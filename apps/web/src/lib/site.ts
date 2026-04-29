@@ -18,5 +18,6 @@ export const site = {
     { label: "Archive", href: "/screens" },
     { label: "Issues", href: "/collections" },
     { label: "MCP", href: "/mcp" },
+    { label: "Sign in", href: "/signin" },
   ],
 } as const;

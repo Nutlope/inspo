@@ -1,0 +1,20 @@
+#:schema https://json.schemastore.org/wrangler.json
+name = "inspo-mcp"
+main = "src/worker.ts"
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Vars are set per-environment. For local dev:
+#   wrangler dev --var DATABASE_URL=$DATABASE_URL --var INSPO_BASE_URL=http://localhost:3000
+#
+# For production:
+#   wrangler secret put DATABASE_URL
+#   wrangler secret put INSPO_BASE_URL
+
+[vars]
+ENFORCE_AUTH = "0"
+
+# Custom domain example (uncomment + set zone in dashboard before deploy):
+# [[routes]]
+# pattern = "api.inspo.example.com/*"
+# zone_name = "inspo.example.com"

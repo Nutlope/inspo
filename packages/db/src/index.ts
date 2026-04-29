@@ -7,6 +7,9 @@ export {
   getAllCollections,
   findCollection,
   screensInCollection,
+  getPendingScreens,
+  updateScreenStatus,
+  updateScreenCuratorNote,
   type ScreenFilter,
 } from "./queries";
 export { screens, collections } from "./fixtures";

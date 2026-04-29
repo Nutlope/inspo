@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { findScreen } from "@inspo/db";
+import { findScreen, getPendingScreens } from "@inspo/db";
 
 /**
  * Stylized SVG placeholder generator.
@@ -191,7 +191,11 @@ export async function GET(
   ctx: { params: Promise<RouteParams> },
 ) {
   const { slug, variant } = await ctx.params;
-  const screen = await findScreen(slug);
+  let screen = await findScreen(slug);
+  if (!screen) {
+    const pending = await getPendingScreens();
+    screen = pending.find((s) => s.slug === slug) ?? null;
+  }
 
   if (!screen || !isVariant(variant)) {
     return new Response("Not found", { status: 404 });
