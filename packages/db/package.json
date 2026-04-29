@@ -16,17 +16,18 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/migrate.ts",
     "db:seed": "tsx ./src/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "promote": "tsx ./src/promote.ts"
   },
   "dependencies": {
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.36.4"
+    "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.29.1",
-    "tsx": "^4.19.2",
-    "dotenv": "^16.4.5"
+    "tsx": "^4.19.2"
   }
 }

@@ -7,6 +7,7 @@
   "scripts": {
     "playwright:install": "playwright install chromium",
     "capture": "tsx src/cli.ts capture",
+    "capture:seed": "tsx src/seed.ts",
     "test:capture": "tsx src/cli.ts capture https://linear.app",
     "typecheck": "tsc --noEmit"
   },
@@ -16,7 +17,7 @@
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.45.2",
     "node-vibrant": "^4.0.0",
     "playwright": "^1.49.1",
     "sharp": "^0.33.5"

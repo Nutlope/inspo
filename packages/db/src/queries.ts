@@ -27,6 +27,7 @@ import {
   screens as screensFixture,
   collections as collectionsFixture,
 } from "./fixtures";
+import { pendingScreens as pendingFixture } from "./pending-fixtures";
 
 export type ScreenFilter = {
   style?: Style;
@@ -176,6 +177,49 @@ export async function findSimilar(
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => x.s);
+}
+
+/* ──────────────────── curator queue ──────────────────── */
+
+export async function getPendingScreens(): Promise<ScreenSummary[]> {
+  if (!hasDatabase()) return pendingFixture;
+
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(screensT)
+    .where(eq(screensT.status, "pending"))
+    .orderBy(desc(screensT.capturedAt));
+  return rows.map((r) =>
+    rowToSummary(r, {
+      styles: (r.searchKeywords as Style[]) ?? [],
+      industries: [],
+      components: [],
+      vibes: [],
+    }),
+  );
+}
+
+export async function updateScreenStatus(
+  slug: string,
+  status: "pending" | "published" | "rejected",
+): Promise<void> {
+  if (!hasDatabase()) return;
+  await getDb()
+    .update(screensT)
+    .set({ status })
+    .where(eq(screensT.slug, slug));
+}
+
+export async function updateScreenCuratorNote(
+  slug: string,
+  note: string,
+): Promise<void> {
+  if (!hasDatabase()) return;
+  await getDb()
+    .update(screensT)
+    .set({ curatorNote: note })
+    .where(eq(screensT.slug, slug));
 }
 
 /* ──────────────────── collections ──────────────────── */

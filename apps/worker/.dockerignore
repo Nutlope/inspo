@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+.next
+.turbo
+.git
+.env
+.env.local
+captures
+*.log
+.DS_Store
+.vercel
+.wrangler

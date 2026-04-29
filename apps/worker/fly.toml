@@ -1,0 +1,32 @@
+## Fly.io config for the Inspo capture worker.
+## Run from repo root: `fly launch --config apps/worker/fly.toml`.
+
+app = "inspo-worker"
+primary_region = "iad"
+
+[build]
+  dockerfile = "apps/worker/Dockerfile"
+  ignorefile = "apps/worker/.dockerignore"
+
+# No public HTTP — this isn't a server, it's a long-running capture host
+# you `fly ssh console` into. Comment in [http_service] if you later expose
+# an enqueue endpoint.
+
+[[mounts]]
+  source = "captures"
+  destination = "/app/apps/worker/captures"
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 2
+
+# Turn the machine off after 30 min of idle so we're not paying when
+# nobody's capturing.
+[deploy]
+  strategy = "immediate"
+  release_command = "true"
+
+[experimental]
+  auto_rollback = true
