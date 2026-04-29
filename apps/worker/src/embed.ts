@@ -1,58 +1,35 @@
 /**
- * Voyage embeddings — multimodal (image+text) for visual similarity,
- * text-only for BM25-adjacent retrieval. We hit the REST API directly
- * since the JS SDK's multimodal coverage has lagged.
+ * Embeddings via Together AI.
+ *
+ * Model: BAAI/bge-large-en-v1.5 — 1024-dim, well-served on Together's
+ * serverless endpoints. Matches the vector(1024) columns already in
+ * @inspo/db so no migration is needed.
+ *
+ * For v1 we embed text only (description + tags + keywords). Visual-
+ * pixel similarity goes back when we wire CLIP locally; until then,
+ * the description from the vision model captures enough of the
+ * "feel" for tag-style retrieval to work well.
  */
 
-const VOYAGE_BASE = "https://api.voyageai.com/v1";
+import Together from "together-ai";
 
-export async function embedMultimodal(args: {
-  imageBase64: string;
-  text: string;
-}): Promise<number[]> {
-  const key = process.env.VOYAGE_API_KEY;
-  if (!key) throw new Error("VOYAGE_API_KEY is not set");
-
-  const res = await fetch(`${VOYAGE_BASE}/multimodalembeddings`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({
-      model: "voyage-multimodal-3",
-      inputs: [
-        {
-          content: [
-            { type: "image_base64", image_base64: `data:image/png;base64,${args.imageBase64}` },
-            { type: "text", text: args.text },
-          ],
-        },
-      ],
-    }),
-  });
-  if (!res.ok) throw new Error(`Voyage multimodal: ${res.status} ${await res.text()}`);
-  const json = (await res.json()) as { data: { embedding: number[] }[] };
-  return json.data[0].embedding;
-}
+const TEXT_MODEL = "BAAI/bge-large-en-v1.5"; // 1024-dim
+export const EMBEDDING_DIMS = 1024;
 
 export async function embedText(text: string): Promise<number[]> {
-  const key = process.env.VOYAGE_API_KEY;
-  if (!key) throw new Error("VOYAGE_API_KEY is not set");
+  const apiKey = process.env.TOGETHER_API_KEY;
+  if (!apiKey) throw new Error("TOGETHER_API_KEY is not set");
 
-  const res = await fetch(`${VOYAGE_BASE}/embeddings`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({
-      model: "voyage-3-large",
-      input: [text],
-      input_type: "document",
-    }),
+  const client = new Together({ apiKey });
+  const res = await client.embeddings.create({
+    model: TEXT_MODEL,
+    input: text.slice(0, 8000), // BGE max 8K tokens; rough char cap
   });
-  if (!res.ok) throw new Error(`Voyage text: ${res.status} ${await res.text()}`);
-  const json = (await res.json()) as { data: { embedding: number[] }[] };
-  return json.data[0].embedding;
+  const vec = res.data?.[0]?.embedding;
+  if (!Array.isArray(vec) || vec.length !== EMBEDDING_DIMS) {
+    throw new Error(
+      `Together embeddings: expected ${EMBEDDING_DIMS}-dim vector, got ${vec?.length}`,
+    );
+  }
+  return vec;
 }

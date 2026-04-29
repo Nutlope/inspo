@@ -23,8 +23,8 @@ import { stabilize } from "./stabilize.js";
 import { captureAllViewports } from "./screenshot.js";
 import { saveLocal } from "./storage.js";
 import { extract } from "./extract.js";
-import { tagWithClaude } from "./tag.js";
-import { embedMultimodal, embedText } from "./embed.js";
+import { tagWithLLM } from "./tag.js";
+import { embedText } from "./embed.js";
 import type { CaptureResult } from "./types.js";
 
 export type CaptureOptions = {
@@ -94,10 +94,10 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     let embeddings: CaptureResult["embeddings"] = undefined;
 
     if (opts.enrich !== false) {
-      if (process.env.ANTHROPIC_API_KEY) {
+      if (process.env.TOGETHER_API_KEY) {
         try {
-          console.log("  tagging with Claude…");
-          tags = await tagWithClaude({
+          console.log("  tagging with Together (Qwen3-VL)…");
+          tags = await tagWithLLM({
             heroPng: heroShot.buffer,
             pageTitle: meta.pageTitle,
             pageDescription: meta.pageDescription,
@@ -105,16 +105,12 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
           });
         } catch (err) {
           console.warn(
-            `  ⚠ Claude tagging failed: ${err instanceof Error ? err.message : String(err)}`,
+            `  ⚠ Together tagging failed: ${err instanceof Error ? err.message : String(err)}`,
           );
         }
-      } else {
-        console.log("  ⨯ skipping Claude tagging (no ANTHROPIC_API_KEY)");
-      }
 
-      if (process.env.VOYAGE_API_KEY) {
         try {
-          console.log("  embedding with Voyage…");
+          console.log("  embedding with Together (BGE)…");
           const text = [
             meta.pageTitle,
             meta.pageDescription,
@@ -123,21 +119,15 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
           ]
             .filter(Boolean)
             .join(" — ");
-          const [image, textEmb] = await Promise.all([
-            embedMultimodal({
-              imageBase64: heroShot.buffer.toString("base64"),
-              text,
-            }),
-            embedText(text || meta.pageTitle || url),
-          ]);
-          embeddings = { image, text: textEmb };
+          const vec = await embedText(text || meta.pageTitle || url);
+          embeddings = { text: vec };
         } catch (err) {
           console.warn(
-            `  ⚠ Voyage embedding failed: ${err instanceof Error ? err.message : String(err)}`,
+            `  ⚠ Together embedding failed: ${err instanceof Error ? err.message : String(err)}`,
           );
         }
       } else {
-        console.log("  ⨯ skipping Voyage embeddings (no VOYAGE_API_KEY)");
+        console.log("  ⨯ skipping enrichment (no TOGETHER_API_KEY)");
       }
     }
 

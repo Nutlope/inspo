@@ -1,6 +1,6 @@
 # Seeding the catalogue
 
-Replace the SVG placeholders with real captures of 50 hand-picked production sites. End-to-end, the run takes ~10–25 minutes and ~$0.20 in API spend (Anthropic + Voyage), depending on how many sites still load with cookie-banner roulette.
+Replace the SVG placeholders with real captures of 50 hand-picked production sites. End-to-end, the run takes ~10–25 minutes and a few cents in API spend on **Together AI** (one key, both vision + embeddings), depending on how many sites still load with cookie-banner roulette.
 
 ## Prerequisites
 
@@ -11,17 +11,17 @@ pnpm --filter @inspo/worker run playwright:install   # Chromium, ~170MB
 
 ## 1. Provision API keys
 
-These three vars activate the full pipeline. Each is graceful-fallback — without it the worker still produces captures + metadata, just no AI tags / no embeddings / no DB persist.
+Two vars activate the full pipeline. Each is graceful-fallback — without it the worker still produces captures + metadata, just no AI tags / no embeddings / no DB persist.
 
 Create `.env` at the repo root:
 
 ```env
-# required for tagging
-ANTHROPIC_API_KEY=sk-ant-...                # https://console.anthropic.com
-# required for similarity search
-VOYAGE_API_KEY=pa-...                       # https://docs.voyageai.com
-# required to persist captures into the gallery / MCP
-DATABASE_URL=postgres://...                 # Neon — see DEPLOY.md §1
+# Together AI — powers vision tagging (Qwen3-VL) + embeddings (BGE).
+# One key, both endpoints. https://api.together.ai
+TOGETHER_API_KEY=
+
+# Neon Postgres — see DEPLOY.md §1
+DATABASE_URL=postgres://...
 ```
 
 If you want Better Auth to issue real API keys for the gallery dashboard:
@@ -95,18 +95,17 @@ Allow-lists in [`packages/taxonomy/src/index.ts`](packages/taxonomy/src/index.ts
 
 | Missing | What still works |
 |---|---|
-| nothing | Full pipeline: PNGs + palette + fonts + tech + Claude tags + Voyage embeddings + DB persist |
-| `ANTHROPIC_API_KEY` | Everything except `tags` (description, alt text, search keywords) |
-| `VOYAGE_API_KEY` | Everything except `embeddings` (no visual / text similarity until backfilled) |
+| nothing | Full pipeline: PNGs + palette + fonts + tech + Together tags + Together embeddings + DB persist |
+| `TOGETHER_API_KEY` | Everything except `tags` and `embeddings` |
 | `DATABASE_URL` | Everything except DB persist — captures live as files; review with `cat captures/_reports/...` |
 
 ## Cost ballpark
 
 Per capture, when fully enriched:
 
-- Claude Sonnet 4.6 vision tagging — ~$0.003
-- Voyage `voyage-multimodal-3` + `voyage-3-large` — ~$0.0005
+- Qwen3-VL-8B-Instruct vision tagging — ~$0.0003
+- BAAI/bge-large-en-v1.5 embedding — ~$0.00002
 - Neon — within free tier
 - Cloudflare R2 (when wired) — within free tier
 
-50 captures full pipeline: **~$0.18**. Well under the cost of a coffee.
+50 captures full pipeline: **~$0.02**. Together's open-weights pricing is roughly 10× cheaper than the Anthropic/Voyage path it replaced.
