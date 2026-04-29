@@ -1,0 +1,31 @@
+{
+  "name": "@inspo/mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/server.ts",
+  "bin": {
+    "inspo-mcp": "./bin/inspo-mcp.js"
+  },
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "inspect": "npx @modelcontextprotocol/inspector tsx src/server.ts",
+    "test": "tsx src/smoke.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inspo/db": "workspace:*",
+    "@inspo/shared": "workspace:*",
+    "@inspo/taxonomy": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@neondatabase/serverless": "^0.10.4",
+    "drizzle-orm": "^0.36.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

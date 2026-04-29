@@ -1,0 +1,38 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build
+.next/
+.turbo/
+dist/
+out/
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+
+# logs / runtime
+*.log
+.npm
+.eslintcache
+.cache/
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# deploy
+.vercel/
+.wrangler/
+.fly/
+
+# worker output (raw captures live in storage, not git)
+apps/worker/captures/
+
+# misc
+coverage/
+*.tsbuildinfo
