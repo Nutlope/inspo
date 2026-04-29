@@ -1,0 +1,32 @@
+{
+  "name": "@inspo/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./queries": "./src/queries.ts",
+    "./fixtures": "./src/fixtures.ts"
+  },
+  "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx ./src/migrate.ts",
+    "db:seed": "tsx ./src/seed.ts",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@inspo/shared": "workspace:*",
+    "@inspo/taxonomy": "workspace:*",
+    "@neondatabase/serverless": "^0.10.4",
+    "drizzle-orm": "^0.36.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.29.1",
+    "tsx": "^4.19.2",
+    "dotenv": "^16.4.5"
+  }
+}

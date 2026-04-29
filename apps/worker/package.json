@@ -1,0 +1,30 @@
+{
+  "name": "@inspo/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/cli.ts",
+  "scripts": {
+    "playwright:install": "playwright install chromium",
+    "capture": "tsx src/cli.ts capture",
+    "test:capture": "tsx src/cli.ts capture https://linear.app",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@inspo/db": "workspace:*",
+    "@inspo/shared": "workspace:*",
+    "@inspo/taxonomy": "workspace:*",
+    "@neondatabase/serverless": "^0.10.4",
+    "drizzle-orm": "^0.36.4",
+    "node-vibrant": "^4.0.0",
+    "playwright": "^1.49.1",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

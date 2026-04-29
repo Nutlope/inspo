@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Inspo — Editorial Design Tokens
+   Vibe: archive / magazine / colophon (A24, MUBI, Are.na)
+   ============================================================ */
+
+@theme {
+  /* Type families */
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Editorial palette (light) */
+  --color-paper: #f4f1ec;
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #6b6862;
+  --color-rule: #d8d3c8;
+  --color-accent: #c7402f;
+
+  /* Editorial palette (dark) */
+  --color-paper-dark: #0e0e0c;
+  --color-ink-dark: #e8e4dd;
+  --color-ink-dark-muted: #918d85;
+  --color-rule-dark: #2a2825;
+  --color-accent-dark: #e36b58;
+
+  /* Active surface tokens — flipped by .dark */
+  --color-bg: var(--color-paper);
+  --color-fg: var(--color-ink);
+  --color-fg-muted: var(--color-ink-muted);
+  --color-border: var(--color-rule);
+  --color-link: var(--color-accent);
+
+  /* Type scale */
+  --text-display: clamp(3.5rem, 9vw, 8.5rem);
+  --text-display-line-height: 0.9;
+  --text-display-letter-spacing: -0.04em;
+
+  --text-h1: clamp(2.25rem, 5vw, 4rem);
+  --text-h1-line-height: 1;
+  --text-h1-letter-spacing: -0.025em;
+
+  --text-h2: clamp(1.5rem, 2.5vw, 2.25rem);
+  --text-h2-line-height: 1.1;
+  --text-h2-letter-spacing: -0.015em;
+
+  --text-body: 1.0625rem;
+  --text-body-line-height: 1.6;
+
+  --text-meta: 0.75rem;
+  --text-meta-line-height: 1.4;
+  --text-meta-letter-spacing: 0.04em;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-bg: var(--color-paper-dark);
+  --color-fg: var(--color-ink-dark);
+  --color-fg-muted: var(--color-ink-dark-muted);
+  --color-border: var(--color-rule-dark);
+  --color-link: var(--color-accent-dark);
+}
+
+/* Base */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body-line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Selection — editorial red highlight */
+::selection {
+  background: var(--color-link);
+  color: var(--color-bg);
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Editorial helpers */
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30, "WONK" 0, "opsz" 144;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display-line-height);
+  letter-spacing: var(--text-display-letter-spacing);
+  font-weight: 400;
+}
+
+.text-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  line-height: var(--text-meta-line-height);
+  letter-spacing: var(--text-meta-letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+}
+
+.rule {
+  border-color: var(--color-border);
+}
