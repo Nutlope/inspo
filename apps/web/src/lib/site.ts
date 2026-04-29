@@ -11,7 +11,7 @@ export const site = {
   },
   colophon: {
     typefaces: ["Fraunces", "Inter Tight", "JetBrains Mono"],
-    stack: ["Next.js", "Tailwind", "Postgres", "Cloudflare"],
+    stack: ["Next.js", "Tailwind", "Postgres", "Together AI"],
     year: new Date().getFullYear(),
   },
   nav: [

@@ -42,7 +42,7 @@ export async function persistCapture(result: CaptureResult): Promise<{ id: strin
     heroImageKey: heroAsset?.url ?? null,
     fullImageKey: fullAsset?.url ?? null,
     thumbImageKey: thumbAsset?.url ?? null,
-    embeddingImage: result.embeddings?.image ?? null,
+    embeddingImage: null,
     embeddingText: result.embeddings?.text ?? null,
     status: "pending" as const,
   };

@@ -46,5 +46,5 @@ export type CaptureResult = {
   assets: CapturedAsset[];
   meta: ExtractedMetadata;
   tags?: AITags;
-  embeddings?: { image: number[]; text: number[] };
+  embeddings?: { text: number[] };
 };

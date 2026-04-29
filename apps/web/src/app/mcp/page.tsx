@@ -182,7 +182,16 @@ export default function MCPPage() {
               — before writing code. With Inspo installed, the same agent can
               call <code className="font-mono text-[0.95em] text-[var(--color-fg)]">find_examples_for_macrostructure</code>{" "}
               at that exact step and get four real production sites that
-              embody it. Process and reference, in one prompt.
+              embody it. Process and reference, in one prompt. Both stacks
+              run on{" "}
+              <a
+                href="https://www.together.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
+              >
+                Together AI
+              </a>.
             </p>
 
             <pre className="mt-8 overflow-x-auto border rule px-5 py-4 font-mono text-sm leading-relaxed">

@@ -12,7 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.0",
     "@inspo/db": "workspace:*",
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
@@ -20,7 +19,8 @@
     "drizzle-orm": "^0.45.2",
     "node-vibrant": "^4.0.0",
     "playwright": "^1.49.1",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "together-ai": "^0.21.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
