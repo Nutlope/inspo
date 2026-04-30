@@ -1,13 +1,15 @@
 /**
  * Vision-LLM tagging via Together AI.
  *
- * Model: Qwen3-VL-8B-Instruct — newest open-weights VLM, explicitly
- * trained to recognise UI elements and operate graphical interfaces,
- * which is exactly the read we need over a screenshot. Output is
- * constrained via `response_format: { type: "json_object", schema }`
- * AND a textual schema in the prompt (Together's recommended belt-
- * and-braces pattern). All values are then validated against the
- * @inspo/taxonomy allow-lists before we trust them.
+ * Model: google/gemma-3n-E4B-it — Google's open-weights vision model,
+ * the actual serverless option on Together's catalogue (the bigger
+ * Qwen-VL and Llama-Vision SKUs require dedicated endpoints, $$$).
+ * Cheap ($0.06 / M tokens), fast, and good enough to read UI.
+ *
+ * Output is constrained via `response_format: { type: "json_object",
+ * schema }` AND the textual schema in the prompt (Together's
+ * belt-and-braces pattern). Every value is validated against the
+ * @inspo/taxonomy allow-lists before we trust it.
  */
 
 import Together from "together-ai";
@@ -27,7 +29,7 @@ import {
 } from "@inspo/taxonomy";
 import type { AITags } from "./types";
 
-const MODEL = "Qwen/Qwen3-VL-8B-Instruct";
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
 
 const tagSchema = {
   type: "object",
@@ -55,13 +57,13 @@ const tagSchema = {
 } as const;
 
 const SYSTEM = [
-  "You tag screenshots of websites for a curated archive.",
-  "Every tag MUST come from the supplied enums — never invent values.",
-  "Pick exactly one Hallmark macrostructure and one Hallmark theme.",
-  "description: 1–2 sentences, designer voice, no marketing fluff.",
-  "altText: ≤140 chars, screen-reader accurate.",
-  "searchKeywords: 5–10 short freeform keywords for BM25.",
-  "Return ONLY the JSON object — no prose, no markdown fences.",
+  "You are a senior design critic tagging screenshots of real websites for a curated archive.",
+  "Output a single JSON object matching the schema. No prose, no markdown fences.",
+  "Every enum tag MUST come from the supplied enums — never invent values.",
+  "Pick exactly one Hallmark macrostructure (the named whole-page shape) and one Hallmark theme (category:theme).",
+  "description: 1–2 sentences in a designer's voice. Talk about the actual visual choices on this page (typography, colour, density, mood). No marketing fluff. Never describe yourself or the task.",
+  "altText: ≤140 chars, screen-reader accurate, focuses on the visible content.",
+  "searchKeywords: 5–10 short freeform keywords a designer would actually search for, e.g. 'editorial agency hero', 'dark saas bento'. Lowercase.",
 ].join(" ");
 
 export async function tagWithLLM(args: {
@@ -73,7 +75,11 @@ export async function tagWithLLM(args: {
   const apiKey = process.env.TOGETHER_API_KEY;
   if (!apiKey) throw new Error("TOGETHER_API_KEY is not set");
 
-  const client = new Together({ apiKey });
+  const client = new Together({
+    apiKey,
+    baseURL: process.env.TOGETHER_BASE_URL ?? "https://api.together.ai/v1",
+    timeout: 60_000,
+  });
   const dataUrl = `data:image/png;base64,${args.heroPng.toString("base64")}`;
 
   const schemaText = JSON.stringify(tagSchema, null, 2);
@@ -83,7 +89,7 @@ export async function tagWithLLM(args: {
     `Title: ${args.pageTitle}`,
     `Meta description: ${args.pageDescription}`,
     "",
-    "Tag this page. Return JSON matching this schema exactly:",
+    "Tag this screenshot. Return ONE JSON object matching this schema exactly:",
     schemaText,
   ].join("\n");
 

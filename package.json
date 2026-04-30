@@ -10,6 +10,7 @@
     "typecheck": "turbo run typecheck",
     "capture": "pnpm --filter @inspo/worker capture",
     "capture:seed": "pnpm --filter @inspo/worker capture:seed",
+    "capture:retry": "pnpm --filter @inspo/worker capture:retry",
     "db:migrate": "pnpm --filter @inspo/db db:migrate",
     "db:push": "pnpm --filter @inspo/db db:push",
     "db:seed": "pnpm --filter @inspo/db db:seed",
