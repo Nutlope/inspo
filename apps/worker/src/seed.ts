@@ -11,7 +11,7 @@
  * Curator approves/rejects from /admin/curator.
  */
 
-import "dotenv/config";
+import "./env.js";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { capture } from "./capture.js";
@@ -65,11 +65,8 @@ async function main() {
   if (args.persist && !process.env.DATABASE_URL) {
     console.warn("  ⚠ DATABASE_URL not set — captures won't persist (use --no-persist to silence).\n");
   }
-  if (args.enrich && !process.env.ANTHROPIC_API_KEY) {
-    console.warn("  ⚠ ANTHROPIC_API_KEY not set — Claude tagging will be skipped.\n");
-  }
-  if (args.enrich && !process.env.VOYAGE_API_KEY) {
-    console.warn("  ⚠ VOYAGE_API_KEY not set — Voyage embeddings will be skipped.\n");
+  if (args.enrich && !process.env.TOGETHER_API_KEY) {
+    console.warn("  ⚠ TOGETHER_API_KEY not set — tagging + embeddings will be skipped.\n");
   }
 
   type Outcome = {

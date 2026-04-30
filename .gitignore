@@ -36,3 +36,6 @@ apps/worker/captures/
 # misc
 coverage/
 *.tsbuildinfo
+
+# scheduler runtime
+.claude/

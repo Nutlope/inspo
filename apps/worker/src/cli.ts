@@ -2,7 +2,7 @@
  * CLI entrypoint: pnpm capture <url> [--slug=<slug>] [--no-enrich] [--no-persist]
  */
 
-import "dotenv/config";
+import "./env.js";
 import { capture } from "./capture.js";
 import { persistCapture } from "./persist.js";
 

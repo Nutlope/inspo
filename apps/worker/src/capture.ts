@@ -67,7 +67,16 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     });
 
     console.log("  navigating…");
-    await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 });
+    // First wait for DOM ready (works on every site). Then *try* for
+    // networkidle but don't fail the whole capture if analytics keep
+    // chattering — networkidle was the #1 cause of false-failure on
+    // production sites with persistent beacons.
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45_000 });
+    await page
+      .waitForLoadState("networkidle", { timeout: 8_000 })
+      .catch(() => {
+        /* fine — page is loaded enough */
+      });
 
     console.log("  dismissing banners…");
     const dismissed = await dismissBanners(page);
@@ -96,7 +105,7 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     if (opts.enrich !== false) {
       if (process.env.TOGETHER_API_KEY) {
         try {
-          console.log("  tagging with Together (Qwen3-VL)…");
+          console.log("  tagging with Together (Gemma 3n vision)…");
           tags = await tagWithLLM({
             heroPng: heroShot.buffer,
             pageTitle: meta.pageTitle,
@@ -110,7 +119,7 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
         }
 
         try {
-          console.log("  embedding with Together (BGE)…");
+          console.log("  embedding with Together (E5 multilingual)…");
           const text = [
             meta.pageTitle,
             meta.pageDescription,
