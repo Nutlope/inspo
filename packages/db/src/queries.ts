@@ -42,6 +42,23 @@ function placeholderUrl(slug: string, variant: "hero" | "full" | "thumb") {
   return `/api/placeholder/${slug}/${variant}`;
 }
 
+/**
+ * heroImageKey/fullImageKey/thumbImageKey are written by the worker as
+ * `file://…` paths during dev (R2 URLs in prod). Browsers can't load
+ * file:// — and the placeholder route already serves real PNGs from disk
+ * if they exist — so we only honour the stored key when it's an actual
+ * http(s) URL. This means dev "just works", and the moment we wire R2
+ * the gallery starts serving from the CDN with no other code change.
+ */
+function resolveImageUrl(
+  storedKey: string | null | undefined,
+  slug: string,
+  variant: "hero" | "full" | "thumb",
+): string {
+  if (storedKey && /^https?:\/\//i.test(storedKey)) return storedKey;
+  return placeholderUrl(slug, variant);
+}
+
 function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
   styles: Style[];
   industries: Industry[];
@@ -55,9 +72,9 @@ function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
     sourceUrl: row.sourceUrl,
     designerCredit: row.designerCredit ?? undefined,
     capturedAt: row.capturedAt.toISOString().slice(0, 10),
-    imageUrl: row.heroImageKey ?? placeholderUrl(row.slug, "hero"),
-    fullPageUrl: row.fullImageKey ?? placeholderUrl(row.slug, "full"),
-    thumbUrl: row.thumbImageKey ?? placeholderUrl(row.slug, "thumb"),
+    imageUrl: resolveImageUrl(row.heroImageKey, row.slug, "hero"),
+    fullPageUrl: resolveImageUrl(row.fullImageKey, row.slug, "full"),
+    thumbUrl: resolveImageUrl(row.thumbImageKey, row.slug, "thumb"),
     description: row.description,
     palette: row.palette,
     fonts: row.fonts,
