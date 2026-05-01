@@ -1,14 +1,46 @@
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import type { NextRequest } from "next/server";
 import { findScreen, getPendingScreens } from "@inspo/db";
 
 /**
- * Stylized SVG placeholder generator.
+ * Image route. Two modes, decided per request:
  *
- * Renders each screen as a stylized "site mockup" using its own palette,
- * so the gallery feels populated before real screenshots land. Every
- * screen has a deterministic-but-distinct composition seeded from its
- * slug, so reloads are stable.
+ *   1. Real PNG on disk  — if `apps/worker/captures/<slug>/<viewport>-<variant>-*.png`
+ *      exists, stream it back. This is how live captures show up.
+ *   2. SVG placeholder    — otherwise, generate a stylised mockup from the
+ *      screen's palette. Every fixture row uses this path, and any DB row
+ *      whose capture hasn't landed on disk yet falls back here gracefully.
+ *
+ * Disk path is resolved relative to the apps/web cwd, so it works in dev
+ * (`pnpm dev` from apps/web). In prod we'd swap (1) for an R2 / Cloudflare
+ * Images URL written into screensT.heroImageKey at capture time.
  */
+
+const CAPTURES_DIR = resolve(
+  process.env.INSPO_CAPTURES_DIR ??
+    join(process.cwd(), "..", "worker", "captures"),
+);
+
+function findCaptureFile(slug: string, variant: Variant): string | null {
+  // Variant maps: hero/full come from the desktop viewport; thumb reuses
+  // the desktop hero (browser scales it).
+  const dir = join(CAPTURES_DIR, slug);
+  if (!existsSync(dir)) return null;
+  const wantPrefix =
+    variant === "thumb"
+      ? "desktop-hero-"
+      : `desktop-${variant}-`;
+  let candidates: string[];
+  try {
+    candidates = readdirSync(dir).filter(
+      (f) => f.startsWith(wantPrefix) && f.endsWith(".png"),
+    );
+  } catch {
+    return null;
+  }
+  return candidates.length > 0 ? join(dir, candidates[0]) : null;
+}
 
 type Variant = "hero" | "full" | "thumb";
 type RouteParams = { slug: string; variant: string };
@@ -199,6 +231,22 @@ export async function GET(
 
   if (!screen || !isVariant(variant)) {
     return new Response("Not found", { status: 404 });
+  }
+
+  // Prefer a real captured PNG when one exists on disk.
+  const realPath = findCaptureFile(slug, variant);
+  if (realPath) {
+    try {
+      const buf = readFileSync(realPath);
+      return new Response(new Uint8Array(buf), {
+        headers: {
+          "Content-Type": "image/png",
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+        },
+      });
+    } catch {
+      // fall through to placeholder if the file disappears mid-request
+    }
   }
 
   const svg = render(slug, variant, screen.palette, screen.title, screen.mode);

@@ -7,7 +7,10 @@ import { hasDatabase, getDb, schema } from "@inspo/db";
 import { eq } from "drizzle-orm";
 import type { CaptureResult } from "./types";
 
-export async function persistCapture(result: CaptureResult): Promise<{ id: string } | null> {
+export async function persistCapture(
+  result: CaptureResult,
+  opts: { status?: "pending" | "published" } = {},
+): Promise<{ id: string } | null> {
   if (!hasDatabase()) {
     console.log("  ⨯ skipping DB persist (no DATABASE_URL)");
     return null;
@@ -44,7 +47,10 @@ export async function persistCapture(result: CaptureResult): Promise<{ id: strin
     thumbImageKey: thumbAsset?.url ?? null,
     embeddingImage: null,
     embeddingText: result.embeddings?.text ?? null,
-    status: "pending" as const,
+    status: opts.status ?? ("pending" as const),
+    // Image keys are written for traceability, but the gallery serves
+    // images via /api/placeholder/<slug>/<variant> which prefers a real
+    // disk PNG when present. So these file:// URLs are bookkeeping only.
   };
 
   const existing = await db
