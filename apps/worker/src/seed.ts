@@ -22,6 +22,7 @@ type CliArgs = {
   go: boolean;
   enrich: boolean;
   persist: boolean;
+  publish: boolean;
   slice?: number;
   concurrency: number;
 };
@@ -32,6 +33,7 @@ function parseArgs(): CliArgs {
     go: argv.includes("--go"),
     enrich: !argv.includes("--no-enrich"),
     persist: !argv.includes("--no-persist"),
+    publish: argv.includes("--publish"),
     concurrency: 2,
   };
   const sliceArg = argv.find((a) => a.startsWith("--slice="));
@@ -95,7 +97,9 @@ async function main() {
         });
         let persistedId: string | undefined;
         if (args.persist) {
-          const p = await persistCapture(result);
+          const p = await persistCapture(result, {
+            status: args.publish ? "published" : "pending",
+          });
           persistedId = p?.id;
         }
         outcomes.push({
