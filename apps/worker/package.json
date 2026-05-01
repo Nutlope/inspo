@@ -9,6 +9,7 @@
     "capture": "tsx src/cli.ts capture",
     "capture:seed": "tsx src/seed.ts",
     "capture:retry": "tsx src/retry-failed.ts",
+    "cleanup:titles": "tsx src/cleanup-titles.ts",
     "test:capture": "tsx src/cli.ts capture https://linear.app",
     "typecheck": "tsc --noEmit"
   },
