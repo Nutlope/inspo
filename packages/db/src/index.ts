@@ -11,6 +11,7 @@ export {
   updateScreenStatus,
   updateScreenCuratorNote,
   type ScreenFilter,
+  type ScreenSort,
 } from "./queries";
 export { renderDesignMd } from "./design-md";
 export {
