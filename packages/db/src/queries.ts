@@ -36,6 +36,42 @@ export type ScreenFilter = {
   mode?: Mode;
 };
 
+/**
+ * Sort modes for the home grid.
+ *  latest — most recently captured first (default)
+ *  varied — round-robin one screen per macrostructure, then refill from latest
+ *  random — shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
+ */
+export type ScreenSort = "latest" | "varied" | "random";
+
+function variedOrder(list: ScreenSummary[]): ScreenSummary[] {
+  // Group by macrostructure, take one per group in round-robin until empty.
+  const buckets = new Map<string, ScreenSummary[]>();
+  for (const s of list) {
+    const k = s.tags.macrostructure ?? "_other";
+    if (!buckets.has(k)) buckets.set(k, []);
+    buckets.get(k)!.push(s);
+  }
+  const out: ScreenSummary[] = [];
+  while (buckets.size > 0) {
+    for (const [k, group] of Array.from(buckets.entries())) {
+      const next = group.shift();
+      if (next) out.push(next);
+      if (group.length === 0) buckets.delete(k);
+    }
+  }
+  return out;
+}
+
+function shuffle<T>(list: T[]): T[] {
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 /* ──────────────────── helpers ──────────────────── */
 
 function placeholderUrl(slug: string, variant: "hero" | "full" | "thumb") {
@@ -122,9 +158,13 @@ function applyFiltersFixture(
 
 export async function getAllScreens(
   filter: ScreenFilter = {},
+  sort: ScreenSort = "latest",
 ): Promise<ScreenSummary[]> {
   if (!hasDatabase()) {
-    return applyFiltersFixture(screensFixture, filter);
+    const filtered = applyFiltersFixture(screensFixture, filter);
+    if (sort === "varied") return variedOrder(filtered);
+    if (sort === "random") return shuffle(filtered);
+    return filtered;
   }
 
   const db = getDb();
@@ -137,11 +177,16 @@ export async function getAllScreens(
   // jsonb tags blob in fixtures and via tag-join in DB. To keep this
   // shippable the DB path applies macrostructure/mode in SQL and the
   // taxonomy filters in JS — fine at our seed scale, hot-pathable later.
+  // Sort: latest = ORDER BY captured_at; random = ORDER BY random();
+  // varied = SQL ordered by latest, then re-grouped in JS (cheap at our
+  // scale, swap to a pgvector clustering pass if it ever bites).
+  const orderClause =
+    sort === "random" ? sql`random()` : desc(screensT.capturedAt);
   const rows = await db
     .select()
     .from(screensT)
     .where(and(...conditions))
-    .orderBy(desc(screensT.capturedAt));
+    .orderBy(orderClause);
 
   // For now, tags are not normalized in returned shape — but since we
   // store them in jsonb on the row in the seed flow, return as-is.
@@ -154,10 +199,13 @@ export async function getAllScreens(
     }),
   );
 
-  return applyFiltersFixture(summaries, {
+  const filtered = applyFiltersFixture(summaries, {
     style: filter.style,
     industry: filter.industry,
   });
+
+  if (sort === "varied") return variedOrder(filtered);
+  return filtered;
 }
 
 export async function findScreen(slug: string): Promise<ScreenSummary | null> {
