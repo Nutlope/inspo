@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import { ScreenTile } from "@/components/screen-tile";
 import { PaletteStrip } from "@/components/palette-strip";
 import { TagPill } from "@/components/tag-pill";
+import { TypeRamp } from "@/components/type-ramp";
+import { ScaleRuler } from "@/components/spacing-ruler";
+import { CopyDesignMd } from "@/components/copy-design-md";
 import {
   findScreen,
   findSimilar,
@@ -239,6 +242,98 @@ export default async function ScreenDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Design system ─────────────────────────────────────── */}
+      {(screen.designSystem.typeRamp.length > 0 ||
+        screen.designSystem.spacingScale.length > 0 ||
+        screen.designSystem.radiusScale.length > 0 ||
+        Object.keys(screen.designSystem.cssVariables).length > 0) && (
+        <div className="mx-auto mt-24 max-w-[120rem] px-6 pb-12 sm:px-10">
+          <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
+            <div className="lg:col-span-2">
+              <p className="text-meta">Design system</p>
+              <p className="text-meta mt-2 max-w-[24ch]">
+                Extracted from the live site. Heuristic — adapt, don&rsquo;t copy.
+              </p>
+              <div className="mt-6">
+                <CopyDesignMd slug={screen.slug} />
+              </div>
+            </div>
+
+            <div className="lg:col-span-10 space-y-16">
+              {/* Type ramp */}
+              {screen.designSystem.typeRamp.length > 0 && (
+                <section>
+                  <p className="text-meta mb-5">Type ramp</p>
+                  <TypeRamp ramp={screen.designSystem.typeRamp} />
+                </section>
+              )}
+
+              {/* Spacing */}
+              {screen.designSystem.spacingScale.length > 0 && (
+                <section>
+                  <p className="text-meta mb-5">Spacing scale</p>
+                  <ScaleRuler values={screen.designSystem.spacingScale} />
+                </section>
+              )}
+
+              {/* Radius */}
+              {screen.designSystem.radiusScale.length > 0 && (
+                <section>
+                  <p className="text-meta mb-5">Radius scale</p>
+                  <ScaleRuler
+                    values={screen.designSystem.radiusScale}
+                    capPx={64}
+                  />
+                </section>
+              )}
+
+              {/* Container */}
+              {screen.designSystem.containerWidth && (
+                <section>
+                  <p className="text-meta mb-3">Container</p>
+                  <p className="font-display text-2xl">
+                    Max content width{" "}
+                    <span className="text-[var(--color-link)]">
+                      {screen.designSystem.containerWidth}px
+                    </span>
+                  </p>
+                </section>
+              )}
+
+              {/* CSS variables */}
+              {Object.keys(screen.designSystem.cssVariables).length > 0 && (
+                <section>
+                  <details className="group">
+                    <summary className="text-meta cursor-pointer hover:text-[var(--color-link)]">
+                      CSS variables exposed by source ({" "}
+                      {Object.keys(screen.designSystem.cssVariables).length}{" "}
+                      ) — click to expand
+                    </summary>
+                    <pre className="mt-5 max-h-96 overflow-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] p-4 font-mono text-xs leading-relaxed">
+                      <code>
+                        {":root {\n"}
+                        {Object.entries(screen.designSystem.cssVariables)
+                          .slice(0, 80)
+                          .map(([k, v]) => `  ${k}: ${v};\n`)
+                          .join("")}
+                        {Object.keys(screen.designSystem.cssVariables).length >
+                        80
+                          ? `  /* …${
+                              Object.keys(screen.designSystem.cssVariables)
+                                .length - 80
+                            } more */\n`
+                          : ""}
+                        {"}"}
+                      </code>
+                    </pre>
+                  </details>
+                </section>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Similar ──────────────────────────────────────────── */}
       <div className="mx-auto mt-24 max-w-[120rem] px-6 pb-24 sm:px-10">

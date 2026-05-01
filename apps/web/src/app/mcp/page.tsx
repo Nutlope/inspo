@@ -214,21 +214,26 @@ export default function MCPPage() {
         </div>
       </section>
 
-      {/* Pricing pointer */}
+      {/* Posture */}
       <section className="pt-16 pb-24">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <p className="text-meta lg:col-span-2">Free, mostly</p>
+          <p className="text-meta lg:col-span-2">Free. Open.</p>
           <div className="lg:col-span-10 space-y-4">
-            <p className="font-display max-w-[34ch] text-3xl leading-tight">
-              Free during the beta — 30 calls a day from the agent. Pro tier
-              opens once we&rsquo;re past 1,000 vetted entries.
+            <p className="font-display max-w-[40ch] text-3xl leading-tight">
+              Inspo is open source, MIT, owned and operated by{" "}
+              <a
+                href="https://www.together.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
+              >
+                Together&nbsp;AI
+              </a>
+              . Free for everyone. No tiers, no paywall.
             </p>
             <p className="text-meta">
-              <Link
-                href="/pricing"
-                className="hover:text-[var(--color-link)]"
-              >
-                Pricing →
+              <Link href="/about" className="hover:text-[var(--color-link)]">
+                About + self-host →
               </Link>
             </p>
           </div>

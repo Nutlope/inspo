@@ -19,7 +19,17 @@ import {
   uuid,
   vector,
 } from "drizzle-orm/pg-core";
-import type { Mode } from "@inspo/taxonomy";
+import type { ColorWord, Mode, TypeRole } from "@inspo/taxonomy";
+
+/** One row in the `type_ramp` jsonb column — one role × its computed type tokens. */
+export type TypeRampEntry = {
+  role: TypeRole;
+  family: string;
+  sizePx: number;
+  weight: number;
+  lineHeight: number; // normalised to a unitless multiplier when possible
+  letterSpacing: string; // raw CSS, e.g. "-0.02em"
+};
 
 /* ───────────────────────── screens ───────────────────────── */
 
@@ -50,6 +60,18 @@ export const screens = pgTable(
     // Hallmark vocabulary (denormalized for filter speed)
     macrostructure: text("macrostructure"),
     hallmarkTheme: text("hallmark_theme"),
+
+    // Phase 2 — design-system extraction. All defaulted so existing rows
+    // survive db:push without backfill; the worker fills them on next capture.
+    typeRamp: jsonb("type_ramp").$type<TypeRampEntry[]>().notNull().default([]),
+    spacingScale: jsonb("spacing_scale").$type<number[]>().notNull().default([]),
+    radiusScale: jsonb("radius_scale").$type<number[]>().notNull().default([]),
+    containerWidth: integer("container_width"),
+    cssVariables: jsonb("css_variables")
+      .$type<Record<string, string>>()
+      .notNull()
+      .default({}),
+    colorWords: jsonb("color_words").$type<ColorWord[]>().notNull().default([]),
 
     // Image asset keys (R2 paths or absolute URLs)
     heroImageKey: text("hero_image_key"),

@@ -1,4 +1,16 @@
-import type { ScreenSummary } from "@inspo/shared";
+import type { DesignSystem, ScreenSummary } from "@inspo/shared";
+
+const EMPTY_DESIGN_SYSTEM: DesignSystem = {
+  typeRamp: [],
+  spacingScale: [],
+  radiusScale: [],
+  containerWidth: null,
+  cssVariables: {},
+  colorWords: [],
+};
+
+type RawPending = Omit<ScreenSummary, "designSystem"> &
+  Partial<Pick<ScreenSummary, "designSystem">>;
 
 /**
  * Demo "pending" screens — surfaced only by `getPendingScreens()` in
@@ -9,7 +21,7 @@ import type { ScreenSummary } from "@inspo/shared";
 const placeholder = (slug: string, variant: "hero" | "full" | "thumb") =>
   `/api/placeholder/${slug}/${variant}`;
 
-export const pendingScreens: ScreenSummary[] = [
+const _pending: RawPending[] = [
   {
     id: "pending-01",
     slug: "linear-app-pending",
@@ -86,3 +98,8 @@ export const pendingScreens: ScreenSummary[] = [
     },
   },
 ];
+
+export const pendingScreens: ScreenSummary[] = _pending.map((s) => ({
+  ...s,
+  designSystem: s.designSystem ?? EMPTY_DESIGN_SYSTEM,
+}));

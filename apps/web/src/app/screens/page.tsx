@@ -1,44 +1,59 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { ScreenTile } from "@/components/screen-tile";
 import { Dateline } from "@/components/dateline";
-import { getAllScreens } from "@inspo/db";
 import {
+  findByHostname,
+  getAllScreens,
+  isUrl,
+  lexicalSearch,
+} from "@inspo/db";
+import {
+  COLOR_WORDS,
   STYLES,
   INDUSTRIES,
   MACROSTRUCTURES,
   MACROSTRUCTURE_LABELS,
   MODES,
+  VIBES,
   isStyle,
   isIndustry,
   isMacrostructure,
+  type ColorWord,
   type Macrostructure,
+  type Vibe,
 } from "@inspo/taxonomy";
 
 export const metadata: Metadata = {
   title: "Archive",
   description:
-    "The full archive — every site we've filed, browsable by industry, style, macrostructure, and mode.",
+    "The full archive — every site we've filed. Browse by hand or query from your agent over MCP.",
 };
 
 type SearchParams = {
+  q?: string;
   style?: string;
   industry?: string;
   macro?: string;
   mode?: string;
+  mood?: string;
+  color?: string;
 };
 
 function FilterGroup({
   label,
   options,
   param,
-  current,
+  currentValue,
+  allParams,
   formatLabel,
 }: {
   label: string;
   options: readonly string[];
   param: keyof SearchParams;
-  current?: string;
+  currentValue?: string;
+  allParams: SearchParams;
   formatLabel?: (v: string) => string;
 }) {
   return (
@@ -46,13 +61,23 @@ function FilterGroup({
       <p className="text-meta">{label}</p>
       <ul className="flex flex-col gap-1.5">
         <li>
-          <FilterLink param={param} value={undefined} active={!current}>
+          <FilterLink
+            current={allParams}
+            param={param}
+            value={undefined}
+            active={!currentValue}
+          >
             All
           </FilterLink>
         </li>
         {options.map((opt) => (
           <li key={opt}>
-            <FilterLink param={param} value={opt} active={current === opt}>
+            <FilterLink
+              current={allParams}
+              param={param}
+              value={opt}
+              active={currentValue === opt}
+            >
               {formatLabel ? formatLabel(opt) : opt.replace(/-/g, " ")}
             </FilterLink>
           </li>
@@ -62,24 +87,69 @@ function FilterGroup({
   );
 }
 
+function SearchBox({ current }: { current: SearchParams }) {
+  return (
+    <form
+      method="GET"
+      action="/screens"
+      className="flex w-full items-stretch border rule"
+    >
+      <input
+        type="search"
+        name="q"
+        defaultValue={current.q ?? ""}
+        placeholder="Search styles, brands, fonts — or paste a URL"
+        autoComplete="off"
+        className="w-full bg-transparent px-4 py-3 font-mono text-sm outline-none placeholder:text-[var(--color-fg-muted)]"
+      />
+      {/* Preserve filter siblings across submits */}
+      {(["style", "industry", "macro", "mode", "mood", "color"] as const).map(
+        (k) =>
+          current[k] ? (
+            <input key={k} type="hidden" name={k} value={current[k] as string} />
+          ) : null,
+      )}
+      <button
+        type="submit"
+        className="text-meta border-l rule bg-[var(--color-fg)] px-5 text-[var(--color-bg)] transition-opacity hover:opacity-80"
+      >
+        Search →
+      </button>
+    </form>
+  );
+}
+
+function buildHref(
+  current: SearchParams,
+  toggle: { param: keyof SearchParams; value: string | undefined },
+): string {
+  const next = { ...current };
+  if (toggle.value === undefined) delete next[toggle.param];
+  else next[toggle.param] = toggle.value;
+  const usp = new URLSearchParams();
+  for (const [k, v] of Object.entries(next)) {
+    if (v !== undefined && v !== "") usp.set(k, v);
+  }
+  const qs = usp.toString();
+  return qs ? `/screens?${qs}` : "/screens";
+}
+
 function FilterLink({
+  current,
   param,
   value,
   active,
   children,
 }: {
+  current: SearchParams;
   param: keyof SearchParams;
   value: string | undefined;
   active: boolean;
   children: React.ReactNode;
 }) {
-  // Build new query string preserving siblings — but as a simple component,
-  // for now just toggle the one param. SearchParams preservation lands in
-  // the client-side filter rail in a follow-up.
-  const href = value ? `/screens?${param}=${encodeURIComponent(value)}` : "/screens";
   return (
     <Link
-      href={href}
+      href={buildHref(current, { param, value })}
       className={`block text-sm capitalize transition-colors ${
         active
           ? "text-[var(--color-link)]"
@@ -96,13 +166,27 @@ function FilterLink({
   );
 }
 
+const isVibe = (v: string): v is Vibe =>
+  (VIBES as readonly string[]).includes(v);
+const isColorWord = (v: string): v is ColorWord =>
+  (COLOR_WORDS as readonly string[]).includes(v);
+
 export default async function ArchivePage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const filtered = await getAllScreens({
+
+  // URL-paste shortcut: redirect to the matching screen if we know it.
+  if (params.q && isUrl(params.q)) {
+    const all = await getAllScreens();
+    const match = findByHostname(all, params.q);
+    if (match) redirect(`/screens/${match.slug}`);
+  }
+
+  // Stage 1 — DB filter (style, industry, macrostructure, mode, vibe, color).
+  let filtered = await getAllScreens({
     style: params.style && isStyle(params.style) ? params.style : undefined,
     industry:
       params.industry && isIndustry(params.industry)
@@ -115,7 +199,28 @@ export default async function ArchivePage({
         ? params.mode
         : undefined,
   });
+
+  // Stage 2 — JS filter for the v2 axes (mood + color word) since they're
+  // jsonb arrays not yet promoted into the DB filter signature. Cheap at
+  // our seed scale.
+  if (params.mood && isVibe(params.mood)) {
+    const m = params.mood;
+    filtered = filtered.filter((s) => s.tags.vibe.includes(m));
+  }
+  if (params.color && isColorWord(params.color)) {
+    const c = params.color;
+    filtered = filtered.filter((s) => s.designSystem.colorWords.includes(c));
+  }
+
+  // Stage 3 — lexical query rerank.
+  if (params.q && params.q.trim()) {
+    filtered = lexicalSearch(filtered, params.q.trim(), 200);
+  }
+
   const totalCount = (await getAllScreens()).length;
+  const noUrlMatch = Boolean(
+    params.q && isUrl(params.q) && filtered.length === 0,
+  );
 
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
@@ -139,6 +244,23 @@ export default async function ArchivePage({
               Install instructions →
             </Link>
           </p>
+
+          <div className="mt-10 max-w-[36rem]">
+            <SearchBox current={params} />
+          </div>
+
+          {noUrlMatch && (
+            <div className="mt-6 max-w-[52ch] border-l-2 border-[var(--color-link)] pl-4 text-sm text-[var(--color-fg-muted)]">
+              We haven&rsquo;t captured{" "}
+              <span className="text-[var(--color-fg)]">{params.q}</span> yet.{" "}
+              <Link
+                href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
+                className="text-[var(--color-link)] underline-offset-4 hover:underline"
+              >
+                Extract its design system →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -151,19 +273,36 @@ export default async function ArchivePage({
               label="Industry"
               options={INDUSTRIES}
               param="industry"
-              current={params.industry}
+              currentValue={params.industry}
+              allParams={params}
             />
             <FilterGroup
               label="Style"
               options={STYLES}
               param="style"
-              current={params.style}
+              currentValue={params.style}
+              allParams={params}
+            />
+            <FilterGroup
+              label="Mood"
+              options={VIBES}
+              param="mood"
+              currentValue={params.mood}
+              allParams={params}
+            />
+            <FilterGroup
+              label="Color"
+              options={COLOR_WORDS}
+              param="color"
+              currentValue={params.color}
+              allParams={params}
             />
             <FilterGroup
               label="Macrostructure"
               options={MACROSTRUCTURES}
               param="macro"
-              current={params.macro}
+              currentValue={params.macro}
+              allParams={params}
               formatLabel={(v) =>
                 MACROSTRUCTURE_LABELS[v as Macrostructure] ?? v
               }
@@ -172,7 +311,8 @@ export default async function ArchivePage({
               label="Mode"
               options={MODES}
               param="mode"
-              current={params.mode}
+              currentValue={params.mode}
+              allParams={params}
             />
           </div>
         </aside>
