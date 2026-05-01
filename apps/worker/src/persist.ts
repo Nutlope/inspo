@@ -27,9 +27,24 @@ export async function persistCapture(
     (a) => a.viewport === "tablet" && !a.fullPage,
   );
 
+  // Title preference: real <title> tag first (it's a brand name like
+  // "Linear – The system for product development"), falling back to the
+  // first clause of the AI description, finally the slug. Trim trailing
+  // brand-tag bits ("— Foo", "| Bar") so the gallery card stays compact.
+  const cleanedPageTitle = (result.meta.pageTitle ?? "")
+    .split(/\s[—|·–-]\s/)[0]
+    ?.trim();
+  const fallbackTitle =
+    result.tags?.description?.split(".")[0]?.slice(0, 80) ?? result.slug;
+  const title =
+    (cleanedPageTitle && cleanedPageTitle.length >= 2 && cleanedPageTitle.length <= 80
+      ? cleanedPageTitle
+      : null) ??
+    fallbackTitle;
+
   const values = {
     slug: result.slug,
-    title: result.tags?.description?.split(".")[0]?.slice(0, 80) ?? result.meta.pageTitle ?? result.slug,
+    title,
     sourceUrl: result.sourceUrl,
     designerCredit: null,
     capturedAt: result.capturedAt,
@@ -48,6 +63,13 @@ export async function persistCapture(
     embeddingImage: null,
     embeddingText: result.embeddings?.text ?? null,
     status: opts.status ?? ("pending" as const),
+    // Phase 2 — design system extracted in-page.
+    typeRamp: result.meta.designSystem?.typeRamp ?? [],
+    spacingScale: result.meta.designSystem?.spacingScale ?? [],
+    radiusScale: result.meta.designSystem?.radiusScale ?? [],
+    containerWidth: result.meta.designSystem?.containerWidth ?? null,
+    cssVariables: result.meta.designSystem?.cssVariables ?? {},
+    colorWords: result.tags?.colorWords ?? [],
     // Image keys are written for traceability, but the gallery serves
     // images via /api/placeholder/<slug>/<variant> which prefers a real
     // disk PNG when present. So these file:// URLs are bookkeeping only.

@@ -8,10 +8,32 @@ import type {
   Industry,
   Component,
   Vibe,
+  ColorWord,
   Mode,
   Macrostructure,
   HallmarkTheme,
+  TypeRole,
 } from "@inspo/taxonomy";
+
+/** Phase 2 — one row of a captured type ramp. */
+export type TypeRampEntry = {
+  role: TypeRole;
+  family: string;
+  sizePx: number;
+  weight: number;
+  lineHeight: number;
+  letterSpacing: string;
+};
+
+/** Phase 2 — the design-system block extracted per capture. */
+export type DesignSystem = {
+  typeRamp: TypeRampEntry[];
+  spacingScale: number[];
+  radiusScale: number[];
+  containerWidth: number | null;
+  cssVariables: Record<string, string>;
+  colorWords: ColorWord[];
+};
 
 export type ScreenSummary = {
   id: string;
@@ -36,6 +58,8 @@ export type ScreenSummary = {
     macrostructure?: Macrostructure;
     hallmarkTheme?: HallmarkTheme;
   };
+  /** Phase 2 — present when extracted; empty defaults otherwise. */
+  designSystem: DesignSystem;
 };
 
 export type SearchResult = ScreenSummary & {
@@ -49,6 +73,9 @@ export type SearchFilters = Partial<{
   components: Component[];
   macrostructure: Macrostructure;
   hallmarkTheme: HallmarkTheme;
+  vibe: Vibe;
+  colorWord: ColorWord;
+  query: string;
 }>;
 
 export type Collection = {

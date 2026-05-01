@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
     "./queries": "./src/queries.ts",
-    "./fixtures": "./src/fixtures.ts"
+    "./fixtures": "./src/fixtures.ts",
+    "./design-md": "./src/design-md.ts"
   },
   "scripts": {
     "db:push": "drizzle-kit push",

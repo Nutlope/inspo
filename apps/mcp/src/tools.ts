@@ -12,6 +12,7 @@ import {
   findSimilar,
   getAllCollections,
   getAllScreens,
+  renderDesignMd,
 } from "@inspo/db";
 import {
   STYLES,
@@ -100,6 +101,34 @@ export function registerTools(server: McpServer) {
       const s = await findScreen(slug);
       if (!s) return asTextContent({ error: `No screen with slug '${slug}'` });
       return asTextContent(formatScreen(s));
+    },
+  );
+
+  /* ────────────── get_design_system ────────────── */
+  server.registerTool(
+    "get_design_system",
+    {
+      description:
+        "Return the full DESIGN.md for one screen — color tokens (with role guesses), type ramp (size / weight / line-height), spacing scale, radius scale, container width, raw CSS variables. This is the artifact you should read BEFORE writing any UI code referencing this site. Pairs with the Hallmark skill: Hallmark gives the design process, get_design_system gives the visual reference. Returns markdown text, ready to feed back into your reasoning.",
+      inputSchema: {
+        slug: z
+          .string()
+          .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
+      },
+    },
+    async ({ slug }) => {
+      const s = await findScreen(slug);
+      if (!s) {
+        return {
+          content: [
+            { type: "text" as const, text: `No screen with slug '${slug}'.` },
+          ],
+          isError: true,
+        };
+      }
+      return {
+        content: [{ type: "text" as const, text: renderDesignMd(s) }],
+      };
     },
   );
 

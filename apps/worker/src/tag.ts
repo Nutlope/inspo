@@ -18,6 +18,7 @@ import {
   INDUSTRIES,
   COMPONENTS,
   VIBES,
+  COLOR_WORDS,
   MACROSTRUCTURES,
   HALLMARK_THEMES,
   isStyle,
@@ -27,7 +28,11 @@ import {
   isMacrostructure,
   isHallmarkTheme,
 } from "@inspo/taxonomy";
+import type { ColorWord } from "@inspo/taxonomy";
 import type { AITags } from "./types";
+
+const isColorWord = (v: string): v is ColorWord =>
+  (COLOR_WORDS as readonly string[]).includes(v);
 
 const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
 
@@ -39,6 +44,7 @@ const tagSchema = {
     industry: { type: "array", items: { type: "string", enum: [...INDUSTRIES] } },
     components: { type: "array", items: { type: "string", enum: [...COMPONENTS] } },
     vibe: { type: "array", items: { type: "string", enum: [...VIBES] } },
+    colorWords: { type: "array", items: { type: "string", enum: [...COLOR_WORDS] } },
     macrostructure: { type: "string", enum: [...MACROSTRUCTURES] },
     hallmarkTheme: { type: "string", enum: [...HALLMARK_THEMES] },
     description: { type: "string" },
@@ -50,6 +56,7 @@ const tagSchema = {
     "industry",
     "components",
     "vibe",
+    "colorWords",
     "description",
     "altText",
     "searchKeywords",
@@ -137,6 +144,9 @@ export async function tagWithLLM(args: {
       ? (raw.components as string[]).filter(isComponent)
       : [],
     vibe: Array.isArray(raw.vibe) ? (raw.vibe as string[]).filter(isVibe) : [],
+    colorWords: Array.isArray(raw.colorWords)
+      ? (raw.colorWords as string[]).filter(isColorWord)
+      : [],
     macrostructure:
       typeof raw.macrostructure === "string" && isMacrostructure(raw.macrostructure)
         ? raw.macrostructure

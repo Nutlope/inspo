@@ -96,7 +96,13 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     // Hero buffer for palette + AI tagging (desktop hero, above-the-fold)
     const heroShot = shots.find((s) => s.viewport === "desktop" && !s.fullPage)!;
 
+    // Reset to desktop before extracting — `getComputedStyle` results
+    // depend on the active viewport (responsive CSS). Without this, we
+    // sample type/spacing/container-width at 375px and report mobile
+    // metrics for a desktop-class design system.
     console.log("  extracting metadata…");
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.evaluate(() => new Promise((r) => setTimeout(r, 200)));
     const meta = await extract(page, mainHeaders, heroShot.buffer);
 
     let tags: CaptureResult["tags"] = undefined;

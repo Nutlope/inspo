@@ -12,4 +12,11 @@ export {
   updateScreenCuratorNote,
   type ScreenFilter,
 } from "./queries";
+export { renderDesignMd } from "./design-md";
+export {
+  lexicalSearch,
+  findByHostname,
+  hostnameOf,
+  isUrl,
+} from "./search";
 export { screens, collections } from "./fixtures";

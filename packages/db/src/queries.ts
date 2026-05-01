@@ -89,6 +89,14 @@ function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
       hallmarkTheme:
         (row.hallmarkTheme as ScreenSummary["tags"]["hallmarkTheme"]) ?? undefined,
     },
+    designSystem: {
+      typeRamp: row.typeRamp ?? [],
+      spacingScale: row.spacingScale ?? [],
+      radiusScale: row.radiusScale ?? [],
+      containerWidth: row.containerWidth,
+      cssVariables: row.cssVariables ?? {},
+      colorWords: row.colorWords ?? [],
+    },
   };
 }
 

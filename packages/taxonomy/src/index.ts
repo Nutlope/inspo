@@ -95,6 +95,19 @@ export const COLOR_WORDS = [
 
 export const MODES = ["light", "dark"] as const;
 
+/**
+ * Roles in a type ramp. The worker's in-page extractor walks these
+ * selectors in order and pulls computed-style tokens for each.
+ */
+export const TYPE_ROLES = [
+  "h1",
+  "h2",
+  "h3",
+  "body",
+  "caption",
+  "button",
+] as const;
+
 export const VIEWPORTS = ["desktop", "tablet", "mobile"] as const;
 
 /**
@@ -154,6 +167,7 @@ export type Mode = (typeof MODES)[number];
 export type Viewport = (typeof VIEWPORTS)[number];
 export type Macrostructure = (typeof MACROSTRUCTURES)[number];
 export type HallmarkTheme = (typeof HALLMARK_THEMES)[number];
+export type TypeRole = (typeof TYPE_ROLES)[number];
 
 /** Allow-list validators — used to reject LLM tag output that drifts. */
 export const isStyle = (v: string): v is Style =>

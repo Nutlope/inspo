@@ -1,4 +1,4 @@
-import type { ScreenSummary, Collection } from "@inspo/shared";
+import type { ScreenSummary, Collection, DesignSystem } from "@inspo/shared";
 
 /**
  * Seed data for the catalogue. Single source of truth for dev:
@@ -7,12 +7,29 @@ import type { ScreenSummary, Collection } from "@inspo/shared";
  *
  * Every entry is shaped exactly like what the MCP server returns, so
  * building against this fixture means the wire format is real.
+ *
+ * Phase 2 — fixtures don't carry a real type ramp / spacing scale; they
+ * default to empty. The detail page hides the Design system block when
+ * there's nothing extracted (so dev mode stays clean). Real captures
+ * fill these in via the worker.
  */
 
 const placeholder = (slug: string, variant: "hero" | "full" | "thumb") =>
   `/api/placeholder/${slug}/${variant}`;
 
-export const screens: ScreenSummary[] = [
+const EMPTY_DESIGN_SYSTEM: DesignSystem = {
+  typeRamp: [],
+  spacingScale: [],
+  radiusScale: [],
+  containerWidth: null,
+  cssVariables: {},
+  colorWords: [],
+};
+
+type RawFixture = Omit<ScreenSummary, "designSystem"> &
+  Partial<Pick<ScreenSummary, "designSystem">>;
+
+const _screens: RawFixture[] = [
   {
     id: "01",
     slug: "atelier-mira",
@@ -414,6 +431,11 @@ export const screens: ScreenSummary[] = [
     },
   },
 ];
+
+export const screens: ScreenSummary[] = _screens.map((s) => ({
+  ...s,
+  designSystem: s.designSystem ?? EMPTY_DESIGN_SYSTEM,
+}));
 
 export const collections: Collection[] = [
   {

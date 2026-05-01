@@ -1,4 +1,5 @@
-import type { Style, Industry, Component, Vibe, Macrostructure, Mode, HallmarkTheme } from "@inspo/taxonomy";
+import type { Style, Industry, Component, Vibe, ColorWord, Macrostructure, Mode, HallmarkTheme } from "@inspo/taxonomy";
+import type { TypeRampEntry } from "@inspo/shared";
 
 export type Viewport = "desktop" | "tablet" | "mobile";
 
@@ -18,6 +19,14 @@ export type CapturedAsset = {
   contentHash: string;
 };
 
+export type ExtractedDesignSystem = {
+  typeRamp: TypeRampEntry[];
+  spacingScale: number[];
+  radiusScale: number[];
+  containerWidth: number | null;
+  cssVariables: Record<string, string>;
+};
+
 export type ExtractedMetadata = {
   palette: string[]; // hex strings
   fonts: string[];
@@ -25,6 +34,7 @@ export type ExtractedMetadata = {
   mode: Mode;
   pageTitle: string;
   pageDescription: string;
+  designSystem: ExtractedDesignSystem;
 };
 
 export type AITags = {
@@ -32,6 +42,7 @@ export type AITags = {
   industry: Industry[];
   components: Component[];
   vibe: Vibe[];
+  colorWords: ColorWord[];
   macrostructure?: Macrostructure;
   hallmarkTheme?: HallmarkTheme;
   description: string;
