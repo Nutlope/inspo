@@ -3,16 +3,15 @@
 import { useState } from "react";
 
 /**
- * The marquee search input on the home hero. Plain GET form pointed at
- * /screens — that route already handles URL-paste detection (redirects
- * to /screens/<slug> when hostname matches the catalogue) and lex
- * search across title / description / fonts / palette / css vars.
+ * The marquee search input on the home hero.
  *
- * Rules from the editorial visual system:
- *  - 1.5px solid rule border, transparent bg (NOT a glassy SaaS pill)
- *  - mono 16px placeholder
- *  - focus border swaps to accent red
- *  - submit is a typographic "Enter →" affordance, not a filled pill
+ * Single horizontal row — icon + input + submit hint share one focus
+ * container so hover/focus state lights up everything together. No
+ * internal vertical dividers; the focus indicator is an animated
+ * underline that grows from the centre.
+ *
+ * Submits a GET form to /screens, where URL-paste detection redirects
+ * to the matching screen and lex search ranks the rest.
  */
 export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
   const [value, setValue] = useState(defaultValue);
@@ -21,16 +20,29 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
     <form
       method="GET"
       action="/screens"
-      className="group flex w-full items-stretch border-[1.5px] rule transition-colors focus-within:border-[var(--color-link)]"
       role="search"
       aria-label="Search the archive"
+      className="
+        group relative w-full
+        flex items-center gap-3 px-5 py-4
+        border-b border-[var(--color-border)]/60
+        transition-colors duration-200
+        hover:border-[var(--color-fg)]/40
+        focus-within:border-[var(--color-link)]
+      "
     >
       <span
         aria-hidden
-        className="pl-5 self-center font-mono text-base text-[var(--color-fg-muted)] transition-colors group-focus-within:text-[var(--color-link)]"
+        className="
+          font-mono text-base leading-none
+          text-[var(--color-fg-muted)]
+          transition-colors duration-200
+          group-focus-within:text-[var(--color-link)]
+        "
       >
         ⌕
       </span>
+
       <input
         type="search"
         name="q"
@@ -38,15 +50,39 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         onChange={(e) => setValue(e.target.value)}
         placeholder="search styles, brands, fonts — or paste a URL"
         autoComplete="off"
-        className="w-full bg-transparent px-4 py-5 font-mono text-base outline-none placeholder:text-[var(--color-fg-muted)] sm:text-lg"
+        className="
+          flex-1 min-w-0 bg-transparent outline-none
+          font-mono text-base sm:text-lg
+          placeholder:text-[var(--color-fg-muted)]
+        "
       />
+
       <button
         type="submit"
-        className="text-meta hidden items-center gap-2 border-l rule px-6 transition-colors hover:text-[var(--color-link)] sm:flex"
         aria-label="Search"
+        className="
+          shrink-0 inline-flex items-center gap-1.5
+          font-mono text-meta tracking-wide
+          text-[var(--color-fg-muted)]
+          transition-colors duration-200
+          group-focus-within:text-[var(--color-link)]
+          hover:text-[var(--color-fg)]
+        "
       >
-        Enter <span aria-hidden>→</span>
+        Enter <span aria-hidden>↵</span>
       </button>
+
+      {/* Animated underline — grows from centre on focus, retracts on blur. */}
+      <span
+        aria-hidden
+        className="
+          pointer-events-none absolute inset-x-0 -bottom-px h-px
+          origin-center scale-x-0
+          bg-[var(--color-link)]
+          transition-transform duration-300 ease-out
+          group-focus-within:scale-x-100
+        "
+      />
     </form>
   );
 }
