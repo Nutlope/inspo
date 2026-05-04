@@ -131,3 +131,34 @@ body {
 .rule {
   border-color: var(--color-border);
 }
+
+/* ─── Grid stagger fade-in ──────────────────────────────────
+   Tiles fade in from top → down with a 30ms-per-tile cascade,
+   capped at 24 (so beyond the fold we don't pile up delays).
+   Respect prefers-reduced-motion via the global block above.
+*/
+@keyframes screens-grid-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screens-grid-item {
+  --idx: 0;
+  opacity: 0;
+  animation: screens-grid-rise 360ms ease-out forwards;
+  animation-delay: calc(var(--idx) * 30ms);
+}
+
+/* View Transitions on the grid swap. The browser fades old/new states;
+   we tune the duration so the change feels deliberate, not snappy. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease-out;
+}

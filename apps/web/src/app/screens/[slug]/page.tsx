@@ -95,9 +95,6 @@ export default async function ScreenDetailPage({
             <h1 className="font-display max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-7xl">
               {screen.title}
             </h1>
-            <p className="mt-6 max-w-[58ch] text-lg text-[var(--color-fg-muted)]">
-              {screen.description}
-            </p>
 
             {/* Tag pills */}
             <div className="mt-8 flex flex-wrap gap-2">

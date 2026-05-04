@@ -39,18 +39,12 @@ export default async function HomePage({
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
       {/* HERO ─ marquee-hero macrostructure ──────────────────── */}
-      <section className="pt-16 pb-16 sm:pt-24 sm:pb-20">
+      <section className="pt-12 pb-14 sm:pt-20 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight">
             An archive of websites,{" "}
             <em className="italic">indexed.</em>
           </h1>
-
-          <p className="mx-auto mt-6 max-w-[60ch] text-base leading-relaxed text-[var(--color-fg-muted)] sm:text-lg">
-            Real production sites — palettes, typography, components,
-            tokenised. Browse here, or query the same archive from your
-            agent over MCP.
-          </p>
 
           <div className="mx-auto mt-10 max-w-[42rem] sm:mt-12">
             <HomeSearch />

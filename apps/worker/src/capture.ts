@@ -18,7 +18,11 @@
  */
 
 import { chromium, type BrowserContext, type Page, type Response } from "playwright";
-import { dismissBanners } from "./dismiss.js";
+import {
+  dismissBanners,
+  preSeedConsentCookies,
+  blockConsentNetworks,
+} from "./dismiss.js";
 import { stabilize } from "./stabilize.js";
 import { captureAllViewports } from "./screenshot.js";
 import { saveLocal } from "./storage.js";
@@ -56,6 +60,16 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
       colorScheme: "light",
     });
 
+    // Block known consent / chat-widget CDNs at the network layer.
+    // Many banners die when their script never loads. This must run
+    // BEFORE newPage so it applies to the very first navigation.
+    await blockConsentNetworks(ctx);
+
+    // Pre-seed consent cookies for the destination host so banners
+    // that read existing cookies skip rendering. Scoped to the host
+    // so we don't leak fake state across domains.
+    await preSeedConsentCookies(ctx, url);
+
     const page = await ctx.newPage();
 
     // Track response headers of the main document for tech-fingerprinting.
@@ -88,7 +102,7 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     console.log("  dismissing banners…");
     const dismissed = await dismissBanners(page);
     console.log(
-      `   ↳ consent: ${dismissed.consentClicked} · text-buttons: ${dismissed.textButtonsClicked} · overlays-hidden: ${dismissed.overlaysHidden}`,
+      `   ↳ consent: ${dismissed.consentClicked} · text-buttons: ${dismissed.textButtonsClicked} · overlays-hidden: ${dismissed.overlaysHidden} · phantoms-hidden: ${dismissed.phantomsHidden ?? 0}`,
     );
 
     console.log("  stabilizing…");

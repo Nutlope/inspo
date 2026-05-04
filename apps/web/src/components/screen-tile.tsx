@@ -16,12 +16,16 @@ export function ScreenTile({
   index,
   showCaption = true,
   className = "",
+  priority = false,
 }: {
   screen: ScreenSummary;
   variant?: Variant;
   index?: number;
   showCaption?: boolean;
   className?: string;
+  /** First 12 tiles get loading="eager" + fetchpriority="high" so the
+   *  above-the-fold grid paints crisp. Below the fold stays lazy. */
+  priority?: boolean;
 }) {
   const macroKey = screen.tags.macrostructure;
   const macro = macroKey ? MACROSTRUCTURE_LABELS[macroKey] : null;
@@ -39,23 +43,24 @@ export function ScreenTile({
         className="block focus:outline-none"
       >
         <div
-          className={`relative w-full overflow-hidden border rule transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:rotate-[0.15deg] ${ASPECT[variant]}`}
+          className={`relative w-full overflow-hidden border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt={`${screen.title} — ${screen.description}`}
             className="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
+            loading={priority ? "eager" : "lazy"}
+            decoding={priority ? "sync" : "async"}
+            // @ts-expect-error — fetchpriority is valid HTML, React types lag
+            fetchpriority={priority ? "high" : undefined}
           />
 
           {/* Hover strip — palette swatches + macrostructure caption.
-              Slides up from the bottom on hover (motion respects
-              prefers-reduced-motion via globals.css). Read on focus
-              too for keyboard users. */}
+              Opacity-fades in (no slide), calmer than translate. Reads
+              on focus too for keyboard users. */}
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-between gap-3 bg-[color-mix(in_oklab,var(--color-bg)_92%,transparent)] px-3 py-2 backdrop-blur-sm transition-transform duration-200 ease-out group-hover:translate-y-0 group-focus-within:translate-y-0"
+            className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)] px-3 py-2 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100"
             aria-hidden
           >
             <div className="flex items-center gap-1">
