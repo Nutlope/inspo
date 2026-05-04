@@ -27,6 +27,7 @@ type CliArgs = {
   publish: boolean;
   skipExisting: boolean;
   slice?: number;
+  from?: number;
   concurrency: number;
 };
 
@@ -42,6 +43,8 @@ function parseArgs(): CliArgs {
   };
   const sliceArg = argv.find((a) => a.startsWith("--slice="));
   if (sliceArg) out.slice = Number(sliceArg.split("=")[1]);
+  const fromArg = argv.find((a) => a.startsWith("--from="));
+  if (fromArg) out.from = Number(fromArg.split("=")[1]);
   const concArg = argv.find((a) => a.startsWith("--concurrency="));
   if (concArg) out.concurrency = Number(concArg.split("=")[1]);
   return out;
@@ -63,7 +66,9 @@ function slugFor(url: string, override?: string): string {
 
 async function main() {
   const args = parseArgs();
-  let list = args.slice ? seedUrls.slice(0, args.slice) : seedUrls;
+  let list = seedUrls;
+  if (args.from !== undefined) list = list.slice(args.from);
+  if (args.slice !== undefined) list = list.slice(0, args.slice);
 
   // Skip URLs whose slug is already present in DB (cheap re-runs).
   let skipped = 0;
