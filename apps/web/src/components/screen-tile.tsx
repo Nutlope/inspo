@@ -49,6 +49,29 @@ export function ScreenTile({
             loading="lazy"
             decoding="async"
           />
+
+          {/* Hover strip — palette swatches + macrostructure caption.
+              Slides up from the bottom on hover (motion respects
+              prefers-reduced-motion via globals.css). Read on focus
+              too for keyboard users. */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-between gap-3 bg-[color-mix(in_oklab,var(--color-bg)_92%,transparent)] px-3 py-2 backdrop-blur-sm transition-transform duration-200 ease-out group-hover:translate-y-0 group-focus-within:translate-y-0"
+            aria-hidden
+          >
+            <div className="flex items-center gap-1">
+              {screen.palette.slice(0, 5).map((hex, i) => (
+                <span
+                  key={`${hex}-${i}`}
+                  title={hex}
+                  className="block h-3 w-3 border rule"
+                  style={{ background: hex }}
+                />
+              ))}
+            </div>
+            <p className="text-meta truncate text-[var(--color-fg)]">
+              {macro ?? screen.tags.style[0] ?? "—"}
+            </p>
+          </div>
         </div>
 
         {showCaption && (
