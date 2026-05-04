@@ -35,6 +35,7 @@ async function main() {
   const go = args.includes("--go");
   const persist = !args.includes("--no-persist");
   const enrich = !args.includes("--no-enrich");
+  const publish = args.includes("--publish");
   const concurrency = Number(
     args.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 2,
   );
@@ -75,7 +76,12 @@ async function main() {
         const result = await capture({ url: entry.url, slug: entry.slug, enrich });
         let persistedId: string | undefined;
         if (persist) {
-          const p = await persistCapture(result);
+          // Forward --publish so retries don't downgrade rows previously
+          // published by the seed runner. Without this, an idempotent
+          // upsert silently flips status='published' back to 'pending'.
+          const p = await persistCapture(result, {
+            status: publish ? "published" : "pending",
+          });
           persistedId = p?.id;
         }
         outcomes.push({
