@@ -17,12 +17,15 @@ import { join } from "node:path";
 import { capture } from "./capture.js";
 import { persistCapture } from "./persist.js";
 import { seedUrls } from "./seed-urls.js";
+import { hasDatabase, getDb, schema } from "@inspo/db";
+import { inArray } from "drizzle-orm";
 
 type CliArgs = {
   go: boolean;
   enrich: boolean;
   persist: boolean;
   publish: boolean;
+  skipExisting: boolean;
   slice?: number;
   concurrency: number;
 };
@@ -34,6 +37,7 @@ function parseArgs(): CliArgs {
     enrich: !argv.includes("--no-enrich"),
     persist: !argv.includes("--no-persist"),
     publish: argv.includes("--publish"),
+    skipExisting: argv.includes("--skip-existing"),
     concurrency: 2,
   };
   const sliceArg = argv.find((a) => a.startsWith("--slice="));
@@ -43,12 +47,45 @@ function parseArgs(): CliArgs {
   return out;
 }
 
+/** Slug that the worker will derive from a URL's hostname.
+ * Mirrors `slugFromUrl` in cli.ts / capture.ts (stays in sync via tests
+ * if we ever build them). Cheaper to redo here than to import the
+ * Playwright-laden capture module just for one helper. */
+function slugFor(url: string, override?: string): string {
+  if (override) return override;
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, "").replace(/[^a-z0-9]+/gi, "-");
+  } catch {
+    return url.replace(/[^a-z0-9]+/gi, "-").slice(0, 60);
+  }
+}
+
 async function main() {
   const args = parseArgs();
-  const list = args.slice ? seedUrls.slice(0, args.slice) : seedUrls;
+  let list = args.slice ? seedUrls.slice(0, args.slice) : seedUrls;
+
+  // Skip URLs whose slug is already present in DB (cheap re-runs).
+  let skipped = 0;
+  if (args.skipExisting && hasDatabase()) {
+    const candidateSlugs = list.map((e) => slugFor(e.url, e.slug));
+    const db = getDb();
+    const rows = await db
+      .select({ slug: schema.screens.slug })
+      .from(schema.screens)
+      .where(inArray(schema.screens.slug, candidateSlugs));
+    const existing = new Set(rows.map((r) => r.slug));
+    const before = list.length;
+    list = list.filter((e) => !existing.has(slugFor(e.url, e.slug)));
+    skipped = before - list.length;
+  }
 
   console.log(`\n  Inspo seed run`);
-  console.log(`  ${list.length} urls · concurrency ${args.concurrency} · enrich=${args.enrich} · persist=${args.persist}\n`);
+  console.log(
+    `  ${list.length} urls · concurrency ${args.concurrency} · enrich=${args.enrich} · persist=${args.persist}${
+      skipped ? ` · skipped ${skipped} already-in-DB` : ""
+    }\n`,
+  );
 
   if (!args.go) {
     list.forEach((u, i) =>

@@ -67,6 +67,13 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     });
 
     console.log("  navigating…");
+    // Random 200–800ms warmup before goto. Reduces Chromium's
+    // DNS-resolver burst-throttling at concurrency >2 — the dominant
+    // failure mode in the 840-URL seed run was ERR_NAME_NOT_RESOLVED
+    // on URLs that obviously resolve (x.com, liftconference.com), a
+    // resolver-throttling pattern that disappears with a small jitter.
+    await new Promise((r) => setTimeout(r, 200 + Math.random() * 600));
+
     // First wait for DOM ready (works on every site). Then *try* for
     // networkidle but don't fail the whole capture if analytics keep
     // chattering — networkidle was the #1 cause of false-failure on
