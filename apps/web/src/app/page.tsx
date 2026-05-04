@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ScreenTile } from "@/components/screen-tile";
 import { HomeSearch } from "@/components/home-search";
 import { SortTabs } from "@/components/sort-tabs";
+import { HomeChips } from "@/components/home-chips";
 import {
   findScreen,
   getAllCollections,
@@ -58,6 +59,8 @@ export default async function HomePage({
           <div className="mt-6 flex justify-center">
             <SortTabs active={sort} />
           </div>
+
+          <HomeChips />
         </div>
       </section>
 
