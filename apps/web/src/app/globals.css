@@ -85,11 +85,18 @@ body {
   color: var(--color-bg);
 }
 
-/* Focus */
+/* Focus — global ring for links/buttons; inputs handle their own
+   focus state (the home search uses an animated underline). */
 :focus-visible {
   outline: 2px solid var(--color-link);
   outline-offset: 3px;
   border-radius: 1px;
+}
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
 }
 
 /* Reduced motion respect */
