@@ -30,8 +30,17 @@ type AuditVerdict = {
   reason: string;
 };
 
-const SYSTEM_PROMPT =
-  "You inspect screenshots of website homepages and decide whether they contain a visible cookie/consent banner, a chat widget pop-up, or a 'loading…' splash that obscures the page. Reply with ONLY a JSON object matching the schema. Be conservative — only flag if the overlay is clearly visible.";
+const SYSTEM_PROMPT = `You inspect screenshots of website homepages.
+
+Reply true ONLY if the screenshot has AT LEAST ONE of these visibly disruptive issues:
+  (a) a cookie or consent dialog covering more than 25% of the hero content
+  (b) a chat widget that's OPEN (not just the closed bubble icon)
+  (c) a "Loading…" or empty-white state where the page content hasn't rendered
+  (d) the page is genuinely empty — one block of text and no design language
+
+Reply false otherwise. Specifically: a small bottom-right cookie card that does NOT obscure the hero is false. A chat widget BUBBLE (closed) at bottom-right is false. A normal busy hero with lots of text is false. A site that's just genuinely minimal is false. Don't flag interesting designs because they're sparse.
+
+Reply with ONLY a JSON object matching the schema.`;
 
 const SCHEMA = {
   type: "object",
@@ -69,7 +78,7 @@ async function inspect(client: Together, png: Buffer): Promise<AuditVerdict> {
           { type: "image_url", image_url: { url: dataUrl } },
           {
             type: "text",
-            text: 'Does this screenshot show a cookie banner, chat widget overlay, or loading splash that obscures the page? Reply: {"hasBanner": true|false, "reason": "<one short sentence>"}',
+            text: 'Apply the four-criteria checklist from the system prompt. Reply: {"hasBanner": true|false, "reason": "<one short sentence; cite which criterion (a/b/c/d) if true>"}',
           },
         ],
       },

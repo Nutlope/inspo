@@ -42,9 +42,14 @@ export default async function HomePage({
       <section className="pt-12 pb-14 sm:pt-20 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight">
-            An archive of websites,{" "}
-            <em className="italic">indexed.</em>
+            A thousand sites we&rsquo;d{" "}
+            <em className="italic">actually study</em>.
           </h1>
+
+          <p className="mx-auto mt-7 max-w-[44ch] text-[var(--color-fg-muted)] sm:mt-8">
+            Pick a mood, paste a URL, or just scroll. Your coding agent can do
+            the same — see <Link href="/mcp" className="underline-offset-4 hover:text-[var(--color-link)] hover:underline">the MCP</Link>.
+          </p>
 
           <div className="mx-auto mt-10 max-w-[42rem] sm:mt-12">
             <HomeSearch />
@@ -126,17 +131,15 @@ export default async function HomePage({
 
           <div className="lg:col-span-10">
             <h2 className="font-display max-w-[24ch] text-4xl leading-tight tracking-tight sm:text-5xl">
-              Your coding agent doesn&rsquo;t have taste.{" "}
+              Your agent doesn&rsquo;t have taste.{" "}
               <em className="italic">Lend it some.</em>
             </h2>
 
             <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
-              Install one MCP server and Claude Code, Cursor, Codex, or Zed
-              gain a new tool: <code className="font-mono text-[0.95em] text-[var(--color-fg)]">search_screens</code>. Ask
-              for &ldquo;minimalist editorial agency portfolios&rdquo; and the
-              agent receives eight curated screenshots, palettes, and
-              component breakdowns to reason over before writing a single
-              line.
+              One install and Claude Code, Cursor, Codex, and Zed get a new
+              tool — <code className="font-mono text-[0.95em] text-[var(--color-fg)]">search_screens</code>. Ask for
+              {" "}&ldquo;minimalist editorial agency portfolios&rdquo; and your
+              agent gets eight real ones to study before it writes a line.
             </p>
 
             <pre className="mt-8 overflow-x-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] p-4 font-mono text-sm leading-relaxed">

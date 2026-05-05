@@ -162,3 +162,79 @@ body {
   animation-duration: 240ms;
   animation-timing-function: ease-out;
 }
+
+/* ─── Skeleton shimmer ─────────────────────────────────────
+   A faint diagonal sheen sweeps the tile placeholder every 1.6s.
+   Calmer than a typical shimmer (no high-contrast white bar) — keeps
+   the page from feeling like it's busy doing nothing.
+*/
+@keyframes screens-skeleton-shimmer-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(150%);
+  }
+}
+
+.screens-skeleton-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-fg) 5%, transparent) 50%,
+    transparent 100%
+  );
+  animation: screens-skeleton-shimmer-sweep 1.6s ease-in-out infinite;
+}
+
+/* ─── Detail page entry ────────────────────────────────────
+   /screens/<slug> sections fade-in-up, staggered.
+*/
+@keyframes screens-detail-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screens-detail-section {
+  --idx: 0;
+  opacity: 0;
+  animation: screens-detail-fade-in-up 480ms ease-out forwards;
+  animation-delay: calc(var(--idx) * 90ms);
+}
+
+/* ─── Top route-progress bar ───────────────────────────────
+   2px line that grows to 80% over 600ms while a route is pending,
+   completes to 100% on settle, then fades out.
+*/
+@keyframes screens-route-progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.8);
+  }
+}
+
+@keyframes screens-route-progress-finish {
+  from {
+    transform: scaleX(0.8);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}

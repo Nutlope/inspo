@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import type { ScreenSummary } from "@inspo/shared";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 
@@ -36,6 +39,14 @@ export function ScreenTile({
   const src =
     variant === "thumb" ? screen.thumbUrl : screen.imageUrl;
 
+  // Blur-up — the tile div renders a gradient between the screen's
+  // first and third palette hex colours. The image fades in over it
+  // when it loads. Cost: zero extra fetches; instant perceived load;
+  // tile shows the site's *own* colour identity before the PNG arrives.
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const palette0 = screen.palette[0] ?? "#eee";
+  const palette2 = screen.palette[2] ?? screen.palette[1] ?? "#ddd";
+
   return (
     <article className={`group ${className}`}>
       <Link
@@ -44,14 +55,20 @@ export function ScreenTile({
       >
         <div
           className={`relative w-full overflow-hidden border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
+          style={{
+            background: `linear-gradient(135deg, ${palette0}, ${palette2})`,
+          }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt={`${screen.title} — ${screen.description}`}
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover transition-opacity duration-[400ms] ease-out ${
+              imgLoaded ? "opacity-100" : "opacity-0"
+            }`}
             loading={priority ? "eager" : "lazy"}
             decoding={priority ? "sync" : "async"}
+            onLoad={() => setImgLoaded(true)}
             // @ts-expect-error — fetchpriority is valid HTML, React types lag
             fetchpriority={priority ? "high" : undefined}
           />

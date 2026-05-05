@@ -94,14 +94,14 @@ export default async function ArchivePage({
             <Dateline label="The archive" />
           </div>
           <div className="lg:col-span-10 space-y-4">
-            <p className="text-meta">{totalCount} entries</p>
+            <p className="text-meta">{totalCount.toLocaleString()} sites · filed by hand</p>
             <div className="max-w-[40rem]">
               <SearchBox defaultValue={params.q ?? ""} />
             </div>
             {noUrlMatch && (
               <p className="max-w-[52ch] border-l-2 border-[var(--color-link)] pl-3 text-sm text-[var(--color-fg-muted)]">
-                We haven&rsquo;t captured{" "}
-                <span className="text-[var(--color-fg)]">{params.q}</span> yet.{" "}
+                We don&rsquo;t have{" "}
+                <span className="text-[var(--color-fg)]">{params.q}</span> yet. Want us to grab it?{" "}
                 <Link
                   href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
                   className="text-[var(--color-link)] underline-offset-4 hover:underline"

@@ -77,7 +77,7 @@ export default async function ScreenDetailPage({
   return (
     <div>
       {/* Editorial caption ─────────────────────────────────── */}
-      <div className="mx-auto max-w-[120rem] px-6 pt-12 sm:px-10 sm:pt-16">
+      <div className="screens-detail-section mx-auto max-w-[120rem] px-6 pt-12 sm:px-10 sm:pt-16" style={{ ["--idx" as string]: 0 }}>
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="text-meta">
@@ -147,12 +147,12 @@ export default async function ScreenDetailPage({
       </div>
 
       {/* Spec sheet + full page ───────────────────────────── */}
-      <div className="mx-auto mt-24 max-w-[120rem] px-6 sm:px-10">
+      <div className="screens-detail-section mx-auto mt-24 max-w-[120rem] px-6 sm:px-10" style={{ ["--idx" as string]: 1 }}>
         <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:gap-x-10">
           {/* Spec sheet */}
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-8">
-              <p className="text-meta">Spec sheet</p>
+              <p className="text-meta">What it&rsquo;s made of</p>
               <dl className="mt-4">
                 <MetaRow label="Designer">
                   {screen.designerCredit ?? "—"}
@@ -212,7 +212,7 @@ export default async function ScreenDetailPage({
 
           {/* Full-page scroll viewer */}
           <div className="lg:col-span-8">
-            <p className="text-meta mb-3">Full page — scroll to view</p>
+            <p className="text-meta mb-3">The whole page, top to bottom</p>
             <div className="max-h-[80vh] overflow-y-auto border rule">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -223,15 +223,12 @@ export default async function ScreenDetailPage({
                 decoding="async"
               />
             </div>
-            <p className="text-meta mt-3 italic">
-              Placeholder — real captures land with Task 3 (the worker).
-            </p>
           </div>
         </div>
       </div>
 
       {/* Palette band ─────────────────────────────────────── */}
-      <div className="mx-auto mt-24 max-w-[120rem] border-y rule px-6 py-10 sm:px-10">
+      <div className="screens-detail-section mx-auto mt-24 max-w-[120rem] border-y rule px-6 py-10 sm:px-10" style={{ ["--idx" as string]: 2 }}>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <p className="text-meta lg:col-span-2">Palette</p>
           <div className="lg:col-span-10">
@@ -245,12 +242,12 @@ export default async function ScreenDetailPage({
         screen.designSystem.spacingScale.length > 0 ||
         screen.designSystem.radiusScale.length > 0 ||
         Object.keys(screen.designSystem.cssVariables).length > 0) && (
-        <div className="mx-auto mt-24 max-w-[120rem] px-6 pb-12 sm:px-10">
+        <div className="screens-detail-section mx-auto mt-24 max-w-[120rem] px-6 pb-12 sm:px-10" style={{ ["--idx" as string]: 3 }}>
           <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
             <div className="lg:col-span-2">
-              <p className="text-meta">Design system</p>
+              <p className="text-meta">How to build one like this</p>
               <p className="text-meta mt-2 max-w-[24ch]">
-                Extracted from the live site. Heuristic — adapt, don&rsquo;t copy.
+                Read off the live site. Treat it as reference, not a recipe.
               </p>
               <div className="mt-6">
                 <CopyDesignMd slug={screen.slug} />
@@ -333,12 +330,12 @@ export default async function ScreenDetailPage({
       )}
 
       {/* Similar ──────────────────────────────────────────── */}
-      <div className="mx-auto mt-24 max-w-[120rem] px-6 pb-24 sm:px-10">
+      <div className="screens-detail-section mx-auto mt-24 max-w-[120rem] px-6 pb-24 sm:px-10" style={{ ["--idx" as string]: 4 }}>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
-            <p className="text-meta">Adjacent</p>
+            <p className="text-meta">Sites that feel similar</p>
             <p className="text-meta mt-2 max-w-[20ch]">
-              Sites that share this {macroLabel ? "macrostructure" : "vibe"}.
+              {macroLabel ? "Same macrostructure, different voice." : "Same vibe, different page."}
             </p>
           </div>
           <ul className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-10 lg:grid-cols-3">

@@ -209,8 +209,8 @@ export function ScreensGrid({
         <div className="mb-6 flex items-baseline justify-between border-b rule pb-4">
           <p className="text-meta">
             {filteredCount === totalCount
-              ? `${totalCount} entries`
-              : `${filteredCount} of ${totalCount}`}
+              ? `${totalCount.toLocaleString()} sites`
+              : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
           </p>
           <p className="text-meta hidden sm:block">
             Sort: <span className="text-[var(--color-fg)]">Latest</span>
@@ -219,14 +219,14 @@ export function ScreensGrid({
 
         {filtered.length === 0 ? (
           <div className="border rule px-8 py-20 text-center">
-            <p className="font-display text-2xl">Nothing on file —</p>
+            <p className="font-display text-2xl">Nothing matches that.</p>
             <p className="text-meta mt-3">
-              Loosen the filters, or try{" "}
+              Loosen a filter, or scroll{" "}
               <Link
                 href="/screens"
                 className="text-[var(--color-link)] underline-offset-4 hover:underline"
               >
-                the full archive
+                the whole archive
               </Link>
               .
             </p>
