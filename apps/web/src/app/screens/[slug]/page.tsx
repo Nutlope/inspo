@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ScreenTile } from "@/components/screen-tile";
 import { PaletteStrip } from "@/components/palette-strip";
@@ -7,12 +8,14 @@ import { TagPill } from "@/components/tag-pill";
 import { TypeRamp } from "@/components/type-ramp";
 import { ScaleRuler } from "@/components/spacing-ruler";
 import { CopyDesignMd } from "@/components/copy-design-md";
+import { SkeletonTile } from "@/components/skeleton-tile";
 import {
   findScreen,
   findSimilar,
   getAllCollections,
   getAllScreens,
 } from "@inspo/db";
+import type { ScreenSummary } from "@inspo/shared";
 import {
   MACROSTRUCTURE_LABELS,
   type Macrostructure,
@@ -64,15 +67,6 @@ export default async function ScreenDetailPage({
   const macroLabel = screen.tags.macrostructure
     ? MACROSTRUCTURE_LABELS[screen.tags.macrostructure as Macrostructure]
     : null;
-
-  const [similar, allCollections] = await Promise.all([
-    findSimilar(screen.slug, 3),
-    getAllCollections(),
-  ]);
-
-  const inCollections = allCollections.filter((c) =>
-    c.screens.some((entry) => entry.slug === screen.slug),
-  );
 
   return (
     <div>
@@ -193,20 +187,9 @@ export default async function ScreenDetailPage({
                 </MetaRow>
               </dl>
 
-              {inCollections.length > 0 && (
-                <div className="mt-10 space-y-2">
-                  <p className="text-meta">Appears in</p>
-                  {inCollections.map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/collections/${c.slug}`}
-                      className="block text-sm hover:text-[var(--color-link)]"
-                    >
-                      Issue Nº{c.number} — {c.title} →
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <Suspense fallback={null}>
+                <AppearsIn slug={screen.slug} />
+              </Suspense>
             </div>
           </aside>
 
@@ -338,15 +321,58 @@ export default async function ScreenDetailPage({
               {macroLabel ? "Same macrostructure, different voice." : "Same vibe, different page."}
             </p>
           </div>
-          <ul className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-10 lg:grid-cols-3">
-            {similar.map((s) => (
-              <li key={s.slug}>
-                <ScreenTile screen={s} variant="hero" />
-              </li>
-            ))}
-          </ul>
+          <Suspense fallback={<SimilarSkeleton />}>
+            <SimilarGrid slug={screen.slug} />
+          </Suspense>
         </div>
       </div>
+    </div>
+  );
+}
+
+async function SimilarGrid({ slug }: { slug: string }) {
+  const similar = await findSimilar(slug, 3);
+  return (
+    <ul className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-10 lg:grid-cols-3">
+      {similar.map((s: ScreenSummary) => (
+        <li key={s.slug}>
+          <ScreenTile screen={s} variant="hero" />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SimilarSkeleton() {
+  return (
+    <ul className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-10 lg:grid-cols-3">
+      {[0, 1, 2].map((i) => (
+        <li key={i}>
+          <SkeletonTile variant="hero" />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+async function AppearsIn({ slug }: { slug: string }) {
+  const allCollections = await getAllCollections();
+  const inCollections = allCollections.filter((c) =>
+    c.screens.some((entry) => entry.slug === slug),
+  );
+  if (inCollections.length === 0) return null;
+  return (
+    <div className="mt-10 space-y-2">
+      <p className="text-meta">Appears in</p>
+      {inCollections.map((c) => (
+        <Link
+          key={c.slug}
+          href={`/collections/${c.slug}`}
+          className="block text-sm hover:text-[var(--color-link)]"
+        >
+          Issue Nº{c.number} — {c.title} →
+        </Link>
+      ))}
     </div>
   );
 }
