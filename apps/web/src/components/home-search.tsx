@@ -61,15 +61,18 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         type="submit"
         aria-label="Search"
         className="
-          shrink-0 inline-flex items-center gap-1.5
-          font-mono text-meta tracking-wide
+          shrink-0 inline-flex h-10 w-10 items-center justify-center
+          rounded-full border rule
+          text-lg leading-none
           text-[var(--color-fg-muted)]
           transition-colors duration-200
+          group-focus-within:border-[var(--color-link)]
           group-focus-within:text-[var(--color-link)]
+          hover:border-[var(--color-fg)]/50
           hover:text-[var(--color-fg)]
         "
       >
-        Enter <span aria-hidden>↵</span>
+        <span aria-hidden>→</span>
       </button>
 
       {/* Animated underline — grows from centre on focus, retracts on blur. */}
