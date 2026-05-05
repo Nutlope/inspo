@@ -21,18 +21,18 @@ export default function AboutPage() {
             An archive, <em className="italic">in public</em>.
           </h1>
 
+
           <div className="prose-style max-w-[64ch] space-y-6 text-lg leading-relaxed text-[var(--color-fg)]">
             <p>
-              Inspo is a curated, editorial archive of real-website
-              screenshots — queryable by your coding agent over MCP. It exists
-              because agents have access to tools but not taste, and because
-              the open web already contains every reference an agent should
-              ever need: it just has to be assembled, tagged, and addressable.
+              A thousand real production sites, filed by hand, queryable by
+              your coding agent over MCP. Agents have tools but not taste —
+              and the open web already holds every reference one could need.
+              We just had to assemble, tag, and address it.
             </p>
             <p>
               Inspo is{" "}
               <strong className="text-[var(--color-fg)]">open source</strong>,
-              licensed under MIT, owned and operated by{" "}
+              MIT, owned and operated by{" "}
               <a
                 href="https://www.together.ai"
                 target="_blank"
@@ -41,34 +41,40 @@ export default function AboutPage() {
               >
                 Together&nbsp;AI
               </a>
-              . The hosted instance at this domain is free for everyone. There
-              is no commercial tier. There is no paywall. There never will be.
-            </p>
-            <p>
-              Inspo runs on Together AI&rsquo;s open-weights inference for
-              both vision tagging (Gemma 3n) and text embeddings
-              (multilingual-e5). The same stack powers{" "}
+              . The hosted instance is free for everyone. No tiers, no paywall.
+              The pair to Hallmark — its{" "}
               <a
                 href="https://github.com/Luffixos/hallmark"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
               >
-                Hallmark
+                sibling skill
               </a>{" "}
-              — Inspo&rsquo;s sibling skill, which gives the agent a design
-              process while Inspo gives it visual reference.
+              gives your agent a design process; Inspo gives it the
+              reference.
             </p>
           </div>
 
           <div className="space-y-6 border-t rule pt-12">
-            <p className="text-meta">Self-host</p>
+            <p className="text-meta">Self-host & contribute</p>
             <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
               <p>
-                Every dependency has a free or local-equivalent tier:
-                Postgres on Neon, the gallery on Vercel, the MCP on
-                Cloudflare Workers, the capture worker on Fly.io (or any
-                Node host with Chromium). The repo at{" "}
+                Every dependency has a free tier — Postgres on Neon, gallery
+                on Vercel, MCP on Cloudflare Workers, capture worker on
+                Fly.io (or any Node host with Chromium). One Together AI key,
+                one Neon URL, one{" "}
+                <code className="font-mono text-[0.95em]">
+                  pnpm capture:seed
+                </code>
+                {" "}— you have your own instance.
+              </p>
+              <p>
+                Want to add a site you love? Append it to{" "}
+                <code className="font-mono text-[0.95em]">
+                  apps/worker/src/seed-urls.ts
+                </code>{" "}
+                and open a PR at{" "}
                 <a
                   href="https://github.com/Luffixos/inspo"
                   target="_blank"
@@ -76,35 +82,9 @@ export default function AboutPage() {
                   className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
                 >
                   github.com/Luffixos/inspo
-                </a>{" "}
-                ships a complete{" "}
-                <code className="font-mono text-[0.95em]">DEPLOY.md</code>{" "}
-                runbook.
-              </p>
-              <p>
-                One Together AI key, one Neon URL, one{" "}
-                <code className="font-mono text-[0.95em]">
-                  pnpm capture:seed
-                </code>{" "}
-                — your own gallery, your own MCP endpoint, your own taste
-                pre-curated for whatever niche you care about.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-6 border-t rule pt-12">
-            <p className="text-meta">Contribute</p>
-            <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
-              <p>
-                Add a site you love to{" "}
-                <code className="font-mono text-[0.95em]">
-                  apps/worker/src/seed-urls.ts
-                </code>{" "}
-                and open a PR. Improve banner-dismissal heuristics in{" "}
-                <code className="font-mono text-[0.95em]">dismiss.ts</code>.
-                Tighten the tag taxonomy. Curate an editorial issue. The bar
-                is &ldquo;does this make the archive better for someone
-                building a website?&rdquo;
+                </a>
+                . The bar: does this make the archive better for someone
+                building a website?
               </p>
             </div>
           </div>
@@ -113,14 +93,14 @@ export default function AboutPage() {
             <p className="text-meta">Credit</p>
             <p className="prose-style max-w-[64ch] text-[var(--color-fg)]">
               Every screen credits the designer or studio when known and
-              links the source URL. Anyone can request a takedown via{" "}
+              links the source. Want yours taken down? Reach us at{" "}
               <Link
                 href="/dmca"
                 className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
               >
                 /dmca
               </Link>{" "}
-              and we&rsquo;ll honour it.
+              — we&rsquo;ll honour it.
             </p>
           </div>
         </div>

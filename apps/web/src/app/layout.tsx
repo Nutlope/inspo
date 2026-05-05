@@ -24,12 +24,23 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE),
   title: {
     default: `${site.name} — ${site.tagline}`,
     template: `%s — ${site.name}`,
   },
   description: site.description,
+  openGraph: {
+    siteName: site.name,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

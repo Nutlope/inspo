@@ -6,8 +6,8 @@ export function Colophon() {
       <div className="mx-auto grid max-w-[120rem] grid-cols-1 gap-10 px-6 py-12 text-meta sm:grid-cols-4 sm:px-10 sm:py-16">
         <div className="space-y-2">
           <p className="text-[var(--color-fg)] not-italic">{site.name}</p>
-          <p>An archive of websites,</p>
-          <p>served to your agent.</p>
+          <p>A thousand websites</p>
+          <p>worth studying.</p>
         </div>
 
         <div className="space-y-2">

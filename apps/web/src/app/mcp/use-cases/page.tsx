@@ -127,10 +127,9 @@ export default async function UseCasesPage() {
             What the MCP <em className="italic">actually</em> does.
           </h1>
           <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-[var(--color-fg-muted)]">
-            Three real prompts an agent might receive — once without the
-            Inspo MCP, once with. Same prompt, two different outputs. The
-            MCP doesn&rsquo;t make the agent smarter; it gives it real
-            production sites to study before it writes a line.
+            Three real prompts. Same agent — once without Inspo, once with.
+            Inspo doesn&rsquo;t make your agent smarter. It hands it real
+            production sites to study first.
           </p>
           <div className="mt-8">
             <Link
@@ -162,7 +161,7 @@ export default async function UseCasesPage() {
               <div className="grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-2">
                 {/* Without */}
                 <div className="border-t-2 border-[var(--color-fg-muted)]/30 pt-6">
-                  <p className="text-meta">Without Inspo</p>
+                  <p className="text-meta">What an agent does without Inspo</p>
                   <p className="mt-4 max-w-[40ch] text-[var(--color-fg-muted)]">
                     {uc.withoutMCP}
                   </p>
@@ -171,7 +170,7 @@ export default async function UseCasesPage() {
                 {/* With */}
                 <div className="border-t-2 border-[var(--color-link)] pt-6">
                   <p className="text-meta text-[var(--color-link)]">
-                    With Inspo
+                    What it does with.
                   </p>
 
                   <div className="mt-4 space-y-3 font-mono text-xs">

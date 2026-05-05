@@ -1,9 +1,9 @@
 export const site = {
   name: "Inspo",
   marker: "Nº",
-  tagline: "An archive of websites, served to your agent.",
+  tagline: "A thousand websites worth studying.",
   description:
-    "A curated, editorial archive of real-website screenshots. Browse the gallery — or query it from Claude Code, Cursor, and other coding agents over MCP.",
+    "A thousand real production sites, filed by hand. Browse here, or query the catalogue from your coding agent over MCP.",
   issue: {
     number: "01",
     date: "04 — 2026",

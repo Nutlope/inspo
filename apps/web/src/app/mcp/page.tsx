@@ -12,38 +12,38 @@ const tools = [
   {
     name: "search_screens",
     sig: "(query, filters?, limit=8)",
-    desc: "Natural-language search over the archive. Returns curated screenshots, palettes, fonts, and component breakdowns.",
+    desc: "Search the archive in plain language. Returns screenshots, palettes, fonts, components.",
     example: 'search_screens("dark editorial agency hero", { mode: "dark" })',
   },
   {
     name: "get_screen",
     sig: "(id)",
-    desc: "Full record for a single screen — every viewport variant, the curator note, the linked sources.",
+    desc: "One screen's full record — every viewport, the curator note, the source link.",
     example: 'get_screen("atelier-mira")',
   },
   {
     name: "find_similar",
     sig: "(id_or_url, limit=8)",
-    desc: "Visual + structural similarity. Hand it a screen you like; get its neighbours.",
+    desc: "Hand it a screen you like, get its neighbours.",
     example: 'find_similar("compass-bento")',
   },
   {
     name: "find_examples_for_macrostructure",
     sig: '(name: "Bento" | "Specimen" | …)',
-    desc: "Hallmark-aware. Pass any of the 21 named macrostructures and get real production sites that exemplify it. Made to be called from the Hallmark skill.",
+    desc: "Pass one of the 21 Hallmark macrostructures, get real sites that embody it.",
     example: 'find_examples_for_macrostructure("Bento Grid")',
     accent: true,
   },
   {
     name: "list_collections",
     sig: "()",
-    desc: "All editor-curated issues, in publication order.",
+    desc: "Every editor-curated issue, in publication order.",
     example: "list_collections()",
   },
   {
     name: "get_collection",
     sig: "(slug)",
-    desc: "One issue with the editor's blurb and ordered screens.",
+    desc: "One issue — the editor's blurb plus its ordered screens.",
     example: 'get_collection("editorial-layouts")',
   },
 ];
@@ -70,10 +70,9 @@ export default function MCPPage() {
             <em className="italic">Lend it some.</em>
           </h1>
           <p className="mt-10 max-w-[58ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">
-            Inspo is an MCP server. Install it once and Claude Code, Cursor,
-            Codex, and Zed gain a small set of tools that hand the model real,
-            curated screenshots — palettes, typefaces, component breakdowns —
-            before it writes a line.
+            Install Inspo once and Claude Code, Cursor, Codex, and Zed get a
+            handful of new tools. Your agent can study real production sites —
+            palettes, typefaces, components — before it writes anything.
           </p>
         </div>
       </section>
@@ -122,8 +121,7 @@ export default function MCPPage() {
           <div className="lg:col-span-2">
             <p className="text-meta">Tools exposed</p>
             <p className="text-meta mt-2 max-w-[20ch]">
-              Six. Sharp. Returns URLs, not base64 — agents fetch only what
-              they need.
+              Six tools. Returns URLs, so your agent fetches only what it needs.
             </p>
           </div>
 

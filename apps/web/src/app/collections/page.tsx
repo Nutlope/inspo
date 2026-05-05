@@ -31,9 +31,7 @@ export default async function CollectionsPage() {
             Issues — <em className="italic">themed sets</em> from the archive.
           </h1>
           <p className="mt-8 max-w-[58ch] text-lg text-[var(--color-fg-muted)]">
-            Each issue picks a posture — a macrostructure, a mood, a context —
-            and frames {collections.length} or so sites against it. New issues
-            land most weeks.
+            Themed sets, edited by hand. Open one for a long read.
           </p>
         </div>
       </section>
