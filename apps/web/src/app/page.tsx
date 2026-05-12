@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { ScreenTile } from "@/components/screen-tile";
 import { HomeSearch } from "@/components/home-search";
-import { getAllScreens } from "@inspo/db";
+import { getAllSites } from "@inspo/db";
 
 const GRID_LIMIT = 12;
 
 export default async function HomePage() {
-  const allScreens = await getAllScreens();
-  const totalCount = allScreens.length;
-  const grid = allScreens.slice(0, GRID_LIMIT);
+  // One tile per site, not per captured screen (gallery-style).
+  const allSites = await getAllSites();
+  const totalCount = allSites.length;
+  const grid = allSites.slice(0, GRID_LIMIT);
 
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
@@ -36,9 +37,9 @@ export default async function HomePage() {
       {/* GRID ─────────────────────────────────────────────────── */}
       <section className="border-t rule pt-10 pb-16">
         <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {grid.map((screen, i) => (
-            <li key={screen.slug}>
-              <ScreenTile screen={screen} index={i + 1} variant="hero" />
+          {grid.map((site, i) => (
+            <li key={site.siteSlug}>
+              <ScreenTile screen={site} index={i + 1} variant="hero" pageCount={site.pageCount} />
             </li>
           ))}
         </ul>

@@ -254,7 +254,56 @@ export async function findSimilar(
     .map((x) => x.s);
 }
 
-/* ──────────────────── sites ──────────────────── */
+/* ──────────────────── sites (grid view) ──────────────────── */
+
+/**
+ * One ScreenSummary per site, paired with its captured page count.
+ *
+ * Used by the home + /screens grid. For sites with a captured landing
+ * page (siteSlug equals an existing slug AND that row's pageType is
+ * 'landing'), the hero is that row. For sites whose landing wasn't
+ * captured (rare), we fall back to the earliest captured row.
+ *
+ * Filters apply to the hero's properties — which is what the user
+ * means by "show me sites that match X" since hero == brand identity.
+ */
+export type SiteTile = ScreenSummary & { pageCount: number };
+
+export async function getAllSites(
+  filter: ScreenFilter = {},
+  sort: ScreenSort = "latest",
+): Promise<SiteTile[]> {
+  // Pull all screens through the existing path (handles filters + fixtures).
+  const allScreens = await getAllScreens(filter, sort);
+
+  // Bucket by siteSlug; pick the landing row as the hero (fallback: first).
+  const bySite = new Map<string, { hero: ScreenSummary; count: number }>();
+  for (const s of allScreens) {
+    const key = s.siteSlug;
+    const existing = bySite.get(key);
+    if (!existing) {
+      bySite.set(key, { hero: s, count: 1 });
+    } else {
+      existing.count += 1;
+      // Prefer pageType='landing' over whatever was first.
+      if (existing.hero.pageType !== "landing" && s.pageType === "landing") {
+        existing.hero = s;
+      }
+    }
+  }
+  // Preserve the order of first occurrence (which already obeys `sort`).
+  const out: SiteTile[] = [];
+  const seen = new Set<string>();
+  for (const s of allScreens) {
+    if (seen.has(s.siteSlug)) continue;
+    seen.add(s.siteSlug);
+    const entry = bySite.get(s.siteSlug)!;
+    out.push({ ...entry.hero, pageCount: entry.count });
+  }
+  return out;
+}
+
+/* ──────────────────── sites (detail) ──────────────────── */
 
 export type SiteSummary = {
   siteSlug: string;

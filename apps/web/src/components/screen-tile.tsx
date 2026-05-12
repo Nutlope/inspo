@@ -20,6 +20,7 @@ export function ScreenTile({
   showCaption = true,
   className = "",
   priority = false,
+  pageCount,
 }: {
   screen: ScreenSummary;
   variant?: Variant;
@@ -29,6 +30,11 @@ export function ScreenTile({
   /** First 12 tiles get loading="eager" + fetchpriority="high" so the
    *  above-the-fold grid paints crisp. Below the fold stays lazy. */
   priority?: boolean;
+  /** When set and > 1, the tile represents a multi-page site:
+   *  - link routes to /sites/[siteSlug] (gallery-style)
+   *  - small "N pages" badge in the caption row
+   *  Otherwise link routes to /screens/[slug] (single screen detail). */
+  pageCount?: number;
 }) {
   const macroKey = screen.tags.macrostructure;
   const macro = macroKey ? MACROSTRUCTURE_LABELS[macroKey] : null;
@@ -47,10 +53,15 @@ export function ScreenTile({
   const palette0 = screen.palette[0] ?? "#eee";
   const palette2 = screen.palette[2] ?? screen.palette[1] ?? "#ddd";
 
+  const isMultiPage = (pageCount ?? 0) > 1;
+  const href = isMultiPage
+    ? `/sites/${screen.siteSlug}`
+    : `/screens/${screen.slug}`;
+
   return (
     <article className={`group ${className}`}>
       <Link
-        href={`/screens/${screen.slug}`}
+        href={href}
         className="block focus:outline-none"
       >
         <div
@@ -105,7 +116,7 @@ export function ScreenTile({
               </span>
             </p>
             <p className="text-meta whitespace-nowrap">
-              {macro ?? screen.tags.style[0] ?? "—"}
+              {isMultiPage ? `${pageCount} pages` : (macro ?? screen.tags.style[0] ?? "—")}
             </p>
           </div>
         )}

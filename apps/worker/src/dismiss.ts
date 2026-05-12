@@ -56,9 +56,29 @@ const OVERLAY_SELECTORS = [
   "#hubspot-messages-iframe-container",
   // Zendesk web widget
   "iframe[title*='Web Widget' i]",
-  // Generic newsletter modals
+  // Generic newsletter / promo modals
   "[id*='newsletter' i][class*='modal' i]",
   "[class*='newsletter' i][class*='popup' i]",
+  "[id*='subscribe' i][class*='modal' i]",
+  "[class*='promo' i][class*='modal' i]",
+  "[class*='promo' i][class*='popup' i]",
+  // Klaviyo
+  "[class*='klaviyo' i][class*='form' i]",
+  ".needsclick.kl-private-reset-css-Xuajs1",
+  // Privy
+  "#privy-modal",
+  ".privy-style-overlay",
+  // OptinMonster
+  ".om-element",
+  ".om-iframe-wrapper",
+  // Sumo / Wisepops
+  ".sumome-react-wysiwyg-modal",
+  ".wisepops-popup",
+  // Mailchimp embedded modal
+  "#mc_embed_signup",
+  // Generic role-based dialogs (centered modals)
+  "[role='dialog'][aria-modal='true']",
+  "[role='alertdialog']",
 ];
 
 /** Accepts a button if its full text (trim + lowercase) CONTAINS one of these.
@@ -76,6 +96,17 @@ const ACCEPT_TEXT_PHRASES = [
   "yes, i'm happy",
   "okay, got it",
   "okay, thanks",
+  // Newsletter / promo / region modal dismissals
+  "no thanks",
+  "no, thanks",
+  "not now",
+  "maybe later",
+  "dismiss",
+  "skip",
+  "close",
+  "continue shopping",
+  "continue browsing",
+  "x close",
 ];
 
 /** Phrases that suggest a deeper-modal opener — explicitly skipped. */
@@ -264,6 +295,76 @@ export async function dismissBanners(
         }
       }
 
+      // Pass D — explicit dialog role + class-name signatures. The
+      // [role='dialog'][aria-modal='true'] pattern is the most reliable
+      // signal of "this is a centered modal blocking content".
+      if (hidden < 6) {
+        const DIALOG_SELECTORS = [
+          "[role='dialog'][aria-modal='true']",
+          "[role='alertdialog']",
+          "[class*='modal--open' i]",
+          "[class*='modal-open' i]",
+          "[class*='Modal_' i][class*='open' i]",
+          "[id*='popup' i]:not(nav):not(header)",
+          "[class*='popup' i]:not(nav):not(header)",
+          "[class*='overlay' i]:not(nav):not(header)",
+        ];
+        for (const sel of DIALOG_SELECTORS) {
+          for (const el of Array.from(document.querySelectorAll(sel))) {
+            if (!(el instanceof HTMLElement)) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width < 200 || r.height < 100) continue;
+            if (isLikelyTopNav(r)) continue;
+            if (tryHide(el)) {
+              hidden += 1;
+              if (hidden >= 6) return hidden;
+            }
+          }
+        }
+      }
+
+      // Pass E — backdrop detector. Centered modals usually sit on top
+      // of a full-viewport semi-transparent backdrop. Find any fixed
+      // element covering >70% of the viewport with a dark/transparent
+      // bg-color, hide it AND its child modal.
+      if (hidden < 6) {
+        const wideArea = vw * vh * 0.7;
+        for (const el of Array.from(document.querySelectorAll("body *")).slice(0, 800)) {
+          if (!(el instanceof HTMLElement)) continue;
+          const cs = window.getComputedStyle(el);
+          if (cs.position !== "fixed" && cs.position !== "absolute") continue;
+          const r = el.getBoundingClientRect();
+          if (r.width * r.height < wideArea) continue;
+          const bg = cs.backgroundColor;
+          // rgba(0,0,0,X) or similar dim layer — has alpha 0 < X < 1
+          const m = bg.match(/rgba?\(([^)]+)\)/);
+          if (!m) continue;
+          const parts = m[1]!.split(",").map((p) => p.trim());
+          const alpha = parts.length === 4 ? Number(parts[3]) : 1;
+          if (alpha <= 0 || alpha >= 1) continue;
+          if (tryHide(el)) {
+            hidden += 1;
+            // Also hide any direct centered modal children.
+            for (const child of Array.from(el.children)) {
+              if (child instanceof HTMLElement) tryHide(child);
+            }
+            if (hidden >= 6) return hidden;
+          }
+        }
+      }
+
+      // Pass F — body lock detector. When body has overflow:hidden
+      // applied (modal-open lock), find the visible overlay nearest the
+      // top of the stacking order and hide it.
+      if (hidden < 6) {
+        const bodyCs = window.getComputedStyle(document.body);
+        if (bodyCs.overflow === "hidden" || bodyCs.position === "fixed") {
+          // Restore scrolling, then look for the modal that locked it.
+          document.body.style.setProperty("overflow", "auto", "important");
+          document.body.style.setProperty("position", "static", "important");
+        }
+      }
+
       return hidden;
     });
     result.phantomsHidden = hiddenCount;
@@ -283,6 +384,7 @@ export async function dismissBanners(
  * in the context.
  */
 const BLOCKED_HOSTS = [
+  // Consent management
   "onetrust.com",
   "cookielaw.org",
   "cookiebot.com",
@@ -292,6 +394,7 @@ const BLOCKED_HOSTS = [
   "consentmanager.net",
   "iubenda.com",
   "termly.io",
+  // Chat widgets
   "intercom.io",
   "intercomcdn.com",
   "drift.com",
@@ -302,6 +405,24 @@ const BLOCKED_HOSTS = [
   "hubspot.com/conversations",
   "kustomerapp.com",
   "front.com",
+  // Email-capture / promo popup systems (the modal user complained about)
+  "privy.com",
+  "privy-static.com",
+  "klaviyo.com/onsite",
+  "k.klaviyo.com",
+  "static-tracking.klaviyo.com",
+  "optinmonster.com",
+  "wisepops.com",
+  "sumo.com",
+  "popupsmart.com",
+  "optimonk.com",
+  "justuno.com",
+  "yieldify.com",
+  "exitbee.com",
+  "getsitecontrol.com",
+  // Region / language detector services
+  "wovn.io",
+  "weglot.com",
 ];
 
 export async function blockConsentNetworks(ctx: BrowserContext): Promise<void> {
