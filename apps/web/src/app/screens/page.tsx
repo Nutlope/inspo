@@ -58,25 +58,26 @@ export default async function ArchivePage({
     params.q && isUrl(params.q) && allScreens.every((s) => !s.sourceUrl.includes(params.q!)),
   );
 
-  // Trim the per-row payload before shipping to the client filter. The
-  // cssVariables blob on a real capture can be 40–80KB per row (every
-  // --* declared on documentElement); 700 × 60KB ≈ 40MB of HTML is a
-  // non-starter. The grid only needs the filterable surface + the
-  // image URL + palette swatches.
+  // Trim the per-row payload before shipping to the client filter.
+  // Earlier this carried description (240 chars), fonts, tech, full
+  // image URL, designerCredit, etc — ~400 chars/row × 1000 = 400KB
+  // of HTML. The grid only needs the filter surface + the visible
+  // pixels. Per-screen detail loads from /screens/[slug] which fetches
+  // the full record server-side. ~110 chars/row → ~110KB.
   const compact = allSites.map((s) => ({
     id: s.id,
     slug: s.slug,
     title: s.title,
     sourceUrl: s.sourceUrl,
-    designerCredit: s.designerCredit,
+    designerCredit: undefined,
     capturedAt: s.capturedAt,
     imageUrl: s.imageUrl,
-    fullPageUrl: s.fullPageUrl,
+    fullPageUrl: s.imageUrl, // alias so ScreenSummary stays shaped
     thumbUrl: s.thumbUrl,
-    description: s.description.slice(0, 240),
+    description: "",
     palette: s.palette,
-    fonts: s.fonts,
-    tech: s.tech,
+    fonts: [],
+    tech: [],
     mode: s.mode,
     tags: s.tags,
     designSystem: {
