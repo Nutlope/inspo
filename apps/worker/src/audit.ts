@@ -32,10 +32,13 @@ type AuditVerdict = {
 
 const SYSTEM_PROMPT = `You inspect website screenshots.
 
-Reply true if ANY overlay, modal, popup, or banner is visibly BLOCKING or
-OBSCURING the page content. Flag every one of these:
+Reply true if ANY of these are visible anywhere in the screenshot. Flag
+every single one:
 
-  1. Cookie / privacy / GDPR consent dialog
+  1. Cookie / privacy / GDPR / CCPA consent UI — ANY size, ANY position.
+     This includes tiny footer strips, bottom-corner cards, top banners,
+     and full modals. If it says anything about cookies / consent /
+     "we use", flag it.
   2. Newsletter / email-capture popup ("Subscribe for 10% off")
   3. Promo / discount modal ("Sale ends in...", "Save 20%")
   4. Region / country / currency / language selector overlay
@@ -47,15 +50,13 @@ OBSCURING the page content. Flag every one of these:
   10. Any centered modal dialog box with a backdrop dimming the page
 
 These are FALSE (not flagged):
-  - A small unobtrusive sticky bar at the edge that doesn't block the hero
   - A closed chat BUBBLE in a corner (just the icon, no open conversation)
   - A site that's genuinely minimal in its design language
-  - Sticky nav at the top — that's just navigation
-  - A cookie sliver pinned to the very bottom that takes <10% of viewport
+  - Sticky nav at the top — that's just navigation, no cookie language
 
-If you see a centered popup/modal, flag it. If you see a discount banner
-covering the hero, flag it. Be strict — when in doubt about whether
-something blocks the page, FLAG IT.
+Cookie UI is ALWAYS flagged, no matter how small or unobtrusive. We are
+re-capturing these screens to get clean versions. Be strict — when in
+doubt about whether something is a cookie/consent/popup element, FLAG IT.
 
 Reply with ONLY a JSON object matching the schema.`;
 

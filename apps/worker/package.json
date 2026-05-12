@@ -14,6 +14,8 @@
     "cleanup:titles": "tsx src/cleanup-titles.ts",
     "audit:banners": "tsx src/audit.ts",
     "audit:modals": "tsx src/audit.ts",
+    "capture:recapture-flagged": "tsx src/recapture-flagged.ts",
+    "capture:recapture-pilot": "tsx src/recapture-pilot.ts",
     "dev:server": "tsx src/server.ts",
     "start:server": "tsx src/server.ts",
     "test:capture": "tsx src/cli.ts capture https://linear.app",
