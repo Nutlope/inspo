@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import type { ScreenSummary } from "@inspo/shared";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
+import { TransitionLink as Link } from "@/components/transition-link";
 
 type Variant = "thumb" | "hero" | "feature";
 
