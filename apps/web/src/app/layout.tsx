@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Masthead } from "@/components/masthead";
 import { Colophon } from "@/components/colophon";
+import { CommandPalette } from "@/components/command-palette";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default function RootLayout({
         <Masthead />
         <main className="flex-1">{children}</main>
         <Colophon />
+        <CommandPalette />
       </body>
     </html>
   );

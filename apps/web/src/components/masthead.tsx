@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllScreens } from "@inspo/db";
 import { site } from "@/lib/site";
+import { CommandHint } from "@/components/command-hint";
 
 export async function Masthead() {
   // Live count of published screens, mono badge next to the brand mark.
@@ -27,7 +28,7 @@ export async function Masthead() {
           </span>
         </div>
 
-        <nav aria-label="Primary" className="flex items-center gap-7 sm:gap-10">
+        <nav aria-label="Primary" className="flex items-center gap-5 sm:gap-8">
           {site.nav.map((item) => (
             <Link
               key={item.href}
@@ -37,6 +38,7 @@ export async function Masthead() {
               {item.label}
             </Link>
           ))}
+          <CommandHint />
         </nav>
       </div>
     </header>
