@@ -6,6 +6,8 @@ export {
   findSimilar,
   findSite,
   getMultiPageSites,
+  getAllSites,
+  type SiteTile,
   getAllCollections,
   findCollection,
   screensInCollection,

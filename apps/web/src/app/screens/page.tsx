@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { Dateline } from "@/components/dateline";
 import { ScreensGrid } from "@/components/screens-grid";
-import { findByHostname, getAllScreens, isUrl } from "@inspo/db";
+import { findByHostname, getAllScreens, getAllSites, isUrl } from "@inspo/db";
 
 export const metadata: Metadata = {
   title: "Archive",
@@ -48,8 +48,12 @@ export default async function ArchivePage({
     if (match) redirect(`/screens/${match.slug}`);
   }
 
+  // Mobbin-style: one tile per SITE, not per captured screen. The hero
+  // (landing page) is what shows; pageCount surfaces on the tile. Click
+  // routes to /sites/[siteSlug] which expands to all captured pages.
+  const allSites = await getAllSites();
   const allScreens = await getAllScreens();
-  const totalCount = allScreens.length;
+  const totalCount = allSites.length;
   const noUrlMatch = Boolean(
     params.q && isUrl(params.q) && allScreens.every((s) => !s.sourceUrl.includes(params.q!)),
   );
@@ -59,7 +63,7 @@ export default async function ArchivePage({
   // --* declared on documentElement); 700 × 60KB ≈ 40MB of HTML is a
   // non-starter. The grid only needs the filterable surface + the
   // image URL + palette swatches.
-  const compact = allScreens.map((s) => ({
+  const compact = allSites.map((s) => ({
     id: s.id,
     slug: s.slug,
     title: s.title,
@@ -85,6 +89,7 @@ export default async function ArchivePage({
     },
     siteSlug: s.siteSlug,
     pageType: s.pageType,
+    pageCount: s.pageCount,
   }));
 
   return (

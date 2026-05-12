@@ -244,6 +244,7 @@ export function ScreensGrid({
                   index={i + 1}
                   variant="hero"
                   priority={i < 6}
+                  pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
                 />
               </li>
             ))}
