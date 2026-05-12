@@ -31,12 +31,18 @@ import { tagWithLLM } from "./tag.js";
 import { embedText } from "./embed.js";
 import type { CaptureResult } from "./types.js";
 
+import type { PageType } from "./types.js";
+
 export type CaptureOptions = {
   url: string;
   /** Slug for filenames + DB row. Defaults to derived-from-host. */
   slug?: string;
   /** If false, skip the AI tagging + embedding step (faster smoke test). */
   enrich?: boolean;
+  /** Multi-page grouping: which site this page belongs to. Defaults to slug. */
+  siteSlug?: string;
+  /** Page classification — set by the discovery layer. Defaults 'landing'. */
+  pageType?: PageType;
 };
 
 export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
@@ -178,6 +184,8 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
       meta,
       tags,
       embeddings,
+      siteSlug: opts.siteSlug ?? slug,
+      pageType: opts.pageType ?? "landing",
     };
   } finally {
     await ctx?.close().catch(() => {});

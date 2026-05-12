@@ -45,6 +45,25 @@ export const screens = pgTable(
       .defaultNow()
       .notNull(),
 
+    // Multi-page grouping. site_slug groups all captured pages of one
+    // site (typically the hostname-derived slug of the homepage). For
+    // existing rows this back-fills to the row's own slug. page_type
+    // is decided at URL discovery (sitemap ranker) — see worker/discover.ts.
+    siteSlug: text("site_slug"),
+    pageType: text("page_type")
+      .$type<
+        | "landing"
+        | "pricing"
+        | "features"
+        | "auth"
+        | "about"
+        | "blog"
+        | "changelog"
+        | "docs"
+        | "other"
+      >()
+      .default("landing"),
+
     description: text("description").notNull().default(""),
     altText: text("alt_text").notNull().default(""),
     searchKeywords: jsonb("search_keywords")
@@ -92,6 +111,7 @@ export const screens = pgTable(
     statusIdx: index("screens_status_idx").on(t.status),
     capturedIdx: index("screens_captured_at_idx").on(t.capturedAt),
     macroIdx: index("screens_macrostructure_idx").on(t.macrostructure),
+    siteSlugIdx: index("screens_site_slug_idx").on(t.siteSlug),
     // Approximate-NN indexes for vectors — created in raw SQL migration
     // since drizzle-kit's vector index support is still maturing.
   }),

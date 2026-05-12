@@ -1,0 +1,71 @@
+# Phase 7 pilot — 50 flagship sites for the multi-page capture experiment.
+# Each line is a site_slug whose homepage already exists in the DB.
+# The capture-site orchestrator will discover up to 7 additional pages
+# per site (pricing / features / about / signup / blog / etc.) and
+# capture them, tagging each with a page_type.
+
+# Dev tools / SaaS
+linear-app
+stripe-com
+vercel-com
+supabase-com
+raycast-com
+github-com
+notion-so
+figma-com
+framer-com
+clerk-com
+posthog-com
+resend-com
+v0-dev
+
+# AI
+anthropic-com
+openai-com
+perplexity-ai
+midjourney-com
+cohere-com
+replicate-com
+cursor-com
+
+# Fintech
+mercury-com
+ramp-com
+brex-com
+coinbase-com
+
+# Editorial / agency / cultural
+a24films-com
+pentagram-com
+itsnicethat-com
+mubi-com
+dezeen-com
+locomotive-ca
+instrument-com
+moma-org
+tate-org-uk
+
+# E-commerce / D2C / brand
+apple-com
+nike-com
+everlane-com
+allbirds-com
+casper-com
+aesop-com
+patagonia-com
+uniqlo-com
+
+# Media / publishing
+spotify-com
+nytimes-com
+substack-com
+medium-com
+
+# Design systems / component libs
+ui-shadcn-com
+tailwindcss-com
+
+# OSS frameworks + portfolio
+nextjs-org
+svelte-dev
+rauno-me
