@@ -35,6 +35,17 @@ export type DesignSystem = {
   colorWords: ColorWord[];
 };
 
+export type PageType =
+  | "landing"
+  | "pricing"
+  | "features"
+  | "auth"
+  | "about"
+  | "blog"
+  | "changelog"
+  | "docs"
+  | "other";
+
 export type ScreenSummary = {
   id: string;
   slug: string;
@@ -60,6 +71,11 @@ export type ScreenSummary = {
   };
   /** Phase 2 — present when extracted; empty defaults otherwise. */
   designSystem: DesignSystem;
+  /** Phase 7 — multi-page grouping. siteSlug = parent site; pageType =
+   *  this page's classification. For legacy single-page rows siteSlug
+   *  equals slug and pageType = 'landing'. */
+  siteSlug: string;
+  pageType: PageType;
 };
 
 export type SearchResult = ScreenSummary & {

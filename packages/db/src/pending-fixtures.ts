@@ -9,8 +9,8 @@ const EMPTY_DESIGN_SYSTEM: DesignSystem = {
   colorWords: [],
 };
 
-type RawPending = Omit<ScreenSummary, "designSystem"> &
-  Partial<Pick<ScreenSummary, "designSystem">>;
+type RawPending = Omit<ScreenSummary, "designSystem" | "siteSlug" | "pageType"> &
+  Partial<Pick<ScreenSummary, "designSystem" | "siteSlug" | "pageType">>;
 
 /**
  * Demo "pending" screens — surfaced only by `getPendingScreens()` in
@@ -102,4 +102,6 @@ const _pending: RawPending[] = [
 export const pendingScreens: ScreenSummary[] = _pending.map((s) => ({
   ...s,
   designSystem: s.designSystem ?? EMPTY_DESIGN_SYSTEM,
+  siteSlug: s.siteSlug ?? s.slug,
+  pageType: s.pageType ?? "landing",
 }));

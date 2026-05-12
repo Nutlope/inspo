@@ -133,6 +133,8 @@ function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
       cssVariables: row.cssVariables ?? {},
       colorWords: row.colorWords ?? [],
     },
+    siteSlug: row.siteSlug ?? row.slug,
+    pageType: (row.pageType ?? "landing") as ScreenSummary["pageType"],
   };
 }
 
@@ -250,6 +252,115 @@ export async function findSimilar(
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => x.s);
+}
+
+/* ──────────────────── sites ──────────────────── */
+
+export type SiteSummary = {
+  siteSlug: string;
+  title: string;
+  designerCredit?: string;
+  sourceUrl: string;
+  hero: ScreenSummary;
+  pages: ScreenSummary[]; // includes hero — sorted by pageType priority
+  pageCount: number;
+};
+
+const PAGE_TYPE_ORDER: Record<NonNullable<ScreenSummary["pageType"]>, number> = {
+  landing: 0,
+  pricing: 1,
+  features: 2,
+  auth: 3,
+  about: 4,
+  blog: 5,
+  changelog: 6,
+  docs: 7,
+  other: 8,
+};
+
+function sortPages(pages: ScreenSummary[]): ScreenSummary[] {
+  return [...pages].sort(
+    (a, b) =>
+      PAGE_TYPE_ORDER[a.pageType] - PAGE_TYPE_ORDER[b.pageType] ||
+      a.capturedAt.localeCompare(b.capturedAt),
+  );
+}
+
+/** All pages of one site, by site_slug. */
+export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
+  if (!hasDatabase()) {
+    const pages = screensFixture.filter((s) => s.siteSlug === siteSlug);
+    if (pages.length === 0) return null;
+    const sorted = sortPages(pages);
+    const hero = sorted.find((p) => p.pageType === "landing") ?? sorted[0]!;
+    return {
+      siteSlug,
+      title: hero.title,
+      designerCredit: hero.designerCredit,
+      sourceUrl: hero.sourceUrl,
+      hero,
+      pages: sorted,
+      pageCount: sorted.length,
+    };
+  }
+
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(screensT)
+    .where(
+      and(eq(screensT.siteSlug, siteSlug), eq(screensT.status, "published")),
+    );
+  if (rows.length === 0) return null;
+  const summaries = rows.map((r) =>
+    rowToSummary(r, {
+      styles: (r.searchKeywords as Style[]) ?? [],
+      industries: [],
+      components: [],
+      vibes: [],
+    }),
+  );
+  const sorted = sortPages(summaries);
+  const hero = sorted.find((p) => p.pageType === "landing") ?? sorted[0]!;
+  return {
+    siteSlug,
+    title: hero.title,
+    designerCredit: hero.designerCredit,
+    sourceUrl: hero.sourceUrl,
+    hero,
+    pages: sorted,
+    pageCount: sorted.length,
+  };
+}
+
+/** Every site that has more than one captured page. Used by /sites index
+ *  (when we want one) and by the back-link logic on /screens/[slug]. */
+export async function getMultiPageSites(): Promise<
+  { siteSlug: string; pageCount: number }[]
+> {
+  if (!hasDatabase()) {
+    const counts = new Map<string, number>();
+    for (const s of screensFixture)
+      counts.set(s.siteSlug, (counts.get(s.siteSlug) ?? 0) + 1);
+    return [...counts.entries()]
+      .filter(([, c]) => c > 1)
+      .map(([siteSlug, pageCount]) => ({ siteSlug, pageCount }));
+  }
+  const db = getDb();
+  const rows = await db
+    .select({
+      siteSlug: screensT.siteSlug,
+      pageCount: sql<number>`count(*)::int`,
+    })
+    .from(screensT)
+    .where(eq(screensT.status, "published"))
+    .groupBy(screensT.siteSlug)
+    .having(sql`count(*) > 1`);
+  return rows
+    .filter((r): r is { siteSlug: string; pageCount: number } =>
+      Boolean(r.siteSlug),
+    )
+    .map((r) => ({ siteSlug: r.siteSlug, pageCount: r.pageCount }));
 }
 
 /* ──────────────────── curator queue ──────────────────── */

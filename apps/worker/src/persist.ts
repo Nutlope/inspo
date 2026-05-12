@@ -48,6 +48,8 @@ export async function persistCapture(
     sourceUrl: result.sourceUrl,
     designerCredit: null,
     capturedAt: result.capturedAt,
+    siteSlug: result.siteSlug ?? result.slug,
+    pageType: result.pageType ?? "landing",
     description: result.tags?.description ?? result.meta.pageDescription ?? "",
     altText: result.tags?.altText ?? "",
     searchKeywords: result.tags?.searchKeywords ?? [],

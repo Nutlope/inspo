@@ -83,6 +83,8 @@ export default async function ArchivePage({
       cssVariables: {},
       colorWords: s.designSystem.colorWords,
     },
+    siteSlug: s.siteSlug,
+    pageType: s.pageType,
   }));
 
   return (

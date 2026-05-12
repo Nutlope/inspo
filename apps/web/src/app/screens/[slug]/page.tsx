@@ -12,6 +12,7 @@ import { SkeletonTile } from "@/components/skeleton-tile";
 import {
   findScreen,
   findSimilar,
+  findSite,
   getAllCollections,
   getAllScreens,
 } from "@inspo/db";
@@ -86,6 +87,10 @@ export default async function ScreenDetailPage({
           </div>
 
           <div className="lg:col-span-10">
+            <Suspense fallback={null}>
+              <SiteBacklink slug={screen.slug} />
+            </Suspense>
+
             <h1 className="font-display max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-7xl">
               {screen.title}
             </h1>
@@ -352,6 +357,27 @@ function SimilarSkeleton() {
         </li>
       ))}
     </ul>
+  );
+}
+
+async function SiteBacklink({ slug }: { slug: string }) {
+  const screen = await findScreen(slug);
+  if (!screen) return null;
+  // Only show when this site has more than one page captured.
+  const site = await findSite(screen.siteSlug);
+  if (!site || site.pageCount <= 1) return null;
+  const isHero = site.hero.slug === slug;
+  return (
+    <p className="text-meta mb-3">
+      <Link
+        href={`/sites/${screen.siteSlug}`}
+        className="text-[var(--color-link)] underline-offset-4 hover:underline"
+      >
+        {isHero
+          ? `See all ${site.pageCount} pages of ${site.title} →`
+          : `Part of ${site.title} — ${site.pageCount} pages captured →`}
+      </Link>
+    </p>
   );
 }
 

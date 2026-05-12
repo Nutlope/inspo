@@ -50,6 +50,17 @@ export type AITags = {
   searchKeywords: string[];
 };
 
+export type PageType =
+  | "landing"
+  | "pricing"
+  | "features"
+  | "auth"
+  | "about"
+  | "blog"
+  | "changelog"
+  | "docs"
+  | "other";
+
 export type CaptureResult = {
   sourceUrl: string;
   slug: string;
@@ -58,4 +69,10 @@ export type CaptureResult = {
   meta: ExtractedMetadata;
   tags?: AITags;
   embeddings?: { text: number[] };
+  /** Multi-page grouping. Defaults to the screen's own slug when capturing
+   *  a single homepage (which makes the screen its own site of one). */
+  siteSlug?: string;
+  /** Per-page classification (landing / pricing / auth / ...). Defaults
+   *  to 'landing' when capturing a standalone homepage. */
+  pageType?: PageType;
 };
