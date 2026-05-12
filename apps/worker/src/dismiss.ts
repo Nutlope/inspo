@@ -365,6 +365,36 @@ export async function dismissBanners(
         }
       }
 
+      // Pass G — small cookie footer/strip. Any fixed/sticky element
+      // pinned to the bottom (or top) edge whose text mentions "cookie"
+      // or "consent" or "privacy", regardless of size. The earlier
+      // 15%-area heuristic misses unobtrusive footer strips and
+      // bottom-right cards. The user wants ALL cookie UI gone.
+      const TEXTUAL_CONSENT_RX = /\b(cookie|consent|privacy|gdpr|ccpa|we use|we and our partners|tracking)\b/i;
+      for (const el of Array.from(document.querySelectorAll("*")).slice(0, 2500)) {
+        if (!(el instanceof HTMLElement)) continue;
+        if (seen.has(el)) continue;
+        const cs = window.getComputedStyle(el);
+        if (cs.position !== "fixed" && cs.position !== "sticky") continue;
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 100 || r.height < 20) continue;
+        // Bottom-pinned (cookie strips) or top-pinned (consent bars)
+        const pinnedBottom = vh - r.bottom < 24 && r.top > vh * 0.5;
+        const pinnedTopBar = r.top < 24 && r.height < 200 && r.width > vw * 0.6;
+        const pinnedCorner =
+          r.width < vw * 0.6 && r.height < vh * 0.6 &&
+          (vh - r.bottom < 60 || r.top < 60);
+        if (!pinnedBottom && !pinnedTopBar && !pinnedCorner) continue;
+        const text = (el.textContent ?? "").trim().slice(0, 800);
+        if (text.length < 6 || text.length > 800) continue;
+        if (!TEXTUAL_CONSENT_RX.test(text)) continue;
+        if (tryHide(el)) {
+          hidden += 1;
+          if (hidden >= 10) return hidden;
+        }
+      }
+
       return hidden;
     });
     result.phantomsHidden = hiddenCount;

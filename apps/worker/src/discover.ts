@@ -193,7 +193,8 @@ async function probeCommonPaths(root: URL): Promise<string[]> {
 /* ───────────────────── candidate filtering ───────────────────── */
 
 const JUNK_PATTERNS = [
-  /\.(?:pdf|xml|jpg|jpeg|png|gif|webp|svg|ico|css|js|mp4|webm|zip|rss)$/i,
+  /\.(?:pdf|xml|jpg|jpeg|png|gif|webp|svg|ico|css|js|mp4|webm|zip|rss|gz|tar|bz2)$/i,
+  /\.xml\.gz$/i,
   /\/(?:api|cdn-cgi|assets?|static|wp-content|wp-admin|wp-json|feed|rss|atom)\//i,
   /\/page\/\d+/i, // /blog/page/12 style pagination
   /\/p\/\d+/i,
