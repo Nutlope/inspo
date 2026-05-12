@@ -245,3 +245,27 @@ textarea:focus-visible {
     opacity: 0;
   }
 }
+
+
+/* View Transitions — quick editorial crossfade between routes.
+   Only fires in browsers that support the View Transitions API
+   (Chrome/Edge stable, Safari TP, Firefox behind flag). Otherwise
+   the page swaps instantly as usual. */
+::view-transition-old(root) {
+  animation: 180ms cubic-bezier(0.2, 0, 0.13, 1.5) both vt-out;
+}
+::view-transition-new(root) {
+  animation: 220ms cubic-bezier(0.2, 0, 0.13, 1.5) 30ms both vt-in;
+}
+@keyframes vt-out {
+  to { opacity: 0; transform: translateY(-2px); }
+}
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
