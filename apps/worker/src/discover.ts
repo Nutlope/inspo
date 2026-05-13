@@ -196,6 +196,10 @@ const JUNK_PATTERNS = [
   /\.(?:pdf|xml|jpg|jpeg|png|gif|webp|svg|ico|css|js|mp4|webm|zip|rss|gz|tar|bz2)$/i,
   /\.xml\.gz$/i,
   /\/(?:api|cdn-cgi|assets?|static|wp-content|wp-admin|wp-json|feed|rss|atom)\//i,
+  /\/sitemap[^/]*\//i, // /sitemap/, /sitemap_v2/ — sitemap-style index pages
+  /\/sitemap[^/]*$/i, // /sitemap or /sitemap.xml or /sitemap_index
+  /\/cgc\//i, // cloud.google.com directory listings
+  /\/wayfinding/i, // misc site-index pages
   /\/page\/\d+/i, // /blog/page/12 style pagination
   /\/p\/\d+/i,
   /\/\d{4}\/\d{2}\/\d{2}\//, // /2024/03/15/ style date archives

@@ -108,12 +108,24 @@ export async function captureSite(opts: Opts): Promise<SiteCaptureReport> {
         if (!next) break;
         const childSlug = slugifyChild(siteSlug, next.url);
         try {
-          const result = await capture({
-            url: next.url,
-            slug: childSlug,
-            siteSlug,
-            pageType: next.pageType,
-          });
+          // Outer 120s timeout — guards against Chromium hangs that
+          // bypass page.goto's own 45s (e.g. cgc/sitemap-style pages
+          // that load HTML then never settle). If the inner capture
+          // exceeds this, we abandon it and move on.
+          const result = await Promise.race([
+            capture({
+              url: next.url,
+              slug: childSlug,
+              siteSlug,
+              pageType: next.pageType,
+            }),
+            new Promise<never>((_, reject) =>
+              setTimeout(
+                () => reject(new Error("capture timed out (120s)")),
+                120_000,
+              ),
+            ),
+          ]);
           await persistCapture(result, publish ? { status: "published" } : {});
           captured.push({
             url: next.url,
