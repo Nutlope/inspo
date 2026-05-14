@@ -21,7 +21,7 @@ import {
 import { stabilize } from "./stabilize.js";
 import { extractComponents } from "./components.js";
 import { getDb, schema, hasDatabase } from "@inspo/db";
-import { eq, sql, desc } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 type Target = { slug: string; sourceUrl: string };
 
@@ -40,27 +40,31 @@ async function selectTargets(opts: {
     return rows;
   }
   if (opts.top) {
-    // Top-N sites by number of captured pages — i.e. the sites where
-    // multi-page exists and the components are most useful.
-    const rows = await db
+    // Top-N SITES by captured-page-count. We backfill components on the
+    // HOMEPAGE of each (slug == site_slug) — that's the canonical surface
+    // for /components tiles. Other pages of the same site can get their
+    // own scan later if needed.
+    const homepages = await db
       .select({
         slug: schema.screens.slug,
         sourceUrl: schema.screens.sourceUrl,
-        pageCount: sql<number>`count(*) over (partition by site_slug)::int`,
+        pageCount: sql<number>`(
+          SELECT count(*)::int FROM screens s2
+          WHERE s2.site_slug = screens.site_slug AND s2.status = 'published'
+        )`,
       })
       .from(schema.screens)
-      .where(eq(schema.screens.status, "published"))
-      .orderBy(desc(sql`count(*) over (partition by site_slug)`));
-    // Dedup by slug, take first N
-    const seen = new Set<string>();
-    const out: Target[] = [];
-    for (const r of rows) {
-      if (seen.has(r.slug)) continue;
-      seen.add(r.slug);
-      out.push({ slug: r.slug, sourceUrl: r.sourceUrl });
-      if (out.length >= opts.top) break;
-    }
-    return out;
+      .where(
+        and(
+          eq(schema.screens.status, "published"),
+          sql`slug = site_slug`,
+        ),
+      );
+    homepages.sort((a, b) => b.pageCount - a.pageCount);
+    return homepages.slice(0, opts.top).map((r) => ({
+      slug: r.slug,
+      sourceUrl: r.sourceUrl,
+    }));
   }
   // --all
   const rows = await db
