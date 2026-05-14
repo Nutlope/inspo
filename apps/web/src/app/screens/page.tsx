@@ -91,6 +91,7 @@ export default async function ArchivePage({
     siteSlug: s.siteSlug,
     pageType: s.pageType,
     pageCount: s.pageCount,
+    components: [],
   }));
 
   return (

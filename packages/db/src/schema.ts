@@ -31,6 +31,28 @@ export type TypeRampEntry = {
   letterSpacing: string; // raw CSS, e.g. "-0.02em"
 };
 
+/** One detected component region on a page. Page-absolute pixel coords
+ * (top includes scrollY so we can crop the full-page PNG directly).  */
+export type ComponentRegion = {
+  type:
+    | "nav"
+    | "hero"
+    | "pricing"
+    | "features"
+    | "cta"
+    | "testimonial"
+    | "logo-cloud"
+    | "footer"
+    | "faq"
+    | "stat";
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  /** Optional one-line label (e.g. h1 text, link aria-label) for ranking. */
+  label?: string;
+};
+
 /* ───────────────────────── screens ───────────────────────── */
 
 export const screens = pgTable(
@@ -92,6 +114,16 @@ export const screens = pgTable(
       .default({}),
     colorWords: jsonb("color_words").$type<ColorWord[]>().notNull().default([]),
 
+    // Phase 8 — component-level regions extracted from the live DOM at
+    // capture-time. Each entry has page-absolute pixel coords matching
+    // the full-page PNG, so /api/component/[slug]/[idx] can crop it via
+    // sharp without re-rendering anything. Empty array on legacy rows
+    // until the components-only backfill runs.
+    components: jsonb("components")
+      .$type<ComponentRegion[]>()
+      .notNull()
+      .default([]),
+
     // Image asset keys (R2 paths or absolute URLs)
     heroImageKey: text("hero_image_key"),
     fullImageKey: text("full_image_key"),
@@ -112,6 +144,7 @@ export const screens = pgTable(
     capturedIdx: index("screens_captured_at_idx").on(t.capturedAt),
     macroIdx: index("screens_macrostructure_idx").on(t.macrostructure),
     siteSlugIdx: index("screens_site_slug_idx").on(t.siteSlug),
+    pageTypeIdx: index("screens_page_type_idx").on(t.pageType),
     // Approximate-NN indexes for vectors — created in raw SQL migration
     // since drizzle-kit's vector index support is still maturing.
   }),

@@ -35,6 +35,29 @@ export type DesignSystem = {
   colorWords: ColorWord[];
 };
 
+/** Phase 8 — one detected component region on a captured page.
+ *  Coords are page-absolute (top accounts for scroll). */
+export type ComponentType =
+  | "nav"
+  | "hero"
+  | "pricing"
+  | "features"
+  | "cta"
+  | "testimonial"
+  | "logo-cloud"
+  | "footer"
+  | "faq"
+  | "stat";
+
+export type ComponentRegion = {
+  type: ComponentType;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  label?: string;
+};
+
 export type PageType =
   | "landing"
   | "pricing"
@@ -76,6 +99,9 @@ export type ScreenSummary = {
    *  equals slug and pageType = 'landing'. */
   siteSlug: string;
   pageType: PageType;
+  /** Phase 8 — detected component regions (page-absolute coords).
+   *  Empty array on legacy rows until extract:components runs. */
+  components: ComponentRegion[];
 };
 
 export type SearchResult = ScreenSummary & {

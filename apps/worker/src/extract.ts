@@ -13,6 +13,7 @@ import { Vibrant } from "node-vibrant/node";
 import type { Page } from "playwright";
 import type { TypeRampEntry } from "@inspo/shared";
 import type { ExtractedMetadata } from "./types";
+import { extractComponents } from "./components.js";
 
 const gen = (c: Clues, needle: string) =>
   Boolean(c.metaGenerator && c.metaGenerator.toLowerCase().includes(needle));
@@ -126,6 +127,17 @@ export async function extract(
       : null;
   const cssVariables = ds.cssVariables ?? {};
 
+  // Component-region scan (page-absolute coords). Best-effort: if a
+  // detector throws we still ship the rest of the metadata.
+  let components: ExtractedMetadata["components"] = [];
+  try {
+    components = await extractComponents(page);
+  } catch (err) {
+    console.warn(
+      `  ⚠ component scan failed: ${err instanceof Error ? err.message : err}`,
+    );
+  }
+
   return {
     palette,
     fonts: inPage.fonts,
@@ -140,6 +152,7 @@ export async function extract(
       containerWidth,
       cssVariables,
     },
+    components,
   };
 }
 

@@ -72,6 +72,7 @@ export async function persistCapture(
     containerWidth: result.meta.designSystem?.containerWidth ?? null,
     cssVariables: result.meta.designSystem?.cssVariables ?? {},
     colorWords: result.tags?.colorWords ?? [],
+    components: result.meta.components ?? [],
     // Image keys are written for traceability, but the gallery serves
     // images via /api/placeholder/<slug>/<variant> which prefers a real
     // disk PNG when present. So these file:// URLs are bookkeeping only.

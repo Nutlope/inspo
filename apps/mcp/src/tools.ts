@@ -8,6 +8,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
   findCollection,
+  findComponents,
   findScreen,
   findSimilar,
   getAllCollections,
@@ -224,6 +225,71 @@ export function registerTools(server: McpServer) {
   );
 
   /* ────────────── get_collection ────────────── */
+  /* ────────────── find_components ────────────── */
+  server.registerTool(
+    "find_components",
+    {
+      description:
+        "Find specific UI components (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat) cropped from real sites. Returns image URLs the agent can fetch — perfect for 'show me 12 pricing cards' or 'study how 8 sites do their CTAs'.",
+      inputSchema: {
+        type: z
+          .enum([
+            "hero",
+            "pricing",
+            "features",
+            "cta",
+            "nav",
+            "footer",
+            "testimonial",
+            "logo-cloud",
+            "faq",
+            "stat",
+          ])
+          .describe("Which component type to find"),
+        industry: z
+          .enum(INDUSTRIES as unknown as [string, ...string[]])
+          .optional(),
+        macrostructure: z
+          .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
+          .optional(),
+        mode: z.enum(MODES as unknown as [string, ...string[]]).optional(),
+        limit: z.number().int().min(1).max(40).default(12),
+      },
+    },
+    async (args) => {
+      const hits = await findComponents({
+        type: args.type as Parameters<typeof findComponents>[0]["type"],
+        industry: args.industry as Industry | undefined,
+        macrostructure: args.macrostructure as Macrostructure | undefined,
+        mode: args.mode as Mode | undefined,
+        limit: args.limit,
+      });
+      const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
+      return asTextContent({
+        type: args.type,
+        count: hits.length,
+        components: hits.map((h) => ({
+          siteSlug: h.screen.siteSlug,
+          siteTitle: h.screen.title,
+          siteHost: (() => {
+            try {
+              return new URL(h.screen.sourceUrl).host.replace(/^www\./, "");
+            } catch {
+              return h.screen.sourceUrl;
+            }
+          })(),
+          imageUrl: `${base}/api/component/${h.screen.slug}/${h.idx}`,
+          siteUrl: `${base}/sites/${h.screen.siteSlug}`,
+          width: h.region.width,
+          height: h.region.height,
+          label: h.region.label ?? null,
+          palette: h.screen.palette.slice(0, 5),
+          mode: h.screen.mode,
+        })),
+      });
+    },
+  );
+
   server.registerTool(
     "get_collection",
     {

@@ -26,8 +26,8 @@ const EMPTY_DESIGN_SYSTEM: DesignSystem = {
   colorWords: [],
 };
 
-type RawFixture = Omit<ScreenSummary, "designSystem" | "siteSlug" | "pageType"> &
-  Partial<Pick<ScreenSummary, "designSystem" | "siteSlug" | "pageType">>;
+type RawFixture = Omit<ScreenSummary, "designSystem" | "siteSlug" | "pageType" | "components"> &
+  Partial<Pick<ScreenSummary, "designSystem" | "siteSlug" | "pageType" | "components">>;
 
 const _screens: RawFixture[] = [
   {
@@ -437,6 +437,7 @@ export const screens: ScreenSummary[] = _screens.map((s) => ({
   designSystem: s.designSystem ?? EMPTY_DESIGN_SYSTEM,
   siteSlug: s.siteSlug ?? s.slug,
   pageType: s.pageType ?? "landing",
+  components: s.components ?? [],
 }));
 
 export const collections: Collection[] = [
