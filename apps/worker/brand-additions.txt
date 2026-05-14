@@ -1,0 +1,75 @@
+# Phase 9 additions — gallery-tier brands with full design teams.
+# These are URLs (not slugs) because the sites aren't in DB yet — the
+# worker will discover + capture homepages first, then multi-page.
+# Use: pnpm capture <url> --publish  (one-off)
+# or process via the seed runner.
+
+# Fintech (full design teams)
+https://cash.app
+https://www.wealthfront.com
+https://www.affirm.com
+https://www.klarna.com
+https://wise.com
+https://revolut.com
+https://n26.com
+https://chime.com
+https://step.com
+https://plaid.com
+https://twilio.com
+https://www.square.com
+
+# Consumer brands (top design)
+https://www.pinterest.com
+https://snap.com
+https://www.lululemon.com
+https://www.glossier.com
+https://www.thereformation.com
+https://www.aritzia.com
+https://www.warbyparker.com
+https://www.tracksmith.com
+https://www.madewell.com
+https://www.bonobos.com
+
+# Auto + EV
+https://www.tesla.com
+https://rivian.com
+https://www.volvocars.com
+https://lucidmotors.com
+https://www.audi.com
+
+# Wellness
+https://www.headspace.com
+https://www.calm.com
+https://oura.com
+
+# Dev tools / design tools
+https://railway.app
+https://render.com
+https://height.app
+https://www.pitch.com
+https://tome.app
+https://beautiful.ai
+https://penpot.app
+https://www.spline.design
+https://rive.app
+https://lottiefiles.com
+
+# Productivity (design-led)
+https://dayoneapp.com
+https://reflect.app
+https://tana.inc
+https://www.heptabase.com
+https://flomoapp.com
+https://www.craft.do
+https://things.app
+https://www.todoist.com
+
+# Music / creative
+https://www.ableton.com
+https://splice.com
+https://www.output.com
+
+# Cars + lifestyle
+https://www.porsche.com
+https://www.bmw.com
+https://www.lexus.com

@@ -9,6 +9,8 @@
     "capture": "tsx src/cli.ts capture",
     "capture:seed": "tsx src/seed.ts",
     "capture:retry": "tsx src/retry-failed.ts",
+    "capture:retry-urls": "tsx src/retry-urls.ts",
+    "capture:add-sites": "tsx src/add-sites.ts",
     "capture:site": "tsx src/capture-site.ts",
     "capture:sites": "tsx src/capture-sites.ts",
     "cleanup:titles": "tsx src/cleanup-titles.ts",
