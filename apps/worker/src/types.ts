@@ -1,5 +1,6 @@
 import type { Style, Industry, Component, Vibe, ColorWord, Macrostructure, Mode, HallmarkTheme } from "@inspo/taxonomy";
 import type { TypeRampEntry } from "@inspo/shared";
+import type { ComponentRegion } from "@inspo/db/schema";
 
 export type Viewport = "desktop" | "tablet" | "mobile";
 
@@ -35,6 +36,9 @@ export type ExtractedMetadata = {
   pageTitle: string;
   pageDescription: string;
   designSystem: ExtractedDesignSystem;
+  /** Phase 8 — page-absolute regions for hero / nav / pricing / footer / etc.
+   *  Crops served by sharp later. */
+  components: ComponentRegion[];
 };
 
 export type AITags = {

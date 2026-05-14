@@ -17,6 +17,7 @@
     "audit:cookie-strips": "tsx src/audit-cookie-strips.ts",
     "capture:recapture-flagged": "tsx src/recapture-flagged.ts",
     "capture:recapture-pilot": "tsx src/recapture-pilot.ts",
+    "extract:components": "tsx src/extract-components.ts",
     "dev:server": "tsx src/server.ts",
     "start:server": "tsx src/server.ts",
     "test:capture": "tsx src/cli.ts capture https://linear.app",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllScreens } from "@inspo/db";
 import { site } from "@/lib/site";
 import { CommandHint } from "@/components/command-hint";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export async function Masthead() {
   // Live count of published screens, mono badge next to the brand mark.
@@ -39,6 +40,7 @@ export async function Masthead() {
             </Link>
           ))}
           <CommandHint />
+          <ThemeToggle />
         </nav>
       </div>
     </header>

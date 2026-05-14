@@ -135,6 +135,7 @@ function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
     },
     siteSlug: row.siteSlug ?? row.slug,
     pageType: (row.pageType ?? "landing") as ScreenSummary["pageType"],
+    components: row.components ?? [],
   };
 }
 
@@ -184,8 +185,49 @@ export async function getAllScreens(
   // scale, swap to a pgvector clustering pass if it ever bites).
   const orderClause =
     sort === "random" ? sql`random()` : desc(screensT.capturedAt);
+
+  // Explicit column projection — SKIP cssVariables (40–80KB per row),
+  // embedding_image, embedding_text (1024-d float arrays). At 3,598
+  // rows the SELECT * version was hitting Neon's 64MB HTTP cap. The
+  // listing pages don't render cssVariables; the detail page can
+  // fetch it on-demand via findScreen.
   const rows = await db
-    .select()
+    .select({
+      id: screensT.id,
+      slug: screensT.slug,
+      title: screensT.title,
+      sourceUrl: screensT.sourceUrl,
+      designerCredit: screensT.designerCredit,
+      capturedAt: screensT.capturedAt,
+      siteSlug: screensT.siteSlug,
+      pageType: screensT.pageType,
+      description: screensT.description,
+      altText: screensT.altText,
+      searchKeywords: screensT.searchKeywords,
+      palette: screensT.palette,
+      fonts: screensT.fonts,
+      tech: screensT.tech,
+      mode: screensT.mode,
+      macrostructure: screensT.macrostructure,
+      hallmarkTheme: screensT.hallmarkTheme,
+      typeRamp: screensT.typeRamp,
+      spacingScale: screensT.spacingScale,
+      radiusScale: screensT.radiusScale,
+      containerWidth: screensT.containerWidth,
+      colorWords: screensT.colorWords,
+      components: screensT.components,
+      heroImageKey: screensT.heroImageKey,
+      fullImageKey: screensT.fullImageKey,
+      thumbImageKey: screensT.thumbImageKey,
+      status: screensT.status,
+      curatorNote: screensT.curatorNote,
+      // omitted: cssVariables, embeddingImage, embeddingText
+      cssVariables: sql<Record<string, string>>`'{}'::jsonb`.as(
+        "cssVariables",
+      ),
+      embeddingImage: sql<null>`NULL`.as("embeddingImage"),
+      embeddingText: sql<null>`NULL`.as("embeddingText"),
+    })
     .from(screensT)
     .where(and(...conditions))
     .orderBy(orderClause);
@@ -410,6 +452,55 @@ export async function getMultiPageSites(): Promise<
       Boolean(r.siteSlug),
     )
     .map((r) => ({ siteSlug: r.siteSlug, pageCount: r.pageCount }));
+}
+
+/* ──────────────────── components ──────────────────── */
+
+import type { ComponentRegion, ComponentType } from "@inspo/shared";
+
+export type ComponentHit = {
+  screen: ScreenSummary;
+  /** Position of the region within screen.components — the URL the crop
+   *  service reads. */
+  idx: number;
+  region: ComponentRegion;
+};
+
+/** Browse / search component regions. Filters apply to the parent
+ *  screen first; then we explode each screen's components and yield
+ *  one hit per matching region.
+ *
+ *  Optional filters:
+ *    type      — only this component type (hero | pricing | …)
+ *    macrostructure / mode / style / industry — screen-level filters
+ *
+ *  Ordering: latest captured first, then components in the order the
+ *  scanner emitted them (hero → pricing → footer …).  */
+export async function findComponents(opts: {
+  type?: ComponentType;
+  macrostructure?: Macrostructure;
+  mode?: Mode;
+  style?: Style;
+  industry?: Industry;
+  limit?: number;
+}): Promise<ComponentHit[]> {
+  const all = await getAllScreens({
+    macrostructure: opts.macrostructure,
+    mode: opts.mode,
+    style: opts.style,
+    industry: opts.industry,
+  });
+  const out: ComponentHit[] = [];
+  const limit = opts.limit ?? 60;
+  for (const s of all) {
+    s.components.forEach((region, idx) => {
+      if (opts.type && region.type !== opts.type) return;
+      if (out.length >= limit) return;
+      out.push({ screen: s, idx, region });
+    });
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 /* ──────────────────── curator queue ──────────────────── */
