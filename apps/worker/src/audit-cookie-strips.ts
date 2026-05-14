@@ -123,6 +123,8 @@ async function main() {
   const concurrency = Number(
     argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 6,
   );
+  const slugsArg = argv.find((a) => a.startsWith("--slugs="));
+  const slugFilter = slugsArg ? slugsArg.slice("--slugs=".length).split(",") : null;
 
   if (!hasDatabase()) {
     console.error("DATABASE_URL not set");
@@ -142,7 +144,7 @@ async function main() {
 
   // Only homepages — slug == site_slug. Skip pilot child captures (they
   // were recaptured with the new dismiss.ts earlier).
-  const rows = await db
+  const baseRows = await db
     .select({ slug: schema.screens.slug, title: schema.screens.title })
     .from(schema.screens)
     .where(
@@ -151,6 +153,9 @@ async function main() {
         sql`slug = site_slug`,
       ),
     );
+  const rows = slugFilter
+    ? baseRows.filter((r) => slugFilter.includes(r.slug))
+    : baseRows;
 
   console.log(`\n  cookie-strip audit · ${rows.length} homepages · apply=${apply}\n`);
 
