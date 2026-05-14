@@ -39,9 +39,6 @@ export function ScreenTile({
   const macroKey = screen.tags.macrostructure;
   const macro = macroKey ? MACROSTRUCTURE_LABELS[macroKey] : null;
 
-  const indexLabel =
-    typeof index === "number" ? String(index).padStart(3, "0") : screen.id;
-
   const src =
     variant === "thumb" ? screen.thumbUrl : screen.imageUrl;
 
@@ -110,7 +107,6 @@ export function ScreenTile({
         {showCaption && (
           <div className="mt-3 flex items-baseline justify-between gap-3">
             <p className="font-display text-lg leading-tight">
-              <span className="text-meta mr-2">{indexLabel}</span>
               <span className="transition-colors group-hover:text-[var(--color-link)]">
                 {screen.title}
               </span>
