@@ -198,8 +198,10 @@ export async function getAllScreens(
   // rows the SELECT * version was hitting Neon's 64MB HTTP cap. The
   // listing pages don't render cssVariables; the detail page can
   // fetch it on-demand via findScreen.
-  const rows = await db
-    .select({
+  let rows;
+  try {
+    rows = await db
+      .select({
       id: screensT.id,
       slug: screensT.slug,
       title: screensT.title,
@@ -238,6 +240,14 @@ export async function getAllScreens(
     .from(screensT)
     .where(and(...conditions))
     .orderBy(orderClause);
+  } catch (err) {
+    // Neon hiccup (data-transfer quota, connection drop). Fall back to
+    // the fixture set so every consumer page still ships something.
+    console.warn(
+      `[db] getAllScreens fell back to fixtures: ${err instanceof Error ? err.message : err}`,
+    );
+    return applyFiltersFixture(screensFixture, filter);
+  }
 
   // For now, tags are not normalized in returned shape — but since we
   // store them in jsonb on the row in the seed flow, return as-is.
