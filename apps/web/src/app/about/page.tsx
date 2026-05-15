@@ -56,6 +56,70 @@ export default function AboutPage() {
             </p>
           </div>
 
+          {/* Three-layer positioning — the real moat ─────────────── */}
+          <div className="space-y-6 border-t rule pt-12">
+            <p className="text-meta">Why one server</p>
+            <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
+              <p>
+                Inspo ships three things at once, addressable from one
+                MCP server:
+              </p>
+              <ol className="list-none space-y-4 pl-0">
+                <li>
+                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                    01 ·
+                  </span>{" "}
+                  <strong className="text-[var(--color-fg)]">
+                    Visual range
+                  </strong>{" "}
+                  — a thousand hand-curated captures across three
+                  viewports each. Palettes, type ramps, tech fingerprints
+                  extracted. The agent gets real designs to study, not
+                  generative slop to remix.
+                </li>
+                <li>
+                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                    02 ·
+                  </span>{" "}
+                  <strong className="text-[var(--color-fg)]">
+                    Canonical code
+                  </strong>{" "}
+                  — twenty-eight Hallmark-stamped reference components.
+                  Each one demonstrates a named macrostructure or
+                  archetype, rendered live at{" "}
+                  <Link
+                    href="/components"
+                    className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
+                  >
+                    /components
+                  </Link>
+                  .
+                </li>
+                <li>
+                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                    03 ·
+                  </span>{" "}
+                  <strong className="text-[var(--color-fg)]">
+                    Design systems on tap
+                  </strong>{" "}
+                  — every captured site has a{" "}
+                  <code className="font-mono text-[0.95em]">
+                    DESIGN.md
+                  </code>{" "}
+                  extracted from its DOM. Semantic palette roles, type
+                  ramp by role, spacing scale, CSS variables, container
+                  width.
+                </li>
+              </ol>
+              <p>
+                Other tools ship one of these. Inspo ships all three,
+                queryable from one place — which is what makes the
+                combination useful to an agent that doesn&rsquo;t read
+                your design system the way a human would.
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-6 border-t rule pt-12">
             <p className="text-meta">Self-host & contribute</p>
             <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">

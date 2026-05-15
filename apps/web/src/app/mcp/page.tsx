@@ -69,10 +69,12 @@ export default function MCPPage() {
             Your agent doesn&rsquo;t have taste.{" "}
             <em className="italic">Lend it some.</em>
           </h1>
-          <p className="mt-10 max-w-[58ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">
-            Install Inspo once and Claude Code, Cursor, Codex, and Zed get a
-            handful of new tools. Your agent can study real production sites —
-            palettes, typefaces, components — before it writes anything.
+          <p className="mt-10 max-w-[64ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">
+            Install once and Claude Code, Cursor, Codex, and Zed get a
+            handful of new tools. Your agent gets three things from one
+            server: <strong className="text-[var(--color-fg)]">a thousand real screenshots</strong> to study,{" "}
+            <strong className="text-[var(--color-fg)]">a curated set of reference components</strong> to copy from, and a{" "}
+            <strong className="text-[var(--color-fg)]"><code className="font-mono text-[0.95em]">DESIGN.md</code> per site</strong> with palette roles, type ramp, and spacing scale already extracted.
           </p>
         </div>
       </section>

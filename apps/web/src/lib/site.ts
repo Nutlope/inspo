@@ -2,9 +2,8 @@ export const site = {
   name: "Inspo",
   marker: "Nº",
   tagline: "A thousand websites worth studying.",
-  // bumped 2026-05-15 to force a deploy with blob URLs live.
   description:
-    "A thousand real production sites, filed by hand. Browse here, or query the catalogue from your coding agent over MCP.",
+    "A reference layer for AI coding agents — a thousand real production sites, twenty-eight canonical reference components, and a DESIGN.md per site, all queryable from one MCP server.",
   issue: {
     number: "01",
     date: "04 — 2026",

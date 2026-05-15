@@ -69,11 +69,23 @@ export default async function HomePage() {
               <em className="italic">Lend it some.</em>
             </h2>
 
-            <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
-              One install and Claude Code, Cursor, Codex, and Zed get a new
-              tool — <code className="font-mono text-[0.95em] text-[var(--color-fg)]">search_screens</code>. Ask for
-              {" "}&ldquo;minimalist editorial agency portfolios&rdquo; and your
-              agent gets eight real ones to study before it writes a line.
+            <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
+              One install and Claude Code, Cursor, Codex, and Zed reach a
+              new server. Ask for &ldquo;minimalist editorial agency
+              portfolios&rdquo; — your agent gets eight real captures to
+              study, the canonical{" "}
+              <Link
+                href="/components"
+                className="underline-offset-4 hover:text-[var(--color-fg)] hover:underline"
+              >
+                reference components
+              </Link>{" "}
+              to copy from, and each site&rsquo;s{" "}
+              <code className="font-mono text-[0.95em] text-[var(--color-fg)]">
+                DESIGN.md
+              </code>{" "}
+              with palette roles + type ramp already extracted. Three
+              surfaces, one MCP server.
             </p>
 
             <pre className="mt-8 overflow-x-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] p-4 font-mono text-sm leading-relaxed">
