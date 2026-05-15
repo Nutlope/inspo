@@ -79,12 +79,15 @@ function placeholderUrl(slug: string, variant: "hero" | "full" | "thumb") {
 }
 
 /**
- * heroImageKey/fullImageKey/thumbImageKey are written by the worker as
- * `file://…` paths during dev (R2 URLs in prod). Browsers can't load
- * file:// — and the placeholder route already serves real PNGs from disk
- * if they exist — so we only honour the stored key when it's an actual
- * http(s) URL. This means dev "just works", and the moment we wire R2
- * the gallery starts serving from the CDN with no other code change.
+ * Compute the canonical image URL for a (slug, variant) pair.
+ *
+ *   1. Stored key on the row is an actual http(s) URL → use it
+ *      (used when individual rows have been one-off uploaded somewhere).
+ *   2. INSPO_BLOB_BASE_URL env var is set → deterministic Vercel-Blob
+ *      URL: `<base>/<slug>/<variant>.png`. Keys are stamped at upload
+ *      time by capture:upload-to-blob with deterministic paths.
+ *   3. Otherwise → /api/placeholder/<slug>/<variant>, which prefers a
+ *      real PNG on disk (dev) and falls back to an SVG palette gradient.
  */
 function resolveImageUrl(
   storedKey: string | null | undefined,
@@ -92,6 +95,10 @@ function resolveImageUrl(
   variant: "hero" | "full" | "thumb",
 ): string {
   if (storedKey && /^https?:\/\//i.test(storedKey)) return storedKey;
+  const blobBase = process.env.INSPO_BLOB_BASE_URL;
+  if (blobBase) {
+    return `${blobBase.replace(/\/$/, "")}/${slug}/${variant}.png`;
+  }
   return placeholderUrl(slug, variant);
 }
 
