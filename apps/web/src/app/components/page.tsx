@@ -22,13 +22,13 @@ const TYPES: { type: ComponentType; label: string; hint: string }[] = [
   { type: "hero", label: "Heroes", hint: "Marquee · Stat-Led · Manifesto" },
   { type: "footer", label: "Footers", hint: "Colophon · Statement · Index" },
   { type: "cta", label: "CTAs", hint: "Quiet · Banded · Form-led" },
-  { type: "pricing", label: "Pricing", hint: "Plan comparisons & price cards" },
-  { type: "features", label: "Features", hint: "Bento grids, feature blocks" },
-  { type: "nav", label: "Nav bars", hint: "Top navigation rows" },
-  { type: "testimonial", label: "Testimonials", hint: "Quotes & social proof" },
-  { type: "logo-cloud", label: "Logo clouds", hint: "Trust strips" },
-  { type: "faq", label: "FAQ", hint: "Accordion question stacks" },
-  { type: "stat", label: "Stat strips", hint: "Big-number rows" },
+  { type: "pricing", label: "Pricing", hint: "Three-card · Toggle · Table" },
+  { type: "features", label: "Features", hint: "Bento · Triplet · Alternating" },
+  { type: "nav", label: "Nav bars", hint: "Inline · Pill · Marginal" },
+  { type: "testimonial", label: "Testimonials", hint: "Pull · Mosaic · Cinematic" },
+  { type: "logo-cloud", label: "Logo clouds", hint: "Strip · Marquee" },
+  { type: "faq", label: "FAQ", hint: "Accordion · Two-column · Numbered" },
+  { type: "stat", label: "Stat strips", hint: "Row · Single hero" },
 ];
 
 export default async function ComponentsIndex() {

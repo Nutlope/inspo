@@ -11,9 +11,28 @@
       { "type": "footer", "archetype": "Ft1 Index", "id": "list" },
       { "type": "cta", "archetype": "Typographic CTA", "id": "quiet" },
       { "type": "cta", "archetype": "Accent Band", "id": "banded" },
-      { "type": "cta", "archetype": "Inline Form", "id": "form-led" }
+      { "type": "cta", "archetype": "Inline Form", "id": "form-led" },
+      { "type": "pricing", "archetype": "Horizontal plan trio", "id": "three-card" },
+      { "type": "pricing", "archetype": "Cadence toggle", "id": "toggle" },
+      { "type": "pricing", "archetype": "Feature matrix", "id": "table" },
+      { "type": "features", "macrostructure": "Bento Grid", "id": "bento" },
+      { "type": "features", "archetype": "Process triplet", "id": "numbered-triplet" },
+      { "type": "features", "archetype": "Vertical stack with side flip", "id": "alternating" },
+      { "type": "nav", "archetype": "N1 Inline", "id": "inline" },
+      { "type": "nav", "archetype": "N5 Floating pill", "id": "floating-pill" },
+      { "type": "nav", "archetype": "N7 Marginal", "id": "marginal" },
+      { "type": "testimonial", "archetype": "Single voice", "id": "pull-quote" },
+      { "type": "testimonial", "archetype": "Quote grid", "id": "mosaic" },
+      { "type": "testimonial", "archetype": "Dark band + credit roll", "id": "cinematic" },
+      { "type": "logo-cloud", "archetype": "Single-row strip", "id": "strip" },
+      { "type": "logo-cloud", "archetype": "Infinite scroll", "id": "marquee" },
+      { "type": "faq", "archetype": "Native <details> stack", "id": "accordion" },
+      { "type": "faq", "archetype": "Q-left, A-right", "id": "two-column" },
+      { "type": "faq", "archetype": "Ordered manifesto FAQ", "id": "numbered" },
+      { "type": "stat", "archetype": "4-stat row", "id": "row" },
+      { "type": "stat", "archetype": "One giant number", "id": "single-hero" }
     ],
     "theme": "Inspo-paper (existing project tokens)",
-    "brief": "Populate /components with Hallmark-disciplined reference set"
+    "brief": "Full reference set — 28 components, 10 types, all Hallmark-stamped"
   }
 ]
