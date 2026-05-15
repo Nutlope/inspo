@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { Dateline } from "@/components/dateline";
 import { ScreensGrid } from "@/components/screens-grid";
 import { findByHostname, getAllScreens, getAllSites, isUrl } from "@inspo/db";
 
@@ -55,7 +54,6 @@ export default async function ArchivePage({
   // routes to /sites/[siteSlug] which expands to all captured pages.
   const allSites = await getAllSites();
   const allScreens = await getAllScreens();
-  const totalCount = allSites.length;
   const noUrlMatch = Boolean(
     params.q && isUrl(params.q) && allScreens.every((s) => !s.sourceUrl.includes(params.q!)),
   );
@@ -98,15 +96,11 @@ export default async function ArchivePage({
 
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
-      {/* Header — single airy strip ─────────────────────────── */}
+      {/* Header — search-only, airy ──────────────────────────── */}
       <section className="pt-10 pb-8 sm:pt-14">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <div className="lg:col-span-2">
-            <Dateline label="The archive" />
-          </div>
-          <div className="lg:col-span-10 space-y-4">
-            <p className="text-meta">{totalCount.toLocaleString()} sites · filed by hand</p>
-            <div className="max-w-[40rem]">
+          <div className="lg:col-span-12 space-y-4">
+            <div className="max-w-[48rem]">
               <SearchBox defaultValue={params.q ?? ""} />
             </div>
             {noUrlMatch && (
@@ -149,16 +143,37 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
         focus-within:border-[var(--color-link)]
       "
     >
-      <span aria-hidden className="font-mono text-sm text-[var(--color-fg-muted)]">
-        ⌕
+      <span
+        aria-hidden
+        className="
+          shrink-0 inline-flex
+          text-[var(--color-fg-muted)]
+          transition-colors duration-200
+          group-focus-within:text-[var(--color-link)]
+        "
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
       </span>
       <input
         type="search"
         name="q"
         defaultValue={defaultValue}
-        placeholder="search"
+        placeholder="search styles, brands, fonts — or paste a URL"
         autoComplete="off"
-        className="flex-1 min-w-0 bg-transparent outline-none font-mono text-sm placeholder:text-[var(--color-fg-muted)]"
+        className="flex-1 min-w-0 bg-transparent outline-none font-mono text-base placeholder:text-[var(--color-fg-muted)]"
       />
     </form>
   );

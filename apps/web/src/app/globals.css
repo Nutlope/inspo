@@ -273,3 +273,65 @@ textarea:focus-visible {
     animation: none;
   }
 }
+
+/* ─── ⌘K palette · group rhythm ────────────────────────────
+   cmdk gives us [cmdk-group] wrappers and [cmdk-group-heading]
+   labels with no default styling. The defaults read as shouty —
+   too much top margin, plain text. Replace with a small lowercase
+   mono caption, faint colour, hairline rule to the right so each
+   section reads like a magazine sub-deck rather than a label.
+*/
+[cmdk-group] {
+  padding: 0;
+}
+[cmdk-group]:not(:first-child) {
+  margin-top: 6px;
+}
+[cmdk-group-heading] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: color-mix(in oklab, var(--color-fg-muted) 75%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+[cmdk-group-heading]::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: color-mix(in oklab, var(--color-border) 60%, transparent);
+}
+[cmdk-group]:first-child > [cmdk-group-heading] {
+  padding-top: 6px;
+}
+/* When the active item is in a group, give the heading a hint of
+   accent so the eye knows where it is. Subtle — about a 10% tint. */
+[cmdk-group]:has([aria-selected="true"]) > [cmdk-group-heading] {
+  color: color-mix(in oklab, var(--color-link) 75%, var(--color-fg-muted));
+}
+
+/* ─── MCP page · section labels ───────────────────────────
+   The thin labels in the left rail of the MCP page were too quiet —
+   the page is the project's elevator pitch and these need to catch
+   the eye. Same mono caption typography as .text-meta but with full
+   foreground contrast: ink on light, pure white on dark. Slightly
+   wider tracking so they read as section markers, not body copy.
+*/
+.mcp-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-fg);
+}
+:root.dark .mcp-section-label {
+  color: #ffffff;
+}

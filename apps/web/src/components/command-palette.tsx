@@ -208,8 +208,24 @@ export function CommandPalette() {
         label="Command palette"
       >
         <div className="relative flex items-center border-b rule">
-          <span aria-hidden className="pl-5 pr-3 text-[var(--color-fg-muted)]">
-            ⌕
+          <span
+            aria-hidden
+            className="inline-flex shrink-0 pl-5 pr-3 text-[var(--color-fg-muted)]"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
           </span>
           <Command.Input
             value={query}
@@ -228,7 +244,7 @@ export function CommandPalette() {
 
           {/* Saved */}
           {query === "" && savedSites.length > 0 && (
-            <Command.Group heading="Saved">
+            <Command.Group heading="saved">
               {savedSites.map((e) => (
                 <SiteRow
                   key={`saved-${e.slug}`}
@@ -244,7 +260,7 @@ export function CommandPalette() {
 
           {/* Recent */}
           {query === "" && recentSites.length > 0 && (
-            <Command.Group heading="Recent">
+            <Command.Group heading="recent">
               {recentSites.map((e) => (
                 <SiteRow
                   key={`recent-${e.slug}`}
@@ -259,7 +275,7 @@ export function CommandPalette() {
           )}
 
           {/* Navigation */}
-          <Command.Group heading="Navigation">
+          <Command.Group heading="navigate">
             {STATIC_NAV.map((n) => (
               <Command.Item
                 key={n.href}
@@ -276,7 +292,7 @@ export function CommandPalette() {
           </Command.Group>
 
           {/* Quick actions */}
-          <Command.Group heading="Actions">
+          <Command.Group heading="actions">
             {QUICK_ACTIONS.map((a) => (
               <Command.Item
                 key={a.action}
@@ -298,7 +314,7 @@ export function CommandPalette() {
               loading sites…
             </div>
           ) : (
-            <Command.Group heading={`Sites · ${index.length}`}>
+            <Command.Group heading="sites">
               {index.map((e) => (
                 <SiteRow
                   key={e.slug}
