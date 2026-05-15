@@ -19,16 +19,16 @@ export const metadata: Metadata = {
 };
 
 const TYPES: { type: ComponentType; label: string; hint: string }[] = [
-  { type: "hero", label: "Heroes", hint: "Marquee · Stat-Led · Manifesto" },
-  { type: "footer", label: "Footers", hint: "Colophon · Statement · Index" },
-  { type: "cta", label: "CTAs", hint: "Quiet · Banded · Form-led" },
-  { type: "pricing", label: "Pricing", hint: "Three-card · Toggle · Table" },
-  { type: "features", label: "Features", hint: "Bento · Triplet · Alternating" },
-  { type: "nav", label: "Nav bars", hint: "Inline · Pill · Marginal" },
-  { type: "testimonial", label: "Testimonials", hint: "Pull · Mosaic · Cinematic" },
-  { type: "logo-cloud", label: "Logo clouds", hint: "Strip · Marquee" },
-  { type: "faq", label: "FAQ", hint: "Accordion · Two-column · Numbered" },
-  { type: "stat", label: "Stat strips", hint: "Row · Single hero" },
+  { type: "hero", label: "Heroes", hint: "Marquee · Stat-Led · Manifesto · …" },
+  { type: "footer", label: "Footers", hint: "Colophon · Statement · Index · …" },
+  { type: "cta", label: "CTAs", hint: "Quiet · Banded · Form-led · …" },
+  { type: "pricing", label: "Pricing", hint: "Three-card · Toggle · Table · …" },
+  { type: "features", label: "Features", hint: "Bento · Triplet · Workbench · …" },
+  { type: "nav", label: "Nav bars", hint: "Inline · Pill · Mega · …" },
+  { type: "testimonial", label: "Testimonials", hint: "Pull · Mosaic · Cinematic · …" },
+  { type: "logo-cloud", label: "Logo clouds", hint: "Strip · Marquee · Grid · …" },
+  { type: "faq", label: "FAQ", hint: "Accordion · Search-led · Tabs · …" },
+  { type: "stat", label: "Stat strips", hint: "Row · Bar · Annotated · …" },
 ];
 
 export default async function ComponentsIndex() {
@@ -93,21 +93,31 @@ export default async function ComponentsIndex() {
                       ${populated ? "group-hover:scale-[1.012]" : "opacity-60"}
                     `}
                   >
-                    {populated && t.firstRef ? (
-                      /* Mini live render — scaled-down view of the first
-                         reference. transform: scale flattens it into a
-                         miniature; pointer-events-none so the tile itself
-                         remains the click target. */
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 origin-top-left"
-                        style={{
-                          transform: "scale(0.32)",
-                          width: "calc(100% / 0.32)",
-                          height: "calc(100% / 0.32)",
-                        }}
-                      >
-                        <t.firstRef.Component />
+                    {populated ? (
+                      /* Typographic preview — calmer than rendering the
+                         live component at 32% scale (which used to mean
+                         10 components on one page, including a marquee
+                         animation looping). Surfaces the count + the
+                         macrostructure of the first reference so the
+                         visitor can read what's in the type at a glance. */
+                      <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-7">
+                        <p className="text-meta">
+                          {t.refCount} reference{t.refCount === 1 ? "" : "s"}
+                        </p>
+                        <p
+                          className="font-display leading-[0.95] tracking-tight text-balance"
+                          style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
+                        >
+                          {t.label}
+                          <span aria-hidden className="text-[var(--color-link)]">.</span>
+                        </p>
+                        {t.firstRef ? (
+                          <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                            {t.firstRef.macro}
+                          </p>
+                        ) : (
+                          <span aria-hidden />
+                        )}
                       </div>
                     ) : t.firstCrop ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
