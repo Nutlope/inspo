@@ -12,6 +12,7 @@
     "@inspo/db": "workspace:*",
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
+    "@vercel/blob": "^2.3.3",
     "better-auth": "^1.6.9",
     "cmdk": "^1.1.1",
     "drizzle-orm": "^0.45.2",
