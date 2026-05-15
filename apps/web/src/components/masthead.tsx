@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { CommandHint } from "@/components/command-hint";
+import { NavLink } from "@/components/nav-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Masthead() {
@@ -21,13 +22,7 @@ export function Masthead() {
           className="flex items-center gap-5 sm:gap-7"
         >
           {site.nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-meta transition-colors hover:text-[var(--color-link)]"
-            >
-              {item.label}
-            </Link>
+            <NavLink key={item.href} href={item.href} label={item.label} />
           ))}
 
           {/* Utilities cluster — tighter gap than the nav links above

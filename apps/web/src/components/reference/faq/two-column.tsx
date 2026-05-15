@@ -21,8 +21,8 @@ const QA = [
     a: "Both, actually. The MCP wraps the same query surface a REST API exposes — the value is in the catalogue, not the protocol.",
   },
   {
-    q: "How is this different from Mobbin?",
-    a: "Mobbin is a research tool for designers; you read it. Inspo is a reference layer for coding agents; they call it.",
+    q: "Who is this for?",
+    a: "Designers and the coding agents they work alongside. The website is for humans — browse, study, copy a DESIGN.md. The MCP is for agents — same catalogue, addressed by tool calls.",
   },
   {
     q: "What about copyright?",

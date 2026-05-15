@@ -8,7 +8,7 @@ Inspo ships three things at once, addressable from one server:
 2. **Canonical code** — 28 Hallmark-disciplined reference components (heroes, pricing, footers, CTAs, features, nav, testimonials, logo clouds, FAQ, stats). Every example demonstrates one named macrostructure or archetype, stamped with its design provenance.
 3. **Design systems on tap** — every captured site gets a `DESIGN.md` extracted from its DOM — palette as semantic roles, type ramp by role, spacing scale, radius scale, CSS variables, container width. Your agent merges these tokens with the reference structures and the output looks like the brief, not like Inspo.
 
-Mobbin has screenshots. Refero has tokens. Storybook galleries have code. **Inspo has all three, queryable from a single MCP surface** — which is what makes the combination useful to an agent that doesn't read your design system the way a human would.
+Most reference tools ship one of these. Inspo ships all three, queryable from a single MCP surface — which is what makes the combination useful to an agent that doesn't read your design system the way a human would.
 
 ## Install for your agent
 
