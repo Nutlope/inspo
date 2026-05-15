@@ -34,13 +34,26 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
       <span
         aria-hidden
         className="
-          font-mono text-base leading-none
+          shrink-0 inline-flex
           text-[var(--color-fg-muted)]
           transition-colors duration-200
           group-focus-within:text-[var(--color-link)]
         "
       >
-        ⌕
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
       </span>
 
       <input

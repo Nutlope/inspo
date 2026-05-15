@@ -8,10 +8,8 @@ import {
 } from "@inspo/db";
 import { ScreenTile } from "@/components/screen-tile";
 
-export async function generateStaticParams() {
-  const collections = await getAllCollections();
-  return collections.map((c) => ({ slug: c.slug }));
-}
+// Runtime-rendered.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

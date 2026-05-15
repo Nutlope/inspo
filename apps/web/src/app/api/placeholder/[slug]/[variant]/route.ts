@@ -17,12 +17,17 @@ import { findScreen, getPendingScreens } from "@inspo/db";
  * Images URL written into screensT.heroImageKey at capture time.
  */
 
-const CAPTURES_DIR = resolve(
+const CAPTURES_DIR =
   process.env.INSPO_CAPTURES_DIR ??
-    join(process.cwd(), "..", "worker", "captures"),
-);
+  resolve(join(process.cwd(), "..", "worker", "captures"));
+
+// Disable disk lookups in production — the captures dir doesn't ship
+// with Vercel deployments. The SVG placeholder branch handles every
+// row gracefully until R2/Blob is wired up.
+const DISK_ENABLED = process.env.NODE_ENV !== "production";
 
 function findCaptureFile(slug: string, variant: Variant): string | null {
+  if (!DISK_ENABLED) return null;
   // Variant maps: hero/full come from the desktop viewport; thumb reuses
   // the desktop hero (browser scales it).
   const dir = join(CAPTURES_DIR, slug);

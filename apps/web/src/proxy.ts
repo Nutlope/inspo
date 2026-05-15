@@ -7,23 +7,22 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED = ["/dashboard", "/admin"];
+const PROTECTED = ["/admin"];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (!PROTECTED.some((p) => pathname.startsWith(p))) return NextResponse.next();
 
-  // Better Auth sets these cookie names by default:
-  //   "better-auth.session_token" (or "__Secure-…" in prod over https)
+  // Better Auth sets these cookie names by default.
   const hasSession =
     req.cookies.has("better-auth.session_token") ||
     req.cookies.has("__Secure-better-auth.session_token");
 
   if (!hasSession) {
+    // /signin is gone; bounce admin probers home.
     const url = req.nextUrl.clone();
-    url.pathname = "/signin";
-    url.searchParams.set("redirect", pathname);
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 
@@ -31,5 +30,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/admin/:path*"],
 };
