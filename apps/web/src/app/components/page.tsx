@@ -4,6 +4,8 @@ import { findComponents } from "@inspo/db";
 import type { ComponentType } from "@inspo/shared";
 import { Dateline } from "@/components/dateline";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Components",
   description:
