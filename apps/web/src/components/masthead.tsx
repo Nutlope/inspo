@@ -6,8 +6,15 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export async function Masthead() {
   // Live count of published screens, mono badge next to the brand mark.
-  // No telemetry, just the catalogue size.
-  const count = (await getAllScreens()).length;
+  // No telemetry, just the catalogue size. Wrapped in try/catch so a
+  // transient DB error doesn't fail every page render — the badge
+  // hides if the count can't be fetched.
+  let count: number | null = null;
+  try {
+    count = (await getAllScreens()).length;
+  } catch {
+    count = null;
+  }
 
   return (
     <header className="border-b rule">
@@ -21,12 +28,14 @@ export async function Masthead() {
             {site.name}
             <span className="text-[var(--color-link)]">.</span>
           </Link>
-          <span
-            aria-hidden
-            className="text-meta hidden text-[var(--color-fg-muted)] sm:inline"
-          >
-            Nº{count} · open source
-          </span>
+          {count !== null && (
+            <span
+              aria-hidden
+              className="text-meta hidden text-[var(--color-fg-muted)] sm:inline"
+            >
+              Nº{count} · open source
+            </span>
+          )}
         </div>
 
         <nav aria-label="Primary" className="flex items-center gap-5 sm:gap-8">
