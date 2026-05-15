@@ -16,7 +16,9 @@ import {
   isIndustry,
   isMacrostructure,
   type ColorWord,
+  type Industry,
   type Macrostructure,
+  type Style,
   type Vibe,
 } from "@inspo/taxonomy";
 import { ScreenTile } from "@/components/screen-tile";
@@ -164,6 +166,7 @@ export function ScreensGrid({
             param="industry"
             current={active.industry}
             onSelect={setFilter}
+            count={(v) => screens.filter((x) => x.tags.industry.includes(v as Industry)).length}
           />
           <FilterGroup
             label="Style"
@@ -171,6 +174,7 @@ export function ScreensGrid({
             param="style"
             current={active.style}
             onSelect={setFilter}
+            count={(v) => screens.filter((x) => x.tags.style.includes(v as Style)).length}
           />
           <FilterGroup
             label="Mood"
@@ -178,6 +182,7 @@ export function ScreensGrid({
             param="mood"
             current={active.mood}
             onSelect={setFilter}
+            count={(v) => screens.filter((x) => x.tags.vibe.includes(v as Vibe)).length}
           />
           <FilterGroup
             label="Color"
@@ -185,6 +190,10 @@ export function ScreensGrid({
             param="color"
             current={active.color}
             onSelect={setFilter}
+            count={(v) =>
+              screens.filter((x) => x.designSystem.colorWords.includes(v as ColorWord))
+                .length
+            }
           />
           <FilterGroup
             label="Macrostructure"
@@ -192,6 +201,7 @@ export function ScreensGrid({
             param="macro"
             current={active.macro}
             onSelect={setFilter}
+            count={(v) => screens.filter((x) => x.tags.macrostructure === v).length}
             formatLabel={(v) => MACROSTRUCTURE_LABELS[v as Macrostructure] ?? v}
           />
           <FilterGroup
@@ -200,6 +210,7 @@ export function ScreensGrid({
             param="mode"
             current={active.mode}
             onSelect={setFilter}
+            count={(v) => screens.filter((x) => x.mode === v).length}
           />
         </div>
       </aside>
@@ -263,6 +274,7 @@ function FilterGroup({
   param,
   current,
   onSelect,
+  count,
   formatLabel,
 }: {
   label: string;
@@ -270,8 +282,15 @@ function FilterGroup({
   param: keyof Filters;
   current?: string;
   onSelect: (param: keyof Filters, value: string | undefined) => void;
+  /** Returns the number of rows that match this option in the current dataset.
+   *  Chips with 0 matches are hidden; groups with no matching chips collapse. */
+  count?: (v: string) => number;
   formatLabel?: (v: string) => string;
 }) {
+  // Drop chips that have no matches in the current dataset. If none
+  // remain, hide the whole group.
+  const live = count ? options.filter((o) => count(o) > 0) : [...options];
+  if (live.length === 0) return null;
   return (
     <div className="space-y-3">
       <p className="text-meta">{label}</p>
@@ -281,7 +300,7 @@ function FilterGroup({
             All
           </FilterButton>
         </li>
-        {options.map((opt) => (
+        {live.map((opt) => (
           <li key={opt}>
             <FilterButton
               active={current === opt}

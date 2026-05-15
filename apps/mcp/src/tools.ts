@@ -21,12 +21,28 @@ import {
   MACROSTRUCTURES,
   MACROSTRUCTURE_LABELS,
   MODES,
+  VIBES,
+  COLOR_WORDS,
   isMacrostructure,
   type Style,
   type Industry,
   type Macrostructure,
   type Mode,
+  type Vibe,
+  type ColorWord,
 } from "@inspo/taxonomy";
+
+const PAGE_TYPES = [
+  "landing",
+  "pricing",
+  "features",
+  "auth",
+  "about",
+  "blog",
+  "changelog",
+  "docs",
+  "other",
+] as const;
 import { asTextContent, formatCollection, formatScreen } from "./format.js";
 import { lexicalSearch } from "./search.js";
 
@@ -47,11 +63,11 @@ export function registerTools(server: McpServer) {
         style: z
           .enum(STYLES as unknown as [string, ...string[]])
           .optional()
-          .describe("Filter to one visual style"),
+          .describe("Filter to one visual style (e.g. 'minimalism', 'editorial')"),
         industry: z
           .enum(INDUSTRIES as unknown as [string, ...string[]])
           .optional()
-          .describe("Filter to one industry"),
+          .describe("Filter to one industry (e.g. 'saas', 'fintech', 'portfolio')"),
         macrostructure: z
           .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional()
@@ -60,6 +76,20 @@ export function registerTools(server: McpServer) {
           .enum(MODES as unknown as [string, ...string[]])
           .optional()
           .describe("light or dark"),
+        vibe: z
+          .enum(VIBES as unknown as [string, ...string[]])
+          .optional()
+          .describe("Mood / vibe — 'calm', 'loud', 'luxe', 'technical', 'soft', etc."),
+        color: z
+          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+          .optional()
+          .describe("Color word — 'warm', 'cool', 'monochrome', 'neon', 'earthy'"),
+        pageType: z
+          .enum(PAGE_TYPES)
+          .optional()
+          .describe(
+            "Filter to a page kind: 'landing' (default homepages), 'pricing', 'features', 'auth', 'about', 'blog', 'changelog', 'docs', 'other'",
+          ),
         limit: z.number().int().min(1).max(20).default(8),
       },
     },
@@ -71,7 +101,22 @@ export function registerTools(server: McpServer) {
         mode: args.mode as Mode | undefined,
       });
 
-      const matched = lexicalSearch(screens, args.query, args.limit);
+      // Apply the new in-JS filters that the DB layer doesn't index.
+      let filtered = screens;
+      if (args.vibe) {
+        const v = args.vibe as Vibe;
+        filtered = filtered.filter((s) => s.tags.vibe.includes(v));
+      }
+      if (args.color) {
+        const c = args.color as ColorWord;
+        filtered = filtered.filter((s) => s.designSystem.colorWords.includes(c));
+      }
+      if (args.pageType) {
+        const p = args.pageType;
+        filtered = filtered.filter((s) => s.pageType === p);
+      }
+
+      const matched = lexicalSearch(filtered, args.query, args.limit);
       return asTextContent({
         query: args.query,
         filters: {
@@ -79,6 +124,9 @@ export function registerTools(server: McpServer) {
           industry: args.industry ?? null,
           macrostructure: args.macrostructure ?? null,
           mode: args.mode ?? null,
+          vibe: args.vibe ?? null,
+          color: args.color ?? null,
+          pageType: args.pageType ?? null,
         },
         count: matched.length,
         tip:
@@ -246,6 +294,10 @@ export function registerTools(server: McpServer) {
             "stat",
           ])
           .describe("Which component type to find"),
+        style: z
+          .enum(STYLES as unknown as [string, ...string[]])
+          .optional()
+          .describe("Filter the parent site's style"),
         industry: z
           .enum(INDUSTRIES as unknown as [string, ...string[]])
           .optional(),
@@ -253,22 +305,57 @@ export function registerTools(server: McpServer) {
           .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional(),
         mode: z.enum(MODES as unknown as [string, ...string[]]).optional(),
+        vibe: z
+          .enum(VIBES as unknown as [string, ...string[]])
+          .optional()
+          .describe("Mood — 'calm', 'loud', 'luxe', etc."),
+        color: z
+          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+          .optional()
+          .describe("Color word — 'warm', 'cool', 'monochrome', etc."),
+        pageType: z
+          .enum(PAGE_TYPES)
+          .optional()
+          .describe("Only components from this page kind (e.g. 'pricing')"),
         limit: z.number().int().min(1).max(40).default(12),
       },
     },
     async (args) => {
       const hits = await findComponents({
         type: args.type as Parameters<typeof findComponents>[0]["type"],
+        style: args.style as Style | undefined,
         industry: args.industry as Industry | undefined,
         macrostructure: args.macrostructure as Macrostructure | undefined,
         mode: args.mode as Mode | undefined,
         limit: args.limit,
       });
+      // In-JS filter for the axes findComponents doesn't index.
+      const vibe = args.vibe as Vibe | undefined;
+      const color = args.color as ColorWord | undefined;
+      const pageType = args.pageType as
+        | (typeof PAGE_TYPES)[number]
+        | undefined;
+      const filtered = hits.filter((h) => {
+        if (vibe && !h.screen.tags.vibe.includes(vibe)) return false;
+        if (color && !h.screen.designSystem.colorWords.includes(color))
+          return false;
+        if (pageType && h.screen.pageType !== pageType) return false;
+        return true;
+      });
       const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
       return asTextContent({
         type: args.type,
-        count: hits.length,
-        components: hits.map((h) => ({
+        filters: {
+          style: args.style ?? null,
+          industry: args.industry ?? null,
+          macrostructure: args.macrostructure ?? null,
+          mode: args.mode ?? null,
+          vibe: args.vibe ?? null,
+          color: args.color ?? null,
+          pageType: args.pageType ?? null,
+        },
+        count: filtered.length,
+        components: filtered.map((h) => ({
           siteSlug: h.screen.siteSlug,
           siteTitle: h.screen.title,
           siteHost: (() => {

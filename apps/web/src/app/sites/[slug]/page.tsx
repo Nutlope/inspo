@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { findSite, getMultiPageSites } from "@inspo/db";
+import { findSite } from "@inspo/db";
 import { PaletteStrip } from "@/components/palette-strip";
 import { TagPill } from "@/components/tag-pill";
-import { ScreenTile } from "@/components/screen-tile";
+import { SiteGallery } from "@/components/site-gallery";
 import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
-import type { ScreenSummary } from "@inspo/shared";
 
 // Runtime-rendered — pre-rendering 1k sites is wasteful at build time.
 export const dynamic = "force-dynamic";
@@ -25,18 +24,6 @@ export async function generateMetadata({
   };
 }
 
-const PAGE_TYPE_LABELS: Record<ScreenSummary["pageType"], string> = {
-  landing: "Landing",
-  pricing: "Pricing",
-  features: "Features",
-  auth: "Sign up & sign in",
-  about: "About",
-  blog: "Blog",
-  changelog: "Changelog",
-  docs: "Docs",
-  other: "Other",
-};
-
 export default async function SiteDetailPage({
   params,
 }: {
@@ -51,13 +38,6 @@ export default async function SiteDetailPage({
     ? MACROSTRUCTURE_LABELS[hero.tags.macrostructure as Macrostructure]
     : null;
 
-  // Group non-hero pages by pageType (preserves sort order from findSite).
-  const groups = new Map<ScreenSummary["pageType"], ScreenSummary[]>();
-  for (const page of site.pages) {
-    if (page.slug === hero.slug) continue;
-    if (!groups.has(page.pageType)) groups.set(page.pageType, []);
-    groups.get(page.pageType)!.push(page);
-  }
   const host = (() => {
     try {
       return new URL(site.sourceUrl).host.replace(/^www\./, "");
@@ -123,30 +103,13 @@ export default async function SiteDetailPage({
         </div>
       </div>
 
-      {/* Hero plate ─────────────────────────────────────────────── */}
-      <div className="mx-auto mt-12 max-w-[120rem] px-6 sm:mt-16 sm:px-10">
-        <Link href={`/screens/${hero.slug}`} className="group block">
-          <div className="overflow-hidden border rule">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={hero.imageUrl}
-              alt={hero.description}
-              className="h-auto w-full transition-transform duration-[280ms] ease-out group-hover:scale-[1.005]"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-          <p className="text-meta mt-3 flex items-baseline justify-between">
-            <span>Homepage — 1440 × 900</span>
-            <span className="transition-colors group-hover:text-[var(--color-link)]">
-              Open this page →
-            </span>
-          </p>
-        </Link>
-      </div>
+      {/* Hero plate + grouped sub-pages — all open in an in-page lightbox.
+          Arrow keys cycle between pages, Esc closes, URL deep-links via
+          ?page=<slug>. No route change while flipping through pages. */}
+      <SiteGallery hero={hero} pages={site.pages} />
 
       {/* Palette band — pulled from the homepage extraction ───────── */}
-      <div className="mx-auto mt-16 max-w-[120rem] border-y rule px-6 py-10 sm:px-10">
+      <div className="mx-auto max-w-[120rem] border-y rule px-6 py-10 sm:px-10">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <p className="text-meta lg:col-span-2">Brand palette</p>
           <div className="lg:col-span-10">
@@ -154,42 +117,6 @@ export default async function SiteDetailPage({
           </div>
         </div>
       </div>
-
-      {/* Pages grouped by type ─────────────────────────────────── */}
-      {groups.size > 0 ? (
-        <div className="mx-auto mt-20 max-w-[120rem] space-y-20 px-6 pb-24 sm:px-10">
-          {[...groups.entries()].map(([type, pages]) => (
-            <section key={type}>
-              <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-                <div className="lg:col-span-2">
-                  <p className="text-meta">{PAGE_TYPE_LABELS[type]}</p>
-                  <p className="text-meta mt-2">
-                    {pages.length} page{pages.length === 1 ? "" : "s"}
-                  </p>
-                </div>
-                <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:col-span-10 lg:grid-cols-3">
-                  {pages.map((p) => (
-                    <li key={p.slug}>
-                      <ScreenTile
-                        screen={p}
-                        variant="hero"
-                        showCaption
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <div className="mx-auto mt-16 max-w-[120rem] px-6 pb-24 sm:px-10">
-          <p className="text-meta">
-            Only the homepage is captured for this site. More pages may land in
-            the next discovery pass.
-          </p>
-        </div>
-      )}
     </div>
   );
 }
