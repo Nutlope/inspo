@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Dateline } from "@/components/dateline";
 import { findScreen } from "@inspo/db";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Use cases · MCP",
   description:

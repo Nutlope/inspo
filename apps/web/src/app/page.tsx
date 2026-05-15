@@ -1,5 +1,8 @@
 /* Hallmark · macrostructure: Marquee Hero */
 
+// Runtime-rendered — pre-rendering at build hits Neon hard.
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { ScreenTile } from "@/components/screen-tile";
 import { HomeSearch } from "@/components/home-search";

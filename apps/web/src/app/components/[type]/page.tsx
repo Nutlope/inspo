@@ -5,6 +5,8 @@ import { findComponents } from "@inspo/db";
 import type { ComponentType } from "@inspo/shared";
 import { Dateline } from "@/components/dateline";
 
+export const dynamic = "force-dynamic";
+
 const TYPE_LABELS: Record<ComponentType, string> = {
   hero: "Heroes",
   pricing: "Pricing",
@@ -32,10 +34,6 @@ const TYPE_HINTS: Record<ComponentType, string> = {
 };
 
 const TYPES = Object.keys(TYPE_LABELS) as ComponentType[];
-
-export function generateStaticParams() {
-  return TYPES.map((type) => ({ type }));
-}
 
 export async function generateMetadata({
   params,

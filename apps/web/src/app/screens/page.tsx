@@ -5,6 +5,8 @@ import { Dateline } from "@/components/dateline";
 import { ScreensGrid } from "@/components/screens-grid";
 import { findByHostname, getAllScreens, getAllSites, isUrl } from "@inspo/db";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Archive",
   description:

@@ -12,8 +12,12 @@
 import { NextResponse } from "next/server";
 import { getAllSites } from "@inspo/db";
 
-export const dynamic = "force-static";
-export const revalidate = 3600; // 1 hour
+// Runtime-rendered, but with edge-cache via Cache-Control. Was static
+// but Neon free-tier data transfer caps killed prerender of a 1k-row
+// query at build time. Cache-Control below keeps the request count
+// the same as a 1h static revalidate.
+export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type IndexEntry = {
   slug: string;
