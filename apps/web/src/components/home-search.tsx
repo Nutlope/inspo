@@ -114,7 +114,6 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
             relative z-10
             transition-transform duration-300 ease-out
             group-hover/submit:translate-x-0.5
-            group-focus-within:translate-x-0.5
           "
         >
           <path d="M5 12h14" />
