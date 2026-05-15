@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { findComponents } from "@inspo/db";
 import type { ComponentType } from "@inspo/shared";
-import { Dateline } from "@/components/dateline";
+import { getReferences } from "@/components/reference";
 
 export const dynamic = "force-dynamic";
 
@@ -21,10 +21,10 @@ const TYPE_LABELS: Record<ComponentType, string> = {
 };
 
 const TYPE_HINTS: Record<ComponentType, string> = {
-  hero: "Above-the-fold statements — the line everyone reads first.",
+  hero: "The line everyone reads first — and the macrostructure that frames it.",
   pricing: "Plan comparisons, price cards, billing toggles.",
   features: "Bento grids, feature trios, product blocks.",
-  cta: "Mid-page conversion sections — usually one or two big buttons.",
+  cta: "Mid-page conversion sections — earn loudness by being singular.",
   nav: "Top navigation rows.",
   footer: "Site colophons, link maps, fine print.",
   testimonial: "Customer quotes, reviews, social proof.",
@@ -58,7 +58,8 @@ export default async function ComponentTypePage({
   if (!TYPES.includes(rawType as ComponentType)) notFound();
   const type = rawType as ComponentType;
 
-  const hits = await findComponents({ type, limit: 120 });
+  const references = getReferences(type);
+  const crops = await findComponents({ type, limit: 60 });
   const label = TYPE_LABELS[type];
   const hint = TYPE_HINTS[type];
 
@@ -72,7 +73,10 @@ export default async function ComponentTypePage({
               ← Components
             </Link>
           </p>
-          <p className="text-meta mt-2">{hits.length} on file</p>
+          <p className="text-meta mt-2">
+            {references.length} reference{references.length === 1 ? "" : "s"}
+            {crops.length > 0 ? ` · ${crops.length} captured` : ""}
+          </p>
         </div>
         <div className="lg:col-span-10 space-y-4">
           <h1 className="font-display max-w-[24ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl">
@@ -82,15 +86,57 @@ export default async function ComponentTypePage({
         </div>
       </section>
 
-      {/* Grid ───────────────────────────────────────────────── */}
-      <section className="border-t rule pb-24 pt-10">
-        {hits.length === 0 ? (
-          <p className="text-meta py-20 text-center">
-            No examples extracted yet — backfill is still running.
-          </p>
-        ) : (
+      {/* References — Hallmark-disciplined live examples ───────── */}
+      {references.length > 0 && (
+        <section className="border-t rule pb-24 pt-16 space-y-24">
+          {references.map((ref, i) => (
+            <article key={ref.id} id={ref.id} className="space-y-6">
+              <header className="grid grid-cols-1 gap-y-3 lg:grid-cols-12 lg:gap-x-10">
+                <div className="lg:col-span-2">
+                  <p className="text-meta">
+                    {String(i + 1).padStart(2, "0")} ·{" "}
+                    <span className="text-[var(--color-fg)]">{ref.label}</span>
+                  </p>
+                </div>
+                <div className="lg:col-span-10">
+                  <p className="text-meta normal-case tracking-normal text-[var(--color-fg)]">
+                    {ref.macro}
+                  </p>
+                  <p className="mt-2 max-w-[60ch] text-[var(--color-fg-muted)]">
+                    {ref.note}
+                  </p>
+                </div>
+              </header>
+              <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
+                <div className="lg:col-span-12">
+                  {/* Live render. The example IS the artifact — no crop,
+                      no screenshot, no PNG. Designers can inspect, copy,
+                      and read hover behaviour in their devtools. */}
+                  <ref.Component />
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
+      )}
+
+      {/* Real captures — extracted crops from production sites.
+          Empty in production today (no component coords in the static
+          seed). Kept so when the backfill lands the grid populates
+          without code changes. */}
+      {crops.length > 0 && (
+        <section className="border-t rule pt-16 pb-24">
+          <div className="mb-10 grid grid-cols-1 gap-y-3 lg:grid-cols-12 lg:gap-x-10">
+            <div className="lg:col-span-2">
+              <p className="text-meta">From the archive</p>
+            </div>
+            <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)] lg:col-span-10">
+              The same pattern, cropped from real production sites.
+            </p>
+          </div>
+
           <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {hits.map((h) => (
+            {crops.map((h) => (
               <li key={`${h.screen.slug}-${h.idx}`}>
                 <Link
                   href={`/sites/${h.screen.siteSlug}`}
@@ -118,8 +164,16 @@ export default async function ComponentTypePage({
               </li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
+
+      {references.length === 0 && crops.length === 0 && (
+        <section className="border-t rule pb-24 pt-16">
+          <p className="text-meta py-20 text-center">
+            Nothing on file for {label.toLowerCase()} yet.
+          </p>
+        </section>
+      )}
     </div>
   );
 }
