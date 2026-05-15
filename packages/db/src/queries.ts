@@ -24,10 +24,26 @@ import {
   screens as screensT,
 } from "./schema";
 import {
-  screens as screensFixture,
+  screens as fixtureScreens,
   collections as collectionsFixture,
 } from "./fixtures";
 import { pendingScreens as pendingFixture } from "./pending-fixtures";
+import staticScreensJson from "./static-screens.json" with { type: "json" };
+
+/**
+ * Fallback set used when DATABASE_URL is missing OR the live Neon
+ * query throws (e.g. data-transfer quota exhausted on free tier).
+ *
+ * Prefers the static seed built from the local captures directory
+ * (3,779 real entries with blob-URL images, derived slugs/titles).
+ * Falls back to the 16-row demo fixtures if the static seed isn't
+ * present (running outside the monorepo build).
+ */
+const STATIC_AVAILABLE =
+  Array.isArray(staticScreensJson) && staticScreensJson.length > 0;
+const screensFixture = (STATIC_AVAILABLE
+  ? (staticScreensJson as unknown as typeof fixtureScreens)
+  : fixtureScreens);
 
 export type ScreenFilter = {
   style?: Style;
