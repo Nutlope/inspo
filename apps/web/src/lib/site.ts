@@ -2,6 +2,7 @@ export const site = {
   name: "Inspo",
   marker: "Nº",
   tagline: "A thousand websites worth studying.",
+  // bumped 2026-05-15 to force a deploy with blob URLs live.
   description:
     "A thousand real production sites, filed by hand. Browse here, or query the catalogue from your coding agent over MCP.",
   issue: {
