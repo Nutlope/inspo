@@ -81,7 +81,7 @@ export default function MCPPage() {
       <section className="border-t rule pt-12 pb-24">
         <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
-            <p className="text-meta">Install</p>
+            <p className="mcp-section-label">Install</p>
             <p className="text-meta mt-2 max-w-[18ch]">
               One command. Authenticates in the browser.
             </p>
@@ -119,7 +119,7 @@ export default function MCPPage() {
       <section className="border-t rule pt-12 pb-24">
         <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
-            <p className="text-meta">Tools exposed</p>
+            <p className="mcp-section-label">Tools exposed</p>
             <p className="text-meta mt-2 max-w-[20ch]">
               Six tools. Returns URLs, so your agent fetches only what it needs.
             </p>
@@ -156,7 +156,7 @@ export default function MCPPage() {
       <section className="border-y rule pt-12 pb-24">
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
-            <p className="text-meta">Pairs with</p>
+            <p className="mcp-section-label">Pairs with</p>
           </div>
 
           <div className="lg:col-span-10">
@@ -215,7 +215,7 @@ export default function MCPPage() {
       {/* Posture */}
       <section className="pt-16 pb-24">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <p className="text-meta lg:col-span-2">Free. Open.</p>
+          <p className="mcp-section-label lg:col-span-2">Free. Open.</p>
           <div className="lg:col-span-10 space-y-4">
             <p className="font-display max-w-[40ch] text-3xl leading-tight">
               Inspo is open source, MIT, owned and operated by{" "}
