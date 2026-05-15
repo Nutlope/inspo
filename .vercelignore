@@ -1,0 +1,18 @@
+# Captures are local only — they don't ship with the deployment.
+# (The /api/placeholder + /api/component routes fall back to SVG
+# placeholders in production until R2/Blob hosting is wired.)
+apps/worker/captures
+apps/worker/captures/**
+
+# Skip the rest of the worker app entirely — it runs on Fly.io, not Vercel.
+apps/worker/node_modules
+apps/worker/.turbo
+
+# MCP server runs on Cloudflare Workers, not Vercel.
+apps/mcp/node_modules
+apps/mcp/.wrangler
+
+# Misc
+**/.turbo
+**/.next/cache
+**/node_modules

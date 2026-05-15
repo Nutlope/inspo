@@ -4,6 +4,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "DATABASE_URL",
+        "INSPO_BASE_URL",
+        "TOGETHER_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "NODE_ENV"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {
