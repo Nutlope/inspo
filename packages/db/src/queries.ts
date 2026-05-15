@@ -274,11 +274,19 @@ export async function findScreen(slug: string): Promise<ScreenSummary | null> {
     return screensFixture.find((s) => s.slug === slug) ?? null;
   }
   const db = getDb();
-  const rows = await db
-    .select()
-    .from(screensT)
-    .where(eq(screensT.slug, slug))
-    .limit(1);
+  let rows;
+  try {
+    rows = await db
+      .select()
+      .from(screensT)
+      .where(eq(screensT.slug, slug))
+      .limit(1);
+  } catch (err) {
+    console.warn(
+      `[db] findScreen fell back to fixtures: ${err instanceof Error ? err.message : err}`,
+    );
+    return screensFixture.find((s) => s.slug === slug) ?? null;
+  }
   if (!rows[0]) return null;
   return rowToSummary(rows[0], {
     styles: [],
@@ -413,12 +421,32 @@ export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
   }
 
   const db = getDb();
-  const rows = await db
-    .select()
-    .from(screensT)
-    .where(
-      and(eq(screensT.siteSlug, siteSlug), eq(screensT.status, "published")),
+  let rows;
+  try {
+    rows = await db
+      .select()
+      .from(screensT)
+      .where(
+        and(eq(screensT.siteSlug, siteSlug), eq(screensT.status, "published")),
+      );
+  } catch (err) {
+    console.warn(
+      `[db] findSite fell back to fixtures: ${err instanceof Error ? err.message : err}`,
     );
+    const pages = screensFixture.filter((s) => s.siteSlug === siteSlug);
+    if (pages.length === 0) return null;
+    const sorted = sortPages(pages);
+    const hero = sorted.find((p) => p.pageType === "landing") ?? sorted[0]!;
+    return {
+      siteSlug,
+      title: hero.title,
+      designerCredit: hero.designerCredit,
+      sourceUrl: hero.sourceUrl,
+      hero,
+      pages: sorted,
+      pageCount: sorted.length,
+    };
+  }
   if (rows.length === 0) return null;
   const summaries = rows.map((r) =>
     rowToSummary(r, {
