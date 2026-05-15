@@ -8,10 +8,8 @@ import { ScreenTile } from "@/components/screen-tile";
 import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
 import type { ScreenSummary } from "@inspo/shared";
 
-export async function generateStaticParams() {
-  const sites = await getMultiPageSites();
-  return sites.map((s) => ({ slug: s.siteSlug }));
-}
+// Runtime-rendered — pre-rendering 1k sites is wasteful at build time.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

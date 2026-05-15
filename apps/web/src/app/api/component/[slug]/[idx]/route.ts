@@ -14,12 +14,17 @@ import sharp from "sharp";
 import type { NextRequest } from "next/server";
 import { findScreen } from "@inspo/db";
 
-const CAPTURES_DIR = resolve(
+const CAPTURES_DIR =
   process.env.INSPO_CAPTURES_DIR ??
-    join(process.cwd(), "..", "worker", "captures"),
-);
+  resolve(join(process.cwd(), "..", "worker", "captures"));
+
+// Disable disk lookups in production — the captures dir doesn't ship
+// with Vercel deployments. Set INSPO_CAPTURES_REMOTE_URL once we wire
+// R2/Blob and the route will fetch from there instead.
+const DISK_ENABLED = process.env.NODE_ENV !== "production";
 
 function findFullPagePng(slug: string): string | null {
+  if (!DISK_ENABLED) return null;
   const dir = join(CAPTURES_DIR, slug);
   if (!existsSync(dir)) return null;
   let candidates: string[];
@@ -49,7 +54,24 @@ export async function GET(
   if (!region) return new Response("region not found", { status: 404 });
 
   const pngPath = findFullPagePng(slug);
-  if (!pngPath) return new Response("source png missing", { status: 404 });
+  if (!pngPath) {
+    // No source PNG (e.g. Vercel deployment with no R2 backing yet).
+    // Return a tiny palette-gradient SVG placeholder sized to the rect.
+    const palette = (screen as unknown as { palette?: string[] }).palette ?? [];
+    const c0 = palette[0] ?? "#eee";
+    const c2 = palette[2] ?? palette[1] ?? "#ddd";
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}" viewBox="0 0 ${region.width} ${region.height}">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${c0}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs>
+  <rect width="100%" height="100%" fill="url(#g)"/>
+</svg>`;
+    return new Response(svg, {
+      headers: {
+        "Content-Type": "image/svg+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      },
+    });
+  }
 
   try {
     const buf = readFileSync(pngPath);

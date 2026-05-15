@@ -44,9 +44,22 @@ npx vercel deploy --prod
 
 `vercel.json` at [`apps/web/vercel.json`](apps/web/vercel.json) tells Vercel to build the workspace correctly via `pnpm --filter web... build`.
 
-After deploy:
-- Sign in once at `https://your-domain/signin` to create your user row.
-- Promote yourself: `pnpm --filter @inspo/db promote you@example.com admin`.
+**Required env vars (production):**
+
+| Variable | Notes |
+|---|---|
+| `DATABASE_URL` | Neon pooled URL |
+| `INSPO_BASE_URL` | Your Vercel domain (used by `metadataBase`, sitemap, MCP image URLs) |
+| `TOGETHER_API_KEY` | Only needed if `/api/extract` is enabled |
+| `BETTER_AUTH_SECRET` | Optional — only if you re-enable the curator/admin auth flow |
+
+**About images.** The site renders fine in production without the local
+captures dir — every image route falls back to a palette-gradient SVG
+placeholder. To serve real screenshots in prod, upload the
+`apps/worker/captures` directory to Vercel Blob or R2 and update the
+`hero_image_key` / `full_image_key` / `thumb_image_key` columns in
+`screens` with the resulting URLs. The placeholder + component routes
+already prefer an `http(s)://` stored key over the local disk.
 
 ---
 

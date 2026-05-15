@@ -39,3 +39,4 @@ coverage/
 
 # scheduler runtime
 .claude/
+.vercel

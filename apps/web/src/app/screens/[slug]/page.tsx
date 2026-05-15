@@ -22,10 +22,10 @@ import {
   type Macrostructure,
 } from "@inspo/taxonomy";
 
-export async function generateStaticParams() {
-  const screens = await getAllScreens();
-  return screens.map((s) => ({ slug: s.slug }));
-}
+// Runtime-rendered with on-demand cache; pre-rendering 3,800 pages at
+// build is wasteful and slow. The detail-page row size is small enough
+// that an SSR/render-on-demand pass is fast (~200ms).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

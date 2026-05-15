@@ -53,19 +53,25 @@ export default async function ExtractPage({
           {!session?.user ? (
             <div className="space-y-6 border rule px-6 py-8">
               <p className="font-display text-2xl">
-                Sign in to extract.
+                Extract isn&rsquo;t enabled on this instance.
               </p>
               <p className="max-w-[52ch] text-sm text-[var(--color-fg-muted)]">
-                Together AI absorbs the inference cost on the hosted instance,
-                so we ask you to sign in (anti-abuse) before kicking off a
-                capture. No paywall, no tier — sign-in is the only gate.
-                Self-host the project to remove this entirely.
+                Self-host the project from{" "}
+                <a
+                  href="https://github.com/Luffixos/inspo"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-4 hover:underline hover:text-[var(--color-link)]"
+                >
+                  github.com/Luffixos/inspo
+                </a>{" "}
+                to run captures locally.
               </p>
               <Link
-                href={`/signin?redirect=${encodeURIComponent("/extract" + (sp.url ? `?url=${encodeURIComponent(sp.url)}` : ""))}`}
-                className="font-mono text-meta border rule bg-[var(--color-fg)] inline-block px-5 py-3 text-[var(--color-bg)] transition-opacity hover:opacity-80"
+                href="/screens"
+                className="font-mono inline-block bg-[var(--color-fg)] !text-white px-5 py-3 text-sm font-medium uppercase tracking-wide transition-opacity hover:opacity-90 dark:!text-[var(--color-bg)]"
               >
-                Sign in →
+                Browse the archive →
               </Link>
             </div>
           ) : (

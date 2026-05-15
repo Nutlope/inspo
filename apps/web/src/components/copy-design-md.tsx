@@ -30,20 +30,27 @@ export function CopyDesignMd({ slug }: { slug: string }) {
       : "Copy DESIGN.md";
 
   return (
-    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 text-meta">
+    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
       <button
         type="button"
         onClick={copy}
         disabled={state === "copying"}
-        className="font-mono text-meta border rule bg-[var(--color-fg)] px-4 py-2 text-[var(--color-bg)] transition-opacity hover:opacity-80 disabled:opacity-40"
+        className="
+          font-mono inline-flex items-center gap-2
+          bg-[var(--color-fg)] !text-white
+          px-5 py-3 text-sm font-medium tracking-wide uppercase
+          transition-opacity hover:opacity-90
+          disabled:opacity-50
+          dark:!text-[var(--color-bg)]
+        "
       >
-        {state === "ok" ? "✓ " : ""}
-        {label}
+        {state === "ok" ? <span aria-hidden>✓</span> : null}
+        <span>{label}</span>
       </button>
       <a
         href={`/api/design/${slug}`}
         download={`DESIGN-${slug}.md`}
-        className="hover:text-[var(--color-link)]"
+        className="text-meta hover:text-[var(--color-link)]"
       >
         Download .md
       </a>
@@ -51,7 +58,7 @@ export function CopyDesignMd({ slug }: { slug: string }) {
         href={`/api/design/${slug}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:text-[var(--color-link)]"
+        className="text-meta hover:text-[var(--color-link)]"
       >
         View raw ↗
       </a>
