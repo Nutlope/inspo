@@ -1,0 +1,19 @@
+[
+  {
+    "date": "2026-05-15",
+    "scope": "component-set",
+    "items": [
+      { "type": "hero", "macrostructure": "Marquee Hero", "id": "marquee" },
+      { "type": "hero", "macrostructure": "Stat-Led", "id": "stat-led" },
+      { "type": "hero", "macrostructure": "Manifesto", "id": "manifesto" },
+      { "type": "footer", "archetype": "Ft7 Colophon", "id": "colophon" },
+      { "type": "footer", "archetype": "Ft5 Statement", "id": "statement" },
+      { "type": "footer", "archetype": "Ft1 Index", "id": "list" },
+      { "type": "cta", "archetype": "Typographic CTA", "id": "quiet" },
+      { "type": "cta", "archetype": "Accent Band", "id": "banded" },
+      { "type": "cta", "archetype": "Inline Form", "id": "form-led" }
+    ],
+    "theme": "Inspo-paper (existing project tokens)",
+    "brief": "Populate /components with Hallmark-disciplined reference set"
+  }
+]
