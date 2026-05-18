@@ -82,15 +82,19 @@ function pageTitle(siteTitle: string, pageType: PageType): string {
   }
 }
 
-function makeEntry(slug: string, capturedAt: string) {
+function makeEntry(slug: string, capturedAt: string, mtime: number) {
   const siteSlug = slug.includes("--") ? slug.split("--")[0]! : slug;
   const pageType = pageTypeFromSlug(siteSlug, slug);
   const siteTitle = titleCaseFromSlug(siteSlug);
   const title = pageTitle(siteTitle, pageType);
 
-  const imageUrl = `${BLOB_BASE}/${slug}/hero.png`;
-  const fullPageUrl = `${BLOB_BASE}/${slug}/full.png`;
-  const thumbUrl = `${BLOB_BASE}/${slug}/thumb.png`;
+  // Cache-buster — recaptured slugs get a fresh mtime, which mints a
+  // fresh URL. Unchanged slugs keep their old mtime → CDN keeps
+  // serving the cached PNG. Use unix seconds (compact).
+  const v = Math.floor(mtime / 1000);
+  const imageUrl = `${BLOB_BASE}/${slug}/hero.png?v=${v}`;
+  const fullPageUrl = `${BLOB_BASE}/${slug}/full.png?v=${v}`;
+  const thumbUrl = `${BLOB_BASE}/${slug}/thumb.png?v=${v}`;
 
   // Cheap fallback palette — gradient is wired in the tile blur-up; an
   // exact extraction would require Sharp on every file (~10 min for 4K
@@ -151,7 +155,7 @@ async function main() {
     } catch {
       /* keep default */
     }
-    return makeEntry(slug, new Date(mtime).toISOString().slice(0, 10));
+    return makeEntry(slug, new Date(mtime).toISOString().slice(0, 10), mtime);
   });
 
   const out = resolve("..", "..", "packages", "db", "src", "static-screens.json");
