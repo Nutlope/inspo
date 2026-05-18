@@ -287,9 +287,16 @@ function FilterGroup({
   count?: (v: string) => number;
   formatLabel?: (v: string) => string;
 }) {
-  // Drop chips that have no matches in the current dataset. If none
-  // remain, hide the whole group.
-  const live = count ? options.filter((o) => count(o) > 0) : [...options];
+  // Hide-zero-match optimisation only kicks in when the dataset has
+  // tag data to filter by. If every chip in this group reports 0
+  // (which happens in production where the static seed ships without
+  // per-row tags), show all options instead of collapsing the whole
+  // group — the filter still works, it just doesn't pre-narrow.
+  const hasAnyMatches = count ? options.some((o) => count(o) > 0) : true;
+  const live =
+    count && hasAnyMatches
+      ? options.filter((o) => count(o) > 0)
+      : [...options];
   if (live.length === 0) return null;
   return (
     <div className="space-y-3">
