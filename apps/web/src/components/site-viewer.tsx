@@ -9,6 +9,11 @@
  * ?page=<slug> so the choice is deep-linkable. Arrow keys cycle
  * between pages without leaving the page.
  *
+ * Each page renders its details (description, palette, fonts, tech,
+ * tags) inline directly below the active screenshot — no extra click
+ * to expose the metadata. The full per-page deep view still lives at
+ * /screens/[slug] for the type ramp, CSS variables, and similar grid.
+ *
  * Mobile: the rail collapses into a horizontal scroll strip above the
  * main viewer so the user sees the page-set up front without
  * dragging a column into view.
@@ -17,6 +22,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { ScreenSummary } from "@inspo/shared";
+import { PaletteStrip } from "@/components/palette-strip";
+import { TagPill } from "@/components/tag-pill";
+import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
 
 const PAGE_TYPE_LABELS: Record<ScreenSummary["pageType"], string> = {
   landing: "Landing",
@@ -117,9 +125,12 @@ export function SiteViewer({
               href={`/screens/${active.slug}`}
               className="text-[var(--color-fg)] hover:text-[var(--color-link)]"
             >
-              Open page detail →
+              Full page detail · DESIGN.md →
             </Link>
           </div>
+
+          {/* Inline page details — exposed by default. No click-to-open. */}
+          <PageDetails screen={active} />
         </div>
 
         {/* THUMBNAIL RAIL — sticky on desktop, horizontal on mobile ─── */}
@@ -205,5 +216,121 @@ export function SiteViewer({
         </aside>
       </div>
     </div>
+  );
+}
+
+/* ─────────────── Inline details for the active page ─────────────── */
+
+function PageDetails({ screen }: { screen: ScreenSummary }) {
+  const macroLabel = screen.tags.macrostructure
+    ? MACROSTRUCTURE_LABELS[screen.tags.macrostructure as Macrostructure]
+    : null;
+
+  // Stable list of tag chips for this page. Style + industry route to
+  // archive filters; vibe and color words tag without linking.
+  const styleTags = screen.tags.style.slice(0, 4);
+  const industryTags = screen.tags.industry.slice(0, 2);
+  const vibeTags = screen.tags.vibe.slice(0, 3);
+  const hasAnyTags =
+    macroLabel ||
+    styleTags.length + industryTags.length + vibeTags.length > 0;
+
+  const hasFonts = screen.fonts.length > 0;
+  const hasTech = screen.tech.length > 0;
+  const hasPalette = screen.palette.length > 0;
+
+  // If the row carries nothing useful (which can happen on slugs
+  // captured before metadata extraction landed), bail with a quiet
+  // note pointing to the full page-detail view.
+  if (
+    !screen.description &&
+    !hasAnyTags &&
+    !hasFonts &&
+    !hasTech &&
+    !hasPalette
+  ) {
+    return null;
+  }
+
+  return (
+    <section
+      key={screen.slug}
+      className="mt-8 grid grid-cols-1 gap-x-10 gap-y-8 lg:grid-cols-12"
+    >
+      {/* Description + tags ─────────────────────────────────────── */}
+      <div className="lg:col-span-7 space-y-5">
+        {screen.description && (
+          <p className="max-w-[64ch] text-base leading-relaxed text-[var(--color-fg)]">
+            {screen.description}
+          </p>
+        )}
+
+        {hasAnyTags && (
+          <div className="flex flex-wrap gap-2">
+            {macroLabel && <TagPill label={macroLabel} variant="macro" />}
+            {styleTags.map((s) => (
+              <TagPill
+                key={`s-${s}`}
+                label={s.replace(/-/g, " ")}
+                href={`/screens?style=${s}`}
+              />
+            ))}
+            {industryTags.map((i) => (
+              <TagPill
+                key={`i-${i}`}
+                label={i.replace(/-/g, " ")}
+                href={`/screens?industry=${i}`}
+              />
+            ))}
+            {vibeTags.map((v) => (
+              <TagPill key={`v-${v}`} label={v.replace(/-/g, " ")} />
+            ))}
+            <TagPill label={screen.mode} />
+          </div>
+        )}
+      </div>
+
+      {/* Spec column — palette, fonts, tech, container ─────────── */}
+      <dl className="lg:col-span-5 lg:border-l rule lg:pl-8 space-y-5 text-sm">
+        {hasPalette && (
+          <div>
+            <dt className="text-meta">Palette</dt>
+            <dd className="mt-2">
+              <PaletteStrip palette={screen.palette} size="md" />
+            </dd>
+          </div>
+        )}
+        {hasFonts && (
+          <div>
+            <dt className="text-meta">Fonts</dt>
+            <dd className="mt-2 text-[var(--color-fg)]">
+              {screen.fonts.slice(0, 4).join(", ")}
+              {screen.fonts.length > 4 && (
+                <span className="text-[var(--color-fg-muted)]">
+                  {" "}
+                  · +{screen.fonts.length - 4} more
+                </span>
+              )}
+            </dd>
+          </div>
+        )}
+        {hasTech && (
+          <div>
+            <dt className="text-meta">Tech</dt>
+            <dd className="mt-2 text-[var(--color-fg)]">
+              {screen.tech.slice(0, 6).join(", ")}
+            </dd>
+          </div>
+        )}
+        {screen.designSystem.containerWidth ? (
+          <div>
+            <dt className="text-meta">Container width</dt>
+            <dd className="mt-2 font-mono text-[var(--color-fg)]">
+              {screen.designSystem.containerWidth}px max
+            </dd>
+          </div>
+        ) : null}
+      </dl>
+    </section>
   );
 }
