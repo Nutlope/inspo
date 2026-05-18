@@ -8,6 +8,7 @@ import { TagPill } from "@/components/tag-pill";
 import { TypeRamp } from "@/components/type-ramp";
 import { ScaleRuler } from "@/components/spacing-ruler";
 import { CopyDesignMd } from "@/components/copy-design-md";
+import { SiteActionBar } from "@/components/site-action-bar";
 import { SkeletonTile } from "@/components/skeleton-tile";
 import {
   findScreen,
@@ -331,6 +332,9 @@ export default async function ScreenDetailPage({
           </Suspense>
         </div>
       </div>
+
+      {/* Sticky action toast — Copy DESIGN.md + quick actions ── */}
+      <SiteActionBar slug={screen.slug} sourceUrl={screen.sourceUrl} />
     </div>
   );
 }

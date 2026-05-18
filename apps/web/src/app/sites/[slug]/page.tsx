@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { findSite } from "@inspo/db";
 import { PaletteStrip } from "@/components/palette-strip";
 import { TagPill } from "@/components/tag-pill";
-import { SiteGallery } from "@/components/site-gallery";
+import { SiteViewer } from "@/components/site-viewer";
+import { SiteActionBar } from "@/components/site-action-bar";
 import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
 
 // Runtime-rendered — pre-rendering 1k sites is wasteful at build time.
@@ -48,7 +49,7 @@ export default async function SiteDetailPage({
 
   return (
     <div>
-      {/* Header ─────────────────────────────────────────────────── */}
+      {/* Header — site title, designer credit, tags ──────────── */}
       <div className="mx-auto max-w-[120rem] px-6 pt-12 sm:px-10 sm:pt-16">
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
@@ -103,12 +104,12 @@ export default async function SiteDetailPage({
         </div>
       </div>
 
-      {/* Hero plate + grouped sub-pages — all open in an in-page lightbox.
-          Arrow keys cycle between pages, Esc closes, URL deep-links via
-          ?page=<slug>. No route change while flipping through pages. */}
-      <SiteGallery hero={hero} pages={site.pages} />
+      {/* Master-detail viewer with sticky thumbnail rail ─────── */}
+      <div className="mt-12 pb-24 sm:mt-16">
+        <SiteViewer hero={hero} pages={site.pages} />
+      </div>
 
-      {/* Palette band — pulled from the homepage extraction ───────── */}
+      {/* Palette band — pulled from the homepage extraction ─── */}
       <div className="mx-auto max-w-[120rem] border-y rule px-6 py-10 sm:px-10">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <p className="text-meta lg:col-span-2">Brand palette</p>
@@ -117,6 +118,9 @@ export default async function SiteDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Sticky action toast — Copy DESIGN.md + quick actions ── */}
+      <SiteActionBar slug={hero.slug} sourceUrl={site.sourceUrl} />
     </div>
   );
 }
