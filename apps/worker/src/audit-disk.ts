@@ -1,0 +1,205 @@
+/**
+ * Disk-only audit pass — walks captures/ on local disk, sends every
+ * desktop-hero PNG to Together Gemma vision, asks "is there a
+ * modal/banner/popup covering content?".
+ *
+ * Bypasses Neon entirely so it works when the DB quota is exhausted.
+ * Writes the flagged list to `captures/_reports/disk-audit-<ts>.json`
+ * for the recapture pass to consume.
+ *
+ *   pnpm --filter @inspo/worker exec tsx src/audit-disk.ts
+ *   pnpm --filter @inspo/worker exec tsx src/audit-disk.ts --slugs=apple-com,nike-com
+ *   pnpm --filter @inspo/worker exec tsx src/audit-disk.ts --concurrency=4
+ */
+
+import "./env.js";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { join, resolve } from "node:path";
+import Together from "together-ai";
+
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+const CAPTURES_DIR = resolve(process.env.INSPO_CAPTURES_DIR ?? "./captures");
+
+type AuditVerdict = { hasModal: boolean; reason: string };
+
+const SYSTEM_PROMPT = `You inspect website screenshots.
+
+Reply true if ANY of these are visible anywhere in the screenshot. Flag
+every single one:
+
+  1. Cookie / privacy / GDPR / CCPA consent UI — ANY size, ANY position.
+     This includes tiny footer strips, bottom-corner cards, top banners,
+     and full modals. If it says anything about cookies / consent /
+     "we use", flag it.
+  2. Newsletter / email-capture popup ("Subscribe for 10% off")
+  3. Promo / discount modal ("Sale ends in…", "Save 20%")
+  4. Region / country / currency / language selector overlay
+  5. Age gate ("Are you 21+?")
+  6. Trial / signup / login full-screen splash forcing action before content
+  7. Open chat widget (NOT the small closed bubble — an open conversation)
+  8. Loading state or empty white page (content hasn't rendered)
+  9. Ad / interstitial / paywall overlay
+  10. Any centered modal dialog box with a backdrop dimming the page
+
+These are FALSE (not flagged):
+  - A closed chat BUBBLE in a corner (just the icon, no open conversation)
+  - A site that's genuinely minimal in its design language
+  - Sticky nav at the top — that's just navigation, no cookie language
+
+Cookie UI is ALWAYS flagged, no matter how small or unobtrusive. Be
+strict — when in doubt, FLAG IT.
+
+Reply with ONLY a JSON object matching the schema.`;
+
+const SCHEMA = {
+  type: "object",
+  required: ["hasModal", "reason"],
+  properties: {
+    hasModal: { type: "boolean" },
+    reason: { type: "string" },
+  },
+} as const;
+
+function listSlugs(): string[] {
+  if (!existsSync(CAPTURES_DIR)) return [];
+  return readdirSync(CAPTURES_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !d.name.startsWith("_") && !d.name.startsWith("."))
+    .map((d) => d.name)
+    .sort();
+}
+
+function findHero(slug: string): string | null {
+  const dir = join(CAPTURES_DIR, slug);
+  if (!existsSync(dir)) return null;
+  let files: string[];
+  try {
+    files = readdirSync(dir);
+  } catch {
+    return null;
+  }
+  const hero = files.find(
+    (f) => f.startsWith("desktop-hero-") && f.endsWith(".png"),
+  );
+  return hero ? join(dir, hero) : null;
+}
+
+async function inspect(client: Together, png: Buffer): Promise<AuditVerdict> {
+  const dataUrl = `data:image/png;base64,${png.toString("base64")}`;
+  const completion = await client.chat.completions.create({
+    model: MODEL,
+    max_tokens: 200,
+    temperature: 0,
+    response_format: {
+      type: "json_object",
+      schema: SCHEMA as unknown as Record<string, unknown>,
+    },
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: dataUrl } },
+          {
+            type: "text",
+            text: 'Inspect this screenshot. Apply the 10-item checklist. Reply: {"hasModal": true|false, "reason": "<one short sentence; cite which item (1-10) if true>"}',
+          },
+        ],
+      },
+    ],
+  });
+
+  const raw = completion.choices?.[0]?.message?.content ?? "{}";
+  let parsed: AuditVerdict;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    parsed = { hasModal: false, reason: "(parse failed) " + raw.slice(0, 80) };
+  }
+  if (typeof parsed.hasModal !== "boolean")
+    parsed = { hasModal: false, reason: "no boolean returned" };
+  if (typeof parsed.reason !== "string") parsed.reason = "(no reason)";
+  return parsed;
+}
+
+async function main() {
+  const argv = process.argv.slice(2);
+  const slugsArg = argv.find((a) => a.startsWith("--slugs="));
+  const slugFilter = slugsArg ? slugsArg.slice(8).split(",") : null;
+  const concurrency = Number(
+    argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 4,
+  );
+
+  if (!process.env.TOGETHER_API_KEY) {
+    console.error("TOGETHER_API_KEY not set — audit needs Together vision.");
+    process.exit(1);
+  }
+  const client = new Together({
+    apiKey: process.env.TOGETHER_API_KEY,
+    baseURL: process.env.TOGETHER_BASE_URL ?? "https://api.together.ai/v1",
+    timeout: 60_000,
+  });
+
+  // Homepage slugs only — sub-pages (slug includes "--") are mirrors of
+  // the same hero crop and bring the same modal if any. Audit one per
+  // site; recapture handles sub-pages alongside.
+  const all = listSlugs();
+  const homepages = all.filter((s) => !s.includes("--"));
+  const list = slugFilter
+    ? homepages.filter((s) => slugFilter.includes(s))
+    : homepages;
+
+  console.log(`\n  disk-audit · ${list.length} homepages (of ${all.length} total)\n`);
+
+  const flagged: Array<{ slug: string; reason: string }> = [];
+  let cursor = 0;
+  let done = 0;
+  let missing = 0;
+  let errors = 0;
+
+  async function worker() {
+    while (cursor < list.length) {
+      const idx = cursor++;
+      const slug = list[idx]!;
+      const tag = `[${String(idx + 1).padStart(4, " ")}/${list.length}]`;
+      try {
+        const heroPath = findHero(slug);
+        if (!heroPath) {
+          missing += 1;
+          continue;
+        }
+        const png = readFileSync(heroPath);
+        const verdict = await inspect(client, png);
+        done += 1;
+        if (verdict.hasModal) {
+          flagged.push({ slug, reason: verdict.reason });
+          console.log(`${tag} ⚠ ${slug.padEnd(34)} ${verdict.reason.slice(0, 80)}`);
+        } else if (done % 50 === 0) {
+          console.log(`${tag}   ${done} inspected · ${flagged.length} flagged so far`);
+        }
+      } catch (err) {
+        errors += 1;
+        const msg = err instanceof Error ? err.message : String(err);
+        console.log(`${tag} ✗ ${slug.padEnd(34)} ${msg.slice(0, 70)}`);
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, () => worker()));
+
+  console.log();
+  console.log(`  inspected ${done} · flagged ${flagged.length} · missing ${missing} · errors ${errors}`);
+
+  const reportDir = join(process.cwd(), "captures", "_reports");
+  mkdirSync(reportDir, { recursive: true });
+  const reportPath = join(
+    reportDir,
+    `disk-audit-${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
+  );
+  writeFileSync(reportPath, JSON.stringify(flagged, null, 2));
+  console.log(`  flagged list → ${reportPath}\n`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
