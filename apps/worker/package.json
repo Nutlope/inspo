@@ -12,6 +12,7 @@
     "capture:retry-urls": "tsx src/retry-urls.ts",
     "capture:add-sites": "tsx src/add-sites.ts",
     "capture:upload-to-blob": "tsx src/upload-to-blob.ts",
+    "capture:encode-variants": "tsx src/encode-existing.ts",
     "build:static-seed": "tsx src/build-static-seed.ts",
     "capture:site": "tsx src/capture-site.ts",
     "capture:sites": "tsx src/capture-sites.ts",
