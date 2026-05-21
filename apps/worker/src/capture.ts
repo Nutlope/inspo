@@ -26,6 +26,7 @@ import {
 import { stabilize } from "./stabilize.js";
 import { captureAllViewports } from "./screenshot.js";
 import { saveLocal } from "./storage.js";
+import { encodeVariants } from "./encode-variants.js";
 import { extract } from "./extract.js";
 import { tagWithLLM } from "./tag.js";
 import { embedText } from "./embed.js";
@@ -119,6 +120,39 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
 
     console.log(`  saving ${shots.length} assets…`);
     const assets = await Promise.all(shots.map((s) => saveLocal(slug, s)));
+
+    // Encode AVIF + WebP variants next to each source PNG. The capture
+    // pipeline is already on a beefy machine; the encoder adds ~600ms
+    // per site (≈4s of CPU spread across viewports) and turns the
+    // gallery's first-paint payload from megabytes to kilobytes. Skips
+    // outputs that already exist, so re-captures stay cheap.
+    console.log("  encoding AVIF/WebP variants…");
+    let encoded = 0;
+    let skipped = 0;
+    for (const asset of assets) {
+      // `desktop-hero` is the gallery's tile + the hero plate; `tablet-
+      // hero` doubles as the upload-to-blob "thumb". Encode variants
+      // for both, and full-page for the detail view. Mobile gets
+      // skipped — we don't render it anywhere yet.
+      const isHero =
+        !asset.fullPage &&
+        (asset.viewport === "desktop" || asset.viewport === "tablet");
+      const isFull = asset.fullPage && asset.viewport === "desktop";
+      if (!isHero && !isFull) continue;
+      try {
+        const role = isFull ? "full" : asset.viewport === "tablet" ? "thumb" : "hero";
+        const r = await encodeVariants(asset.filePath, { role });
+        encoded += r.written.length;
+        skipped += r.skipped.length;
+      } catch (err) {
+        // Encoding is a perf win, not a correctness requirement —
+        // never let it sink a capture.
+        console.warn(
+          `   ⚠ encode failed for ${asset.filePath}: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }
+    console.log(`   ↳ wrote ${encoded} · reused ${skipped}`);
 
     // Hero buffer for palette + AI tagging (desktop hero, above-the-fold)
     const heroShot = shots.find((s) => s.viewport === "desktop" && !s.fullPage)!;
