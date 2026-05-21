@@ -20,6 +20,10 @@ type SearchParams = {
   mode?: string;
   mood?: string;
   color?: string;
+  /** 1-based page index. Defaults to 1. Drives the visible slice in
+   *  <ScreensGrid>; full data is always shipped so client-side filters
+   *  still see everything. */
+  page?: string;
 };
 
 /**
@@ -119,9 +123,17 @@ export default async function ArchivePage({
         </div>
       </section>
 
-      {/* Body — client filter + grid (instant, no page nav) ─── */}
+      {/* Body — client filter + grid (instant filter, paginated render) ─── */}
       <section className="border-t rule pt-10 pb-24">
-        <ScreensGrid screens={compact} initialFilters={params} />
+        <ScreensGrid
+          screens={compact}
+          initialFilters={{
+            ...params,
+            // Parse server-side so the first paint already shows the
+            // right slice (no flash of page 1 then re-slice on hydrate).
+            page: params.page ? Math.max(1, parseInt(params.page, 10) || 1) : 1,
+          }}
+        />
       </section>
     </div>
   );
