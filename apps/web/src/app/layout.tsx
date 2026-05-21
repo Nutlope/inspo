@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import ReactDOM from "react-dom";
 import { Masthead } from "@/components/masthead";
 import { Colophon } from "@/components/colophon";
 import { CommandPalette } from "@/components/command-palette";
@@ -27,6 +28,13 @@ const jetbrainsMono = JetBrains_Mono({
 
 const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
 
+// The host that serves every captured screenshot. Hard-coded because
+// the build environment may not have INSPO_BLOB_BASE_URL set, and we
+// want the preconnect hint emitted regardless. If you migrate to a
+// different blob bucket, update this and `build-static-seed.ts` in
+// lockstep.
+const BLOB_ORIGIN = "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com";
+
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
@@ -49,6 +57,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Preconnect to the blob origin so the TLS handshake overlaps with
+  // HTML parsing — saves ~80–200 ms on first image on cold page loads,
+  // where every gallery tile pulls from this host. Next 16's preferred
+  // API is ReactDOM.preconnect/prefetchDNS rather than raw <link> tags.
+  ReactDOM.preconnect(BLOB_ORIGIN, { crossOrigin: "anonymous" });
+  ReactDOM.prefetchDNS(BLOB_ORIGIN);
+
   return (
     <html
       lang="en"

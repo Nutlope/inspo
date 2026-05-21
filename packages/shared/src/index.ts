@@ -69,6 +69,24 @@ export type PageType =
   | "docs"
   | "other";
 
+/** One width-keyed entry inside a modern-format `<source srcset>`.
+ *  Produced by the worker's `encode-variants.ts`. */
+export type ImageVariant = {
+  /** Pixel width the variant was encoded at (e.g. 384, 768, 1440). */
+  w: number;
+  /** Public URL — already cache-busted with `?v=<unixSeconds>`. */
+  url: string;
+};
+
+/** AVIF + WebP variants for one role (hero / full / thumb). Paired so
+ *  `<ScreenTile>` can build a `<picture>` element with AVIF first,
+ *  WebP second, PNG fallback. Arrays may be empty if only one format
+ *  encoded successfully. */
+export type RoleVariants = {
+  avif: ImageVariant[];
+  webp: ImageVariant[];
+};
+
 export type ScreenSummary = {
   id: string;
   slug: string;
@@ -79,6 +97,17 @@ export type ScreenSummary = {
   imageUrl: string;
   fullPageUrl: string;
   thumbUrl: string;
+  /** Hero (above-the-fold) variants at 384/768/1440. Present once the
+   *  worker's encoder has run for this row; absent on legacy rows. */
+  heroVariants?: RoleVariants;
+  /** Full-page scroll variants at 768/1440. Used on /screens/[slug]. */
+  fullVariants?: RoleVariants;
+  /** Tile-sized variants (384-wide). Used in every grid. */
+  thumbVariants?: RoleVariants;
+  /** 16-wide AVIF base64 data URL, ~50–80 bytes after compression.
+   *  Painted as a CSS background-image for instant first paint
+   *  before the real tile decodes. */
+  lqip?: string;
   description: string;
   palette: string[];
   fonts: string[];
