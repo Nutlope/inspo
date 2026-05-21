@@ -4,6 +4,15 @@ import { useMemo, useTransition, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { ScreenSummary } from "@inspo/shared";
+
+/**
+ * How many tiles to render per page. The /screens archive holds ~1,000
+ * sites; rendering them all at once was the page's worst perf bug
+ * (~47 MB of PNG thumbs, ~1,000 DOM nodes, ~1,000 client-component
+ * hydrations). 60 fills a 3-column grid for 20 rows — enough to scroll
+ * through before hitting the pagination control.
+ */
+const PAGE_SIZE = 60;
 import {
   COLOR_WORDS,
   STYLES,
@@ -36,16 +45,20 @@ type Filters = {
   mode?: string;
   mood?: string;
   color?: string;
+  /** 1-based current page. Drives the slice rendered, not the data
+   *  that's filtered (filters always operate on the full set). */
+  page?: number;
 };
 
 /**
- * Client-side filter + swap for /screens. Receives the full list of
- * published screens once (server-side), filters in-memory on every
- * filter chip click — no round trip. URL stays in sync via
- * router.replace so links remain bookmarkable.
+ * Client-side filter + paginated render for /screens. Receives the
+ * full list once from the server, filters in-memory on every chip
+ * click (no round-trip), but only renders the active page's slice.
+ * URL stays in sync via router.replace so the back button and shared
+ * links land on the right page.
  *
  * Uses the View Transitions API where available for a browser-native
- * crossfade on the grid swap. Falls back to instant repaint on Safari
+ * crossfade on filter swaps. Falls back to instant repaint on Safari
  * or any browser without `startViewTransition`.
  */
 export function ScreensGrid({
@@ -62,6 +75,8 @@ export function ScreensGrid({
   // Hydrate from URL on mount + on every search-param change.
   const filters = useMemo<Filters>(() => {
     const get = (k: string) => searchParams.get(k) ?? undefined;
+    const pageRaw = searchParams.get("page");
+    const pageNum = pageRaw ? Math.max(1, parseInt(pageRaw, 10) || 1) : 1;
     return {
       q: get("q"),
       style: get("style"),
@@ -70,6 +85,7 @@ export function ScreensGrid({
       mode: get("mode"),
       mood: get("mood"),
       color: get("color"),
+      page: pageNum,
     };
   }, [searchParams]);
 
@@ -131,8 +147,11 @@ export function ScreensGrid({
   /* ─────── filter chip click — wrap in View Transition ─────── */
   function setFilter(param: keyof Filters, value: string | undefined) {
     const next = new URLSearchParams(searchParams.toString());
-    if (value) next.set(param, value);
+    if (value) next.set(param, String(value));
     else next.delete(param);
+    // Any filter change resets pagination — staying on page 7 makes
+    // no sense after narrowing the set to 12 results.
+    if (param !== "page") next.delete("page");
     const href = next.toString() ? `/screens?${next.toString()}` : "/screens";
 
     const nav = () => {
@@ -154,6 +173,21 @@ export function ScreensGrid({
 
   const totalCount = screens.length;
   const filteredCount = filtered.length;
+
+  /* ─────── pagination slice ─────── */
+  const pageCount = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
+  // Clamp — a filter change may have left `page` past the new end.
+  const currentPage = Math.min(active.page ?? 1, pageCount);
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
+
+  // Build the href for a given page, preserving every other filter.
+  function hrefForPage(p: number): string {
+    const next = new URLSearchParams(searchParams.toString());
+    if (p <= 1) next.delete("page");
+    else next.set("page", String(p));
+    return next.toString() ? `/screens?${next.toString()}` : "/screens";
+  }
 
   return (
     <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-10">
@@ -222,6 +256,11 @@ export function ScreensGrid({
             {filteredCount === totalCount
               ? `${totalCount.toLocaleString()} sites`
               : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
+            {pageCount > 1 && (
+              <span className="ml-2 text-[var(--color-fg-muted)]">
+                · page {currentPage} of {pageCount}
+              </span>
+            )}
           </p>
           <p className="text-meta hidden sm:block">
             Sort: <span className="text-[var(--color-fg)]">Latest</span>
@@ -243,26 +282,125 @@ export function ScreensGrid({
             </p>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((screen, i) => (
-              <li
-                key={screen.slug}
-                className="screens-grid-item"
-                style={{ ["--idx" as string]: Math.min(i, 23) }}
-              >
-                <ScreenTile
-                  screen={screen}
-                  index={i + 1}
-                  variant="hero"
-                  priority={i < 6}
-                  pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
-                />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+              {pageItems.map((screen, i) => (
+                <li
+                  key={screen.slug}
+                  className="screens-grid-item"
+                  style={{ ["--idx" as string]: Math.min(i, 23) }}
+                >
+                  <ScreenTile
+                    screen={screen}
+                    index={startIdx + i + 1}
+                    variant="hero"
+                    // Only the first row of the FIRST page gets the
+                    // priority hint — beyond that, we lazy-load.
+                    priority={currentPage === 1 && i < 6}
+                    pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
+                  />
+                </li>
+              ))}
+            </ul>
+
+            {pageCount > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                pageCount={pageCount}
+                hrefForPage={hrefForPage}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+/* ─────────────────── Pagination control ───────────────────
+ *
+ * Editorial-minimal: prev / 1 2 … 7 8 9 … 18 / next. Always shows the
+ * first + last page plus a window of 3 around the current. Uses native
+ * <a> via next/link — bookmarkable, back-button respects history, no
+ * JS needed for the click itself. Filter state survives because
+ * setFilter is the only path that mutates filter params; pagination
+ * mutates only `?page=`. */
+
+function Pagination({
+  currentPage,
+  pageCount,
+  hrefForPage,
+}: {
+  currentPage: number;
+  pageCount: number;
+  hrefForPage: (p: number) => string;
+}) {
+  const items: (number | "ellipsis")[] = [];
+  // Page numbers to always render: first, last, current ± 1.
+  const window = new Set<number>([1, pageCount, currentPage - 1, currentPage, currentPage + 1]);
+  for (let p = 1; p <= pageCount; p++) {
+    if (window.has(p)) items.push(p);
+    else if (items[items.length - 1] !== "ellipsis") items.push("ellipsis");
+  }
+
+  const linkClasses =
+    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border rule transition-colors hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]";
+  const activeClasses =
+    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border border-[var(--color-link)] text-[var(--color-link)]";
+  const disabledClasses =
+    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border rule text-[var(--color-fg-muted)]/40 cursor-not-allowed";
+
+  return (
+    <nav
+      aria-label="Archive pagination"
+      className="mt-16 flex flex-wrap items-center justify-center gap-2 border-t rule pt-8"
+    >
+      {currentPage > 1 ? (
+        <Link href={hrefForPage(currentPage - 1)} className={linkClasses} scroll>
+          ← Prev
+        </Link>
+      ) : (
+        <span className={disabledClasses} aria-disabled="true">
+          ← Prev
+        </span>
+      )}
+
+      <ul className="flex flex-wrap items-center gap-1">
+        {items.map((it, i) =>
+          it === "ellipsis" ? (
+            <li
+              key={`e-${i}`}
+              className="px-1 text-meta text-[var(--color-fg-muted)]"
+              aria-hidden
+            >
+              …
+            </li>
+          ) : (
+            <li key={it}>
+              {it === currentPage ? (
+                <span className={activeClasses} aria-current="page">
+                  {it}
+                </span>
+              ) : (
+                <Link href={hrefForPage(it)} className={linkClasses} scroll>
+                  {it}
+                </Link>
+              )}
+            </li>
+          ),
+        )}
+      </ul>
+
+      {currentPage < pageCount ? (
+        <Link href={hrefForPage(currentPage + 1)} className={linkClasses} scroll>
+          Next →
+        </Link>
+      ) : (
+        <span className={disabledClasses} aria-disabled="true">
+          Next →
+        </span>
+      )}
+    </nav>
   );
 }
 
