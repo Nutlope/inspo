@@ -66,3 +66,35 @@ export function asTextContent(value: unknown) {
     ],
   };
 }
+
+/**
+ * Same JSON text payload as `asTextContent`, plus a native `image`
+ * content block per provided thumbnail URL — fetched in parallel,
+ * AVIF-preferred with PNG fallback, in-process LRU-cached. Agents
+ * see the thumbnails directly in the tool response instead of having
+ * to curl each one and Read it.
+ *
+ * Order of image blocks matches the order of `imageUrls` (which the
+ * caller is expected to pass in the same order as the `results`
+ * array in `value`), so agents can correlate JSON ↔ image by index.
+ *
+ * Failed fetches are silently dropped — the JSON text always still
+ * comes back, the agent can fall back to the URLs in the payload.
+ */
+export async function withImages(
+  value: unknown,
+  imageUrls: ReadonlyArray<string>,
+) {
+  const { thumbnailBlocks, MAX_INLINE_PER_CALL } = await import("./inline-images.js");
+  const slice = imageUrls.slice(0, MAX_INLINE_PER_CALL);
+  const blocks = await thumbnailBlocks(slice);
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(value, null, 2),
+      },
+      ...blocks.filter((b): b is NonNullable<typeof b> => b !== null),
+    ],
+  };
+}

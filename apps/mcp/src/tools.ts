@@ -43,7 +43,7 @@ const PAGE_TYPES = [
   "docs",
   "other",
 ] as const;
-import { asTextContent, formatCollection, formatScreen } from "./format.js";
+import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
 import { lexicalSearch } from "./search.js";
 
 export function registerTools(server: McpServer) {
@@ -117,24 +117,28 @@ export function registerTools(server: McpServer) {
       }
 
       const matched = lexicalSearch(filtered, args.query, args.limit);
-      return asTextContent({
-        query: args.query,
-        filters: {
-          style: args.style ?? null,
-          industry: args.industry ?? null,
-          macrostructure: args.macrostructure ?? null,
-          mode: args.mode ?? null,
-          vibe: args.vibe ?? null,
-          color: args.color ?? null,
-          pageType: args.pageType ?? null,
+      const results = matched.map((s) => formatScreen(s));
+      return withImages(
+        {
+          query: args.query,
+          filters: {
+            style: args.style ?? null,
+            industry: args.industry ?? null,
+            macrostructure: args.macrostructure ?? null,
+            mode: args.mode ?? null,
+            vibe: args.vibe ?? null,
+            color: args.color ?? null,
+            pageType: args.pageType ?? null,
+          },
+          count: matched.length,
+          tip:
+            matched.length > 0
+              ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are AVIF when available, PNG otherwise."
+              : "No matches. Try fewer filters or a broader query.",
+          results,
         },
-        count: matched.length,
-        tip:
-          matched.length > 0
-            ? "Each result includes palette, fonts, components, and image URLs. Fetch the `image` URL or pass it to your vision model before generating UI."
-            : "No matches. Try fewer filters or a broader query.",
-        results: matched.map((s) => formatScreen(s)),
-      });
+        results.map((r) => r.thumb),
+      );
     },
   );
 
@@ -149,7 +153,8 @@ export function registerTools(server: McpServer) {
     async ({ slug }) => {
       const s = await findScreen(slug);
       if (!s) return asTextContent({ error: `No screen with slug '${slug}'` });
-      return asTextContent(formatScreen(s));
+      const formatted = formatScreen(s);
+      return withImages(formatted, [formatted.thumb]);
     },
   );
 
@@ -196,18 +201,22 @@ export function registerTools(server: McpServer) {
       const target = await findScreen(slug);
       if (!target) return asTextContent({ error: `No screen with slug '${slug}'` });
       const similar = await findSimilar(slug, limit);
-      return asTextContent({
-        reference: { slug: target.slug, title: target.title },
-        count: similar.length,
-        results: similar.map((s) =>
-          formatScreen(
-            s,
-            s.tags.macrostructure === target.tags.macrostructure
-              ? `Same macrostructure (${target.tags.macrostructure})`
-              : "Overlapping industry / style / mode",
-          ),
+      const results = similar.map((s) =>
+        formatScreen(
+          s,
+          s.tags.macrostructure === target.tags.macrostructure
+            ? `Same macrostructure (${target.tags.macrostructure})`
+            : "Overlapping industry / style / mode",
         ),
-      });
+      );
+      return withImages(
+        {
+          reference: { slug: target.slug, title: target.title },
+          count: similar.length,
+          results,
+        },
+        results.map((r) => r.thumb),
+      );
     },
   );
 
@@ -243,15 +252,19 @@ export function registerTools(server: McpServer) {
       }
       const screens = await getAllScreens({ macrostructure: slug });
       const top = screens.slice(0, limit);
-      return asTextContent({
-        macrostructure: { slug, label: MACROSTRUCTURE_LABELS[slug] },
-        count: top.length,
-        tip:
-          top.length > 0
-            ? `Study the palette, fonts, and components of these ${top.length} ${MACROSTRUCTURE_LABELS[slug]} examples before generating one yourself. Fetch each 'image' URL.`
-            : `No screens tagged ${MACROSTRUCTURE_LABELS[slug]} yet. Try search_screens with a broader query.`,
-        results: top.map((s) => formatScreen(s)),
-      });
+      const results = top.map((s) => formatScreen(s));
+      return withImages(
+        {
+          macrostructure: { slug, label: MACROSTRUCTURE_LABELS[slug] },
+          count: top.length,
+          tip:
+            top.length > 0
+              ? `Each result has an inline thumbnail (image block) below the JSON. Study them — they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
+              : `No screens tagged ${MACROSTRUCTURE_LABELS[slug]} yet. Try search_screens with a broader query.`,
+          results,
+        },
+        results.map((r) => r.thumb),
+      );
     },
   );
 
@@ -343,37 +356,46 @@ export function registerTools(server: McpServer) {
         return true;
       });
       const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
-      return asTextContent({
-        type: args.type,
-        filters: {
-          style: args.style ?? null,
-          industry: args.industry ?? null,
-          macrostructure: args.macrostructure ?? null,
-          mode: args.mode ?? null,
-          vibe: args.vibe ?? null,
-          color: args.color ?? null,
-          pageType: args.pageType ?? null,
+      const components = filtered.map((h) => ({
+        siteSlug: h.screen.siteSlug,
+        siteTitle: h.screen.title,
+        siteHost: (() => {
+          try {
+            return new URL(h.screen.sourceUrl).host.replace(/^www\./, "");
+          } catch {
+            return h.screen.sourceUrl;
+          }
+        })(),
+        imageUrl: `${base}/api/component/${h.screen.slug}/${h.idx}`,
+        // Fallback for inline preview — the parent site's whole-page
+        // thumb. The cropped imageUrl serves the actual component
+        // (e.g. just the pricing table); the thumb gives the agent
+        // page-level context.
+        thumb: h.screen.thumbUrl,
+        siteUrl: `${base}/sites/${h.screen.siteSlug}`,
+        width: h.region.width,
+        height: h.region.height,
+        label: h.region.label ?? null,
+        palette: h.screen.palette.slice(0, 5),
+        mode: h.screen.mode,
+      }));
+      return withImages(
+        {
+          type: args.type,
+          filters: {
+            style: args.style ?? null,
+            industry: args.industry ?? null,
+            macrostructure: args.macrostructure ?? null,
+            mode: args.mode ?? null,
+            vibe: args.vibe ?? null,
+            color: args.color ?? null,
+            pageType: args.pageType ?? null,
+          },
+          count: filtered.length,
+          components,
         },
-        count: filtered.length,
-        components: filtered.map((h) => ({
-          siteSlug: h.screen.siteSlug,
-          siteTitle: h.screen.title,
-          siteHost: (() => {
-            try {
-              return new URL(h.screen.sourceUrl).host.replace(/^www\./, "");
-            } catch {
-              return h.screen.sourceUrl;
-            }
-          })(),
-          imageUrl: `${base}/api/component/${h.screen.slug}/${h.idx}`,
-          siteUrl: `${base}/sites/${h.screen.siteSlug}`,
-          width: h.region.width,
-          height: h.region.height,
-          label: h.region.label ?? null,
-          palette: h.screen.palette.slice(0, 5),
-          mode: h.screen.mode,
-        })),
-      });
+        components.map((c) => c.thumb),
+      );
     },
   );
 
