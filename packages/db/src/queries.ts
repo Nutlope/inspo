@@ -17,7 +17,7 @@ import type {
   Macrostructure,
   Mode,
 } from "@inspo/taxonomy";
-import { hasDatabase, getDb } from "./client";
+import { hasDatabase, useDbReads, getDb } from "./client";
 import {
   collections as collectionsT,
   collectionScreens as collectionScreensT,
@@ -186,7 +186,7 @@ export async function getAllScreens(
   filter: ScreenFilter = {},
   sort: ScreenSort = "latest",
 ): Promise<ScreenSummary[]> {
-  if (!hasDatabase()) {
+  if (!useDbReads()) {
     const filtered = applyFiltersFixture(screensFixture, filter);
     if (sort === "varied") return variedOrder(filtered);
     if (sort === "random") return shuffle(filtered);
@@ -286,7 +286,7 @@ export async function getAllScreens(
 }
 
 export async function findScreen(slug: string): Promise<ScreenSummary | null> {
-  if (!hasDatabase()) {
+  if (!useDbReads()) {
     return screensFixture.find((s) => s.slug === slug) ?? null;
   }
   const db = getDb();
@@ -420,7 +420,7 @@ function sortPages(pages: ScreenSummary[]): ScreenSummary[] {
 
 /** All pages of one site, by site_slug. */
 export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
-  if (!hasDatabase()) {
+  if (!useDbReads()) {
     const pages = screensFixture.filter((s) => s.siteSlug === siteSlug);
     if (pages.length === 0) return null;
     const sorted = sortPages(pages);
@@ -490,7 +490,7 @@ export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
 export async function getMultiPageSites(): Promise<
   { siteSlug: string; pageCount: number }[]
 > {
-  if (!hasDatabase()) {
+  if (!useDbReads()) {
     const counts = new Map<string, number>();
     for (const s of screensFixture)
       counts.set(s.siteSlug, (counts.get(s.siteSlug) ?? 0) + 1);
@@ -610,7 +610,7 @@ export async function updateScreenCuratorNote(
 /* ──────────────────── collections ──────────────────── */
 
 export async function getAllCollections(): Promise<Collection[]> {
-  if (!hasDatabase()) return collectionsFixture;
+  if (!useDbReads()) return collectionsFixture;
 
   const db = getDb();
   const cols = await db
