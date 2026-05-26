@@ -18,7 +18,10 @@
  */
 
 import type { ScreenSummary } from "@inspo/shared";
-import { embedQuery, loadSidecar, cosineSim } from "./vector.js";
+// No `.js` extension — Turbopack in apps/web can't substitute `.ts`
+// here even with `transpilePackages` set. The tsx runtime (worker /
+// MCP) resolves either form.
+import { embedQuery, loadSidecar, cosineSim } from "./vector";
 
 const URL_RE = /^https?:\/\//i;
 
