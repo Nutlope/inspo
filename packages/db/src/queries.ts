@@ -29,6 +29,8 @@ import {
 } from "./fixtures";
 import { pendingScreens as pendingFixture } from "./pending-fixtures";
 import staticScreensJson from "./static-screens.json" with { type: "json" };
+import referenceManifestJson from "./reference-components.json" with { type: "json" };
+import type { ReferenceComponent } from "@inspo/shared";
 
 /**
  * Fallback set used when DATABASE_URL is missing OR the live Neon
@@ -692,4 +694,39 @@ export async function screensInCollection(slug: string): Promise<
       return screen ? { ...entry, screen } : null;
     })
     .filter(<T,>(v: T | null): v is T => v !== null);
+}
+
+/* ──────────────────── reference components ────────────────────
+ *
+ * Read from `reference-components.json` — the manifest built by
+ *   pnpm --filter @inspo/web build:reference-manifest
+ * from the 68 Hallmark-stamped components under
+ * apps/web/src/components/reference/<type>/<id>.tsx. Bundled with
+ * @inspo/db so the MCP doesn't need the apps/web tree at runtime.
+ */
+
+const REFERENCE_COMPONENTS = referenceManifestJson as ReferenceComponent[];
+
+export function getReferenceComponents(filter?: {
+  type?: ReferenceComponent["type"];
+  /** Case-insensitive substring match against the .macro field —
+   *  "marquee" matches "Marquee Hero", "marquee with rail", etc. */
+  macroQuery?: string;
+}): ReferenceComponent[] {
+  let list = REFERENCE_COMPONENTS;
+  if (filter?.type) list = list.filter((r) => r.type === filter.type);
+  if (filter?.macroQuery) {
+    const q = filter.macroQuery.toLowerCase();
+    list = list.filter((r) => r.macro.toLowerCase().includes(q));
+  }
+  return list;
+}
+
+export function findReferenceComponent(
+  type: ReferenceComponent["type"],
+  id: string,
+): ReferenceComponent | null {
+  return (
+    REFERENCE_COMPONENTS.find((r) => r.type === type && r.id === id) ?? null
+  );
 }

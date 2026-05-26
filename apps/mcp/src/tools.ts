@@ -9,10 +9,12 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
   findCollection,
   findComponents,
+  findReferenceComponent,
   findScreen,
   findSimilar,
   getAllCollections,
   getAllScreens,
+  getReferenceComponents,
   renderDesignMd,
 } from "@inspo/db";
 import {
@@ -42,6 +44,19 @@ const PAGE_TYPES = [
   "changelog",
   "docs",
   "other",
+] as const;
+
+const REFERENCE_TYPES = [
+  "hero",
+  "pricing",
+  "features",
+  "cta",
+  "nav",
+  "footer",
+  "testimonial",
+  "logo-cloud",
+  "faq",
+  "stat",
 ] as const;
 import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
 import { searchScreens } from "./search.js";
@@ -419,6 +434,99 @@ export function registerTools(server: McpServer) {
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
       return asTextContent({ ...formatCollection(c), screens: enriched });
+    },
+  );
+
+  /* ────── find_reference_components (canonical-JSX catalogue) ──────
+   *
+   * Lists the 68 Hallmark-stamped reference components — the canonical
+   * shapes for hero / pricing / footer / etc. Without filters, returns
+   * a list view (no source) so the agent can scan. Filtered by type,
+   * returns the full source for each match.
+   */
+  server.registerTool(
+    "find_reference_components",
+    {
+      description:
+        "List the Hallmark-stamped reference components — canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for that category; without filters you get a scan-view with names + notes. After picking, call `get_reference_jsx` for the full source of a specific one. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
+      inputSchema: {
+        type: z
+          .enum(REFERENCE_TYPES)
+          .optional()
+          .describe("Component category (hero, pricing, cta, …). Omit to scan all types."),
+        macro: z
+          .string()
+          .optional()
+          .describe(
+            "Substring match on the component's macro field — e.g. 'Marquee' matches 'Marquee Hero'.",
+          ),
+      },
+    },
+    async ({ type, macro }) => {
+      const list = getReferenceComponents({
+        type: type as Parameters<typeof getReferenceComponents>[0] extends infer T
+          ? T extends { type?: infer U }
+            ? U
+            : never
+          : never,
+        macroQuery: macro,
+      });
+      // Without a `type` filter the catalogue is heavy (68 × ~2 KB);
+      // return a list view (id/label/macro/note + tiny preview) and
+      // let the caller fetch full source via get_reference_jsx.
+      if (!type) {
+        return asTextContent({
+          count: list.length,
+          tip: "Filter by `type` to get full JSX source. Currently showing list view only.",
+          components: list.map((r) => ({
+            id: r.id,
+            type: r.type,
+            label: r.label,
+            macro: r.macro,
+            note: r.note,
+            sourcePreview: r.source.slice(0, 240).replace(/\s+/g, " ") + "…",
+          })),
+        });
+      }
+      return asTextContent({
+        count: list.length,
+        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source — read them; they explain when to reach for this archetype.",
+        components: list,
+      });
+    },
+  );
+
+  /* ────────────── get_reference_jsx ────────────── */
+  server.registerTool(
+    "get_reference_jsx",
+    {
+      description:
+        "Return the full canonical JSX source for one Hallmark-stamped reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content — including the Hallmark `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
+      inputSchema: {
+        type: z
+          .enum(REFERENCE_TYPES)
+          .describe("Component category"),
+        id: z
+          .string()
+          .describe("Reference id within that type (e.g. 'marquee', 'three-card')."),
+      },
+    },
+    async ({ type, id }) => {
+      const r = findReferenceComponent(type, id);
+      if (!r) {
+        return asTextContent({
+          error: `No reference component with type='${type}' id='${id}'.`,
+          hint: "Call find_reference_components({ type: '" + type + "' }) to list available ids.",
+        });
+      }
+      return asTextContent({
+        id: r.id,
+        type: r.type,
+        label: r.label,
+        macro: r.macro,
+        note: r.note,
+        source: r.source,
+      });
     },
   );
 }

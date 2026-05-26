@@ -16,6 +16,8 @@ export {
   getPendingScreens,
   updateScreenStatus,
   updateScreenCuratorNote,
+  getReferenceComponents,
+  findReferenceComponent,
   type ScreenFilter,
   type ScreenSort,
   type SiteSummary,

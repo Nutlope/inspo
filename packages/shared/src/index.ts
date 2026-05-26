@@ -159,3 +159,22 @@ export type Collection = {
   coverScreenSlug: string;
   screens: { slug: string; editorNote?: string; span?: 1 | 2 | 3 }[];
 };
+
+/** One Hallmark-stamped reference component. Generated from
+ *  apps/web/src/components/reference by
+ *  `pnpm --filter @inspo/web build:reference-manifest`. Surfaced
+ *  over the MCP via `find_reference_components` + `get_reference_jsx`. */
+export type ReferenceComponent = {
+  id: string;
+  type: ComponentType;
+  label: string;
+  /** Sub-macro / archetype label from the component's Hallmark stamp.
+   *  Free-form descriptive — not strictly the same enum as
+   *  ScreenSummary.macrostructure (e.g. "Ft7 Colophon"). */
+  macro: string;
+  /** One-sentence editorial note on what this component is and when
+   *  to reach for it. */
+  note: string;
+  /** Full .tsx source as a string — Hallmark stamp + JSDoc + export. */
+  source: string;
+};
