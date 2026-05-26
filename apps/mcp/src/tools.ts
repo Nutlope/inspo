@@ -496,6 +496,195 @@ export function registerTools(server: McpServer) {
     },
   );
 
+  /* ────────────── recommend (Hallmark-aware orchestrator) ──────────
+   *
+   * One call that returns everything an agent needs to start writing
+   * a page: a macrostructure pick, 5 real exemplars (with inline
+   * thumbnails), 1–3 canonical reference JSX components matching that
+   * macrostructure, and a palette suggestion extracted from the top
+   * exemplar.
+   *
+   * Hallmark-compatible:
+   *   - If `macrostructure` is passed (Hallmark already picked one)
+   *     the recommend tool uses it directly — no pick, no LLM call.
+   *   - If omitted, recommend runs the hybrid search on the brief
+   *     and the top result's macrostructure becomes the pick.
+   *
+   * No LLM call inside. Composes search_screens + find_examples_for_
+   * macrostructure + find_reference_components — anything you could
+   * do by hand, but in one round-trip.
+   */
+  server.registerTool(
+    "recommend",
+    {
+      description:
+        "Hallmark-compatible orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1–3 canonical reference JSX components, and a palette suggestion — everything an agent needs to start a page. If you're following Hallmark, pass the macrostructure you've picked; otherwise the tool picks one from the brief via hybrid search. No LLM call — composes search + find_examples + find_reference_components.",
+      inputSchema: {
+        brief: z
+          .string()
+          .min(2)
+          .describe(
+            "The user's design brief in plain English. E.g. 'calm meditation app', 'dark dev-tool that helps teams ship faster'.",
+          ),
+        macrostructure: z
+          .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
+          .optional()
+          .describe(
+            "Optional: a macrostructure already picked (typically by Hallmark). Skips the pick step.",
+          ),
+        pageType: z
+          .enum(PAGE_TYPES)
+          .optional()
+          .describe("Optional: 'landing', 'pricing', 'features', etc."),
+        mode: z
+          .enum(MODES as unknown as [string, ...string[]])
+          .optional()
+          .describe("Optional: 'light' or 'dark'."),
+        vibe: z
+          .enum(VIBES as unknown as [string, ...string[]])
+          .optional()
+          .describe("Optional vibe filter."),
+        color: z
+          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+          .optional()
+          .describe("Optional colour word."),
+      },
+    },
+    async (args) => {
+      const all = await getAllScreens();
+      // Apply any caller-supplied filters before searching.
+      let pool = all;
+      if (args.mode) {
+        const m = args.mode as Mode;
+        pool = pool.filter((s) => s.mode === m);
+      }
+      if (args.vibe) {
+        const v = args.vibe as Vibe;
+        pool = pool.filter((s) => s.tags.vibe.includes(v));
+      }
+      if (args.color) {
+        const c = args.color as ColorWord;
+        pool = pool.filter((s) => s.designSystem.colorWords.includes(c));
+      }
+      if (args.pageType) {
+        const p = args.pageType;
+        pool = pool.filter((s) => s.pageType === p);
+      }
+
+      // Rank against the brief. The hybrid ranker (PR 7) embeds the
+      // query and blends cosine with lexical; results are deduped per
+      // site so the top of the list is genuinely diverse.
+      const ranked = await searchScreens(pool, args.brief, 24);
+
+      // Pick a macrostructure. If Hallmark gave us one, honour it.
+      // Otherwise: take the most common macrostructure among the top
+      // 6 ranked results (defends against one outlier dragging the
+      // pick toward an unrelated macro).
+      let picked: Macrostructure | undefined;
+      let rationale: string;
+      if (args.macrostructure) {
+        picked = args.macrostructure as Macrostructure;
+        rationale = `Honouring the macrostructure passed in by the caller (typically Hallmark's pick).`;
+      } else {
+        const top = ranked.slice(0, 6);
+        const counts = new Map<Macrostructure, number>();
+        for (const s of top) {
+          const m = s.tags.macrostructure;
+          if (m) counts.set(m, (counts.get(m) ?? 0) + 1);
+        }
+        let bestN = 0;
+        for (const [m, n] of counts) {
+          if (n > bestN) {
+            bestN = n;
+            picked = m;
+          }
+        }
+        if (!picked && top[0]) picked = top[0].tags.macrostructure;
+        rationale = picked
+          ? `Picked ${MACROSTRUCTURE_LABELS[picked]} — most common macrostructure (${bestN} of ${top.length}) among the top hybrid-search hits for the brief.`
+          : "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
+      }
+
+      // 5 exemplars OF the picked macro from the ranked pool. Fall
+      // back to the ranked top if filtering yields nothing.
+      let exemplars = picked
+        ? ranked.filter((s) => s.tags.macrostructure === picked).slice(0, 5)
+        : ranked.slice(0, 5);
+      if (exemplars.length === 0) exemplars = ranked.slice(0, 5);
+      const exemplarsFmt = exemplars.map((s) => formatScreen(s));
+
+      // Canonical reference component(s) that match the picked
+      // macrostructure. Substring-match on the first word of the
+      // display label (e.g. "Marquee" → matches hero/marquee) AND
+      // on the slug. Returns 0–3 matches.
+      const refMatches: ReturnType<typeof getReferenceComponents> = [];
+      if (picked) {
+        const label = MACROSTRUCTURE_LABELS[picked];
+        const firstWord = label.split(/[\s-]+/)[0]!.toLowerCase();
+        const slugTokens = picked.split("-");
+        const all = getReferenceComponents();
+        for (const r of all) {
+          const hay = `${r.id} ${r.macro}`.toLowerCase();
+          if (hay.includes(firstWord)) {
+            refMatches.push(r);
+            continue;
+          }
+          if (slugTokens.every((t) => hay.includes(t))) refMatches.push(r);
+        }
+      }
+      // De-duplicate; prefer hero matches first (they define page
+      // shape) then everything else.
+      const seenRef = new Set<string>();
+      const referencePicks = [
+        ...refMatches.filter((r) => r.type === "hero"),
+        ...refMatches.filter((r) => r.type !== "hero"),
+      ]
+        .filter((r) => {
+          const k = `${r.type}/${r.id}`;
+          if (seenRef.has(k)) return false;
+          seenRef.add(k);
+          return true;
+        })
+        .slice(0, 3);
+
+      // Palette suggestion — top exemplar's palette is the safest
+      // signal. If somehow empty, fall back to the second.
+      const palette =
+        (exemplarsFmt[0]?.palette?.length ?? 0) > 0
+          ? exemplarsFmt[0]!.palette
+          : (exemplarsFmt[1]?.palette ?? []);
+
+      return withImages(
+        {
+          brief: args.brief,
+          filters: {
+            pageType: args.pageType ?? null,
+            mode: args.mode ?? null,
+            vibe: args.vibe ?? null,
+            color: args.color ?? null,
+          },
+          pick: picked
+            ? {
+                macrostructure: {
+                  slug: picked,
+                  label: MACROSTRUCTURE_LABELS[picked],
+                },
+                rationale,
+              }
+            : { macrostructure: null, rationale },
+          exemplars: exemplarsFmt,
+          referenceComponents: referencePicks,
+          paletteSuggestion: palette,
+          tip:
+            referencePicks.length > 0
+              ? "Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. Study the inline exemplar thumbnails for palette + type + density choices specific to your brief."
+              : "No canonical reference matched the picked macrostructure. Study the inline exemplar thumbnails and write the page shape by hand.",
+        },
+        exemplarsFmt.map((r) => r.thumb),
+      );
+    },
+  );
+
   /* ────────────── get_reference_jsx ────────────── */
   server.registerTool(
     "get_reference_jsx",
