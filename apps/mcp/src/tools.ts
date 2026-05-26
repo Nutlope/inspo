@@ -44,7 +44,7 @@ const PAGE_TYPES = [
   "other",
 ] as const;
 import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
-import { lexicalSearch } from "./search.js";
+import { searchScreens } from "./search.js";
 
 export function registerTools(server: McpServer) {
   /* ────────────── search_screens ────────────── */
@@ -116,7 +116,7 @@ export function registerTools(server: McpServer) {
         filtered = filtered.filter((s) => s.pageType === p);
       }
 
-      const matched = lexicalSearch(filtered, args.query, args.limit);
+      const matched = await searchScreens(filtered, args.query, args.limit);
       const results = matched.map((s) => formatScreen(s));
       return withImages(
         {

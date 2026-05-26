@@ -23,8 +23,10 @@ export {
 export { renderDesignMd } from "./design-md";
 export {
   lexicalSearch,
+  searchScreens,
   findByHostname,
   hostnameOf,
   isUrl,
 } from "./search";
+export { embedQuery, loadSidecar, cosineSim, EMBEDDING_DIMS } from "./vector";
 export { screens, collections } from "./fixtures";

@@ -201,6 +201,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@cloudflare/workers-types@4.20260426.1)(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)(kysely@0.28.16)
+      together-ai:
+        specifier: ^0.21.0
+        version: 0.21.1
     devDependencies:
       dotenv:
         specifier: ^16.4.5

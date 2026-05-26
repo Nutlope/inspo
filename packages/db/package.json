@@ -24,7 +24,8 @@
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.2",
+    "together-ai": "^0.21.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
