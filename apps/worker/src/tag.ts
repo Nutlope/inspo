@@ -36,42 +36,107 @@ const isColorWord = (v: string): v is ColorWord =>
 
 const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
 
-const tagSchema = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    style: { type: "array", items: { type: "string", enum: [...STYLES] } },
-    industry: { type: "array", items: { type: "string", enum: [...INDUSTRIES] } },
-    components: { type: "array", items: { type: "string", enum: [...COMPONENTS] } },
-    vibe: { type: "array", items: { type: "string", enum: [...VIBES] } },
-    colorWords: { type: "array", items: { type: "string", enum: [...COLOR_WORDS] } },
-    macrostructure: { type: "string", enum: [...MACROSTRUCTURES] },
-    hallmarkTheme: { type: "string", enum: [...HALLMARK_THEMES] },
-    description: { type: "string" },
-    altText: { type: "string" },
-    searchKeywords: { type: "array", items: { type: "string" } },
-  },
-  required: [
-    "style",
-    "industry",
-    "components",
-    "vibe",
-    "colorWords",
-    "description",
-    "altText",
-    "searchKeywords",
-  ],
-} as const;
+/**
+ * One-line definitions for each macrostructure, lifted from the
+ * Hallmark canonical reference. Surfaced in the prompt so the vision
+ * model picks based on the actual page shape rather than reaching for
+ * whichever enum label happened to be listed first.
+ *
+ * Concrete observation that motivates this: on the first 41-site
+ * eval run, ~63% of pages were tagged "bento-grid" because Gemma
+ * defaulted to the first enum value. With these definitions in the
+ * prompt + the per-call shuffle below, distribution flattens.
+ */
+const MACROSTRUCTURE_DEFINITIONS: Record<(typeof MACROSTRUCTURES)[number], string> = {
+  "bento-grid": "Modular blocks of VARYING sizes in an irregular grid (≥4 tiles). Visual rhythm from size variation, not card uniformity. If the page is mostly one column or has a single dominant element, it is NOT bento.",
+  "long-document": "Reads like a memo, letter, or journal — continuous prose with inline section heads. No marketing structure.",
+  "marquee-hero": "One bold statement or visual fills the viewport above the fold. Below the fold the page becomes something else (list, grid, prose).",
+  "stat-led": "The hero is a giant NUMBER (metric, count, percentage). Everything below supports or qualifies it.",
+  "workbench": "Product screenshots in frames are the primary content. A guided tour of the app in use, not marketing copy.",
+  "conversational-faq": "Bold questions, brief answers. Reads like an honest interview. Often accordions.",
+  "manifesto": "Polemical large type. Declaration energy. Tells the reader what to BELIEVE before what to buy.",
+  "photographic": "A single huge IMAGE dominates each fold. Text is small annotation. Says LOOK before it says read.",
+  "quote-led": "The hero is a pull-quote with attribution. Headline is borrowed credibility, not the brand's own voice.",
+  "specimen": "Numbered left-margin labels, huge serif display, asymmetric column spans, hairline rules, typographic-only CTA. Editorial / type-foundry energy.",
+  "catalogue": "Uniform grid of variations of the same thing — typefaces, SKUs, swatches. A visual index of inventory.",
+  "letter": "First-person, written, intimate. Opens with a greeting (\"Dear friend,\"). No buttons in fold.",
+  "index-first": "The page IS a list of links. No hero image, no narrative flow. Pure navigation as design.",
+  "narrative-workflow": "Numbered stages (1.0 → 2.0 → 3.0) tell the story of how the user uses the product over time.",
+  "split-studio": "Diptych. Every major block divides the screen — text one side, proof the other. Pairing alternates direction.",
+  "feature-stack": "Sticky left pane (label) + scroll-synced right pane (screenshots cycling through related details).",
+  "type-specimen": "The typeface IS the design. Foundry homepage or design-system page where a custom typeface is the brand's proof.",
+  "portfolio-grid": "Filterable cards of projects. Studio or designer homepage where the WORK is the product.",
+  "map-diagram": "A single large spatial diagram organises the page — flowchart, floor plan, system map. Information is spatial, not linear.",
+  "ecosystem-index": "Multiple discovery surfaces — featured / latest / by category / by people. Browsing IS the value.",
+  "component-playground": "Interactive code-and-preview blocks are the primary content. Each previews a thing and shows how to copy-paste it.",
+};
+
+/** Shuffle helper — Fisher-Yates. Used to pass the macrostructure /
+ *  theme enums to the model in a fresh order each call so no single
+ *  label sits at position 0 every time (small VLMs anchor on the
+ *  first enum option). */
+function shuffled<T>(arr: readonly T[]): T[] {
+  const a = arr.slice() as T[];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}
+
+/** Build the tag schema with macrostructure + hallmarkTheme enums
+ *  shuffled per call. All other enums stay in their declared order
+ *  (they're multi-select, less sensitive to ordering). */
+function buildTagSchema() {
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      style: { type: "array", items: { type: "string", enum: [...STYLES] } },
+      industry: { type: "array", items: { type: "string", enum: [...INDUSTRIES] } },
+      components: { type: "array", items: { type: "string", enum: [...COMPONENTS] } },
+      vibe: { type: "array", items: { type: "string", enum: [...VIBES] } },
+      colorWords: { type: "array", items: { type: "string", enum: [...COLOR_WORDS] } },
+      macrostructure: { type: "string", enum: shuffled(MACROSTRUCTURES) },
+      hallmarkTheme: { type: "string", enum: shuffled(HALLMARK_THEMES) },
+      description: { type: "string" },
+      altText: { type: "string" },
+      searchKeywords: { type: "array", items: { type: "string" } },
+    },
+    required: [
+      "style",
+      "industry",
+      "components",
+      "vibe",
+      "colorWords",
+      "description",
+      "altText",
+      "searchKeywords",
+    ],
+  } as const;
+}
+
+const MACRO_RUBRIC = MACROSTRUCTURES.map(
+  (m) => `  - ${m}: ${MACROSTRUCTURE_DEFINITIONS[m]}`,
+).join("\n");
 
 const SYSTEM = [
   "You are a senior design critic tagging screenshots of real websites for a curated archive.",
   "Output a single JSON object matching the schema. No prose, no markdown fences.",
   "Every enum tag MUST come from the supplied enums — never invent values.",
-  "Pick exactly one Hallmark macrostructure (the named whole-page shape) and one Hallmark theme (category:theme).",
+  "",
+  "MACROSTRUCTURE — pick exactly ONE that genuinely matches the page shape. Use the rubric below.",
+  "Do NOT default to bento-grid: only pick bento-grid if there are 4+ small modular tiles in an irregular grid. A page with a single hero image, a single long column, a numbered list, or a code-window-as-hero is NOT bento.",
+  "Read every definition before deciding. The page shape — not the industry — drives the macrostructure choice.",
+  "",
+  "Macrostructure rubric:",
+  MACRO_RUBRIC,
+  "",
+  "Pick exactly one Hallmark theme (category:theme) that matches the visual register.",
   "description: 1–2 sentences in a designer's voice. Talk about the actual visual choices on this page (typography, colour, density, mood). No marketing fluff. Never describe yourself or the task.",
   "altText: ≤140 chars, screen-reader accurate, focuses on the visible content.",
   "searchKeywords: 5–10 short freeform keywords a designer would actually search for, e.g. 'editorial agency hero', 'dark saas bento'. Lowercase.",
-].join(" ");
+].join("\n");
 
 export async function tagWithLLM(args: {
   heroPng: Buffer;
@@ -89,6 +154,9 @@ export async function tagWithLLM(args: {
   });
   const dataUrl = `data:image/png;base64,${args.heroPng.toString("base64")}`;
 
+  // Build a fresh schema per call so the macrostructure / theme enums
+  // are shuffled — defends against first-position bias.
+  const tagSchema = buildTagSchema();
   const schemaText = JSON.stringify(tagSchema, null, 2);
 
   const userText = [
