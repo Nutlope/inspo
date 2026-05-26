@@ -60,6 +60,7 @@ const REFERENCE_TYPES = [
 ] as const;
 import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
 import { searchScreens } from "./search.js";
+import { study } from "./study.js";
 
 export function registerTools(server: McpServer) {
   /* ────────────── search_screens ────────────── */
@@ -178,14 +179,20 @@ export function registerTools(server: McpServer) {
     "get_design_system",
     {
       description:
-        "Return the full DESIGN.md for one screen — color tokens (with role guesses), type ramp (size / weight / line-height), spacing scale, radius scale, container width, raw CSS variables. This is the artifact you should read BEFORE writing any UI code referencing this site. Pairs with the Hallmark skill: Hallmark gives the design process, get_design_system gives the visual reference. Returns markdown text, ready to feed back into your reasoning.",
+        "Return the full DESIGN.md for one screen — real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens. Pairs with Hallmark.",
       inputSchema: {
         slug: z
           .string()
           .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
+        live: z
+          .boolean()
+          .default(true)
+          .describe(
+            "If true (default), supplement thin captured tokens by fetching the source URL via study(). Set false to skip the network round-trip.",
+          ),
       },
     },
-    async ({ slug }) => {
+    async ({ slug, live }) => {
       const s = await findScreen(slug);
       if (!s) {
         return {
@@ -195,8 +202,56 @@ export function registerTools(server: McpServer) {
           isError: true,
         };
       }
+
+      // Captured-time DESIGN.md (palette + role guesses + whatever
+      // type ramp / spacing scale extract.ts produced). Often thin
+      // for legacy rows.
+      const capturedMd = renderDesignMd(s);
+      const hasRichCaptured =
+        s.fonts.length > 0 ||
+        s.designSystem.typeRamp.length > 0 ||
+        Object.keys(s.designSystem.cssVariables).length > 0;
+
+      // If the captured data is already rich, return it as-is —
+      // saves a network call on hot rows.
+      if (!live || hasRichCaptured) {
+        return {
+          content: [{ type: "text" as const, text: capturedMd }],
+        };
+      }
+
+      // Live-fetch the source URL. Best-effort: if study() fails or
+      // returns thin data (SPA shell, bot wall), we still return the
+      // captured-time DESIGN.md with a note.
+      const liveStudy = await study(s.sourceUrl).catch(() => null);
+      if (!liveStudy || !liveStudy.ok) {
+        const note =
+          liveStudy?.warnings.join(" · ") ?? "live fetch unavailable";
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text:
+                capturedMd +
+                "\n\n---\n\n_Live fetch attempted but returned no usable tokens (" +
+                note +
+                "). Returning captured-time DESIGN.md only._",
+            },
+          ],
+        };
+      }
+
+      // Merge: keep the role-guessed palette + macrostructure from
+      // captured data (those came from vision tagging) AND attach the
+      // freshly-extracted fonts / CSS variables / tech from the live
+      // page. The caller reads the live block underneath the
+      // captured one.
+      const merged =
+        capturedMd +
+        "\n\n---\n\n## Live-extracted (just fetched)\n\n" +
+        liveStudy.designMd.replace(/^# .+\n+>.+\n+Source.+\n+/, "");
       return {
-        content: [{ type: "text" as const, text: renderDesignMd(s) }],
+        content: [{ type: "text" as const, text: merged }],
       };
     },
   );
@@ -493,6 +548,39 @@ export function registerTools(server: McpServer) {
         tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source — read them; they explain when to reach for this archetype.",
         components: list,
       });
+    },
+  );
+
+  /* ────────────── study (live URL → DESIGN.md) ──────────
+   *
+   * Fetch any live URL and return the brand's design system —
+   * fonts / palette / CSS variables / tech, extracted from HTML and
+   * CSS at request time. The MCP doesn't need the URL to be in the
+   * catalogue.
+   *
+   * Pairs directly with Hallmark's `study <url>` verb: the agent
+   * passes the brand URL, gets a DESIGN.md, then uses it as the
+   * token block when writing code.
+   */
+  server.registerTool(
+    "study",
+    {
+      description:
+        "Fetch any live URL and return its design system — real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Pairs with Hallmark's `study` verb.",
+      inputSchema: {
+        url: z
+          .string()
+          .url()
+          .describe(
+            "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'.",
+          ),
+      },
+    },
+    async ({ url }) => {
+      const r = await study(url);
+      // Return the structured shape so agents can read individual
+      // fields, plus the formatted DESIGN.md as a sibling block.
+      return asTextContent(r);
     },
   );
 
