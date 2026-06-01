@@ -101,6 +101,9 @@ function inspectMobile(slug: string): MobileFields | null {
 
 function main() {
   const write = process.argv.includes("--write");
+  // --only=<slug> augments just that one row (testing / incremental
+  // updates), leaving every other row untouched.
+  const only = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
   const rows = JSON.parse(readFileSync(SEED, "utf8")) as Array<
     Record<string, unknown>
   >;
@@ -110,6 +113,7 @@ function main() {
   let without = 0;
   for (const row of rows) {
     const slug = String(row.slug);
+    if (only && slug !== only) continue;
     // Strip any prior mobile fields first (idempotent).
     delete row.mobileImageUrl;
     delete row.mobileFullUrl;
