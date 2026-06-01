@@ -12,6 +12,7 @@ import {
   findReferenceComponent,
   findScreen,
   findSimilar,
+  findSite,
   getAllCollections,
   getAllScreens,
   getReferenceComponents,
@@ -295,6 +296,50 @@ export function registerTools(server: McpServer) {
         },
         results.map((r) => r.thumb),
       );
+    },
+  );
+
+  /* ────────────── get_flow ────────────── */
+  server.registerTool(
+    "get_flow",
+    {
+      description:
+        "Return a site's full multi-page JOURNEY — the ordered sequence of captured pages (landing → features → pricing → sign-up → docs …), each with its page type, title, palette, and an inline thumbnail. Where a single screen shows one moment, a flow shows how a real product walks a user from first touch to conversion — far richer signal for an agent that has to design more than a hero. Use it after search_screens/recommend to study how a reference structures its whole experience, not just its landing page. Only sites with multiple captured pages return a journey; single-page sites return just their landing.",
+      inputSchema: {
+        siteSlug: z
+          .string()
+          .describe(
+            "Site slug (the brand, not a sub-page), e.g. 'linear-app', 'clerk-com'. This is the `siteSlug` field on any screen result.",
+          ),
+      },
+    },
+    async ({ siteSlug }) => {
+      const site = await findSite(siteSlug);
+      if (!site) {
+        return asTextContent({
+          error: `No site '${siteSlug}'. Use the siteSlug field from a search result.`,
+        });
+      }
+      const steps = site.pages.map((p, i) => ({
+        step: i + 1,
+        slug: p.slug,
+        pageType: p.pageType,
+        title: p.title,
+        palette: p.palette.slice(0, 5),
+        thumb: absolute(p.thumbUrl),
+        ...(p.northstar ? { northstar: p.northstar } : {}),
+      }));
+      const payload = {
+        site: site.siteSlug,
+        title: site.title,
+        sourceUrl: site.sourceUrl,
+        pageCount: site.pageCount,
+        journey: steps.map((s) => s.pageType).join(" → "),
+        steps,
+      };
+      // Inline every step's thumbnail in journey order so the agent can
+      // see the whole arc at a glance.
+      return withImages(payload, steps.map((s) => s.thumb));
     },
   );
 
