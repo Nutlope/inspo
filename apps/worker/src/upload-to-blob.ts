@@ -127,6 +127,10 @@ async function main() {
   const argv = process.argv.slice(2);
   const go = argv.includes("--go");
   const pngsOnly = argv.includes("--pngs-only");
+  // --mobile-only: ship just the mobile + mobile-full variants (the
+  // desktop hero/full/thumb are already on Blob), so the backfill
+  // upload doesn't redundantly re-push thousands of existing files.
+  const mobileOnly = argv.includes("--mobile-only");
   const slugFilter = argv.find((a) => a.startsWith("--slug="))?.split("=")[1];
   // --from-file=path : upload only the slugs listed (one per line).
   // Lets us push just the newly-captured set instead of re-uploading
@@ -185,7 +189,12 @@ async function main() {
       try {
         let pngsThisSlug = 0;
         let variantsThisSlug = 0;
-        for (const v of ["hero", "full", "thumb", "mobile", "mobile-full"] as Variant[]) {
+        const variants = (
+          mobileOnly
+            ? ["mobile", "mobile-full"]
+            : ["hero", "full", "thumb", "mobile", "mobile-full"]
+        ) as Variant[];
+        for (const v of variants) {
           if (!go) {
             const src = newestPng(join(CAPTURES_DIR, slug), PREFIX[v]);
             if (src) {
