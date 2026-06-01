@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Osteria Nera — A nightly tasting menu in the dark, Torino</title>
+<meta name="description" content="Eleven courses, one seating at a time. Chef Lucia Maranzano cooks a single nightly menu from the Piedmontese hills — fourteen seats, candlelight, no choices but the wine. Wednesday to Saturday, Torino." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────────────────────
+     OSTERIA NERA — pure-Inspo build, DARK register.
+
+     Type, palette and macrostructure are traced to real captures in the
+     Inspo archive (verified via get_design_system --live):
+
+       • EB Garamond (display serif) — the live font on BOTH
+         deathandcompany-com AND elevenmadisonpark-com. The category's
+         actual serif, not an AI guess.
+       • Inter Tight (UI / labels) — live on elevenmadisonpark-com,
+         paired there with EB Garamond exactly as used here.
+       • Oxblood accent #8A1C12 — Death & Co's live brand red (#b32614);
+         find_by_color "#8a1c12" returned a tight real cluster
+         (#882219 lesswrong, #86201c parsons, #872414 branchfurniture,
+         #8a2718 ysl) — the colour lives in the archive.
+       • Warm candle amber #C9882E / #E3A074 — Eleven Madison Park
+         (#c57838 / #e1b997) and Atomix NYC (#c95535 / #e3a696).
+       • Near-black ground — Death & Co (#000) + Dinner by Heston's
+         monochrome "quiet authority" specimen.
+
+     Macrostructure: Specimen / Marquee-Hero. Typography is the hero on a
+     dark candlelit field (Dinner by Heston = Specimen; Death & Co =
+     Marquee Hero; both dark, restrained, serif-led).
+     ─────────────────────────────────────────────────────────────── */
+  :root{
+    --ink:        #0C0A08;   /* near-black ground (Death & Co #000, warmed) */
+    --ink-2:      #14110D;   /* raised panel */
+    --ink-3:      #1C1813;   /* card / hover */
+    --line:       rgba(231,221,203,.12);
+    --line-2:     rgba(231,221,203,.20);
+    --line-3:     rgba(231,221,203,.30);
+
+    --bone:       #ECE6D8;   /* primary text on dark — warm bone, not pure white */
+    --bone-soft:  rgba(236,230,216,.66);
+    --bone-mute:  rgba(236,230,216,.42);
+
+    --oxblood:    #8A1C12;   /* primary accent — traced to Death & Co red cluster */
+    --oxblood-lo: #6E140C;
+    --ember:      #B23A24;   /* lifted oxblood for hovers */
+
+    --amber:      #C9882E;   /* candle gold — EMP / Atomix warm earth */
+    --amber-lo:   #8A5A1A;
+    --flesh:      #E3A074;   /* warm highlight — EMP #e1b997 / Atomix #e3a696 */
+
+    --serif: 'EB Garamond', 'Hoefler Text', Georgia, serif;
+    --sans:  'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --gut: 32px;
+    --maxw: 1280px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;padding:0;background:var(--ink);color:var(--bone);
+    font-family:var(--sans);font-size:16px;font-weight:400;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* very fine warm grain so the dark field never reads as flat #000 */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.86  0 0 0 0 0.80  0 0 0 0 0.66  0 0 0 0.02 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>") 0 0 / 200px 200px;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  ::selection{background:var(--oxblood);color:var(--bone)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);position:relative;z-index:1}
+  @media (max-width:640px){ :root{--gut:20px} }
+
+  .serif{font-family:var(--serif)}
+  .italic{font-style:italic}
+
+  /* small grotesque label — the Inter Tight "spec" voice from EMP */
+  .label{
+    font-family:var(--sans);font-size:11px;font-weight:500;
+    letter-spacing:.28em;text-transform:uppercase;color:var(--amber);
+  }
+  .label.muted{color:var(--bone-mute)}
+  .rule-label{display:inline-flex;align-items:center;gap:14px}
+  .rule-label::before{content:"";width:30px;height:1px;background:var(--amber);opacity:.7}
+
+  /* ───────────── reservation bar ───────────── */
+  .topline{
+    background:var(--ink);border-bottom:1px solid var(--line);
+    font-family:var(--sans);font-size:11.5px;font-weight:400;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--bone-soft);
+    display:flex;justify-content:center;align-items:center;gap:28px;
+    padding:11px 16px;position:relative;z-index:2;
+  }
+  .topline span{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+  .topline .dot{width:4px;height:4px;border-radius:50%;background:var(--amber);display:inline-block}
+  .topline b{color:var(--bone);font-weight:500}
+  @media (max-width:900px){ .topline span:nth-child(3){display:none} }
+  @media (max-width:560px){ .topline span:nth-child(2){display:none} .topline{font-size:10.5px;gap:0;justify-content:center} }
+
+  /* ───────────── nav ───────────── */
+  nav.top{position:sticky;top:0;z-index:40;background:rgba(12,10,8,.72);border-bottom:1px solid var(--line)}
+  @supports (backdrop-filter: blur(1px)){
+    nav.top{backdrop-filter:saturate(130%) blur(10px);background:rgba(12,10,8,.55)}
+  }
+  nav.top .row{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:20px 0}
+  .brand{display:inline-flex;align-items:baseline;gap:11px;line-height:1}
+  .brand .word{
+    font-family:var(--serif);font-weight:500;font-size:25px;letter-spacing:.04em;color:var(--bone);
+  }
+  .brand .word b{font-weight:600;font-style:italic}
+  .brand .est{
+    font-family:var(--sans);font-size:9.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--amber);border:1px solid var(--line-3);border-radius:2px;padding:3px 6px 2px;transform:translateY(-3px);
+  }
+  .menu{display:flex;gap:30px;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:.16em;text-transform:uppercase}
+  .menu a{position:relative;padding:6px 0;color:var(--bone-soft);transition:color .18s ease}
+  .menu a:hover{color:var(--bone)}
+  .menu a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--amber);transition:right .25s ease}
+  .menu a:hover::after{right:0}
+  .book{
+    font-family:var(--sans);font-size:11.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--line-3);color:var(--bone);padding:11px 20px;border-radius:1px;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  .book:hover{background:var(--bone);color:var(--ink);border-color:var(--bone)}
+  @media (max-width:880px){ .menu{display:none} }
+  @media (max-width:520px){
+    .brand .word{font-size:21px}.brand .est{display:none}
+    .book{padding:9px 14px;font-size:10.5px}
+    nav.top .row{padding:15px 0;gap:12px}
+  }
+
+  /* ═══════════════ HERO — candlelit table, composed in CSS ═══════════════ */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  /* the pool of candlelight: a warm radial that falls off into the black */
+  .hero::before{
+    content:"";position:absolute;z-index:0;left:50%;top:38%;
+    width:140vw;height:120vh;transform:translate(-50%,-50%);
+    background:radial-gradient(closest-side,
+        rgba(201,136,46,.20) 0%,
+        rgba(178,58,36,.10) 32%,
+        rgba(138,28,18,.05) 50%,
+        rgba(12,10,8,0) 72%);
+    pointer-events:none;
+  }
+  /* a second tighter flame-glow anchored to the candle graphic */
+  .hero::after{
+    content:"";position:absolute;z-index:0;right:18%;top:30%;
+    width:520px;height:520px;transform:translate(50%,-50%);
+    background:radial-gradient(closest-side, rgba(227,160,116,.22), rgba(12,10,8,0) 70%);
+    pointer-events:none;filter:blur(6px);
+  }
+  @media (max-width:980px){ .hero::after{right:50%;top:auto;bottom:-4%;transform:translate(50%,0);width:420px;height:420px} }
+
+  .hero .inner{
+    display:grid;grid-template-columns:1.06fr .94fr;gap:56px;align-items:center;
+    padding:90px 0 96px;min-height:min(86vh,820px);
+  }
+  .hero .lead{position:relative;z-index:2}
+  .hero .kicker{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:30px}
+  .hero .kicker .seal{
+    width:58px;height:58px;border-radius:50%;border:1px solid var(--line-3);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-family:var(--sans);font-size:8px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--bone-soft);line-height:1.5;flex-shrink:0;
+  }
+  .hero .kicker .seal b{color:var(--amber);font-weight:600}
+  h1.display{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(58px, 8.6vw, 124px);line-height:.94;letter-spacing:-.012em;
+    margin:0 0 30px;color:var(--bone);
+  }
+  h1.display em{font-style:italic;font-weight:500;color:var(--flesh)}
+  h1.display .line{display:block}
+  .hero .lede{
+    font-family:var(--serif);font-size:clamp(18px,2.05vw,22px);line-height:1.5;font-weight:400;
+    color:var(--bone-soft);max-width:43ch;margin:0 0 38px;
+  }
+  .hero .lede b{color:var(--bone);font-weight:500}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:var(--sans);font-size:12.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+    padding:17px 30px;border-radius:1px;transition:all .18s ease;
+  }
+  .btn-solid{background:var(--bone);color:var(--ink)}
+  .btn-solid:hover{background:var(--amber);color:var(--ink)}
+  .btn-line{border:1px solid var(--line-3);color:var(--bone)}
+  .btn-line:hover{border-color:var(--bone);background:rgba(236,230,216,.04)}
+  .btn .arr{display:inline-block;transition:transform .18s ease}
+  .btn:hover .arr{transform:translateX(5px)}
+
+  .hero-meta{display:flex;gap:42px;flex-wrap:wrap;margin-top:48px;padding-top:30px;border-top:1px solid var(--line)}
+  .hero-meta .m b{
+    display:block;font-family:var(--serif);font-size:30px;font-weight:500;color:var(--bone);
+    line-height:1;margin-bottom:7px;letter-spacing:-.01em;
+  }
+  .hero-meta .m span{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-mute)}
+
+  /* — the plated course, composed entirely in CSS — */
+  .hero .scene{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:520px}
+  .table-scene{position:relative;width:min(440px,100%);aspect-ratio:1/1}
+
+  /* the plate */
+  .plate{
+    position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);
+    width:78%;aspect-ratio:1/1;border-radius:50%;
+    background:
+      radial-gradient(closest-side at 42% 38%, #2a241c 0%, #1a1611 60%, #100d0a 100%);
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,.9),
+      inset 0 2px 1px rgba(236,230,216,.06);
+  }
+  .plate::before{ /* rim */
+    content:"";position:absolute;inset:7%;border-radius:50%;
+    border:1px solid rgba(236,230,216,.10);
+    box-shadow:inset 0 0 40px rgba(0,0,0,.6);
+  }
+  .plate::after{ /* warm catch-light from the candle, upper-right */
+    content:"";position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(closest-side at 70% 26%, rgba(227,160,116,.16), rgba(0,0,0,0) 58%);
+  }
+  /* the dressed plate: a small composed still-life */
+  .food{position:absolute;inset:24%;border-radius:50%;}
+  .smear{ /* sauce arc */
+    position:absolute;left:14%;top:54%;width:64%;height:30%;
+    background:radial-gradient(closest-side, rgba(138,28,18,.85), rgba(110,20,12,.25) 70%, transparent);
+    border-radius:50%;transform:rotate(-12deg);filter:blur(.4px);
+  }
+  .quenelle{ /* the protein, centre */
+    position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-8deg);
+    width:46%;height:30%;border-radius:50% 50% 48% 52% / 62% 60% 40% 42%;
+    background:linear-gradient(150deg,#6b4a2c 0%, #3c2615 70%);
+    box-shadow:inset 0 -6px 10px rgba(0,0,0,.5), inset 0 4px 6px rgba(227,160,116,.25), 0 6px 14px rgba(0,0,0,.5);
+  }
+  .garnish{position:absolute;border-radius:50%}
+  .g1{left:36%;top:34%;width:8px;height:8px;background:var(--amber);box-shadow:0 0 8px rgba(201,136,46,.6)}
+  .g2{left:62%;top:40%;width:5px;height:5px;background:var(--flesh)}
+  .g3{left:48%;top:62%;width:6px;height:6px;background:#7c8b5a}
+  .g4{left:58%;top:60%;width:4px;height:4px;background:#7c8b5a}
+  .leaf{
+    position:absolute;left:54%;top:30%;width:24px;height:9px;
+    background:linear-gradient(90deg,#5b6b3c,#3a472a);
+    border-radius:0 60% 0 60%;transform:rotate(-28deg);transform-origin:left center;
+    box-shadow:0 2px 4px rgba(0,0,0,.5);
+  }
+  .dust{ /* scattered crumb / spice */
+    position:absolute;inset:0;border-radius:50%;
+    background:
+      radial-gradient(1.5px 1.5px at 30% 70%, rgba(201,136,46,.7), transparent),
+      radial-gradient(1.5px 1.5px at 66% 68%, rgba(227,160,116,.6), transparent),
+      radial-gradient(1.5px 1.5px at 44% 30%, rgba(201,136,46,.5), transparent),
+      radial-gradient(1.5px 1.5px at 70% 50%, rgba(236,230,216,.4), transparent);
+  }
+
+  /* the candle, upper right of the plate */
+  .candle{position:absolute;right:6%;top:2%;width:30px;display:flex;flex-direction:column;align-items:center}
+  .candle .flame{
+    width:11px;height:26px;border-radius:50% 50% 50% 50% / 64% 64% 40% 40%;
+    background:radial-gradient(closest-side at 50% 72%, #fff5d8 0%, var(--amber) 42%, var(--ember) 78%, transparent 100%);
+    transform-origin:50% 100%;animation:flicker 3.2s ease-in-out infinite;
+    box-shadow:0 0 22px 6px rgba(201,136,46,.45);
+  }
+  .candle .wick{width:2px;height:6px;background:#2a2018;margin-top:-2px}
+  .candle .stick{
+    width:13px;height:120px;margin-top:1px;border-radius:3px 3px 1px 1px;
+    background:linear-gradient(90deg,#15110c 0%, #2a2118 38%, #3a2e20 50%, #1d1710 70%, #100c08 100%);
+    box-shadow:inset 0 0 0 1px rgba(236,230,216,.05);
+  }
+  @keyframes flicker{
+    0%,100%{transform:scaleY(1) skewX(0deg);opacity:.96}
+    25%{transform:scaleY(1.06) skewX(-2deg);opacity:1}
+    50%{transform:scaleY(.97) skewX(1deg);opacity:.9}
+    75%{transform:scaleY(1.03) skewX(-1deg);opacity:.98}
+  }
+  @media (prefers-reduced-motion:reduce){ .candle .flame{animation:none} }
+
+  /* hand-lettered course marker over the scene */
+  .scene .course-tag{
+    position:absolute;left:0;bottom:6%;z-index:3;
+    font-family:var(--sans);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--bone-mute);
+    display:flex;align-items:center;gap:12px;
+  }
+  .scene .course-tag b{font-family:var(--serif);font-style:italic;font-size:19px;letter-spacing:0;color:var(--flesh);text-transform:none}
+
+  @media (max-width:980px){
+    .hero .inner{grid-template-columns:1fr;gap:24px;padding:64px 0 80px;min-height:auto}
+    .hero .scene{min-height:380px;order:2}
+    .table-scene{width:min(360px,84%)}
+    .hero-meta{gap:30px}
+  }
+  @media (max-width:520px){
+    .hero .kicker{gap:14px;margin-bottom:24px}
+    .hero-meta{gap:0 36px;row-gap:22px}
+    .hero-meta .m{flex:0 0 calc(50% - 18px)}
+    .hero-ctas{gap:12px}
+    .btn{padding:15px 22px;flex:1;justify-content:center}
+    .scene .course-tag{position:static;justify-content:center;margin-top:22px}
+  }
+
+  /* ───────────── marquee — the menu name, drifting ───────────── */
+  .marquee{border-bottom:1px solid var(--line);background:var(--ink-2);overflow:hidden;position:relative;z-index:1}
+  .marquee .track{display:flex;white-space:nowrap;animation:drift 44s linear infinite;will-change:transform}
+  .marquee .it{
+    font-family:var(--serif);font-style:italic;font-size:clamp(22px,3vw,34px);font-weight:400;
+    color:var(--bone-soft);padding:18px 0;display:inline-flex;align-items:center;
+  }
+  .marquee .it::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--oxblood);margin:0 38px}
+  @keyframes drift{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){ .marquee .track{animation:none} }
+
+  /* ───────────── generic section ───────────── */
+  section{position:relative;z-index:1;padding:104px 0;border-bottom:1px solid var(--line)}
+  .sec-head{display:grid;grid-template-columns:1fr 1.45fr;gap:48px;align-items:end;margin-bottom:64px}
+  .sec-head .idx{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--bone-mute);text-align:right}
+  .sec-head h2{
+    font-family:var(--serif);font-weight:400;font-size:clamp(38px,5.1vw,68px);line-height:1.02;
+    letter-spacing:-.015em;margin:18px 0 0;color:var(--bone);
+  }
+  .sec-head h2 em{font-style:italic;color:var(--flesh)}
+  .sec-head .blurb{font-family:var(--serif);font-size:19px;line-height:1.56;color:var(--bone-soft);margin:0;max-width:50ch;justify-self:end}
+  @media (max-width:820px){
+    section{padding:76px 0}
+    .sec-head{grid-template-columns:1fr;gap:16px;align-items:start;margin-bottom:44px}
+    .sec-head .idx{text-align:left;order:-1}
+    .sec-head .blurb{justify-self:start}
+  }
+
+  /* ───────────── philosophy — text specimen ───────────── */
+  .philo{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .philo .big{
+    font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,38px);line-height:1.28;
+    letter-spacing:-.01em;color:var(--bone);margin:0;
+  }
+  .philo .big em{font-style:italic;color:var(--flesh)}
+  .philo .col{display:flex;flex-direction:column;gap:22px}
+  .philo .col p{margin:0;font-size:16px;line-height:1.7;color:var(--bone-soft)}
+  .philo .col p:first-child::first-letter{
+    font-family:var(--serif);float:left;font-size:62px;line-height:.78;font-weight:500;
+    color:var(--oxblood);margin:6px 12px 0 0;
+  }
+  .philo .sign{
+    margin-top:14px;display:flex;align-items:center;gap:16px;padding-top:22px;border-top:1px solid var(--line);
+  }
+  .philo .sign .name{font-family:var(--serif);font-style:italic;font-size:27px;color:var(--bone)}
+  .philo .sign .role{font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-mute)}
+  @media (max-width:820px){ .philo{grid-template-columns:1fr;gap:36px} }
+
+  /* ───────────── the menu — numbered carte ───────────── */
+  .menu-band{background:var(--ink)}
+  .carte{border-top:1px solid var(--line-2)}
+  .course{
+    display:grid;grid-template-columns:64px 1fr auto;gap:32px;align-items:baseline;
+    padding:26px 4px;border-bottom:1px solid var(--line);
+    transition:background .2s ease,padding-left .2s ease;
+  }
+  .course:hover{background:var(--ink-3);padding-left:14px}
+  .course .no{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--oxblood);line-height:1}
+  .course .body .nm{
+    font-family:var(--serif);font-size:clamp(23px,2.6vw,30px);font-weight:400;color:var(--bone);
+    line-height:1.12;letter-spacing:-.01em;margin:0 0 6px;
+  }
+  .course .body .nm em{font-style:italic;color:var(--flesh)}
+  .course .body .desc{font-family:var(--serif);font-size:16px;line-height:1.5;color:var(--bone-soft);margin:0;max-width:62ch}
+  .course .body .desc i{color:var(--bone-mute);font-style:italic}
+  .course .meta{
+    font-family:var(--sans);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-mute);
+    text-align:right;white-space:nowrap;align-self:center;
+  }
+  .course .meta b{display:block;color:var(--amber);font-weight:500;margin-bottom:3px}
+  .menu-foot{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;
+    margin-top:44px;padding-top:34px;border-top:1px solid var(--line-2);
+  }
+  .menu-foot .price-block .label{margin-bottom:14px;display:inline-block}
+  .menu-foot .price-block .price{font-family:var(--serif);font-size:clamp(44px,6vw,72px);line-height:.9;color:var(--bone);letter-spacing:-.02em}
+  .menu-foot .price-block .price sup{font-size:.42em;vertical-align:.9em;color:var(--bone-soft);font-style:italic}
+  .menu-foot .price-block .price small{font-family:var(--sans);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--bone-mute);margin-left:14px;vertical-align:.5em}
+  .menu-foot .pair{max-width:44ch;text-align:right}
+  .menu-foot .pair p{font-family:var(--serif);font-size:16.5px;line-height:1.55;color:var(--bone-soft);margin:0 0 16px}
+  .menu-foot .pair p em{color:var(--flesh);font-style:italic}
+  @media (max-width:680px){
+    .course{grid-template-columns:38px 1fr;gap:14px 18px}
+    .course .meta{grid-column:2;text-align:left;margin-top:8px}
+    .course:hover{padding-left:4px}
+    .menu-foot{flex-direction:column;align-items:flex-start;gap:30px}
+    .menu-foot .pair{text-align:left}
+  }
+
+  /* ───────────── the room / experience — three notes ───────────── */
+  .notes{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+  .note{padding:40px 32px 44px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px;transition:background .2s ease}
+  .note:last-child{border-right:0}
+  .note:hover{background:var(--ink-2)}
+  .note .n{font-family:var(--serif);font-style:italic;font-size:40px;color:var(--oxblood);line-height:.85}
+  .note h3{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.12;margin:4px 0 0;letter-spacing:-.01em;color:var(--bone)}
+  .note p{font-size:15px;line-height:1.62;color:var(--bone-soft);margin:0;max-width:34ch}
+  .note .tail{
+    margin-top:auto;padding-top:20px;border-top:1px solid var(--line);
+    font-family:var(--sans);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-mute);
+  }
+  @media (max-width:820px){
+    .notes{grid-template-columns:1fr}
+    .note{border-right:0;border-bottom:1px solid var(--line)}
+    .note:last-child{border-bottom:0}
+  }
+
+  /* ───────────── reservations / hours block ───────────── */
+  .reserve{background:var(--ink-2)}
+  .reserve-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line-2)}
+  .reserve .left{padding:56px 52px;display:flex;flex-direction:column;border-right:1px solid var(--line-2)}
+  .reserve .left h2{
+    font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.4vw,56px);line-height:1.02;
+    letter-spacing:-.015em;margin:18px 0 22px;color:var(--bone);
+  }
+  .reserve .left h2 em{font-style:italic;color:var(--flesh)}
+  .reserve .left p{font-family:var(--serif);font-size:18px;line-height:1.55;color:var(--bone-soft);margin:0 0 32px;max-width:42ch}
+  .seatings{display:flex;flex-direction:column;gap:0;margin-bottom:34px;border-top:1px solid var(--line)}
+  .seatings .row{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .seatings .row .day{font-family:var(--serif);font-size:20px;color:var(--bone)}
+  .seatings .row .day small{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-mute);display:block;margin-top:2px}
+  .seatings .row .time{font-family:var(--sans);font-size:13px;letter-spacing:.1em;color:var(--bone-soft);text-align:right}
+  .seatings .row.dark .day{color:var(--bone-mute)}
+  .seatings .row.dark .time{color:var(--oxblood);font-style:italic;font-family:var(--serif);font-size:16px;letter-spacing:0}
+  .reserve .left .foot-note{margin-top:auto;font-size:13.5px;line-height:1.6;color:var(--bone-mute)}
+  .reserve .left .foot-note a{color:var(--amber);border-bottom:1px solid rgba(201,136,46,.4)}
+
+  /* booking form */
+  .reserve .right{padding:56px 52px;display:flex;flex-direction:column}
+  .reserve .right .form-head{margin-bottom:30px}
+  .reserve .right .form-head .t{font-family:var(--serif);font-size:27px;color:var(--bone);margin:10px 0 0}
+  .bk{display:grid;gap:22px}
+  .bk .field{display:grid;gap:10px}
+  .bk .flabel{font-family:var(--sans);font-size:10.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-mute)}
+  .bk input, .bk select{
+    width:100%;background:var(--ink);border:1px solid var(--line-2);border-radius:1px;color:var(--bone);
+    padding:14px 16px;font-family:var(--sans);font-size:14.5px;outline:none;transition:border-color .18s ease;
+    -webkit-appearance:none;appearance:none;
+  }
+  .bk input::placeholder{color:var(--bone-mute)}
+  .bk input:focus, .bk select:focus{border-color:var(--line-3)}
+  .bk select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23C9882E' stroke-width='1.4'><path d='M1 1.5 6 6l5-4.5'/></svg>");
+    background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;
+  }
+  .bk .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .bk-segment{display:flex;gap:8px;flex-wrap:wrap}
+  .bk-segment button{
+    flex:1;min-width:64px;border:1px solid var(--line-2);border-radius:1px;padding:12px 8px;
+    font-family:var(--sans);font-size:13px;letter-spacing:.04em;color:var(--bone-soft);
+    transition:all .15s ease;background:var(--ink);
+  }
+  .bk-segment button:hover{border-color:var(--line-3);color:var(--bone)}
+  .bk-segment button.on{background:var(--bone);color:var(--ink);border-color:var(--bone);font-weight:500}
+  .bk .submit{
+    margin-top:6px;background:var(--oxblood);color:var(--bone);padding:17px;border-radius:1px;
+    font-family:var(--sans);font-size:12.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    transition:background .18s ease;display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .bk .submit:hover{background:var(--ember)}
+  .bk .fine{font-size:12px;line-height:1.55;color:var(--bone-mute);text-align:center;margin-top:4px}
+  @media (max-width:820px){
+    .reserve-grid{grid-template-columns:1fr}
+    .reserve .left{border-right:0;border-bottom:1px solid var(--line-2)}
+    .reserve .left, .reserve .right{padding:38px 26px}
+  }
+
+  /* ───────────── press strip ───────────── */
+  .press{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line-2)}
+  .quote{padding:44px 36px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:22px}
+  .quote:last-child{border-right:0}
+  .quote blockquote{
+    font-family:var(--serif);font-size:21px;line-height:1.42;color:var(--bone);margin:0;letter-spacing:-.005em;
+  }
+  .quote blockquote em{font-style:italic;color:var(--flesh)}
+  .quote .src{
+    margin-top:auto;font-family:var(--sans);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-mute);
+    padding-top:18px;border-top:1px solid var(--line);
+  }
+  .quote .src b{color:var(--amber);font-weight:500}
+  .quote .stars{color:var(--amber);font-size:13px;letter-spacing:.3em}
+  @media (max-width:820px){
+    .press{grid-template-columns:1fr}
+    .quote{border-right:0;border-bottom:1px solid var(--line)}
+    .quote:last-child{border-bottom:0}
+  }
+
+  /* ───────────── footer ───────────── */
+  footer{position:relative;z-index:1;background:var(--ink);padding:88px 0 30px}
+  .foot-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;padding-bottom:56px;border-bottom:1px solid var(--line)}
+  .foot-brand .word{font-family:var(--serif);font-size:32px;color:var(--bone);letter-spacing:.03em}
+  .foot-brand .word b{font-style:italic;font-weight:600}
+  .foot-brand p{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--bone-soft);margin:18px 0 0;max-width:32ch}
+  .foot-brand .addr{
+    margin-top:22px;font-family:var(--sans);font-size:13px;line-height:1.7;letter-spacing:.02em;color:var(--bone-soft);
+  }
+  .foot-brand .addr b{color:var(--bone);font-weight:500;display:block;letter-spacing:.06em;font-size:11px;text-transform:uppercase;margin-bottom:6px;color:var(--amber)}
+  .foot-col h5{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin:0 0 18px;font-weight:500}
+  .foot-col ul{list-style:none;padding:0;margin:0;display:grid;gap:11px}
+  .foot-col a{font-family:var(--sans);font-size:14px;color:var(--bone-soft);transition:color .15s ease}
+  .foot-col a:hover{color:var(--bone)}
+  .foot-col .line{font-family:var(--sans);font-size:14px;color:var(--bone-soft);line-height:1.7}
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+    padding-top:24px;margin-top:30px;border-top:1px solid var(--line);
+    font-family:var(--sans);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--bone-mute);
+  }
+  .foot-bottom a{color:var(--bone-soft)}
+  .foot-bottom a:hover{color:var(--amber)}
+  @media (max-width:820px){ .foot-top{grid-template-columns:1fr 1fr;gap:34px} }
+  @media (max-width:520px){ .foot-top{grid-template-columns:1fr} }
+
+  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* subtle reveal — content paints visible if JS never runs */
+  @media (prefers-reduced-motion:no-preference){
+    [data-rise].is-pending{opacity:0;transform:translateY(16px)}
+    [data-rise]{transition:opacity .8s cubic-bezier(.2,.6,.2,1), transform .8s cubic-bezier(.2,.6,.2,1)}
+  }
+</style>
+</head>
+<body>
+
+<!-- reservation line -->
+<div class="topline" role="status">
+  <span><span class="dot"></span> One nightly menu &nbsp;·&nbsp; <b>fourteen seats</b></span>
+  <span>June residency: <b>Il Buio</b> — the dark, eleven movements</span>
+  <span>Reservations open the <b>1st</b> for the month ahead</span>
+</div>
+
+<!-- nav -->
+<nav class="top">
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="#top">
+        <span class="word">Osteria <b>Nera</b></span>
+        <span class="est">Torino · MMXIX</span>
+      </a>
+      <div class="menu">
+        <a href="#menu">The Menu</a>
+        <a href="#kitchen">The Kitchen</a>
+        <a href="#room">The Room</a>
+        <a href="#reserve">Reservations</a>
+      </div>
+      <a href="#reserve" class="book">Reserve a seating</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="inner">
+      <div class="lead" data-rise>
+        <div class="kicker">
+          <span class="seal">Una<br><b>stella</b><br>2024</span>
+          <span class="rule-label label">A tasting menu in the dark · Torino, Piemonte</span>
+        </div>
+        <h1 class="display" id="h1">
+          <span class="line">Eleven plates,</span>
+          <span class="line">told by <em>candle</em></span>
+          <span class="line">light.</span>
+        </h1>
+        <p class="lede">
+          One menu a night, written each afternoon from whatever the hills around
+          Torino gave up that morning. <b>No choices but the wine.</b> Fourteen seats,
+          two seatings, the lights kept low on purpose.
+        </p>
+        <div class="hero-ctas">
+          <a href="#reserve" class="btn btn-solid">Reserve a seating <span class="arr">&rarr;</span></a>
+          <a href="#menu" class="btn btn-line">Read tonight's menu</a>
+        </div>
+
+        <div class="hero-meta" aria-label="At a glance">
+          <div class="m"><b>XI</b><span>Movements nightly</span></div>
+          <div class="m"><b>14</b><span>Seats, one room</span></div>
+          <div class="m"><b>Wed–Sat</b><span>Two seatings</span></div>
+          <div class="m"><b>€185</b><span>Per guest</span></div>
+        </div>
+      </div>
+
+      <div class="scene" data-rise>
+        <div class="table-scene" aria-hidden="true">
+          <div class="plate">
+            <div class="food">
+              <div class="dust"></div>
+              <div class="smear"></div>
+              <div class="quenelle"></div>
+              <div class="leaf"></div>
+              <span class="garnish g1"></span>
+              <span class="garnish g2"></span>
+              <span class="garnish g3"></span>
+              <span class="garnish g4"></span>
+            </div>
+          </div>
+          <div class="candle">
+            <div class="flame"></div>
+            <div class="wick"></div>
+            <div class="stick"></div>
+          </div>
+        </div>
+        <div class="course-tag"><span>Quinto · the fifth</span> <b>Hare, juniper, burnt cream</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    <span class="it">Il Buio</span><span class="it">eleven movements</span><span class="it">written each afternoon</span><span class="it">cooked over chestnut wood</span><span class="it">fourteen seats</span><span class="it">no menu but the season</span>
+    <span class="it">Il Buio</span><span class="it">eleven movements</span><span class="it">written each afternoon</span><span class="it">cooked over chestnut wood</span><span class="it">fourteen seats</span><span class="it">no menu but the season</span>
+  </div>
+</div>
+
+<!-- ═══════════════ PHILOSOPHY ═══════════════ -->
+<section id="kitchen" aria-labelledby="kitchen-h">
+  <div class="wrap">
+    <header class="sec-head" data-rise>
+      <div>
+        <span class="rule-label label">The Kitchen</span>
+        <h2 id="kitchen-h">A menu you don't <em>order</em>.</h2>
+      </div>
+      <div>
+        <span class="idx">I — Philosophy</span>
+        <p class="blurb">There is one menu each evening and you will eat all of it.
+        We think that is the kindest thing a kitchen can offer: a single, finished thought,
+        served in the order it was meant to be read.</p>
+      </div>
+    </header>
+
+    <div class="philo" data-rise>
+      <p class="big">
+        Lucia Maranzano grew up in the Langhe, an hour south, where the fog sits in the
+        vineyards until noon. She cooks the way her grandmother set a table —
+        <em>quietly, completely, and without asking what you'd prefer.</em>
+      </p>
+      <div class="col">
+        <p>The pantry is small and local on purpose: hazelnuts from Cortemilia, beef raised
+        in the Po valley, herbs and roots foraged in the Alpine foothills the same morning
+        they are plated. What isn't good that day simply doesn't appear.</p>
+        <p>Each course is a single sentence — one protein, one season, one idea — and the
+        eleven of them together make a paragraph. The room is dark so that the plate, and the
+        person across from you, are the only things lit.</p>
+        <div class="sign">
+          <span class="name italic">Lucia Maranzano</span>
+          <span class="role">Chef · Patron</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ THE MENU ═══════════════ -->
+<section id="menu" class="menu-band" aria-labelledby="menu-h">
+  <div class="wrap">
+    <header class="sec-head" data-rise>
+      <div>
+        <span class="rule-label label">Tonight's Menu</span>
+        <h2 id="menu-h"><em>Il Buio</em> — the dark.</h2>
+      </div>
+      <div>
+        <span class="idx">II — Eleven movements</span>
+        <p class="blurb">Printed fresh at five o'clock. Allergies and aversions are noted when
+        you book and the kitchen adjusts without a word. The order below is the order it arrives.</p>
+      </div>
+    </header>
+
+    <div class="carte" data-rise>
+      <article class="course">
+        <span class="no">I</span>
+        <div class="body">
+          <h3 class="nm">Snow &amp; <em>anchovy</em></h3>
+          <p class="desc">Frozen whey, Cantabrian anchovy, a single drop of last year's olio nuovo. <i>To wake the tongue.</i></p>
+        </div>
+        <div class="meta"><b>Apertura</b>with Franciacorta</div>
+      </article>
+
+      <article class="course">
+        <span class="no">II</span>
+        <div class="body">
+          <h3 class="nm">Hazelnut, raw <em>and</em> burnt</h3>
+          <p class="desc">Cortemilia hazelnut three ways — milk, praline, ash — under shaved white truffle when the season allows.</p>
+        </div>
+        <div class="meta"><b>Secondo</b>Timorasso</div>
+      </article>
+
+      <article class="course">
+        <span class="no">III</span>
+        <div class="body">
+          <h3 class="nm">Egg, <em>buried</em></h3>
+          <p class="desc">A yolk cooked in embers for an hour, smoked potato, fonduta of Castelmagno aged thirty months.</p>
+        </div>
+        <div class="meta"><b>Terzo</b>Erbaluce</div>
+      </article>
+
+      <article class="course">
+        <span class="no">IV</span>
+        <div class="body">
+          <h3 class="nm">Agnolotti del <em>plin</em></h3>
+          <p class="desc">The pasta of the house — pinched by hand, filled with three roasts, dressed in nothing but their own jus.</p>
+        </div>
+        <div class="meta"><b>Quarto</b>Barbera</div>
+      </article>
+
+      <article class="course">
+        <span class="no">V</span>
+        <div class="body">
+          <h3 class="nm">Hare, juniper, <em>burnt cream</em></h3>
+          <p class="desc">Wild hare from the foothills, slow-braised in Nebbiolo, juniper picked at altitude, a quenelle of cream scorched tableside.</p>
+        </div>
+        <div class="meta"><b>Quinto</b>Barolo, young</div>
+      </article>
+
+      <article class="course">
+        <span class="no">VI</span>
+        <div class="body">
+          <h3 class="nm">The river, at <em>dusk</em></h3>
+          <p class="desc">Trout from the Stura, cured then barely warmed, with watercress and a broth of its own bones and smoke.</p>
+        </div>
+        <div class="meta"><b>Sesto</b>Nascetta</div>
+      </article>
+
+      <article class="course">
+        <span class="no">VII</span>
+        <div class="body">
+          <h3 class="nm">Beef, <em>aged</em> in the dark</h3>
+          <p class="desc">Fassona from the Po valley, dry-aged seventy days, grilled over chestnut wood, with bone marrow and roasted shallot.</p>
+        </div>
+        <div class="meta"><b>Settimo</b>Barolo, reserve</div>
+      </article>
+
+      <article class="course">
+        <span class="no">VIII</span>
+        <div class="body">
+          <h3 class="nm">Bitter <em>leaves</em></h3>
+          <p class="desc">A small plate of foraged Alpine greens, dressed in walnut oil and aged vinegar. A pause before the sweet.</p>
+        </div>
+        <div class="meta"><b>Ottavo</b>—</div>
+      </article>
+
+      <article class="course">
+        <span class="no">IX</span>
+        <div class="body">
+          <h3 class="nm">Castelmagno, <em>honey</em>, pear</h3>
+          <p class="desc">The mountain cheese, acacia honey from the same valley, a poached pear cooked in its own leaves.</p>
+        </div>
+        <div class="meta"><b>Nono</b>Moscato</div>
+      </article>
+
+      <article class="course">
+        <span class="no">X</span>
+        <div class="body">
+          <h3 class="nm">Chestnut &amp; <em>chocolate</em></h3>
+          <p class="desc">Marrons from the hills, single-origin chocolate, a spoon of grappa cream and burnt sugar.</p>
+        </div>
+        <div class="meta"><b>Decimo</b>Barolo Chinato</div>
+      </article>
+
+      <article class="course">
+        <span class="no">XI</span>
+        <div class="body">
+          <h3 class="nm">Coffee, in the <em>dark</em></h3>
+          <p class="desc">Espresso and a final small thing, served by candlelight as the room is brought back up. <i>Buona notte.</i></p>
+        </div>
+        <div class="meta"><b>Chiusura</b>with grappa</div>
+      </article>
+    </div>
+
+    <div class="menu-foot" data-rise>
+      <div class="price-block">
+        <span class="label">The tasting menu, complete</span>
+        <div class="price">€185<small>per guest</small></div>
+      </div>
+      <div class="pair">
+        <p>An <em>accompagnamento</em> of seven wines, poured to the menu by our sommelier
+        Tobia, is offered at <em>€115</em>. A reserve pairing, and a non-alcoholic flight
+        of house ferments, are available on request.</p>
+        <span class="label muted">Service included · A €60 deposit secures each seat</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ THE ROOM ═══════════════ -->
+<section id="room" aria-labelledby="room-h">
+  <div class="wrap">
+    <header class="sec-head" data-rise>
+      <div>
+        <span class="rule-label label">The Room</span>
+        <h2 id="room-h">Fourteen seats, <em>one</em> evening.</h2>
+      </div>
+      <div>
+        <span class="idx">III — The experience</span>
+        <p class="blurb">We seat the whole room within twenty minutes so the kitchen can cook
+        for everyone at once. What you give up in flexibility you get back in temperature,
+        timing, and quiet.</p>
+      </div>
+    </header>
+
+    <div class="notes" data-rise>
+      <article class="note">
+        <span class="n">i.</span>
+        <h3>A single table</h3>
+        <p>Fourteen chairs around one long oak table, lit by tapers. You will likely speak
+        to the people beside you. Most nights, that becomes the point.</p>
+        <span class="tail">No à la carte · No bar seating</span>
+      </article>
+      <article class="note">
+        <span class="n">ii.</span>
+        <h3>Cooked, not plated</h3>
+        <p>An open pass at the end of the room. You watch the eleventh course finished by
+        hand, by the same people who foraged it that morning.</p>
+        <span class="tail">Counter view on request</span>
+      </article>
+      <article class="note">
+        <span class="n">iii.</span>
+        <h3>Roughly three hours</h3>
+        <p>Allow the full evening — the menu is paced, not rushed. The early seating ends in
+        time for the opera; the late one runs as long as it wants to.</p>
+        <span class="tail">Phones kept in the drawer, please</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ RESERVATIONS / HOURS ═══════════════ -->
+<section id="reserve" class="reserve" aria-labelledby="reserve-h">
+  <div class="wrap">
+    <div class="reserve-grid" data-rise>
+      <!-- hours -->
+      <div class="left">
+        <span class="rule-label label">Reservations</span>
+        <h2 id="reserve-h">Two seatings, <em>four</em> nights.</h2>
+        <p>The book opens on the first of each month for the month ahead. Tables of one and
+        two are taken online; for parties of three or four, write to us directly.</p>
+
+        <div class="seatings">
+          <div class="row">
+            <div class="day">Wednesday — Friday<small>Early seating</small></div>
+            <div class="time">18:30</div>
+          </div>
+          <div class="row">
+            <div class="day">Wednesday — Friday<small>Late seating</small></div>
+            <div class="time">21:00</div>
+          </div>
+          <div class="row">
+            <div class="day">Saturday<small>One seating, the long night</small></div>
+            <div class="time">19:30</div>
+          </div>
+          <div class="row dark">
+            <div class="day">Sunday — Tuesday<small>The kitchen rests &amp; forages</small></div>
+            <div class="time">Chiuso</div>
+          </div>
+        </div>
+
+        <p class="foot-note">
+          Dietary needs are handled gladly when noted at booking — the whole menu is cooked
+          to order. For private use of the room, press, or the wine cellar, write to
+          <a href="mailto:tavola@osterianera.it">tavola@osterianera.it</a>.
+        </p>
+      </div>
+
+      <!-- booking form -->
+      <div class="right">
+        <div class="form-head">
+          <span class="label muted">Request a table</span>
+          <div class="t">Tell us when, and for how many.</div>
+        </div>
+
+        <form class="bk" id="bookform" onsubmit="event.preventDefault();onBook();">
+          <div class="field">
+            <label class="flabel">Party size</label>
+            <div class="bk-segment" id="party" role="group" aria-label="Party size">
+              <button type="button" data-v="1">One</button>
+              <button type="button" class="on" data-v="2">Two</button>
+              <button type="button" data-v="3">Three</button>
+              <button type="button" data-v="4">Four</button>
+            </div>
+          </div>
+
+          <div class="two">
+            <div class="field">
+              <label class="flabel" for="date">Date</label>
+              <input id="date" name="date" type="text" placeholder="Fri, 13 June" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="flabel" for="seating">Seating</label>
+              <select id="seating" name="seating">
+                <option>18:30 — early</option>
+                <option selected>21:00 — late</option>
+                <option>19:30 — Saturday</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="flabel" for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label class="flabel" for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+
+          <button class="submit" type="submit" id="bookbtn">Request this table <span class="arr">&rarr;</span></button>
+          <p class="fine">A request, not yet a booking — we confirm by email within the day,
+          and take a €60-per-seat deposit on confirmation.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PRESS ═══════════════ -->
+<section aria-labelledby="press-h" style="padding-top:84px">
+  <div class="wrap">
+    <header class="sec-head" data-rise>
+      <div>
+        <span class="rule-label label">In Print</span>
+        <h2 id="press-h">What's been <em>written</em>.</h2>
+      </div>
+      <div>
+        <span class="idx">IV — Press</span>
+        <p class="blurb">We don't take photographs of the food and we'd rather you didn't
+        either — but the people who came to write it down said this.</p>
+      </div>
+    </header>
+
+    <div class="press" data-rise>
+      <article class="quote">
+        <span class="stars">★★★★★</span>
+        <blockquote>The most <em>quietly radical</em> thing in Torino: a restaurant that has
+        decided, on your behalf, exactly what a perfect evening is — and is almost always right.</blockquote>
+        <span class="src"><b>La Stampa</b> · Torino</span>
+      </article>
+      <article class="quote">
+        <span class="stars">★★★★★</span>
+        <blockquote>Maranzano cooks the Piedmont you remember from a childhood you didn't have.
+        The hare course alone is <em>worth the journey</em>.</blockquote>
+        <span class="src"><b>Gambero Rosso</b> · Tre Forchette</span>
+      </article>
+      <article class="quote">
+        <span class="stars">★★★★★</span>
+        <blockquote>Fourteen strangers, one table, no menu and no light to speak of. You leave
+        having had <em>dinner with the place itself</em>.</blockquote>
+        <span class="src"><b>Condé Nast Traveller</b></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="word">Osteria <b>Nera</b></div>
+        <p>A fourteen-seat tasting room in the Quadrilatero Romano. One menu a night,
+        cooked from the hills that raised it.</p>
+        <div class="addr">
+          <b>Find us</b>
+          Via dei Mercanti 9 — 10122<br>
+          Torino, Piemonte, Italia<br>
+          +39 011 0 18 24 19
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <h5>The Restaurant</h5>
+        <ul>
+          <li><a href="#menu">Tonight's menu</a></li>
+          <li><a href="#kitchen">The kitchen</a></li>
+          <li><a href="#room">The room</a></li>
+          <li><a href="#">The cellar</a></li>
+          <li><a href="#">Gift the table</a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h5>Reservations</h5>
+        <ul>
+          <li><a href="#reserve">Book a seating</a></li>
+          <li><a href="#">Parties of 3–4</a></li>
+          <li><a href="#">Private dining</a></li>
+          <li><a href="#">Cancellation</a></li>
+          <li><a href="mailto:tavola@osterianera.it">Write to us</a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h5>Hours</h5>
+        <div class="line">
+          Wed–Fri · 18:30 &amp; 21:00<br>
+          Saturday · 19:30<br>
+          Sun–Tue · closed<br><br>
+          <span style="color:var(--bone-mute)">August: the kitchen forages.<br>Closed for the month.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© MMXXVI Osteria Nera — Torino. Cooked in the dark.</span>
+      <span><a href="#">Privacy</a> · <a href="#">Allergens</a> · <a href="#">Press kit</a> · Una stella, dal 2024</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // party-size segment
+  (function(){
+    var grp = document.getElementById('party');
+    if(grp) grp.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      grp.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+    });
+  })();
+
+  // booking confirmation (no storage — sandbox-safe)
+  function onBook(){
+    var btn = document.getElementById('bookbtn');
+    btn.innerHTML = 'Request sent — grazie ✓';
+    btn.style.background = 'var(--amber)';
+    btn.style.color = 'var(--ink)';
+  }
+
+  // reveal-on-scroll. Anything below the fold gets hidden, then unwinds.
+  // If JS never runs, nothing is hidden — content is fully visible.
+  (function(){
+    if(!('IntersectionObserver' in window) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var vh = window.innerHeight;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.remove('is-pending'); io.unobserve(en.target); }
+      });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:.06 });
+    document.querySelectorAll('[data-rise]').forEach(function(el){
+      if(el.getBoundingClientRect().top >= vh - 60){
+        el.classList.add('is-pending');
+        io.observe(el);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

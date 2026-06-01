@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Subtone — Electronic music for low rooms and long nights</title>
+<meta name="description" content="Subtone is an independent electronic record label. Deep house, dub techno, ambient and broken beat — pressed to wax, mastered loud, catalogued obsessively. Est. Berlin, 2014." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     SUBTONE RECORDS — design tokens
+     Palette traced to the Inspo "dark electronic / brutalist" cluster:
+       surface  #04040c  → yannnovak-com + scale-com (Δ0.000 on #3f3fbf pairing)
+       accent   #3f3fbf  → yannnovak-com (electric indigo), ninjatune-net neighbour
+       accent-2 #9b9bdd  → yannnovak-com (lifted indigo)
+       paper    #edeceb  → cognition-ai live palette (off-white ink)
+       lime     #bbf258  → typesense-org (single hot signal accent)
+     Type: Space Grotesk (display) + Space Mono (labels) named in
+     yannnovak-com's real CSS var; Newsreader serif echoes cognition-ai's
+     stkBureauSerif editorial register.
+     ============================================================ */
+  :root{
+    --void:    #04040c;   /* page surface — near black with a blue cast */
+    --void-2:  #07070f;   /* raised panel */
+    --void-3:  #0b0b16;   /* card / tile */
+    --line:    #1a1a28;   /* hairline */
+    --line-2:  #26263a;   /* brighter hairline */
+    --paper:   #edeceb;   /* primary ink */
+    --paper-d: #a9a9b8;   /* dim ink */
+    --paper-m: #6c6c82;   /* mute ink */
+    --indigo:  #3f3fbf;   /* electric indigo — the house accent */
+    --indigo-2:#5a5ad6;   /* hover / lift */
+    --indigo-3:#9b9bdd;   /* tint */
+    --lime:    #c8f24a;   /* one hot signal — "new" / live */
+
+    --sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif:'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+
+    --max: 1320px;
+    --pad: clamp(16px, 4vw, 44px);
+    --gap: clamp(14px, 2vw, 22px);
+  }
+
+  *{box-sizing:border-box}
+  ::selection{background:var(--indigo);color:#fff}
+  html{scroll-behavior:smooth}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--void);
+    color:var(--paper);
+    font-family:var(--sans);
+    line-height:1.4;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    font-feature-settings:"ss01","ss02";
+  }
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  h1,h2,h3,h4,p{margin:0}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding-inline:var(--pad)}
+  .mono{font-family:var(--mono)}
+  .serif{font-family:var(--serif)}
+
+  /* small structural label used everywhere — Space Mono, tracked, dimmed */
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--paper-m);
+  }
+
+  /* ============================================================
+     TOP TICKER — marquee (swisstypefaces-com macrostructure)
+     ============================================================ */
+  .ticker{
+    border-bottom:1px solid var(--line);
+    background:var(--indigo);
+    color:#fff;
+    overflow:hidden;
+    white-space:nowrap;
+    position:relative;
+  }
+  .ticker__track{
+    display:inline-flex;
+    gap:0;
+    animation:slide 38s linear infinite;
+    will-change:transform;
+  }
+  .ticker__track span{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    padding:9px 0;
+    display:inline-flex;
+    align-items:center;
+  }
+  .ticker__track span::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--lime);margin:0 26px}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.ticker__track{animation:none}}
+
+  /* ============================================================
+     NAV — sticky, brutalist, monospace
+     ============================================================ */
+  header.nav{
+    position:sticky;top:0;z-index:60;
+    background:rgba(4,4,12,.78);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav__in{
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;gap:18px;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
+  .brand b{font-weight:700}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--lime);display:inline-block;align-self:center;box-shadow:0 0 0 3px rgba(200,242,74,.18)}
+  .nav__links{display:flex;gap:30px;align-items:center}
+  .nav__links a{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-d);transition:color .18s}
+  .nav__links a:hover{color:var(--paper)}
+  .nav__cta{
+    font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid var(--line-2);padding:9px 16px;color:var(--paper);
+    transition:background .18s,border-color .18s,color .18s;
+  }
+  .nav__cta:hover{background:var(--paper);color:var(--void);border-color:var(--paper)}
+  .burger{display:none;flex-direction:column;gap:5px;padding:8px}
+  .burger span{width:22px;height:2px;background:var(--paper);display:block}
+
+  /* ============================================================
+     HERO — specimen (yannnovak/cognition) + oversized mixed-weight
+     type (swisstypefaces). Dot-grid background (cognition).
+     ============================================================ */
+  .hero{
+    position:relative;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+    background:
+      radial-gradient(1100px 520px at 78% -8%, rgba(63,63,191,.30), transparent 60%),
+      radial-gradient(700px 420px at 8% 120%, rgba(63,63,191,.12), transparent 55%);
+  }
+  .hero__grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(120% 90% at 70% 0%, #000 30%, transparent 78%);
+    -webkit-mask-image:radial-gradient(120% 90% at 70% 0%, #000 30%, transparent 78%);
+    pointer-events:none;
+  }
+  .hero__in{position:relative;padding-top:clamp(52px,8vw,104px);padding-bottom:clamp(30px,4vw,48px)}
+  .hero__meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:clamp(30px,6vw,72px)}
+  .hero__meta .right{display:flex;gap:26px}
+
+  .hero h1{
+    font-weight:500;
+    font-size:clamp(58px,15.5vw,236px);
+    line-height:.84;
+    letter-spacing:-.045em;
+    margin:0;
+  }
+  /* mixed-weight / mixed-style display word — swisstypefaces move */
+  .hero h1 .o{ -webkit-text-stroke:2px var(--paper); color:transparent; }
+  .hero h1 .i{ font-style:italic; font-family:var(--serif); font-weight:400; letter-spacing:-.01em; }
+  .hero h1 .accent{ color:var(--indigo-3); }
+
+  .hero__sub{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(20px,4vw,60px);
+    align-items:end;margin-top:clamp(28px,4vw,46px);
+  }
+  .hero__lede{font-size:clamp(16px,1.5vw,20px);line-height:1.5;color:var(--paper-d);max-width:46ch}
+  .hero__lede b{color:var(--paper);font-weight:500}
+  .hero__actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{
+    font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    padding:13px 20px;border:1px solid var(--line-2);transition:.18s;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn .arr{transition:transform .18s}
+  .btn:hover .arr{transform:translate(2px,-2px)}
+  .btn--solid{background:var(--paper);color:var(--void);border-color:var(--paper)}
+  .btn--solid:hover{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .btn--ghost:hover{border-color:var(--paper)}
+
+  /* thin stat strip under hero */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:clamp(34px,5vw,64px)}
+  .stats div{padding:18px 0;border-left:1px solid var(--line)}
+  .stats div:first-child{border-left:none;padding-left:0}
+  .stats div:not(:first-child){padding-left:18px}
+  .stats .n{font-family:var(--mono);font-size:clamp(22px,2.4vw,30px);font-weight:700;letter-spacing:-.02em}
+  .stats .n .pct{color:var(--indigo-3)}
+  .stats .l{margin-top:5px}
+
+  /* ============================================================
+     SECTION HEADERS
+     ============================================================ */
+  section{padding-block:clamp(56px,8vw,108px)}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:clamp(26px,4vw,44px);flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(28px,4vw,52px);font-weight:500;letter-spacing:-.035em;line-height:.95}
+  .sec-head h2 .idx{font-family:var(--mono);font-size:.4em;font-weight:400;color:var(--indigo-3);vertical-align:super;letter-spacing:.04em;margin-right:.5em}
+  .sec-head .link{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-d);border-bottom:1px solid var(--line-2);padding-bottom:4px;transition:.18s}
+  .sec-head .link:hover{color:var(--paper);border-color:var(--paper)}
+
+  /* ============================================================
+     FEATURED RELEASE — big editorial block
+     ============================================================ */
+  .featured{border-top:1px solid var(--line)}
+  .feat{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,64px);align-items:center;
+  }
+  .feat__art{
+    position:relative;aspect-ratio:1/1;border:1px solid var(--line-2);overflow:hidden;
+    background:
+      radial-gradient(120% 120% at 20% 10%, #15153a, transparent 55%),
+      radial-gradient(140% 140% at 90% 90%, #2a2a78, transparent 50%),
+      linear-gradient(160deg,#06060f,#101028);
+  }
+  /* generated cover artwork — concentric "sub" rings + grain, no images */
+  .feat__art .rings{position:absolute;inset:0;display:grid;place-items:center}
+  .feat__art .rings i{
+    position:absolute;border:1px solid rgba(155,155,221,.22);border-radius:50%;
+  }
+  .feat__art .core{
+    width:42%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%, var(--indigo-2), var(--indigo) 46%, #15155a 100%);
+    box-shadow:0 0 80px rgba(63,63,191,.55), inset 0 0 40px rgba(0,0,0,.5);
+    position:relative;z-index:2;
+  }
+  .feat__art .core::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%, #04040c 8%, transparent 9%)}
+  .feat__art .catno{position:absolute;top:16px;left:16px;z-index:3}
+  .feat__art .spin{position:absolute;bottom:16px;right:16px;z-index:3;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--indigo-3)}
+  .feat__art .grain{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");}
+
+  .feat__body .kick{margin-bottom:18px}
+  .feat__body h3{font-size:clamp(30px,3.6vw,50px);font-weight:500;letter-spacing:-.035em;line-height:1;margin-bottom:8px}
+  .feat__body .by{font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.9vw,24px);color:var(--indigo-3);margin-bottom:22px}
+  .feat__body p{color:var(--paper-d);font-size:clamp(14px,1.3vw,16px);line-height:1.6;max-width:48ch;margin-bottom:24px}
+  .feat__track{
+    display:flex;align-items:center;gap:14px;padding:13px 0;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:13px;
+  }
+  .feat__track:last-of-type{border-bottom:1px solid var(--line);margin-bottom:26px}
+  .feat__track .tn{color:var(--paper-m);width:26px}
+  .feat__track .tt{flex:1;color:var(--paper);letter-spacing:.01em}
+  .feat__track .td{color:var(--paper-m)}
+  .feat__track .play{width:30px;height:30px;border:1px solid var(--line-2);display:grid;place-items:center;transition:.18s;flex-shrink:0}
+  .feat__track .play svg{width:9px;height:9px;fill:var(--paper)}
+  .feat__track:hover .play{background:var(--indigo);border-color:var(--indigo)}
+  .feat__track:hover .play svg{fill:#fff}
+
+  /* ============================================================
+     CATALOGUE GRID — dense album-art grid (ninjatune-net)
+     with metadata rows (yannnovak-com)
+     ============================================================ */
+  .cat-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);
+  }
+  .rel{
+    border:1px solid var(--line);background:var(--void-3);
+    transition:border-color .2s,transform .2s;position:relative;
+  }
+  .rel:hover{border-color:var(--line-2);transform:translateY(-3px)}
+  .rel__art{aspect-ratio:1/1;position:relative;overflow:hidden}
+  .rel__art .gen{position:absolute;inset:0}
+  .rel__art .grain{position:absolute;inset:0;opacity:.4;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");}
+  .rel__cat{position:absolute;top:9px;left:9px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.85);mix-blend-mode:difference;z-index:2}
+  .rel__new{position:absolute;top:9px;right:9px;z-index:2;background:var(--lime);color:#0a0a05;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 6px;text-transform:uppercase}
+  .rel__play{
+    position:absolute;inset:0;display:grid;place-items:center;z-index:3;
+    opacity:0;transition:opacity .2s;background:rgba(4,4,12,.42);
+  }
+  .rel:hover .rel__play{opacity:1}
+  .rel__play span{
+    width:46px;height:46px;border-radius:50%;background:var(--paper);display:grid;place-items:center;
+    transform:scale(.85);transition:transform .2s;
+  }
+  .rel:hover .rel__play span{transform:scale(1)}
+  .rel__play svg{width:13px;height:13px;fill:var(--void);margin-left:2px}
+  .rel__meta{padding:11px 12px 13px;display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--line)}
+  .rel__title{font-size:14px;font-weight:500;letter-spacing:-.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rel__artist{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--indigo-3);line-height:1.2}
+  .rel__row{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10.5px;color:var(--paper-m);letter-spacing:.04em}
+
+  /* ============================================================
+     ROSTER — index list (type-specimen / long index)
+     ============================================================ */
+  .roster{border-top:1px solid var(--line);background:var(--void-2)}
+  .artist-row{
+    display:grid;grid-template-columns:48px 1.6fr 1fr auto;gap:18px;align-items:center;
+    padding:clamp(16px,2.4vw,26px) 0;border-bottom:1px solid var(--line);
+    transition:padding-left .25s,background .25s;position:relative;
+  }
+  .artist-row:hover{padding-left:14px;background:rgba(63,63,191,.05)}
+  .artist-row .num{font-family:var(--mono);font-size:12px;color:var(--paper-m)}
+  .artist-row .name{font-size:clamp(22px,3.4vw,42px);font-weight:500;letter-spacing:-.03em;line-height:1}
+  .artist-row:hover .name{color:var(--indigo-3)}
+  .artist-row .gen-tags{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-d)}
+  .artist-row .loc{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--paper-m);text-align:right}
+  .artist-row .arr{font-family:var(--mono);font-size:18px;color:var(--paper-m);transition:.25s;opacity:0;transform:translateX(-8px)}
+  .artist-row:hover .arr{opacity:1;transform:translateX(0);color:var(--indigo-3)}
+
+  /* ============================================================
+     MANIFESTO / EDITORIAL band
+     ============================================================ */
+  .manifesto{border-top:1px solid var(--line);position:relative;overflow:hidden}
+  .manifesto::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 400px at 90% 50%,rgba(63,63,191,.16),transparent 60%);pointer-events:none}
+  .manifesto__in{position:relative}
+  .manifesto .tag{margin-bottom:26px}
+  .manifesto blockquote{
+    margin:0;font-family:var(--serif);font-weight:400;
+    font-size:clamp(26px,4.4vw,58px);line-height:1.08;letter-spacing:-.02em;max-width:18ch;
+  }
+  .manifesto blockquote em{color:var(--indigo-3);font-style:italic}
+  .manifesto .sig{margin-top:34px;display:flex;gap:14px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--paper-d)}
+  .manifesto .sig .ln{width:34px;height:1px;background:var(--line-2)}
+
+  /* ============================================================
+     SIGNUP / FOOTER
+     ============================================================ */
+  .sub-band{border-top:1px solid var(--line);background:var(--void-2)}
+  .sub-band__in{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:center}
+  .sub-band h2{font-size:clamp(26px,3.6vw,46px);font-weight:500;letter-spacing:-.03em;line-height:1;margin-bottom:14px}
+  .sub-band p{color:var(--paper-d);font-size:15px;line-height:1.5;max-width:40ch}
+  .signup{display:flex;border:1px solid var(--line-2);background:var(--void)}
+  .signup input{
+    flex:1;background:transparent;border:none;outline:none;color:var(--paper);
+    font-family:var(--mono);font-size:13px;padding:16px 18px;letter-spacing:.04em;
+  }
+  .signup input::placeholder{color:var(--paper-m)}
+  .signup button{
+    background:var(--paper);color:var(--void);font-family:var(--mono);font-size:12px;
+    letter-spacing:.08em;text-transform:uppercase;padding:0 22px;transition:.18s;white-space:nowrap;
+  }
+  .signup button:hover{background:var(--indigo);color:#fff}
+  .signup__note{font-family:var(--mono);font-size:11px;color:var(--paper-m);margin-top:12px;letter-spacing:.04em}
+
+  footer.foot{border-top:1px solid var(--line);padding-block:clamp(40px,6vw,72px) 30px}
+  .foot__top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:clamp(40px,6vw,70px)}
+  .foot__brand .brand{font-size:26px;margin-bottom:16px}
+  .foot__brand p{color:var(--paper-m);font-size:13px;line-height:1.6;max-width:34ch;font-family:var(--mono);letter-spacing:.02em}
+  .foot-col h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-m);margin-bottom:16px}
+  .foot-col a{display:block;font-size:14px;color:var(--paper-d);padding:5px 0;transition:color .18s}
+  .foot-col a:hover{color:var(--paper)}
+  .foot__bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:26px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .foot__bottom p{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--paper-m)}
+  .foot__bottom .ref{color:var(--paper-m)}
+  .foot__bottom .ref b{color:var(--paper-d);font-weight:400}
+
+  /* giant wordmark outro */
+  .outro{font-weight:700;font-size:clamp(64px,20vw,330px);line-height:.78;letter-spacing:-.05em;color:var(--void-3);text-align:center;padding:clamp(20px,4vw,40px) 0 0;user-select:none;overflow:hidden}
+  .outro span{ -webkit-text-stroke:1px var(--line-2); color:transparent;}
+
+  /* ============================================================
+     RESPONSIVE — real mobile layout at ~390px
+     ============================================================ */
+  @media (max-width:920px){
+    .nav__links{display:none}
+    .burger{display:flex}
+    .hero__sub{grid-template-columns:1fr;gap:26px;align-items:start}
+    .hero__actions{justify-content:flex-start}
+    .feat{grid-template-columns:1fr;gap:26px}
+    .feat__art{max-width:440px}
+    .cat-grid{grid-template-columns:repeat(3,1fr)}
+    .sub-band__in{grid-template-columns:1fr;gap:26px}
+    .foot__top{grid-template-columns:1fr 1fr}
+    .foot__brand{grid-column:1/-1}
+  }
+  @media (max-width:560px){
+    .hero__meta .right{gap:16px}
+    .stats{grid-template-columns:1fr 1fr}
+    .stats div:nth-child(3){border-left:none;padding-left:0}
+    .stats div:nth-child(1),.stats div:nth-child(2){border-bottom:1px solid var(--line);padding-bottom:16px}
+    .stats div:nth-child(3),.stats div:nth-child(4){padding-top:16px}
+    .cat-grid{grid-template-columns:repeat(2,1fr)}
+    .artist-row{grid-template-columns:30px 1fr;gap:10px 14px}
+    .artist-row .gen-tags{grid-column:2;margin-top:2px}
+    .artist-row .loc{display:none}
+    .artist-row .arr{display:none}
+    .signup{flex-direction:column}
+    .signup button{padding:14px}
+    .foot__top{grid-template-columns:1fr 1fr}
+    .hero h1{font-size:clamp(46px,13.5vw,82px);line-height:.9}
+    .hero h1 .o{ -webkit-text-stroke:1.5px var(--paper); }
+    .hero__in{padding-top:44px}
+  }
+  @media (max-width:380px){
+    .cat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+    .hero h1{font-size:clamp(42px,12.5vw,72px)}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===================== TICKER (swisstypefaces marquee) ===================== -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>Out now — SUB-041 · Lena Kessler — “Halflight EP”</span>
+      <span>Subtone Nights / Berghain Kantine / Jun 21</span>
+      <span>Vinyl repress — SUB-012 back in stock</span>
+      <span>New signing: Atria</span>
+      <span>Mastered at Subtone Annex, Neukölln</span>
+      <span>Out now — SUB-041 · Lena Kessler — “Halflight EP”</span>
+      <span>Subtone Nights / Berghain Kantine / Jun 21</span>
+      <span>Vinyl repress — SUB-012 back in stock</span>
+      <span>New signing: Atria</span>
+      <span>Mastered at Subtone Annex, Neukölln</span>
+    </div>
+  </div>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav">
+    <div class="wrap nav__in">
+      <a class="brand" href="#top"><span class="dot"></span><b>SUBTONE</b><span class="tag" style="font-size:10px;align-self:center">REC.</span></a>
+      <nav class="nav__links">
+        <a href="#releases">Releases</a>
+        <a href="#roster">Roster</a>
+        <a href="#about">Label</a>
+        <a href="#radio">Radio</a>
+        <a href="#shop">Shop</a>
+      </nav>
+      <a class="nav__cta" href="#subscribe">Subscribe ↗</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- ===================== HERO (specimen + mixed-weight display) ===================== -->
+  <section class="hero" id="top">
+    <div class="hero__grid"></div>
+    <div class="wrap hero__in">
+      <div class="hero__meta">
+        <span class="tag">Independent electronic label · est. Berlin 2014</span>
+        <div class="right">
+          <span class="tag">041 catalogue nos.</span>
+          <span class="tag">52°31′N 13°25′E</span>
+        </div>
+      </div>
+
+      <h1>
+        <span class="o">SUB</span><span class="accent">TONE</span><br>
+        <span class="i">low&nbsp;rooms,</span><br>
+        long&nbsp;nights
+      </h1>
+
+      <div class="hero__sub">
+        <p class="hero__lede">
+          An independent record label for <b>deep house, dub techno, ambient&nbsp;&amp; broken beat</b>. We press to wax, master loud, and catalogue every release like it&nbsp;matters — because the forty-first one still&nbsp;does.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="#releases">Hear the catalogue <span class="arr">↗</span></a>
+          <a class="btn btn--ghost" href="#radio">Subtone Radio</a>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div><div class="n">041</div><div class="tag l">Releases</div></div>
+        <div><div class="n">17</div><div class="tag l">Artists</div></div>
+        <div><div class="n">12</div><div class="tag l">Years</div></div>
+        <div><div class="n">180<span class="pct">g</span></div><div class="tag l">Pressed wax</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURED RELEASE ===================== -->
+  <section class="featured" id="release">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="idx">001 / featured</span><br>Latest pressing</h2>
+        <a class="link" href="#releases">All releases ↗</a>
+      </div>
+
+      <div class="feat">
+        <div class="feat__art" role="img" aria-label="Cover artwork for Halflight EP by Lena Kessler">
+          <div class="rings">
+            <i style="width:92%"></i><i style="width:74%"></i><i style="width:56%"></i>
+            <div class="core"></div>
+          </div>
+          <span class="catno tag" style="color:var(--indigo-3)">SUB-041</span>
+          <span class="spin">33⅓ · A/B</span>
+          <div class="grain"></div>
+        </div>
+
+        <div class="feat__body">
+          <span class="tag kick">New release · 12&quot; + digital · Mastered loud</span>
+          <h3>Halflight EP</h3>
+          <div class="by">Lena Kessler</div>
+          <p>
+            Four tracks of late-room dub techno recorded between Neukölln and a disused water tower outside Leipzig. Tape hiss left in on purpose. Side B is the one that doesn&apos;t resolve.
+          </p>
+
+          <div class="feat__track">
+            <span class="tn">A1</span><span class="tt">Halflight</span><span class="td">6:42</span>
+            <button class="play" aria-label="Play Halflight"><svg viewBox="0 0 10 10"><path d="M0 0l10 5-10 5z"/></svg></button>
+          </div>
+          <div class="feat__track">
+            <span class="tn">A2</span><span class="tt">Kantine (4am Mix)</span><span class="td">7:18</span>
+            <button class="play" aria-label="Play Kantine"><svg viewBox="0 0 10 10"><path d="M0 0l10 5-10 5z"/></svg></button>
+          </div>
+          <div class="feat__track">
+            <span class="tn">B1</span><span class="tt">Untitled Water Tower</span><span class="td">9:03</span>
+            <button class="play" aria-label="Play Untitled Water Tower"><svg viewBox="0 0 10 10"><path d="M0 0l10 5-10 5z"/></svg></button>
+          </div>
+
+          <div class="hero__actions" style="justify-content:flex-start">
+            <a class="btn btn--solid" href="#shop">Buy 12&quot; — €18 <span class="arr">↗</span></a>
+            <a class="btn btn--ghost" href="#release">Stream</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CATALOGUE GRID (ninjatune dense grid) ===================== -->
+  <section id="releases">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="idx">002 / catalogue</span><br>Recent releases</h2>
+        <a class="link" href="#shop">Browse all 041 ↗</a>
+      </div>
+      <div class="cat-grid" id="catGrid"><!-- generated by tiny script --></div>
+    </div>
+  </section>
+
+  <!-- ===================== ROSTER (index list) ===================== -->
+  <section class="roster" id="roster">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="idx">003 / roster</span><br>The artists</h2>
+        <a class="link" href="#about">A–Z index ↗</a>
+      </div>
+      <div id="rosterList"><!-- generated --></div>
+    </div>
+  </section>
+
+  <!-- ===================== MANIFESTO ===================== -->
+  <section class="manifesto" id="about">
+    <div class="wrap manifesto__in">
+      <p class="tag">004 / the label</p>
+      <blockquote>
+        We don&apos;t chase the <em>peak</em>. We make records for the <em>hour after</em> — when the room has thinned and the bass is the only thing left&nbsp;standing.
+      </blockquote>
+      <div class="sig">
+        <span class="ln"></span>
+        Subtone Recordings · Founded by M. Voss &amp; Atria · Neukölln, Berlin
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUBSCRIBE ===================== -->
+  <section class="sub-band" id="subscribe">
+    <div class="wrap sub-band__in">
+      <div>
+        <p class="tag" style="margin-bottom:18px">005 / dispatch</p>
+        <h2>One email a month. New wax, dates, dubplates.</h2>
+        <p>No algorithm. Just the next release, the next Subtone Night, and the occasional 4am mix that never made the record.</p>
+      </div>
+      <div>
+        <form class="signup" id="subForm" novalidate>
+          <input type="email" placeholder="you@somewhere.fm" aria-label="Email address" required />
+          <button type="submit">Subscribe</button>
+        </form>
+        <p class="signup__note" id="subNote">↳ Mailing list runs on plain text. Unsubscribe whenever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="foot" id="shop">
+    <div class="wrap">
+      <div class="foot__top">
+        <div class="foot__brand">
+          <div class="brand"><span class="dot"></span><b>SUBTONE</b></div>
+          <p>Independent electronic recordings since 2014. Deep house · dub techno · ambient · broken beat. Pressed in Germany on 180g wax. Catalogue SUB-001 → SUB-041.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Catalogue</h4>
+          <a href="#releases">All releases</a>
+          <a href="#releases">New &amp; repressed</a>
+          <a href="#roster">Artists A–Z</a>
+          <a href="#shop">Vinyl shop</a>
+        </div>
+        <div class="foot-col">
+          <h4>Label</h4>
+          <a href="#about">About Subtone</a>
+          <a href="#radio">Subtone Radio</a>
+          <a href="#about">Demos &amp; submissions</a>
+          <a href="#about">Press kit</a>
+        </div>
+        <div class="foot-col">
+          <h4>Elsewhere</h4>
+          <a href="#">Bandcamp ↗</a>
+          <a href="#">SoundCloud ↗</a>
+          <a href="#">Instagram ↗</a>
+          <a href="#">Resident Advisor ↗</a>
+        </div>
+      </div>
+
+      <div class="outro" aria-hidden="true"><span>SUBTONE</span></div>
+
+      <div class="foot__bottom">
+        <p>© 2026 Subtone Recordings · Berlin · All rights of the producer reserved</p>
+        <p class="ref">Designed with <b>Inspo</b> · refs: yannnovak · ninjatune · cognition · swisstypefaces · beatport</p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  /* ----------------------------------------------------------------
+     Tiny vanilla JS — no frameworks, no storage, sandbox-safe.
+     1. Generates the catalogue grid (procedural cover art, no images)
+     2. Generates the roster index
+     3. Inline subscribe acknowledgement
+     ---------------------------------------------------------------- */
+  (function(){
+    // ---- procedural cover artwork generator -------------------------
+    // Each cover is a deterministic abstract composition built from the
+    // house indigo + a per-record hue rotation, so the grid reads like
+    // a real label's varied-but-coherent catalogue (ninjatune feel).
+    var releases = [
+      {cat:"SUB-041", title:"Halflight EP",        artist:"Lena Kessler",   genre:"Dub Techno",   year:"2026", neu:true,  k:8},
+      {cat:"SUB-040", title:"Tessellate",          artist:"Atria",          genre:"Deep House",   year:"2026", neu:true,  k:2},
+      {cat:"SUB-039", title:"Room Tone",           artist:"Yuki Mar",       genre:"Ambient",      year:"2025", neu:false, k:5},
+      {cat:"SUB-038", title:"Broken English",      artist:"D. Holloway",    genre:"Broken Beat",  year:"2025", neu:false, k:1},
+      {cat:"SUB-037", title:"Nachtcafé",           artist:"Voss",           genre:"Dub Techno",   year:"2025", neu:false, k:6},
+      {cat:"SUB-036", title:"Pale Blue Hours",     artist:"Sœur",           genre:"Deep House",   year:"2025", neu:false, k:3},
+      {cat:"SUB-035", title:"Concrete & Rain",     artist:"Maral Ito",      genre:"Techno",       year:"2024", neu:false, k:7},
+      {cat:"SUB-034", title:"Low End Theory II",   artist:"Atria",          genre:"Broken Beat",  year:"2024", neu:false, k:4},
+    ];
+
+    var palettes = [
+      ["#1b1b4d","#3f3fbf","#9b9bdd"],   // house indigo
+      ["#0d2b2a","#13716a","#5fd6c8"],   // teal (ninjatune neighbour #1d6d59)
+      ["#2a1140","#5a2c8e","#b58ce0"],   // violet
+      ["#0a0a14","#3a3a52","#9b9bdd"],   // graphite + indigo tint
+      ["#22142a","#7a2e6a","#e08cc4"],   // magenta dusk
+      ["#101028","#2a2a78","#6a6ad6"],   // deep blue
+      ["#1a1208","#7a4a14","#e0a85a"],   // amber (single warm)
+      ["#0c1c0c","#2e6a2e","#8cd68c"]    // moss
+    ];
+
+    function cover(r){
+      var p = palettes[r.k % palettes.length];
+      var seed = r.cat.charCodeAt(5) + r.cat.charCodeAt(6) + r.title.length;
+      var style = seed % 4;
+      var bg, fg;
+      if(style===0){ // concentric rings
+        bg = "radial-gradient(120% 120% at 30% 20%, "+p[1]+", "+p[0]+" 70%)";
+        fg = "repeating-radial-gradient(circle at 50% 50%, transparent 0 14px, "+hexa(p[2],.18)+" 14px 15px)";
+      } else if(style===1){ // diagonal split
+        bg = "linear-gradient(135deg, "+p[0]+" 0 48%, "+p[1]+" 48% 100%)";
+        fg = "linear-gradient(135deg, transparent 49.4%, "+hexa(p[2],.5)+" 49.6%, transparent 50.4%)";
+      } else if(style===2){ // horizon bands
+        bg = "linear-gradient(180deg, "+p[1]+", "+p[0]+")";
+        fg = "repeating-linear-gradient(180deg, transparent 0 22px, "+hexa(p[2],.12)+" 22px 23px)";
+      } else { // off-axis sun
+        bg = "radial-gradient(60% 60% at 72% 30%, "+p[2]+", "+p[1]+" 40%, "+p[0]+" 80%)";
+        fg = "radial-gradient(40% 40% at 72% 30%, "+hexa("#04040c",.0)+" 60%, "+hexa("#04040c",.5)+" 61%)";
+      }
+      return '<div class="gen" style="background:'+fg+","+bg+'"></div>';
+    }
+
+    function hexa(hex,a){
+      var h = hex.replace('#','');
+      var r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+
+    var playIco = '<svg viewBox="0 0 12 12"><path d="M1 1l10 5L1 11z"/></svg>';
+    var grid = document.getElementById('catGrid');
+    if(grid){
+      grid.innerHTML = releases.map(function(r){
+        return ''+
+        '<article class="rel">'+
+          '<div class="rel__art">'+
+            cover(r)+
+            '<div class="grain"></div>'+
+            '<span class="rel__cat">'+r.cat+'</span>'+
+            (r.neu?'<span class="rel__new">New</span>':'')+
+            '<div class="rel__play"><span>'+playIco+'</span></div>'+
+          '</div>'+
+          '<div class="rel__meta">'+
+            '<span class="rel__title">'+r.title+'</span>'+
+            '<span class="rel__artist">'+r.artist+'</span>'+
+            '<span class="rel__row"><span>'+r.genre+'</span><span>'+r.year+'</span></span>'+
+          '</div>'+
+        '</article>';
+      }).join('');
+    }
+
+    // ---- roster index ----------------------------------------------
+    var roster = [
+      {name:"Atria",        tags:"Deep House / Broken Beat", loc:"Berlin"},
+      {name:"Lena Kessler", tags:"Dub Techno",              loc:"Leipzig"},
+      {name:"Voss",         tags:"Dub Techno / Ambient",    loc:"Berlin"},
+      {name:"Yuki Mar",     tags:"Ambient / Drone",         loc:"Osaka"},
+      {name:"Sœur",         tags:"Deep House",              loc:"Paris"},
+      {name:"D. Holloway",  tags:"Broken Beat",             loc:"Manchester"},
+      {name:"Maral Ito",    tags:"Techno",                  loc:"Tbilisi"}
+    ];
+    var list = document.getElementById('rosterList');
+    if(list){
+      list.innerHTML = roster.map(function(a,i){
+        var n = String(i+1).padStart(2,'0');
+        return ''+
+        '<a class="artist-row" href="#roster">'+
+          '<span class="num">'+n+'</span>'+
+          '<span class="name">'+a.name+'</span>'+
+          '<span class="gen-tags">'+a.tags+'</span>'+
+          '<span class="loc">'+a.loc+'</span>'+
+          '<span class="arr" aria-hidden="true">↗</span>'+
+        '</a>';
+      }).join('');
+    }
+
+    // ---- subscribe (no storage; inline ack) ------------------------
+    var form = document.getElementById('subForm');
+    if(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var input = form.querySelector('input');
+        var note = document.getElementById('subNote');
+        var val = (input.value||'').trim();
+        if(val && val.indexOf('@')>0){
+          note.textContent = '↳ On the list. First dispatch lands with SUB-042.';
+          note.style.color = 'var(--lime)';
+          input.value = '';
+          input.setAttribute('placeholder','✓ subscribed');
+        } else {
+          note.textContent = '↳ That doesn’t look like an email — try again.';
+          note.style.color = 'var(--indigo-3)';
+        }
+      });
+    }
+
+    // ---- mobile menu (decorative toggle, sandbox-safe) -------------
+    var burger = document.querySelector('.burger');
+    if(burger){
+      burger.addEventListener('click', function(){
+        var open = burger.getAttribute('data-open')==='1';
+        burger.setAttribute('data-open', open?'0':'1');
+        burger.style.opacity = open ? '1' : '.5';
+      });
+    }
+  })();
+</script>
+</body>
+</html>
