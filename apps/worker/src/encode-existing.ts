@@ -32,6 +32,8 @@ const ROLES: RoleSpec[] = [
   { prefix: "desktop-hero-", role: "hero" },
   { prefix: "desktop-full-", role: "full" },
   { prefix: "tablet-hero-", role: "thumb" },
+  { prefix: "mobile-hero-", role: "mobile" },
+  { prefix: "mobile-full-", role: "mobile-full" },
 ];
 
 function newestPng(dir: string, prefix: string): string | null {
@@ -80,7 +82,8 @@ async function main() {
         // Each role emits 2 formats × N widths. We don't actually run
         // the encoder in dry mode — just check the first output.
         const stem = png.slice(0, -".png".length);
-        const probeW = role === "thumb" ? 384 : role === "hero" ? 384 : 768;
+        const probeW =
+          role === "thumb" || role === "hero" || role === "mobile" ? 384 : 768;
         const probe = `${stem}.${probeW}.avif`;
         if (existsSync(probe)) already += 1;
         else needs += 1;

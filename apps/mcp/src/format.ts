@@ -18,6 +18,10 @@ export function formatScreen(s: ScreenSummary, why?: string) {
     image: absolute(s.imageUrl),
     fullPage: absolute(s.fullPageUrl),
     thumb: absolute(s.thumbUrl),
+    // Mobile (375px) capture, when backfilled — pass both breakpoints so
+    // the agent can study how the design reflows, not just the desktop.
+    ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
+    ...(s.mobileFullUrl ? { mobileFull: absolute(s.mobileFullUrl) } : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     description: s.description,
     palette: s.palette,

@@ -14,6 +14,7 @@ import { AgentPromptGuide } from "@/components/agent-prompt-guide";
 import { SiteActionBar } from "@/components/site-action-bar";
 import { SkeletonTile } from "@/components/skeleton-tile";
 import { AddToCompare } from "@/components/add-to-compare";
+import { TileImage } from "@/components/tile-image";
 import {
   findScreen,
   findSimilar,
@@ -132,20 +133,52 @@ export default async function ScreenDetailPage({
         </div>
       </div>
 
-      {/* Hero plate ────────────────────────────────────────── */}
+      {/* Hero plate — desktop, paired with the mobile capture when the
+          row has been backfilled. The pair is the responsiveness signal:
+          one real page at two widths, side by side. ─────────────── */}
       <div className="mx-auto mt-12 max-w-[120rem] px-6 sm:mt-16 sm:px-10">
-        <div className="overflow-hidden border rule">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={screen.imageUrl}
-            alt={screen.description}
-            className="h-auto w-full"
-            loading="eager"
-            decoding="async"
-          />
+        <div
+          className={
+            screen.mobileImageUrl
+              ? "grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start"
+              : ""
+          }
+        >
+          <div className="overflow-hidden border rule">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={screen.imageUrl}
+              alt={screen.description}
+              className="h-auto w-full"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          {screen.mobileImageUrl && (
+            <figure className="mx-auto w-full max-w-[15rem]">
+              <div className="overflow-hidden rounded-[1.5rem] border rule bg-[color-mix(in_oklab,var(--color-fg)_6%,var(--color-bg))] p-1.5">
+                <div className="overflow-hidden rounded-[1.1rem]">
+                  <TileImage
+                    variants={screen.mobileVariants}
+                    fallbackSrc={screen.mobileImageUrl}
+                    alt={`${screen.title} — mobile`}
+                    sizes="240px"
+                    imgClassName="block h-auto w-full"
+                  />
+                </div>
+              </div>
+              <figcaption className="text-meta mt-2 text-center">
+                Mobile · 375
+              </figcaption>
+            </figure>
+          )}
         </div>
         <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 text-meta">
-          <span>Hero — desktop · 1440 × 900</span>
+          <span>
+            {screen.mobileImageUrl
+              ? "Hero — desktop 1440 × 900 · mobile 375"
+              : "Hero — desktop · 1440 × 900"}
+          </span>
           <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
             <AddToCompare slug={screen.slug} title={screen.title} />
             <Link
@@ -219,18 +252,41 @@ export default async function ScreenDetailPage({
             </div>
           </aside>
 
-          {/* Full-page scroll viewer */}
+          {/* Full-page scroll viewer — desktop, with the mobile scroll
+              alongside it when the row has a mobile capture. */}
           <div className="lg:col-span-8">
-            <p className="text-meta mb-3">The whole page, top to bottom</p>
-            <div className="max-h-[80vh] overflow-y-auto border rule">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={screen.fullPageUrl}
-                alt={`${screen.title} — full page scroll`}
-                className="block w-full"
-                loading="lazy"
-                decoding="async"
-              />
+            <p className="text-meta mb-3">
+              The whole page, top to bottom
+              {screen.mobileFullUrl ? " — desktop & mobile" : ""}
+            </p>
+            <div
+              className={
+                screen.mobileFullUrl
+                  ? "grid grid-cols-[minmax(0,1fr)_auto] gap-4"
+                  : ""
+              }
+            >
+              <div className="max-h-[80vh] overflow-y-auto border rule">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={screen.fullPageUrl}
+                  alt={`${screen.title} — full page scroll`}
+                  className="block w-full"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              {screen.mobileFullUrl && (
+                <div className="hidden max-h-[80vh] w-[190px] overflow-y-auto rounded-[1.25rem] border rule sm:block">
+                  <TileImage
+                    variants={screen.mobileFullVariants}
+                    fallbackSrc={screen.mobileFullUrl}
+                    alt={`${screen.title} — mobile full page`}
+                    sizes="190px"
+                    imgClassName="block h-auto w-full"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

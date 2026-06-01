@@ -46,15 +46,22 @@ import sharp from "sharp";
 export type VariantWidth = 384 | 768 | 1440;
 export type VariantFormat = "avif" | "webp";
 
-export type EncodeRole = "hero" | "full" | "thumb";
+export type EncodeRole = "hero" | "full" | "thumb" | "mobile" | "mobile-full";
 
 /** Pixel widths to emit per role. Order matters — narrowest first so
  *  the encoder produces a useful tile-sized image even if it's killed
- *  midway through. */
+ *  midway through.
+ *
+ *  Mobile captures are shot at 375 CSS px × deviceScaleFactor 2 ⇒ a
+ *  ~750px-wide source. We emit 384 (≈half, for the bento phone tile)
+ *  and 768 (≈native, clamped by withoutEnlargement) — no 1440 (it'd
+ *  just upscale). `mobile-full` is the tall scroll, so one width. */
 const WIDTHS_BY_ROLE: Record<EncodeRole, readonly VariantWidth[]> = {
   thumb: [384],
   hero: [384, 768, 1440],
   full: [768, 1440],
+  mobile: [384, 768],
+  "mobile-full": [768],
 };
 
 /** Per-format, per-width quality. Tile sizes go lower (denser pixels,
@@ -90,7 +97,8 @@ export async function encodeVariants(
 ): Promise<EncodeResult> {
   const widths = WIDTHS_BY_ROLE[opts.role];
   const wantLqip =
-    opts.lqip ?? (opts.role === "hero" || opts.role === "thumb");
+    opts.lqip ??
+    (opts.role === "hero" || opts.role === "thumb" || opts.role === "mobile");
 
   const dir = dirname(pngPath);
   const stem = basename(pngPath, ".png");

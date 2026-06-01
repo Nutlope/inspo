@@ -30,14 +30,17 @@ const CAPTURES_DIR = resolve(
   process.env.INSPO_CAPTURES_DIR ?? join(process.cwd(), "captures"),
 );
 
-type Variant = "hero" | "full" | "thumb";
+type Variant = "hero" | "full" | "thumb" | "mobile" | "mobile-full";
 
 /** Map our Variant → the on-disk filename prefix. thumb reuses tablet-hero
- *  so the browser scales a smaller asset (~30KB) into the 600×400 tile. */
+ *  so the browser scales a smaller asset (~30KB) into the 600×400 tile.
+ *  mobile/mobile-full ship the 375-wide capture for the responsive pair. */
 const PREFIX: Record<Variant, string> = {
   hero: "desktop-hero-",
   full: "desktop-full-",
   thumb: "tablet-hero-",
+  mobile: "mobile-hero-",
+  "mobile-full": "mobile-full-",
 };
 
 /** Pixel widths to upload per role. Must match the widths the encoder
@@ -46,6 +49,8 @@ const WIDTHS_PER_VARIANT: Record<Variant, readonly number[]> = {
   hero: [384, 768, 1440],
   full: [768, 1440],
   thumb: [384],
+  mobile: [384, 768],
+  "mobile-full": [768],
 };
 
 function newestPng(dir: string, prefix: string): string | null {
@@ -180,7 +185,7 @@ async function main() {
       try {
         let pngsThisSlug = 0;
         let variantsThisSlug = 0;
-        for (const v of ["hero", "full", "thumb"] as Variant[]) {
+        for (const v of ["hero", "full", "thumb", "mobile", "mobile-full"] as Variant[]) {
           if (!go) {
             const src = newestPng(join(CAPTURES_DIR, slug), PREFIX[v]);
             if (src) {
@@ -208,7 +213,7 @@ async function main() {
         okSlugs += 1;
         if (okSlugs % 50 === 0) {
           console.log(
-            `${tag} ✓ ${slug.padEnd(45)} (${pngsThisSlug}/3 pngs · ${variantsThisSlug} variants)`,
+            `${tag} ✓ ${slug.padEnd(45)} (${pngsThisSlug}/5 pngs · ${variantsThisSlug} variants)`,
           );
         }
       } catch (err) {

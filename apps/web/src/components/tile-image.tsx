@@ -25,12 +25,16 @@ export function TileImage({
   alt,
   sizes,
   priority = false,
+  imgClassName = "h-full w-full object-cover",
 }: {
   variants?: RoleVariants;
   fallbackSrc: string;
   alt: string;
   sizes: string;
   priority?: boolean;
+  /** Override the <img> classes — e.g. natural-height for the phone
+   *  frame on the detail page (`block w-full h-auto`). */
+  imgClassName?: string;
 }) {
   const [failed, setFailed] = useState(false);
   // Hidden on total load failure → parent bg (LQIP / palette gradient)
@@ -49,7 +53,7 @@ export function TileImage({
       <img
         src={fallbackSrc}
         alt={alt}
-        className="h-full w-full object-cover"
+        className={imgClassName}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
         // @ts-expect-error — fetchpriority is valid HTML, React types lag

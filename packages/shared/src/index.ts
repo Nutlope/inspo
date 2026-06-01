@@ -104,6 +104,16 @@ export type ScreenSummary = {
   fullVariants?: RoleVariants;
   /** Tile-sized variants (384-wide). Used in every grid. */
   thumbVariants?: RoleVariants;
+  /** Mobile (375px-wide) capture — present once the mobile backfill has
+   *  encoded + uploaded for this row. `mobileImageUrl` is the above-the-
+   *  fold phone hero; `mobileFullUrl` the full phone scroll. Powers the
+   *  desktop↔mobile responsive pair on /screens/[slug] + the MCP payload
+   *  (the responsiveness signal no competitor pairs). Absent on rows not
+   *  yet backfilled — the UI shows desktop-only then. */
+  mobileImageUrl?: string;
+  mobileFullUrl?: string;
+  mobileVariants?: RoleVariants;
+  mobileFullVariants?: RoleVariants;
   /** 16-wide AVIF base64 data URL, ~50–80 bytes after compression.
    *  Painted as a CSS background-image for instant first paint
    *  before the real tile decodes. */
