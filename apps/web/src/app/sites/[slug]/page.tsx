@@ -2,11 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { findSite } from "@inspo/db";
-import { PaletteStrip } from "@/components/palette-strip";
-import { TagPill } from "@/components/tag-pill";
 import { SiteViewer } from "@/components/site-viewer";
 import { SiteActionBar } from "@/components/site-action-bar";
-import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
 
 // Runtime-rendered — pre-rendering 1k sites is wasteful at build time.
 export const dynamic = "force-dynamic";
@@ -35,9 +32,6 @@ export default async function SiteDetailPage({
   if (!site) notFound();
 
   const hero = site.hero;
-  const macroLabel = hero.tags.macrostructure
-    ? MACROSTRUCTURE_LABELS[hero.tags.macrostructure as Macrostructure]
-    : null;
 
   const host = (() => {
     try {
@@ -81,42 +75,13 @@ export default async function SiteDetailPage({
                 <span>· Designer: {site.designerCredit}</span>
               )}
             </p>
-
-            <div className="mt-8 flex flex-wrap gap-2">
-              {macroLabel && <TagPill label={macroLabel} variant="macro" />}
-              {hero.tags.style.slice(0, 3).map((s) => (
-                <TagPill
-                  key={s}
-                  label={s.replace(/-/g, " ")}
-                  href={`/screens?style=${s}`}
-                />
-              ))}
-              {hero.tags.industry.slice(0, 2).map((i) => (
-                <TagPill
-                  key={i}
-                  label={i.replace(/-/g, " ")}
-                  href={`/screens?industry=${i}`}
-                />
-              ))}
-              <TagPill label={hero.mode} />
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Master-detail viewer with sticky thumbnail rail ─────── */}
+      {/* gallery-style two-pane: DESIGN.md left, screens right ── */}
       <div className="mt-12 pb-24 sm:mt-16">
         <SiteViewer hero={hero} pages={site.pages} />
-      </div>
-
-      {/* Palette band — pulled from the homepage extraction ─── */}
-      <div className="mx-auto max-w-[120rem] border-y rule px-6 py-10 sm:px-10">
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <p className="text-meta lg:col-span-2">Brand palette</p>
-          <div className="lg:col-span-10">
-            <PaletteStrip palette={hero.palette} size="lg" />
-          </div>
-        </div>
       </div>
 
       {/* Sticky action toast — Copy DESIGN.md + quick actions ── */}
