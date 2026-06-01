@@ -44,3 +44,6 @@ coverage/
 # session backup snapshots (do not commit)
 packages/db/src/*.pre-*.json
 packages/db/src/*.pre-*.bin
+
+# flow capture output (large; regenerate via capture-flow.ts)
+apps/worker/captures/_flows/
