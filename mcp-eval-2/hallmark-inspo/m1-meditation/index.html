@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Stillwater — A small meditation practice, sent by letter.</title>
+  <meta name="description" content="Stillwater is a meditation practice you receive like a letter — one short session in your inbox each morning. Fourteen days, free. Begun in Portland, 2026." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+  <style>
+    /* Hallmark · pre-emit critique: P5 H5 E4 S4 R5 V5
+     * genre: editorial · macrostructure: Letter · theme: Atelier · enrichment: none (typography + Tier-A breath glyph)
+     * nav: N9 Edge-aligned minimal · footer: Ft6 Letter close
+     * H5 Letter knobs: salutation=greeting · body=3-paragraph · signoff=typed name
+     * contrast: pass (46–50) · honest: pass (56) · chrome: pass (57) · tokens: pass (58)
+     * responsive: pass (59) · icons: pass (60) · mobile: pass (36, 59, 61–69)
+     */
+
+    /* ────────────────────── tokens ────────────────────── */
+    :root {
+      /* Type — three families: Fraunces (display) + Newsreader (body) + JetBrains Mono (wordmark + caption outlier) */
+      --font-display: "Fraunces", ui-serif, Georgia, serif;
+      --font-body:    "Newsreader", ui-serif, Georgia, serif;
+      --font-outlier: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+      /* Atelier palette — warm cream paper, terracotta accent. Anchor hue 35–80 (warm). */
+      --color-paper:     oklch(96.5% 0.012 80);
+      --color-paper-2:   oklch(93%   0.014 75);
+      --color-paper-3:   oklch(89%   0.016 70);
+      --color-rule:      oklch(80%   0.012 70);
+      --color-rule-soft: oklch(86%   0.010 70);
+      --color-ink:       oklch(20%   0.012 60);
+      --color-ink-soft:  oklch(32%   0.012 55);
+      --color-muted:     oklch(47%   0.010 65);
+      --color-accent:    oklch(58%   0.135 35);    /* soft terracotta */
+      --color-accent-2:  oklch(48%   0.14  32);    /* terracotta, hover-deepened */
+      --color-accent-ink: oklch(97%  0.008 80);    /* paper-on-accent, contrast verified */
+      --color-focus:     oklch(45%   0.20  255);   /* cool blue focus ring, ≥3:1 on paper */
+
+      /* Spacing — 4pt scale */
+      --space-3xs: 0.125rem;
+      --space-2xs: 0.25rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+      --space-4xl: 9rem;
+
+      /* Type scale — major third, 16px base */
+      --text-xs:   0.78rem;
+      --text-sm:   0.875rem;
+      --text-base: 1.0625rem;        /* 17px — letter-body grade */
+      --text-md:   1.25rem;
+      --text-lg:   1.5625rem;
+      --text-xl:   1.953rem;
+      --text-2xl:  2.441rem;
+      --text-3xl:  3.052rem;
+      --text-display: clamp(2.5rem, 4.6vw + 1rem, 4.6rem);
+
+      /* Easings — exponential ease-out (Atelier multiplier 1.3× = very gentle) */
+      --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+      --dur-micro: 120ms;
+      --dur-short: 280ms;
+      --dur-long:  540ms;
+
+      /* Rules + radius — atelier ships hairlines, not card borders */
+      --rule:   1px solid var(--color-rule);
+      --rule-soft: 1px solid var(--color-rule-soft);
+      --radius-sm: 2px;
+
+      /* Z scale — six named levels */
+      --z-base: 1;
+      --z-raised: 10;
+      --z-sticky: 200;
+      --z-modal: 400;
+
+      /* Page gutter — fluid */
+      --page-gutter: clamp(1.25rem, 4vw, 3rem);
+      --measure: 36rem;            /* letter-body measure ~ 60–65ch */
+    }
+
+    /* ────────────────────── reset & base ────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      overflow-x: clip;                           /* gate 62 */
+      background: var(--color-paper);
+      color: var(--color-ink);
+    }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      font-weight: 400;
+      line-height: 1.62;
+      font-variant-numeric: oldstyle-nums;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      padding-inline: max(var(--page-gutter), env(safe-area-inset-left));
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    h1, h2, h3 { margin: 0; font-weight: 400; line-height: 1.08; letter-spacing: -0.02em; }
+    p { margin: 0; }
+    a { color: var(--color-ink); text-decoration-color: var(--color-rule); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out); }
+    a:hover { text-decoration-color: var(--color-accent); color: var(--color-accent); }
+    a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+    ::selection { background: var(--color-accent); color: var(--color-accent-ink); }
+
+    /* ────────────────────── layout shell ────────────────────── */
+    .page {
+      max-width: 64rem;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100dvh;
+    }
+
+    /* ────────────────────── nav · N9 Edge-aligned minimal ────────────────────── */
+    .nav-edge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding-block: var(--space-lg);
+      border-bottom: var(--rule-soft);
+    }
+    .wordmark {
+      font-family: var(--font-outlier);
+      font-size: var(--text-sm);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .wordmark__mark {
+      display: inline-block;
+      width: 0.55em;
+      height: 0.55em;
+      border-radius: 999px;
+      background: var(--color-accent);
+      transform: translateY(0.04em);
+    }
+    .wordmark:hover { color: var(--color-ink); text-decoration: none; }
+    .wordmark:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: var(--radius-sm); }
+
+    .nav-cta {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      text-decoration: none;
+      padding-inline: var(--space-md);
+      padding-block: var(--space-sm);
+      border: 1px solid var(--color-ink);
+      border-radius: 999px;
+      white-space: nowrap;                          /* gate 59 */
+      transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .nav-cta:hover { background: var(--color-ink); color: var(--color-paper); text-decoration: none; }
+    .nav-cta:active { transform: translateY(1px); }
+    .nav-cta:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+    /* ────────────────────── letter (hero · H5) ────────────────────── */
+    .letter {
+      padding-block: clamp(var(--space-2xl), 8vw, var(--space-4xl)) clamp(var(--space-3xl), 9vw, calc(var(--space-4xl) + 2rem));
+      max-width: var(--measure);
+      display: grid;
+      gap: var(--space-xl);
+    }
+
+    .letter__dateline {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .letter__salutation {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.95rem, 3.4vw + 1rem, 3.4rem);
+      line-height: 1.06;
+      letter-spacing: -0.022em;
+      color: var(--color-ink);
+      max-width: 22ch;
+      overflow-wrap: anywhere;                      /* gate 63 */
+      min-width: 0;
+      text-wrap: balance;
+    }
+
+    .letter__body {
+      display: grid;
+      gap: var(--space-lg);
+      max-width: 36rem;                              /* ~60ch at 17px */
+      font-size: var(--text-base);
+      line-height: 1.66;
+      color: var(--color-ink-soft);
+    }
+    .letter__body p { margin: 0; }
+    .letter__body em { font-style: italic; color: var(--color-ink); }
+    .letter__body strong { font-weight: 500; color: var(--color-ink); }
+
+    /* Inline highlighter band — sits behind the x-height (gate 37) */
+    .letter__body mark {
+      background: linear-gradient(180deg,
+        transparent 0%,
+        transparent 38%,
+        color-mix(in oklab, var(--color-accent) 22%, transparent) 38%,
+        color-mix(in oklab, var(--color-accent) 22%, transparent) 88%,
+        transparent 88%);
+      color: var(--color-ink);
+      padding-inline: 0.1em;
+    }
+
+    .letter__rule {
+      border: 0;
+      border-top: var(--rule-soft);
+      width: 6rem;
+      margin: var(--space-md) 0 var(--space-lg) 0;
+    }
+
+    /* Breath glyph — Tier-A pure-CSS, named in the copy as the 4-7-8 ritual.
+       Has semantic purpose (gate 55): users see the cadence they will practise. */
+    .breath {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);   /* gate 61 */
+      align-items: center;
+      gap: var(--space-md);
+      padding-block: var(--space-md);
+      border-top: var(--rule-soft);
+      border-bottom: var(--rule-soft);
+    }
+    .breath__caption {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      line-height: 1.5;
+    }
+    .breath__caption strong { color: var(--color-ink); font-weight: 500; }
+    .breath__glyph {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 50% 50%,
+        color-mix(in oklab, var(--color-accent) 18%, transparent) 0%,
+        color-mix(in oklab, var(--color-accent) 0%, transparent) 70%);
+      border: 1px solid color-mix(in oklab, var(--color-accent) 35%, var(--color-rule));
+      transform-origin: center;
+      animation: breathe 19s var(--ease-in-out) infinite;
+    }
+    @keyframes breathe {
+      0%   { transform: scale(0.85); opacity: 0.72; }   /* exhaled */
+      21%  { transform: scale(1.18); opacity: 1; }      /* inhaled (4s) */
+      57%  { transform: scale(1.18); opacity: 1; }      /* hold     (7s) */
+      99%  { transform: scale(0.85); opacity: 0.72; }   /* exhaled  (8s) */
+      100% { transform: scale(0.85); opacity: 0.72; }
+    }
+
+    /* ────────────────────── signoff form (CTA at letter foot) ────────────────────── */
+    .signoff {
+      display: grid;
+      gap: var(--space-md);
+      max-width: 36rem;
+    }
+    .signoff__handwritten {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: var(--text-md);
+      color: var(--color-ink);
+      line-height: 1.5;
+    }
+    .signoff__name {
+      font-family: var(--font-display);
+      font-style: normal;
+      font-weight: 500;
+      font-size: var(--text-md);
+      color: var(--color-ink);
+    }
+    .signoff__role {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-top: var(--space-2xs);
+    }
+
+    .signoff__ps {
+      margin-top: var(--space-xl);
+      padding-top: var(--space-lg);
+      border-top: var(--rule-soft);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .signoff__ps-lead {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-ink-soft);
+    }
+    .signoff__ps-lead em { font-family: var(--font-display); font-style: italic; color: var(--color-ink); }
+
+    /* C2 Inline form-as-CTA (field count: 1 · submit: end-of-row · helper: below) */
+    .signoff__form {
+      display: flex;
+      align-items: stretch;
+      gap: var(--space-xs);
+      max-width: 32rem;
+      margin-top: var(--space-2xs);
+      flex-wrap: wrap;
+    }
+    .signoff__field {
+      flex: 1 1 14rem;
+      min-width: 0;
+      position: relative;
+    }
+    .signoff__label {
+      position: absolute;
+      width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .signoff__input {
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-ink);
+      background: var(--color-paper-2);
+      border: 1px solid var(--color-rule);                /* gate 41: width stays 1px in all states */
+      border-radius: 4px;
+      padding: 0 var(--space-md);
+      outline: 2px solid transparent;                      /* gate 42: pre-reserve outline */
+      outline-offset: 1px;
+      transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+    }
+    .signoff__input::placeholder { color: var(--color-muted); opacity: 1; }
+    .signoff__input:hover { border-color: var(--color-ink-soft); }
+    .signoff__input:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; background: var(--color-paper); border-color: var(--color-ink-soft); }
+    .signoff__input:disabled,
+    .signoff__input[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;                                 /* gate 45 */
+      background: var(--color-paper-3);
+    }
+    .signoff__input[data-state="error"] {
+      border-color: var(--color-accent);
+      background: color-mix(in oklab, var(--color-accent) 5%, var(--color-paper-2));
+    }
+
+    .signoff__submit {
+      min-height: 48px;                                    /* gate 43: matches input height */
+      padding-inline: var(--space-lg);
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-accent-ink);
+      background: var(--color-accent);
+      border: 1px solid var(--color-accent);
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;                                 /* gate 59 */
+      transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out), opacity var(--dur-short) var(--ease-out);
+    }
+    .signoff__submit:hover { background: var(--color-accent-2); border-color: var(--color-accent-2); }
+    .signoff__submit:active { transform: translateY(1px); }
+    .signoff__submit:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+    .signoff__submit:disabled,
+    .signoff__submit[aria-disabled="true"] {
+      opacity: 0.55; cursor: not-allowed; transform: none;
+    }
+    .signoff__submit[data-state="loading"] { opacity: 0.7; cursor: progress; }
+    .signoff__submit[data-state="success"] {
+      background: var(--color-paper);
+      color: var(--color-ink);
+      border-color: var(--color-ink);
+    }
+
+    .signoff__helper {
+      min-height: 1.5lh;                                   /* gate 44: reserve space */
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
+      color: var(--color-muted);
+      line-height: 1.5;
+    }
+    .signoff__helper[data-state="error"] { color: var(--color-accent); }
+    .signoff__helper[data-state="success"] { color: var(--color-ink); }
+
+    /* ────────────────────── footer · Ft6 Letter close ────────────────────── */
+    .foot-letter {
+      padding-block: clamp(var(--space-2xl), 6vw, var(--space-3xl)) var(--space-2xl);
+      border-top: var(--rule-soft);
+      display: grid;
+      gap: var(--space-lg);
+      max-width: var(--measure);
+    }
+    .foot-letter__close {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: var(--text-lg);
+      line-height: 1.4;
+      color: var(--color-ink);
+    }
+    .foot-letter__sign {
+      font-style: normal;
+      font-weight: 500;
+      display: block;
+      margin-top: var(--space-2xs);
+    }
+    .foot-letter__ps {
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+      max-width: 40rem;
+    }
+    .foot-letter__ps em { font-family: var(--font-display); font-style: italic; color: var(--color-ink-soft); }
+    .foot-letter__ps a { color: var(--color-ink-soft); }
+
+    .foot-letter__meta {
+      margin-top: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md) var(--space-lg);
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+    .foot-letter__meta a { color: var(--color-muted); text-decoration: none; white-space: nowrap; }
+    .foot-letter__meta a:hover { color: var(--color-ink); }
+    .foot-letter__meta a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+    /* ────────────────────── reveal (one orchestrated entrance) ────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: reveal var(--dur-long) var(--ease-out) forwards;
+      animation-delay: calc(var(--i, 0) * 110ms);
+    }
+    @keyframes reveal { to { opacity: 1; transform: none; } }
+
+    /* ────────────────────── reduced motion ────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 150ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 150ms !important;
+      }
+      .breath__glyph {
+        animation: none;
+        transform: scale(1);
+        opacity: 0.88;
+      }
+      .reveal { animation: reveal-reduced 150ms linear forwards; }
+      @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
+    }
+
+    /* ────────────────────── coarse pointer (touch) ────────────────────── */
+    @media (pointer: coarse) {
+      .nav-cta { min-height: 44px; display: inline-flex; align-items: center; }
+    }
+
+    /* ────────────────────── responsive ────────────────────── */
+    @media (max-width: 40rem) {
+      .letter { gap: var(--space-lg); }
+      .nav-edge { padding-block: var(--space-md); }
+      .signoff__form { gap: var(--space-sm); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- ─────── nav · N9 Edge-aligned minimal ─────── -->
+    <header class="nav-edge reveal" style="--i: 0">
+      <a class="wordmark" href="/">
+        <span class="wordmark__mark" aria-hidden="true"></span>
+        Stillwater
+      </a>
+      <a class="nav-cta" href="#begin">Begin →</a>
+    </header>
+
+    <main>
+
+      <!-- ─────── letter · H5 Letter hero ─────── -->
+      <article class="letter">
+
+        <p class="letter__dateline reveal" style="--i: 1">
+          Portland · Tuesday morning, 06:14
+        </p>
+
+        <h1 class="letter__salutation reveal" style="--i: 2">
+          Dear restless reader,
+        </h1>
+
+        <div class="letter__body reveal" style="--i: 3">
+          <p>
+            I&rsquo;m Maya. I sit for ten minutes every morning &mdash; sometimes well, often badly &mdash; and I&rsquo;ve made <em>Stillwater</em> for the mornings where badly is the best you can do.
+          </p>
+          <p>
+            It isn&rsquo;t an app you open and scroll. It&rsquo;s a short letter, sent before dawn, with a single guided sitting at the bottom &mdash; <strong>seven minutes on a weekday, twelve on a Sunday.</strong> No streaks. No badges. No leaderboard. If you skip a day, the next morning&rsquo;s letter still arrives, <mark>as if nothing happened</mark>, because nothing did.
+          </p>
+          <p>
+            The first fourteen days are free, and you can leave by replying with the word <em>stop</em>. We will not chase you. There&rsquo;s no app to delete &mdash; only an email to ignore. That is, I think, the point.
+          </p>
+        </div>
+
+        <!-- Tier-A pure-CSS breath glyph — named in the copy as the 4-7-8 ritual (gate 55) -->
+        <figure class="breath reveal" style="--i: 4" aria-label="A circle that breathes in for four seconds, holds for seven, releases for eight — the rhythm we open every morning&apos;s letter with.">
+          <span class="breath__glyph" aria-hidden="true"></span>
+          <figcaption class="breath__caption">
+            <strong>The 4 · 7 · 8 breath</strong> &mdash; in for four, hold for seven, out for eight. The circle on the left keeps the time so you don&rsquo;t have to.
+          </figcaption>
+        </figure>
+
+        <hr class="letter__rule reveal" style="--i: 5" />
+
+        <!-- ─────── signoff + CTA (the letter&rsquo;s p.s.) ─────── -->
+        <section class="signoff reveal" style="--i: 6" id="begin" aria-labelledby="signoff-title">
+          <p class="signoff__handwritten">Yours, in slowness,</p>
+          <p>
+            <span class="signoff__name">Maya Okonkwo</span>
+            <span class="signoff__role">Co-founder &middot; Stillwater</span>
+          </p>
+
+          <div class="signoff__ps">
+            <p class="signoff__ps-lead" id="signoff-title">
+              <em>P.S.</em> &mdash; if you&rsquo;d like the first letter tomorrow at dawn, leave your address below. Fourteen mornings, on the house. No card, no commitment, no app to install.
+            </p>
+
+            <form class="signoff__form" id="trial-form" novalidate>
+              <div class="signoff__field">
+                <label class="signoff__label" for="trial-email">Email address</label>
+                <input
+                  class="signoff__input"
+                  id="trial-email"
+                  name="email"
+                  type="email"
+                  placeholder="your address &mdash; you@home.com"
+                  autocomplete="email"
+                  required
+                  aria-describedby="trial-help"
+                />
+              </div>
+              <button class="signoff__submit" type="submit" id="trial-submit">
+                Send the first letter
+              </button>
+            </form>
+
+            <p class="signoff__helper" id="trial-help" role="status" aria-live="polite">
+              A confirmation arrives within the hour. Unsubscribe with one word.
+            </p>
+          </div>
+        </section>
+
+      </article>
+
+    </main>
+
+    <!-- ─────── footer · Ft6 Letter close ─────── -->
+    <footer class="foot-letter">
+      <p class="foot-letter__close">
+        Until tomorrow,
+        <span class="foot-letter__sign">&mdash; The Stillwater desk</span>
+      </p>
+      <p class="foot-letter__ps">
+        <em>P.P.S.</em> &mdash; letters back are read by a human, usually within a day. Write to us at <a href="mailto:hello@stillwater.letter">hello@stillwater.letter</a> &mdash; with a question, a complaint, or a morning you&rsquo;d like to talk through.
+      </p>
+      <div class="foot-letter__meta">
+        <span>&copy; Stillwater Press, 2026</span>
+        <a href="#privacy">Privacy</a>
+        <a href="#terms">Terms</a>
+        <a href="#archive">Read past letters</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    /* Single small script: the trial form's optimistic submit + 3-state helper.
+       Silent success becomes a visible label change (no toast — gate 17). */
+    (function () {
+      const form  = document.getElementById('trial-form');
+      if (!form) return;
+      const input = document.getElementById('trial-email');
+      const btn   = document.getElementById('trial-submit');
+      const help  = document.getElementById('trial-help');
+
+      const baseHelp  = help.textContent.trim();
+      const baseLabel = btn.textContent.trim();
+
+      function setState(s, msg) {
+        if (s === 'error') {
+          input.setAttribute('data-state', 'error');
+          help.setAttribute('data-state', 'error');
+          help.textContent = msg;
+          btn.removeAttribute('data-state');
+          btn.disabled = false;
+          btn.textContent = baseLabel;
+          input.focus();
+          return;
+        }
+        if (s === 'loading') {
+          input.removeAttribute('data-state');
+          help.removeAttribute('data-state');
+          btn.setAttribute('data-state', 'loading');
+          btn.disabled = true;
+          btn.textContent = 'Sending…';
+          return;
+        }
+        if (s === 'success') {
+          input.removeAttribute('data-state');
+          help.setAttribute('data-state', 'success');
+          help.textContent = msg;
+          btn.setAttribute('data-state', 'success');
+          btn.disabled = true;
+          btn.textContent = '✓ On its way';
+          return;
+        }
+        input.removeAttribute('data-state');
+        help.removeAttribute('data-state');
+        help.textContent = baseHelp;
+        btn.removeAttribute('data-state');
+        btn.disabled = false;
+        btn.textContent = baseLabel;
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const value = (input.value || '').trim();
+        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+        if (!valid) {
+          setState('error', 'That doesn’t look like a complete email — try once more.');
+          return;
+        }
+        setState('loading');
+        /* Simulated handshake — replace with real fetch() in production. */
+        const start = performance.now();
+        const finish = function () {
+          const elapsed = performance.now() - start;
+          const remaining = Math.max(0, 480 - elapsed);   /* min visible duration */
+          setTimeout(function () {
+            setState('success', 'A first letter is on its way to ' + value + '.');
+          }, remaining);
+        };
+        setTimeout(finish, 720);
+      });
+    })();
+  </script>
+
+</body>
+</html>

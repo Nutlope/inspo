@@ -115,6 +115,50 @@ textarea:focus-visible {
   }
 }
 
+/* ─── Hover-scroll tile overlay ───────────────────────────
+   A tile's parent <article class="group"> drives hover state.
+   The overlay holds the full-page screenshot; it sits over the
+   hero image at opacity 0 until hover, then fades in and slowly
+   scrolls top→bottom via object-position interpolation.
+
+   The duration custom property is set per-tile by the JS component
+   so taller pages can scroll for longer if needed. Default 5.5 s.
+
+   prefers-reduced-motion: the global override above kills the
+   transition duration → the overlay still fades in (200 ms), but
+   the scroll itself runs in ~0 ms (i.e. shows the bottom of the
+   page on hover, no motion). That's the right reduced-motion
+   behavior: no nausea-inducing scroll, but the user still gets
+   visual confirmation the tile responds.
+*/
+.hover-scroll-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+/* Drive the scroll via an animation rather than a transition. With a
+   transition, the <img> mounts already in the parent's :hover state
+   (because the user has been hovering since before the img existed),
+   so the browser sees no state delta and skips the animation. An
+   animation plays from start every time the rule applies, regardless
+   of when the element was inserted. */
+.group:hover .hover-scroll-img,
+.group:focus-within .hover-scroll-img {
+  opacity: 1;
+  animation: hover-scroll-down var(--hover-scroll-duration, 5500ms)
+    cubic-bezier(0.33, 0, 0.4, 1) forwards;
+}
+@keyframes hover-scroll-down {
+  from { object-position: 50% 0%; }
+  to { object-position: 50% 100%; }
+}
+
 /* Editorial helpers */
 .font-display {
   font-family: var(--font-display);

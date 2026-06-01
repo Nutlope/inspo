@@ -20,6 +20,10 @@ type SearchParams = {
   mode?: string;
   mood?: string;
   color?: string;
+  /** Perceptual colour-anchor filter (?hex=%23c7402f). Normalised on
+   *  the client; on the server we trust whatever URL the user pasted
+   *  and let the client sanitise / drop bad inputs. */
+  hex?: string;
   /** 1-based page index. Defaults to 1. Drives the visible slice in
    *  <ScreensGrid>; full data is always shipped so client-side filters
    *  still see everything. */

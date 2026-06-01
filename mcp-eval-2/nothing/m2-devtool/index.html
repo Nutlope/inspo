@@ -1,0 +1,1965 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Lattice — The merge queue your CI deserves</title>
+<meta name="description" content="Lattice is a merge queue and CI orchestrator for fast-moving engineering teams. Land code in minutes, not hours." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  /* ----------------------------------------------------------------------
+     Lattice — design tokens
+     ---------------------------------------------------------------------- */
+  :root {
+    /* surfaces */
+    --ink: #0B0D10;
+    --ink-2: #14181D;
+    --paper: #F6F4EE;       /* warm off-white, slightly creamy */
+    --paper-2: #ECE8DE;
+    --line: rgba(11,13,16,0.10);
+    --line-strong: rgba(11,13,16,0.18);
+    --muted: rgba(11,13,16,0.62);
+    --muted-2: rgba(11,13,16,0.45);
+
+    /* on dark */
+    --on-dark: #F5F3EC;
+    --on-dark-muted: rgba(245,243,236,0.65);
+    --on-dark-line: rgba(245,243,236,0.14);
+
+    /* signal — terminal greens with a touch of warmth */
+    --accent: #C7402F;       /* archive red, used sparingly for alerts */
+    --signal: #6BE39A;       /* terminal mint, passes */
+    --signal-2: #1B6B3F;     /* darker mint for ink */
+    --warn: #E5A93B;
+    --warn-2: #5A3F0A;
+    --fail: #E84B3C;
+
+    /* typography */
+    --font-display: "Instrument Serif", "Times New Roman", serif;
+    --font-ui: "Inter Tight", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* metrics */
+    --radius: 14px;
+    --radius-sm: 8px;
+    --container: 1240px;
+    --gutter: clamp(20px, 4vw, 56px);
+
+    /* easing */
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-feature-settings: "ss01","cv11","cv01","ss03";
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; cursor: pointer; }
+  img, svg { display: block; max-width: 100%; }
+
+  ::selection { background: var(--ink); color: var(--paper); }
+
+  /* ----------------------------------------------------------------------
+     Layout primitives
+     ---------------------------------------------------------------------- */
+  .wrap {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+  .rule { height: 1px; background: var(--line); width: 100%; }
+  .rule-dark { height: 1px; background: var(--on-dark-line); width: 100%; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--signal-2);
+    box-shadow: 0 0 0 3px rgba(27,107,63,0.18);
+  }
+  .eyebrow.on-dark { color: var(--on-dark-muted); }
+  .eyebrow.on-dark::before { background: var(--signal); box-shadow: 0 0 0 3px rgba(107,227,154,0.20); }
+
+  h1,h2,h3,h4 { margin: 0; font-weight: 500; letter-spacing: -0.01em; }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(48px, 7.4vw, 104px);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .display em { font-style: italic; color: var(--muted); }
+
+  .h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 4.8vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  .h2 em { font-style: italic; color: var(--muted); }
+
+  .h3 {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    font-family: var(--font-ui);
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 56ch;
+  }
+  .small {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+
+  /* ----------------------------------------------------------------------
+     Nav
+     ---------------------------------------------------------------------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246,244,238,0.78);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-size: 17px;
+  }
+  .brand .glyph {
+    width: 22px; height: 22px; border-radius: 6px;
+    background:
+      conic-gradient(from 220deg, #0B0D10 0 25%, transparent 25% 50%, #0B0D10 50% 75%, transparent 75%);
+    box-shadow: inset 0 0 0 1px var(--ink);
+    position: relative;
+  }
+  .brand .glyph::after {
+    content: "";
+    position: absolute; inset: 6px;
+    border-radius: 2px;
+    background: var(--paper);
+  }
+  .nav-links {
+    display: flex; gap: 28px; align-items: center;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--ink);
+    opacity: 0.78;
+    transition: opacity .15s var(--ease);
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ink); color: var(--on-dark);
+    padding: 9px 14px 9px 16px;
+    border-radius: 999px;
+    font-size: 13.5px; font-weight: 500;
+    border: 1px solid var(--ink);
+    transition: transform .2s var(--ease), background .2s var(--ease);
+  }
+  .nav-cta:hover { transform: translateY(-1px); background: #1d2228; }
+  .nav-cta .arr { width: 14px; height: 14px; }
+  .nav-burger { display: none; }
+
+  @media (max-width: 820px) {
+    .nav-links { display: none; }
+    .nav-cta .label { display: none; }
+    .nav-cta { padding: 9px 12px; }
+  }
+
+  /* ----------------------------------------------------------------------
+     Hero
+     ---------------------------------------------------------------------- */
+  .hero {
+    position: relative;
+    padding: clamp(56px, 9vw, 120px) 0 clamp(40px, 6vw, 80px);
+    overflow: hidden;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: end;
+  }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  }
+  .hero-copy .meta {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.4);
+  }
+  .meta-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--signal-2);
+    box-shadow: 0 0 0 3px rgba(27,107,63,0.18);
+  }
+
+  .hero h1 .underlined {
+    background-image: linear-gradient(transparent 64%, rgba(199,64,47,0.22) 64% 92%, transparent 92%);
+    padding: 0 0.05em;
+  }
+
+  .hero .lede { margin-top: 24px; }
+
+  .cta-row {
+    display: flex; gap: 12px; align-items: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--ink); color: var(--on-dark);
+    padding: 14px 20px;
+    border-radius: 999px;
+    font-size: 15px; font-weight: 500;
+    border: 1px solid var(--ink);
+    transition: transform .2s var(--ease), background .2s var(--ease);
+  }
+  .btn-primary:hover { transform: translateY(-1px); background: #1d2228; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: transparent; color: var(--ink);
+    padding: 14px 20px;
+    border-radius: 999px;
+    font-size: 15px; font-weight: 500;
+    border: 1px solid var(--line-strong);
+    transition: background .2s var(--ease), border-color .2s var(--ease);
+  }
+  .btn-secondary:hover { background: rgba(11,13,16,0.04); border-color: var(--ink); }
+  .btn-secondary code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: rgba(11,13,16,0.06);
+    padding: 2px 8px;
+    border-radius: 5px;
+    color: var(--ink);
+  }
+
+  .hero-stats {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 24px;
+  }
+  .stat .n {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 3.6vw, 44px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat .l {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* hero visual — terminal/pipeline */
+  .hero-visual {
+    position: relative;
+  }
+  .pipeline {
+    background: var(--ink);
+    color: var(--on-dark);
+    border-radius: 18px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 20px 60px -20px rgba(11,13,16,0.4),
+      0 4px 14px -8px rgba(11,13,16,0.3);
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+  .pipeline-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--on-dark-line);
+    background: linear-gradient(180deg, #181C22, #14181D);
+  }
+  .pipeline-head .dots { display: flex; gap: 6px; }
+  .pipeline-head .dots i {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #2a2f37;
+  }
+  .pipeline-head .dots i:nth-child(1) { background: #ff5f57; }
+  .pipeline-head .dots i:nth-child(2) { background: #febc2e; }
+  .pipeline-head .dots i:nth-child(3) { background: #28c840; }
+  .pipeline-head .title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-dark-muted);
+    letter-spacing: 0.04em;
+  }
+  .pipeline-head .status {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .pipeline-head .status .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(107,227,154,0.6);
+    animation: pulse 1.8s var(--ease) infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(107,227,154,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(107,227,154,0); }
+    100% { box-shadow: 0 0 0 0 rgba(107,227,154,0); }
+  }
+
+  .pipeline-body { padding: 22px 18px 8px; }
+  .pr {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--on-dark-line);
+  }
+  .pr:last-child { border-bottom: 0; }
+  .pr .badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    background: rgba(255,255,255,0.06);
+    color: var(--on-dark-muted);
+    flex-shrink: 0;
+  }
+  .pr.pass .badge { background: rgba(107,227,154,0.14); color: var(--signal); }
+  .pr.fail .badge { background: rgba(232,75,60,0.16); color: #ff8b80; }
+  .pr.run .badge { background: rgba(229,169,59,0.16); color: #ffd07a; }
+  .pr .meta { flex: 1; min-width: 0; }
+  .pr .meta .row1 {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13.5px;
+  }
+  .pr .meta .row1 .num {
+    font-family: var(--font-mono);
+    color: var(--on-dark-muted);
+    font-size: 12px;
+  }
+  .pr .meta .row1 .ttl {
+    color: var(--on-dark);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .pr .meta .row2 {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--on-dark-muted);
+    margin-top: 3px;
+    display: flex; gap: 14px;
+  }
+  .pr .meta .row2 .who::before { content: "@"; opacity: .55; }
+  .pr .timer {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-dark-muted);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .pr.run .timer { color: #ffd07a; }
+  .pr.pass .timer { color: var(--signal); }
+
+  .pipeline-foot {
+    padding: 14px 18px;
+    background: #11141A;
+    border-top: 1px solid var(--on-dark-line);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+  }
+  .pipeline-foot .left { color: var(--on-dark-muted); }
+  .pipeline-foot .right { color: var(--signal); }
+
+  /* floating annotation */
+  .annot {
+    position: absolute;
+    right: -14px; top: 36%;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 10px 12px 11px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink);
+    box-shadow: 0 8px 24px -10px rgba(11,13,16,0.18);
+    max-width: 200px;
+    transform: rotate(2.4deg);
+  }
+  .annot .k {
+    display: block;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10.5px;
+    margin-bottom: 2px;
+  }
+  @media (max-width: 980px) {
+    .annot { right: 8px; top: -14px; transform: rotate(-2deg); }
+  }
+
+  /* ----------------------------------------------------------------------
+     Marquee / logos
+     ---------------------------------------------------------------------- */
+  .marquee {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 22px 0;
+    overflow: hidden;
+    background: rgba(255,255,255,0.35);
+  }
+  .marquee-inner {
+    display: flex; align-items: center; gap: clamp(40px, 6vw, 80px);
+    white-space: nowrap;
+    animation: scroll 38s linear infinite;
+    width: max-content;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    opacity: 0.62;
+  }
+  .logo .lg-mark {
+    width: 22px; height: 22px;
+    display: inline-grid; place-items: center;
+    border-radius: 6px;
+    background: var(--ink); color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+  }
+  .logo--italic { font-family: var(--font-display); font-style: italic; font-size: 22px; font-weight: 400; }
+  .logo--mono { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .marquee-label {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  /* ----------------------------------------------------------------------
+     Section: Problem
+     ---------------------------------------------------------------------- */
+  .section {
+    padding: clamp(72px, 10vw, 140px) 0;
+    position: relative;
+  }
+  .section--dark {
+    background: var(--ink);
+    color: var(--on-dark);
+  }
+  .section--cream {
+    background: var(--paper-2);
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: end;
+    margin-bottom: clamp(40px, 6vw, 64px);
+  }
+  @media (max-width: 820px) {
+    .section-head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .section-head .eyebrow { margin-bottom: 16px; }
+
+  /* problem cards */
+  .problems {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  @media (max-width: 820px) {
+    .problems { grid-template-columns: 1fr; }
+  }
+  .problem {
+    background: var(--paper);
+    padding: clamp(24px, 3vw, 40px);
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 280px;
+  }
+  .problem .pn {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+  .problem .pt {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 2.2vw, 30px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+  .problem .pt em { font-style: italic; color: var(--accent); }
+  .problem .pd {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: auto;
+  }
+
+  /* ----------------------------------------------------------------------
+     Section: How it works
+     ---------------------------------------------------------------------- */
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .how-grid { grid-template-columns: 1fr; }
+  }
+  .how-steps {
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .step {
+    border-top: 1px solid var(--on-dark-line);
+    padding: 22px 0;
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 16px;
+    cursor: pointer;
+    transition: opacity .2s var(--ease);
+  }
+  .step:last-child { border-bottom: 1px solid var(--on-dark-line); }
+  .step .sn {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-dark-muted);
+    letter-spacing: 0.06em;
+    padding-top: 2px;
+  }
+  .step .sh {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2vw, 28px);
+    color: var(--on-dark);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .step .sd {
+    color: var(--on-dark-muted);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: 8px;
+    max-width: 52ch;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s var(--ease), margin-top .25s var(--ease);
+  }
+  .step.is-open .sd { max-height: 200px; margin-top: 8px; }
+  .step:not(.is-open) .sd { margin-top: 0; }
+  .step:not(.is-open) { opacity: 0.68; }
+  .step:hover { opacity: 1; }
+
+  /* code panel */
+  .code-panel {
+    background: #0F1318;
+    border: 1px solid var(--on-dark-line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 18px 50px -25px rgba(0,0,0,0.6);
+  }
+  .code-tabs {
+    display: flex; align-items: center;
+    border-bottom: 1px solid var(--on-dark-line);
+    padding: 0 14px;
+    height: 44px;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .code-tabs::-webkit-scrollbar { display: none; }
+  .code-tab {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--on-dark-muted);
+    padding: 8px 12px;
+    border-radius: 7px;
+    background: transparent;
+    border: 0;
+    white-space: nowrap;
+  }
+  .code-tab.is-active {
+    color: var(--on-dark);
+    background: rgba(255,255,255,0.06);
+  }
+  .code-tab .filename { letter-spacing: -0.01em; }
+  .code-body {
+    padding: 22px 22px 24px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #C9D1D9;
+    overflow-x: auto;
+  }
+  .code-body pre { margin: 0; }
+  .tok-c { color: #7B8794; font-style: italic; }
+  .tok-k { color: #FF7B72; }
+  .tok-s { color: #A5D6A4; }
+  .tok-n { color: #79C0FF; }
+  .tok-p { color: #D2A8FF; }
+  .tok-f { color: #FFA657; }
+  .gutter { color: #4A5562; user-select: none; display: inline-block; width: 22px; text-align: right; padding-right: 10px; }
+
+  /* ----------------------------------------------------------------------
+     Feature grid (bento)
+     ---------------------------------------------------------------------- */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: minmax(180px, auto);
+    gap: 18px;
+  }
+  @media (max-width: 980px) {
+    .bento { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .bento { grid-template-columns: 1fr; }
+  }
+  .cell {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .cell h3 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+  }
+  .cell p { color: var(--muted); font-size: 14.5px; line-height: 1.5; margin: 6px 0 0; }
+  .cell .cell-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+    margin-bottom: 10px;
+  }
+
+  .cell--wide { grid-column: span 4; }
+  .cell--narrow { grid-column: span 2; }
+  .cell--tall { grid-row: span 2; }
+  .cell--half { grid-column: span 3; }
+  @media (max-width: 980px) {
+    .cell--wide, .cell--narrow, .cell--half { grid-column: span 2; }
+    .cell--tall { grid-row: auto; }
+  }
+  @media (max-width: 560px) {
+    .cell--wide, .cell--narrow, .cell--half { grid-column: span 1; }
+  }
+
+  .cell .cell-art {
+    margin-top: 16px;
+    flex: 1;
+    display: flex; align-items: stretch; justify-content: stretch;
+    min-height: 140px;
+  }
+
+  /* feature artworks */
+  .art-queue {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 11.999%,
+        var(--line) 12% 12.05%
+      ),
+      var(--paper-2);
+    display: flex; flex-direction: column; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+  .art-queue .qrow {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--line);
+  }
+  .art-queue .qrow .ix {
+    width: 18px; height: 18px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-size: 10px;
+  }
+  .art-queue .qrow .ttl { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .art-queue .qrow .st {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--signal-2);
+  }
+  .art-queue .qrow.queued .st { color: var(--warn-2); }
+  .art-queue .qrow.queued .ix { background: var(--warn); color: var(--ink); }
+  .art-queue .qrow.batched { border-style: dashed; background: rgba(107,227,154,0.10); }
+  .art-queue .qrow.batched .ix { background: var(--signal-2); }
+
+  .art-graph {
+    width: 100%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .art-graph svg { width: 100%; height: 100%; min-height: 140px; }
+
+  .art-stack {
+    width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .stack-pill {
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.6);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .stack-pill .ok {
+    color: var(--signal-2);
+    font-size: 11px;
+  }
+
+  .art-time {
+    width: 100%;
+    display: flex; flex-direction: column; gap: 6px;
+    justify-content: center;
+  }
+  .art-time .bar-row { display: flex; align-items: center; gap: 10px; }
+  .art-time .bar-row .lab {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    width: 56px;
+    text-align: right;
+  }
+  .art-time .bar-row .bar {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--ink);
+  }
+  .art-time .bar-row.before .bar { background: rgba(11,13,16,0.4); width: 88%; }
+  .art-time .bar-row.after .bar { background: var(--signal-2); width: 24%; }
+  .art-time .bar-row .val {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+
+  .art-flake {
+    width: 100%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .art-flake .ft {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 6px;
+  }
+  .art-flake .ft .name { color: var(--ink); }
+  .art-flake .ft .rate { color: var(--accent); font-weight: 600; }
+  .art-flake .ft .rate.ok { color: var(--signal-2); }
+
+  /* ----------------------------------------------------------------------
+     Pricing
+     ---------------------------------------------------------------------- */
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 980px) {
+    .pricing { grid-template-columns: 1fr; }
+  }
+  .plan {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .plan.featured {
+    background: var(--ink);
+    color: var(--on-dark);
+    border-color: var(--ink);
+  }
+  .plan.featured .price, .plan.featured h3, .plan.featured .desc { color: var(--on-dark); }
+  .plan.featured ul li { color: rgba(245,243,236,0.78); }
+  .plan.featured .price-sub { color: var(--on-dark-muted); }
+  .plan.featured .ribbon {
+    position: absolute; top: -10px; right: 22px;
+    background: var(--signal);
+    color: #082817;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .plan h3 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    font-weight: 400;
+  }
+  .plan .desc {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+  .plan .price {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-top: 22px;
+  }
+  .plan .price .cur {
+    font-family: var(--font-ui);
+    font-size: 18px;
+    font-weight: 500;
+    vertical-align: top;
+    margin-right: 4px;
+  }
+  .plan .price-sub {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+  .plan ul {
+    list-style: none;
+    margin: 24px 0 28px;
+    padding: 0;
+    display: flex; flex-direction: column;
+    gap: 10px;
+  }
+  .plan ul li {
+    font-size: 14px;
+    color: var(--ink);
+    padding-left: 24px;
+    position: relative;
+    line-height: 1.45;
+  }
+  .plan ul li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 7px;
+    width: 13px; height: 8px;
+    background: none;
+    border-left: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg);
+    opacity: 0.7;
+  }
+  .plan .plan-cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    font-size: 14.5px;
+    font-weight: 500;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .plan.featured .plan-cta {
+    background: var(--signal);
+    color: #082817;
+    border-color: var(--signal);
+    font-weight: 600;
+  }
+  .plan .plan-cta:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .plan.featured .plan-cta:hover { background: #57d489; }
+
+  /* ----------------------------------------------------------------------
+     Testimonial
+     ---------------------------------------------------------------------- */
+  .quote {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: clamp(32px, 6vw, 72px);
+    align-items: center;
+  }
+  @media (max-width: 820px) { .quote { grid-template-columns: 1fr; } }
+  .quote .q-meta {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background:
+      radial-gradient(120% 100% at 30% 25%, #fff 0 12%, transparent 12.1%),
+      conic-gradient(from 200deg, #C7402F, #E5A93B, #6BE39A, #14181D 90%);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .quote .body {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3vw, 38px);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+  }
+  .quote .body em { font-style: italic; color: var(--muted); }
+  .quote .person {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    margin-top: 14px;
+    color: var(--ink);
+  }
+  .quote .role {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  /* ----------------------------------------------------------------------
+     FAQ
+     ---------------------------------------------------------------------- */
+  .faq {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: clamp(32px, 6vw, 72px);
+  }
+  @media (max-width: 820px) { .faq { grid-template-columns: 1fr; } }
+  .faq-list { display: flex; flex-direction: column; }
+  .faq-item {
+    border-top: 1px solid var(--line);
+    padding: 20px 0;
+  }
+  .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-q {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    font-size: 18px;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-q .plus {
+    width: 18px; height: 18px;
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+  .faq-q .plus::before, .faq-q .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+    transition: transform .2s var(--ease);
+  }
+  .faq-q .plus::before { top: 8px; left: 0; width: 18px; height: 2px; }
+  .faq-q .plus::after { left: 8px; top: 0; width: 2px; height: 18px; }
+  details[open] .faq-q .plus::after { transform: rotate(90deg); opacity: 0; }
+  .faq-a {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.55;
+    max-width: 64ch;
+  }
+
+  /* ----------------------------------------------------------------------
+     CTA banner
+     ---------------------------------------------------------------------- */
+  .cta-banner {
+    background: var(--ink);
+    color: var(--on-dark);
+    border-radius: 20px;
+    padding: clamp(36px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: clamp(24px, 4vw, 56px);
+    position: relative;
+    overflow: hidden;
+  }
+  @media (max-width: 820px) { .cta-banner { grid-template-columns: 1fr; } }
+  .cta-banner::before {
+    content: "";
+    position: absolute;
+    right: -120px; top: -120px;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(107,227,154,0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .cta-banner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+  .cta-banner h2 em { font-style: italic; color: var(--on-dark-muted); }
+  .cta-banner .lede { color: var(--on-dark-muted); margin-top: 18px; max-width: 50ch; }
+  .cta-banner .form {
+    display: flex; gap: 8px; align-items: center;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--on-dark-line);
+    border-radius: 999px;
+    padding: 5px 5px 5px 18px;
+    margin-top: 28px;
+    max-width: 460px;
+  }
+  .cta-banner .form input {
+    flex: 1; background: transparent; border: 0; outline: none;
+    color: var(--on-dark);
+    font-family: var(--font-ui);
+    font-size: 14.5px;
+    padding: 12px 0;
+  }
+  .cta-banner .form input::placeholder { color: var(--on-dark-muted); }
+  .cta-banner .form button {
+    background: var(--signal);
+    color: #082817;
+    border: 0;
+    padding: 11px 18px;
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 14px;
+    transition: background .2s var(--ease);
+  }
+  .cta-banner .form button:hover { background: #57d489; }
+  .cta-fine {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--on-dark-muted);
+    margin-top: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  /* right column: ascii lattice */
+  .cta-art {
+    border: 1px solid var(--on-dark-line);
+    border-radius: 14px;
+    padding: 22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--on-dark-muted);
+  }
+  .cta-art .line { display: block; white-space: pre; }
+  .cta-art .hi { color: var(--signal); }
+
+  /* ----------------------------------------------------------------------
+     Footer
+     ---------------------------------------------------------------------- */
+  .footer {
+    border-top: 1px solid var(--line);
+    padding: 56px 0 40px;
+    background: var(--paper);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(4, 1fr);
+    gap: 32px;
+  }
+  @media (max-width: 820px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .footer-col h4 {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .footer-col a {
+    display: block;
+    font-size: 14.5px;
+    color: var(--ink);
+    padding: 4px 0;
+    opacity: 0.78;
+    transition: opacity .15s var(--ease);
+  }
+  .footer-col a:hover { opacity: 1; }
+  .footer-brand p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 14px;
+    max-width: 32ch;
+    line-height: 1.55;
+  }
+  .footer-bottom {
+    margin-top: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 14px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+  }
+  .footer-bottom .status {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .footer-bottom .status .d {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--signal-2);
+    box-shadow: 0 0 0 3px rgba(27,107,63,0.18);
+  }
+
+  /* ----------------------------------------------------------------------
+     Subtle motion on scroll
+     ---------------------------------------------------------------------- */
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     NAV
+     ==================================================================== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="brand" aria-label="Lattice home">
+      <span class="glyph" aria-hidden="true"></span>
+      Lattice
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#changelog">Changelog</a>
+      <a href="#docs">Docs</a>
+    </nav>
+    <a href="#cta" class="nav-cta">
+      <span class="label">Start free trial</span>
+      <svg class="arr" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</header>
+
+<!-- ====================================================================
+     HERO
+     ==================================================================== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="meta">
+        <span class="meta-chip"><span class="dot"></span> v3.4 · Released last Tuesday</span>
+        <span class="meta-chip">SOC&nbsp;2 Type II</span>
+      </div>
+      <h1 class="display">
+        The merge queue<br>
+        your CI <em>deserves.</em><br>
+        <span class="underlined">Land code in minutes,</span><br>
+        not afternoons.
+      </h1>
+      <p class="lede">
+        Lattice batches your pull requests, runs only the tests that matter, and merges
+        them in the right order — automatically. Engineering teams from Series A
+        to enterprise ship 4× faster, without babysitting CI.
+      </p>
+      <div class="cta-row">
+        <a href="#cta" class="btn-primary">
+          Start free for 14 days
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
+            <path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#how" class="btn-secondary">
+          <code>brew install lattice</code>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="n">73%</div>
+          <div class="l">Less CI compute</div>
+        </div>
+        <div class="stat">
+          <div class="n">11&nbsp;min</div>
+          <div class="l">Median time to merge</div>
+        </div>
+        <div class="stat">
+          <div class="n">2,400+</div>
+          <div class="l">Repos in production</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="hero-visual" aria-label="Live merge queue preview">
+      <div class="pipeline" role="presentation">
+        <div class="pipeline-head">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="title">lattice / queue · main</div>
+          <div class="status"><span class="pulse"></span> Live</div>
+        </div>
+        <div class="pipeline-body">
+
+          <div class="pr pass">
+            <div class="badge">✓</div>
+            <div class="meta">
+              <div class="row1"><span class="num">#4821</span><span class="ttl">feat(api): paginate /v2/sessions</span></div>
+              <div class="row2"><span class="who">lina.k</span><span>342 tests · 9 affected</span></div>
+            </div>
+            <div class="timer">merged · 4m 12s</div>
+          </div>
+
+          <div class="pr pass">
+            <div class="badge">✓</div>
+            <div class="meta">
+              <div class="row1"><span class="num">#4820</span><span class="ttl">fix(auth): refresh token race condition</span></div>
+              <div class="row2"><span class="who">mateo</span><span>342 tests · 6 affected</span></div>
+            </div>
+            <div class="timer">merged · 3m 48s</div>
+          </div>
+
+          <div class="pr run">
+            <div class="badge">↻</div>
+            <div class="meta">
+              <div class="row1"><span class="num">#4819</span><span class="ttl">refactor(billing): extract proration helpers</span></div>
+              <div class="row2"><span class="who">priya.s</span><span>342 tests · 18 affected</span></div>
+            </div>
+            <div class="timer">running · 2m 03s</div>
+          </div>
+
+          <div class="pr">
+            <div class="badge">·</div>
+            <div class="meta">
+              <div class="row1"><span class="num">#4822</span><span class="ttl">docs: cookbook for webhook signing</span></div>
+              <div class="row2"><span class="who">jonas</span><span>queued · batched with #4823</span></div>
+            </div>
+            <div class="timer">~6m</div>
+          </div>
+
+          <div class="pr">
+            <div class="badge">·</div>
+            <div class="meta">
+              <div class="row1"><span class="num">#4823</span><span class="ttl">chore: bump postgres driver to 3.4.1</span></div>
+              <div class="row2"><span class="who">renovate</span><span>queued · batched with #4822</span></div>
+            </div>
+            <div class="timer">~6m</div>
+          </div>
+
+        </div>
+        <div class="pipeline-foot">
+          <div class="left">3 of 5 merged today · 11m median</div>
+          <div class="right">$0.42 saved on this run</div>
+        </div>
+      </div>
+
+      <div class="annot" aria-hidden="true">
+        <span class="k">Batched merge</span>
+        Two unrelated PRs landing in a single test run — instead of two.
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================================
+     LOGO MARQUEE
+     ==================================================================== -->
+<div class="marquee" aria-label="Companies using Lattice">
+  <div class="marquee-inner" role="list">
+    <span class="logo" role="listitem"><span class="lg-mark">M</span> Meridian</span>
+    <span class="logo logo--italic" role="listitem">Halcyon&nbsp;Labs</span>
+    <span class="logo" role="listitem"><span class="lg-mark">A</span> Arcwell</span>
+    <span class="logo logo--mono" role="listitem">/// north star</span>
+    <span class="logo" role="listitem"><span class="lg-mark">P</span> Plumbline</span>
+    <span class="logo logo--italic" role="listitem">Marrow&nbsp;&amp;&nbsp;Co</span>
+    <span class="logo" role="listitem"><span class="lg-mark">K</span> Kindling</span>
+    <span class="logo logo--mono" role="listitem">[ ravensign ]</span>
+    <!-- duplicate for seamless loop -->
+    <span class="logo" role="listitem" aria-hidden="true"><span class="lg-mark">M</span> Meridian</span>
+    <span class="logo logo--italic" role="listitem" aria-hidden="true">Halcyon&nbsp;Labs</span>
+    <span class="logo" role="listitem" aria-hidden="true"><span class="lg-mark">A</span> Arcwell</span>
+    <span class="logo logo--mono" role="listitem" aria-hidden="true">/// north star</span>
+    <span class="logo" role="listitem" aria-hidden="true"><span class="lg-mark">P</span> Plumbline</span>
+    <span class="logo logo--italic" role="listitem" aria-hidden="true">Marrow&nbsp;&amp;&nbsp;Co</span>
+    <span class="logo" role="listitem" aria-hidden="true"><span class="lg-mark">K</span> Kindling</span>
+    <span class="logo logo--mono" role="listitem" aria-hidden="true">[ ravensign ]</span>
+  </div>
+</div>
+
+<!-- ====================================================================
+     PROBLEM
+     ==================================================================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">01 — Why</span>
+        <h2 class="h2">CI shouldn't be the bottleneck.</h2>
+      </div>
+      <p class="lede">
+        Every team eventually hits the wall: a busy main branch, flaky tests, and a
+        merge button that turns into a coin flip. The fix isn't more runners —
+        it's a queue that's smart enough to know what to run.
+      </p>
+    </div>
+
+    <div class="problems reveal">
+      <article class="problem">
+        <div class="pn">N.01</div>
+        <div class="pt">Stacked PRs that <em>conflict</em> on merge.</div>
+        <div class="pd">
+          Two engineers ship in parallel. Both go green. Both press merge. The
+          second one breaks main, and now Slack is on fire.
+        </div>
+      </article>
+      <article class="problem">
+        <div class="pn">N.02</div>
+        <div class="pt">Test suites that take <em>too long</em>.</div>
+        <div class="pd">
+          A 40-minute CI run for a one-line README change. You either burn the
+          compute or skip the tests — neither is good.
+        </div>
+      </article>
+      <article class="problem">
+        <div class="pn">N.03</div>
+        <div class="pt">Flakes that <em>silently</em> erode trust.</div>
+        <div class="pd">
+          When "rerun until green" becomes muscle memory, real bugs land. Trust
+          in the suite collapses, and so does the value of the gate.
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     HOW IT WORKS
+     ==================================================================== -->
+<section class="section section--dark" id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow on-dark">02 — How it works</span>
+        <h2 class="h2" style="color:var(--on-dark)">A queue that thinks <em style="color:var(--on-dark-muted)">in graphs.</em></h2>
+      </div>
+      <p class="lede" style="color:var(--on-dark-muted)">
+        Connect Lattice to your repo. It reads your test suite, builds a dependency
+        graph of your code, and turns the chaos of merging into a deterministic
+        pipeline — no YAML rewrites required.
+      </p>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-steps" id="steps">
+        <button class="step is-open" data-tab="0" aria-expanded="true">
+          <span class="sn">01</span>
+          <span>
+            <span class="sh">Install in one command.</span>
+            <span class="sd">A single GitHub or GitLab app. No new YAML, no migrations.
+            Lattice listens to your existing PR events and slots in beside whatever you already run.</span>
+          </span>
+        </button>
+        <button class="step" data-tab="1" aria-expanded="false">
+          <span class="sn">02</span>
+          <span>
+            <span class="sh">It maps your code.</span>
+            <span class="sd">Lattice builds a static dependency graph of your monorepo — which
+            tests cover which files, which packages depend on which. It updates on every push.</span>
+          </span>
+        </button>
+        <button class="step" data-tab="2" aria-expanded="false">
+          <span class="sn">03</span>
+          <span>
+            <span class="sh">Only the tests that matter run.</span>
+            <span class="sd">For each PR, Lattice runs the subset of tests that could possibly be
+            affected. The rest are skipped — provably safe, and 73% cheaper on average.</span>
+          </span>
+        </button>
+        <button class="step" data-tab="3" aria-expanded="false">
+          <span class="sn">04</span>
+          <span>
+            <span class="sh">Batched, ordered, merged.</span>
+            <span class="sd">Non-conflicting PRs batch into a single test run. Conflicting ones get
+            sequenced. You press "queue" once; we handle the rest until it's on main.</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="code-panel" id="code-panel" aria-live="polite">
+        <div class="code-tabs" role="tablist">
+          <button class="code-tab is-active" data-tab="0" role="tab"><span class="filename">~ install</span></button>
+          <button class="code-tab" data-tab="1" role="tab"><span class="filename">graph.toml</span></button>
+          <button class="code-tab" data-tab="2" role="tab"><span class="filename">selective.json</span></button>
+          <button class="code-tab" data-tab="3" role="tab"><span class="filename">queue.yml</span></button>
+        </div>
+        <div class="code-body" id="code-body">
+<pre id="code-0"><span class="gutter">1</span><span class="tok-c"># Install the GitHub app, then in your repo:</span>
+<span class="gutter">2</span><span class="tok-k">$</span> brew install <span class="tok-n">lattice</span>
+<span class="gutter">3</span><span class="tok-k">$</span> lattice init <span class="tok-s">--detect</span>
+
+<span class="gutter">4</span><span class="tok-c">✓ Detected: pnpm workspaces (47 packages)</span>
+<span class="gutter">5</span><span class="tok-c">✓ Detected: vitest, playwright, go test</span>
+<span class="gutter">6</span><span class="tok-c">✓ Wrote .lattice/config.toml</span>
+<span class="gutter">7</span>
+<span class="gutter">8</span><span class="tok-k">$</span> git push
+<span class="gutter">9</span><span class="tok-c"># That's it. Open a PR — Lattice takes over from there.</span></pre>
+
+<pre id="code-1" hidden><span class="gutter">1</span><span class="tok-c"># .lattice/graph.toml — generated, but yours to edit</span>
+<span class="gutter">2</span>[<span class="tok-n">graph</span>]
+<span class="gutter">3</span>strategy   = <span class="tok-s">"static + runtime"</span>
+<span class="gutter">4</span>refresh    = <span class="tok-s">"on-push"</span>
+<span class="gutter">5</span>
+<span class="gutter">6</span>[[<span class="tok-n">packages</span>]]
+<span class="gutter">7</span>name    = <span class="tok-s">"@meridian/api"</span>
+<span class="gutter">8</span>tests   = <span class="tok-s">"apps/api/**/*.test.ts"</span>
+<span class="gutter">9</span>depends = [<span class="tok-s">"@meridian/db"</span>, <span class="tok-s">"@meridian/auth"</span>]
+<span class="gutter">10</span>
+<span class="gutter">11</span>[<span class="tok-n">flake_detection</span>]
+<span class="gutter">12</span>quarantine_threshold = <span class="tok-p">0.04</span>  <span class="tok-c"># 4% fail rate auto-quarantines</span></pre>
+
+<pre id="code-2" hidden><span class="gutter">1</span><span class="tok-c">// PR #4819 — refactor(billing): extract proration helpers</span>
+<span class="gutter">2</span>{
+<span class="gutter">3</span>  <span class="tok-n">"changed"</span>: [
+<span class="gutter">4</span>    <span class="tok-s">"packages/billing/proration.ts"</span>,
+<span class="gutter">5</span>    <span class="tok-s">"packages/billing/proration.test.ts"</span>
+<span class="gutter">6</span>  ],
+<span class="gutter">7</span>  <span class="tok-n">"affected_packages"</span>: <span class="tok-p">3</span>,
+<span class="gutter">8</span>  <span class="tok-n">"tests_total"</span>:    <span class="tok-p">2417</span>,
+<span class="gutter">9</span>  <span class="tok-n">"tests_selected"</span>: <span class="tok-p">342</span>,   <span class="tok-c">// ← 14% of the suite</span>
+<span class="gutter">10</span>  <span class="tok-n">"estimated_time"</span>: <span class="tok-s">"2m 11s"</span>,
+<span class="gutter">11</span>  <span class="tok-n">"compute_saved"</span>:  <span class="tok-s">"$1.84"</span>
+<span class="gutter">12</span>}</pre>
+
+<pre id="code-3" hidden><span class="gutter">1</span><span class="tok-c"># queue.yml — declare your merge policy</span>
+<span class="gutter">2</span>policy<span class="tok-p">:</span>
+<span class="gutter">3</span>  branch<span class="tok-p">:</span> main
+<span class="gutter">4</span>  batch_size<span class="tok-p">:</span> <span class="tok-p">4</span>
+<span class="gutter">5</span>  require<span class="tok-p">:</span>
+<span class="gutter">6</span>    - <span class="tok-s">"checks: all"</span>
+<span class="gutter">7</span>    - <span class="tok-s">"reviews: 1 codeowner"</span>
+<span class="gutter">8</span>  on_failure<span class="tok-p">:</span>
+<span class="gutter">9</span>    bisect<span class="tok-p">:</span> <span class="tok-k">true</span>            <span class="tok-c"># find the bad PR automatically</span>
+<span class="gutter">10</span>    notify<span class="tok-p">:</span> [<span class="tok-s">"#eng-alerts"</span>]
+<span class="gutter">11</span>  freeze_windows<span class="tok-p">:</span>
+<span class="gutter">12</span>    - <span class="tok-s">"Fri 17:00 → Mon 09:00 UTC"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FEATURES (BENTO)
+     ==================================================================== -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">03 — What's inside</span>
+        <h2 class="h2">Every part of CI, <em>made boring.</em></h2>
+      </div>
+      <p class="lede">
+        Lattice replaces the half-dozen scripts and brittle GitHub Actions you've
+        accumulated over the years. Each piece below works on its own — or together,
+        if you want the full thing.
+      </p>
+    </div>
+
+    <div class="bento reveal">
+
+      <article class="cell cell--wide cell--tall">
+        <div class="cell-tag">Smart merge queue</div>
+        <h3>Batched merges that don't lie about what's safe.</h3>
+        <p>Group non-conflicting PRs into a single test run. Lattice rolls the batch back surgically when one PR fails — never the whole train.</p>
+        <div class="cell-art">
+          <div class="art-queue" aria-hidden="true">
+            <div class="qrow"><div class="ix">1</div><div class="ttl">feat: pagination</div><div class="st">PASS</div></div>
+            <div class="qrow batched"><div class="ix">2</div><div class="ttl">fix: token refresh</div><div class="st">BATCHED</div></div>
+            <div class="qrow batched"><div class="ix">3</div><div class="ttl">docs: webhooks</div><div class="st">BATCHED</div></div>
+            <div class="qrow queued"><div class="ix">4</div><div class="ttl">refactor: billing</div><div class="st">QUEUED</div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell cell--narrow">
+        <div class="cell-tag">Selective testing</div>
+        <h3>73% less compute, on average.</h3>
+        <p>Run only the tests affected by a change. Provably safe — never a heuristic.</p>
+        <div class="cell-art">
+          <div class="art-time">
+            <div class="bar-row before"><span class="lab">Before</span><span class="bar"></span><span class="val">38m</span></div>
+            <div class="bar-row after"><span class="lab">With&nbsp;Lattice</span><span class="bar"></span><span class="val">9m</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell cell--narrow">
+        <div class="cell-tag">Flake quarantine</div>
+        <h3>Quarantines flakes automatically.</h3>
+        <p>Lattice spots tests that fail under 4% of the time and isolates them — main stays green while you fix at your pace.</p>
+        <div class="cell-art">
+          <div class="art-flake" aria-hidden="true">
+            <div class="ft"><span class="name">auth.session.test.ts</span><span class="rate">7.2%</span></div>
+            <div class="ft"><span class="name">queue.batch.test.ts</span><span class="rate ok">0.0%</span></div>
+            <div class="ft"><span class="name">graph.build.test.ts</span><span class="rate">5.1%</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell cell--wide">
+        <div class="cell-tag">Dependency graph</div>
+        <h3>A live map of your monorepo.</h3>
+        <p>Lattice continuously parses your code into a graph and uses it to schedule everything else. Browse it, query it, or export it for your own tooling.</p>
+        <div class="cell-art">
+          <div class="art-graph">
+            <svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#0B0D10"/>
+                </marker>
+              </defs>
+              <g stroke="#0B0D10" stroke-width="1" fill="none" opacity="0.6">
+                <path d="M50,80 C90,80 110,30 160,30" marker-end="url(#arr)"/>
+                <path d="M50,80 C90,80 110,80 160,80" marker-end="url(#arr)"/>
+                <path d="M50,80 C90,80 110,130 160,130" marker-end="url(#arr)"/>
+                <path d="M160,30 C200,30 220,80 270,80" marker-end="url(#arr)"/>
+                <path d="M160,80 C200,80 220,80 270,80" marker-end="url(#arr)"/>
+                <path d="M160,130 C200,130 220,80 270,80" marker-end="url(#arr)"/>
+              </g>
+              <g font-family="JetBrains Mono, monospace" font-size="10" fill="#0B0D10">
+                <g>
+                  <rect x="14" y="68" width="72" height="24" rx="6" fill="#F6F4EE" stroke="#0B0D10"/>
+                  <text x="50" y="84" text-anchor="middle">@db</text>
+                </g>
+                <g>
+                  <rect x="124" y="18" width="80" height="24" rx="6" fill="#F6F4EE" stroke="#0B0D10"/>
+                  <text x="164" y="34" text-anchor="middle">@auth</text>
+                </g>
+                <g>
+                  <rect x="124" y="68" width="80" height="24" rx="6" fill="#F6F4EE" stroke="#0B0D10"/>
+                  <text x="164" y="84" text-anchor="middle">@billing</text>
+                </g>
+                <g>
+                  <rect x="124" y="118" width="80" height="24" rx="6" fill="#F6F4EE" stroke="#0B0D10"/>
+                  <text x="164" y="134" text-anchor="middle">@queue</text>
+                </g>
+                <g>
+                  <rect x="240" y="68" width="68" height="24" rx="6" fill="#0B0D10" stroke="#0B0D10"/>
+                  <text x="274" y="84" text-anchor="middle" fill="#F5F3EC">@api</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </article>
+
+      <article class="cell cell--half">
+        <div class="cell-tag">Auto-bisect</div>
+        <h3>Find the bad PR in seconds.</h3>
+        <p>When a batch fails, Lattice bisects the failing subset, identifies the offender, kicks it out, and re-runs the rest. You don't see the queue stop.</p>
+      </article>
+
+      <article class="cell cell--half">
+        <div class="cell-tag">Works with what you have</div>
+        <h3>GitHub, GitLab, Buildkite, your YAML.</h3>
+        <p>Don't rewrite your pipelines. Lattice slots in beside whatever you already run — and reads its results.</p>
+        <div class="cell-art">
+          <div class="art-stack">
+            <div class="stack-pill">GitHub Actions <span class="ok">connected</span></div>
+            <div class="stack-pill">Buildkite <span class="ok">connected</span></div>
+            <div class="stack-pill">CircleCI <span class="ok">connected</span></div>
+            <div class="stack-pill">Self-hosted <span class="ok">connected</span></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     TESTIMONIAL
+     ==================================================================== -->
+<section class="section section--cream">
+  <div class="wrap">
+    <div class="quote reveal">
+      <div class="q-meta">
+        <div class="avatar" aria-hidden="true"></div>
+        <span class="eyebrow">— Operator note</span>
+      </div>
+      <div>
+        <p class="body">
+          "We were running 38-minute CI on a 47-package monorepo. Three months on Lattice
+          and our median PR-to-main is <em>nine minutes</em>. Our cloud bill dropped by a
+          third. Nobody asks me 'is main broken?' on Slack anymore."
+        </p>
+        <div class="person">Mateo Aguilar</div>
+        <div class="role">Staff Engineer · Meridian Health</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     PRICING
+     ==================================================================== -->
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">04 — Pricing</span>
+        <h2 class="h2">Per developer. <em>No CI minute math.</em></h2>
+      </div>
+      <p class="lede">
+        We don't charge by build minute, by repo, or by GitHub seat. One price per
+        developer who actually opens PRs — that's it. Annual saves 20%.
+      </p>
+    </div>
+
+    <div class="pricing reveal">
+
+      <article class="plan">
+        <h3>Solo</h3>
+        <p class="desc">Free forever for individuals and OSS maintainers.</p>
+        <div class="price"><span class="cur">$</span>0</div>
+        <div class="price-sub">forever · up to 3 contributors</div>
+        <ul>
+          <li>Merge queue with batching</li>
+          <li>Selective tests for public repos</li>
+          <li>Flake quarantine</li>
+          <li>Community support</li>
+        </ul>
+        <a class="plan-cta" href="#cta">Get started</a>
+      </article>
+
+      <article class="plan featured">
+        <span class="ribbon">Most teams</span>
+        <h3>Team</h3>
+        <p class="desc">For growing engineering teams that ship every day.</p>
+        <div class="price"><span class="cur">$</span>29</div>
+        <div class="price-sub">per developer / month</div>
+        <ul>
+          <li>Everything in Solo</li>
+          <li>Private repos &amp; monorepos</li>
+          <li>Auto-bisect &amp; freeze windows</li>
+          <li>Dependency graph API</li>
+          <li>SSO &amp; audit log</li>
+          <li>Priority Slack support</li>
+        </ul>
+        <a class="plan-cta" href="#cta">Start 14-day trial</a>
+      </article>
+
+      <article class="plan">
+        <h3>Enterprise</h3>
+        <p class="desc">For platform teams running large monorepos at scale.</p>
+        <div class="price"><span class="cur"></span>Custom</div>
+        <div class="price-sub">talk to us · usage-based</div>
+        <ul>
+          <li>Everything in Team</li>
+          <li>Self-hosted runners &amp; VPC</li>
+          <li>SOC&nbsp;2, ISO&nbsp;27001, HIPAA BAA</li>
+          <li>Dedicated solutions engineer</li>
+          <li>Custom SLA &amp; uptime credits</li>
+        </ul>
+        <a class="plan-cta" href="#cta">Talk to sales</a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FAQ
+     ==================================================================== -->
+<section class="section section--cream">
+  <div class="wrap">
+    <div class="faq">
+      <div class="reveal">
+        <span class="eyebrow">05 — Common questions</span>
+        <h2 class="h2" style="margin-top:14px">The honest answers, <em>up front.</em></h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item" open>
+          <summary class="faq-q">Do I have to rewrite my GitHub Actions? <span class="plus"></span></summary>
+          <div class="faq-a">No. Lattice reads the results of whatever pipelines you already run.
+            Most teams keep their existing YAML completely untouched. The only thing you
+            change is which user clicks "merge" — and that's now Lattice.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">How is "selective testing" actually safe? <span class="plus"></span></summary>
+          <div class="faq-a">Lattice builds a real dependency graph by walking imports, build inputs,
+            and (optionally) runtime traces. A test is only skipped if there's no reachable
+            path from the changed files to its assertions. We publish the proof per PR so
+            you can audit any decision.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Does it work with monorepos? Polyrepos? <span class="plus"></span></summary>
+          <div class="faq-a">Both. The queue, graph, and selective testing all work across any number
+            of repos. Most teams that adopt Lattice have a mixed setup, and the dashboard
+            stitches it together into a single view.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">What about flaky tests we already have? <span class="plus"></span></summary>
+          <div class="faq-a">Lattice ingests your last 14 days of CI history on connect, identifies
+            tests that fail under your threshold (default 4%), and quarantines them on
+            day one. You'll usually see your green rate jump within an hour.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Where does our code live during all this? <span class="plus"></span></summary>
+          <div class="faq-a">Lattice never stores your source. We hold metadata — file paths, test
+            IDs, timings, graph edges — and stream code through during analysis. Enterprise
+            plans can run the analyzer entirely inside your own VPC.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Can I try it on one repo before rolling out? <span class="plus"></span></summary>
+          <div class="faq-a">Yes, that's the recommended path. Install the app on a single repo, let
+            Lattice shadow your merges for a week (it'll show what it would have done without
+            taking over), then flip the switch when you're convinced.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     CTA BANNER
+     ==================================================================== -->
+<section class="section" id="cta">
+  <div class="wrap">
+    <div class="cta-banner reveal">
+      <div>
+        <span class="eyebrow on-dark">Start free</span>
+        <h2><em>Ship faster.</em> Or your<br>money back, no questions.</h2>
+        <p class="lede">
+          Connect a repo in under five minutes. See your first batched merge inside
+          the hour. We mean it about the refund.
+        </p>
+        <form class="form" onsubmit="event.preventDefault(); this.querySelector('button').innerText='Check your inbox';">
+          <input type="email" required placeholder="you@yourcompany.com" aria-label="Work email" />
+          <button type="submit">Get the install link</button>
+        </form>
+        <div class="cta-fine">No credit card · 14-day free trial · Cancel anytime</div>
+      </div>
+      <div class="cta-art" aria-hidden="true">
+<span class="line">  lattice / queue ────────────────</span>
+<span class="line">  ┌──────────────────────────────┐</span>
+<span class="line">  │ <span class="hi">●</span> #4821  feat: paginate api │</span>
+<span class="line">  │ <span class="hi">●</span> #4820  fix: token race    │</span>
+<span class="line">  │ <span class="hi">◐</span> #4819  refactor: billing  │</span>
+<span class="line">  │ ○ #4822  docs: webhooks    │</span>
+<span class="line">  │ ○ #4823  chore: bump pg    │</span>
+<span class="line">  └──────────────────────────────┘</span>
+<span class="line">  median&nbsp;&nbsp;<span class="hi">11m</span>   saved&nbsp;&nbsp;<span class="hi">$0.42/run</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+     ==================================================================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <a href="#" class="brand"><span class="glyph" aria-hidden="true"></span> Lattice</a>
+        <p>The merge queue your CI deserves. Made by engineers who got tired of asking "is main broken?".</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#changelog">Changelog</a>
+        <a href="#">Roadmap</a>
+      </div>
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <a href="#docs">Documentation</a>
+        <a href="#">CLI reference</a>
+        <a href="#">Graph API</a>
+        <a href="#">Status</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers&nbsp;·&nbsp;3 open</a>
+        <a href="#">Customers</a>
+        <a href="#">Press kit</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Security</a>
+        <a href="#">SOC&nbsp;2 report</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lattice Labs, Inc. · Made in Lisbon &amp; Brooklyn</span>
+      <span class="status"><span class="d"></span> All systems operational · 99.99% uptime</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // --- step + tab sync ----------------------------------------------------
+  (function(){
+    var steps = document.querySelectorAll('#steps .step');
+    var tabs  = document.querySelectorAll('#code-panel .code-tab');
+    var bodies = document.querySelectorAll('#code-body pre');
+
+    function activate(idx){
+      steps.forEach(function(s,i){
+        s.classList.toggle('is-open', i === idx);
+        s.setAttribute('aria-expanded', i === idx ? 'true' : 'false');
+      });
+      tabs.forEach(function(t,i){ t.classList.toggle('is-active', i === idx); });
+      bodies.forEach(function(b,i){
+        if (i === idx) b.removeAttribute('hidden'); else b.setAttribute('hidden','');
+      });
+    }
+    steps.forEach(function(s,i){ s.addEventListener('click', function(){ activate(i); }); });
+    tabs.forEach(function(t,i){  t.addEventListener('click', function(){ activate(i); }); });
+  })();
+
+  // --- subtle reveal on scroll -------------------------------------------
+  (function(){
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  })();
+
+  // --- pipeline timer micro-animation ------------------------------------
+  (function(){
+    var el = document.querySelector('.pr.run .timer');
+    if (!el) return;
+    var start = Date.now();
+    var base = 2 * 60 + 3; // 2m 03s
+    function tick(){
+      var s = base + Math.floor((Date.now() - start) / 1000);
+      var m = Math.floor(s / 60);
+      var r = s % 60;
+      el.textContent = 'running · ' + m + 'm ' + (r < 10 ? '0' + r : r) + 's';
+    }
+    setInterval(tick, 1000);
+  })();
+</script>
+</body>
+</html>

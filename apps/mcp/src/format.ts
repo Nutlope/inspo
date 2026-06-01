@@ -18,6 +18,7 @@ export function formatScreen(s: ScreenSummary, why?: string) {
     image: absolute(s.imageUrl),
     fullPage: absolute(s.fullPageUrl),
     thumb: absolute(s.thumbUrl),
+    ...(s.northstar ? { northstar: s.northstar } : {}),
     description: s.description,
     palette: s.palette,
     fonts: s.fonts,

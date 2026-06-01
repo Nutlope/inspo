@@ -56,11 +56,101 @@ export type ScreenFilter = {
 
 /**
  * Sort modes for the home grid.
- *  latest — most recently captured first (default)
- *  varied — round-robin one screen per macrostructure, then refill from latest
- *  random — shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
+ *  latest   — most recently captured first (default)
+ *  varied   — round-robin one screen per macrostructure, then refill from latest
+ *  random   — shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
+ *  featured — design-interest score desc: front-loads the most visually
+ *             striking work (bold macrostructures/styles + award-winning
+ *             captures) so the landing grid reads as a highlight reel.
  */
-export type ScreenSort = "latest" | "varied" | "random";
+export type ScreenSort = "latest" | "varied" | "random" | "featured";
+
+/* ─── design-interest scoring (drives the "featured" sort) ───
+ * Hand-tuned weights. The point isn't precision — it's pushing the
+ * cooler, more distinctive designs to the front and the generic
+ * minimal-SaaS long tail toward the back. Adjust freely.
+ */
+const MACRO_WEIGHT: Record<string, number> = {
+  "marquee-hero": 9,
+  "type-specimen": 9,
+  photographic: 8,
+  "bento-grid": 8,
+  "split-studio": 7,
+  manifesto: 7,
+  specimen: 7,
+  "portfolio-grid": 6,
+  catalogue: 6,
+  "narrative-workflow": 6,
+  "map-diagram": 6,
+  "quote-led": 5,
+  "stat-led": 5,
+  workbench: 5,
+  "component-playground": 5,
+  "ecosystem-index": 5,
+  letter: 4,
+  "index-first": 4,
+  "conversational-faq": 3,
+  "feature-stack": 3,
+  "long-document": 2,
+};
+const STYLE_WEIGHT: Record<string, number> = {
+  maximalism: 8,
+  brutalism: 8,
+  futurist: 7,
+  glassmorphism: 7,
+  claymorphism: 7,
+  editorial: 6,
+  playful: 6,
+  vintage: 6,
+  swiss: 5,
+  bento: 5,
+  "dark-mode": 4,
+  neumorphism: 4,
+  monochrome: 3,
+  minimalism: 2,
+};
+const VIBE_WEIGHT: Record<string, number> = {
+  loud: 5,
+  luxe: 5,
+  playful: 4,
+  raw: 4,
+  warm: 3,
+  technical: 2,
+  soft: 2,
+  serious: 2,
+  calm: 1,
+  cold: 1,
+};
+
+function maxWeight(keys: string[], table: Record<string, number>): number {
+  let best = 0;
+  for (const k of keys) best = Math.max(best, table[k] ?? 0);
+  return best;
+}
+
+/** Small stable jitter in [0,1) from the slug so equal-score rows
+ *  don't clump alphabetically. Deterministic across renders. */
+function slugJitter(slug: string): number {
+  let h = 5381;
+  for (let i = 0; i < slug.length; i++) h = ((h << 5) + h + slug.charCodeAt(i)) >>> 0;
+  return (h % 1000) / 1000;
+}
+
+export function featuredScore(s: ScreenSummary): number {
+  const macro = s.tags.macrostructure ? (MACRO_WEIGHT[s.tags.macrostructure] ?? 2) : 2;
+  const style = maxWeight(s.tags.style ?? [], STYLE_WEIGHT);
+  const vibe = maxWeight(s.tags.vibe ?? [], VIBE_WEIGHT);
+  // Award bonus: rows captured during the 2026-05 gallery harvest came
+  // from awards / gallery / Lapa etc. — curated-for-cool by definition.
+  // (Safe to feature now that their tile images are uploaded to Blob;
+  // before upload this front-loaded broken thumbnails, so it was held.)
+  const award = s.capturedAt >= "2026-05-27" ? 2 : 0;
+  return macro + style + vibe + award + slugJitter(s.slug);
+}
+
+function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
+  return [...list].sort((a, b) => featuredScore(b) - featuredScore(a));
+}
 
 function variedOrder(list: ScreenSummary[]): ScreenSummary[] {
   // Group by macrostructure, take one per group in round-robin until empty.
@@ -192,6 +282,7 @@ export async function getAllScreens(
     const filtered = applyFiltersFixture(screensFixture, filter);
     if (sort === "varied") return variedOrder(filtered);
     if (sort === "random") return shuffle(filtered);
+    if (sort === "featured") return featuredOrder(filtered);
     return filtered;
   }
 
@@ -284,6 +375,7 @@ export async function getAllScreens(
   });
 
   if (sort === "varied") return variedOrder(filtered);
+  if (sort === "featured") return featuredOrder(filtered);
   return filtered;
 }
 

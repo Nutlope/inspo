@@ -109,6 +109,11 @@ export type ScreenSummary = {
    *  before the real tile decodes. */
   lqip?: string;
   description: string;
+  /** One-line evocative "design soul" tagline (8–14 words). Generated
+   *  per site by the worker's generate-northstars pass; absent on rows
+   *  that haven't been through it. Surfaced on the detail hero +
+   *  recommend() output. */
+  northstar?: string;
   palette: string[];
   fonts: string[];
   tech: string[];
@@ -148,6 +153,12 @@ export type SearchFilters = Partial<{
   colorWord: ColorWord;
   query: string;
 }>;
+
+// Extensionless paths to match the project's convention (cf.
+// packages/db/src/index.ts). Turbopack's resolver in Next 16 doesn't
+// fall back to .ts when a `.js` re-export specifier is unresolved.
+export * from "./color";
+export * from "./study";
 
 export type Collection = {
   id: string;

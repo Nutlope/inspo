@@ -1,6 +1,8 @@
 import type { ScreenSummary } from "@inspo/shared";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 import { TransitionLink as Link } from "@/components/transition-link";
+import { HoverScrollOverlay } from "@/components/hover-scroll-overlay";
+import { TileImage } from "@/components/tile-image";
 
 /**
  * Server-rendered tile. No `"use client"`, no `useState`. The previous
@@ -45,10 +47,6 @@ const ASPECT: Record<Variant, string> = {
 const TILE_SIZES =
   "(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw";
 
-function buildSrcSet(entries: { w: number; url: string }[]): string {
-  return entries.map((e) => `${e.url} ${e.w}w`).join(", ");
-}
-
 export function ScreenTile({
   screen,
   variant = "thumb",
@@ -57,6 +55,7 @@ export function ScreenTile({
   className = "",
   priority = false,
   pageCount,
+  hoverScroll = false,
 }: {
   screen: ScreenSummary;
   variant?: Variant;
@@ -72,6 +71,13 @@ export function ScreenTile({
    *  - small "N pages" badge in the caption row
    *  Otherwise link routes to /screens/[slug] (single screen detail). */
   pageCount?: number;
+  /** When true, on first hover the tile loads the full-page screenshot
+   *  and slowly scrolls it top→bottom over ~5.5 s. Adds a tiny client
+   *  island per tile but no upfront network cost — the full PNG is
+   *  fetched only after the user actually hovers. Default off so
+   *  callers opt in (we don't want this on cards in tight grids like
+   *  /collections summaries). */
+  hoverScroll?: boolean;
 }) {
   const macroKey = screen.tags.macrostructure;
   const macro = macroKey ? MACROSTRUCTURE_LABELS[macroKey] : null;
@@ -114,32 +120,25 @@ export function ScreenTile({
           className={`relative w-full overflow-hidden border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
           style={bgStyle}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <picture>
-            {variants?.avif?.length ? (
-              <source
-                type="image/avif"
-                srcSet={buildSrcSet(variants.avif)}
-                sizes={TILE_SIZES}
-              />
-            ) : null}
-            {variants?.webp?.length ? (
-              <source
-                type="image/webp"
-                srcSet={buildSrcSet(variants.webp)}
-                sizes={TILE_SIZES}
-              />
-            ) : null}
-            <img
-              src={fallbackSrc}
-              alt={`${screen.title} — ${screen.description}`}
-              className="h-full w-full object-cover"
-              loading={priority ? "eager" : "lazy"}
-              decoding={priority ? "sync" : "async"}
-              // @ts-expect-error — fetchpriority is valid HTML, React types lag
-              fetchpriority={priority ? "high" : undefined}
+          <TileImage
+            variants={variants}
+            fallbackSrc={fallbackSrc}
+            alt={`${screen.title} — ${screen.description}`}
+            sizes={TILE_SIZES}
+            priority={priority}
+          />
+
+          {/* Hover-scroll overlay — full page screenshot, lazy. Renders
+              nothing on first paint; fetches the 1440-wide AVIF only on
+              first pointerenter. The overlay sits above the hero image
+              and below the caption strip (caption uses pointer-events:
+              none so hover still bubbles to the parent group). */}
+          {hoverScroll && screen.fullPageUrl ? (
+            <HoverScrollOverlay
+              fullUrl={screen.fullPageUrl}
+              fullVariants={screen.fullVariants}
             />
-          </picture>
+          ) : null}
 
           {/* Hover strip — palette swatches + macrostructure caption.
               Opacity-fades in (no slide), calmer than translate. Reads

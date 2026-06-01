@@ -18,6 +18,12 @@ import {
   renderDesignMd,
 } from "@inspo/db";
 import {
+  HEX_FAMILY_THRESHOLD,
+  normalizeHex,
+  paletteDistance,
+  study,
+} from "@inspo/shared";
+import {
   STYLES,
   INDUSTRIES,
   MACROSTRUCTURES,
@@ -59,8 +65,10 @@ const REFERENCE_TYPES = [
   "stat",
 ] as const;
 import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
+import { absolute } from "./url.js";
 import { searchScreens } from "./search.js";
-import { study } from "./study.js";
+// study() was moved to @inspo/shared so the web playground can call
+// it without depending on the MCP-SDK side of @inspo/mcp.
 
 export function registerTools(server: McpServer) {
   /* ────────────── search_screens ────────────── */
@@ -283,6 +291,146 @@ export function registerTools(server: McpServer) {
         {
           reference: { slug: target.slug, title: target.title },
           count: similar.length,
+          results,
+        },
+        results.map((r) => r.thumb),
+      );
+    },
+  );
+
+  /* ────────────── compare ────────────── */
+  server.registerTool(
+    "compare",
+    {
+      description:
+        "Compare 2–4 captured sites side by side across design dimensions — palette, typefaces, macrostructure, mode, style tags, type-scale + spacing + radius scales, container width. Returns a per-site breakdown plus a `shared` block (style tags every site has in common, the set of distinct macrostructures, whether they share a light/dark register). Use it to answer 'what do linear, stripe, and vercel share visually' or to triangulate a house style from a few references. Inline thumbnails included.",
+      inputSchema: {
+        slugs: z
+          .array(z.string())
+          .min(2)
+          .max(4)
+          .describe(
+            "2–4 screen slugs to compare, e.g. ['linear-app','stripe-com','vercel-com']. Discover slugs with search_screens / find_similar.",
+          ),
+      },
+    },
+    async ({ slugs }) => {
+      const found = await Promise.all(slugs.map((s) => findScreen(s)));
+      const missing = slugs.filter((_, i) => !found[i]);
+      const screens = found.filter((s): s is NonNullable<typeof s> => s != null);
+      if (screens.length < 2) {
+        return asTextContent({
+          error: `Need at least 2 valid slugs to compare. Missing: ${missing.join(", ") || "none"}.`,
+        });
+      }
+
+      const sites = screens.map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        sourceUrl: s.sourceUrl,
+        macrostructure: s.tags.macrostructure
+          ? MACROSTRUCTURE_LABELS[s.tags.macrostructure]
+          : null,
+        mode: s.mode,
+        styles: s.tags.style,
+        vibe: s.tags.vibe,
+        palette: s.palette.slice(0, 6),
+        fonts: s.fonts,
+        tech: s.tech,
+        typeScaleSteps: s.designSystem.typeRamp.length,
+        spacingScale: s.designSystem.spacingScale,
+        radiusScale: s.designSystem.radiusScale,
+        containerWidth: s.designSystem.containerWidth,
+      }));
+
+      // Shared signals — intersection of style tags, set of distinct
+      // macrostructures, register agreement.
+      const styleSets = screens.map((s) => new Set(s.tags.style));
+      const commonStyles = [...styleSets[0]!].filter((st) =>
+        styleSets.every((set) => set.has(st)),
+      );
+      const macros = [
+        ...new Set(
+          screens
+            .map((s) => s.tags.macrostructure)
+            .filter((m): m is NonNullable<typeof m> => m != null)
+            .map((m) => MACROSTRUCTURE_LABELS[m]),
+        ),
+      ];
+      const modes = [...new Set(screens.map((s) => s.mode))];
+
+      const payload = {
+        count: sites.length,
+        ...(missing.length ? { missing } : {}),
+        sites,
+        shared: {
+          commonStyles,
+          distinctMacrostructures: macros,
+          sameRegister: modes.length === 1 ? modes[0] : false,
+        },
+      };
+      return withImages(
+        payload,
+        screens.map((s) => absolute(s.thumbUrl)),
+      );
+    },
+  );
+
+  /* ────────────── find_by_color ────────────── */
+  server.registerTool(
+    "find_by_color",
+    {
+      description:
+        "Given a hex colour, return real production sites whose extracted palette includes a close match. Distance is Euclidean in OKLAB — the colour space where perceived difference and numeric distance line up — so 'close' means same family of colour, not just same hue. Useful when a brief specifies a particular accent / brand colour and you want sites already living near it. Pairs with `get_design_system` to harvest the matching palette tokens.",
+      inputSchema: {
+        hex: z
+          .string()
+          .describe(
+            "Target colour as a hex string ('#c7402f', 'c7402f', '#fff'). Case-insensitive. 3- or 6-digit.",
+          ),
+        tolerance: z
+          .number()
+          .min(0.02)
+          .max(0.5)
+          .default(HEX_FAMILY_THRESHOLD)
+          .describe(
+            "Max OKLAB distance to count as a match. Defaults to 0.15 ('same family'). 0.05 ≈ 'near-identical', 0.30 ≈ 'in the same hue zip code'.",
+          ),
+        limit: z.number().int().min(1).max(40).default(12),
+      },
+    },
+    async ({ hex, tolerance, limit }) => {
+      const target = normalizeHex(hex);
+      if (!target) {
+        return asTextContent({
+          error: `Invalid hex '${hex}'. Use #rrggbb, #rgb, or the same without the #.`,
+        });
+      }
+      const all = await getAllScreens();
+      // Score one row per site — sub-pages inherit the parent's palette
+      // so scoring all 3,000+ rows is wasted work + would double-list
+      // sites whose sub-pages share the same hex. Group by siteSlug,
+      // take the landing row (slug === siteSlug) as the canonical one.
+      const bySite = new Map<string, typeof all[number]>();
+      for (const s of all) {
+        if (s.slug !== s.siteSlug) continue;
+        bySite.set(s.siteSlug, s);
+      }
+      const scored: { d: number; s: typeof all[number] }[] = [];
+      for (const s of bySite.values()) {
+        const d = paletteDistance(target, s.palette ?? []);
+        if (d <= tolerance) scored.push({ d, s });
+      }
+      scored.sort((a, b) => a.d - b.d);
+      const top = scored.slice(0, limit);
+      const results = top.map(({ s, d }) =>
+        formatScreen(s, `Δ ${d.toFixed(3)} from ${target}`),
+      );
+      return withImages(
+        {
+          anchor: target,
+          tolerance,
+          count: results.length,
           results,
         },
         results.map((r) => r.thumb),

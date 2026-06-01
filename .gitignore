@@ -40,3 +40,7 @@ coverage/
 # scheduler runtime
 .claude/
 .vercel
+
+# session backup snapshots (do not commit)
+packages/db/src/*.pre-*.json
+packages/db/src/*.pre-*.bin

@@ -11,8 +11,12 @@ import { getAllSites } from "@inspo/db";
 const GRID_LIMIT = 12;
 
 export default async function HomePage() {
-  // One tile per site, not per captured screen (gallery-style).
-  const allSites = await getAllSites();
+  // One tile per site, not per captured screen (gallery-style). The
+  // "featured" sort front-loads the most visually striking work
+  // (award-winning captures + bold macrostructures/styles) rather than
+  // the capture order — the landing grid is a highlight reel, not a
+  // changelog.
+  const allSites = await getAllSites({}, "featured");
   const totalCount = allSites.length;
   const grid = allSites.slice(0, GRID_LIMIT);
 
@@ -42,7 +46,7 @@ export default async function HomePage() {
         <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {grid.map((site, i) => (
             <li key={site.siteSlug}>
-              <ScreenTile screen={site} index={i + 1} variant="hero" pageCount={site.pageCount} />
+              <ScreenTile screen={site} index={i + 1} variant="hero" pageCount={site.pageCount} hoverScroll />
             </li>
           ))}
         </ul>

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conduit — Durable workflows for production systems</title>
+<meta name="description" content="Conduit runs your background jobs, scheduled tasks, and long-running workflows as durable, observable functions. Ship retry-safe pipelines in an afternoon." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    --bg:        #0b0d12;
+    --bg-2:      #11141b;
+    --bg-3:      #161a23;
+    --line:      #232836;
+    --line-2:    #2c3242;
+    --ink:       #eef0f3;
+    --ink-dim:   #aab1c0;
+    --ink-mute:  #7a8294;
+    --accent:    #f0a657;   /* warm saffron, one note only */
+    --accent-2:  #ffd09e;
+    --good:      #8bd49a;
+    --warn:      #ffd166;
+    --bad:       #f47e7e;
+    --info:      #8ec5ff;
+
+    --sans: 'Inter Tight', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --serif:'Fraunces', ui-serif, Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --max: 1240px;
+    --pad: clamp(20px, 4vw, 40px);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{overflow-x:hidden;line-height:1.45}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;border:0;background:transparent;color:inherit;cursor:pointer}
+  img,svg{display:block;max-width:100%}
+
+  /* ---------- type ---------- */
+  h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-0.02em;line-height:1.05}
+  h1{font-size:clamp(44px, 7vw, 92px);letter-spacing:-0.035em}
+  h2{font-size:clamp(30px, 4.2vw, 52px);letter-spacing:-0.03em}
+  h3{font-size:22px;letter-spacing:-0.015em}
+  .ital{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute)}
+  .dim{color:var(--ink-dim)}
+  .mute{color:var(--ink-mute)}
+  .mono{font-family:var(--mono)}
+  p{margin:0;color:var(--ink-dim);font-size:16px;line-height:1.55}
+  .lead{font-size:clamp(17px, 1.5vw, 20px);color:var(--ink-dim);max-width:60ch}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+  section{padding:clamp(72px, 9vw, 128px) 0}
+  .rule{height:1px;background:var(--line);width:100%}
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(11,13,18,0.72);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--line)}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-0.01em;font-size:17px}
+  .brand .mark{width:22px;height:22px;border-radius:6px;background:radial-gradient(120% 120% at 20% 10%, var(--accent), #b86f24 70%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.18), 0 0 0 1px rgba(0,0,0,0.4)}
+  .links{display:flex;gap:28px;font-size:14px;color:var(--ink-dim)}
+  .links a:hover{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:14px;font-size:14px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;font-size:14px;font-weight:500;transition:all .18s ease;border:1px solid var(--line-2)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--accent);color:#1b1207;border-color:transparent;font-weight:600}
+  .btn-primary:hover{background:var(--accent-2)}
+  .btn-ghost{color:var(--ink);background:transparent}
+  .btn-ghost:hover{background:var(--bg-3);border-color:var(--line-2)}
+  .btn-sm{padding:8px 14px;font-size:13px}
+
+  @media (max-width:760px){
+    .links{display:none}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding-top:64px;padding-bottom:48px;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;inset:-40% -10% auto -10%;height:680px;
+    background:
+      radial-gradient(60% 60% at 50% 30%, rgba(240,166,87,0.12), transparent 60%),
+      radial-gradient(40% 40% at 80% 20%, rgba(142,197,255,0.08), transparent 60%),
+      radial-gradient(40% 40% at 15% 35%, rgba(139,212,154,0.06), transparent 60%);
+    pointer-events:none;z-index:0;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:64px 64px;
+    background-position:center top;
+    mask-image:radial-gradient(70% 60% at 50% 25%, #000 0%, transparent 70%);
+    -webkit-mask-image:radial-gradient(70% 60% at 50% 25%, #000 0%, transparent 70%);
+    pointer-events:none;z-index:0;
+  }
+  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr 1fr;gap:64px;align-items:center}
+  @media (max-width:1024px){.hero-inner{grid-template-columns:1fr;gap:48px}}
+
+  .tagline{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-dim);font-size:13px;margin-bottom:28px}
+  .tagline .pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(139,212,154,0.6);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(139,212,154,0.45)}70%{box-shadow:0 0 0 8px rgba(139,212,154,0)}100%{box-shadow:0 0 0 0 rgba(139,212,154,0)}}
+
+  .h-sub{margin-top:24px;max-width:54ch}
+  .h-ctas{margin-top:36px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .h-ctas .meta{font-size:13px;color:var(--ink-mute);margin-left:8px}
+
+  /* terminal card */
+  .install{margin-top:28px;display:inline-flex;align-items:center;gap:14px;padding:12px 14px 12px 16px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:13.5px;color:var(--ink-dim);max-width:100%}
+  .install .prompt{color:var(--accent)}
+  .install code{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .install .copy{padding:6px 10px;border-radius:6px;background:var(--bg-3);border:1px solid var(--line-2);font-size:11px;color:var(--ink-dim);font-family:var(--mono);letter-spacing:0.04em;cursor:pointer}
+  .install .copy:hover{color:var(--ink)}
+
+  /* dashboard mock */
+  .dash{position:relative;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg, var(--bg-2), var(--bg));box-shadow:0 50px 120px -40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;overflow:hidden}
+  .dash-bar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg-3)}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .d-r{background:#ff5f57}.d-y{background:#febc2e}.d-g{background:#28c840}
+  .dash-bar .breadcrumb{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:0.06em}
+  .dash-body{display:grid;grid-template-columns:170px 1fr;min-height:380px}
+  @media (max-width:520px){.dash-body{grid-template-columns:1fr}.dash-side{display:none}}
+  .dash-side{border-right:1px solid var(--line);padding:14px 10px;background:rgba(255,255,255,0.01)}
+  .dash-side .group{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute);padding:8px 10px 6px}
+  .dash-side .nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;font-size:13px;color:var(--ink-dim);cursor:default}
+  .dash-side .nav-item.active{background:var(--bg-3);color:var(--ink)}
+  .dash-side .nav-item .count{font-family:var(--mono);font-size:11px;color:var(--ink-mute)}
+  .dash-main{padding:18px 18px 14px;display:flex;flex-direction:column;gap:14px;min-width:0}
+  .dash-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .dash-head h4{font-size:15px;font-weight:600;letter-spacing:-0.01em}
+  .dash-head .pill{font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(240,166,87,0.1);padding:4px 8px;border-radius:999px;border:1px solid rgba(240,166,87,0.25)}
+  .runs{display:grid;grid-template-columns:1fr;gap:6px;font-family:var(--mono);font-size:12px}
+  .run{display:grid;grid-template-columns:14px 1fr auto auto;gap:10px;align-items:center;padding:9px 10px;background:var(--bg-2);border:1px solid var(--line);border-radius:8px}
+  .run .status{width:8px;height:8px;border-radius:50%}
+  .s-ok{background:var(--good)}
+  .s-run{background:var(--info);animation:blink 1.4s ease-in-out infinite}
+  .s-warn{background:var(--warn)}
+  .s-fail{background:var(--bad)}
+  @keyframes blink{50%{opacity:0.3}}
+  .run .name{color:var(--ink)}
+  .run .dur{color:var(--ink-mute)}
+  .run .time{color:var(--ink-mute);font-size:11px}
+  .timeline{display:flex;gap:3px;align-items:flex-end;height:46px;padding:0 2px;margin-top:4px}
+  .timeline span{flex:1;background:var(--line-2);border-radius:2px;min-height:6px;transition:background .3s}
+  .timeline span.hi{background:var(--accent)}
+  .timeline span.med{background:rgba(240,166,87,0.55)}
+
+  /* ---------- trust strip ---------- */
+  .trust{padding:36px 0 8px}
+  .trust .label{display:flex;align-items:center;gap:14px;color:var(--ink-mute);font-size:13px;justify-content:center;margin-bottom:24px}
+  .trust .label::before,.trust .label::after{content:"";flex:1;height:1px;background:var(--line);max-width:160px}
+  .logo-row{display:grid;grid-template-columns:repeat(6,1fr);gap:30px;align-items:center;justify-items:center;color:var(--ink-mute);font-family:var(--sans);font-weight:600;letter-spacing:-0.01em;opacity:0.85}
+  .logo-row span{font-size:18px;white-space:nowrap}
+  .logo-row .ser{font-family:var(--serif);font-style:italic;font-weight:400;font-size:22px}
+  .logo-row .mono{font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:0}
+  @media (max-width:900px){.logo-row{grid-template-columns:repeat(3,1fr);gap:24px}}
+
+  /* ---------- features ---------- */
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin-bottom:56px}
+  .section-head .left{max-width:46ch}
+  .section-head h2{margin-top:14px}
+  .section-head p{margin-top:14px}
+  @media (max-width:760px){.section-head{flex-direction:column;align-items:flex-start;gap:16px}}
+
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  @media (max-width:900px){.features{grid-template-columns:1fr}}
+  .feat{background:var(--bg);padding:32px 28px 28px;display:flex;flex-direction:column;gap:14px;min-height:280px}
+  .feat .ico{width:34px;height:34px;border-radius:8px;background:var(--bg-3);border:1px solid var(--line-2);display:grid;place-items:center;color:var(--accent)}
+  .feat h3{margin-top:6px}
+  .feat .meta{margin-top:auto;font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:0.06em;display:flex;align-items:center;gap:6px}
+  .feat .meta::before{content:"";width:14px;height:1px;background:var(--line-2)}
+
+  /* ---------- code split ---------- */
+  .split{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center}
+  @media (max-width:1024px){.split{grid-template-columns:1fr;gap:40px}}
+  .split-bullets{display:flex;flex-direction:column;gap:22px;margin-top:32px}
+  .bullet{display:flex;gap:14px;align-items:flex-start}
+  .bullet .b-num{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:24px;padding-top:3px;letter-spacing:0.06em}
+  .bullet h4{font-weight:600;font-size:16px;letter-spacing:-0.01em;margin-bottom:4px}
+  .bullet p{font-size:14.5px}
+
+  .code{border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2);overflow:hidden;box-shadow:0 30px 80px -40px rgba(0,0,0,0.6)}
+  .code-tabs{display:flex;gap:0;background:var(--bg-3);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+  .code-tabs .tab{padding:10px 16px;color:var(--ink-mute);cursor:pointer;border-right:1px solid var(--line);transition:color .15s}
+  .code-tabs .tab:hover{color:var(--ink-dim)}
+  .code-tabs .tab.active{color:var(--ink);background:var(--bg-2);position:relative}
+  .code-tabs .tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--accent)}
+  .code-tabs .spacer{flex:1;border-right:0}
+  .code-body{padding:22px 24px;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--ink-dim);overflow:auto;max-width:100%}
+  .code-pane{display:none;white-space:pre;margin:0}
+  .code-pane.active{display:block}
+  .tk-k{color:#c084fc}        /* keyword */
+  .tk-s{color:#86efac}        /* string */
+  .tk-c{color:#64748b;font-style:italic} /* comment */
+  .tk-f{color:var(--accent)}  /* function */
+  .tk-t{color:#7dd3fc}        /* type */
+  .tk-n{color:#fbbf24}        /* number */
+  .tk-p{color:#e2e8f0}        /* punctuation */
+
+  /* ---------- stats strip ---------- */
+  .stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2)}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+  @media (max-width:760px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--bg-2);padding:36px 28px}
+  .stat .n{font-size:46px;font-weight:600;letter-spacing:-0.04em;line-height:1;display:flex;align-items:baseline;gap:4px}
+  .stat .n small{font-size:18px;color:var(--ink-mute);font-weight:500}
+  .stat .l{margin-top:10px;font-size:13px;color:var(--ink-mute);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase}
+
+  /* ---------- timeline / how-it-works ---------- */
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:48px}
+  @media (max-width:900px){.flow{grid-template-columns:1fr}}
+  .step{background:var(--bg);padding:32px 28px 36px}
+  .step .ix{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+  .step .ix::after{content:"";flex:1;height:1px;background:var(--line)}
+  .step h3{font-size:21px;margin-bottom:10px}
+  .step .preview{margin-top:20px;padding:14px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:12px;color:var(--ink-dim);line-height:1.7;white-space:pre;overflow:auto}
+
+  /* ---------- testimonial ---------- */
+  .quote{display:grid;grid-template-columns:1.4fr 1fr;gap:64px;align-items:center;padding:88px 0}
+  @media (max-width:900px){.quote{grid-template-columns:1fr;gap:32px}}
+  .quote q{display:block;font-size:clamp(24px, 2.8vw, 36px);font-weight:500;letter-spacing:-0.02em;line-height:1.25;color:var(--ink);quotes:none}
+  .quote q::before{content:"\201C ";color:var(--accent)}
+  .quote q::after{content:"\201D";color:var(--accent)}
+  .quote cite{display:block;margin-top:24px;font-style:normal;font-size:14px;color:var(--ink-mute);font-family:var(--mono);letter-spacing:0.04em}
+  .quote .card{padding:28px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+  .quote .card .row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .quote .card .row:last-child{border-bottom:0}
+  .quote .card .row .k{font-size:13px;color:var(--ink-mute);font-family:var(--mono);letter-spacing:0.04em}
+  .quote .card .row .v{font-size:16px;color:var(--ink);font-weight:500}
+  .quote .card .v .delta{color:var(--good);font-family:var(--mono);font-size:12px;margin-left:6px}
+
+  /* ---------- pricing ---------- */
+  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+  @media (max-width:900px){.pricing{grid-template-columns:1fr}}
+  .tier{padding:32px 28px 28px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;gap:18px;position:relative}
+  .tier.featured{border-color:rgba(240,166,87,0.4);background:linear-gradient(180deg, rgba(240,166,87,0.06), var(--bg-2) 60%)}
+  .tier .badge{position:absolute;top:-10px;right:24px;padding:4px 10px;background:var(--accent);color:#1b1207;border-radius:999px;font-size:11px;font-weight:600;font-family:var(--mono);letter-spacing:0.04em;text-transform:uppercase}
+  .tier .t-name{font-family:var(--mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute)}
+  .tier .t-price{font-size:46px;font-weight:600;letter-spacing:-0.03em;line-height:1;display:flex;align-items:baseline;gap:4px}
+  .tier .t-price small{font-size:14px;font-weight:500;color:var(--ink-mute);font-family:var(--mono)}
+  .tier .t-tag{color:var(--ink-dim);font-size:14px}
+  .tier ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+  .tier li{font-size:14px;color:var(--ink-dim);display:flex;gap:10px;align-items:flex-start}
+  .tier li::before{content:"";width:12px;height:12px;margin-top:5px;flex-shrink:0;background:radial-gradient(circle, var(--accent) 30%, transparent 32%)}
+  .tier .btn{justify-content:center;margin-top:auto}
+
+  /* ---------- faq ---------- */
+  .faq{display:grid;grid-template-columns:1fr 1.4fr;gap:64px}
+  @media (max-width:900px){.faq{grid-template-columns:1fr;gap:24px}}
+  .faq-list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .faq-item{border-bottom:1px solid var(--line)}
+  .faq-item summary{cursor:pointer;list-style:none;padding:24px 0;display:flex;justify-content:space-between;align-items:center;gap:24px;font-weight:500;font-size:17px;letter-spacing:-0.01em;transition:color .15s}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary:hover{color:var(--accent)}
+  .faq-item summary .plus{width:18px;height:18px;flex-shrink:0;position:relative;color:var(--ink-mute);transition:color .15s, transform .25s}
+  .faq-item summary .plus::before,.faq-item summary .plus::after{content:"";position:absolute;background:currentColor;top:50%;left:50%}
+  .faq-item summary .plus::before{width:14px;height:1.5px;transform:translate(-50%,-50%)}
+  .faq-item summary .plus::after{width:1.5px;height:14px;transform:translate(-50%,-50%);transition:transform .25s}
+  .faq-item[open] summary .plus{color:var(--accent);transform:rotate(180deg)}
+  .faq-item[open] summary .plus::after{transform:translate(-50%,-50%) scaleY(0)}
+  .faq-item .a{padding:0 32px 26px 0;color:var(--ink-dim);font-size:15px;line-height:1.65;max-width:62ch}
+
+  /* ---------- cta ---------- */
+  .endcta{position:relative;overflow:hidden;border-radius:24px;margin:64px 0;padding:80px 56px;background:linear-gradient(140deg, var(--bg-2) 0%, #161922 100%);border:1px solid var(--line)}
+  .endcta::before{content:"";position:absolute;inset:auto -10% -50% auto;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle, rgba(240,166,87,0.18), transparent 60%);pointer-events:none}
+  .endcta .inner{position:relative;display:flex;justify-content:space-between;align-items:center;gap:48px;flex-wrap:wrap}
+  .endcta h2{max-width:18ch}
+  .endcta .actions{display:flex;gap:12px;flex-wrap:wrap}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding-top:72px;padding-bottom:48px;background:var(--bg)}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:48px}
+  @media (max-width:900px){.foot-grid{grid-template-columns:1fr 1fr;gap:32px}}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 18px;font-weight:500}
+  .foot-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .foot-col li a{font-size:14px;color:var(--ink-dim);transition:color .15s}
+  .foot-col li a:hover{color:var(--ink)}
+  .foot-brand p{margin-top:18px;max-width:34ch;font-size:14px}
+  .foot-brand .status{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--ink-mute);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+  .foot-brand .status .pulse{width:6px;height:6px;border-radius:50%;background:var(--good)}
+  .foot-bottom{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;color:var(--ink-mute);font-size:13px}
+  .foot-bottom .legal{display:flex;gap:18px}
+
+  /* ---------- focus ---------- */
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+  ::selection{background:var(--accent);color:#1b1207}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-row">
+    <a class="brand" href="#">
+      <span class="mark" aria-hidden="true"></span>
+      <span>Conduit</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      <a href="#product">Product</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs</a>
+      <a href="#changelog">Changelog</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#signin" class="dim" style="font-size:14px">Sign in</a>
+      <a href="#start" class="btn btn-primary btn-sm">Start free <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="tagline"><span class="pulse" aria-hidden="true"></span> v3.4 — Branch deploys for workflows</span>
+      <h1>Background jobs<br>that <span class="ital">don&rsquo;t lose</span> the plot.</h1>
+      <p class="lead h-sub">Conduit runs your queues, schedules, and long-running workflows as durable functions. Retry-safe by default. Observable from the first run. No brokers to babysit.</p>
+
+      <div class="install" role="region" aria-label="Install command">
+        <span class="prompt">$</span>
+        <code>npm i @conduit/sdk &amp;&amp; npx conduit init</code>
+        <button class="copy" type="button" aria-label="Copy install command" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText('npm i @conduit/sdk &amp;&amp; npx conduit init');this.textContent='copied'">copy</button>
+      </div>
+
+      <div class="h-ctas">
+        <a href="#start" class="btn btn-primary">Start free, no card</a>
+        <a href="#book" class="btn btn-ghost">Book a 20-min tour</a>
+        <span class="meta">Free tier covers 100k runs/mo &middot; SOC 2 Type II</span>
+      </div>
+    </div>
+
+    <!-- live-ish dashboard mock -->
+    <div class="dash" aria-hidden="true">
+      <div class="dash-bar">
+        <span class="dot d-r"></span><span class="dot d-y"></span><span class="dot d-g"></span>
+        <span class="breadcrumb">acme &middot; workflows &middot; <strong style="color:var(--ink-dim)">checkout-fulfillment</strong></span>
+      </div>
+      <div class="dash-body">
+        <aside class="dash-side">
+          <div class="group">Workspaces</div>
+          <div class="nav-item active">checkout <span class="count">42</span></div>
+          <div class="nav-item">onboarding <span class="count">7</span></div>
+          <div class="nav-item">billing <span class="count">3</span></div>
+          <div class="nav-item">migrations <span class="count">128</span></div>
+          <div class="group">Observability</div>
+          <div class="nav-item">Runs</div>
+          <div class="nav-item">Events</div>
+          <div class="nav-item">Logs</div>
+        </aside>
+        <div class="dash-main">
+          <div class="dash-head">
+            <h4>Recent runs <span class="mute mono" style="font-size:12px;margin-left:8px;font-weight:400">last 5 min</span></h4>
+            <span class="pill">live</span>
+          </div>
+
+          <div class="timeline" aria-hidden="true">
+            <span></span><span></span><span class="med"></span><span></span><span></span>
+            <span class="hi"></span><span></span><span class="med"></span><span class="med"></span>
+            <span></span><span></span><span class="hi"></span><span class="hi"></span><span></span>
+            <span class="med"></span><span></span><span></span><span class="hi"></span><span></span>
+            <span></span><span class="med"></span><span class="hi"></span><span></span><span></span>
+          </div>
+
+          <div class="runs">
+            <div class="run"><span class="status s-ok"></span><span class="name">fulfillment.dispatch <span class="mute">#ord_8721</span></span><span class="dur">412 ms</span><span class="time">just now</span></div>
+            <div class="run"><span class="status s-run"></span><span class="name">stripe.webhook.process <span class="mute">#evt_4421</span></span><span class="dur">running</span><span class="time">3s</span></div>
+            <div class="run"><span class="status s-ok"></span><span class="name">email.receipt.send <span class="mute">#ord_8720</span></span><span class="dur">196 ms</span><span class="time">11s</span></div>
+            <div class="run"><span class="status s-warn"></span><span class="name">inventory.reserve <span class="mute">#sku_991</span></span><span class="dur">retry 2/5</span><span class="time">22s</span></div>
+            <div class="run"><span class="status s-ok"></span><span class="name">ledger.post <span class="mute">#tx_7110</span></span><span class="dur">88 ms</span><span class="time">34s</span></div>
+            <div class="run"><span class="status s-fail"></span><span class="name">tax.calculate <span class="mute">#ord_8714</span></span><span class="dur">DLQ</span><span class="time">1m</span></div>
+            <div class="run"><span class="status s-ok"></span><span class="name">analytics.emit <span class="mute">#batch_44</span></span><span class="dur">52 ms</span><span class="time">2m</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section class="trust">
+  <div class="wrap">
+    <p class="label">Running pipelines for product teams at</p>
+    <div class="logo-row" aria-label="Customer logos">
+      <span class="ser">Linework</span>
+      <span>HALCYON</span>
+      <span class="mono">/peregrine</span>
+      <span class="ser">Otsu &amp; Co.</span>
+      <span>BOLINE</span>
+      <span class="mono">tessera::</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="product">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="left">
+        <span class="eyebrow">// the runtime</span>
+        <h2>One primitive. Every <span class="ital">durable</span> pattern.</h2>
+      </div>
+      <p class="lead" style="max-width:42ch">A single function call gives you queues, schedules, fan-out, sagas, and human-in-the-loop. We persist every step so the runtime can resume exactly where it left off.</p>
+    </div>
+
+    <div class="features">
+      <div class="feat">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h10M4 17h7"/></svg></div>
+        <h3>Step-level retries</h3>
+        <p>Wrap any side effect in <span class="mono dim">step.run()</span> and Conduit memoises the result. Failures resume from the last successful step — no manual checkpoints, no idempotency keys to invent.</p>
+        <span class="meta">retry &middot; backoff &middot; replay</span>
+      </div>
+      <div class="feat">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Sleep without paying</h3>
+        <p>Pause a workflow for minutes, days, or quarters. Sleeping runs cost nothing — they live in storage until the timer fires or an event wakes them. Perfect for trials, renewals, and SLAs.</p>
+        <span class="meta">durable sleep &middot; cron &middot; events</span>
+      </div>
+      <div class="feat">
+        <div class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></div>
+        <h3>Observability built in</h3>
+        <p>Every step shipped to the dashboard with inputs, outputs, and the actual stack trace. Replay a failed run against today&rsquo;s code in one click. Logs are searchable for 30 days on every plan.</p>
+        <span class="meta">traces &middot; replay &middot; alerts</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CODE / SPLIT ============ -->
+<section style="padding-top:0">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">// authoring</span>
+      <h2 style="margin-top:14px">Functions, not <span class="ital">YAML.</span></h2>
+      <p class="lead" style="margin-top:18px">Define workflows in the language you already ship. No state machine DSL, no broker config, no separate worker fleet. Deploy the same way you deploy your app.</p>
+
+      <div class="split-bullets">
+        <div class="bullet">
+          <span class="b-num">01</span>
+          <div>
+            <h4>Type-safe events</h4>
+            <p class="dim">Schemas are inferred from your TypeScript types. Trigger a workflow from any service, get autocomplete in your IDE.</p>
+          </div>
+        </div>
+        <div class="bullet">
+          <span class="b-num">02</span>
+          <div>
+            <h4>Concurrency &amp; throttling</h4>
+            <p class="dim">Cap parallel runs per user, per tenant, per integration. Backpressure is a one-line declaration on the function.</p>
+          </div>
+        </div>
+        <div class="bullet">
+          <span class="b-num">03</span>
+          <div>
+            <h4>Local-first development</h4>
+            <p class="dim">The dev server runs every step in-process with a real UI. No mocks, no Docker, no separate Redis to remember.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code" role="region" aria-label="Code example">
+      <div class="code-tabs" role="tablist">
+        <button class="tab active" data-tab="ts" role="tab" aria-selected="true">workflows/checkout.ts</button>
+        <button class="tab" data-tab="py" role="tab" aria-selected="false">workflows/checkout.py</button>
+        <button class="tab" data-tab="go" role="tab" aria-selected="false">workflows/checkout.go</button>
+        <span class="tab spacer"></span>
+      </div>
+      <div class="code-body">
+<pre class="code-pane active" data-pane="ts"><span class="tk-k">import</span> <span class="tk-p">{</span> conduit <span class="tk-p">}</span> <span class="tk-k">from</span> <span class="tk-s">"@conduit/sdk"</span><span class="tk-p">;</span>
+
+<span class="tk-k">export const</span> <span class="tk-f">fulfillOrder</span> <span class="tk-p">=</span> conduit<span class="tk-p">.</span><span class="tk-f">createFunction</span><span class="tk-p">(</span>
+  <span class="tk-p">{</span> id<span class="tk-p">:</span> <span class="tk-s">"fulfill-order"</span><span class="tk-p">,</span> concurrency<span class="tk-p">:</span> <span class="tk-p">{</span> limit<span class="tk-p">:</span> <span class="tk-n">8</span><span class="tk-p">,</span> key<span class="tk-p">:</span> <span class="tk-s">"event.data.tenantId"</span> <span class="tk-p">}</span> <span class="tk-p">},</span>
+  <span class="tk-p">{</span> event<span class="tk-p">:</span> <span class="tk-s">"order/placed"</span> <span class="tk-p">},</span>
+  <span class="tk-k">async</span> <span class="tk-p">({</span> event<span class="tk-p">,</span> step <span class="tk-p">})</span> <span class="tk-k">=&gt;</span> <span class="tk-p">{</span>
+
+    <span class="tk-c">// step.run() memoises &mdash; safe to retry the whole function.</span>
+    <span class="tk-k">const</span> charge <span class="tk-p">=</span> <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">run</span><span class="tk-p">(</span><span class="tk-s">"charge-card"</span><span class="tk-p">,</span> <span class="tk-p">() =&gt;</span>
+      stripe<span class="tk-p">.</span>charges<span class="tk-p">.</span><span class="tk-f">create</span><span class="tk-p">({</span> amount<span class="tk-p">:</span> event<span class="tk-p">.</span>data<span class="tk-p">.</span>total <span class="tk-p">})</span>
+    <span class="tk-p">);</span>
+
+    <span class="tk-c">// Sleep for free. Wakes itself in 24h or earlier on event.</span>
+    <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">sleep</span><span class="tk-p">(</span><span class="tk-s">"hold-for-fraud-check"</span><span class="tk-p">,</span> <span class="tk-s">"24h"</span><span class="tk-p">);</span>
+
+    <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">run</span><span class="tk-p">(</span><span class="tk-s">"hand-off-to-3pl"</span><span class="tk-p">,</span> <span class="tk-p">() =&gt;</span> warehouse<span class="tk-p">.</span><span class="tk-f">ship</span><span class="tk-p">(</span>event<span class="tk-p">.</span>data<span class="tk-p">));</span>
+
+    <span class="tk-k">return</span> <span class="tk-p">{</span> chargeId<span class="tk-p">:</span> charge<span class="tk-p">.</span>id<span class="tk-p">,</span> shipped<span class="tk-p">:</span> <span class="tk-k">true</span> <span class="tk-p">};</span>
+  <span class="tk-p">}</span>
+<span class="tk-p">);</span></pre>
+
+<pre class="code-pane" data-pane="py"><span class="tk-k">from</span> conduit <span class="tk-k">import</span> Conduit<span class="tk-p">,</span> Step
+
+app <span class="tk-p">=</span> <span class="tk-f">Conduit</span><span class="tk-p">(</span><span class="tk-s">"acme"</span><span class="tk-p">)</span>
+
+<span class="tk-p">@</span>app<span class="tk-p">.</span><span class="tk-f">function</span><span class="tk-p">(</span>
+    id<span class="tk-p">=</span><span class="tk-s">"fulfill-order"</span><span class="tk-p">,</span>
+    trigger<span class="tk-p">=</span><span class="tk-s">"order/placed"</span><span class="tk-p">,</span>
+    concurrency<span class="tk-p">={</span><span class="tk-s">"limit"</span><span class="tk-p">:</span> <span class="tk-n">8</span><span class="tk-p">,</span> <span class="tk-s">"key"</span><span class="tk-p">:</span> <span class="tk-s">"data.tenantId"</span><span class="tk-p">},</span>
+<span class="tk-p">)</span>
+<span class="tk-k">async def</span> <span class="tk-f">fulfill_order</span><span class="tk-p">(</span>event<span class="tk-p">,</span> step<span class="tk-p">:</span> <span class="tk-t">Step</span><span class="tk-p">):</span>
+    <span class="tk-c"># step.run() memoises &mdash; safe to retry the whole function.</span>
+    charge <span class="tk-p">=</span> <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">run</span><span class="tk-p">(</span><span class="tk-s">"charge-card"</span><span class="tk-p">,</span>
+        <span class="tk-k">lambda</span><span class="tk-p">:</span> stripe<span class="tk-p">.</span>charges<span class="tk-p">.</span><span class="tk-f">create</span><span class="tk-p">(</span>amount<span class="tk-p">=</span>event<span class="tk-p">.</span>data<span class="tk-p">.</span>total<span class="tk-p">))</span>
+
+    <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">sleep</span><span class="tk-p">(</span><span class="tk-s">"hold-for-fraud-check"</span><span class="tk-p">,</span> <span class="tk-s">"24h"</span><span class="tk-p">)</span>
+
+    <span class="tk-k">await</span> step<span class="tk-p">.</span><span class="tk-f">run</span><span class="tk-p">(</span><span class="tk-s">"hand-off-to-3pl"</span><span class="tk-p">,</span>
+        <span class="tk-k">lambda</span><span class="tk-p">:</span> warehouse<span class="tk-p">.</span><span class="tk-f">ship</span><span class="tk-p">(</span>event<span class="tk-p">.</span>data<span class="tk-p">))</span>
+
+    <span class="tk-k">return</span> <span class="tk-p">{</span><span class="tk-s">"charge_id"</span><span class="tk-p">:</span> charge<span class="tk-p">.</span>id<span class="tk-p">,</span> <span class="tk-s">"shipped"</span><span class="tk-p">:</span> <span class="tk-k">True</span><span class="tk-p">}</span></pre>
+
+<pre class="code-pane" data-pane="go"><span class="tk-k">package</span> workflows
+
+<span class="tk-k">import</span> <span class="tk-p">(</span>
+  <span class="tk-s">"context"</span>
+  <span class="tk-s">"github.com/conduit/sdk-go"</span>
+<span class="tk-p">)</span>
+
+<span class="tk-k">var</span> FulfillOrder <span class="tk-p">=</span> conduit<span class="tk-p">.</span><span class="tk-f">Function</span><span class="tk-p">(</span>
+  conduit<span class="tk-p">.</span>Config<span class="tk-p">{</span>
+    ID<span class="tk-p">:</span> <span class="tk-s">"fulfill-order"</span><span class="tk-p">,</span>
+    Concurrency<span class="tk-p">:</span> conduit<span class="tk-p">.</span>Concurrency<span class="tk-p">{</span>Limit<span class="tk-p">:</span> <span class="tk-n">8</span><span class="tk-p">,</span> Key<span class="tk-p">:</span> <span class="tk-s">"event.data.tenantId"</span><span class="tk-p">},</span>
+  <span class="tk-p">},</span>
+  conduit<span class="tk-p">.</span><span class="tk-f">On</span><span class="tk-p">(</span><span class="tk-s">"order/placed"</span><span class="tk-p">),</span>
+  <span class="tk-k">func</span><span class="tk-p">(</span>ctx context<span class="tk-p">.</span>Context<span class="tk-p">,</span> e <span class="tk-p">*</span>conduit<span class="tk-p">.</span>Event<span class="tk-p">,</span> s <span class="tk-p">*</span>conduit<span class="tk-p">.</span>Step<span class="tk-p">)</span> <span class="tk-p">(</span><span class="tk-k">any</span><span class="tk-p">,</span> <span class="tk-k">error</span><span class="tk-p">)</span> <span class="tk-p">{</span>
+
+    charge<span class="tk-p">,</span> err <span class="tk-p">:=</span> s<span class="tk-p">.</span><span class="tk-f">Run</span><span class="tk-p">(</span><span class="tk-s">"charge-card"</span><span class="tk-p">,</span> <span class="tk-k">func</span><span class="tk-p">() (</span><span class="tk-k">any</span><span class="tk-p">,</span> <span class="tk-k">error</span><span class="tk-p">) {</span>
+      <span class="tk-k">return</span> stripe<span class="tk-p">.</span><span class="tk-f">Charge</span><span class="tk-p">(</span>e<span class="tk-p">.</span>Data<span class="tk-p">.</span>Total<span class="tk-p">)</span>
+    <span class="tk-p">})</span>
+    <span class="tk-k">if</span> err <span class="tk-p">!=</span> <span class="tk-k">nil</span> <span class="tk-p">{</span> <span class="tk-k">return</span> <span class="tk-k">nil</span><span class="tk-p">,</span> err <span class="tk-p">}</span>
+
+    s<span class="tk-p">.</span><span class="tk-f">Sleep</span><span class="tk-p">(</span><span class="tk-s">"hold-for-fraud-check"</span><span class="tk-p">,</span> <span class="tk-s">"24h"</span><span class="tk-p">)</span>
+    s<span class="tk-p">.</span><span class="tk-f">Run</span><span class="tk-p">(</span><span class="tk-s">"hand-off-to-3pl"</span><span class="tk-p">,</span> <span class="tk-k">func</span><span class="tk-p">() (</span><span class="tk-k">any</span><span class="tk-p">,</span> <span class="tk-k">error</span><span class="tk-p">) {</span> <span class="tk-k">return</span> warehouse<span class="tk-p">.</span><span class="tk-f">Ship</span><span class="tk-p">(</span>e<span class="tk-p">.</span>Data<span class="tk-p">) })</span>
+
+    <span class="tk-k">return</span> charge<span class="tk-p">,</span> <span class="tk-k">nil</span>
+  <span class="tk-p">},</span>
+<span class="tk-p">)</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="stats" style="padding:0">
+  <div class="wrap" style="padding:0">
+    <div class="stats-row">
+      <div class="stat"><div class="n">2.4<small>B</small></div><div class="l">Runs / month</div></div>
+      <div class="stat"><div class="n">99.995<small>%</small></div><div class="l">Step delivery</div></div>
+      <div class="stat"><div class="n">38<small>ms</small></div><div class="l">P50 latency</div></div>
+      <div class="stat"><div class="n">14<small>+</small></div><div class="l">Regions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="left">
+        <span class="eyebrow">// the loop</span>
+        <h2>Ship in an <span class="ital">afternoon.</span></h2>
+      </div>
+      <p class="lead" style="max-width:42ch">Three commands stand between you and a production-grade workflow. No infrastructure tickets, no platform team approvals, no waiting on a separate queue runbook.</p>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="ix">Step 01 / Install</div>
+        <h3>Add the SDK</h3>
+        <p>One package per language. Conduit picks up your existing functions &mdash; no router, no decorator forest, no rewrite.</p>
+        <div class="preview"><span style="color:var(--accent)">$ </span>npm i @conduit/sdk
+<span style="color:var(--ink-mute)"># or pip, or go get</span></div>
+      </div>
+      <div class="step">
+        <div class="ix">Step 02 / Author</div>
+        <h3>Define a function</h3>
+        <p>Use <span class="mono">step.run()</span> for each side-effect. Compose sleeps, waits-for-event, and parallel branches like ordinary code.</p>
+        <div class="preview"><span style="color:#c084fc">export const</span> <span style="color:var(--accent)">fn</span> = conduit
+  .<span style="color:var(--accent)">createFunction</span>(
+    { id: <span style="color:#86efac">"new"</span> },
+    { event: <span style="color:#86efac">"user/joined"</span> },
+    ...
+  );</div>
+      </div>
+      <div class="step">
+        <div class="ix">Step 03 / Ship</div>
+        <h3>Deploy &amp; observe</h3>
+        <p>Push to any host. Conduit&rsquo;s router discovers your functions, runs each step durably, and streams every state change to the dashboard.</p>
+        <div class="preview"><span style="color:var(--accent)">$ </span>conduit deploy
+<span style="color:var(--good)">&check;</span> registered 12 functions
+<span style="color:var(--good)">&check;</span> live at acme.conduit.run</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIAL ============ -->
+<section style="padding:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2)">
+  <div class="wrap quote">
+    <div>
+      <q>We deleted the Sidekiq cluster, two Lambda destinations, and a 600-line orchestration script on the same Friday. Our on-call pager went from 14 incidents a month to two.</q>
+      <cite>&mdash; Priya Nair, Staff engineer at Boline (DTC commerce, ~480 employees)</cite>
+    </div>
+    <div class="card" aria-label="Migration scorecard">
+      <div class="row"><span class="k">Before / queues</span><span class="v">3 stacks</span></div>
+      <div class="row"><span class="k">After / queues</span><span class="v">1 runtime</span></div>
+      <div class="row"><span class="k">P95 retry latency</span><span class="v">2.4s <span class="delta">&minus;81%</span></span></div>
+      <div class="row"><span class="k">Engineer time / week</span><span class="v">3h <span class="delta">&minus;72%</span></span></div>
+      <div class="row"><span class="k">Lines of glue</span><span class="v">~120 <span class="delta">&minus;94%</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="left">
+        <span class="eyebrow">// pricing</span>
+        <h2>Pay for <span class="ital">work,</span> not idle workers.</h2>
+      </div>
+      <p class="lead" style="max-width:42ch">Every plan includes unlimited functions, unlimited environments, and step-level retries. We meter what you run &mdash; sleep is always free.</p>
+    </div>
+
+    <div class="pricing">
+      <div class="tier">
+        <div>
+          <div class="t-name">Hobby</div>
+          <div class="t-price" style="margin-top:18px">$0<small>/month</small></div>
+          <p class="t-tag" style="margin-top:10px">For prototypes, side projects, and the first 90 days of a new product.</p>
+        </div>
+        <ul>
+          <li>100,000 runs / month</li>
+          <li>3 environments</li>
+          <li>7 days of run history</li>
+          <li>Community Discord</li>
+        </ul>
+        <a href="#start" class="btn btn-ghost">Start free</a>
+      </div>
+
+      <div class="tier featured">
+        <span class="badge">Most picked</span>
+        <div>
+          <div class="t-name">Team</div>
+          <div class="t-price" style="margin-top:18px">$90<small>/month</small></div>
+          <p class="t-tag" style="margin-top:10px">For production teams shipping every day. Usage above the included pool meters at $0.40 per million steps.</p>
+        </div>
+        <ul>
+          <li>10M runs / month included</li>
+          <li>Unlimited environments &amp; branches</li>
+          <li>30-day run history + replay</li>
+          <li>SAML SSO &amp; audit log</li>
+          <li>P1 response within 4 hours</li>
+        </ul>
+        <a href="#start" class="btn btn-primary">Start 14-day trial</a>
+      </div>
+
+      <div class="tier">
+        <div>
+          <div class="t-name">Enterprise</div>
+          <div class="t-price" style="margin-top:18px">Custom</div>
+          <p class="t-tag" style="margin-top:10px">For regulated workloads, custom regions, and self-hosted control planes.</p>
+        </div>
+        <ul>
+          <li>BYOC or self-hosted runtime</li>
+          <li>HIPAA, FedRAMP-ready, EU residency</li>
+          <li>365-day retention &amp; legal hold</li>
+          <li>99.99% SLA with credits</li>
+          <li>Named solutions architect</li>
+        </ul>
+        <a href="#book" class="btn btn-ghost">Talk to sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section style="padding-top:0">
+  <div class="wrap faq">
+    <div>
+      <span class="eyebrow">// answers</span>
+      <h2 style="margin-top:14px">Common <span class="ital">questions.</span></h2>
+      <p class="lead" style="margin-top:18px">Still unclear? <a href="#docs" style="color:var(--accent);border-bottom:1px solid var(--accent)">read the docs</a> or ping <span class="mono">hello@conduit.run</span>.</p>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary>How is this different from a queue like SQS or Sidekiq?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">Queues hand you a message; you still write the retry loop, the deadletter handler, the idempotency layer, the observability shim, and the cron scheduler. Conduit gives you all of those as a single primitive (<span class="mono dim">step.run</span>) and persists the result of every step so failures resume exactly where they stopped &mdash; not from the top.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I have to rewrite my existing handlers?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">No. Wrap any side-effect call in <span class="mono dim">step.run("name", () =&gt; ...)</span> and you&rsquo;re done. Most teams migrate one job at a time and run Conduit alongside their existing queue until they&rsquo;ve drained it.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Where does Conduit run my code?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">Your code runs in your own infrastructure. Conduit is the durable router and state store &mdash; it hosts the dashboard, schedules events, and calls your endpoints. Code, secrets, and customer data never leave your VPC. Self-hosting the router is available on Enterprise.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What languages and frameworks do you support?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">First-class SDKs for TypeScript, Python, Go, and Elixir. Anything that can serve an HTTP endpoint can use the JSON protocol directly. Native integrations for Next.js, FastAPI, Express, Fiber, Phoenix, and Hono.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How do you price &ldquo;a run&rdquo;?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">A run is one function invocation, regardless of how many steps it contains. Sleeping runs cost nothing &mdash; we only meter steps that execute. There are no per-CPU charges and no idle worker fees.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Is there a free tier I can leave running?<span class="plus" aria-hidden="true"></span></summary>
+        <div class="a">Yes. The Hobby plan stays free indefinitely up to 100,000 runs per month. We don&rsquo;t expire projects, sunset accounts, or paywall production usage on the free tier.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ END CTA ============ -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="endcta">
+      <div class="inner">
+        <div>
+          <span class="eyebrow">// get started</span>
+          <h2 style="margin-top:14px">Trade the retry loop<br>for an <span class="ital">afternoon off.</span></h2>
+          <p class="lead" style="margin-top:18px;max-width:46ch">Spin up a workspace in two minutes. No credit card. The first 100k runs are on us &mdash; every month, forever.</p>
+        </div>
+        <div class="actions">
+          <a href="#start" class="btn btn-primary">Start free, no card</a>
+          <a href="#book" class="btn btn-ghost">Book a 20-min tour</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="brand" href="#">
+          <span class="mark" aria-hidden="true"></span>
+          <span>Conduit</span>
+        </a>
+        <p>Durable workflows for engineering teams who&rsquo;d rather be shipping product than babysitting infrastructure.</p>
+        <span class="status"><span class="pulse"></span> All systems normal &middot; 99.998% / 30d</span>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#">Workflows</a></li>
+          <li><a href="#">Queues</a></li>
+          <li><a href="#">Scheduling</a></li>
+          <li><a href="#">Observability</a></li>
+          <li><a href="#">Integrations</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Developers</h5>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">SDK reference</a></li>
+          <li><a href="#">Patterns library</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Status page</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers <span class="mute mono" style="font-size:11px;margin-left:4px">5</span></a></li>
+          <li><a href="#">Customers</a></li>
+          <li><a href="#">Field notes</a></li>
+          <li><a href="#">Press kit</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Trust</h5>
+        <ul>
+          <li><a href="#">SOC 2 Type II</a></li>
+          <li><a href="#">HIPAA</a></li>
+          <li><a href="#">Subprocessors</a></li>
+          <li><a href="#">Security disclosure</a></li>
+          <li><a href="#">Terms &amp; privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Conduit Labs, Inc. &middot; Brooklyn &middot; Berlin &middot; Bengaluru</span>
+      <div class="legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">DPA</a>
+        <span class="mono">build 3.4.118 &middot; 2026-05-26</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // tabs
+  const tabs = document.querySelectorAll('.code-tabs .tab[data-tab]');
+  const panes = document.querySelectorAll('.code-pane');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected','false'); });
+    t.classList.add('active'); t.setAttribute('aria-selected','true');
+    const id = t.dataset.tab;
+    panes.forEach(p => p.classList.toggle('active', p.dataset.pane === id));
+  }));
+
+  // live run timeline tick + status flicker
+  const tl = document.querySelectorAll('.timeline span');
+  let i = 0;
+  setInterval(() => {
+    if (!tl.length) return;
+    tl.forEach(s => s.classList.remove('hi'));
+    const seed = i % tl.length;
+    tl[seed].classList.add('hi');
+    tl[(seed + 4) % tl.length].classList.add('hi');
+    tl[(seed + 11) % tl.length].classList.add('hi');
+    i++;
+  }, 1200);
+</script>
+
+</body>
+</html>

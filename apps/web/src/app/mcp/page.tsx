@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Dateline } from "@/components/dateline";
+import { McpPlayground } from "@/components/mcp-playground";
 
 export const metadata: Metadata = {
   title: "MCP",
@@ -151,6 +152,21 @@ export default function MCPPage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* Playground ───────────────────────────────────────── */}
+      <section className="border-t rule pt-12 pb-24">
+        <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
+          <div className="lg:col-span-2">
+            <p className="mcp-section-label">Try it now</p>
+            <p className="text-meta mt-3 max-w-[20ch] text-[var(--color-fg-muted)]">
+              Real MCP code, in the browser. No install.
+            </p>
+          </div>
+          <div className="lg:col-span-10">
+            <McpPlayground />
+          </div>
         </div>
       </section>
 

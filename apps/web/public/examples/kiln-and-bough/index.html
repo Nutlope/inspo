@@ -1,0 +1,1451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kiln & Bough — Hand-thrown stoneware, Hudson Valley</title>
+<meta name="description" content="A small ceramics studio in Hudson, NY. Wheel-thrown tableware, slow seasonal collections, and a working workshop you can visit." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ------------ tokens ------------ */
+  :root{
+    --paper:#f3ede4;          /* warm paper, lighter than heath's cream */
+    --paper-2:#ebe2d3;        /* a touch deeper for stripes */
+    --paper-3:#e0d4c0;        /* card edges */
+    --ink:#1f1813;            /* near-black espresso */
+    --ink-2:#2a221b;
+    --clay:#a44a25;           /* terracotta, leaned from heath palette */
+    --clay-deep:#7a2f17;
+    --bough:#3a4a32;          /* mossy green, the only cool note */
+    --rust:#b3593b;
+    --bone:#cdbfa6;
+    --gold:#c98b3b;
+
+    --serif:'Fraunces', 'Times New Roman', serif;
+    --sans:'Inter Tight', system-ui, -apple-system, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+
+    --max:1320px;
+    --gutter: clamp(20px, 4vw, 56px);
+
+    --r-sm:4px;
+    --r-md:10px;
+    --r-lg:22px;
+
+    --hair:1px solid rgba(31,24,19,.14);
+    --hair-strong:1px solid rgba(31,24,19,.28);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    /* very subtle paper grain */
+    background-image:
+      radial-gradient(rgba(31,24,19,.025) 1px, transparent 1px),
+      radial-gradient(rgba(31,24,19,.018) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+  img{max-width:100%; display:block}
+  a{color:inherit; text-decoration:none}
+  button{font:inherit; cursor:pointer}
+
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 var(--gutter)}
+
+  /* ------------ top utility bar ------------ */
+  .util{
+    background:var(--ink); color:var(--paper);
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .util-inner{
+    display:flex; justify-content:space-between; align-items:center;
+    height:34px; padding:0 var(--gutter);
+    max-width:var(--max); margin:0 auto;
+  }
+  .util-left{display:flex; gap:22px; opacity:.78}
+  .util-right{display:flex; gap:18px; opacity:.78}
+  .util a:hover{color:#fff; opacity:1}
+  @media (max-width:760px){
+    .util-left span:nth-child(2){display:none}
+    .util-right a:nth-child(1){display:none}
+  }
+
+  /* ------------ navigation ------------ */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(243,237,228,.92);
+    backdrop-filter: blur(10px);
+    border-bottom:var(--hair);
+  }
+  .nav-inner{
+    display:grid; grid-template-columns: auto 1fr auto;
+    align-items:center; gap:32px;
+    padding:18px var(--gutter);
+    max-width:var(--max); margin:0 auto;
+  }
+  .brand{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:22px;
+    letter-spacing:-.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand-mark{
+    width:30px; height:30px; border-radius:50%;
+    background:
+      radial-gradient(circle at 35% 35%, #d9b274 0%, var(--clay) 55%, var(--clay-deep) 100%);
+    box-shadow: inset -2px -3px 0 rgba(0,0,0,.18);
+  }
+  .brand small{
+    font-family:var(--mono); font-size:10px;
+    letter-spacing:.18em; text-transform:uppercase;
+    opacity:.55; margin-left:4px;
+  }
+  .primary-nav{
+    display:flex; gap:30px; justify-content:center;
+    font-size:14px;
+  }
+  .primary-nav a{
+    position:relative; padding:6px 0;
+  }
+  .primary-nav a::after{
+    content:""; position:absolute; left:50%; bottom:0;
+    width:0; height:1px; background:var(--ink);
+    transition: width .25s ease, left .25s ease;
+  }
+  .primary-nav a:hover::after{ width:100%; left:0 }
+  .nav-actions{display:flex; gap:14px; align-items:center}
+  .icon-btn{
+    width:38px; height:38px; border-radius:50%;
+    border:var(--hair); background:transparent;
+    display:grid; place-items:center;
+    transition: background .2s ease;
+  }
+  .icon-btn:hover{ background:rgba(31,24,19,.06) }
+  .icon-btn svg{width:16px; height:16px}
+  .cart-count{
+    background:var(--clay); color:#fff;
+    font-family:var(--mono); font-size:10px;
+    border-radius:999px; padding:3px 8px;
+  }
+  .menu-toggle{display:none}
+  @media (max-width:880px){
+    .primary-nav{display:none}
+    .menu-toggle{display:grid}
+    .nav-inner{grid-template-columns: auto 1fr auto auto; gap:14px}
+  }
+
+  /* ------------ hero ------------ */
+  .hero{
+    padding: 28px var(--gutter) 80px;
+    max-width:var(--max); margin:0 auto;
+  }
+  .hero-meta{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; opacity:.65;
+    border-top:var(--hair); padding-top:14px;
+  }
+  .hero-meta span:last-child{ font-feature-settings:"tnum" }
+
+  .hero-grid{
+    margin-top: 34px;
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: clamp(28px, 5vw, 72px);
+    align-items:end;
+  }
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr; gap:40px}
+  }
+  .hero-display{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    font-size: clamp(54px, 9.2vw, 132px);
+    line-height: .92;
+    letter-spacing: -.035em;
+    color:var(--ink);
+    margin: 0;
+  }
+  .hero-display em{
+    font-style:italic; font-weight:400;
+    font-variation-settings:"opsz" 144, "SOFT" 100, "WONK" 1;
+    color:var(--clay);
+  }
+  .hero-sub{
+    margin-top:28px;
+    max-width: 38ch;
+    font-size: 17px;
+    line-height:1.55;
+    color:var(--ink-2);
+  }
+  .hero-ctas{
+    margin-top:32px;
+    display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 22px;
+    font-family:var(--sans); font-size:14px; font-weight:500;
+    letter-spacing:.01em;
+    border-radius:999px;
+    border:1px solid transparent;
+    transition: transform .15s ease, background .2s ease, color .2s ease;
+  }
+  .btn:hover{ transform: translateY(-1px) }
+  .btn-primary{ background:var(--ink); color:var(--paper) }
+  .btn-primary:hover{ background:var(--clay-deep) }
+  .btn-ghost{ background:transparent; color:var(--ink); border-color:rgba(31,24,19,.28) }
+  .btn-ghost:hover{ background:rgba(31,24,19,.06) }
+  .btn svg{ width:14px; height:14px; transition: transform .2s ease }
+  .btn:hover svg{ transform: translateX(3px) }
+
+  /* hero plate showcase */
+  .plate-stage{
+    position:relative;
+    aspect-ratio: 4/5;
+    border-radius: var(--r-lg);
+    overflow:hidden;
+    background: #6b4a30;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.08),
+      0 30px 60px -20px rgba(58,32,15,.35);
+  }
+  .stage-img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    filter: saturate(0.92) contrast(1.02);
+  }
+  .plate-stage::before{
+    /* warm light wash */
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(120% 80% at 70% 30%, rgba(255,230,190,.5), transparent 60%);
+    pointer-events:none;
+  }
+  .plate-stage::after{
+    /* table edge */
+    content:""; position:absolute; left:0; right:0; bottom:0; height:38%;
+    background: linear-gradient(to top, rgba(45,28,16,.45), transparent);
+    pointer-events:none;
+  }
+  .plate {
+    position:absolute;
+    border-radius:50%;
+    box-shadow:
+      inset 4px 6px 0 rgba(255,255,255,.18),
+      inset -6px -10px 0 rgba(0,0,0,.18),
+      0 18px 30px -8px rgba(40,20,8,.5);
+  }
+  .plate.bowl-1{
+    width:54%; aspect-ratio:1; left:18%; top:14%;
+    background:
+      radial-gradient(circle at 40% 35%, #f3e3c7 0%, #d8b787 45%, #a07042 80%, #7a4a22 100%);
+  }
+  .plate.bowl-1::after{
+    content:""; position:absolute; inset:18%; border-radius:50%;
+    background:
+      radial-gradient(circle at 45% 40%, #e9d5b2 0%, #b88c5a 60%, #6c4421 100%);
+    box-shadow: inset 0 8px 12px rgba(0,0,0,.25);
+  }
+  .plate.bowl-2{
+    width:34%; aspect-ratio:1; right:8%; top:34%;
+    background:
+      radial-gradient(circle at 38% 32%, #cfb38a 0%, #8e6437 55%, #4a2c14 100%);
+  }
+  .plate.bowl-2::after{
+    content:""; position:absolute; inset:22%; border-radius:50%;
+    background: radial-gradient(circle at 45% 40%, #b78a59 0%, #5b3617 90%);
+    box-shadow: inset 0 6px 10px rgba(0,0,0,.3);
+  }
+  .plate.cup-1{
+    width:22%; aspect-ratio:1; left:10%; bottom:14%;
+    background: radial-gradient(circle at 40% 35%, #efe1c6 0%, #c9a673 50%, #855425 100%);
+  }
+  .plate.cup-1::after{
+    content:""; position:absolute; inset:24%; border-radius:50%;
+    background: radial-gradient(circle at 45% 40%, #d6b784 0%, #6f4520 90%);
+    box-shadow: inset 0 4px 8px rgba(0,0,0,.3);
+  }
+
+  .plate-caption{
+    position:absolute; left:18px; bottom:18px;
+    font-family:var(--mono); font-size:10px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,242,221,.85);
+    background:rgba(20,12,6,.32);
+    border:1px solid rgba(255,255,255,.16);
+    backdrop-filter: blur(6px);
+    padding:8px 12px; border-radius:999px;
+  }
+  .plate-tag{
+    position:absolute; right:18px; top:18px;
+    background:rgba(243,237,228,.94);
+    color:var(--ink);
+    font-family:var(--sans); font-size:12px; font-weight:500;
+    padding:8px 14px;
+    border-radius:999px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .pulse{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--clay);
+    box-shadow:0 0 0 0 rgba(164,74,37,.6);
+    animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(164,74,37,.6)}
+    70%{box-shadow:0 0 0 8px rgba(164,74,37,0)}
+    100%{box-shadow:0 0 0 0 rgba(164,74,37,0)}
+  }
+
+  /* ------------ marquee ribbon ------------ */
+  .ribbon{
+    overflow:hidden;
+    border-top:var(--hair); border-bottom:var(--hair);
+    padding: 18px 0;
+    background:var(--paper-2);
+  }
+  .ribbon-track{
+    display:flex; gap:48px;
+    white-space:nowrap;
+    animation: scroll 38s linear infinite;
+  }
+  .ribbon-item{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    font-size: 28px;
+    color:var(--ink);
+    opacity:.78;
+    display:inline-flex; align-items:center; gap:48px;
+    flex-shrink:0;
+  }
+  .ribbon-item::after{
+    content:"·";
+    color:var(--clay);
+    font-size:36px;
+    line-height:1;
+    margin-left:48px;
+  }
+  @keyframes scroll{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  /* ------------ section header ------------ */
+  .section{
+    padding: clamp(72px, 9vw, 130px) 0;
+    max-width:var(--max); margin:0 auto;
+    padding-left:var(--gutter); padding-right:var(--gutter);
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:var(--clay);
+    display:flex; align-items:center; gap:14px;
+  }
+  .eyebrow::before{
+    content:""; display:inline-block;
+    width:24px; height:1px; background:var(--clay);
+  }
+  .section-head{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    align-items:end;
+    gap:32px;
+    margin-bottom: 56px;
+    padding-bottom: 22px;
+    border-bottom: var(--hair-strong);
+  }
+  .section-title{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144, "SOFT" 50;
+    font-size: clamp(40px, 5.6vw, 76px);
+    line-height: 1;
+    letter-spacing: -.025em;
+    margin: 16px 0 0;
+    color:var(--ink);
+    max-width: 16ch;
+  }
+  .section-title em{
+    font-style:italic; color:var(--clay);
+    font-variation-settings:"opsz" 144, "WONK" 1;
+  }
+  .section-aside{
+    max-width: 28ch;
+    font-size: 14px;
+    color:var(--ink-2);
+    text-align: right;
+  }
+  @media (max-width:760px){
+    .section-head{grid-template-columns:1fr; align-items:start}
+    .section-aside{text-align:left; max-width:none}
+  }
+
+  /* ------------ collection grid ------------ */
+  .collection{
+    display:grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 18px;
+  }
+  .piece{
+    position:relative;
+    background:var(--paper-2);
+    border-radius:var(--r-md);
+    overflow:hidden;
+    transition: transform .35s ease;
+  }
+  .piece:hover{ transform: translateY(-4px) }
+  .piece:hover .piece-img{ transform: scale(1.03) }
+  .piece-img{
+    width:100%; aspect-ratio: 4/5; object-fit:cover;
+    transition: transform .6s ease;
+    background:#c9b48d;
+  }
+  .piece.s-tall .piece-img{ aspect-ratio: 3/5 }
+  .piece.s-wide .piece-img{ aspect-ratio: 1/1 }
+
+  .piece.span-3{ grid-column: span 3 }
+  .piece.span-4{ grid-column: span 4 }
+  .piece.span-5{ grid-column: span 5 }
+  .piece.span-6{ grid-column: span 6 }
+  .piece.span-7{ grid-column: span 7 }
+  .piece.span-8{ grid-column: span 8 }
+  @media (max-width:980px){
+    .piece.span-3,.piece.span-4{grid-column: span 6}
+    .piece.span-5,.piece.span-6,.piece.span-7,.piece.span-8{grid-column: span 12}
+  }
+  @media (max-width:560px){
+    .piece{ grid-column: span 12 !important }
+  }
+
+  .piece-body{
+    padding: 18px 20px 22px;
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px;
+    background:var(--paper);
+    border-top:var(--hair);
+  }
+  .piece-name{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size: 21px;
+    line-height:1.1;
+    margin:0;
+    letter-spacing:-.01em;
+  }
+  .piece-sub{
+    font-family:var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    opacity:.6;
+    display:block;
+    margin-top:6px;
+  }
+  .piece-price{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size: 17px;
+    color: var(--ink);
+    font-feature-settings:"tnum";
+    white-space:nowrap;
+  }
+  .piece-badge{
+    position:absolute; top:14px; left:14px;
+    background:var(--ink); color:var(--paper);
+    font-family:var(--mono); font-size:10px;
+    letter-spacing:.14em; text-transform:uppercase;
+    padding:6px 10px; border-radius:999px;
+  }
+  .piece-badge.bough{ background:var(--bough) }
+  .piece-badge.clay{ background:var(--clay) }
+
+  /* "image" inside piece — uses radial gradients to fake ceramic photography */
+  .ceramic{ position:absolute; inset:0 }
+  .ceramic-base{ position:absolute; inset:0 }
+
+  .ceramic.scene-a .ceramic-base{
+    background: linear-gradient(170deg, #d8c4a4 0%, #b5946a 60%, #6a4426 100%);
+  }
+  .ceramic.scene-a::after{
+    content:""; position:absolute; left:18%; top:25%;
+    width:65%; height:60%; border-radius:50%;
+    background: radial-gradient(circle at 38% 30%, #f0dfbf 0%, #c69a64 50%, #7d4c22 100%);
+    box-shadow: inset 6px 8px 0 rgba(255,255,255,.18), inset -10px -14px 0 rgba(0,0,0,.2), 0 20px 30px -10px rgba(40,20,8,.45);
+  }
+
+  .ceramic.scene-b .ceramic-base{
+    background: linear-gradient(180deg, #efe5d2 0%, #c8b496 60%, #968169 100%);
+  }
+  .ceramic.scene-b::after{
+    content:""; position:absolute; left:50%; top:14%;
+    width:60%; height:74%;
+    transform: translateX(-50%);
+    background:
+      linear-gradient(180deg, #3e2c1a 0%, #5a3a20 30%, #a06a3a 70%, #c98b53 100%);
+    border-radius: 40% 40% 28% 28% / 38% 38% 12% 12%;
+    box-shadow: inset 5px 0 0 rgba(255,255,255,.15), inset -8px 0 0 rgba(0,0,0,.25), 0 20px 30px -10px rgba(40,20,8,.45);
+  }
+  .ceramic.scene-b::before{
+    content:""; position:absolute; left:50%; top:8%; transform:translateX(-50%);
+    width:36%; height:14%;
+    background: #2a1c10; border-radius:50%;
+    box-shadow: inset 0 6px 8px rgba(0,0,0,.6);
+  }
+
+  .ceramic.scene-c .ceramic-base{
+    background: linear-gradient(170deg, #ead9b6 0%, #c3a578 65%, #806037 100%);
+  }
+  .ceramic.scene-c::after{
+    content:""; position:absolute; left:20%; bottom:18%;
+    width:60%; height:32%;
+    background:
+      radial-gradient(ellipse at 50% 0%, #2a1c10 0%, transparent 70%),
+      linear-gradient(180deg, #6d4a2a 0%, #c89058 100%);
+    border-radius: 50% 50% 10% 10% / 36% 36% 6% 6%;
+    box-shadow: inset 0 -10px 0 rgba(0,0,0,.18), 0 16px 22px -8px rgba(40,20,8,.4);
+  }
+
+  .ceramic.scene-d .ceramic-base{
+    background: linear-gradient(170deg, #c9bda6 0%, #8c7458 60%, #4a3621 100%);
+  }
+  .ceramic.scene-d::after{
+    content:""; position:absolute; left:14%; top:18%;
+    width:72%; height:64%; border-radius:50%;
+    background:
+      radial-gradient(circle at 40% 35%, #f4ecd9 0%, #e3d0a8 30%, #b58f59 65%, #65441f 100%);
+    box-shadow: inset 0 0 0 8px rgba(40,20,8,.3), inset 8px 10px 0 rgba(255,255,255,.18), 0 24px 32px -8px rgba(40,20,8,.5);
+  }
+
+  .ceramic.scene-e .ceramic-base{
+    background: linear-gradient(170deg, #e6d6b6 0%, #ab8a5e 70%, #5d3d1e 100%);
+  }
+  .ceramic.scene-e::after{
+    content:""; position:absolute; left:30%; top:18%;
+    width:42%; height:64%;
+    background:
+      linear-gradient(180deg, #d8b67d 0%, #a87538 60%, #5e3717 100%);
+    border-radius: 38% 38% 50% 50% / 18% 18% 60% 60%;
+    box-shadow: inset 4px 0 0 rgba(255,255,255,.18), inset -7px 0 0 rgba(0,0,0,.22), 0 18px 26px -8px rgba(40,20,8,.45);
+  }
+  .ceramic.scene-e::before{
+    content:""; position:absolute; left:50%; top:78%; transform:translateX(-50%);
+    width:54%; height:5%;
+    background:rgba(20,10,4,.35); border-radius:50%;
+    filter: blur(6px);
+  }
+
+  .ceramic.scene-f .ceramic-base{
+    background: linear-gradient(165deg, #424a3a 0%, #25291f 100%);
+  }
+  .ceramic.scene-f::after{
+    content:""; position:absolute; left:24%; top:22%;
+    width:52%; height:56%; border-radius:50%;
+    background: radial-gradient(circle at 40% 35%, #e8d3a6 0%, #b88d4f 55%, #5d3517 100%);
+    box-shadow: inset 8px 10px 0 rgba(255,255,255,.22), inset -10px -14px 0 rgba(0,0,0,.25), 0 22px 36px -10px rgba(0,0,0,.5);
+  }
+
+  /* ------------ feature: maker section ------------ */
+  .maker{
+    background: var(--ink);
+    color: var(--paper);
+    padding: clamp(80px, 9vw, 140px) 0;
+    margin-top: 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  .maker::before{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(60% 50% at 80% 20%, rgba(164,74,37,.15), transparent 70%);
+    pointer-events:none;
+  }
+  .maker .wrap{
+    display:grid;
+    grid-template-columns: 5fr 6fr;
+    gap: clamp(40px, 6vw, 80px);
+    align-items:center;
+    position:relative;
+  }
+  @media (max-width:880px){
+    .maker .wrap{grid-template-columns:1fr; gap:40px}
+  }
+  .maker-eye{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color: var(--gold);
+    display:flex; align-items:center; gap:14px;
+  }
+  .maker-eye::before{
+    content:""; width:24px; height:1px; background:var(--gold);
+  }
+  .maker-title{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144, "SOFT" 40;
+    font-size: clamp(36px, 4.8vw, 60px);
+    line-height:1.05;
+    letter-spacing:-.025em;
+    margin: 18px 0 24px;
+    color:#f6efe2;
+  }
+  .maker-title em{
+    color: var(--gold);
+    font-style:italic;
+    font-variation-settings:"opsz" 144, "WONK" 1;
+  }
+  .maker-body{
+    font-size: 17px;
+    color: rgba(243,237,228,.78);
+    line-height:1.65;
+    max-width: 52ch;
+  }
+  .maker-quote{
+    margin-top:32px;
+    padding-left:22px;
+    border-left: 2px solid var(--clay);
+    font-family:var(--serif);
+    font-style:italic;
+    font-size: 19px;
+    line-height:1.45;
+    color: rgba(243,237,228,.88);
+    max-width: 42ch;
+  }
+  .maker-sig{
+    margin-top:18px;
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase;
+    color: rgba(243,237,228,.5);
+  }
+
+  .maker-portrait{
+    position:relative;
+    aspect-ratio: 4/5;
+    border-radius: var(--r-lg);
+    overflow:hidden;
+    background: #1d130a;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,220,160,.06),
+      0 30px 60px -20px rgba(0,0,0,.6);
+  }
+  .portrait-img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    filter: saturate(0.88) contrast(1.04) brightness(0.95);
+  }
+  .maker-portrait::after{
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(180deg, transparent 40%, rgba(20,12,6,.5) 100%);
+    pointer-events:none;
+  }
+  .portrait-tag{
+    position:absolute; left:18px; bottom:18px;
+    font-family:var(--mono); font-size:10px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(255,242,221,.85);
+    background:rgba(20,12,6,.42);
+    border:1px solid rgba(255,255,255,.16);
+    backdrop-filter: blur(6px);
+    padding:8px 12px; border-radius:999px;
+  }
+
+  /* ------------ process steps ------------ */
+  .process{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: var(--hair-strong);
+  }
+  .step{
+    padding: 36px 28px 32px;
+    border-right: var(--hair);
+    border-bottom: var(--hair);
+  }
+  .step:last-child{ border-right:none }
+  .step-num{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.18em; text-transform:uppercase;
+    color: var(--clay);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 22px;
+  }
+  .step-num span{
+    width:24px; height:24px; border-radius:50%;
+    border:1px solid var(--clay);
+    display:grid; place-items:center;
+    font-size:10px;
+  }
+  .step-title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size: 24px;
+    line-height:1.15;
+    margin: 0 0 12px;
+    letter-spacing:-.015em;
+  }
+  .step-body{
+    font-size: 14px;
+    line-height:1.55;
+    color: var(--ink-2);
+    opacity:.82;
+    max-width: 28ch;
+  }
+  @media (max-width: 980px){
+    .process{grid-template-columns: repeat(2, 1fr)}
+    .step:nth-child(2){ border-right:none }
+  }
+  @media (max-width: 560px){
+    .process{grid-template-columns: 1fr}
+    .step{ border-right:none }
+  }
+
+  /* ------------ journal ------------ */
+  .journal-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width:880px){
+    .journal-grid{grid-template-columns: 1fr}
+  }
+  .journal-card{
+    display:flex; flex-direction:column;
+    gap: 18px;
+  }
+  .journal-img{
+    aspect-ratio: 5/4;
+    border-radius: var(--r-md);
+    overflow:hidden;
+    position:relative;
+    background:#c9b48d;
+  }
+  .journal-img img{
+    width:100%; height:100%;
+    object-fit:cover;
+    transition: transform .6s ease;
+  }
+  .journal-card:hover .journal-img img{ transform: scale(1.04) }
+  .journal-tag{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase;
+    color: var(--clay);
+  }
+  .journal-title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size: 24px;
+    line-height:1.2;
+    margin: 4px 0 4px;
+    letter-spacing:-.015em;
+  }
+  .journal-meta{
+    font-family:var(--mono);
+    font-size: 11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color: var(--ink-2);
+    opacity:.55;
+    display:flex; gap:14px;
+  }
+  .journal-card a:hover .journal-title{ color: var(--clay) }
+
+  /* ------------ visit ------------ */
+  .visit{
+    background:var(--paper-2);
+    border-top: var(--hair);
+    border-bottom: var(--hair);
+  }
+  .visit-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width:880px){ .visit-grid{ grid-template-columns: 1fr } }
+  .visit-text{
+    padding: clamp(60px, 8vw, 100px) var(--gutter);
+    border-right: var(--hair);
+  }
+  @media (max-width:880px){ .visit-text{ border-right:none; border-bottom: var(--hair) } }
+  .visit-map{
+    position:relative;
+    min-height: 460px;
+    background:
+      linear-gradient(135deg, #d4c8b2 0%, #b5a486 50%, #8a7359 100%);
+    overflow:hidden;
+  }
+  .visit-map::before{
+    /* fake topo lines */
+    content:""; position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(35deg, transparent 0 22px, rgba(31,24,19,.06) 22px 23px),
+      repeating-linear-gradient(125deg, transparent 0 38px, rgba(31,24,19,.04) 38px 39px);
+  }
+  .visit-map::after{
+    /* fake river */
+    content:""; position:absolute; left:-10%; top:30%;
+    width:140%; height:60px;
+    background: linear-gradient(180deg, transparent, rgba(58,74,50,.4), transparent);
+    transform: rotate(-12deg);
+    filter: blur(2px);
+  }
+  .map-pin{
+    position:absolute; left:42%; top:48%;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--clay);
+    box-shadow: 0 0 0 6px rgba(164,74,37,.25), 0 8px 16px rgba(31,24,19,.4);
+  }
+  .map-pin::after{
+    content:""; position:absolute; left:50%; bottom:-22px; transform:translateX(-50%);
+    border:8px solid transparent; border-top-color: var(--clay);
+  }
+  .map-card{
+    position:absolute; right:24px; top:24px;
+    background:var(--paper);
+    padding: 18px 22px;
+    border-radius: var(--r-md);
+    box-shadow: 0 8px 24px rgba(31,24,19,.18);
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:.06em; text-transform:uppercase;
+    line-height:1.7;
+    max-width: 220px;
+  }
+  .map-card strong{
+    font-family:var(--serif); font-weight:400;
+    font-size: 18px; text-transform:none;
+    letter-spacing:-.01em; display:block;
+    margin-bottom: 4px;
+  }
+  .visit-title{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144, "SOFT" 60;
+    font-size: clamp(36px, 4.8vw, 60px);
+    line-height:1;
+    letter-spacing:-.025em;
+    margin: 18px 0 24px;
+  }
+  .visit-title em{ font-style:italic; color: var(--clay); }
+  .visit-body{
+    font-size: 17px;
+    color: var(--ink-2);
+    max-width: 42ch;
+    margin-bottom: 32px;
+  }
+  .hours{
+    font-family:var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    border-top: var(--hair);
+    padding-top: 18px;
+  }
+  .hours dt{
+    text-transform:uppercase;
+    color: var(--clay);
+    letter-spacing: .14em;
+    font-size: 10px;
+    padding-bottom: 4px;
+  }
+  .hours dd{
+    margin: 0 0 14px;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .hours dd em{ color:var(--bough); font-style:normal; font-size:13px; margin-left:8px }
+  .hours-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 32px;
+  }
+
+  /* ------------ newsletter ------------ */
+  .news{
+    padding: clamp(80px, 9vw, 130px) 0;
+    text-align:center;
+    max-width:var(--max); margin:0 auto;
+    padding-left:var(--gutter); padding-right:var(--gutter);
+  }
+  .news-title{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144, "SOFT" 80;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -.025em;
+    margin: 18px auto 22px;
+    max-width: 18ch;
+  }
+  .news-title em{
+    font-style:italic;
+    color:var(--clay);
+    font-variation-settings:"opsz" 144, "WONK" 1, "SOFT" 100;
+  }
+  .news-sub{
+    max-width: 48ch;
+    margin: 0 auto 36px;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .news-form{
+    display:flex;
+    gap: 8px;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid rgba(31,24,19,.4);
+    border-radius: 999px;
+    padding: 6px 6px 6px 22px;
+  }
+  .news-form input{
+    flex:1; min-width:0;
+    border: none; background:transparent;
+    padding: 12px 0;
+    font: inherit; color: var(--ink);
+    font-size: 15px;
+    outline:none;
+  }
+  .news-form input::placeholder{ color: rgba(31,24,19,.45) }
+  .news-form button{
+    border: none;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px; font-weight: 500;
+    transition: background .2s ease;
+  }
+  .news-form button:hover{ background: var(--clay-deep) }
+  .news-note{
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    opacity: .55;
+  }
+
+  /* ------------ footer ------------ */
+  footer{
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 0 28px;
+  }
+  .foot-grid{
+    max-width:var(--max); margin:0 auto;
+    padding: 0 var(--gutter);
+    display:grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(243,237,228,.14);
+  }
+  @media (max-width:880px){ .foot-grid{ grid-template-columns: 1fr 1fr; gap: 40px } }
+  @media (max-width:520px){ .foot-grid{ grid-template-columns: 1fr } }
+  .foot-brand{
+    font-family:var(--serif);
+    font-weight:300;
+    font-variation-settings:"opsz" 144, "SOFT" 80;
+    font-size: clamp(38px, 5vw, 60px);
+    line-height: 1;
+    letter-spacing: -.025em;
+    color:#f4ecd9;
+    margin: 0 0 16px;
+  }
+  .foot-brand em{ font-style:italic; color: var(--gold); font-variation-settings:"opsz" 144, "WONK" 1 }
+  .foot-tag{
+    font-size: 14px;
+    color: rgba(243,237,228,.6);
+    max-width: 34ch;
+    line-height:1.55;
+  }
+  .foot-col h4{
+    font-family:var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 6px 0 18px;
+  }
+  .foot-col ul{
+    list-style:none; padding:0; margin:0;
+    display:flex; flex-direction:column; gap: 10px;
+  }
+  .foot-col a{
+    font-size: 14px;
+    color: rgba(243,237,228,.78);
+    transition: color .2s ease;
+  }
+  .foot-col a:hover{ color: var(--paper) }
+
+  .foot-bottom{
+    max-width:var(--max); margin: 32px auto 0;
+    padding: 0 var(--gutter);
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(243,237,228,.45);
+    gap: 16px;
+    flex-wrap:wrap;
+  }
+  .foot-bottom a:hover{ color: var(--paper) }
+
+  /* ------------ utilities ------------ */
+  .sr-only{
+    position:absolute; width:1px; height:1px;
+    padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+</head>
+<body>
+
+<!-- utility bar -->
+<div class="util">
+  <div class="util-inner">
+    <div class="util-left">
+      <span>Free U.S. shipping over $180</span>
+      <span>Summer kiln opens June 14</span>
+    </div>
+    <div class="util-right">
+      <a href="#journal">Journal</a>
+      <a href="#visit">Visit the studio</a>
+      <a href="#">Trade</a>
+    </div>
+  </div>
+</div>
+
+<!-- nav -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand" aria-label="Kiln & Bough, home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      Kiln &amp; Bough
+      <small>EST. MMXIX</small>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <a href="#shop">Shop</a>
+      <a href="#collections">Collections</a>
+      <a href="#maker">The Studio</a>
+      <a href="#journal">Journal</a>
+      <a href="#visit">Visit</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Cart, 2 items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1.5 11H7.5L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        <span class="sr-only">items in cart</span>
+      </button>
+      <button class="icon-btn menu-toggle" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-meta">
+    <span>Volume 07 — Summer Wares</span>
+    <span>Hudson, New York · 42.25° N</span>
+  </div>
+
+  <div class="hero-grid">
+    <div>
+      <h1 class="hero-display">
+        Slow clay,<br>
+        steady <em>hands.</em>
+      </h1>
+      <p class="hero-sub">
+        We are a two-person studio throwing tableware on the kick wheel in a converted dairy barn outside Hudson. Each piece is fired in our wood-and-soda kiln across five days — small batches, no two alike.
+      </p>
+      <div class="hero-ctas">
+        <a href="#shop" class="btn btn-primary">
+          Shop summer wares
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+        <a href="#maker" class="btn btn-ghost">
+          Meet the makers
+        </a>
+      </div>
+    </div>
+
+    <div class="plate-stage">
+      <img class="stage-img" src="https://images.unsplash.com/photo-1676125105332-608345abe20e?w=1100&q=80&auto=format&fit=crop" alt="A wheel and freshly thrown vessels in the studio" />
+      <div class="plate-caption">Wheel № 02 · Tuesday morning</div>
+      <div class="plate-tag"><span class="pulse"></span>Wood-fired this week</div>
+    </div>
+  </div>
+</section>
+
+<!-- ribbon -->
+<div class="ribbon" aria-hidden="true">
+  <div class="ribbon-track">
+    <span class="ribbon-item">Wheel-thrown in Columbia County</span>
+    <span class="ribbon-item">Local clay, sourced within 60 miles</span>
+    <span class="ribbon-item">Soda kiln, fired five days</span>
+    <span class="ribbon-item">No two pieces alike</span>
+    <span class="ribbon-item">Made by Margit & Owen</span>
+    <span class="ribbon-item">Wheel-thrown in Columbia County</span>
+    <span class="ribbon-item">Local clay, sourced within 60 miles</span>
+    <span class="ribbon-item">Soda kiln, fired five days</span>
+    <span class="ribbon-item">No two pieces alike</span>
+    <span class="ribbon-item">Made by Margit & Owen</span>
+  </div>
+</div>
+
+<!-- shop / collection -->
+<section class="section" id="shop">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">№ 01 — The Summer Collection</p>
+      <h2 class="section-title">A short<br>season, in <em>clay.</em></h2>
+    </div>
+    <p class="section-aside">
+      Twelve forms drawn from a kitchen garden in late June. Released in a single firing on the 14th. When it&rsquo;s gone, it&rsquo;s gone.
+    </p>
+  </div>
+
+  <div class="collection">
+    <article class="piece span-5">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=900&q=80&auto=format&fit=crop" alt="Honeycomb dinner plate, honey-ash glaze" loading="lazy" />
+      <div class="piece-badge clay">Just fired</div>
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Honeycomb Dinner Plate</h3>
+          <span class="piece-sub">Ø 26 cm · honey ash glaze</span>
+        </div>
+        <div class="piece-price">$78</div>
+      </div>
+    </article>
+
+    <article class="piece span-3">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1572853566597-b83cde546912?w=700&q=80&auto=format&fit=crop" alt="Tall bough vase in iron oxide" loading="lazy" />
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Bough Vase, Tall</h3>
+          <span class="piece-sub">H 28 cm · iron oxide</span>
+        </div>
+        <div class="piece-price">$148</div>
+      </div>
+    </article>
+
+    <article class="piece span-4">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800&q=80&auto=format&fit=crop" alt="Linen serving bowl, oat slip" loading="lazy" />
+      <div class="piece-badge bough">Garden series</div>
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Linen Serving Bowl</h3>
+          <span class="piece-sub">Ø 32 cm · oat slip</span>
+        </div>
+        <div class="piece-price">$124</div>
+      </div>
+    </article>
+
+    <article class="piece span-4">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1610206349499-c932c3b3aacb?w=800&q=80&auto=format&fit=crop" alt="Set of four coupe plates in matte clay" loading="lazy" />
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Coupe Set of Four</h3>
+          <span class="piece-sub">Ø 22 cm · matte clay</span>
+        </div>
+        <div class="piece-price">$236</div>
+      </div>
+    </article>
+
+    <article class="piece span-3">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=80&auto=format&fit=crop" alt="Morning mug in honey ash glaze" loading="lazy" />
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Morning Mug</h3>
+          <span class="piece-sub">300 ml · honey ash</span>
+        </div>
+        <div class="piece-price">$46</div>
+      </div>
+    </article>
+
+    <article class="piece span-5">
+      <img class="piece-img" src="https://images.unsplash.com/photo-1739467516257-20c1d7f1949a?w=900&q=80&auto=format&fit=crop" alt="Kiln-touched charger with soda flash" loading="lazy" />
+      <div class="piece-badge">One of a kind</div>
+      <div class="piece-body">
+        <div>
+          <h3 class="piece-name">Kiln-touched Charger</h3>
+          <span class="piece-sub">Ø 38 cm · soda flash</span>
+        </div>
+        <div class="piece-price">$310</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- maker / dark section -->
+<section class="maker" id="maker">
+  <div class="wrap">
+    <div>
+      <p class="maker-eye">№ 02 — Inside the studio</p>
+      <h2 class="maker-title">
+        A barn, two wheels,<br>
+        and a <em>long kiln week.</em>
+      </h2>
+      <p class="maker-body">
+        Margit Roth and Owen Kessler met at the Penland School in 2017. Four years later they bought a sagging dairy barn on a north-facing slope in Greenport, NY and turned the milking parlour into a throwing room with three north-light windows and one very old cat.
+      </p>
+      <p class="maker-body" style="margin-top:14px">
+        They throw together, glaze separately, and fire once a month in a soda kiln they built from salvaged firebrick in 2022. Everything you see on this site was made by their four hands.
+      </p>
+      <blockquote class="maker-quote">
+        &ldquo;We&rsquo;re not trying to be efficient. We&rsquo;re trying to make a hundred good plates a month and one or two we&rsquo;ll remember.&rdquo;
+      </blockquote>
+      <p class="maker-sig">— Margit, 2026</p>
+    </div>
+
+    <div class="maker-portrait">
+      <img class="portrait-img" src="https://images.unsplash.com/photo-1673103622378-62e9a29f71f2?w=1000&q=80&auto=format&fit=crop" alt="Margit at the wheel, a Tuesday in May" />
+      <div class="portrait-tag">Margit Roth · Wheel № 02 · May</div>
+    </div>
+  </div>
+</section>
+
+<!-- process -->
+<section class="section" id="process">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">№ 03 — How it&rsquo;s made</p>
+      <h2 class="section-title">Five weeks, one <em>cup.</em></h2>
+    </div>
+    <p class="section-aside">
+      We don&rsquo;t cast or jigger. Every form starts wet on the wheel and finishes in a kiln we light by hand.
+    </p>
+  </div>
+
+  <div class="process">
+    <div class="step">
+      <p class="step-num"><span>01</span>Clay</p>
+      <h3 class="step-title">Local stoneware</h3>
+      <p class="step-body">
+        We blend our own body from Hudson Valley fireclay and a small portion of porcelain for tooth. Bagged and aged for three months before it touches the wheel.
+      </p>
+    </div>
+    <div class="step">
+      <p class="step-num"><span>02</span>Throwing</p>
+      <h3 class="step-title">On a kick wheel</h3>
+      <p class="step-body">
+        Forms are pulled in a single sitting — never trimmed back from a thick blank. The mark of the hand stays visible on the inside wall.
+      </p>
+    </div>
+    <div class="step">
+      <p class="step-num"><span>03</span>Glaze</p>
+      <h3 class="step-title">Wood-ash & oat slip</h3>
+      <p class="step-body">
+        Three glazes, all wood-ash based, all mixed in the studio. Applied by hand-dipping, so each piece keeps its own drip line.
+      </p>
+    </div>
+    <div class="step">
+      <p class="step-num"><span>04</span>Fire</p>
+      <h3 class="step-title">Five days of soda</h3>
+      <p class="step-body">
+        Loaded slow, fired slow. We sleep on the studio futon for three nights and ring a bell on the fifth morning when the kiln is finally cool.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- journal -->
+<section class="section" id="journal">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">№ 04 — The Journal</p>
+      <h2 class="section-title">Notes from <em>the barn.</em></h2>
+    </div>
+    <a href="#" class="btn btn-ghost">
+      All entries
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <div class="journal-grid">
+    <a class="journal-card" href="#">
+      <div class="journal-img"><img src="https://images.unsplash.com/photo-1595351298020-038700609878?w=900&q=80&auto=format&fit=crop" alt="Studio tools by the wheel" loading="lazy" /></div>
+      <span class="journal-tag">Field notes</span>
+      <h3 class="journal-title">Reading the kiln by the colour of its smoke</h3>
+      <div class="journal-meta">
+        <span>May 12</span>
+        <span>·</span>
+        <span>6 min read</span>
+      </div>
+    </a>
+    <a class="journal-card" href="#">
+      <div class="journal-img"><img src="https://images.unsplash.com/photo-1739467516257-20c1d7f1949a?w=900&q=80&auto=format&fit=crop" alt="Carving a foot ring on a fresh mug" loading="lazy" /></div>
+      <span class="journal-tag">Recipes</span>
+      <h3 class="journal-title">The honey-ash glaze, in nine slow stages</h3>
+      <div class="journal-meta">
+        <span>April 24</span>
+        <span>·</span>
+        <span>11 min read</span>
+      </div>
+    </a>
+    <a class="journal-card" href="#">
+      <div class="journal-img"><img src="https://images.unsplash.com/photo-1610206349499-c932c3b3aacb?w=900&q=80&auto=format&fit=crop" alt="A shelf of bisque waiting to be glazed" loading="lazy" /></div>
+      <span class="journal-tag">Conversations</span>
+      <h3 class="journal-title">Talking to Akiko Hirai about why she throws standing up</h3>
+      <div class="journal-meta">
+        <span>March 30</span>
+        <span>·</span>
+        <span>14 min read</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- visit -->
+<section class="visit" id="visit">
+  <div class="visit-grid">
+    <div class="visit-text">
+      <p class="eyebrow">№ 05 — Visit the barn</p>
+      <h2 class="visit-title">Open <em>Saturdays</em><br>in summer.</h2>
+      <p class="visit-body">
+        From May through October the studio doors are open one Saturday a month. You&rsquo;re welcome to walk the kiln yard, watch a throwing demo at noon, and take a second from the seconds shelf.
+      </p>
+      <a href="#" class="btn btn-primary" style="margin-bottom:30px">
+        Get directions
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </a>
+      <dl class="hours hours-grid">
+        <div>
+          <dt>Open Saturdays</dt>
+          <dd>10:00 — 4:00 <em>second Sat. only</em></dd>
+        </div>
+        <div>
+          <dt>Throwing demo</dt>
+          <dd>12:00 <em>~30 min</em></dd>
+        </div>
+        <div>
+          <dt>Studio address</dt>
+          <dd>118 Mill Creek Rd<br>Greenport, NY 12534</dd>
+        </div>
+        <div>
+          <dt>By appointment</dt>
+          <dd>hello@kilnand­bough.com</dd>
+        </div>
+      </dl>
+    </div>
+    <div class="visit-map" aria-label="Approximate location, Greenport, NY">
+      <span class="map-pin" aria-hidden="true"></span>
+      <div class="map-card">
+        <strong>The Barn at Mill Creek</strong>
+        Greenport, NY<br>
+        2.4 mi north of Hudson<br>
+        Off Route 9G
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- newsletter -->
+<section class="news">
+  <p class="eyebrow" style="justify-content:center; display:inline-flex">№ 06 — The Kiln Letter</p>
+  <h2 class="news-title">
+    A note <em>before</em><br>
+    each firing.
+  </h2>
+  <p class="news-sub">
+    Once a month, the day before we light the kiln, we send a short letter with what&rsquo;s loaded, what&rsquo;s glazed, and what will be on the shelves on Saturday. No tracking, no upsells.
+  </p>
+  <form class="news-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed';">
+    <label class="sr-only" for="news-email">Email</label>
+    <input id="news-email" type="email" required placeholder="your@email" autocomplete="email" />
+    <button type="submit">Send me the letter</button>
+  </form>
+  <p class="news-note">Twelve letters a year · unsubscribe in one click</p>
+</section>
+
+<!-- footer -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h3 class="foot-brand">Kiln &amp; <em>Bough</em></h3>
+      <p class="foot-tag">A two-person ceramics studio in a converted dairy barn outside Hudson, New York. Small batches, slow kilns, no two pieces alike.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Summer wares</a></li>
+        <li><a href="#">Tableware</a></li>
+        <li><a href="#">Vases & vessels</a></li>
+        <li><a href="#">Seconds shelf</a></li>
+        <li><a href="#">Gift cards</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Studio</h4>
+      <ul>
+        <li><a href="#maker">The makers</a></li>
+        <li><a href="#process">Our process</a></li>
+        <li><a href="#journal">Journal</a></li>
+        <li><a href="#visit">Visit</a></li>
+        <li><a href="#">Workshops</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Care</h4>
+      <ul>
+        <li><a href="#">Caring for clay</a></li>
+        <li><a href="#">Shipping & returns</a></li>
+        <li><a href="#">Trade & wholesale</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© Kiln & Bough Pottery, MMXXVI</span>
+    <span>118 Mill Creek Rd · Greenport, NY 12534</span>
+    <span>Site built with patience</span>
+  </div>
+</footer>
+
+<script>
+  // subtle parallax on the hero image
+  (function(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.innerWidth < 900) return;
+    const stage = document.querySelector('.plate-stage');
+    const img = stage?.querySelector('.stage-img');
+    if (!stage || !img) return;
+    stage.addEventListener('mousemove', (e) => {
+      const r = stage.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      img.style.transform = `scale(1.06) translate(${x * -10}px, ${y * -10}px)`;
+      img.style.transition = 'transform 200ms ease-out';
+    });
+    stage.addEventListener('mouseleave', () => {
+      img.style.transform = '';
+    });
+  })();
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@
  */
 
 import "./env.js";
-import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync, statSync } from "node:fs";
 import { readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import Together from "together-ai";
@@ -78,10 +78,23 @@ function findHero(slug: string): string | null {
   } catch {
     return null;
   }
-  const hero = files.find(
-    (f) => f.startsWith("desktop-hero-") && f.endsWith(".png"),
-  );
-  return hero ? join(dir, hero) : null;
+  // Many dirs have multiple desktop-hero-<hash>.png across recapture
+  // generations. `files.find` would pick the lexicographically-first
+  // (= arbitrary by hash), which often misses the latest shot. Use
+  // newest mtime so we always audit the most recent capture.
+  let best: { path: string; mtime: number } | null = null;
+  for (const f of files) {
+    if (!f.startsWith("desktop-hero-") || !f.endsWith(".png")) continue;
+    const p = join(dir, f);
+    let m = 0;
+    try {
+      m = statSync(p).mtimeMs;
+    } catch {
+      continue;
+    }
+    if (!best || m > best.mtime) best = { path: p, mtime: m };
+  }
+  return best ? best.path : null;
 }
 
 async function inspect(client: Together, png: Buffer): Promise<AuditVerdict> {
@@ -125,10 +138,21 @@ async function inspect(client: Together, png: Buffer): Promise<AuditVerdict> {
 async function main() {
   const argv = process.argv.slice(2);
   const slugsArg = argv.find((a) => a.startsWith("--slugs="));
+  const fromReportArg = argv.find((a) => a.startsWith("--from-report="));
   const slugFilter = slugsArg ? slugsArg.slice(8).split(",") : null;
   const concurrency = Number(
     argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 4,
   );
+  // Optional: limit audit to slugs from a prior report (array of
+  // `{ slug, reason }`). Used by re-audit passes that only want to
+  // re-check the previously-flagged set against today's captures.
+  let fromReportFilter: Set<string> | null = null;
+  if (fromReportArg) {
+    const p = fromReportArg.slice("--from-report=".length);
+    const raw = JSON.parse(readFileSync(p, "utf8")) as Array<{ slug: string }>;
+    fromReportFilter = new Set(raw.map((r) => r.slug));
+    console.log(`  loaded ${fromReportFilter.size} slugs from ${p}`);
+  }
 
   if (!process.env.TOGETHER_API_KEY) {
     console.error("TOGETHER_API_KEY not set — audit needs Together vision.");
@@ -145,9 +169,9 @@ async function main() {
   // site; recapture handles sub-pages alongside.
   const all = listSlugs();
   const homepages = all.filter((s) => !s.includes("--"));
-  const list = slugFilter
-    ? homepages.filter((s) => slugFilter.includes(s))
-    : homepages;
+  let list = homepages;
+  if (slugFilter) list = list.filter((s) => slugFilter.includes(s));
+  if (fromReportFilter) list = list.filter((s) => fromReportFilter!.has(s));
 
   console.log(`\n  disk-audit · ${list.length} homepages (of ${all.length} total)\n`);
 

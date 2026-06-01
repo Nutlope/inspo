@@ -4,12 +4,16 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ScreenTile } from "@/components/screen-tile";
 import { PaletteStrip } from "@/components/palette-strip";
+import { PaletteTable } from "@/components/palette-table";
 import { TagPill } from "@/components/tag-pill";
 import { TypeRamp } from "@/components/type-ramp";
 import { ScaleRuler } from "@/components/spacing-ruler";
 import { CopyDesignMd } from "@/components/copy-design-md";
+import { ExportBlock } from "@/components/export-block";
+import { AgentPromptGuide } from "@/components/agent-prompt-guide";
 import { SiteActionBar } from "@/components/site-action-bar";
 import { SkeletonTile } from "@/components/skeleton-tile";
+import { AddToCompare } from "@/components/add-to-compare";
 import {
   findScreen,
   findSimilar,
@@ -96,6 +100,13 @@ export default async function ScreenDetailPage({
               {screen.title}
             </h1>
 
+            {/* Northstar — the design's soul in one line */}
+            {screen.northstar && (
+              <p className="mt-5 max-w-[44ch] font-display text-xl italic leading-snug text-[var(--color-fg-muted)] lg:text-2xl">
+                {screen.northstar}
+              </p>
+            )}
+
             {/* Tag pills */}
             <div className="mt-8 flex flex-wrap gap-2">
               {macroLabel && (
@@ -133,16 +144,25 @@ export default async function ScreenDetailPage({
             decoding="async"
           />
         </div>
-        <div className="mt-3 flex items-baseline justify-between text-meta">
+        <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 text-meta">
           <span>Hero — desktop · 1440 × 900</span>
-          <a
-            href={screen.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[var(--color-link)]"
-          >
-            Visit source ↗
-          </a>
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            <AddToCompare slug={screen.slug} title={screen.title} />
+            <Link
+              href={`/screens/${screen.slug}/history`}
+              className="hover:text-[var(--color-link)]"
+            >
+              See history ↻
+            </Link>
+            <a
+              href={screen.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[var(--color-link)]"
+            >
+              Visit source ↗
+            </a>
+          </div>
         </div>
       </div>
 
@@ -219,9 +239,17 @@ export default async function ScreenDetailPage({
       {/* Palette band ─────────────────────────────────────── */}
       <div className="screens-detail-section mx-auto mt-24 max-w-[120rem] border-y rule px-6 py-10 sm:px-10" style={{ ["--idx" as string]: 2 }}>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <p className="text-meta lg:col-span-2">Palette</p>
+          <div className="lg:col-span-2">
+            <p className="text-meta">Palette</p>
+            <p className="text-meta mt-2 max-w-[20ch]">
+              Click any value to copy. Roles are suggestions, not gospel.
+            </p>
+          </div>
           <div className="lg:col-span-10">
-            <PaletteStrip palette={screen.palette} size="lg" />
+            <PaletteTable
+              palette={screen.palette}
+              colorWords={screen.designSystem.colorWords}
+            />
           </div>
         </div>
       </div>
@@ -284,35 +312,24 @@ export default async function ScreenDetailPage({
                 </section>
               )}
 
-              {/* CSS variables */}
-              {Object.keys(screen.designSystem.cssVariables).length > 0 && (
-                <section>
-                  <details className="group">
-                    <summary className="text-meta cursor-pointer hover:text-[var(--color-link)]">
-                      CSS variables exposed by source ({" "}
-                      {Object.keys(screen.designSystem.cssVariables).length}{" "}
-                      ) — click to expand
-                    </summary>
-                    <pre className="mt-5 max-h-96 overflow-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] p-4 font-mono text-xs leading-relaxed">
-                      <code>
-                        {":root {\n"}
-                        {Object.entries(screen.designSystem.cssVariables)
-                          .slice(0, 80)
-                          .map(([k, v]) => `  ${k}: ${v};\n`)
-                          .join("")}
-                        {Object.keys(screen.designSystem.cssVariables).length >
-                        80
-                          ? `  /* …${
-                              Object.keys(screen.designSystem.cssVariables)
-                                .length - 80
-                            } more */\n`
-                          : ""}
-                        {"}"}
-                      </code>
-                    </pre>
-                  </details>
-                </section>
-              )}
+              {/* Export — CSS / Tailwind v4 / Markdown tabs */}
+              <section>
+                <p className="text-meta mb-5">Export</p>
+                <ExportBlock
+                  slug={screen.slug}
+                  palette={screen.palette}
+                  cssVariables={screen.designSystem.cssVariables}
+                />
+              </section>
+
+              {/* Agent prompt — drop-in for Cursor / Claude Code */}
+              <AgentPromptGuide
+                slug={screen.slug}
+                title={screen.title}
+                palette={screen.palette}
+                fonts={screen.fonts}
+                macrostructure={macroLabel ?? null}
+              />
             </div>
           </div>
         </div>

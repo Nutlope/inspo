@@ -123,6 +123,18 @@ async function main() {
   const go = argv.includes("--go");
   const pngsOnly = argv.includes("--pngs-only");
   const slugFilter = argv.find((a) => a.startsWith("--slug="))?.split("=")[1];
+  // --from-file=path : upload only the slugs listed (one per line).
+  // Lets us push just the newly-captured set instead of re-uploading
+  // the whole archive (deterministic keys make re-uploads safe but slow).
+  const fromFile = argv.find((a) => a.startsWith("--from-file="))?.split("=")[1];
+  const fromFileSet = fromFile
+    ? new Set(
+        readFileSync(fromFile, "utf8")
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter((l) => l && !l.startsWith("#")),
+      )
+    : null;
   const concurrency = Number(
     argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 6,
   );
@@ -142,8 +154,10 @@ async function main() {
       `cannot read captures dir at ${CAPTURES_DIR}: ${err instanceof Error ? err.message : err}`,
     );
   }
-  const rows = (slugFilter ? allSlugs.filter((s) => s === slugFilter) : allSlugs)
-    .map((slug) => ({ slug }));
+  let selected = allSlugs;
+  if (slugFilter) selected = selected.filter((s) => s === slugFilter);
+  if (fromFileSet) selected = selected.filter((s) => fromFileSet.has(s));
+  const rows = selected.map((slug) => ({ slug }));
 
   console.log(
     `\n  upload-to-blob · ${rows.length} rows · go=${go} · variants=${!pngsOnly}\n`,

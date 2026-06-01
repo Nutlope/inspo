@@ -17,6 +17,14 @@
  */
 
 import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  Check,
+  ClipboardCopy,
+  Link2,
+  Star,
+  X,
+} from "lucide-react";
 
 const SAVED_KEY = "inspo:cmdk:saved";
 const DISMISS_KEY = "inspo:action-bar:dismissed";
@@ -146,35 +154,25 @@ export function SiteActionBar({
           font-mono text-[0.7rem] uppercase tracking-[0.12em]
         "
       >
+        {/* Primary CTA — filled so the most-wanted action reads at a
+            glance. Ink-on-paper in light mode, paper-on-ink in dark.
+            Matches the in-page CopyDesignMd button. */}
         <button
           type="button"
           onClick={onCopyDesign}
           disabled={copyDesign === "copying"}
-          className={`
+          className="
             relative inline-flex items-center gap-2 px-4 sm:px-5 py-3
-            transition-colors
-            ${
-              copyDesign === "ok"
-                ? "text-[var(--color-link)]"
-                : "text-[var(--color-fg)] hover:text-[var(--color-link)]"
-            }
-            disabled:opacity-50
-          `}
+            bg-[var(--color-fg)] !text-white dark:!text-[var(--color-bg)]
+            transition-opacity hover:opacity-90
+            disabled:opacity-60
+          "
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <rect x="8" y="3" width="13" height="13" rx="1" />
-            <path d="M5 7v13a1 1 0 0 0 1 1h13" />
-          </svg>
+          {copyDesign === "ok" ? (
+            <Check size={15} strokeWidth={2} aria-hidden />
+          ) : (
+            <ClipboardCopy size={15} strokeWidth={2} aria-hidden />
+          )}
           <span>{designLabel}</span>
         </button>
 
@@ -193,21 +191,11 @@ export function SiteActionBar({
             disabled:opacity-50
           `}
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M9 17H7A5 5 0 1 1 7 7h2" />
-            <path d="M15 7h2a5 5 0 0 1 0 10h-2" />
-            <path d="M8 12h8" />
-          </svg>
+          {copyUrl === "ok" ? (
+            <Check size={15} strokeWidth={1.75} aria-hidden />
+          ) : (
+            <Link2 size={15} strokeWidth={1.75} aria-hidden />
+          )}
           <span className="hidden sm:inline">{urlLabel}</span>
           <span className="sr-only sm:hidden">{urlLabel}</span>
         </button>
@@ -222,9 +210,12 @@ export function SiteActionBar({
             ${saved ? "text-[var(--color-link)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"}
           `}
         >
-          <span aria-hidden className="text-base leading-none">
-            {saved ? "★" : "☆"}
-          </span>
+          <Star
+            size={15}
+            strokeWidth={1.75}
+            fill={saved ? "currentColor" : "none"}
+            aria-hidden
+          />
           <span className="hidden md:inline">{saved ? "Saved" : "Save"}</span>
         </button>
 
@@ -237,21 +228,7 @@ export function SiteActionBar({
             text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-link)]
           "
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <path d="M15 3h6v6" />
-            <path d="M10 14 21 3" />
-          </svg>
+          <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden />
           <span className="hidden md:inline">Visit live</span>
           <span className="sr-only md:hidden">Visit live site</span>
         </a>
@@ -265,7 +242,7 @@ export function SiteActionBar({
             text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]
           "
         >
-          <span aria-hidden>✕</span>
+          <X size={15} strokeWidth={1.75} aria-hidden />
         </button>
       </div>
     </div>

@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { Masthead } from "@/components/masthead";
 import { Colophon } from "@/components/colophon";
 import { CommandPalette } from "@/components/command-palette";
+import { CompareDock } from "@/components/compare-dock";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -74,6 +75,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Colophon />
         <CommandPalette />
+        <CompareDock />
       </body>
     </html>
   );

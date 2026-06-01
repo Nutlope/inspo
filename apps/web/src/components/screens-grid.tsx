@@ -31,6 +31,11 @@ import {
   type Vibe,
 } from "@inspo/taxonomy";
 import { ScreenTile } from "@/components/screen-tile";
+import {
+  HEX_FAMILY_THRESHOLD,
+  normalizeHex,
+  paletteDistance,
+} from "@/lib/color";
 
 const isVibe = (v: string): v is Vibe =>
   (VIBES as readonly string[]).includes(v);
@@ -45,6 +50,11 @@ type Filters = {
   mode?: string;
   mood?: string;
   color?: string;
+  /** Perceptual-distance colour anchor (?hex=%23c7402f). Normalised
+   *  to `#aabbcc`. Filters to sites with at least one palette colour
+   *  within HEX_FAMILY_THRESHOLD in OKLAB. Distinct from `color`,
+   *  which is the semantic colorWord filter ("warm", "monochrome"…). */
+  hex?: string;
   /** 1-based current page. Drives the slice rendered, not the data
    *  that's filtered (filters always operate on the full set). */
   page?: number;
@@ -77,6 +87,7 @@ export function ScreensGrid({
     const get = (k: string) => searchParams.get(k) ?? undefined;
     const pageRaw = searchParams.get("page");
     const pageNum = pageRaw ? Math.max(1, parseInt(pageRaw, 10) || 1) : 1;
+    const hexRaw = get("hex");
     return {
       q: get("q"),
       style: get("style"),
@@ -85,6 +96,7 @@ export function ScreensGrid({
       mode: get("mode"),
       mood: get("mood"),
       color: get("color"),
+      hex: hexRaw ? (normalizeHex(hexRaw) ?? undefined) : undefined,
       page: pageNum,
     };
   }, [searchParams]);
@@ -119,7 +131,19 @@ export function ScreensGrid({
     }
     if (active.color && isColorWord(active.color)) {
       const c = active.color;
-      list = list.filter((x) => x.designSystem.colorWords.includes(c));
+      list = list.filter((x) =>
+        (x.designSystem.colorWords ?? []).includes(c),
+      );
+    }
+    if (active.hex) {
+      // Perceptual filter — a site matches if any of its palette
+      // colours sits within HEX_FAMILY_THRESHOLD of the anchor in OKLAB.
+      // We compute the per-site score once per render — at 1.2k sites
+      // this is ~10ms on a desktop, no need to memoise per palette.
+      const anchor = active.hex;
+      list = list.filter(
+        (x) => paletteDistance(anchor, x.palette) <= HEX_FAMILY_THRESHOLD,
+      );
     }
     if (active.q && active.q.trim()) {
       const q = active.q.trim().toLowerCase();
@@ -225,8 +249,9 @@ export function ScreensGrid({
             current={active.color}
             onSelect={setFilter}
             count={(v) =>
-              screens.filter((x) => x.designSystem.colorWords.includes(v as ColorWord))
-                .length
+              screens.filter((x) =>
+                (x.designSystem.colorWords ?? []).includes(v as ColorWord),
+              ).length
             }
           />
           <FilterGroup
@@ -251,6 +276,32 @@ export function ScreensGrid({
 
       {/* Grid ─────────────────────────────────────────────────── */}
       <div className="lg:col-span-10">
+        {active.hex && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y rule px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="block h-7 w-7 border rule"
+                style={{ background: active.hex }}
+              />
+              <p className="text-meta">
+                Filtering by colour family ·{" "}
+                <span className="font-mono uppercase">{active.hex}</span>
+                <span className="ml-2 text-[var(--color-fg-muted)]">
+                  ({filteredCount.toLocaleString()} match
+                  {filteredCount === 1 ? "" : "es"})
+                </span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFilter("hex", undefined)}
+              className="font-mono text-[10px] uppercase tracking-wider hover:text-[var(--color-link)]"
+            >
+              clear ×
+            </button>
+          </div>
+        )}
         <div className="mb-6 flex items-baseline justify-between border-b rule pb-4">
           <p className="text-meta">
             {filteredCount === totalCount
@@ -298,6 +349,7 @@ export function ScreensGrid({
                     // priority hint — beyond that, we lazy-load.
                     priority={currentPage === 1 && i < 6}
                     pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
+                    hoverScroll
                   />
                 </li>
               ))}
@@ -425,6 +477,11 @@ function FilterGroup({
   count?: (v: string) => number;
   formatLabel?: (v: string) => string;
 }) {
+  // A unique view-transition name per group so the active marker
+  // smoothly slides between buttons when the user switches filters.
+  // Names must be unique on the page — scoping by param key gives us
+  // one marker per filter group, which is exactly what we want.
+  const vtName = `filter-marker-${String(param)}`;
   // Hide-zero-match optimisation only kicks in when the dataset has
   // tag data to filter by. If every chip in this group reports 0
   // (which happens in production where the static seed ships without
@@ -441,7 +498,11 @@ function FilterGroup({
       <p className="text-meta">{label}</p>
       <ul className="flex flex-col gap-1.5">
         <li>
-          <FilterButton active={!current} onClick={() => onSelect(param, undefined)}>
+          <FilterButton
+            active={!current}
+            onClick={() => onSelect(param, undefined)}
+            vtName={vtName}
+          >
             All
           </FilterButton>
         </li>
@@ -450,6 +511,7 @@ function FilterGroup({
             <FilterButton
               active={current === opt}
               onClick={() => onSelect(param, opt)}
+              vtName={vtName}
             >
               {formatLabel ? formatLabel(opt) : opt.replace(/-/g, " ")}
             </FilterButton>
@@ -464,10 +526,15 @@ function FilterButton({
   active,
   onClick,
   children,
+  vtName,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  /** When set + active, the indicator dot carries this
+   *  view-transition-name. Browser morphs the dot between positions
+   *  during the View Transition kicked off by setFilter(). */
+  vtName?: string;
 }) {
   return (
     <button
@@ -480,7 +547,11 @@ function FilterButton({
       }`}
     >
       {active && (
-        <span aria-hidden className="mr-1.5">
+        <span
+          aria-hidden
+          className="mr-1.5"
+          style={vtName ? { viewTransitionName: vtName } : undefined}
+        >
           ·
         </span>
       )}

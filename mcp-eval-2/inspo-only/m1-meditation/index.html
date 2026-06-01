@@ -1,0 +1,1832 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stilla — a small daily practice for a quieter mind</title>
+    <meta
+      name="description"
+      content="Stilla is a meditation and sleep app made for people who don't think of themselves as meditators. Ten minutes a day. Free for fourteen."
+    />
+    <meta name="theme-color" content="#f3ecdf" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ------------------------------------------------------------------
+       *  Stilla — design tokens
+       *  Macrostructure: Feature Stack (Inspo MCP pick)
+       *  Palette is a Headspace-cousin: warm cream paper, deep midnight
+       *  ink, single dawn-terracotta accent, sage tonal. Chosen against
+       *  the default meditation-app mint/lavender to feel like a printed
+       *  almanac, not a wellness brochure.
+       *  Type ramp: Fraunces (display, optical size) + Inter Tight (body)
+       *  + JetBrains Mono (marginalia).
+       * ------------------------------------------------------------------ */
+      :root {
+        --paper: #f3ecdf;             /* warm cream — page ground */
+        --paper-2: #ebe2cf;           /* slightly deeper cream */
+        --ink: #1a1f3a;               /* deep midnight — primary text */
+        --ink-soft: #3d4569;          /* secondary text */
+        --muted: #7e8094;             /* tertiary text + marginalia */
+        --rule: rgba(26, 31, 58, 0.14);
+
+        --dawn: #c2603f;              /* sole accent — dawn terracotta */
+        --dawn-deep: #9a4628;         /* hover deepening */
+        --sage: #758a76;              /* tonal secondary, never primary */
+        --moss: #4b5d4d;              /* paired darker sage */
+
+        --r-sm: 4px;
+        --r-md: 10px;
+        --r-lg: 18px;
+        --r-pill: 999px;
+
+        --gutter: clamp(1.25rem, 4vw, 3.5rem);
+        --max-w: 76rem;
+
+        --shadow-soft: 0 1px 0 rgba(26, 31, 58, 0.04),
+          0 12px 32px -16px rgba(26, 31, 58, 0.12);
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Inter Tight", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        font-size: 17px;
+        line-height: 1.55;
+        font-feature-settings: "ss01", "cv02", "cv11";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Grain — barely-there paper texture so the cream doesn't read flat */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.5;
+        background-image:
+          radial-gradient(circle at 25% 30%, rgba(26, 31, 58, 0.035) 0.5px, transparent 1px),
+          radial-gradient(circle at 75% 70%, rgba(194, 96, 63, 0.025) 0.5px, transparent 1px);
+        background-size: 3px 3px, 5px 5px;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        text-underline-offset: 0.2em;
+      }
+
+      ::selection {
+        background: var(--dawn);
+        color: var(--paper);
+      }
+
+      /* ------------------------------------------------------------------
+       *  Typography ramp
+       * ------------------------------------------------------------------ */
+
+      .display {
+        font-family: "Fraunces", "Times New Roman", serif;
+        font-weight: 400;
+        font-variation-settings: "opsz" 144, "SOFT" 50;
+        letter-spacing: -0.012em;
+        line-height: 1.02;
+      }
+      .display em {
+        font-style: italic;
+        font-variation-settings: "opsz" 144, "SOFT" 100;
+      }
+
+      .meta {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .lede {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        max-width: 56ch;
+      }
+
+      h1, h2, h3 { margin: 0; }
+
+      /* ------------------------------------------------------------------
+       *  Layout primitives
+       * ------------------------------------------------------------------ */
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+
+      .rule { border: 1px solid var(--rule); }
+      .rule-t { border-top: 1px solid var(--rule); }
+      .rule-b { border-bottom: 1px solid var(--rule); }
+
+      /* ------------------------------------------------------------------
+       *  Nav — N1 inline minimal (Inspo reference)
+       * ------------------------------------------------------------------ */
+
+      .nav {
+        padding: 1.25rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: color-mix(in oklab, var(--paper) 88%, transparent);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.2s ease;
+      }
+      .nav.scrolled { border-bottom-color: var(--rule); }
+      .nav .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+      .wordmark {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.1em;
+      }
+      .wordmark .dot { color: var(--dawn); }
+      .nav-links {
+        display: none;
+        align-items: center;
+        gap: 1.75rem;
+      }
+      .nav-links a {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+        transition: color 0.2s ease;
+      }
+      .nav-links a:hover { color: var(--ink); }
+
+      .btn {
+        --bg: var(--ink);
+        --fg: var(--paper);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        height: 2.6rem;
+        padding: 0 1.1rem;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        border: 1px solid var(--bg);
+        border-radius: var(--r-pill);
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn .arr {
+        transition: transform 0.25s ease;
+      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn:hover .arr { transform: translateX(2px); }
+      .btn:active { transform: translateY(0); }
+      .btn.dawn { --bg: var(--dawn); --fg: var(--paper); border-color: var(--dawn); }
+      .btn.dawn:hover { --bg: var(--dawn-deep); border-color: var(--dawn-deep); }
+      .btn.ghost {
+        --bg: transparent;
+        --fg: var(--ink);
+        border: 1px solid var(--rule);
+      }
+      .btn.ghost:hover {
+        --bg: var(--paper-2);
+        border-color: var(--ink-soft);
+      }
+      .btn.large {
+        height: 3.1rem;
+        padding: 0 1.5rem;
+        font-size: 0.78rem;
+      }
+
+      @media (min-width: 760px) {
+        .nav-links { display: inline-flex; }
+      }
+
+      /* ------------------------------------------------------------------
+       *  Hero — Marquee Hero (Inspo reference)
+       *  Type carries the design. One quiet ambient breath-circle on
+       *  the right; CSS only, no images, no faux chrome.
+       * ------------------------------------------------------------------ */
+
+      .hero {
+        padding: clamp(3rem, 9vw, 8rem) 0 clamp(4rem, 10vw, 9rem);
+        position: relative;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        align-items: end;
+      }
+      @media (min-width: 880px) {
+        .hero-grid {
+          grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+          gap: 4rem;
+        }
+      }
+
+      .hero-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+      }
+      .hero-eyebrow .pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--dawn);
+        box-shadow: 0 0 0 0 rgba(194, 96, 63, 0.4);
+        animation: gentle-pulse 3.2s ease-in-out infinite;
+      }
+      @keyframes gentle-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(194, 96, 63, 0.45); }
+        50%      { box-shadow: 0 0 0 9px rgba(194, 96, 63, 0); }
+      }
+
+      .hero h1 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 60;
+        font-weight: 400;
+        font-size: clamp(2.5rem, 7.5vw, 5.75rem);
+        line-height: 0.96;
+        letter-spacing: -0.022em;
+        max-width: 16ch;
+        text-wrap: balance;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--dawn);
+        font-variation-settings: "opsz" 144, "SOFT" 100;
+      }
+
+      .hero-sub {
+        margin-top: 2.25rem;
+        max-width: 44ch;
+        color: var(--ink-soft);
+        font-size: 1.075rem;
+        line-height: 1.6;
+      }
+
+      .hero-ctas {
+        margin-top: 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .hero-fineprint {
+        margin-top: 1.2rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      /* Hero ambient panel — breathing concentric ring, CSS only */
+      .hero-panel {
+        position: relative;
+        aspect-ratio: 5 / 6;
+        min-height: 18rem;
+        border-radius: var(--r-lg);
+        background:
+          radial-gradient(
+            120% 80% at 30% 0%,
+            color-mix(in oklab, var(--dawn) 28%, transparent),
+            transparent 55%
+          ),
+          radial-gradient(
+            120% 100% at 100% 100%,
+            color-mix(in oklab, var(--ink) 35%, transparent),
+            transparent 60%
+          ),
+          linear-gradient(
+            165deg,
+            #e8d9c1 0%,
+            #d8c4a8 45%,
+            #b89578 100%
+          );
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+      }
+      .hero-panel::before,
+      .hero-panel::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 58%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        border: 1px solid rgba(243, 236, 223, 0.55);
+        animation: breath 10s ease-in-out infinite;
+      }
+      .hero-panel::before {
+        width: 65%;
+        aspect-ratio: 1;
+      }
+      .hero-panel::after {
+        width: 40%;
+        aspect-ratio: 1;
+        border-color: rgba(243, 236, 223, 0.85);
+        animation-delay: -3s;
+      }
+      .hero-panel .inner-dot {
+        position: absolute;
+        left: 50%;
+        top: 58%;
+        transform: translate(-50%, -50%);
+        width: 14%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(243, 236, 223, 0.95),
+          rgba(243, 236, 223, 0.5) 60%,
+          transparent
+        );
+        filter: blur(0.5px);
+        animation: breath 10s ease-in-out infinite;
+        animation-delay: -1.5s;
+      }
+      @keyframes breath {
+        0%, 100% { transform: translate(-50%, -50%) scale(0.86); opacity: 0.55; }
+        50%      { transform: translate(-50%, -50%) scale(1.18); opacity: 0.95; }
+      }
+
+      .hero-panel .corner {
+        position: absolute;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: rgba(26, 31, 58, 0.7);
+      }
+      .hero-panel .corner.top { top: 1.25rem; left: 1.25rem; }
+      .hero-panel .corner.bottom { bottom: 1.25rem; right: 1.25rem; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero-panel::before, .hero-panel::after, .hero-panel .inner-dot,
+        .hero-eyebrow .pulse {
+          animation: none;
+        }
+      }
+
+      /* ------------------------------------------------------------------
+       *  Proof strip — quiet press / context band
+       * ------------------------------------------------------------------ */
+
+      .proof {
+        padding: 1.75rem 0 1.75rem;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+      .proof-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1.5rem 2.5rem;
+      }
+      .proof-row .meta { white-space: nowrap; }
+      .proof-names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2.25rem;
+        align-items: baseline;
+      }
+      .proof-names span {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: 1.15rem;
+        color: var(--ink-soft);
+        opacity: 0.75;
+        letter-spacing: -0.005em;
+      }
+      .proof-names span em {
+        font-style: italic;
+        opacity: 1;
+        color: var(--ink);
+      }
+
+      /* ------------------------------------------------------------------
+       *  Section scaffolding
+       * ------------------------------------------------------------------ */
+
+      .section {
+        padding: clamp(4rem, 10vw, 8rem) 0;
+      }
+      .section-head {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem 3rem;
+        margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+      }
+      @media (min-width: 880px) {
+        .section-head {
+          grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+        }
+      }
+      .section-head h2 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 60;
+        font-weight: 400;
+        font-size: clamp(2rem, 4.5vw, 3.25rem);
+        line-height: 1.05;
+        letter-spacing: -0.018em;
+        max-width: 24ch;
+        text-wrap: balance;
+      }
+      .section-head h2 em {
+        font-style: italic;
+        color: var(--dawn);
+      }
+      .section-head .lede { margin-top: 0.75rem; }
+
+      /* ------------------------------------------------------------------
+       *  Ritual — Numbered triplet (Inspo reference)
+       * ------------------------------------------------------------------ */
+
+      .ritual {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      @media (min-width: 720px) {
+        .ritual { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+      }
+      .ritual li { list-style: none; padding: 0; margin: 0; }
+      .ritual .step {
+        border-top: 1.5px solid var(--ink);
+        padding-top: 1.25rem;
+      }
+      .ritual .n { display: block; }
+      .ritual h3 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 60;
+        font-weight: 400;
+        font-size: 1.75rem;
+        line-height: 1.15;
+        margin-top: 0.5rem;
+        letter-spacing: -0.012em;
+      }
+      .ritual p {
+        margin: 0.85rem 0 0;
+        font-size: 0.97rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+        max-width: 32ch;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Features — Alternating rows (Inspo reference)
+       * ------------------------------------------------------------------ */
+
+      .features-wrap {
+        background:
+          linear-gradient(
+            180deg,
+            var(--paper-2) 0%,
+            color-mix(in oklab, var(--paper-2) 50%, var(--paper)) 100%
+          );
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .feat-rows {
+        display: grid;
+        gap: clamp(3rem, 7vw, 5.5rem);
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .feat-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        align-items: center;
+      }
+      @media (min-width: 900px) {
+        .feat-row { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 3.5rem; }
+        .feat-row.flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+        .feat-row.flip .feat-copy  { order: 2; }
+        .feat-row.flip .feat-panel { order: 1; }
+      }
+
+      .feat-copy .meta { display: inline-block; }
+      .feat-copy h3 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 70;
+        font-weight: 400;
+        font-size: clamp(1.7rem, 3vw, 2.4rem);
+        line-height: 1.08;
+        letter-spacing: -0.014em;
+        max-width: 18ch;
+        margin: 0.85rem 0 1rem;
+        text-wrap: balance;
+      }
+      .feat-copy p {
+        color: var(--ink-soft);
+        max-width: 44ch;
+        margin: 0;
+      }
+      .feat-copy .more {
+        display: inline-flex;
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--ink);
+        border-bottom: 1px solid var(--ink-soft);
+        padding-bottom: 0.25rem;
+        transition: color 0.2s, border-color 0.2s;
+      }
+      .feat-copy .more:hover { color: var(--dawn); border-color: var(--dawn); }
+
+      .feat-panel {
+        aspect-ratio: 5 / 4;
+        border-radius: var(--r-lg);
+        position: relative;
+        overflow: hidden;
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        box-shadow: var(--shadow-soft);
+      }
+
+      /* Panel 1 — sound waves: a stack of tonal arcs */
+      .panel-sound {
+        background:
+          radial-gradient(
+            120% 90% at 50% 100%,
+            color-mix(in oklab, var(--sage) 22%, transparent),
+            transparent 65%
+          ),
+          linear-gradient(180deg, #ebe2cf, #e0d3b8);
+      }
+      .panel-sound svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .panel-sound .label {
+        position: absolute;
+        left: 1.25rem;
+        bottom: 1.25rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--moss);
+      }
+
+      /* Panel 2 — sleep / night sky */
+      .panel-sleep {
+        background:
+          radial-gradient(70% 50% at 80% 25%, rgba(243, 236, 223, 0.12), transparent 55%),
+          linear-gradient(165deg, #1a1f3a 0%, #2a2f55 100%);
+        color: var(--paper);
+      }
+      .panel-sleep .crescent {
+        position: absolute;
+        top: 18%;
+        left: 16%;
+        width: 28%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #f3ecdf;
+        box-shadow: inset -16px 4px 0 0 #1f254a;
+        opacity: 0.92;
+      }
+      .panel-sleep .stars {
+        position: absolute;
+        inset: 0;
+      }
+      .panel-sleep .stars i {
+        position: absolute;
+        background: var(--paper);
+        border-radius: 50%;
+        opacity: 0.65;
+      }
+      .panel-sleep .label {
+        position: absolute;
+        bottom: 1.25rem;
+        left: 1.25rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: color-mix(in oklab, var(--paper) 80%, transparent);
+      }
+
+      /* Panel 3 — daily streak / calendar grid */
+      .panel-streak {
+        background: linear-gradient(180deg, #f3ecdf, #ebe2cf);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .panel-streak .grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        margin-top: auto;
+      }
+      .panel-streak .cell {
+        aspect-ratio: 1;
+        border-radius: 3px;
+        background: color-mix(in oklab, var(--ink) 8%, transparent);
+      }
+      .panel-streak .cell.on   { background: color-mix(in oklab, var(--dawn) 70%, transparent); }
+      .panel-streak .cell.deep { background: var(--dawn); }
+      .panel-streak .cell.today { background: var(--ink); }
+      .panel-streak .top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.75rem;
+      }
+      .panel-streak .top-row .num {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: 2.5rem;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .panel-streak .top-row .lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* ------------------------------------------------------------------
+       *  Library bento — six tiles, irregular spans
+       *  (Inspo reference: features/bento)
+       * ------------------------------------------------------------------ */
+
+      .bento {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 720px) {
+        .bento {
+          grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: minmax(140px, auto);
+        }
+      }
+      .tile {
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-md);
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      .tile:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-soft);
+        border-color: color-mix(in oklab, var(--ink) 18%, transparent);
+      }
+      .tile .meta { margin-bottom: 0.75rem; }
+      .tile h3 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 70;
+        font-weight: 400;
+        font-size: 1.55rem;
+        line-height: 1.15;
+        letter-spacing: -0.012em;
+        margin: 0;
+        text-wrap: balance;
+      }
+      .tile p {
+        margin: 0.75rem 0 0;
+        color: var(--ink-soft);
+        font-size: 0.97rem;
+        line-height: 1.55;
+      }
+      .tile.large {
+        grid-column: span 1;
+        grid-row: span 1;
+        padding: 2rem;
+      }
+      @media (min-width: 720px) {
+        .tile.large {
+          grid-column: span 2;
+          grid-row: span 2;
+        }
+      }
+      .tile.large h3 { font-size: clamp(2rem, 3vw, 2.6rem); max-width: 16ch; }
+      .tile.dark {
+        background: var(--ink);
+        color: var(--paper);
+        border-color: var(--ink);
+      }
+      .tile.dark .meta { color: color-mix(in oklab, var(--paper) 60%, transparent); }
+      .tile.dark p { color: color-mix(in oklab, var(--paper) 80%, transparent); }
+      .tile .big-num {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        line-height: 1;
+        letter-spacing: -0.022em;
+        display: block;
+      }
+      .tile .big-num em { font-style: italic; color: var(--dawn); }
+      .tile.dark .big-num em { color: #e5a489; }
+
+      /* The lead tile gets a subtle sunrise wash. */
+      .tile.large .sunrise {
+        position: absolute;
+        right: -6%;
+        bottom: -20%;
+        width: 70%;
+        aspect-ratio: 2 / 1;
+        background: radial-gradient(
+          50% 100% at 50% 100%,
+          color-mix(in oklab, var(--dawn) 32%, transparent),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Testimonial — single portrait (Inspo reference)
+       *  No invented portrait: a typographic monogram card.
+       * ------------------------------------------------------------------ */
+
+      .quote-section {
+        background: var(--paper-2);
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+      .quote-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.25rem;
+        align-items: center;
+      }
+      @media (min-width: 880px) {
+        .quote-grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 3.5rem; }
+      }
+      .quote-card {
+        aspect-ratio: 1;
+        max-width: 22rem;
+        border: 1.5px solid var(--ink);
+        border-radius: var(--r-md);
+        background:
+          radial-gradient(60% 60% at 30% 25%, rgba(194, 96, 63, 0.22), transparent 70%),
+          linear-gradient(165deg, #ebe2cf 0%, #d2b894 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .quote-card .mono {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 100;
+        font-style: italic;
+        font-size: clamp(5rem, 10vw, 8rem);
+        line-height: 0.9;
+        color: var(--ink);
+        letter-spacing: -0.04em;
+      }
+      .quote-card .corner {
+        position: absolute;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: rgba(26, 31, 58, 0.65);
+      }
+      .quote-card .corner.tl { top: 0.9rem; left: 1rem; }
+      .quote-card .corner.br { bottom: 0.9rem; right: 1rem; }
+
+      blockquote.quote {
+        margin: 0;
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 70;
+        font-weight: 400;
+        font-size: clamp(1.4rem, 2.4vw, 2rem);
+        line-height: 1.25;
+        letter-spacing: -0.012em;
+        color: var(--ink);
+        max-width: 36ch;
+        text-wrap: balance;
+      }
+      blockquote.quote::before {
+        content: "“";
+        color: var(--dawn);
+        font-style: italic;
+      }
+      blockquote.quote::after { content: "”"; color: var(--dawn); font-style: italic; }
+      .attrib {
+        margin-top: 2rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid var(--rule);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .attrib b {
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Pricing — quiet single-card / trial pitch
+       *  Form-led CTA blends in here.
+       * ------------------------------------------------------------------ */
+
+      .trial {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        align-items: center;
+      }
+      @media (min-width: 880px) {
+        .trial { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 4rem; }
+      }
+      .trial h2 {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 60;
+        font-weight: 400;
+        font-size: clamp(2.2rem, 5vw, 3.75rem);
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+        max-width: 16ch;
+        text-wrap: balance;
+      }
+      .trial h2 em { font-style: italic; color: var(--dawn); }
+      .trial .lede { margin-top: 1.25rem; }
+
+      .trial-card {
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-lg);
+        padding: clamp(1.75rem, 3.5vw, 2.6rem);
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        overflow: hidden;
+      }
+      .trial-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 80%;
+        height: 100%;
+        background: radial-gradient(
+          50% 100% at 50% 50%,
+          color-mix(in oklab, var(--dawn) 14%, transparent),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .trial-card .row1 {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+      .trial-card .price {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+        line-height: 1;
+        letter-spacing: -0.022em;
+      }
+      .trial-card .price em { font-style: italic; }
+      .trial-card .price small {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 400;
+        font-style: normal;
+        margin-left: 0.4rem;
+      }
+      .trial-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0 0;
+        display: grid;
+        gap: 0.55rem;
+      }
+      .trial-card ul li {
+        font-size: 0.97rem;
+        color: var(--ink);
+        display: flex;
+        gap: 0.7rem;
+        align-items: baseline;
+      }
+      .trial-card ul li::before {
+        content: "›";
+        color: var(--dawn);
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+
+      .trial-form {
+        margin-top: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        border-radius: var(--r-pill);
+        padding: 0.35rem 0.35rem 0.35rem 1.1rem;
+        transition: border-color 0.2s ease;
+        position: relative;
+        z-index: 1;
+      }
+      .trial-form:focus-within { border-color: var(--ink); }
+      .trial-form input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        font-size: 0.97rem;
+        color: var(--ink);
+        outline: none;
+      }
+      .trial-form input::placeholder { color: var(--muted); }
+      .trial-form button {
+        height: 2.4rem;
+        padding: 0 1.1rem;
+        background: var(--ink);
+        color: var(--paper);
+        border: 0;
+        border-radius: var(--r-pill);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+      .trial-form button:hover { background: var(--dawn); transform: translateY(-1px); }
+      .trial-fine {
+        margin-top: 0.85rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+      .trial-success {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--moss);
+        border-left: 2px solid var(--dawn);
+        padding-left: 0.85rem;
+        margin-top: 1.6rem;
+        display: none;
+      }
+      .trial-form.is-done { display: none; }
+      .trial-fine.is-done { display: none; }
+      .trial-success.is-done { display: block; }
+
+      /* ------------------------------------------------------------------
+       *  FAQ — light, generous, no chevrons
+       * ------------------------------------------------------------------ */
+      .faq {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      @media (min-width: 880px) {
+        .faq { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 3rem; }
+      }
+      .faq-list { display: grid; gap: 0; }
+      .faq-item {
+        border-top: 1px solid var(--rule);
+        padding: 1.4rem 0;
+      }
+      .faq-item:last-child { border-bottom: 1px solid var(--rule); }
+      .faq-item summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144, "SOFT" 50;
+        font-size: 1.18rem;
+        line-height: 1.25;
+        letter-spacing: -0.008em;
+        color: var(--ink);
+        transition: color 0.2s ease;
+      }
+      .faq-item summary::-webkit-details-marker { display: none; }
+      .faq-item summary::after {
+        content: "+";
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1rem;
+        color: var(--muted);
+        transition: transform 0.25s ease, color 0.2s ease;
+        flex-shrink: 0;
+      }
+      .faq-item[open] summary { color: var(--dawn); }
+      .faq-item[open] summary::after {
+        content: "—";
+        color: var(--dawn);
+      }
+      .faq-item summary:hover { color: var(--dawn); }
+      .faq-item p {
+        margin: 0.8rem 0 0;
+        color: var(--ink-soft);
+        max-width: 60ch;
+        line-height: 1.6;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Closing CTA — quiet typographic appeal (Inspo: cta/quiet)
+       * ------------------------------------------------------------------ */
+      .close {
+        text-align: center;
+        padding: clamp(5rem, 11vw, 9rem) 0;
+      }
+      .close .display {
+        font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+        line-height: 1.04;
+        max-width: 22ch;
+        margin: 0 auto;
+        text-wrap: balance;
+      }
+      .close .display em {
+        font-style: italic;
+        color: var(--dawn);
+      }
+      .close .lede {
+        margin: 1.5rem auto 0;
+        text-align: center;
+        max-width: 50ch;
+      }
+      .close .row {
+        margin-top: 2.5rem;
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .close .meta {
+        margin-top: 1.5rem;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Footer — Colophon (Inspo: footer/colophon)
+       * ------------------------------------------------------------------ */
+      footer.site {
+        border-top: 1px solid var(--rule);
+        background: var(--paper);
+        padding: 3.5rem 0 2.5rem;
+      }
+      .foot-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      @media (min-width: 760px) {
+        .foot-grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+      }
+      .foot-grid .meta {
+        margin-bottom: 0.85rem;
+        display: block;
+      }
+      .foot-grid p, .foot-grid a {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+      }
+      .foot-grid a {
+        display: block;
+        transition: color 0.2s;
+        padding: 0.1rem 0;
+      }
+      .foot-grid a:hover { color: var(--dawn); }
+      .foot-bottom {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--rule);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: baseline;
+      }
+      .foot-bottom .meta { margin: 0; }
+
+      .foot-wordmark {
+        font-family: "Fraunces", serif;
+        font-variation-settings: "opsz" 144;
+        font-size: 2.25rem;
+        letter-spacing: -0.022em;
+        line-height: 1;
+      }
+      .foot-wordmark .dot { color: var(--dawn); }
+      .foot-tag {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+        max-width: 32ch;
+        line-height: 1.55;
+      }
+
+      /* ------------------------------------------------------------------
+       *  Accessibility / focus rings
+       * ------------------------------------------------------------------ */
+      :focus-visible {
+        outline: 2px solid var(--dawn);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+      .btn:focus-visible { outline-offset: 4px; }
+
+      /* Print: keep the page readable on paper */
+      @media print {
+        body::before, .hero-panel::before, .hero-panel::after { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ============================================================
+         NAV
+         ============================================================ -->
+    <header class="nav" id="topnav">
+      <div class="wrap row">
+        <a class="wordmark" href="#" aria-label="Stilla, home">
+          Stilla<span class="dot">.</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#ritual">The practice</a>
+          <a href="#library">Library</a>
+          <a href="#voice">Voices</a>
+          <a href="#trial">Pricing</a>
+        </nav>
+        <a class="btn dawn" href="#trial">
+          <span>Begin 14-day trial</span>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         HERO — Marquee
+         ============================================================ -->
+    <section class="hero" aria-labelledby="hero-h">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-eyebrow">
+              <span class="pulse" aria-hidden="true"></span>
+              <span class="meta">Issue Nº01 — A guided practice</span>
+            </div>
+            <h1 id="hero-h" class="display">
+              Ten quiet minutes, before the day <em>takes the rest</em>.
+            </h1>
+            <p class="hero-sub">
+              Stilla is a meditation and sleep app for people who don't
+              think of themselves as meditators. Short sessions, real
+              teachers, nothing chirpy. Begin once and the second day is
+              easier than the first.
+            </p>
+            <div class="hero-ctas">
+              <a class="btn dawn large" href="#trial">
+                <span>Start 14 days free</span>
+                <span class="arr" aria-hidden="true">→</span>
+              </a>
+              <a class="btn ghost large" href="#ritual">
+                <span>How it works</span>
+              </a>
+            </div>
+            <p class="hero-fineprint">
+              No card. No alarm. Cancel from inside the app.
+            </p>
+          </div>
+
+          <!-- Ambient breathing panel — CSS only, no images -->
+          <div class="hero-panel" aria-hidden="true">
+            <span class="corner top">Inhale · 4s</span>
+            <span class="corner bottom">Exhale · 6s</span>
+            <span class="inner-dot"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROOF STRIP — quiet press band
+         ============================================================ -->
+    <section class="proof" aria-label="As mentioned by">
+      <div class="wrap proof-row">
+        <span class="meta">As mentioned by</span>
+        <div class="proof-names" role="list">
+          <span role="listitem"><em>The Calm Issue</em></span>
+          <span role="listitem"><em>Quiet Quarterly</em></span>
+          <span role="listitem"><em>Habit Journal</em></span>
+          <span role="listitem"><em>The Listener</em></span>
+          <span role="listitem"><em>Mind &amp; Margin</em></span>
+        </div>
+        <span class="meta">2024 — present</span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THE PRACTICE — Numbered triplet
+         ============================================================ -->
+    <section class="section" id="ritual" aria-labelledby="ritual-h">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="meta">The practice</span>
+          <div>
+            <h2 id="ritual-h" class="display">
+              Three small habits, repeated <em>without ceremony</em>.
+            </h2>
+            <p class="lede">
+              We borrowed from monastic rule and modern CBT in equal
+              parts. None of it is mystical. None of it requires belief.
+            </p>
+          </div>
+        </div>
+
+        <ol class="ritual" role="list">
+          <li>
+            <div class="step">
+              <span class="meta n">Step 01 — Morning</span>
+              <h3>A short sit, before the inbox.</h3>
+              <p>
+                Five to ten minutes of guided attention. Different
+                teacher each day, so it never settles into a script
+                you stop hearing.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="step">
+              <span class="meta n">Step 02 — Anywhere</span>
+              <h3>One breath, when you remember.</h3>
+              <p>
+                A pocket library of 90-second resets — for meetings,
+                traffic, the moment between texts. Three taps, in,
+                out.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="step">
+              <span class="meta n">Step 03 — At night</span>
+              <h3>A story you don't finish.</h3>
+              <p>
+                Sleep stories read low and slow by writers we admire.
+                Most listeners are out by minute four. The story
+                continues without you.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FEATURES — Alternating rows
+         ============================================================ -->
+    <div class="features-wrap">
+      <section class="section" id="library" aria-labelledby="lib-h">
+        <div class="wrap">
+          <div class="section-head">
+            <span class="meta">The library</span>
+            <div>
+              <h2 id="lib-h" class="display">
+                Built like a small <em>private radio station</em>.
+              </h2>
+              <p class="lede">
+                Every session is original. Every voice is credited. We
+                file them by mood, hour, and duration — the way you'd
+                file records on a shelf.
+              </p>
+            </div>
+          </div>
+
+          <ul class="feat-rows" role="list">
+
+            <!-- Row 1 -->
+            <li class="feat-row">
+              <div class="feat-copy">
+                <span class="meta">Section A — Sound</span>
+                <h3>Three hundred original sessions, read aloud.</h3>
+                <p>
+                  Stilla's library is recorded in a small studio in
+                  Lisbon. No royalty-free voiceover, no AI narration —
+                  just teachers reading their own words. Listen to the
+                  same teacher all month, or pull a stranger's voice
+                  at random.
+                </p>
+                <a class="more" href="#trial">
+                  Hear a sample
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+              <div class="feat-panel panel-sound" aria-hidden="true">
+                <svg viewBox="0 0 400 320" preserveAspectRatio="none">
+                  <g stroke="#4b5d4d" stroke-width="1" fill="none" stroke-linecap="round">
+                    <path d="M0,160 Q50,140 100,160 T200,160 T300,160 T400,160" />
+                    <path d="M0,180 Q50,150 100,180 T200,180 T300,180 T400,180" opacity="0.6" />
+                    <path d="M0,200 Q50,170 100,200 T200,200 T300,200 T400,200" opacity="0.4" />
+                  </g>
+                  <g fill="#1a1f3a">
+                    <circle cx="50"  cy="160" r="2.5" />
+                    <circle cx="120" cy="160" r="2.5" />
+                    <circle cx="195" cy="160" r="3.5" fill="#c2603f" />
+                    <circle cx="270" cy="160" r="2.5" />
+                    <circle cx="345" cy="160" r="2.5" />
+                  </g>
+                </svg>
+                <span class="label">Programme · Daily Sit · 09:21</span>
+              </div>
+            </li>
+
+            <!-- Row 2 -->
+            <li class="feat-row flip">
+              <div class="feat-copy">
+                <span class="meta">Section B — Night</span>
+                <h3>Sleep stories that don't sound like they were written for adults.</h3>
+                <p>
+                  Forty-two long-form sleep stories — slow, plain,
+                  occasionally beautiful. Adapted from public-domain
+                  travelogues, naturalist's field notes, and short
+                  fiction we commissioned. You won't hear them end.
+                </p>
+                <a class="more" href="#trial">
+                  Browse the night shelf
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+              <div class="feat-panel panel-sleep" aria-hidden="true">
+                <div class="crescent"></div>
+                <div class="stars">
+                  <i style="top:18%; left:62%; width:2px; height:2px;"></i>
+                  <i style="top:24%; left:78%; width:1.5px; height:1.5px;"></i>
+                  <i style="top:32%; left:55%; width:1px; height:1px;"></i>
+                  <i style="top:42%; left:72%; width:2px; height:2px;"></i>
+                  <i style="top:55%; left:84%; width:1.5px; height:1.5px;"></i>
+                  <i style="top:14%; left:88%; width:1px; height:1px;"></i>
+                  <i style="top:48%; left:48%; width:1px; height:1px;"></i>
+                </div>
+                <span class="label">Tonight · The harbour at dusk · 42 min</span>
+              </div>
+            </li>
+
+            <!-- Row 3 -->
+            <li class="feat-row">
+              <div class="feat-copy">
+                <span class="meta">Section C — Habit</span>
+                <h3>A streak that doesn't shame you when you miss a day.</h3>
+                <p>
+                  Stilla counts what you did, not what you broke.
+                  Miss a Tuesday and Wednesday still adds. The point
+                  was never the calendar; it's that you came back.
+                </p>
+                <a class="more" href="#trial">
+                  Read the philosophy
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+              <div class="feat-panel panel-streak" aria-hidden="true">
+                <div class="top-row">
+                  <span class="num">23</span>
+                  <span class="lbl">Days, this season</span>
+                </div>
+                <div class="grid" aria-hidden="true">
+                  <!-- 28 cells — four weeks -->
+                  <div class="cell on"></div><div class="cell on"></div><div class="cell deep"></div><div class="cell on"></div><div class="cell on"></div><div class="cell"></div><div class="cell on"></div>
+                  <div class="cell on"></div><div class="cell deep"></div><div class="cell on"></div><div class="cell on"></div><div class="cell on"></div><div class="cell on"></div><div class="cell on"></div>
+                  <div class="cell deep"></div><div class="cell on"></div><div class="cell on"></div><div class="cell"></div><div class="cell on"></div><div class="cell on"></div><div class="cell deep"></div>
+                  <div class="cell on"></div><div class="cell on"></div><div class="cell deep"></div><div class="cell on"></div><div class="cell today"></div><div class="cell"></div><div class="cell"></div>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================
+         BENTO — Library at a glance
+         ============================================================ -->
+    <section class="section" aria-labelledby="bento-h">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="meta">By the numbers</span>
+          <div>
+            <h2 id="bento-h" class="display">
+              The library — at a <em>quiet glance</em>.
+            </h2>
+            <p class="lede">
+              Numbers Stilla actually keeps, set in the open. We don't
+              pad the catalogue; we shorten it whenever a session
+              starts to feel routine.
+            </p>
+          </div>
+        </div>
+
+        <div class="bento">
+          <article class="tile large">
+            <span class="meta">Lead</span>
+            <h3 class="display">
+              The catalogue is small <em>on purpose</em>, and rotated by season.
+            </h3>
+            <p>
+              Three hundred sessions, four times a year. Each season
+              brings sixty new sittings, twelve new sleep stories, and
+              the retirement of anything we've stopped re-listening to
+              ourselves. Less archive, more programme.
+            </p>
+            <div class="sunrise" aria-hidden="true"></div>
+          </article>
+
+          <article class="tile">
+            <span class="meta">Sessions</span>
+            <span class="big-num display"><em>312</em></span>
+            <p>across morning sits, walks, and stories — refreshed each season.</p>
+          </article>
+
+          <article class="tile">
+            <span class="meta">Teachers</span>
+            <span class="big-num display">17</span>
+            <p>monks, therapists, two poets — credited on every track.</p>
+          </article>
+
+          <article class="tile dark">
+            <span class="meta">Quietly</span>
+            <h3 class="display">No streaks weaponised.</h3>
+            <p>
+              Stilla never sends a 9 p.m. guilt push, and the streak
+              counter pauses while you sleep instead of breaking.
+            </p>
+          </article>
+
+          <article class="tile">
+            <span class="meta">Average sit</span>
+            <span class="big-num display">9<em>m</em></span>
+            <p>short enough you'll actually finish, long enough to change the morning.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TESTIMONIAL — Single voice
+         ============================================================ -->
+    <section class="quote-section" id="voice" aria-labelledby="quote-h">
+      <div class="wrap section">
+        <span class="meta">On the record</span>
+        <div class="quote-grid" style="margin-top:2.5rem;">
+          <div class="quote-card" aria-hidden="true">
+            <span class="corner tl">Letter · 14.02.2026</span>
+            <span class="mono">M.</span>
+            <span class="corner br">From Lyon</span>
+          </div>
+          <figure>
+            <blockquote id="quote-h" class="quote">
+              I had tried four other apps before this one. Stilla
+              was the first that didn't feel like it was trying to
+              sell me a personality. It just sat with me for ten
+              minutes a morning, and that turned out to be enough.
+            </blockquote>
+            <figcaption class="attrib">
+              <b>Margot Vasseur</b> · subscriber since 2024 · letter, lightly edited
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TRIAL / PRICING
+         ============================================================ -->
+    <section class="section" id="trial" aria-labelledby="trial-h">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="meta">The offer</span>
+          <div>
+            <h2 id="trial-h" class="display">
+              Fourteen days. No card. <em>No reminders</em>.
+            </h2>
+            <p class="lede">
+              We never ask for payment information up front, and we
+              never email you to ask why you stopped. If Stilla is for
+              you, you'll know inside two weeks.
+            </p>
+          </div>
+        </div>
+
+        <div class="trial">
+          <div>
+            <h2 class="display">Start in <em>under a minute</em>.</h2>
+            <p class="lede">
+              Drop your email and we'll send a single link — open it
+              on the phone you carry to bed. The first session is
+              ready before you've finished your tea.
+            </p>
+            <ul style="list-style:none; padding:0; margin:1.5rem 0 0; display:grid; gap:0.55rem; color:var(--ink-soft); font-size:0.97rem;">
+              <li style="display:flex;gap:0.7rem;align-items:baseline;"><span style="color:var(--dawn); font-family:'Fraunces', serif; font-style:italic; font-size:1.1rem; line-height:1;">›</span> One short email. No newsletter sign-up.</li>
+              <li style="display:flex;gap:0.7rem;align-items:baseline;"><span style="color:var(--dawn); font-family:'Fraunces', serif; font-style:italic; font-size:1.1rem; line-height:1;">›</span> Two-tap install on iOS and Android.</li>
+              <li style="display:flex;gap:0.7rem;align-items:baseline;"><span style="color:var(--dawn); font-family:'Fraunces', serif; font-style:italic; font-size:1.1rem; line-height:1;">›</span> Web player for your laptop and headphones.</li>
+            </ul>
+          </div>
+
+          <aside class="trial-card" aria-label="Pricing">
+            <div class="row1">
+              <div>
+                <span class="meta">Stilla · annual</span>
+                <p class="price"><em>£3.20</em><small>/month, billed yearly</small></p>
+              </div>
+              <span class="meta" style="text-align:right;">14-day<br/>trial</span>
+            </div>
+            <ul>
+              <li>The full library — sits, walks, stories, resets.</li>
+              <li>Offline downloads for flights and the underground.</li>
+              <li>Two seats — yours and one for someone you live with.</li>
+              <li>New seasonal programme four times a year.</li>
+            </ul>
+
+            <form class="trial-form" id="trialForm" novalidate>
+              <input type="email" name="email" id="trialEmail"
+                     placeholder="you@hello.com"
+                     autocomplete="email" required
+                     aria-label="Your email" />
+              <button type="submit">Begin <span aria-hidden="true">↵</span></button>
+            </form>
+            <p class="trial-fine" id="trialFine">
+              No charge for 14 days. Cancel from inside the app.
+            </p>
+            <p class="trial-success" id="trialOk">
+              ✓ Sent. Check your inbox — the link is good for 30 minutes.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FAQ
+         ============================================================ -->
+    <section class="section" style="padding-top:0;" aria-labelledby="faq-h">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="meta">Asked often</span>
+          <div>
+            <h2 id="faq-h" class="display">
+              Things people <em>ask first</em>.
+            </h2>
+            <p class="lede">
+              Plain answers, written by a person. If yours isn't here,
+              hello@stilla.so reaches the founders.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq">
+          <span class="meta">Six common ones</span>
+          <div class="faq-list">
+
+            <details class="faq-item">
+              <summary>I've tried meditation. It didn't work.</summary>
+              <p>
+                Most apps treat meditation like a habit that "sticks"
+                — like flossing. We treat it like reading: you don't
+                read because it's good for you; you read because you
+                like a particular author. Stilla is built around
+                voices and short forms so you find a teacher you
+                actually want to spend ten minutes with.
+              </p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Is the 14-day trial really no-card?</summary>
+              <p>
+                Yes. You give us an email; we give you a link. If
+                you've still got the app on day 15, we'll ask for a
+                card then. If you've deleted it, we never hear from
+                each other again.
+              </p>
+            </details>
+
+            <details class="faq-item">
+              <summary>What's actually in a "session"?</summary>
+              <p>
+                A short introduction (sometimes thirty seconds, never
+                three minutes), a guided sit, and a single closing
+                thought you can take into the day. Lengths run from
+                five to twenty minutes; default is nine.
+              </p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Who are the teachers?</summary>
+              <p>
+                Seventeen of them, currently. Three Theravāda monks,
+                two psychotherapists, a sleep researcher, two
+                published poets, and nine independent meditation
+                teachers we found by ear. Every teacher is credited
+                on every track they read.
+              </p>
+            </details>
+
+            <details class="faq-item">
+              <summary>Is this private?</summary>
+              <p>
+                Sessions stream encrypted. We don't sell data; we
+                don't have ads; we don't run analytics on what you
+                listened to last night. Account deletion takes one
+                tap and one confirmation.
+              </p>
+            </details>
+
+            <details class="faq-item">
+              <summary>What happens after the trial?</summary>
+              <p>
+                £3.20 a month, billed once a year. That's the
+                price; it has been since we started, and we don't
+                plan to change it. Two seats per account so you
+                can share it with someone at home.
+              </p>
+            </details>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CLOSING CTA — Quiet
+         ============================================================ -->
+    <section class="close" aria-labelledby="close-h">
+      <div class="wrap">
+        <p id="close-h" class="display">
+          You've read enough about it.
+          <em>Try ten quiet minutes.</em>
+        </p>
+        <p class="lede">
+          Fourteen days, no card, no follow-up email if you don't
+          come back. We made the trial that long because the first
+          three days never feel like much.
+        </p>
+        <div class="row">
+          <a class="btn dawn large" href="#trial">
+            <span>Begin 14-day trial</span>
+            <span class="arr" aria-hidden="true">→</span>
+          </a>
+          <a class="btn ghost large" href="#ritual">
+            <span>Read the practice</span>
+          </a>
+        </div>
+        <p class="meta">A small Lisbon studio · est. 2024</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER — Colophon
+         ============================================================ -->
+    <footer class="site">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <p class="foot-wordmark">Stilla<span class="dot">.</span></p>
+            <p class="foot-tag">
+              A small daily practice for a quieter mind. Made in
+              Lisbon, listened to in 41 countries.
+            </p>
+          </div>
+
+          <div>
+            <span class="meta">The app</span>
+            <a href="#ritual">The practice</a>
+            <a href="#library">Library</a>
+            <a href="#voice">Voices</a>
+            <a href="#trial">Pricing</a>
+          </div>
+          <div>
+            <span class="meta">Colophon</span>
+            <a href="#">About the studio</a>
+            <a href="#">Teachers, credited</a>
+            <a href="#">Press &amp; reviews</a>
+            <a href="#">Privacy by default</a>
+          </div>
+          <div>
+            <span class="meta">Reach</span>
+            <a href="mailto:hello@stilla.so">hello@stilla.so</a>
+            <a href="#">Help — within a day</a>
+            <a href="#">App Store</a>
+            <a href="#">Google Play</a>
+          </div>
+        </div>
+
+        <div class="foot-bottom">
+          <span class="meta">© <span id="yr">2026</span> Stilla Studio Lda. — Lisbon</span>
+          <span class="meta">Set in Fraunces, Inter Tight, JetBrains Mono</span>
+          <span class="meta">All teachers credited</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Sticky-nav rule reveal on scroll
+      (function () {
+        var nav = document.getElementById("topnav");
+        var onScroll = function () {
+          if (window.scrollY > 12) nav.classList.add("scrolled");
+          else nav.classList.remove("scrolled");
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      })();
+
+      // Trial form — show success state, no real network
+      (function () {
+        var form = document.getElementById("trialForm");
+        var fine = document.getElementById("trialFine");
+        var ok   = document.getElementById("trialOk");
+        if (!form) return;
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var email = document.getElementById("trialEmail").value.trim();
+          if (!email || email.indexOf("@") === -1) {
+            document.getElementById("trialEmail").focus();
+            return;
+          }
+          form.classList.add("is-done");
+          fine.classList.add("is-done");
+          ok.classList.add("is-done");
+        });
+      })();
+
+      // FAQ — keep only one item open at a time
+      (function () {
+        var items = document.querySelectorAll(".faq-item");
+        items.forEach(function (it) {
+          it.addEventListener("toggle", function () {
+            if (!it.open) return;
+            items.forEach(function (other) {
+              if (other !== it) other.open = false;
+            });
+          });
+        });
+      })();
+
+      // Year
+      document.getElementById("yr").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
