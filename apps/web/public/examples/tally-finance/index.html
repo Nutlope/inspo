@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tally — Friendly budgeting that actually sticks</title>
+<meta name="description" content="Tally is a warm, friendly money app that turns your spending into a calm weekly picture. Set a budget, watch the ring, and keep more without the spreadsheet guilt." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ───────────────────────────────────────────────────────────
+     Tally — built purely from Inspo references.
+     Palette traced to:
+       · paper / oatmeal cream  → pi.ai (#d5ccbb earthy) + owo-app butter-cream
+       · terracotta accent      → pi.ai (#ee7637), owo-app peach (#ff8000)
+       · money-green (growth)   → pi.ai (#15895d) — friendly sage, NOT cold teal
+       · blush detail           → pi.ai accent (#e794b5)
+       · warm ink               → dia-com (#69411b) / owo-app peach-900 (#331a00)
+     Type: friendly grotesque display (consumer-app register like owo-app's
+       bold rounded Greed) + Inter UI (dia-com Inter Tight family) + mono
+       numerals for financial data.
+     ─────────────────────────────────────────────────────────── */
+
+  :root{
+    --paper:    #F5F0E6;   /* warm oatmeal page */
+    --paper-2:  #EFE8D9;   /* sunk panel */
+    --paper-3:  #E8DFCC;   /* deeper sunk / hairline fill */
+    --card:     #FBF8F1;   /* raised card (slightly lifted off paper) */
+    --card-2:   #FFFFFF;
+
+    --ink:      #2A2118;   /* warm near-black (brown-black) */
+    --ink-soft: #4A3E30;   /* body */
+    --ink-dim:  #6F6452;   /* secondary */
+    --ink-mute: #9A8E78;   /* tertiary / labels */
+
+    --terra:    #E0682E;   /* primary accent — terracotta */
+    --terra-2:  #C8551F;   /* hover / deeper */
+    --terra-wash:#F7E2D4;  /* terracotta tint fill */
+
+    --moss:     #1E7A52;   /* money / growth green */
+    --moss-2:   #15613F;
+    --moss-wash:#DEEBE0;   /* green tint fill */
+
+    --blush:    #F0BBC7;   /* soft pink detail */
+    --blush-2:  #F7DCE2;
+    --gold:     #E0A53A;   /* warm gold for one chart series */
+
+    --line:     #E0D7C5;   /* hairline on paper */
+    --line-2:   #D4C8B2;   /* stronger hairline */
+    --line-card:#EAE2D2;   /* hairline inside cards */
+
+    --sans: "Inter", -apple-system, system-ui, sans-serif;
+    --disp: "Bricolage Grotesque", "Inter", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+    --pad: clamp(20px, 4.5vw, 56px);
+    --maxw: 1200px;
+    --shadow-card: 0 1px 2px rgba(42,33,24,.04), 0 10px 30px -16px rgba(42,33,24,.18);
+    --shadow-float: 0 2px 4px rgba(42,33,24,.05), 0 24px 60px -24px rgba(42,33,24,.30);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--terra);color:#fff}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;border:0;background:transparent;color:inherit;cursor:pointer}
+  svg{display:block}
+  img{max-width:100%;display:block}
+
+  h1,h2,h3,h4{
+    margin:0;
+    font-family:var(--disp);
+    font-weight:700;
+    line-height:1.04;
+    letter-spacing:-0.02em;
+    color:var(--ink);
+  }
+  p{margin:0}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    font-weight:500;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--terra);display:inline-block}
+  .mono{font-family:var(--mono)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  /* buttons ─────────────────────────────────────── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:13px 22px;border-radius:999px;
+    font-family:var(--sans);font-size:15px;font-weight:600;letter-spacing:-0.01em;
+    border:1px solid transparent;white-space:nowrap;
+    transition:transform .18s cubic-bezier(.2,.7,.3,1), background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--ink);color:var(--paper);box-shadow:0 1px 0 rgba(0,0,0,.04)}
+  .btn-primary:hover{background:var(--terra);transform:translateY(-1px)}
+  .btn-ghost{border-color:var(--line-2);color:var(--ink);background:rgba(255,255,255,.4)}
+  .btn-ghost:hover{border-color:var(--ink);background:var(--card-2)}
+  .btn-arrow{transition:transform .18s ease}
+  .btn:hover .btn-arrow{transform:translate(2px,-2px)}
+
+  /* ───────────────── NAV ───────────────── */
+  .nav{
+    position:absolute;top:0;left:0;right:0;z-index:40;
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    height:74px;
+  }
+  .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:-0.03em;color:var(--ink)}
+  .brand-mark{
+    width:30px;height:30px;border-radius:9px;
+    background:var(--terra);
+    display:grid;place-items:center;flex:none;
+    box-shadow:0 4px 10px -4px rgba(224,104,46,.6);
+  }
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a{font-size:14.5px;font-weight:450;color:var(--ink-soft);transition:color .15s ease}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:12px}
+  .nav-login{font-size:14.5px;font-weight:500;color:var(--ink-soft)}
+  .nav-login:hover{color:var(--ink)}
+
+  /* ───────────────── HERO ───────────────── */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  /* soft atmospheric warmth behind hero */
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 82% 18%, rgba(224,104,46,.10), transparent 70%),
+      radial-gradient(55% 55% at 12% 88%, rgba(30,122,82,.08), transparent 70%);
+  }
+  .hero-body{
+    position:relative;z-index:1;
+    flex:1;display:flex;align-items:center;
+    padding-top:90px;padding-bottom:34px;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.04fr 1fr;
+    gap:clamp(28px,4vw,64px);
+    align-items:center;
+    width:100%;
+  }
+
+  .hero-eyebrow{margin-bottom:22px}
+  .hero h1{
+    font-size:clamp(2.5rem, 5vw, 4.15rem);
+    line-height:1.02;
+    letter-spacing:-0.032em;
+    font-weight:700;
+    max-width:14ch;
+  }
+  .hero h1 .gleam{color:var(--terra)}
+  .hero h1 .u{
+    position:relative;white-space:nowrap;
+  }
+  .hero h1 .u svg{
+    position:absolute;left:0;right:0;bottom:-0.14em;width:100%;height:0.34em;
+    overflow:visible;
+  }
+  .hero-lead{
+    margin-top:22px;
+    font-size:clamp(16px,1.25vw,18.5px);
+    line-height:1.55;
+    color:var(--ink-soft);
+    max-width:42ch;
+  }
+  .hero-cta{margin-top:30px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hero-meta{margin-top:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .hero-stars{display:inline-flex;align-items:center;gap:8px;color:var(--ink-dim);font-size:13.5px;font-weight:450}
+  .stars{display:inline-flex;gap:1px}
+  .hero-free{display:inline-flex;align-items:center;gap:7px;color:var(--ink-dim);font-size:13.5px;font-weight:450}
+  .hero-free svg{flex:none}
+
+  /* ── PRODUCT MOCK ── */
+  .mock-stage{position:relative;display:flex;justify-content:center}
+  .phone{
+    position:relative;
+    width:min(340px, 92%);
+    background:var(--card);
+    border:1px solid var(--line-card);
+    border-radius:34px;
+    padding:14px;
+    box-shadow:var(--shadow-float);
+  }
+  .phone-screen{
+    background:linear-gradient(180deg, #FCFAF4 0%, #FBF7EE 100%);
+    border:1px solid var(--line-card);
+    border-radius:24px;
+    overflow:hidden;
+  }
+  .ps-top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px 10px;
+  }
+  .ps-hi{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-0.02em;color:var(--ink)}
+  .ps-hi span{color:var(--ink-mute);font-weight:500;font-size:12px;display:block;letter-spacing:0;font-family:var(--sans);margin-top:1px}
+  .ps-avatar{width:34px;height:34px;border-radius:50%;background:var(--blush);display:grid;place-items:center;font-family:var(--disp);font-weight:700;color:#7E3B49;font-size:14px;flex:none}
+
+  /* budget ring card */
+  .ring-card{
+    margin:4px 14px 0;
+    background:var(--card-2);
+    border:1px solid var(--line-card);
+    border-radius:18px;
+    padding:16px 16px 14px;
+    display:flex;align-items:center;gap:16px;
+  }
+  .ring-wrap{position:relative;width:108px;height:108px;flex:none}
+  .ring-wrap svg{width:108px;height:108px;transform:rotate(-90deg)}
+  .ring-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+  }
+  .ring-center .big{font-family:var(--mono);font-weight:600;font-size:21px;color:var(--ink);letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+  .ring-center .lab{font-size:9.5px;color:var(--ink-mute);letter-spacing:0.04em;text-transform:uppercase;margin-top:1px}
+  .ring-side{flex:1;min-width:0}
+  .ring-side .left-label{font-size:12px;color:var(--ink-dim);font-weight:450}
+  .ring-side .left-amt{font-family:var(--disp);font-weight:700;font-size:25px;color:var(--moss);letter-spacing:-0.03em;line-height:1.05;margin-top:2px}
+  .ring-pills{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .rpill{font-size:10.5px;font-weight:500;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;background:var(--paper-2);color:var(--ink-soft)}
+  .rpill i{width:7px;height:7px;border-radius:2px;display:inline-block}
+
+  /* transactions */
+  .tx-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 8px}
+  .tx-head .t{font-family:var(--disp);font-weight:600;font-size:13.5px;color:var(--ink);letter-spacing:-0.01em}
+  .tx-head .all{font-size:11.5px;color:var(--terra);font-weight:600}
+  .tx-list{padding:0 14px 16px;display:flex;flex-direction:column;gap:7px}
+  .tx{
+    display:flex;align-items:center;gap:11px;
+    background:var(--card-2);
+    border:1px solid var(--line-card);
+    border-radius:13px;
+    padding:9px 12px;
+  }
+  .tx-ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .tx-mid{flex:1;min-width:0}
+  .tx-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tx-cat{font-size:10.5px;color:var(--ink-mute);letter-spacing:.01em}
+  .tx-amt{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+  .tx-amt.pos{color:var(--moss)}
+
+  /* floating chips around phone */
+  .chip{
+    position:absolute;z-index:3;
+    background:var(--card-2);
+    border:1px solid var(--line-card);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    padding:10px 13px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .chip .chip-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .chip .chip-tx{line-height:1.2}
+  .chip .chip-lab{font-size:10px;color:var(--ink-mute);letter-spacing:.02em}
+  .chip .chip-val{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--ink);letter-spacing:-0.02em}
+  .chip-save{top:11%;left:-8%;animation:floatA 7s ease-in-out infinite}
+  .chip-goal{bottom:13%;right:-7%;animation:floatB 8s ease-in-out infinite}
+
+  @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  @keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  /* ───────────────── trust strip ───────────────── */
+  .trust{
+    position:relative;z-index:1;
+    border-top:1px solid var(--line);
+    padding:18px 0 6px;
+  }
+  .trust-inner{display:flex;align-items:center;gap:clamp(18px,4vw,46px);flex-wrap:wrap;justify-content:center}
+  .trust-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-mute)}
+  .trust-logos{display:flex;align-items:center;gap:clamp(16px,3vw,34px);flex-wrap:wrap;justify-content:center}
+  .tlogo{display:inline-flex;align-items:center;gap:8px;color:var(--ink-dim);font-weight:600;font-size:14.5px;letter-spacing:-0.01em;opacity:.78;font-family:var(--disp)}
+  .tlogo svg{opacity:.7}
+
+  /* ───────────────── SECTION SHELL ───────────────── */
+  section{position:relative}
+  .sec{padding:clamp(72px,9vw,120px) 0}
+  .sec-head{max-width:660px}
+  .sec-head.center{margin:0 auto;text-align:center}
+  .sec-head h2{
+    font-size:clamp(2rem,3.6vw,3.1rem);
+    letter-spacing:-0.028em;
+    line-height:1.05;
+    font-weight:700;
+  }
+  .sec-head p{margin-top:16px;font-size:clamp(16px,1.2vw,18px);color:var(--ink-dim);line-height:1.55;max-width:52ch}
+  .sec-head.center p{margin-left:auto;margin-right:auto}
+
+  /* ── FEATURE BENTO ── */
+  .bento{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:16px;
+    margin-top:clamp(40px,5vw,60px);
+  }
+  .bcard{
+    background:var(--card);
+    border:1px solid var(--line-card);
+    border-radius:22px;
+    padding:26px;
+    position:relative;overflow:hidden;
+    box-shadow:var(--shadow-card);
+  }
+  .bcard h3{font-size:20px;letter-spacing:-0.02em;font-weight:700;margin-bottom:8px}
+  .bcard p{font-size:14.5px;color:var(--ink-dim);line-height:1.55;max-width:34ch}
+  .bcard .ftag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:16px;display:block}
+  .b-wide{grid-column:span 3}
+  .b-tall{grid-column:span 3}
+  .b-sm{grid-column:span 2}
+
+  /* mini bar chart in bento */
+  .barz{display:flex;align-items:flex-end;gap:8px;height:96px;margin-top:20px}
+  .barz .bar{flex:1;border-radius:6px 6px 3px 3px;background:var(--paper-3);position:relative;transition:height .4s ease}
+  .barz .bar.on{background:var(--moss)}
+  .barz .bar.hot{background:var(--terra)}
+  .barz-x{display:flex;gap:8px;margin-top:8px}
+  .barz-x span{flex:1;text-align:center;font-family:var(--mono);font-size:9.5px;color:var(--ink-mute)}
+
+  /* category split mini */
+  .splits{margin-top:18px;display:flex;flex-direction:column;gap:11px}
+  .split-row{display:flex;align-items:center;gap:11px}
+  .split-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .split-mid{flex:1}
+  .split-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+  .split-top .nm{color:var(--ink-soft);font-weight:500}
+  .split-top .vl{font-family:var(--mono);color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .split-track{height:7px;border-radius:999px;background:var(--paper-3);overflow:hidden}
+  .split-fill{height:100%;border-radius:999px}
+
+  /* auto-pilot card */
+  .pilot{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .pilot-row{display:flex;align-items:center;gap:10px;background:var(--card-2);border:1px solid var(--line-card);border-radius:12px;padding:10px 12px}
+  .pilot-check{width:20px;height:20px;border-radius:50%;background:var(--moss);display:grid;place-items:center;flex:none}
+  .pilot-tx{font-size:13px;color:var(--ink-soft)}
+  .pilot-tx b{color:var(--ink);font-weight:600}
+
+  /* ── HOW / STEPS ── */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+    margin-top:clamp(40px,5vw,56px);
+  }
+  .step{
+    background:var(--card);border:1px solid var(--line-card);border-radius:20px;padding:28px 26px;
+    box-shadow:var(--shadow-card);
+  }
+  .step-n{
+    font-family:var(--mono);font-size:12px;font-weight:600;color:var(--terra);
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;letter-spacing:.05em;
+  }
+  .step-n i{width:26px;height:26px;border-radius:8px;background:var(--terra-wash);display:grid;place-items:center;color:var(--terra-2)}
+  .step h3{font-size:18.5px;font-weight:700;letter-spacing:-0.02em;margin-bottom:7px}
+  .step p{font-size:14px;color:var(--ink-dim);line-height:1.55}
+
+  /* ── SHOWCASE / weekly recap band ── */
+  .band{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .recap{
+    display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,5vw,72px);align-items:center;
+  }
+  .recap-card{
+    background:var(--card);border:1px solid var(--line-card);border-radius:24px;
+    box-shadow:var(--shadow-float);overflow:hidden;
+  }
+  .recap-top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px;border-bottom:1px solid var(--line-card);
+  }
+  .recap-top .rt-l{display:flex;align-items:center;gap:10px}
+  .recap-top .rt-dot{width:9px;height:9px;border-radius:50%;background:var(--terra)}
+  .recap-top .rt-t{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:-0.02em}
+  .recap-top .rt-date{font-family:var(--mono);font-size:11px;color:var(--ink-mute)}
+  .recap-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-card)}
+  .recap-cell{background:var(--card);padding:18px 22px}
+  .recap-cell .rc-lab{font-size:11.5px;color:var(--ink-mute);letter-spacing:.02em;display:flex;align-items:center;gap:7px}
+  .recap-cell .rc-val{font-family:var(--disp);font-weight:700;font-size:clamp(24px,2.6vw,30px);letter-spacing:-0.03em;margin-top:6px;line-height:1}
+  .recap-cell .rc-sub{font-family:var(--mono);font-size:11px;margin-top:6px;display:inline-flex;align-items:center;gap:5px}
+  .up{color:var(--moss)}.down{color:var(--terra)}
+  .recap-chart{padding:18px 22px;border-top:1px solid var(--line-card)}
+  .recap-chart .rc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .recap-chart .rc-h .l{font-size:12.5px;color:var(--ink-soft);font-weight:500}
+  .legend{display:flex;gap:14px}
+  .legend span{font-size:11px;color:var(--ink-dim);display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:3px;border-radius:2px}
+
+  .recap-list{display:flex;flex-direction:column;gap:14px}
+  .rl-item{display:flex;gap:14px;align-items:flex-start}
+  .rl-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+  .rl-tx h4{font-family:var(--disp);font-size:16px;font-weight:700;letter-spacing:-0.02em;margin-bottom:3px}
+  .rl-tx p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;max-width:40ch}
+
+  /* ── STATS strip ── */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-top:8px}
+  .stat{background:var(--paper);padding:30px 26px}
+  .stat .s-v{font-family:var(--disp);font-weight:700;font-size:clamp(30px,3.6vw,42px);letter-spacing:-0.03em;line-height:1;color:var(--ink)}
+  .stat .s-v .small{font-size:.6em;color:var(--ink-mute)}
+  .stat .s-l{font-size:13px;color:var(--ink-dim);margin-top:10px;line-height:1.45;max-width:24ch}
+
+  /* ── TESTIMONIAL ── */
+  .quote-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(28px,4vw,56px);align-items:center}
+  .quote{
+    font-family:var(--disp);font-weight:500;
+    font-size:clamp(1.5rem,2.9vw,2.35rem);
+    line-height:1.18;letter-spacing:-0.02em;color:var(--ink);
+  }
+  .quote .hl{color:var(--terra)}
+  .quote-by{margin-top:26px;display:flex;align-items:center;gap:13px}
+  .qb-av{width:46px;height:46px;border-radius:50%;background:var(--moss-wash);display:grid;place-items:center;font-family:var(--disp);font-weight:700;color:var(--moss-2);flex:none}
+  .qb-tx .nm{font-weight:600;font-size:15px;color:var(--ink)}
+  .qb-tx .rl{font-size:13px;color:var(--ink-mute)}
+  .mini-cards{display:flex;flex-direction:column;gap:12px}
+  .mini-q{background:var(--card);border:1px solid var(--line-card);border-radius:16px;padding:18px;box-shadow:var(--shadow-card)}
+  .mini-q p{font-size:14px;color:var(--ink-soft);line-height:1.55}
+  .mini-q .mq-by{margin-top:12px;font-size:12.5px;color:var(--ink-mute);display:flex;align-items:center;gap:8px}
+  .mini-q .mq-dot{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--disp);font-weight:700;font-size:11px}
+
+  /* ── PRICING ── */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:clamp(40px,5vw,56px);max-width:860px;margin-left:auto;margin-right:auto}
+  .plan{background:var(--card);border:1px solid var(--line-card);border-radius:22px;padding:30px 30px 32px;box-shadow:var(--shadow-card);position:relative}
+  .plan.feat{border-color:var(--terra);box-shadow:0 2px 4px rgba(224,104,46,.08), 0 24px 50px -26px rgba(224,104,46,.45)}
+  .plan-badge{position:absolute;top:-11px;right:24px;background:var(--terra);color:#fff;font-size:11px;font-weight:600;letter-spacing:.02em;padding:5px 12px;border-radius:999px;font-family:var(--sans)}
+  .plan-name{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:-0.02em}
+  .plan-desc{font-size:13.5px;color:var(--ink-dim);margin-top:6px;line-height:1.5}
+  .plan-price{margin-top:20px;display:flex;align-items:baseline;gap:6px}
+  .plan-price .amt{font-family:var(--disp);font-weight:700;font-size:46px;letter-spacing:-0.03em;line-height:1}
+  .plan-price .per{font-size:14px;color:var(--ink-mute)}
+  .plan ul{list-style:none;margin:22px 0 26px;padding:0;display:flex;flex-direction:column;gap:11px}
+  .plan li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink-soft);line-height:1.4}
+  .plan li svg{flex:none;margin-top:2px}
+  .plan .btn{width:100%}
+
+  /* ── FAQ ── */
+  .faq{max-width:760px;margin:clamp(38px,4vw,52px) auto 0;border-top:1px solid var(--line)}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{
+    list-style:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    padding:22px 4px;
+    font-family:var(--disp);font-weight:600;font-size:clamp(16px,1.6vw,19px);letter-spacing:-0.015em;color:var(--ink);
+  }
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .ico{
+    flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);
+    display:grid;place-items:center;transition:transform .25s ease, background .25s ease, border-color .25s ease;
+    color:var(--ink-dim);
+  }
+  .faq details[open] summary .ico{transform:rotate(45deg);background:var(--terra);border-color:var(--terra);color:#fff}
+  .faq .ans{padding:0 4px 24px;font-size:15px;color:var(--ink-dim);line-height:1.6;max-width:62ch}
+
+  /* ── FINAL CTA ── */
+  .cta-band{
+    margin:0 var(--pad);
+    background:linear-gradient(135deg, #2A2118 0%, #3A2C1E 60%, #4A3115 100%);
+    border-radius:30px;
+    padding:clamp(48px,7vw,88px) clamp(28px,5vw,72px);
+    position:relative;overflow:hidden;
+    text-align:center;
+  }
+  .cta-band::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(50% 70% at 84% 10%, rgba(224,104,46,.34), transparent 65%),
+      radial-gradient(50% 70% at 12% 96%, rgba(30,122,82,.26), transparent 62%);
+  }
+  .cta-band .cta-in{position:relative;z-index:1;max-width:620px;margin:0 auto}
+  .cta-band .eyebrow{color:rgba(245,240,230,.6)}
+  .cta-band .eyebrow .dot{background:var(--terra)}
+  .cta-band h2{color:#F5F0E6;font-size:clamp(2.1rem,4.4vw,3.5rem);letter-spacing:-0.03em;line-height:1.02;margin-top:18px}
+  .cta-band h2 .it{color:#F0A86A}
+  .cta-band p{color:rgba(245,240,230,.72);margin-top:18px;font-size:clamp(15px,1.3vw,18px);line-height:1.55;max-width:46ch;margin-left:auto;margin-right:auto}
+  .cta-band .cta-row{margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-light{background:var(--paper);color:var(--ink)}
+  .btn-light:hover{background:#fff;transform:translateY(-1px)}
+  .btn-onmuted{border-color:rgba(245,240,230,.28);color:#F5F0E6;background:transparent}
+  .btn-onmuted:hover{border-color:#F5F0E6;background:rgba(245,240,230,.08)}
+  .cta-note{margin-top:18px;font-family:var(--mono);font-size:11.5px;color:rgba(245,240,230,.5);letter-spacing:.02em}
+
+  /* ── FOOTER ── */
+  footer{padding:clamp(56px,7vw,84px) 0 40px}
+  .foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;padding-bottom:48px;border-bottom:1px solid var(--line)}
+  .foot-brand .brand{margin-bottom:16px}
+  .foot-brand p{font-size:14px;color:var(--ink-dim);line-height:1.6;max-width:30ch}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);margin:0 0 16px;font-weight:500}
+  .foot-col a{display:block;font-size:14px;color:var(--ink-soft);margin-bottom:11px;transition:color .15s ease}
+  .foot-col a:hover{color:var(--terra)}
+  .foot-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:26px;flex-wrap:wrap;gap:14px}
+  .foot-bottom p{font-size:13px;color:var(--ink-mute)}
+  .foot-social{display:flex;gap:10px}
+  .foot-social a{width:34px;height:34px;border-radius:9px;border:1px solid var(--line-2);display:grid;place-items:center;color:var(--ink-dim);transition:all .15s ease}
+  .foot-social a:hover{color:var(--ink);border-color:var(--ink)}
+
+  .mobile-only{display:none}
+
+  /* ─────────────────────────── RESPONSIVE ─────────────────────────── */
+  @media (max-width: 980px){
+    .hero-grid{grid-template-columns:1fr;gap:36px}
+    .hero{min-height:auto}
+    .hero-body{padding-top:104px;padding-bottom:48px;align-items:flex-start}
+    .hero h1{max-width:18ch}
+    .hero-lead{max-width:54ch}
+    .mock-stage{margin-top:6px}
+    .b-wide,.b-tall{grid-column:span 6}
+    .b-sm{grid-column:span 3}
+    .steps{grid-template-columns:1fr}
+    .recap{grid-template-columns:1fr}
+    .quote-wrap{grid-template-columns:1fr;gap:32px}
+    .stats{grid-template-columns:1fr 1fr}
+    .foot-top{grid-template-columns:1fr 1fr;gap:30px}
+  }
+  @media (max-width: 720px){
+    .nav-links{display:none}
+    .nav-login{display:none}
+  }
+  @media (max-width: 560px){
+    :root{--pad:20px}
+    .hero-body{padding-top:96px}
+    .hero h1{font-size:clamp(2.15rem,9.5vw,2.9rem)}
+    .price-grid{grid-template-columns:1fr}
+    .price-grid .plan.feat{order:-1}
+    .b-sm{grid-column:span 6}
+    .stats{grid-template-columns:1fr 1fr}
+    .foot-top{grid-template-columns:1fr 1fr}
+    .chip-save{left:-2%;top:7%;transform:scale(.9)}
+    .chip-goal{right:-2%;transform:scale(.9)}
+    .mobile-only{display:block}
+    .desktop-only{display:none}
+    .hero-meta{gap:14px}
+  }
+  @media (max-width: 380px){
+    .foot-top{grid-template-columns:1fr}
+    .chip{display:none}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+    html{scroll-behavior:auto}
+  }
+  html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<!-- ───────────────── NAV ───────────────── -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#" aria-label="Tally home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 11.5L3 4.5M6.2 11.5L6.2 2.6M9.4 11.5L9.4 6M13 8.5L4 8.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Tally
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="nav-login desktop-only">Log in</a>
+      <a href="#pricing" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ───────────────── HERO ───────────────── -->
+<header class="hero">
+  <div class="wrap hero-body">
+    <div class="hero-grid">
+
+      <!-- left: copy -->
+      <div class="hero-copy">
+        <span class="eyebrow hero-eyebrow"><span class="dot"></span>Personal budgeting, made warm</span>
+        <h1>
+          Money that
+          <span class="u">feels
+            <svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M2 11 C 45 4, 90 4, 132 8 S 185 13, 198 7" stroke="#E0682E" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+          calmer.
+        </h1>
+        <p class="hero-lead">
+          Tally turns your spending into one gentle weekly picture — a budget ring,
+          tidy categories, and a nudge before payday, not after. No spreadsheets, no guilt.
+        </p>
+        <div class="hero-cta">
+          <a href="#pricing" class="btn btn-primary">Get Tally free<span class="btn-arrow" aria-hidden="true">↗</span></a>
+          <a href="#how" class="btn btn-ghost">See how it works</a>
+        </div>
+        <div class="hero-meta">
+          <span class="hero-stars">
+            <span class="stars" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="#E0A53A"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.7 4.9 17.4 6 11.6 1.7 7.6l5.8-.7z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="#E0A53A"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.7 4.9 17.4 6 11.6 1.7 7.6l5.8-.7z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="#E0A53A"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.7 4.9 17.4 6 11.6 1.7 7.6l5.8-.7z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="#E0A53A"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.7 4.9 17.4 6 11.6 1.7 7.6l5.8-.7z"/></svg>
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="#E0A53A"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.7 4.9 17.4 6 11.6 1.7 7.6l5.8-.7z"/></svg>
+            </span>
+            4.9 · 38k ratings
+          </span>
+          <span class="hero-free">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 1.7l6.5 2.4v5.3c0 4-2.8 6.9-6.5 8.4-3.7-1.5-6.5-4.4-6.5-8.4V4.1L10 1.7z" stroke="#1E7A52" stroke-width="1.5"/><path d="M7 10l2 2 4-4.2" stroke="#1E7A52" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Bank-grade encryption
+          </span>
+        </div>
+      </div>
+
+      <!-- right: product mock -->
+      <div class="mock-stage">
+        <div class="phone" role="img" aria-label="Tally app showing a weekly budget ring with £840 left to spend and a list of recent transactions">
+
+          <!-- floating chip: saved this month -->
+          <div class="chip chip-save" aria-hidden="true">
+            <span class="chip-ic" style="background:var(--moss-wash)">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 13l4-4 3 3 5-6" stroke="#1E7A52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6h3v3" stroke="#1E7A52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="chip-tx">
+              <span class="chip-lab">Saved in May</span>
+              <span class="chip-val">+£312</span>
+            </span>
+          </div>
+
+          <!-- floating chip: goal -->
+          <div class="chip chip-goal" aria-hidden="true">
+            <span class="chip-ic" style="background:var(--blush-2)">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.2" stroke="#C26079" stroke-width="1.6"/><circle cx="10" cy="10" r="3" fill="#C26079"/></svg>
+            </span>
+            <span class="chip-tx">
+              <span class="chip-lab">Japan fund</span>
+              <span class="chip-val">68%</span>
+            </span>
+          </div>
+
+          <div class="phone-screen">
+            <div class="ps-top">
+              <div class="ps-hi">Hey, Mara <span>Week of May 12</span></div>
+              <div class="ps-avatar" aria-hidden="true">M</div>
+            </div>
+
+            <!-- budget ring -->
+            <div class="ring-card">
+              <div class="ring-wrap" aria-hidden="true">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#EFE8D9" stroke-width="13"/>
+                  <!-- 66% spent of budget → moss arc; circumference ≈ 314 -->
+                  <circle class="ring-arc" cx="60" cy="60" r="50" fill="none" stroke="#1E7A52" stroke-width="13" stroke-linecap="round"
+                          stroke-dasharray="314" stroke-dashoffset="107"/>
+                </svg>
+                <div class="ring-center">
+                  <span class="big">£840</span>
+                  <span class="lab">Left · wk</span>
+                </div>
+              </div>
+              <div class="ring-side">
+                <div class="left-label">Safe to spend today</div>
+                <div class="left-amt">£62.40</div>
+                <div class="ring-pills">
+                  <span class="rpill"><i style="background:var(--moss)"></i>On track</span>
+                  <span class="rpill"><i style="background:var(--gold)"></i>5 days left</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- transactions -->
+            <div class="tx-head">
+              <span class="t">Recent activity</span>
+              <span class="all">See all</span>
+            </div>
+            <div class="tx-list">
+              <div class="tx">
+                <span class="tx-ic" style="background:var(--terra-wash)">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M5 7h10l-1 9H6L5 7z" stroke="#C8551F" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 7a2.5 2.5 0 015 0" stroke="#C8551F" stroke-width="1.5"/></svg>
+                </span>
+                <div class="tx-mid">
+                  <div class="tx-name">Maple & Co Coffee</div>
+                  <div class="tx-cat">Eating out</div>
+                </div>
+                <span class="tx-amt">−£4.20</span>
+              </div>
+              <div class="tx">
+                <span class="tx-ic" style="background:var(--moss-wash)">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M3 10.5l3.5 3.5L17 5" stroke="#1E7A52" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <div class="tx-mid">
+                  <div class="tx-name">Payday — Northwind</div>
+                  <div class="tx-cat">Income</div>
+                </div>
+                <span class="tx-amt pos">+£2,180</span>
+              </div>
+              <div class="tx">
+                <span class="tx-ic" style="background:#E4E8F2">
+                  <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><rect x="3.5" y="5" width="13" height="10" rx="2" stroke="#5566A0" stroke-width="1.5"/><path d="M3.5 8h13" stroke="#5566A0" stroke-width="1.5"/></svg>
+                </span>
+                <div class="tx-mid">
+                  <div class="tx-name">Riverside Rent</div>
+                  <div class="tx-cat">Housing · Auto</div>
+                </div>
+                <span class="tx-amt">−£980</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- trust strip pinned in the fold -->
+  <div class="trust">
+    <div class="wrap trust-inner">
+      <span class="trust-lab">Connects with 12,000+ banks</span>
+      <div class="trust-logos">
+        <span class="tlogo">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="6" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 9.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+          Northwind
+        </span>
+        <span class="tlogo">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2l7 4v8l-7 4-7-4V6l7-4z" stroke="currentColor" stroke-width="1.5"/></svg>
+          Brightbank
+        </span>
+        <span class="tlogo">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 10h7" stroke="currentColor" stroke-width="1.5"/></svg>
+          Meridian
+        </span>
+        <span class="tlogo">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 14l5-7 4 5 5-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Crest Union
+        </span>
+        <span class="tlogo desktop-only">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M7 10h6" stroke="currentColor" stroke-width="1.6"/></svg>
+          Harbour
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ───────────────── FEATURES (bento) ───────────────── -->
+<section class="sec" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><span class="dot"></span>What Tally does</span>
+      <h2 style="margin-top:18px">Everything you spend, in one calm view.</h2>
+      <p>No more switching between five apps and a spreadsheet. Tally quietly sorts every transaction, learns your habits, and shows you what actually matters this week.</p>
+    </div>
+
+    <div class="bento">
+      <!-- wide: spending overview with bars -->
+      <article class="bcard b-wide">
+        <span class="ftag">Weekly rhythm</span>
+        <h3>See the week before it gets away from you.</h3>
+        <p>A simple bar for every day. Green means you're under, terracotta means you leaned in. Tap any day to see why.</p>
+        <div class="barz" aria-hidden="true">
+          <div class="bar on" style="height:42%"></div>
+          <div class="bar on" style="height:58%"></div>
+          <div class="bar on" style="height:36%"></div>
+          <div class="bar hot" style="height:92%"></div>
+          <div class="bar on" style="height:50%"></div>
+          <div class="bar on" style="height:64%"></div>
+          <div class="bar" style="height:24%"></div>
+        </div>
+        <div class="barz-x" aria-hidden="true">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+      </article>
+
+      <!-- tall: category split -->
+      <article class="bcard b-tall">
+        <span class="ftag">Auto-categories</span>
+        <h3>Sorted before you even open the app.</h3>
+        <p>Tally recognises the shops you already use and files each one — you just confirm.</p>
+        <div class="splits" aria-hidden="true">
+          <div class="split-row">
+            <span class="split-ic" style="background:var(--terra-wash)">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M5 7h10l-1 9H6L5 7z" stroke="#C8551F" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="split-mid">
+              <div class="split-top"><span class="nm">Groceries</span><span class="vl">£284</span></div>
+              <div class="split-track"><div class="split-fill" style="width:72%;background:var(--terra)"></div></div>
+            </div>
+          </div>
+          <div class="split-row">
+            <span class="split-ic" style="background:var(--moss-wash)">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M3 10h14" stroke="#1E7A52" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </span>
+            <div class="split-mid">
+              <div class="split-top"><span class="nm">Transport</span><span class="vl">£96</span></div>
+              <div class="split-track"><div class="split-fill" style="width:40%;background:var(--moss)"></div></div>
+            </div>
+          </div>
+          <div class="split-row">
+            <span class="split-ic" style="background:var(--blush-2)">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M4 8l6-4 6 4v8H4V8z" stroke="#C26079" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </span>
+            <div class="split-mid">
+              <div class="split-top"><span class="nm">Fun money</span><span class="vl">£72</span></div>
+              <div class="split-track"><div class="split-fill" style="width:30%;background:var(--blush)"></div></div>
+            </div>
+          </div>
+          <div class="split-row">
+            <span class="split-ic" style="background:#EBE4D4">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6.5" stroke="#9A8E78" stroke-width="1.5"/></svg>
+            </span>
+            <div class="split-mid">
+              <div class="split-top"><span class="nm">Everything else</span><span class="vl">£58</span></div>
+              <div class="split-track"><div class="split-fill" style="width:24%;background:var(--gold)"></div></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- small x3 -->
+      <article class="bcard b-sm">
+        <span class="ftag">Safe-to-spend</span>
+        <h3>One honest number.</h3>
+        <p>Bills set aside, savings on track — here's what's truly yours today.</p>
+      </article>
+
+      <article class="bcard b-sm">
+        <span class="ftag">Auto-pilot</span>
+        <h3>Saving on rails.</h3>
+        <div class="pilot" aria-hidden="true">
+          <div class="pilot-row">
+            <span class="pilot-check"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.6 2.6L10 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="pilot-tx">Rounded up <b>£3.80</b> this week</span>
+          </div>
+          <div class="pilot-row">
+            <span class="pilot-check"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.6 2.6L10 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="pilot-tx">Moved <b>£40</b> to Japan fund</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="bcard b-sm">
+        <span class="ftag">Gentle nudges</span>
+        <h3>A heads-up, not a scolding.</h3>
+        <p>"Dining's running warm — £18 left for the week." That's the whole tone.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── HOW IT WORKS ───────────────── -->
+<section class="sec" id="how" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><span class="dot"></span>Set up in three minutes</span>
+      <h2 style="margin-top:18px">Honestly, it's barely any setup.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-n"><i>01</i>Connect</span>
+        <h3>Link your accounts safely.</h3>
+        <p>Read-only, bank-grade encryption through a regulated open-banking partner. Tally can never move your money.</p>
+      </div>
+      <div class="step">
+        <span class="step-n"><i>02</i>Budget</span>
+        <h3>Pick a few friendly limits.</h3>
+        <p>Start from what you already spend. Tally suggests sensible category budgets — adjust with a slider, done.</p>
+      </div>
+      <div class="step">
+        <span class="step-n"><i>03</i>Relax</span>
+        <h3>Let the ring do the worrying.</h3>
+        <p>Check in for ten seconds a day. Tally tracks every transaction and keeps your safe-to-spend honest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── WEEKLY RECAP BAND ───────────────── -->
+<section class="sec band">
+  <div class="wrap recap">
+    <div class="recap-copy">
+      <span class="eyebrow"><span class="dot"></span>Your Sunday recap</span>
+      <h2 style="margin-top:18px;font-size:clamp(1.9rem,3.4vw,2.9rem)">A warm little letter, every Sunday.</h2>
+      <p style="margin-top:16px;color:var(--ink-dim);font-size:clamp(16px,1.2vw,18px);line-height:1.55;max-width:46ch">
+        No dashboards to dig through. Each week Tally sends one plain-language recap — what you spent, where you saved, and one kind thing to try next week.
+      </p>
+      <div class="recap-list" style="margin-top:30px">
+        <div class="rl-item">
+          <span class="rl-ic" style="background:var(--moss-wash)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 13l4-4 3 3 5-6" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6h3v3" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div class="rl-tx"><h4>You spent £88 less than last week</h4><p>Mostly fewer takeaways — that's £88 closer to Japan.</p></div>
+        </div>
+        <div class="rl-item">
+          <span class="rl-ic" style="background:var(--terra-wash)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#C8551F" stroke-width="1.6"/><path d="M10 6v4l2.5 2" stroke="#C8551F" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          <div class="rl-tx"><h4>Two bills land on Thursday</h4><p>£124 total. Tally's already set it aside, so your number stays honest.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- recap card mock -->
+    <div class="recap-card" role="img" aria-label="A weekly recap card showing money in, money out, and a 7-week spending trend">
+      <div class="recap-top">
+        <div class="rt-l"><span class="rt-dot"></span><span class="rt-t">This week</span></div>
+        <span class="rt-date">May 6 – May 12</span>
+      </div>
+      <div class="recap-grid">
+        <div class="recap-cell">
+          <div class="rc-lab"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M5 9l5-5 5 5" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Money in</div>
+          <div class="rc-val up">£2,180</div>
+          <div class="rc-sub up">▲ payday landed</div>
+        </div>
+        <div class="recap-cell">
+          <div class="rc-lab"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M5 11l5 5 5-5" stroke="#C8551F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Money out</div>
+          <div class="rc-val">£1,342</div>
+          <div class="rc-sub down">▼ 6% vs last wk</div>
+        </div>
+      </div>
+      <div class="recap-chart">
+        <div class="rc-h">
+          <span class="l">Spending trend</span>
+          <div class="legend">
+            <span><i style="background:var(--terra)"></i>Spent</span>
+            <span><i style="background:var(--moss)"></i>Budget</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 320 100" width="100%" height="100" preserveAspectRatio="none" aria-hidden="true">
+          <!-- gridlines -->
+          <line x1="0" y1="25" x2="320" y2="25" stroke="#EAE2D2" stroke-width="1"/>
+          <line x1="0" y1="55" x2="320" y2="55" stroke="#EAE2D2" stroke-width="1"/>
+          <line x1="0" y1="85" x2="320" y2="85" stroke="#EAE2D2" stroke-width="1"/>
+          <!-- budget line (moss, flat-ish) -->
+          <path d="M6 50 L 58 48 L 110 50 L 162 47 L 214 49 L 266 46 L 314 48" fill="none" stroke="#1E7A52" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4" opacity=".7"/>
+          <!-- spent area -->
+          <path d="M6 70 L 58 58 L 110 74 L 162 40 L 214 62 L 266 52 L 314 66 L 314 100 L 6 100 Z" fill="rgba(224,104,46,.12)"/>
+          <!-- spent line (terracotta) -->
+          <path d="M6 70 L 58 58 L 110 74 L 162 40 L 214 62 L 266 52 L 314 66" fill="none" stroke="#E0682E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="162" cy="40" r="3.5" fill="#E0682E" stroke="#FBF8F1" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── STATS ───────────────── -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" style="justify-content:center"><span class="dot"></span>Why people stay</span>
+      <h2 style="margin-top:18px">Small habit, real difference.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="s-v">£3,400<span class="small">/yr</span></div>
+        <div class="s-l">Median saved by members in their first year.</div>
+      </div>
+      <div class="stat">
+        <div class="s-v">10<span class="small">s</span></div>
+        <div class="s-l">A day is all it takes to stay on top of things.</div>
+      </div>
+      <div class="stat">
+        <div class="s-v">4.9<span class="small">★</span></div>
+        <div class="s-l">Across 38,000+ App Store &amp; Play ratings.</div>
+      </div>
+      <div class="stat">
+        <div class="s-v">94<span class="small">%</span></div>
+        <div class="s-l">Say Tally made money feel less stressful.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── TESTIMONIAL ───────────────── -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap quote-wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Loved by careful spenders</span>
+      <blockquote class="quote" style="margin-top:22px">
+        "I've quit three budgeting apps. Tally is the first one that didn't make me feel <span class="hl">behind</span> — it just quietly keeps me on track."
+      </blockquote>
+      <div class="quote-by">
+        <span class="qb-av" aria-hidden="true">JR</span>
+        <div class="qb-tx">
+          <div class="nm">Jordan Reyes</div>
+          <div class="rl">Freelance designer · Lisbon</div>
+        </div>
+      </div>
+    </div>
+    <div class="mini-cards">
+      <div class="mini-q">
+        <p>"The Sunday recap is the only money email I actually open. It's kind, weirdly."</p>
+        <div class="mq-by"><span class="mq-dot" style="background:var(--terra-wash);color:var(--terra-2)">A</span>Amara · teacher</div>
+      </div>
+      <div class="mini-q">
+        <p>"Saved £900 for a trip without once feeling like I was depriving myself."</p>
+        <div class="mq-by"><span class="mq-dot" style="background:var(--moss-wash);color:var(--moss-2)">T</span>Theo · nurse</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── PRICING ───────────────── -->
+<section class="sec band" id="pricing">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" style="justify-content:center"><span class="dot"></span>Simple, honest pricing</span>
+      <h2 style="margin-top:18px">Start free. Upgrade only if you love it.</h2>
+      <p>No ads, no selling your data, no surprise fees — ever. That's not a plan tier, it's the whole company.</p>
+    </div>
+    <div class="price-grid">
+      <div class="plan">
+        <div class="plan-name">Tally Free</div>
+        <div class="plan-desc">Everything you need to see your money clearly.</div>
+        <div class="plan-price"><span class="amt">£0</span><span class="per">/ forever</span></div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#DEEBE0"/><path d="M6 10l2.5 2.5L14 7" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Connect up to 2 accounts</li>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#DEEBE0"/><path d="M6 10l2.5 2.5L14 7" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Weekly budget ring</li>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#DEEBE0"/><path d="M6 10l2.5 2.5L14 7" stroke="#1E7A52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-categories &amp; Sunday recap</li>
+        </ul>
+        <a href="#" class="btn btn-ghost">Get started</a>
+      </div>
+      <div class="plan feat">
+        <span class="plan-badge">Most loved</span>
+        <div class="plan-name">Tally Plus</div>
+        <div class="plan-desc">For goals, couples, and getting genuinely ahead.</div>
+        <div class="plan-price"><span class="amt">£4</span><span class="per">/ month</span></div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#F7E2D4"/><path d="M6 10l2.5 2.5L14 7" stroke="#C8551F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited accounts &amp; shared budgets</li>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#F7E2D4"/><path d="M6 10l2.5 2.5L14 7" stroke="#C8551F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-pilot round-ups &amp; goals</li>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#F7E2D4"/><path d="M6 10l2.5 2.5L14 7" stroke="#C8551F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Bills forecast &amp; safe-to-spend</li>
+          <li><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="#F7E2D4"/><path d="M6 10l2.5 2.5L14 7" stroke="#C8551F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority human support</li>
+        </ul>
+        <a href="#" class="btn btn-primary">Start 30-day free trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FAQ ───────────────── -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" style="justify-content:center"><span class="dot"></span>Good questions</span>
+      <h2 style="margin-top:18px">The stuff you're probably wondering.</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Is my banking data actually safe?<span class="ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Yes. Tally connects through a regulated open-banking provider using read-only access and bank-grade 256-bit encryption. We can see transactions to help you budget, but Tally can never move, spend, or withdraw your money. You can disconnect any account in one tap.</div>
+      </details>
+      <details>
+        <summary>How is Tally free? What's the catch?<span class="ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">No catch. The free plan is genuinely free, and Tally Plus (£4/month) is how we keep the lights on. We never run ads and we never sell your data — being on your side is the entire business model.</div>
+      </details>
+      <details>
+        <summary>Will it work with my bank?<span class="ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Almost certainly. Tally connects with over 12,000 banks and credit unions, plus most major credit cards. If yours isn't supported yet, you can add transactions manually and we'll notify you the moment it's live.</div>
+      </details>
+      <details>
+        <summary>Do I have to budget every single category?<span class="ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Not at all. Most people start with just two or three friendly limits — say groceries, eating out, and fun money — and let Tally watch the rest. You can get as detailed as you like, or keep it gloriously simple.</div>
+      </details>
+      <details>
+        <summary>Can my partner and I share a budget?<span class="ico" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Yep — shared budgets come with Tally Plus. Each person keeps their own private accounts, and you pick exactly which pots to pool. Splitting rent and groceries finally stops being a spreadsheet argument.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FINAL CTA ───────────────── -->
+<section style="padding-bottom:clamp(64px,8vw,110px)">
+  <div class="cta-band">
+    <div class="cta-in">
+      <span class="eyebrow"><span class="dot"></span>It's free to start</span>
+      <h2>Give your money a <span class="it">calmer</span> week.</h2>
+      <p>Join 1.2 million people who finally stopped dreading the question "where did it all go?"</p>
+      <div class="cta-row">
+        <a href="#" class="btn btn-light">Download Tally — free<span class="btn-arrow" aria-hidden="true">↗</span></a>
+        <a href="#pricing" class="btn btn-onmuted">Compare plans</a>
+      </div>
+      <div class="cta-note">No card required · iOS &amp; Android · Cancel Plus anytime</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FOOTER ───────────────── -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="#" aria-label="Tally home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 11.5L3 4.5M6.2 11.5L6.2 2.6M9.4 11.5L9.4 6M13 8.5L4 8.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Tally
+        </a>
+        <p>The friendly money app that turns spending into one calm weekly picture.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#">Tally Plus</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Press kit</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="foot-col">
+        <h5>Trust</h5>
+        <a href="#">Security</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#faq">Help centre</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 Tally Money Ltd. Not a bank. Open-banking services provided by a regulated partner.</p>
+      <div class="foot-social">
+        <a href="#" aria-label="Tally on X">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M3 3l6.2 8M3 17l5.5-6.5M17 3l-6 7M17 17l-6.2-8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+        <a href="#" aria-label="Tally on Instagram">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4.5" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="3.2" stroke="currentColor" stroke-width="1.5"/><circle cx="14.2" cy="5.8" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="#" aria-label="Tally on LinkedIn">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 8.5V14M6.5 6v.01M10 14v-3a1.8 1.8 0 013.5 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tiny, sandbox-safe touch: bring the weekly bars to life once on view.
+  // Respects prefers-reduced-motion. No storage, no network, no same-origin APIs.
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+
+    var bars = document.querySelectorAll('.barz .bar');
+    bars.forEach(function (b) {
+      b.dataset.h = b.style.height;
+      b.style.height = '0%';
+    });
+    var fills = document.querySelectorAll('.split-fill, .recap-card .split-fill');
+    var splitFills = document.querySelectorAll('.split-fill');
+    splitFills.forEach(function (f) { f.dataset.w = f.style.width; f.style.width = '0%'; });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var el = e.target;
+        if (el.classList.contains('barz')) {
+          el.querySelectorAll('.bar').forEach(function (b, i) {
+            setTimeout(function () { b.style.height = b.dataset.h; }, i * 70);
+          });
+        }
+        if (el.classList.contains('splits')) {
+          el.querySelectorAll('.split-fill').forEach(function (f, i) {
+            setTimeout(function () { f.style.width = f.dataset.w; }, 120 + i * 90);
+          });
+        }
+        io.unobserve(el);
+      });
+    }, { threshold: 0.35 });
+
+    document.querySelectorAll('.barz, .splits').forEach(function (el) { io.observe(el); });
+  })();
+</script>
+</body>
+</html>

@@ -1,121 +1,131 @@
 # Larynx — build log
 
-**Slug:** `vox-runtime`
-**Brand:** Larynx (renamed from the suggested "Vox"; slug kept as required)
+**Slug:** `vox-runtime` (kept as required)
+**Brand:** Larynx
 **Prompt:** Build a product page for an AI voice-agents platform.
-**Stack:** pure-inspo — single self-contained `index.html`, inline `<style>`, ~30 lines of vanilla JS, Google Fonts via `<link>`. No frameworks, no build step, no external bundles.
-**Mode:** dark (warm brown-black, not the cold blue-black this genre defaults to)
+**Stack:** pure-inspo — one self-contained `index.html`, inline `<style>`, ~40 lines of
+vanilla JS, Google Fonts via `<link>`. No frameworks, no build step, no external bundles.
+**Mode:** dark (warm brown-black, deliberately not the cold blue-black this genre defaults to)
 
 ---
 
+## The REDO (why this version exists)
+
+The previous hero used an oversized centered 4-line headline ("Ship voice agents that sound
+like they're listening.") that ate the whole viewport and pushed the two CTAs to the very
+bottom edge — they were cut off in the 1280×800 thumbnail. That is the single most common
+hero failure, and it failed it.
+
+**This rebuild fixes it by composition, not by luck:**
+
+- **Balanced two-column split** instead of a centered monolith. Left = eyebrow + headline +
+  sub + CTAs + meta. Right = a compact live-call console. Both columns are vertically
+  centered, so the headline never has to be huge to fill the screen.
+- **Restrained headline.** `clamp(2.4rem, 4.15vw, 3.85rem)`, lands in **2 lines** at 1280px
+  (matches `recommend`'s heroGuidance: "a confident hero headline is ~clamp(2.5rem,5vw,4.5rem),
+  not 8rem"). The accent phrase "pick up on the first ring" carries an amber gradient underline.
+- **Modest top spacing** (`padding-top: 92px` to clear the absolute nav — no tall empty gap).
+- **Measured, not eyeballed.** Rendered headless at exactly 1280×800 and read DOM rects:
+  hero = 0→800px (`min-height: 100svh` resolves to one viewport), CTAs sit at **532→578px**,
+  meta at 604→623, console 224→638. Everything important lives between 224 and 638 with
+  ~160px of breathing room below. Nothing is cut. Re-verified after every edit.
+
 ## The premise
 
-**Larynx is the runtime for production voice agents.** Write the agent in code, point it
-at a phone number, deploy. The developer angle is the whole pitch: sub-300ms turn-taking,
-native barge-in, mid-sentence function-calling, and a full transcript of every call —
-delivered as a *runtime layer* so the agent code stays a dozen lines. The signature object
-is a live phone-call console (transcript + latency meters + animated waveform), not a
-generic dashboard.
+**Larynx is the runtime for production voice agents.** Write the agent in code (a prompt, a
+voice, the tools it may call), point it at a phone number, ship. The pitch is the *runtime*
+layer: sub-300 ms turn-taking, native barge-in, mid-call function calls, and a transcript of
+every call. The signature object is a **live phone-call console** — animated waveform, a
+two-turn transcript with a live `reschedule_order(...)` tool chip, an "ON AIR · 00:24"
+status, and three latency meters (287 ms / barge-in on / 1 tool call live). Not a generic
+dashboard.
 
-## How I stayed distinct from "Conduit"
+## How I stayed distinct from "Conduit" (the existing dark-dev-infra entry)
 
-I read the existing `conduit` gallery entry first. It is: cold blue-charcoal `#0b0d12`, a
-single saffron accent `#f0a657`, JetBrains Mono + Inter Tight + Fraunces, and a
-left-headline / right-dashboard split. To diverge on every axis:
+Conduit is: cold blue-charcoal `#0b0d12`, muted saffron `#f0a657`, JetBrains Mono + Inter
+Tight + Fraunces, left-headline / right-**dashboard** split. I diverge on every axis:
 
-- **Warm, not cold ground.** True brown-black `#16110B` (traced to gehry-getty's ochre-dark
-  warmth + netlify's `#181a1c`), pulled deliberately warm. Reads instantly different from
-  Conduit's blue-black.
-- **Brighter, more amber accent** `#FFB23B` (phosphor amber) vs Conduit's muted saffron, plus
-  a *rare* second functional note — an "on air" signal-green `#7FD49A` used only for
-  live-call status. Conduit uses one note.
-- **Different type stack:** Space Grotesk (display) + Spline Sans Mono (the genre's lingua
-  franca) + Inter (body). No serif at all — clean separation from Conduit's Fraunces italics.
-- **Different hero composition:** centered headline over a *live-call transcript console with
-  an animated waveform*, not a right-side product dashboard.
+- **Warm, not cold ground.** True brown-black `#16110B` (traced to anime.js `#252423`,
+  pulled darker/warmer) — reads instantly different from a blue-black.
+- **Brighter amber accent** `#FFB23B` (ollama `#fcd63e` × anime `--hex-orange-1 #ffa828`) plus
+  a warm-orange `#E1762A` (pipe-com `#e1512d`), and a *rare* signal-green `#79D49A` used only
+  for "on air" / healthy status. Conduit uses a single muted note.
+- **Different type stack:** Space Grotesk (display) + Spline Sans Mono (the dev-genre lingua
+  franca) + Inter (body). **No serif at all** — clean separation from Conduit's Fraunces.
+- **Different hero object:** a live-**call** console (waveform + transcript + meters), not a
+  product dashboard, and a voice/waveform motif throughout (logo glyph, hero visual, brand).
 
-## MCP calls, in order
+## MCP calls (8 substantive)
 
-1. `search_screens {"query":"AI platform developer product dark","limit":8}` — surfaced the
-   whole AI/devtool cluster: retellai, launchdarkly, galileo-ai, beam-ai, hightouch, hex-tech,
-   featurebase, diffusion-studio. Confirmed the genre default is **indigo/blue on charcoal** —
-   exactly what I wanted to avoid.
-2. `search_screens {"query":"voice agent calls audio waveform","limit":8}` — the direct
-   competitors: **retellai-com**, **vapi-ai**, daily-co, otter-ai, beam-ai, animaapp. Told me
-   the voice-AI lane is saturated with blue/indigo; a warm amber would own the category visually.
-3. `get_design_system {"slug":"vapi-ai","live":true}` — pulled the real **avantt** display ramp
-   (h1 80px / weight 600 / line-height 0.9 / letter-spacing −4px) and **Geist Mono** as the
-   mono. This ramp (huge, tight, near-1.0 leading) is the basis for my Space Grotesk hero.
-4. `get_design_system {"slug":"daily-co","live":true}` — real **DM Sans + DM Mono** pairing
-   and a coral/rose accent `#dc3d64`; confirmed mono-as-lingua-franca for the genre.
-5. `find_by_color {"hex":"#e8a13c"}` — tested whether amber lives in the archive. Returned
-   **netlify-com** (apricot-on-charcoal) and **gehry-getty-edu** (brutalist ochre-dark with
-   Roboto Mono) among warm-amber sites. This *earned* the amber-on-dark direction with real
-   captures.
-6. `search_screens {"query":"developer tools terminal dark amber warm monospace","limit":6}`
-   — surfaced **netlify-com** explicitly: "Deep charcoal canvas … luminous apricot accents,"
-   `#f9b23b`. The exact warm-dark-devtool register I built.
-7. `get_design_system {"slug":"netlify-com","live":true}` — live tokens: real dark ground
-   `#181a1c`, **Martian Mono** in the font stack, brand apricot `#f9b23b` / `#fcbc54`. Primary
-   source for my amber.
-8. `recommend {"brief":"…voice agents…warm dark…amber…waveform"}` — picked **Split Studio** as
-   the dominant macrostructure for the brief; exemplars reaffirmed vapi/daily.
-9. `find_similar {"slug":"vapi-ai","limit":6}` — neighbours surfaced **axiom-co** (warm-dark
-   observability using **BerkeleyMono** + Inter, warm peach `#e89c80`) and **genelec-com** (a
-   pro-audio brand, warm gold `#ab8e43` on `#3c270b`). Axiom anchored the premium-mono choice;
-   Genelec validated warm-gold as an audio-adjacent palette.
-10. `get_screen` on all six cited slugs (axiom-co, genelec-com, gehry-getty-edu, netlify-com,
-    vapi-ai, retellai-com) — verified every reference resolves before citing it.
+1. `search_screens {"query":"AI voice agents developer platform runtime"}` — surfaced the
+   voice cluster: **retellai-com**, **vapi-ai**, beam-ai, **daily-co**, launchdarkly-com,
+   galileo-ai. Confirmed the genre defaults to blue/indigo — my cue to go warm.
+2. `find_by_color {"hex":"#C7402F"}` — warm-red/orange neighbours (rijksmuseum, animejs-com,
+   pipe-com via later calls) to anchor the accent away from the cold cluster.
+3. `recommend {"brief":"AI voice agents developer runtime … dark warm amber, waveform motif"}`
+   — picked **Split Studio** macrostructure; returned the split-screen reference component
+   (`clamp(2.5rem, 5.5vw, 4.5rem)` headline) and the **heroGuidance** I built to.
+4. `get_design_system {"slug":"vapi-ai","live":true}` — type ramp discipline (h1 80/0.9/-4px
+   tracking → tight display, big negative tracking) and dark voice-AI register.
+5. `get_design_system {"slug":"animejs-com","live":true}` — the **warm-dark palette source**:
+   bg `#252423`, `--hex-orange-1 #ffa828`, coral/corail surfaces. DIN-style geometric display.
+6. `find_similar {"slug":"animejs-com"}` — led to **ollama-com** (amber/gold `#fcd63e`
+   split-studio, terminal aesthetic, restrained 2-line hero + code-console object).
+7. `search_screens {"query":"dark amber orange terminal developer tool waveform", mode:"dark"}`
+   — **pipe-com** (`#e1512d` warm orange on near-black, left-headline split).
+8. `compare {"slugs":["vapi-ai","ollama-com","animejs-com","pipe-com"]}` — confirmed all four
+   share the Split Studio macrostructure; locked spacing (4/8/16) + radius decisions.
 
-## Palette, traced to source
+Also studied hero **composition** by pulling the actual hero captures for ollama-com,
+pipe-com and anime.js: ollama lands a 2-line headline over a single console object;
+pipe keeps a modest left headline beside a right visual — both leave generous fold room.
+That restraint is what I matched.
 
-| Token | Hex | Traced to |
-|---|---|---|
-| `--bg` warm ink | `#16110B` | gehry-getty-edu ochre-dark (`#6c4c1c`) warmth + netlify `#181a1c`, pulled warm |
-| `--amber` accent | `#FFB23B` | netlify-com `#f9b23b` / `#fcbc54`; gehry-getty-edu `#fca443` |
-| `--amber-deep` | `#C97F1E` | darkened netlify apricot for pressed/shadow states |
-| `--ink` cream | `#F7EFE2` | warm-white reading text for a warm ground (vs cold #eef0f3 in the cluster) |
-| `--live` signal | `#7FD49A` | functional "on air" green — kept rare; echoes the cluster's green status hues |
+## Palette (traced to specific sites)
 
-## Type, traced to source
+| token        | hex       | from |
+|--------------|-----------|------|
+| `--bg`       | `#16110B` | anime.js `#252423` ground, pulled warmer/darker |
+| `--bg-card`  | `#221B12` | warm raised surface in same family |
+| `--amber`    | `#FFB23B` | ollama `#fcd63e` × anime `--hex-orange-1 #ffa828` |
+| `--amber-deep`| `#E1762A`| pipe-com `#e1512d`, warmed |
+| `--gold-soft`| `#FCD98A` | ollama `#fce480` raised tone |
+| `--signal`   | `#79D49A` | rare status-only green (anime turquoise family) |
+| `--ink`      | `#F4ECDD` | warm paper, project editorial convention |
 
-- **Display — Space Grotesk** at 92px / weight 600 / letter-spacing −0.045em / line-height
-  0.96. Built to match the *ratio* of Vapi's avantt ramp (80px / 0.9 / −4px), scaled up.
-- **Mono — Spline Sans Mono.** The genre's lingua franca: axiom-co (BerkeleyMono), netlify
-  (Martian Mono), daily (DM Mono), vapi (Geist Mono). Used for eyebrows, code, meters, nav CTAs.
-- **Body — Inter.** Appears across the cluster (featurebase, default-com, axiom, polar).
+## Type
 
-## Macrostructure
+- **Display:** Space Grotesk (geometric, technical — echoes vapi/anime DIN register without copying)
+- **Mono:** Spline Sans Mono (nav, eyebrows, code, meters — the dev-genre lingua franca)
+- **Body:** Inter
+- Headline tracking `-0.025em`, line-height `1.02`; the genre's tight, confident display treatment.
 
-`recommend` picked **Split Studio** for the brief, but the cluster's heavy hitters
-(featurebase, rippling, netlify) read as **Feature Stack**. I built a feature-stack flow —
-hero → how-it-works → bento features → quickstart split → stats → pricing → CTA → footer —
-with one Split-Studio moment (the quickstart: copy left, terminal right).
+## Page structure (Split Studio, scrolls below the fold)
 
-## The standout move
+1. Hero — balanced split, fits 1280×800 (the whole point)
+2. Logo strip — "In production at"
+3. How it works — syntax-highlighted `agent.ts` console + 4 numbered steps
+4. The runtime — feature trio (barge-in / mid-call function calls / transcripts & replay)
+5. Stats band — 287 ms / 19 regions / 99.98% / 60+ languages
+6. Observability — live-calls panel (with a "slow tool" amber badge) + checklist
+7. CTA — "From `npm i` to a ringing phone in an afternoon" + copyable command
+8. Footer
 
-The hero's **live-call console**: a transcript that types in turn-by-turn with an "On air"
-pulse, paired with a CSS waveform animating per-bar (staggered `animation-delay`), a 287ms
-turn-latency meter, and live tool-call chips. It's the product's value proposition rendered
-as a single believable object — and it makes the page unmistakably *voice* rather than yet
-another dev-infra dashboard. The amber waveform motif then recurs as a through-line: in the
-brand mark glyph, the latency feature card, and a generated waveform along the closing CTA's
-bottom edge.
+## Responsiveness & a11y
 
-## Verification
+- Verified at **1280px** (2-line headline, full balanced fold) and **390px** (clean single
+  column, full-width CTAs, console below). Full-page scroll verified at both widths.
+- `prefers-reduced-motion`: confirmed `animation-name: none` — the waveform freezes to a
+  static meter and the status pulse stops.
+- Sandbox-safe: no localStorage/cookies; the copy button wraps `navigator.clipboard` in
+  try/catch and never depends on it. Visuals are pure CSS/SVG — no raster photos.
+- Inline SVG favicon (waveform glyph) so there are **zero failed network requests**.
+- Console: no errors; 34 waveform bars render; all three fonts load.
 
-Rendered with Playwright (the worker's Chromium) at exact viewports:
-- **1280px:** innerWidth 1280, no horizontal overflow, full nav, h1 92px.
-- **390px:** innerWidth 390, **no horizontal overflow**, hamburger nav + single CTA, h1 ~37px,
-  every section reflows to a real single-column mobile layout (console stacks, bento → 1 col,
-  pricing stacks with the featured plan first).
-- Constraints checked: no localStorage/cookie/sessionStorage, one inline script, sandbox-safe,
-  `prefers-reduced-motion` disables all animation.
+## Verification artifacts
 
-## Self-score
-
-**8.6 / 10.** Strong, specific premise; a genuinely distinct warm-amber palette traced to real
-captures (netlify, gehry-getty); a signature live-call/waveform motif that reinforces "voice";
-disciplined single-accent system; real fonts grounded in the cluster; verified beautiful at
-both widths. Held back from higher by relying on web fonts (a self-hosted display face like
-Vapi's avantt would push the craft further) and a couple of decorative-only SVG icons.
+Rendered with headless Chrome (via playwright-core in /tmp, driving the system Chrome):
+- DOM-rect fold measurement at 1280×800 (CTAs at y 532–578, well above the 800 fold)
+- 2× crisp fold, full-page scroll, 390px mobile + mobile full-page
+- Network + console + reduced-motion checks all clean
+- `thumb.jpg` regenerated at exactly 1280×800 to replace the stale broken-hero thumbnail

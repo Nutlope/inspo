@@ -25,13 +25,13 @@ export const metadata: Metadata = {
 const ORDER = [
   "subtone-records",
   "meridian-bank",
+  "field-day-studio",
   "still-app",
-  "conduit",
+  "tally-finance",
   "osteria-nera",
   "slowboat-coffee",
   "vox-runtime",
-  "the-fold-quarterly",
-  "rohe-and-earl",
+  "conduit",
   "kiln-and-bough",
 ];
 

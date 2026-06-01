@@ -114,12 +114,24 @@
     nav.top .row{gap:12px;padding:14px 0}
   }
 
-  /* --- hero --- */
-  .hero{padding:48px 0 24px;border-bottom:1px solid var(--line)}
-  .hero .grid{
-    display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:stretch;
+  /* --- hero ---
+     Composed to fit the FIRST VIEWPORT (1280×800). The section is a flex
+     column at min-height:100svh; the inner grid is vertically centred in the
+     space left after the sticky promo+nav (~104px). Display type is held to a
+     restrained clamp so the headline lands in 2–3 lines without eating the
+     fold — the single failure we're correcting. Reference discipline:
+     intelligentsiacoffee-com (left headline + lede + one CTA, complete in its
+     first screen) and stumptowncoffee-com (warm ink/gold, product bag device). */
+  .hero{
+    min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:28px 0 32px;border-bottom:1px solid var(--line);
   }
-  .hero .copy{display:flex;flex-direction:column;justify-content:space-between;min-height:540px}
+  .hero .grid{
+    display:grid;grid-template-columns:1.06fr .94fr;gap:clamp(32px,4.5vw,64px);
+    align-items:center;width:100%;
+  }
+  .hero .copy{display:flex;flex-direction:column;gap:clamp(18px,2.4vh,30px)}
   .eyebrow{
     font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
     color:var(--rust);display:inline-flex;align-items:center;gap:10px;
@@ -127,21 +139,23 @@
   .eyebrow::before{content:"";width:24px;height:1px;background:var(--rust);display:inline-block}
   .h1{
     font-family:var(--serif);font-weight:600;
-    font-variation-settings:"opsz" 30;
-    font-size:clamp(56px, 9.2vw, 132px);
-    line-height:.92;letter-spacing:-.025em;
-    margin:24px 0 28px;color:var(--ink);
+    font-variation-settings:"opsz" 40;
+    /* restrained max — 2 to 3 lines at ~1.04 inside the fold */
+    font-size:clamp(40px, 5.2vw, 70px);
+    line-height:1.03;letter-spacing:-.02em;
+    margin:0;color:var(--ink);
+    text-wrap:balance;
   }
   .h1 em{font-style:italic;font-weight:600;color:var(--rust)}
   .h1 .crossed{position:relative;display:inline-block;white-space:nowrap}
   .h1 .crossed::after{
-    content:"";position:absolute;left:-2%;right:-2%;top:54%;height:6px;
-    background:var(--rust);transform:rotate(-2deg);border-radius:2px;opacity:.92;
+    content:"";position:absolute;left:-3%;right:-3%;top:48%;height:5px;
+    background:var(--rust);transform:rotate(-1.5deg);border-radius:2px;opacity:.9;
   }
   @media (max-width:520px){ .h1 .crossed::after{height:4px} }
   .lede{
-    font-family:var(--serif);font-size:20px;line-height:1.45;color:var(--ink-soft);
-    max-width:46ch;font-weight:400;margin:0 0 28px;
+    font-family:var(--serif);font-size:clamp(17px,1.25vw,19px);line-height:1.5;color:var(--ink-soft);
+    max-width:48ch;font-weight:400;margin:0;
   }
   .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
   .btn{
@@ -158,88 +172,128 @@
   .btn:hover .arr{transform:translateX(4px)}
 
   .hero-meta{
-    display:flex;gap:36px;flex-wrap:wrap;
-    padding-top:28px;border-top:1px solid var(--line);
-    font-size:13px;color:var(--ink-soft);
+    display:flex;gap:clamp(22px,3vw,40px);flex-wrap:wrap;
+    margin-top:4px;padding-top:clamp(16px,2vh,24px);border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--ink-soft);line-height:1.3;
   }
-  .hero-meta b{display:block;font-family:var(--serif);font-size:30px;color:var(--ink);font-weight:500;line-height:1;margin-bottom:6px;letter-spacing:-.01em}
+  .hero-meta div{max-width:18ch}
+  .hero-meta b{display:block;font-family:var(--serif);font-size:clamp(24px,2vw,28px);color:var(--ink);font-weight:500;line-height:1;margin-bottom:5px;letter-spacing:-.01em}
 
-  /* hero panel (right) — flat composed illustration in lieu of photo */
+  /* Hero panel (right) — a single composed product card (the bag device,
+     kept from the prior version) sized to sit fully inside the fold. The
+     bag is built from CSS; one rising-steam flourish, reduced-motion-safe. */
   .hero .panel{
     background:var(--ink);color:var(--cream);
-    border-radius:8px;
+    border-radius:10px;
     position:relative;overflow:hidden;
-    min-height:540px;
-    padding:32px;
-    display:flex;flex-direction:column;justify-content:space-between;
+    height:min(72svh,560px);
+    padding:26px;
+    display:flex;flex-direction:column;
+  }
+  .panel::after{ /* warm vignette + faint roastery glow */
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 78% 18%, rgba(192,168,104,.16), transparent 60%),
+      radial-gradient(110% 90% at 30% 110%, rgba(185,65,43,.16), transparent 55%);
+  }
+  .panel .p-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    position:relative;z-index:2;
   }
   .panel .corner-label{
-    position:absolute;top:24px;right:24px;
     font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--mustard);
+    color:var(--mustard);text-align:right;line-height:1.5;
   }
   .panel .stamp{
-    position:absolute;top:24px;left:24px;
-    width:74px;height:74px;border-radius:50%;
+    width:66px;height:66px;border-radius:50%;flex-shrink:0;
     border:1px dashed rgba(251,247,238,.4);
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+    font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
     color:var(--cream);text-align:center;line-height:1.3;
+    animation:spin-stamp 36s linear infinite;
   }
+  @keyframes spin-stamp{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){ .panel .stamp{animation:none} }
+
   .bean-scene{
-    position:relative;flex:1;display:flex;align-items:center;justify-content:center;
-    margin-top:32px;
+    position:relative;z-index:2;flex:1;
+    display:flex;align-items:center;justify-content:center;
+    min-height:0;
   }
-  /* Three bag silhouettes composed in CSS */
+  /* The hero coffee bag — composed in CSS */
   .bag{
-    position:absolute;border-radius:6px 6px 4px 4px;
-    box-shadow:inset 0 -40px 60px rgba(0,0,0,.25), 0 18px 36px rgba(0,0,0,.4);
-    display:flex;flex-direction:column;justify-content:space-between;
-    padding:18px 14px 22px;font-family:var(--mono);
+    position:relative;width:min(58%,210px);aspect-ratio:.74;
+    background:linear-gradient(168deg,#d8bf78 0%, var(--mustard) 46%, #a98e4f 100%);
+    border-radius:5px 5px 7px 7px;
+    box-shadow:inset 0 -54px 80px rgba(73,52,18,.4), inset 0 2px 0 rgba(255,255,255,.25),
+               0 30px 60px -18px rgba(0,0,0,.6);
+    display:flex;flex-direction:column;
+    padding:clamp(16px,2vw,22px) clamp(14px,1.6vw,20px) clamp(18px,2.2vw,24px);
     color:var(--ink);
   }
-  .bag::before{
-    content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-    width:60%;height:18px;background:#3a2e26;border-radius:3px;
-    box-shadow:inset 0 -4px 0 rgba(0,0,0,.25);
+  .bag::before{ /* tin-tie top crimp */
+    content:"";position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    width:62%;height:16px;background:linear-gradient(#4a3a2c,#2f241b);border-radius:3px 3px 2px 2px;
+    box-shadow:inset 0 -4px 0 rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.4);
   }
   .bag .b-top{
-    font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(31,24,21,.6);
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(45,33,21,.62);
+    display:flex;justify-content:space-between;
   }
-  .bag .b-name{font-family:var(--serif);font-style:italic;font-weight:500;font-size:22px;line-height:1;color:var(--ink);letter-spacing:-.01em}
-  .bag .b-foot{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(31,24,21,.55);display:flex;justify-content:space-between}
-  .bag-1{background:var(--mustard);width:140px;height:200px;left:6%;top:26%;transform:rotate(-7deg);z-index:1}
-  .bag-2{background:var(--rust);color:var(--cream);width:160px;height:230px;left:38%;top:14%;z-index:3}
-  .bag-2 .b-top,.bag-2 .b-foot{color:rgba(251,247,238,.7)}
-  .bag-2 .b-name{color:var(--cream)}
-  .bag-3{background:var(--paper-3);width:140px;height:200px;right:6%;top:24%;transform:rotate(8deg);z-index:2}
-  /* steam from the middle bag */
-  .steam{position:absolute;left:50%;top:0;transform:translate(-50%,-60%);}
+  .bag .b-mid{margin:auto 0;display:flex;flex-direction:column;gap:7px}
+  .bag .b-roast{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--rust-deep)}
+  .bag .b-name{font-family:var(--serif);font-style:italic;font-weight:600;font-size:clamp(28px,3.4vw,40px);line-height:.94;color:var(--ink);letter-spacing:-.02em}
+  .bag .b-origin{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(45,33,21,.65)}
+  .bag .b-foot{
+    font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(45,33,21,.6);
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding-top:10px;border-top:1px solid rgba(45,33,21,.22);
+  }
+  .bag .b-bean{ /* little roasted-bean glyph */
+    width:26px;height:34px;border-radius:50% 50% 48% 48%/58% 58% 42% 42%;
+    background:radial-gradient(60% 60% at 38% 32%, #5a4226, #2a1c10);
+    position:relative;
+  }
+  .bag .b-bean::after{content:"";position:absolute;left:50%;top:14%;bottom:14%;width:1.5px;transform:translateX(-50%) rotate(8deg);background:rgba(0,0,0,.5);border-radius:2px}
+
+  /* steam rising off the bag */
+  .steam{position:absolute;left:50%;top:0;transform:translate(-50%,-78%);display:flex}
   .steam .puff{
-    width:14px;height:14px;border-radius:50%;background:rgba(251,247,238,.18);
-    display:inline-block;margin:0 3px;animation:rise 3.6s ease-in-out infinite;
+    width:13px;height:13px;border-radius:50%;background:rgba(251,247,238,.2);
+    display:inline-block;margin:0 3px;animation:rise 3.8s ease-in-out infinite;
   }
-  .steam .puff:nth-child(2){animation-delay:.6s;background:rgba(251,247,238,.12)}
-  .steam .puff:nth-child(3){animation-delay:1.2s;background:rgba(251,247,238,.22)}
+  .steam .puff:nth-child(2){animation-delay:.7s;background:rgba(251,247,238,.13)}
+  .steam .puff:nth-child(3){animation-delay:1.4s;background:rgba(251,247,238,.24)}
   @keyframes rise{
-    0%,100%{transform:translateY(0) scale(.9);opacity:.0}
+    0%,100%{transform:translateY(0) scale(.9);opacity:0}
     20%{opacity:.7}
-    50%{transform:translateY(-30px) scale(1.1);opacity:.4}
+    50%{transform:translateY(-26px) scale(1.1);opacity:.4}
     80%{opacity:0}
   }
+  @media (prefers-reduced-motion:reduce){ .steam{display:none} }
+
   .panel .footer-line{
+    position:relative;z-index:2;
     display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
-    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(251,247,238,.6);
-    padding-top:18px;border-top:1px solid rgba(251,247,238,.15);
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(251,247,238,.62);
+    padding-top:16px;border-top:1px solid rgba(251,247,238,.16);
   }
   .panel .footer-line .price{
-    font-family:var(--serif);font-style:italic;font-size:32px;color:var(--mustard);text-transform:none;letter-spacing:-.01em;line-height:1;
+    font-family:var(--serif);font-style:italic;font-size:30px;color:var(--mustard);text-transform:none;letter-spacing:-.01em;line-height:1;
   }
 
+  /* Tablet/stack: hero is allowed to grow taller than the viewport once the
+     two columns can no longer sit side by side — the fold guarantee is a
+     desktop (≥920px) contract, matching how the gallery thumbnail renders. */
   @media (max-width:920px){
+    .hero{min-height:auto;padding:44px 0 48px}
     .hero .grid{grid-template-columns:1fr;gap:36px}
-    .hero .copy{min-height:auto}
-    .hero .panel{min-height:420px}
+    .hero .panel{height:auto;min-height:420px;order:2}
+    .bag{width:min(56%,220px)}
+  }
+  @media (max-width:520px){
+    .hero{padding:32px 0 40px}
+    .hero .panel{padding:22px;min-height:380px}
   }
 
   /* --- marquee ticker --- */
@@ -263,6 +317,7 @@
     background:var(--rust);
   }
   @keyframes scroll{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){ .ticker .track{animation:none} }
 
   /* --- section meta --- */
   section{padding:96px 0;border-bottom:1px solid var(--line)}
@@ -636,57 +691,48 @@
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap">
     <div class="grid">
-      <div class="copy" data-reveal>
-        <div>
-          <span class="eyebrow">A subscription, not a stockpile · Vol. 07</span>
-          <h1 class="h1" id="hero-title">
-            Coffee for people who <em>actually</em> drink it. <span class="crossed">Not collect</span> it.
-          </h1>
-          <p class="lede">
-            Pick a roast you like. Tell us how often you want a bag. We roast on Monday,
-            it ships on Tuesday, it's on your counter by Friday. Skip a week any time
-            you've still got beans left, which — let's be honest — happens.
-          </p>
-          <div class="hero-ctas">
-            <a href="#offer" class="btn btn-primary">Start a plan <span class="arr">&rarr;</span></a>
-            <a href="#roasts" class="btn btn-ghost">Just the coffee</a>
-          </div>
+      <div class="copy">
+        <span class="eyebrow">A subscription, not a stockpile · Vol. 07</span>
+        <h1 class="h1" id="hero-title">
+          Coffee for people who <em>actually</em> <span class="crossed">drink</span> it.
+        </h1>
+        <p class="lede">
+          Pick a roast. Tell us a rhythm. We roast Monday, it ships Tuesday,
+          it's on your counter by Friday — and you can skip any week you've
+          still got beans left.
+        </p>
+        <div class="hero-ctas">
+          <a href="#offer" class="btn btn-primary">Start a plan <span class="arr">&rarr;</span></a>
+          <a href="#roasts" class="btn btn-ghost">Just the coffee</a>
         </div>
         <div class="hero-meta" aria-label="At a glance">
-          <div><b>72hrs</b>Roast-to-doorstep, average.</div>
+          <div><b>72&thinsp;hrs</b>Roast to doorstep, average.</div>
           <div><b>14</b>Single origins this season.</div>
-          <div><b>4</b>People in the roastery. That's it.</div>
-          <div><b>$18</b>Starts at, per 12oz bag.</div>
+          <div><b>$18</b>To start, per 12&nbsp;oz bag.</div>
         </div>
       </div>
 
-      <aside class="panel" aria-label="This week's lineup">
-        <span class="stamp">Roasted<br>this week</span>
-        <span class="corner-label">Lot · 0428 / W18</span>
+      <aside class="panel" aria-label="This week's roast">
+        <div class="p-head">
+          <span class="stamp">Roasted<br>this week</span>
+          <span class="corner-label">Lot · 0428<br>W18 / Vol.07</span>
+        </div>
 
-        <div class="bean-scene" aria-hidden="true">
-          <div class="bag bag-1">
-            <div class="b-top">No. 14 · Honey</div>
-            <div class="b-name">Don<br>Rolando</div>
-            <div class="b-foot"><span>Antigua</span><span>12 oz</span></div>
-          </div>
-
-          <div class="bag bag-2">
+        <div class="bean-scene">
+          <div class="bag" aria-hidden="true">
             <div class="steam"><span class="puff"></span><span class="puff"></span><span class="puff"></span></div>
-            <div class="b-top">No. 17 · Washed</div>
-            <div class="b-name">Slowboat<br>House</div>
-            <div class="b-foot"><span>Blend</span><span>12 oz</span></div>
-          </div>
-
-          <div class="bag bag-3">
-            <div class="b-top">No. 21 · Natural</div>
-            <div class="b-name">Yirgacheffe</div>
-            <div class="b-foot"><span>Ethiopia</span><span>12 oz</span></div>
+            <div class="b-top"><span>No. 17</span><span>12 oz</span></div>
+            <div class="b-mid">
+              <span class="b-roast">Washed · Medium</span>
+              <span class="b-name">Slowboat<br>House</span>
+              <span class="b-origin">Colombia · Guatemala · Brazil</span>
+            </div>
+            <div class="b-foot"><span>Roasted to order</span><span class="b-bean"></span></div>
           </div>
         </div>
 
         <div class="footer-line">
-          <span>This week's lineup</span>
+          <span>This week's roast</span>
           <span class="price">$18<span style="font-size:12px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(251,247,238,.55);margin-left:6px;">/ bag</span></span>
         </div>
       </aside>
