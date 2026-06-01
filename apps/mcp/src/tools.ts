@@ -70,6 +70,14 @@ import { searchScreens } from "./search.js";
 // study() was moved to @inspo/shared so the web playground can call
 // it without depending on the MCP-SDK side of @inspo/mcp.
 
+/** Guidance every Inspo consumer should honour when composing a page's
+ *  hero. Real production sites compose their first screen to the fold;
+ *  agents tend to overflow it with oversized type, so the hero (and its
+ *  thumbnail) reads as cut-off and unfinished. Surfaced in the server
+ *  instructions + recommend() so it reaches any agent building a page. */
+const HERO_GUIDANCE =
+  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, eyebrow, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold — nothing important cut off. Size display type to land in 2–3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
+
 export function registerTools(server: McpServer) {
   /* ────────────── search_screens ────────────── */
   server.registerTool(
@@ -911,10 +919,11 @@ export function registerTools(server: McpServer) {
           exemplars: exemplarsFmt,
           referenceComponents: referencePicks,
           paletteSuggestion: palette,
+          heroGuidance: HERO_GUIDANCE,
           tip:
             referencePicks.length > 0
-              ? "Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. Study the inline exemplar thumbnails for palette + type + density choices specific to your brief."
-              : "No canonical reference matched the picked macrostructure. Study the inline exemplar thumbnails and write the page shape by hand.",
+              ? "Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. Study the inline exemplar thumbnails for palette + type + density choices specific to your brief. Then honour heroGuidance — compose the hero to fit the first viewport."
+              : "No canonical reference matched the picked macrostructure. Study the inline exemplar thumbnails and write the page shape by hand. Honour heroGuidance — compose the hero to fit the first viewport.",
         },
         exemplarsFmt.map((r) => r.thumb),
       );
@@ -967,4 +976,6 @@ export const SERVER_INSTRUCTIONS = [
   "If the user is following the Hallmark design skill, call",
   "`find_examples_for_macrostructure` at the macrostructure-pick step",
   "to get exemplars of e.g. 'Bento Grid' or 'Specimen'.",
+  "",
+  "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
 ].join(" ");

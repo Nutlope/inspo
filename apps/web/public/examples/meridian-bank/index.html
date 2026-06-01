@@ -141,8 +141,8 @@
     -webkit-mask-image:radial-gradient(80% 70% at 30% 20%, #000, transparent 75%);
     mask-image:radial-gradient(80% 70% at 30% 20%, #000, transparent 75%);
   }
-  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr 0.98fr;gap:clamp(36px,5vw,72px);align-items:center;padding-top:clamp(56px,7vw,92px);padding-bottom:clamp(64px,8vw,104px)}
-  @media (max-width:980px){.hero-inner{grid-template-columns:1fr;gap:44px;padding-bottom:64px}}
+  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr 0.98fr;gap:clamp(36px,5vw,72px);align-items:center;align-content:center;min-height:100svh;box-sizing:border-box;padding-top:clamp(44px,6vh,80px);padding-bottom:clamp(40px,5vh,72px)}
+  @media (max-width:980px){.hero-inner{grid-template-columns:1fr;gap:40px;min-height:0;padding-top:clamp(40px,8vw,72px);padding-bottom:64px}}
 
   .badge{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 10px;border:1px solid var(--line-2);background:color-mix(in srgb, var(--card) 70%, transparent);border-radius:999px;font-size:13px;color:var(--ink-soft);margin-bottom:30px}
   .badge .tick{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:0.04em;color:var(--moss-soft)}
@@ -150,7 +150,7 @@
   @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--good) 50%,transparent)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
   .badge .div{width:1px;height:14px;background:var(--line-2)}
 
-  .hero h1{max-width:13ch}
+  .hero h1{max-width:16ch;font-size:clamp(36px,4.3vw,56px)}
   .hero .sub{margin-top:26px;max-width:50ch}
   .hero .ctas{margin-top:34px;display:flex;gap:13px;flex-wrap:wrap;align-items:center}
   .hero .fineprint{margin-top:22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-mute)}
