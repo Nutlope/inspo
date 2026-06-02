@@ -45,6 +45,22 @@ export async function captureAllViewports(
       contentHash: hashOf(hero),
     });
 
+    // Clip horizontal overflow before the full-page shot. Some sites
+    // have a stray wide element / horizontal carousel that pushes
+    // scrollWidth past the viewport, baking off-screen-right content
+    // into the full-page capture (it should be exactly the
+    // viewport-width vertical scroll). The style persists across the
+    // viewport loop, so every full-page shot is clipped.
+    await page.evaluate(() => {
+      if (document.getElementById("__inspo_clip__")) return;
+      const s = document.createElement("style");
+      s.id = "__inspo_clip__";
+      s.textContent =
+        "html,body{overflow-x:hidden !important;max-width:100vw !important;}";
+      document.head.appendChild(s);
+    });
+    await page.evaluate(() => new Promise((r) => setTimeout(r, 120)));
+
     // Full page
     const full = await page.screenshot({ fullPage: true, type: "png" });
     out.push({

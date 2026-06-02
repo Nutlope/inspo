@@ -131,6 +131,9 @@ async function main() {
   // desktop hero/full/thumb are already on Blob), so the backfill
   // upload doesn't redundantly re-push thousands of existing files.
   const mobileOnly = argv.includes("--mobile-only");
+  // --full-only: ship just the desktop full-page png+variants (e.g. after
+  // re-cropping an overflow capture), without re-pushing hero/thumb/mobile.
+  const fullOnly = argv.includes("--full-only");
   const slugFilter = argv.find((a) => a.startsWith("--slug="))?.split("=")[1];
   // --from-file=path : upload only the slugs listed (one per line).
   // Lets us push just the newly-captured set instead of re-uploading
@@ -192,7 +195,9 @@ async function main() {
         const variants = (
           mobileOnly
             ? ["mobile", "mobile-full"]
-            : ["hero", "full", "thumb", "mobile", "mobile-full"]
+            : fullOnly
+              ? ["full"]
+              : ["hero", "full", "thumb", "mobile", "mobile-full"]
         ) as Variant[];
         for (const v of variants) {
           if (!go) {
