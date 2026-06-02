@@ -111,43 +111,34 @@ export default async function MapPage() {
     .map(([g]) => g);
 
   return (
-    <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
-      <section className="grid grid-cols-1 gap-y-8 pt-16 pb-8 sm:pt-24 lg:grid-cols-12 lg:gap-x-10">
-        <div className="lg:col-span-2">
-          <p className="text-meta">Map</p>
-          <p className="text-meta mt-2 max-w-[18ch] text-[var(--color-fg-muted)]">
-            Sidecar built {sidecar.generatedAt.slice(0, 10)} ·{" "}
-            {points.length.toLocaleString()} sites
+    <div className="px-4 sm:px-6">
+      {/* Compact header — the map itself is the page. */}
+      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3 pt-9 pb-5">
+        <div>
+          <p className="text-meta text-[var(--color-fg-muted)]">
+            Map · {points.length.toLocaleString()} sites · UMAP of 1024-dim
+            embeddings · built {sidecar.generatedAt.slice(0, 10)}
           </p>
-        </div>
-        <div className="lg:col-span-10">
-          <h1 className="font-display max-w-[18ch] text-balance text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.95] tracking-tight">
-            The catalogue&rsquo;s{" "}
-            <em className="italic">visual neighbourhood.</em>
+          <h1 className="font-display mt-1.5 text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.02] tracking-tight">
+            The catalogue&rsquo;s <em className="italic">visual neighbourhood.</em>
           </h1>
-          <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
-            Every site&rsquo;s description, tags, and palette were embedded
-            into a 1024-dim space. UMAP reduces those to 2D so visually +
-            semantically similar sites cluster. Drag to pan. Scroll to zoom.
-            Hover to peek. Click to open a detail page.
-          </p>
         </div>
-      </section>
-
-      <section className="border-y rule">
-        <EmbeddingMap points={points} groupOrder={orderedGroups} />
-      </section>
-
-      <section className="pt-10 pb-16">
-        <p className="text-meta">
-          <Link
-            href="/screens"
-            className="hover:text-[var(--color-link)]"
-          >
-            ← Back to the archive
-          </Link>
+        <p className="text-meta max-w-[52ch] text-[var(--color-fg-muted)]">
+          Semantically + visually similar sites cluster. Search to highlight ·
+          click a group to isolate · zoom in for thumbnails · click a site to open.
         </p>
-      </section>
+      </div>
+
+      {/* Map fills the rest of the viewport. */}
+      <div className="relative h-[calc(100svh-12.5rem)] min-h-[560px] w-full overflow-hidden border rule">
+        <EmbeddingMap points={points} groupOrder={orderedGroups} />
+      </div>
+
+      <div className="py-5 text-meta">
+        <Link href="/screens" className="hover:text-[var(--color-link)]">
+          ← Back to the archive
+        </Link>
+      </div>
     </div>
   );
 }
