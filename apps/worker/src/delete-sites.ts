@@ -116,8 +116,10 @@ function main() {
   // Snapshot bin (cheap, 4MB)
   writeFileSync(BIN_PATH.replace(/\.bin$/, `.pre-delete-${ts}.bin`), binBuf);
 
-  // Write everything
-  writeFileSync(SEED_PATH, `${JSON.stringify(keptRows, null, 2)}\n`);
+  // Write everything. Keep the seed MINIFIED to match how the seed
+  // builder / add-mobile-to-seed write it (pretty-printing would 3x the
+  // file + blow up the diff).
+  writeFileSync(SEED_PATH, JSON.stringify(keptRows));
   const newIdx: Idx = { slugs: keptSlugs, dims, count: keptSlugs.length };
   writeFileSync(IDX_PATH, JSON.stringify(newIdx));
   writeFileSync(BIN_PATH, out);
