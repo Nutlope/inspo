@@ -69,8 +69,25 @@ pnpm --filter @inspo/mcp start            # stdio server
 pnpm --filter @inspo/mcp test             # smoke test — boots in-process, calls every tool
 pnpm --filter @inspo/mcp inspect          # MCP Inspector UI
 pnpm --filter @inspo/mcp worker:dev       # Cloudflare Worker locally
-pnpm --filter @inspo/mcp worker:deploy    # deploy the hosted HTTP MCP
 ```
+
+### Deploy the hosted Worker
+
+The Worker **doesn't bundle** the ~16MB catalogue (it would bust Cloudflare's
+script-size cap). Instead it fetches the seed + embeddings from a CDN at
+runtime (once per isolate), so the deployed script is ~325KB gzipped. Deploy
+is two steps:
+
+```bash
+# 1. Publish the catalogue to Vercel Blob (re-run after any seed change)
+pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
+# 2. Deploy the Worker (needs `wrangler login`)
+pnpm --filter @inspo/mcp worker:deploy
+```
+
+`INSPO_CATALOGUE_URL` (in `wrangler.toml`) points at the published store —
+override it to host the data anywhere. The stdio server still reads the
+bundled seed, so local installs need no CDN.
 
 ## Hallmark integration
 
