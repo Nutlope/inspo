@@ -133,14 +133,24 @@ export async function encodeVariants(
         withoutEnlargement: true,
         fit: "inside",
       });
-      const data =
-        format === "avif"
-          ? await pipeline
-              .avif({ quality, effort: 4, chromaSubsampling: "4:2:0" })
-              .toBuffer()
-          : await pipeline.webp({ quality, effort: 4 }).toBuffer();
-      await writeFile(out, data);
-      written.push(out);
+      try {
+        const data =
+          format === "avif"
+            ? await pipeline
+                .avif({ quality, effort: 4, chromaSubsampling: "4:2:0" })
+                .toBuffer()
+            : await pipeline.webp({ quality, effort: 4 }).toBuffer();
+        await writeFile(out, data);
+        written.push(out);
+      } catch (err) {
+        // Some full-page captures (esp. tall mobile scrolls) exceed
+        // AVIF/HEIF's max dimension (~16k px) and throw. Skip just that
+        // one output — never abort the whole role/slug — so mobile-hero
+        // still encodes and the <picture> falls back to WebP/PNG.
+        skipped.push(
+          `${out} (skipped: ${err instanceof Error ? err.message : String(err)})`,
+        );
+      }
     }
   }
 

@@ -13,7 +13,7 @@
  */
 
 import "./env.js";
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { encodeVariants, type EncodeRole } from "./encode-variants.js";
 
@@ -55,6 +55,16 @@ async function main() {
   const go = argv.includes("--go");
   const force = argv.includes("--force");
   const slugFilter = argv.find((a) => a.startsWith("--slug="))?.split("=")[1];
+  // --from-file=path : encode only the slugs listed (one per line).
+  const fromFile = argv.find((a) => a.startsWith("--from-file="))?.split("=")[1];
+  const fromSet = fromFile
+    ? new Set(
+        readFileSync(fromFile, "utf8")
+          .split(/\r?\n/)
+          .map((l) => l.trim())
+          .filter((l) => l && !l.startsWith("#")),
+      )
+    : null;
   const concurrency = Number(
     argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? 4,
   );
@@ -66,7 +76,9 @@ async function main() {
   const allSlugs = readdirSync(CAPTURES_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory() && !d.name.startsWith("_") && !d.name.startsWith("."))
     .map((d) => d.name);
-  const slugs = (slugFilter ? allSlugs.filter((s) => s === slugFilter) : allSlugs).sort();
+  let slugs = slugFilter ? allSlugs.filter((s) => s === slugFilter) : allSlugs;
+  if (fromSet) slugs = slugs.filter((s) => fromSet.has(s));
+  slugs = slugs.sort();
 
   console.log(`\n  encode-existing · ${slugs.length} slugs · go=${go} · force=${force}\n`);
 
