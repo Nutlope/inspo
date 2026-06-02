@@ -38,6 +38,22 @@ const BLOB_BASE =
 const EMBED_DIMS = 1024;
 const APPLY = process.argv.includes("--apply");
 
+// --from-file=path : merge ONLY the slugs listed (one per line). Without
+// it, every capture dir with a meta.json not yet in the seed is merged —
+// which silently re-adds sites you deliberately deleted, since their
+// meta.json lingers on disk. Scope to a fresh-slug list to stay safe.
+const FROM_FILE = process.argv
+  .find((a) => a.startsWith("--from-file="))
+  ?.split("=")[1];
+const ONLY_SLUGS: Set<string> | null = FROM_FILE
+  ? new Set(
+      readFileSync(FROM_FILE, "utf8")
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter((l) => l && !l.startsWith("#")),
+    )
+  : null;
+
 interface SeedRow {
   id: string;
   slug: string;
@@ -229,7 +245,8 @@ function main() {
     .filter(
       (d) => d.isDirectory() && !d.name.startsWith("_") && !d.name.startsWith("."),
     )
-    .map((d) => d.name);
+    .map((d) => d.name)
+    .filter((name) => !ONLY_SLUGS || ONLY_SLUGS.has(name));
 
   let withMeta = 0;
   let alreadyInSeed = 0;
