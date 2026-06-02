@@ -156,16 +156,14 @@ export default async function ScreenDetailPage({
           </div>
           {screen.mobileImageUrl && (
             <figure className="mx-auto w-full max-w-[15rem]">
-              <div className="overflow-hidden rounded-[1.5rem] border rule bg-[color-mix(in_oklab,var(--color-fg)_6%,var(--color-bg))] p-1.5">
-                <div className="overflow-hidden rounded-[1.1rem]">
-                  <TileImage
-                    variants={screen.mobileVariants}
-                    fallbackSrc={screen.mobileImageUrl}
-                    alt={`${screen.title} — mobile`}
-                    sizes="240px"
-                    imgClassName="block h-auto w-full"
-                  />
-                </div>
+              <div className="overflow-hidden border rule">
+                <TileImage
+                  variants={screen.mobileVariants}
+                  fallbackSrc={screen.mobileImageUrl}
+                  alt={`${screen.title} — mobile`}
+                  sizes="240px"
+                  imgClassName="block h-auto w-full"
+                />
               </div>
               <figcaption className="text-meta mt-2 text-center">
                 Mobile · 375
@@ -277,7 +275,7 @@ export default async function ScreenDetailPage({
                 />
               </div>
               {screen.mobileFullUrl && (
-                <div className="hidden max-h-[80vh] w-[190px] overflow-y-auto rounded-[1.25rem] border rule sm:block">
+                <div className="hidden max-h-[80vh] w-[190px] overflow-y-auto border rule sm:block">
                   <TileImage
                     variants={screen.mobileFullVariants}
                     fallbackSrc={screen.mobileFullUrl}

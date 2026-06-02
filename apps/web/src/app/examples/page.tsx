@@ -86,7 +86,7 @@ export default function ExamplesPage() {
                 href={`/examples/${ex.slug}`}
                 className="group block focus:outline-none"
               >
-                <div className="relative overflow-hidden rounded-[4px] border rule transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-y-0.5 group-hover:shadow-[0_14px_44px_-16px_rgba(0,0,0,0.4)] group-focus-visible:-translate-y-0.5">
+                <div className="relative overflow-hidden border rule transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-y-0.5 group-hover:shadow-[0_14px_44px_-16px_rgba(0,0,0,0.4)] group-focus-visible:-translate-y-0.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/examples/${ex.slug}/thumb.jpg`}
