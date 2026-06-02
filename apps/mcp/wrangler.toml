@@ -13,6 +13,10 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENFORCE_AUTH = "0"
+# Where the Worker fetches the curated catalogue (seed + embeddings) at
+# runtime — it isn't bundled. Defaults to the published Vercel Blob store
+# if unset; re-publish with publish-catalogue-to-blob.ts after seed edits.
+INSPO_CATALOGUE_URL = "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/catalogue"
 
 # Custom domain example (uncomment + set zone in dashboard before deploy):
 # [[routes]]

@@ -11,20 +11,31 @@
  * keep onboarding simple; flip `ENFORCE_AUTH=1` once the catalogue has
  * paywalled tiers.
  *
- * Database access: Neon HTTP driver (works inside the fetch runtime).
- * The query layer in @inspo/db reads `process.env.DATABASE_URL`, so we
- * mirror the binding from Cloudflare's `env.DATABASE_URL` into globalThis
- * before any tool handler runs.
+ * Catalogue data: the curated archive is the static seed. The Worker
+ * can't bundle the ~16MB seed (Cloudflare script-size cap), so on the
+ * first request per isolate it FETCHES the catalogue + embeddings from
+ * the CDN (`INSPO_CATALOGUE_URL`) and injects them into @inspo/db via
+ * `ensureCatalogue()`. The workerd build of `@inspo/db/seed-source`
+ * exports null, so nothing is inlined. (Neon is only consulted if
+ * DATABASE_URL is set AND INSPO_USE_DB=1 — off by default.)
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { ensureCatalogue } from "@inspo/db";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools.js";
 import { verifyApiKeyEdge } from "./auth-edge.js";
+
+// Where the Worker fetches the catalogue from. Overridable per-env via
+// `wrangler secret/var INSPO_CATALOGUE_URL`; defaults to the published
+// Vercel Blob store. Re-run publish-catalogue-to-blob.ts after seed edits.
+const DEFAULT_CATALOGUE_URL =
+  "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/catalogue";
 
 export interface Env {
   DATABASE_URL?: string;
   INSPO_BASE_URL?: string;
+  INSPO_CATALOGUE_URL?: string;
   ENFORCE_AUTH?: string;
 }
 
@@ -70,6 +81,10 @@ export default {
         { status: 401, headers: { "content-type": "application/json" } },
       );
     }
+
+    // The workerd build doesn't bundle the seed — fetch + inject the
+    // catalogue (memoized: once per isolate) before any tool runs.
+    await ensureCatalogue(env.INSPO_CATALOGUE_URL ?? DEFAULT_CATALOGUE_URL);
 
     // Build a fresh server per request — keeps state isolated and fits
     // Workers' execution model. The cost is negligible since registration

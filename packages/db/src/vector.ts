@@ -30,27 +30,64 @@ export const EMBEDDING_DIMS = 1024;
 const EMBED_MODEL =
   process.env.INSPO_EMBED_MODEL ?? "intfloat/multilingual-e5-large-instruct";
 
-// Resolve sidecar paths relative to THIS module, not the caller's
-// cwd. Both files ship in the bundle.
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const SIDECAR_BIN = resolve(__dirname, "./embeddings.bin");
-const SIDECAR_IDX = resolve(__dirname, "./embeddings.idx.json");
+// Resolve sidecar paths relative to THIS module, not the caller's cwd.
+// Done lazily + guarded: the edge Worker has no filesystem and
+// `import.meta.url` is undefined there, which would throw at module load.
+// In that runtime the sidecar is injected via setSidecar() instead, so
+// returning null here is fine.
+function sidecarPaths(): { bin: string; idx: string } | null {
+  try {
+    const dir = dirname(fileURLToPath(import.meta.url));
+    return {
+      bin: resolve(dir, "./embeddings.bin"),
+      idx: resolve(dir, "./embeddings.idx.json"),
+    };
+  } catch {
+    return null;
+  }
+}
 
 /* ────────────────────── sidecar loader ────────────────────── */
 
 let _sidecar: Map<string, Float32Array> | null = null;
 
+/**
+ * Inject the embedding sidecar at runtime, built from a fetched
+ * idx JSON + the raw `embeddings.bin` ArrayBuffer. Used by the edge
+ * Worker (no filesystem) after `loadCatalogueFromUrl()` fetches both
+ * from the CDN. Returns false on a dims mismatch / malformed input so
+ * vector tools degrade to lexical search instead of throwing.
+ */
+export function setSidecar(
+  idx: { slugs: string[]; dims: number; count?: number },
+  bin: ArrayBuffer,
+): boolean {
+  if (idx.dims !== EMBEDDING_DIMS) return false;
+  if (bin.byteLength !== idx.slugs.length * EMBEDDING_DIMS * 4) return false;
+  const view = new Float32Array(bin);
+  const map = new Map<string, Float32Array>();
+  for (let i = 0; i < idx.slugs.length; i++) {
+    map.set(
+      idx.slugs[i]!,
+      view.slice(i * EMBEDDING_DIMS, (i + 1) * EMBEDDING_DIMS),
+    );
+  }
+  _sidecar = map;
+  return true;
+}
+
 export function loadSidecar(): Map<string, Float32Array> | null {
   if (_sidecar) return _sidecar;
-  if (!existsSync(SIDECAR_BIN) || !existsSync(SIDECAR_IDX)) return null;
+  const paths = sidecarPaths();
+  if (!paths || !existsSync(paths.bin) || !existsSync(paths.idx)) return null;
   try {
-    const idx = JSON.parse(readFileSync(SIDECAR_IDX, "utf8")) as {
+    const idx = JSON.parse(readFileSync(paths.idx, "utf8")) as {
       slugs: string[];
       dims: number;
       count: number;
     };
     if (idx.dims !== EMBEDDING_DIMS) return null;
-    const buf = readFileSync(SIDECAR_BIN);
+    const buf = readFileSync(paths.bin);
     const view = new Float32Array(
       buf.buffer,
       buf.byteOffset,

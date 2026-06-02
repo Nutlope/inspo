@@ -28,24 +28,40 @@ import {
   collections as collectionsFixture,
 } from "./fixtures";
 import { pendingScreens as pendingFixture } from "./pending-fixtures";
-import staticScreensJson from "./static-screens.json" with { type: "json" };
+import { bundledScreens } from "@inspo/db/seed-source";
 import referenceManifestJson from "./reference-components.json" with { type: "json" };
 import type { ReferenceComponent } from "@inspo/shared";
 
 /**
- * Fallback set used when DATABASE_URL is missing OR the live Neon
- * query throws (e.g. data-transfer quota exhausted on free tier).
+ * The active catalogue rows used whenever DATABASE_URL is missing, DB
+ * reads are off (the default — see client.ts), OR a live Neon query
+ * throws. Resolution order:
  *
- * Prefers the static seed built from the local captures directory
- * (3,779 real entries with blob-URL images, derived slugs/titles).
- * Falls back to the 16-row demo fixtures if the static seed isn't
- * present (running outside the monorepo build).
+ *   1. `_injectedScreens` — set at runtime by the edge Worker after it
+ *      fetches the catalogue from the CDN (`loadCatalogueFromUrl`).
+ *   2. `bundledScreens` — the static seed inlined at build time in Node
+ *      (web + stdio MCP). Null in the workerd build (not bundled).
+ *   3. demo fixtures — last resort when running outside the monorepo.
  */
-const STATIC_AVAILABLE =
-  Array.isArray(staticScreensJson) && staticScreensJson.length > 0;
-const screensFixture = (STATIC_AVAILABLE
-  ? (staticScreensJson as unknown as typeof fixtureScreens)
-  : fixtureScreens);
+let _injectedScreens: typeof fixtureScreens | null = null;
+
+/** Inject the catalogue at runtime. Used by the Cloudflare Worker,
+ *  which fetches the seed from the CDN rather than bundling it. No-op
+ *  for the bundled-seed path (Node) unless explicitly called. */
+export function setCatalogue(rows: unknown[]): void {
+  _injectedScreens =
+    Array.isArray(rows) && rows.length > 0
+      ? (rows as unknown as typeof fixtureScreens)
+      : null;
+}
+
+function catalogueRows(): typeof fixtureScreens {
+  if (_injectedScreens) return _injectedScreens;
+  if (Array.isArray(bundledScreens) && bundledScreens.length > 0) {
+    return bundledScreens as unknown as typeof fixtureScreens;
+  }
+  return fixtureScreens;
+}
 
 export type ScreenFilter = {
   style?: Style;
@@ -279,7 +295,7 @@ export async function getAllScreens(
   sort: ScreenSort = "latest",
 ): Promise<ScreenSummary[]> {
   if (!useDbReads()) {
-    const filtered = applyFiltersFixture(screensFixture, filter);
+    const filtered = applyFiltersFixture(catalogueRows(), filter);
     if (sort === "varied") return variedOrder(filtered);
     if (sort === "random") return shuffle(filtered);
     if (sort === "featured") return featuredOrder(filtered);
@@ -355,7 +371,7 @@ export async function getAllScreens(
     console.warn(
       `[db] getAllScreens fell back to fixtures: ${err instanceof Error ? err.message : err}`,
     );
-    return applyFiltersFixture(screensFixture, filter);
+    return applyFiltersFixture(catalogueRows(), filter);
   }
 
   // For now, tags are not normalized in returned shape — but since we
@@ -381,7 +397,7 @@ export async function getAllScreens(
 
 export async function findScreen(slug: string): Promise<ScreenSummary | null> {
   if (!useDbReads()) {
-    return screensFixture.find((s) => s.slug === slug) ?? null;
+    return catalogueRows().find((s) => s.slug === slug) ?? null;
   }
   const db = getDb();
   let rows;
@@ -395,7 +411,7 @@ export async function findScreen(slug: string): Promise<ScreenSummary | null> {
     console.warn(
       `[db] findScreen fell back to fixtures: ${err instanceof Error ? err.message : err}`,
     );
-    return screensFixture.find((s) => s.slug === slug) ?? null;
+    return catalogueRows().find((s) => s.slug === slug) ?? null;
   }
   if (!rows[0]) return null;
   return rowToSummary(rows[0], {
@@ -515,7 +531,7 @@ function sortPages(pages: ScreenSummary[]): ScreenSummary[] {
 /** All pages of one site, by site_slug. */
 export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
   if (!useDbReads()) {
-    const pages = screensFixture.filter((s) => s.siteSlug === siteSlug);
+    const pages = catalogueRows().filter((s) => s.siteSlug === siteSlug);
     if (pages.length === 0) return null;
     const sorted = sortPages(pages);
     const hero = sorted.find((p) => p.pageType === "landing") ?? sorted[0]!;
@@ -543,7 +559,7 @@ export async function findSite(siteSlug: string): Promise<SiteSummary | null> {
     console.warn(
       `[db] findSite fell back to fixtures: ${err instanceof Error ? err.message : err}`,
     );
-    const pages = screensFixture.filter((s) => s.siteSlug === siteSlug);
+    const pages = catalogueRows().filter((s) => s.siteSlug === siteSlug);
     if (pages.length === 0) return null;
     const sorted = sortPages(pages);
     const hero = sorted.find((p) => p.pageType === "landing") ?? sorted[0]!;
@@ -586,7 +602,7 @@ export async function getMultiPageSites(): Promise<
 > {
   if (!useDbReads()) {
     const counts = new Map<string, number>();
-    for (const s of screensFixture)
+    for (const s of catalogueRows())
       counts.set(s.siteSlug, (counts.get(s.siteSlug) ?? 0) + 1);
     return [...counts.entries()]
       .filter(([, c]) => c > 1)

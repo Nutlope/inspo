@@ -10,7 +10,11 @@
     "./schema": "./src/schema.ts",
     "./queries": "./src/queries.ts",
     "./fixtures": "./src/fixtures.ts",
-    "./design-md": "./src/design-md.ts"
+    "./design-md": "./src/design-md.ts",
+    "./seed-source": {
+      "workerd": "./src/seed-source.edge.ts",
+      "default": "./src/seed-source.node.ts"
+    }
   },
   "scripts": {
     "db:push": "drizzle-kit push",
