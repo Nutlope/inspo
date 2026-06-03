@@ -44,6 +44,19 @@ claude mcp add --transport http inspo https://inspo-mcp.<your-subdomain>.workers
 { "mcpServers": { "inspo": { "url": "https://inspo-mcp.<your-subdomain>.workers.dev/mcp" } } }
 ```
 
+### `npx` (zero-config, once published)
+
+No clone and no hosting — the stdio server runs straight from npm and fetches
+the catalogue from the CDN:
+
+```jsonc
+// Claude Code: ~/.claude.json  ·  Cursor: ~/.cursor/mcp.json  ·  Claude Desktop: config
+{ "mcpServers": { "inspo": { "command": "npx", "args": ["-y", "inspo-mcp"] } } }
+```
+
+Optional `env`: `TOGETHER_API_KEY` (enables query-embedding semantic search) and
+`INSPO_CATALOGUE_URL` (point at a self-hosted catalogue).
+
 ### Local (stdio, from a clone)
 
 The bin shim boots the TS server via `tsx` — no build step.
@@ -60,7 +73,7 @@ The bin shim boots the TS server via `tsx` — no build step.
 }
 ```
 
-Restart the client; the agent gains all the tools above. (Publishing to npm for a `npx inspo-mcp` one-liner is a follow-up — see *Publishing* below.)
+Restart the client; the agent gains all the tools above.
 
 ## Run / develop
 
@@ -116,14 +129,29 @@ Inspo is the **data/reference** layer; [Hallmark](https://github.com/Luffixos/ha
 - **Auth:** soft by default (`ENFORCE_AUTH=0`). Set `ENFORCE_AUTH=1` + provision `api_keys` to require `Authorization: Bearer inspo_…` on the hosted endpoint before exposing it widely.
 - **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). On a public hosted deployment this is a mild SSRF surface — keep it behind auth / a network allowlist if that matters for your environment.
 
-## Publishing (for a true `npx` one-liner)
+## Publishing `npx inspo-mcp`
 
-`package.json` is currently `private`. To ship a standalone `npx inspo-mcp`: bundle `src` + the static seed, drop `private`, add a `prepublishOnly` build, and `npm publish`. (Requires npm auth — left for the maintainer.)
+The build esbuild-bundles the stdio server into one self-contained file with a
+clean, dependency-free `package.json` — the ~16MB seed is **not** bundled (it's
+fetched from the CDN at runtime), so the package stays ~1.5MB.
+
+```bash
+pnpm --filter @inspo/mcp build:npm   # → apps/mcp/dist/ (inspo-mcp.mjs + package.json)
+node apps/mcp/dist/inspo-mcp.mjs     # optional: smoke-test (speaks MCP on stdio)
+cd apps/mcp/dist && npm publish       # needs `npm login`; publishes the public package
+```
+
+The monorepo `package.json` stays `private` — only the generated `dist/`
+artifact is published, so nothing here leaks. Re-run `build:npm` (and
+`publish-catalogue-to-blob.ts`) after seed changes, then bump `VERSION` in
+`scripts/build-npm.mjs` and re-publish.
 
 ## Files
 
-- `src/server.ts` — stdio entry · `src/worker.ts` — Cloudflare Worker (Streamable HTTP)
-- `src/tools.ts` — all tool registrations + `HERO_GUIDANCE` (shared by both transports)
+- `src/server.ts` — stdio entry (monorepo) · `src/worker.ts` — Cloudflare Worker
+- `src/server-npm.ts` — standalone stdio entry for the published package (CDN catalogue)
+- `src/http-handler.ts` — shared Streamable-HTTP handler (Worker + Vercel route)
+- `src/tools.ts` — all tool registrations + `HERO_GUIDANCE` (shared by all transports)
 - `src/format.ts` — wire format (absolute URLs, inline image blocks, mobile fields)
 - `src/call.ts` — one-shot CLI client (`tsx src/call.ts <tool> '<json>'`)
-- `src/smoke.ts` — `pnpm test` · `bin/inspo-mcp.js` — no-build entrypoint
+- `src/smoke.ts` — `pnpm test` · `scripts/build-npm.mjs` — `npx` bundle builder

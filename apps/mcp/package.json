@@ -18,6 +18,7 @@
     "test": "tsx src/smoke.ts",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
+    "build:npm": "node scripts/build-npm.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -33,6 +34,7 @@
     "@cloudflare/workers-types": "^4.20251201.0",
     "@types/node": "^22.10.2",
     "dotenv": "^16.4.5",
+    "esbuild": "^0.25.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "wrangler": "^4.0.0"
