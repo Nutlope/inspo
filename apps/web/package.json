@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@inspo/db": "workspace:*",
+    "@inspo/mcp": "workspace:*",
     "@inspo/shared": "workspace:*",
     "@inspo/taxonomy": "workspace:*",
     "@vercel/blob": "^2.3.3",

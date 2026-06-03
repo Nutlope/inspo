@@ -89,6 +89,22 @@ pnpm --filter @inspo/mcp worker:deploy
 override it to host the data anywhere. The stdio server still reads the
 bundled seed, so local installs need no CDN.
 
+### Deploy on Vercel (no Cloudflare)
+
+The same MCP is exposed as a Next.js Route Handler in the web app, so it ships
+with your existing Vercel deployment — no extra account. Once `apps/web` is
+deployed, the endpoint is:
+
+```
+https://<your-domain>/api/mcp
+```
+
+Add it like the hosted block above, swapping the URL. The route serves the
+seed bundled into the web build and fetches the embedding sidecar from the CDN
+for vector tools (`INSPO_CATALOGUE_URL`, same default as the Worker). Use this
+if you'd rather not run Cloudflare; use the Worker if you want a dedicated MCP
+host independent of the site.
+
 ## Hallmark integration
 
 Inspo is the **data/reference** layer; [Hallmark](https://github.com/Luffixos/hallmark) is the **process/judgment** layer. An agent following Hallmark picks a macrostructure, then calls `find_examples_for_macrostructure` / `recommend` to ground it in real sites — process from Hallmark, taste from Inspo. Inspo works fine on its own too (see the `/examples` gallery: full pages built with nothing but this MCP).

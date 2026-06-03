@@ -23,8 +23,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { ensureCatalogue } from "@inspo/db";
-import { registerTools, SERVER_INSTRUCTIONS } from "./tools.js";
-import { verifyApiKeyEdge } from "./auth-edge.js";
+import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
+import { verifyApiKeyEdge } from "./auth-edge";
 
 // Where the Worker fetches the catalogue from. Overridable per-env via
 // `wrangler secret/var INSPO_CATALOGUE_URL`; defaults to the published

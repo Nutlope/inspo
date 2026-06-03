@@ -32,5 +32,10 @@ export {
 } from "./search";
 export { embedQuery, loadSidecar, setSidecar, cosineSim, EMBEDDING_DIMS } from "./vector";
 export { setCatalogue } from "./queries";
-export { loadCatalogueFromUrl, ensureCatalogue, type CatalogueLoadResult } from "./load-remote";
+export {
+  loadCatalogueFromUrl,
+  ensureCatalogue,
+  ensureSidecarFromUrl,
+  type CatalogueLoadResult,
+} from "./load-remote";
 export { screens, collections } from "./fixtures";

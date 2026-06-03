@@ -6,7 +6,7 @@
 
 import type { ScreenSummary, Collection } from "@inspo/shared";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
-import { absolute } from "./url.js";
+import { absolute } from "./url";
 
 export function formatScreen(s: ScreenSummary, why?: string) {
   return {
@@ -90,7 +90,7 @@ export async function withImages(
   value: unknown,
   imageUrls: ReadonlyArray<string>,
 ) {
-  const { thumbnailBlocks, MAX_INLINE_PER_CALL } = await import("./inline-images.js");
+  const { thumbnailBlocks, MAX_INLINE_PER_CALL } = await import("./inline-images");
   const slice = imageUrls.slice(0, MAX_INLINE_PER_CALL);
   const blocks = await thumbnailBlocks(slice);
   return {

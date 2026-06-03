@@ -79,6 +79,9 @@ importers:
       '@inspo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@inspo/mcp':
+        specifier: workspace:*
+        version: link:../mcp
       '@inspo/shared':
         specifier: workspace:*
         version: link:../../packages/shared

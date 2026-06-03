@@ -64,9 +64,9 @@ const REFERENCE_TYPES = [
   "faq",
   "stat",
 ] as const;
-import { asTextContent, formatCollection, formatScreen, withImages } from "./format.js";
-import { absolute } from "./url.js";
-import { searchScreens } from "./search.js";
+import { asTextContent, formatCollection, formatScreen, withImages } from "./format";
+import { absolute } from "./url";
+import { searchScreens } from "./search";
 // study() was moved to @inspo/shared so the web playground can call
 // it without depending on the MCP-SDK side of @inspo/mcp.
 

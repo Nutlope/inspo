@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "main": "./src/server.ts",
+  "exports": {
+    ".": "./src/server.ts",
+    "./http": "./src/http-handler.ts",
+    "./tools": "./src/tools.ts"
+  },
   "bin": {
     "inspo-mcp": "./bin/inspo-mcp.js"
   },
