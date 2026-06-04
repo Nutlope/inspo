@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { CommandHint } from "@/components/command-hint";
+import { GithubStar } from "@/components/github-star";
 import { NavLink } from "@/components/nav-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -28,6 +29,7 @@ export function Masthead() {
           {/* Utilities cluster — tighter gap than the nav links above
               and a leading spacer so the cluster reads as a distinct group. */}
           <div className="ml-1 flex items-center gap-1.5 sm:ml-2">
+            <GithubStar />
             <CommandHint />
             <ThemeToggle />
           </div>

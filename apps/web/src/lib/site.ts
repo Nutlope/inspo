@@ -21,4 +21,9 @@ export const site = {
     { label: "MCP", href: "/mcp" },
     { label: "About", href: "/about" },
   ],
+  github: {
+    owner: "Luffixos",
+    repo: "inspo",
+    url: "https://github.com/Luffixos/inspo",
+  },
 } as const;
