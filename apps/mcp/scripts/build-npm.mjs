@@ -81,6 +81,13 @@ writeFileSync(
         "claude",
         "cursor",
       ],
+      repository: {
+        type: "git",
+        url: "git+https://github.com/Luffixos/inspo.git",
+        directory: "apps/mcp",
+      },
+      homepage: "https://github.com/Luffixos/inspo#readme",
+      bugs: { url: "https://github.com/Luffixos/inspo/issues" },
       license: "MIT",
     },
     null,
