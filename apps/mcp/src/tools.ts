@@ -165,7 +165,7 @@ export function registerTools(server: McpServer) {
           count: matched.length,
           tip:
             matched.length > 0
-              ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are AVIF when available, PNG otherwise."
+              ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are WebP when available, PNG otherwise."
               : "No matches. Try fewer filters or a broader query.",
           results,
         },

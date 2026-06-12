@@ -5,12 +5,14 @@
  * Reading it (4 extra tool calls per query), the agent sees the
  * thumbnails directly in the tool response.
  *
- * Source URL: prefer a small AVIF variant if it exists on blob,
+ * Source URL: prefer a small WebP variant if it exists on blob,
  * otherwise fall back to the PNG thumb (which exists for every
- * captured site). Today most rows only have the PNG; once the
- * encoder backfill is uploaded (encode-existing.ts + upload-to-blob),
- * AVIFs progressively become available and the per-result payload
- * drops from ~50 KB to ~5 KB without code changes.
+ * captured site). Never AVIF: the model APIs we care about decode
+ * PNG/JPEG/WebP/GIF only (Anthropic, Moonshot K2.6/MoonViT, Qwen-VL),
+ * so an inlined AVIF block is a wasted ~7 KB the model errors on or
+ * silently drops. As the encoder backfill uploads variants, WebPs
+ * progressively become available and the per-result payload drops
+ * from ~50 KB to ~10 KB without code changes.
  *
  * Performance budget:
  *   - Parallel fetches across all results in one tool call
@@ -62,17 +64,18 @@ function mimeFromUrl(url: string): string {
   return "image/png";
 }
 
-/** Build a small-AVIF candidate URL from the PNG thumb URL by
- *  rewriting `.../thumb.png` → `.../thumb.384.avif`. The encoder /
- *  upload-to-blob pipeline (PR 1) ships variants with this exact
- *  naming when run. If the URL doesn't match the pattern we just
- *  return null (caller falls back to the PNG). */
-function avifVariantFor(thumbUrl: string): string | null {
-  // Match `/<slug>/thumb.png[?v=…]`. Replace `thumb.png` with
-  // `thumb.384.avif` preserving the query string.
+/** Build a small-WebP candidate URL from the PNG thumb URL by
+ *  rewriting `.../thumb.png` to `.../thumb.384.webp`. The encoder /
+ *  upload-to-blob pipeline ships avif+webp variants with this exact
+ *  naming when run; webp is the one every vision API decodes. If the
+ *  URL doesn't match the pattern we just return null (caller falls
+ *  back to the PNG). */
+function webpVariantFor(thumbUrl: string): string | null {
+  // Match `/<slug>/thumb.png[?v=...]`. Replace `thumb.png` with
+  // `thumb.384.webp` preserving the query string.
   const re = /\/thumb\.png(\?[^#]*)?$/;
   if (!re.test(thumbUrl)) return null;
-  return thumbUrl.replace(re, "/thumb.384.avif$1");
+  return thumbUrl.replace(re, "/thumb.384.webp$1");
 }
 
 async function fetchOne(url: string): Promise<InlineImage | null> {
@@ -87,12 +90,16 @@ async function fetchOne(url: string): Promise<InlineImage | null> {
     if (len > MAX_IMAGE_BYTES) return null;
     const buf = new Uint8Array(await res.arrayBuffer());
     if (buf.byteLength > MAX_IMAGE_BYTES) return null;
+    const mimeType = res.headers.get("content-type") ?? mimeFromUrl(url);
+    // Never inline a format the model APIs can't decode (AVIF being the
+    // one our blob store actually hosts) — the caller falls back to PNG.
+    if (mimeType.includes("avif")) return null;
     let bin = "";
     for (let i = 0; i < buf.byteLength; i++) bin += String.fromCharCode(buf[i]!);
     const block: InlineImage = {
       type: "image",
       data: btoa(bin),
-      mimeType: res.headers.get("content-type") ?? mimeFromUrl(url),
+      mimeType,
     };
     cacheSet(url, block);
     return block;
@@ -104,18 +111,18 @@ async function fetchOne(url: string): Promise<InlineImage | null> {
 }
 
 /**
- * Fetch a thumbnail block for a result. Tries the AVIF variant first
- * (5–10 KB once the backfill is up); falls back to the PNG thumb
+ * Fetch a thumbnail block for a result. Tries the WebP variant first
+ * (~10 KB once the backfill is up); falls back to the PNG thumb
  * (~50 KB) which exists for every captured site today. Returns null
  * if neither resolves.
  */
 export async function thumbnailBlock(
   thumbUrl: string,
 ): Promise<InlineImage | null> {
-  const avifCandidate = avifVariantFor(thumbUrl);
-  if (avifCandidate) {
-    const avif = await fetchOne(avifCandidate);
-    if (avif) return avif;
+  const webpCandidate = webpVariantFor(thumbUrl);
+  if (webpCandidate) {
+    const webp = await fetchOne(webpCandidate);
+    if (webp) return webp;
   }
   return fetchOne(thumbUrl);
 }
