@@ -4,8 +4,19 @@
  * Pulled out so adding a tool means editing exactly one file.
  */
 
-import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z, type ZodRawShape } from "zod";
+import type {
+  McpServer,
+  RegisteredTool,
+  ToolCallback,
+} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  LITE_TOOLS,
+  applyProfileOnInitialize,
+  createServerContext,
+  sanitizeListedToolSchemas,
+  type RegisterOptions,
+} from "./profile";
 import {
   findCollection,
   findComponents,
@@ -78,51 +89,154 @@ import { searchScreens } from "./search";
 const HERO_GUIDANCE =
   "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, eyebrow, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold — nothing important cut off. Size display type to land in 2–3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
 
-export function registerTools(server: McpServer) {
+/* ────────────── tolerant argument parsing ──────────────
+ *
+ * OSS models mangle tool arguments in predictable ways: wrong case
+ * ("Dark"), display names for slugs ("Bento Grid"), numbers as strings
+ * ("8"), out-of-range limits, bare domains for URLs. Every one of
+ * those is unambiguous, so accept them instead of bouncing the call.
+ * The preprocessors run before zod validation; zod-to-json-schema
+ * reads through z.preprocess, so the advertised schema (enum lists,
+ * integer bounds) is unchanged.
+ */
+
+const looseTrim = (v: unknown) => (typeof v === "string" ? v.trim() : v);
+
+const looseSlugify = (v: unknown) =>
+  typeof v === "string" ? v.trim().toLowerCase().replace(/\s+/g, "-") : v;
+
+/** Case/whitespace-tolerant enum: "Dark Mode" → "dark-mode". */
+function flexEnum<T extends [string, ...string[]]>(values: T) {
+  return z.preprocess(looseSlugify, z.enum(values));
+}
+
+/** Integer that accepts numeric strings, rounds floats, and clamps to
+ *  [min, max] instead of rejecting an over-eager limit=50. */
+function flexInt(min: number, max: number) {
+  return z.preprocess((v) => {
+    const n = typeof v === "string" && v.trim() !== "" ? Number(v) : v;
+    if (typeof n !== "number" || !Number.isFinite(n)) return v;
+    return Math.min(max, Math.max(min, Math.round(n)));
+  }, z.number().int().min(min).max(max));
+}
+
+/** Float that accepts numeric strings and clamps to [min, max]. */
+function flexNum(min: number, max: number) {
+  return z.preprocess((v) => {
+    const n = typeof v === "string" && v.trim() !== "" ? Number(v) : v;
+    if (typeof n !== "number" || !Number.isFinite(n)) return v;
+    return Math.min(max, Math.max(min, n));
+  }, z.number().min(min).max(max));
+}
+
+const flexBool = () =>
+  z.preprocess((v) => {
+    if (typeof v === "string") {
+      const s = v.trim().toLowerCase();
+      if (s === "true" || s === "1" || s === "yes") return true;
+      if (s === "false" || s === "0" || s === "no") return false;
+    }
+    return v;
+  }, z.boolean());
+
+/** Slug-ish identifier: trims, lowercases, hyphenates inner spaces. */
+const flexSlug = () => z.preprocess(looseSlugify, z.string());
+
+/** URL that tolerates a bare domain ("stripe.com" → "https://stripe.com"). */
+const flexUrl = () =>
+  z.preprocess((v) => {
+    if (typeof v !== "string") return v;
+    const s = v.trim();
+    if (s && !/^[a-z][a-z0-9+.-]*:\/\//i.test(s) && /^[\w-]+(\.[\w-]+)+/.test(s)) {
+      return `https://${s}`;
+    }
+    return s;
+  }, z.string().url());
+
+/** Tip line for screen-list responses, phrased for whichever response
+ *  shape the connecting harness actually receives. */
+function resultsTip(inline: boolean): string {
+  return inline
+    ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are WebP when available, PNG otherwise."
+    : "Text-only profile: no inline image blocks. Read each result's `autopsy` (fold composition breakdown), `northstar`, palette, and fonts instead; they carry the visual essence. Image URLs are included if your harness can fetch them.";
+}
+
+/** Error payload for a slug miss, with close-match suggestions so the
+ *  model can self-correct in one step instead of re-searching. */
+async function unknownSlug(slug: string) {
+  const all = await getAllScreens();
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const n = norm(slug);
+  const didYouMean =
+    n.length >= 3
+      ? all
+          .filter((s) => s.slug === s.siteSlug)
+          .map((s) => s.slug)
+          .filter((x) => {
+            const nx = norm(x);
+            return nx.includes(n) || n.includes(nx);
+          })
+          .slice(0, 5)
+      : [];
+  return {
+    error: `No screen with slug '${slug}'.`,
+    ...(didYouMean.length ? { didYouMean } : {}),
+    hint: "Slugs come from search_screens / recommend / find_similar results.",
+  };
+}
+
+export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
+  const ctx = createServerContext(server, opts);
+  const handles = new Map<string, RegisteredTool>();
+
+  /** registerTool, minus the tools excluded by a statically-known lite
+   *  profile. When the profile is client-detected instead, everything
+   *  registers and applyProfileOnInitialize() hides the rest. */
+  const reg = <Args extends ZodRawShape>(
+    name: string,
+    config: { description?: string; inputSchema?: Args },
+    cb: ToolCallback<Args>,
+  ): void => {
+    if (ctx.staticProfile === "lite" && !LITE_TOOLS.has(name)) return;
+    handles.set(name, server.registerTool(name, config, cb));
+  };
   /* ────────────── search_screens ────────────── */
-  server.registerTool(
+  reg(
     "search_screens",
     {
       description:
         "Search the curated archive of real website screenshots. Returns up to N screens with palette, fonts, components, and image URLs the agent can fetch or pass to a vision model.",
       inputSchema: {
         query: z
-          .string()
+          .preprocess(looseTrim, z.string())
           .describe(
             "Natural-language description of what you're looking for. e.g. 'minimalist editorial agency portfolio'",
           )
           .default(""),
-        style: z
-          .enum(STYLES as unknown as [string, ...string[]])
+        style: flexEnum(STYLES as unknown as [string, ...string[]])
           .optional()
           .describe("Filter to one visual style (e.g. 'minimalism', 'editorial')"),
-        industry: z
-          .enum(INDUSTRIES as unknown as [string, ...string[]])
+        industry: flexEnum(INDUSTRIES as unknown as [string, ...string[]])
           .optional()
           .describe("Filter to one industry (e.g. 'saas', 'fintech', 'portfolio')"),
-        macrostructure: z
-          .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
+        macrostructure: flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional()
           .describe("Filter to a Hallmark macrostructure (e.g. 'bento-grid')"),
-        mode: z
-          .enum(MODES as unknown as [string, ...string[]])
+        mode: flexEnum(MODES as unknown as [string, ...string[]])
           .optional()
           .describe("light or dark"),
-        vibe: z
-          .enum(VIBES as unknown as [string, ...string[]])
+        vibe: flexEnum(VIBES as unknown as [string, ...string[]])
           .optional()
           .describe("Mood / vibe — 'calm', 'loud', 'luxe', 'technical', 'soft', etc."),
-        color: z
-          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+        color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
           .describe("Color word — 'warm', 'cool', 'monochrome', 'neon', 'earthy'"),
-        pageType: z
-          .enum(PAGE_TYPES)
+        pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe(
             "Filter to a page kind: 'landing' (default homepages), 'pricing', 'features', 'auth', 'about', 'blog', 'changelog', 'docs', 'other'",
           ),
-        limit: z.number().int().min(1).max(20).default(8),
+        limit: flexInt(1, 20).default(8),
       },
     },
     async (args) => {
@@ -148,6 +262,7 @@ export function registerTools(server: McpServer) {
         filtered = filtered.filter((s) => s.pageType === p);
       }
 
+      const inline = ctx.inlineImages();
       const matched = await searchScreens(filtered, args.query, args.limit);
       const results = matched.map((s) => formatScreen(s));
       return withImages(
@@ -165,43 +280,42 @@ export function registerTools(server: McpServer) {
           count: matched.length,
           tip:
             matched.length > 0
-              ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are WebP when available, PNG otherwise."
+              ? resultsTip(inline)
               : "No matches. Try fewer filters or a broader query.",
           results,
         },
         results.map((r) => r.thumb),
+        inline,
       );
     },
   );
 
   /* ────────────── get_screen ────────────── */
-  server.registerTool(
+  reg(
     "get_screen",
     {
       description:
         "Fetch the full record for one screen by slug — every viewport variant, palette, fonts, tech stack, designer credit.",
-      inputSchema: { slug: z.string().describe("Screen slug, e.g. 'atelier-mira'") },
+      inputSchema: { slug: flexSlug().describe("Screen slug, e.g. 'atelier-mira'") },
     },
     async ({ slug }) => {
       const s = await findScreen(slug);
-      if (!s) return asTextContent({ error: `No screen with slug '${slug}'` });
+      if (!s) return asTextContent(await unknownSlug(slug));
       const formatted = formatScreen(s);
-      return withImages(formatted, [formatted.thumb]);
+      return withImages(formatted, [formatted.thumb], ctx.inlineImages());
     },
   );
 
   /* ────────────── get_design_system ────────────── */
-  server.registerTool(
+  reg(
     "get_design_system",
     {
       description:
         "Return the full DESIGN.md for one screen — real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens. Pairs with Hallmark.",
       inputSchema: {
-        slug: z
-          .string()
+        slug: flexSlug()
           .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
-        live: z
-          .boolean()
+        live: flexBool()
           .default(true)
           .describe(
             "If true (default), supplement thin captured tokens by fetching the source URL via study(). Set false to skip the network round-trip.",
@@ -213,7 +327,10 @@ export function registerTools(server: McpServer) {
       if (!s) {
         return {
           content: [
-            { type: "text" as const, text: `No screen with slug '${slug}'.` },
+            {
+              type: "text" as const,
+              text: JSON.stringify(await unknownSlug(slug), null, 2),
+            },
           ],
           isError: true,
         };
@@ -273,19 +390,19 @@ export function registerTools(server: McpServer) {
   );
 
   /* ────────────── find_similar ────────────── */
-  server.registerTool(
+  reg(
     "find_similar",
     {
       description:
         "Given a screen slug, return its visual + structural neighbours — same macrostructure first, then overlapping industry / style / mode.",
       inputSchema: {
-        slug: z.string(),
-        limit: z.number().int().min(1).max(20).default(8),
+        slug: flexSlug(),
+        limit: flexInt(1, 20).default(8),
       },
     },
     async ({ slug, limit }) => {
       const target = await findScreen(slug);
-      if (!target) return asTextContent({ error: `No screen with slug '${slug}'` });
+      if (!target) return asTextContent(await unknownSlug(slug));
       const similar = await findSimilar(slug, limit);
       const results = similar.map((s) =>
         formatScreen(
@@ -302,21 +419,24 @@ export function registerTools(server: McpServer) {
           results,
         },
         results.map((r) => r.thumb),
+        ctx.inlineImages(),
       );
     },
   );
 
   /* ────────────── compare ────────────── */
-  server.registerTool(
+  reg(
     "compare",
     {
       description:
         "Compare 2–4 captured sites side by side across design dimensions — palette, typefaces, macrostructure, mode, style tags, type-scale + spacing + radius scales, container width. Returns a per-site breakdown plus a `shared` block (style tags every site has in common, the set of distinct macrostructures, whether they share a light/dark register). Use it to answer 'what do linear, stripe, and vercel share visually' or to triangulate a house style from a few references. Inline thumbnails included.",
       inputSchema: {
         slugs: z
-          .array(z.string())
-          .min(2)
-          .max(4)
+          .preprocess(
+            // Tolerate a comma-separated string where an array was meant.
+            (v) => (typeof v === "string" ? v.split(",").map((s) => s.trim()) : v),
+            z.array(flexSlug()).min(2).max(4),
+          )
           .describe(
             "2–4 screen slugs to compare, e.g. ['linear-app','stripe-com','vercel-com']. Discover slugs with search_screens / find_similar.",
           ),
@@ -380,31 +500,29 @@ export function registerTools(server: McpServer) {
       return withImages(
         payload,
         screens.map((s) => absolute(s.thumbUrl)),
+        ctx.inlineImages(),
       );
     },
   );
 
   /* ────────────── find_by_color ────────────── */
-  server.registerTool(
+  reg(
     "find_by_color",
     {
       description:
         "Given a hex colour, return real production sites whose extracted palette includes a close match. Distance is Euclidean in OKLAB — the colour space where perceived difference and numeric distance line up — so 'close' means same family of colour, not just same hue. Useful when a brief specifies a particular accent / brand colour and you want sites already living near it. Pairs with `get_design_system` to harvest the matching palette tokens.",
       inputSchema: {
         hex: z
-          .string()
+          .preprocess(looseTrim, z.string())
           .describe(
             "Target colour as a hex string ('#c7402f', 'c7402f', '#fff'). Case-insensitive. 3- or 6-digit.",
           ),
-        tolerance: z
-          .number()
-          .min(0.02)
-          .max(0.5)
+        tolerance: flexNum(0.02, 0.5)
           .default(HEX_FAMILY_THRESHOLD)
           .describe(
             "Max OKLAB distance to count as a match. Defaults to 0.15 ('same family'). 0.05 ≈ 'near-identical', 0.30 ≈ 'in the same hue zip code'.",
           ),
-        limit: z.number().int().min(1).max(40).default(12),
+        limit: flexInt(1, 40).default(12),
       },
     },
     async ({ hex, tolerance, limit }) => {
@@ -442,23 +560,24 @@ export function registerTools(server: McpServer) {
           results,
         },
         results.map((r) => r.thumb),
+        ctx.inlineImages(),
       );
     },
   );
 
   /* ────── find_examples_for_macrostructure (Hallmark-aware) ────── */
-  server.registerTool(
+  reg(
     "find_examples_for_macrostructure",
     {
       description:
         "Hallmark-aware. Given one of the 21 named macrostructures, return real production sites that exemplify it. Designed to be called from inside a Hallmark design flow at the macrostructure-pick step. Accepts both kebab-case slugs ('bento-grid') and Hallmark display names ('Bento Grid').",
       inputSchema: {
         name: z
-          .string()
+          .preprocess(looseTrim, z.string())
           .describe(
             "Macrostructure name. e.g. 'bento-grid', 'Bento Grid', 'specimen', 'Marquee Hero'.",
           ),
-        limit: z.number().int().min(1).max(20).default(4),
+        limit: flexInt(1, 20).default(4),
       },
     },
     async ({ name, limit }) => {
@@ -479,23 +598,27 @@ export function registerTools(server: McpServer) {
       const screens = await getAllScreens({ macrostructure: slug });
       const top = screens.slice(0, limit);
       const results = top.map((s) => formatScreen(s));
+      const inline = ctx.inlineImages();
       return withImages(
         {
           macrostructure: { slug, label: MACROSTRUCTURE_LABELS[slug] },
           count: top.length,
           tip:
             top.length > 0
-              ? `Each result has an inline thumbnail (image block) below the JSON. Study them — they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
+              ? (inline
+                  ? `Each result has an inline thumbnail (image block) below the JSON. Study them: they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
+                  : `These are real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}. Study each result's autopsy + palette + fonts; they carry the composition.`)
               : `No screens tagged ${MACROSTRUCTURE_LABELS[slug]} yet. Try search_screens with a broader query.`,
           results,
         },
         results.map((r) => r.thumb),
+        inline,
       );
     },
   );
 
   /* ────────────── list_collections ────────────── */
-  server.registerTool(
+  reg(
     "list_collections",
     {
       description:
@@ -511,52 +634,33 @@ export function registerTools(server: McpServer) {
     },
   );
 
-  /* ────────────── get_collection ────────────── */
   /* ────────────── find_components ────────────── */
-  server.registerTool(
+  reg(
     "find_components",
     {
       description:
         "Find specific UI components (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat) cropped from real sites. Returns image URLs the agent can fetch — perfect for 'show me 12 pricing cards' or 'study how 8 sites do their CTAs'.",
       inputSchema: {
-        type: z
-          .enum([
-            "hero",
-            "pricing",
-            "features",
-            "cta",
-            "nav",
-            "footer",
-            "testimonial",
-            "logo-cloud",
-            "faq",
-            "stat",
-          ])
+        type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Which component type to find"),
-        style: z
-          .enum(STYLES as unknown as [string, ...string[]])
+        style: flexEnum(STYLES as unknown as [string, ...string[]])
           .optional()
           .describe("Filter the parent site's style"),
-        industry: z
-          .enum(INDUSTRIES as unknown as [string, ...string[]])
+        industry: flexEnum(INDUSTRIES as unknown as [string, ...string[]])
           .optional(),
-        macrostructure: z
-          .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
+        macrostructure: flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional(),
-        mode: z.enum(MODES as unknown as [string, ...string[]]).optional(),
-        vibe: z
-          .enum(VIBES as unknown as [string, ...string[]])
+        mode: flexEnum(MODES as unknown as [string, ...string[]]).optional(),
+        vibe: flexEnum(VIBES as unknown as [string, ...string[]])
           .optional()
           .describe("Mood — 'calm', 'loud', 'luxe', etc."),
-        color: z
-          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+        color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
           .describe("Color word — 'warm', 'cool', 'monochrome', etc."),
-        pageType: z
-          .enum(PAGE_TYPES)
+        pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe("Only components from this page kind (e.g. 'pricing')"),
-        limit: z.number().int().min(1).max(40).default(12),
+        limit: flexInt(1, 40).default(12),
       },
     },
     async (args) => {
@@ -621,22 +725,30 @@ export function registerTools(server: McpServer) {
           components,
         },
         components.map((c) => c.thumb),
+        ctx.inlineImages(),
       );
     },
   );
 
-  server.registerTool(
+  /* ────────────── get_collection ────────────── */
+  reg(
     "get_collection",
     {
       description:
         "Fetch one issue by slug, including the editor's blurb and ordered screen list.",
       inputSchema: {
-        slug: z.string().describe("Collection slug, e.g. 'editorial-layouts'"),
+        slug: flexSlug().describe("Collection slug, e.g. 'editorial-layouts'"),
       },
     },
     async ({ slug }) => {
       const c = await findCollection(slug);
-      if (!c) return asTextContent({ error: `No collection with slug '${slug}'` });
+      if (!c) {
+        const all = await getAllCollections();
+        return asTextContent({
+          error: `No collection with slug '${slug}'`,
+          validSlugs: all.map((x) => x.slug),
+        });
+      }
       const screens = await getAllScreens();
       const enriched = c.screens
         .map((entry) => {
@@ -655,18 +767,17 @@ export function registerTools(server: McpServer) {
    * a list view (no source) so the agent can scan. Filtered by type,
    * returns the full source for each match.
    */
-  server.registerTool(
+  reg(
     "find_reference_components",
     {
       description:
         "List the Hallmark-stamped reference components — canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for that category; without filters you get a scan-view with names + notes. After picking, call `get_reference_jsx` for the full source of a specific one. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
       inputSchema: {
-        type: z
-          .enum(REFERENCE_TYPES)
+        type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe("Component category (hero, pricing, cta, …). Omit to scan all types."),
         macro: z
-          .string()
+          .preprocess(looseTrim, z.string())
           .optional()
           .describe(
             "Substring match on the component's macro field — e.g. 'Marquee' matches 'Marquee Hero'.",
@@ -718,18 +829,15 @@ export function registerTools(server: McpServer) {
    * passes the brand URL, gets a DESIGN.md, then uses it as the
    * token block when writing code.
    */
-  server.registerTool(
+  reg(
     "study",
     {
       description:
         "Fetch any live URL and return its design system — real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Pairs with Hallmark's `study` verb.",
       inputSchema: {
-        url: z
-          .string()
-          .url()
-          .describe(
-            "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'.",
-          ),
+        url: flexUrl().describe(
+          "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'. A bare domain ('stripe.com') is accepted.",
+        ),
       },
     },
     async ({ url }) => {
@@ -758,38 +866,32 @@ export function registerTools(server: McpServer) {
    * macrostructure + find_reference_components — anything you could
    * do by hand, but in one round-trip.
    */
-  server.registerTool(
+  reg(
     "recommend",
     {
       description:
         "Hallmark-compatible orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1–3 canonical reference JSX components, and a palette suggestion — everything an agent needs to start a page. If you're following Hallmark, pass the macrostructure you've picked; otherwise the tool picks one from the brief via hybrid search. No LLM call — composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
-          .string()
-          .min(2)
+          .preprocess(looseTrim, z.string().min(2))
           .describe(
             "The user's design brief in plain English. E.g. 'calm meditation app', 'dark dev-tool that helps teams ship faster'.",
           ),
-        macrostructure: z
-          .enum(MACROSTRUCTURES as unknown as [string, ...string[]])
+        macrostructure: flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional()
           .describe(
             "Optional: a macrostructure already picked (typically by Hallmark). Skips the pick step.",
           ),
-        pageType: z
-          .enum(PAGE_TYPES)
+        pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe("Optional: 'landing', 'pricing', 'features', etc."),
-        mode: z
-          .enum(MODES as unknown as [string, ...string[]])
+        mode: flexEnum(MODES as unknown as [string, ...string[]])
           .optional()
           .describe("Optional: 'light' or 'dark'."),
-        vibe: z
-          .enum(VIBES as unknown as [string, ...string[]])
+        vibe: flexEnum(VIBES as unknown as [string, ...string[]])
           .optional()
           .describe("Optional vibe filter."),
-        color: z
-          .enum(COLOR_WORDS as unknown as [string, ...string[]])
+        color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
           .describe("Optional colour word."),
       },
@@ -898,6 +1000,10 @@ export function registerTools(server: McpServer) {
           ? exemplarsFmt[0]!.palette
           : (exemplarsFmt[1]?.palette ?? []);
 
+      const inline = ctx.inlineImages();
+      const exemplarStudyPhrase = inline
+        ? "Study the inline exemplar thumbnails"
+        : "Study each exemplar's autopsy + palette + fonts";
       return withImages(
         {
           brief: args.brief,
@@ -922,35 +1028,37 @@ export function registerTools(server: McpServer) {
           heroGuidance: HERO_GUIDANCE,
           tip:
             referencePicks.length > 0
-              ? "Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. Study the inline exemplar thumbnails for palette + type + density choices specific to your brief. Then honour heroGuidance — compose the hero to fit the first viewport."
-              : "No canonical reference matched the picked macrostructure. Study the inline exemplar thumbnails and write the page shape by hand. Honour heroGuidance — compose the hero to fit the first viewport.",
+              ? `Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief. Then honour heroGuidance: compose the hero to fit the first viewport.`
+              : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance: compose the hero to fit the first viewport.`,
         },
         exemplarsFmt.map((r) => r.thumb),
+        inline,
       );
     },
   );
 
   /* ────────────── get_reference_jsx ────────────── */
-  server.registerTool(
+  reg(
     "get_reference_jsx",
     {
       description:
         "Return the full canonical JSX source for one Hallmark-stamped reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content — including the Hallmark `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
       inputSchema: {
-        type: z
-          .enum(REFERENCE_TYPES)
+        type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Component category"),
-        id: z
-          .string()
+        id: flexSlug()
           .describe("Reference id within that type (e.g. 'marquee', 'three-card')."),
       },
     },
     async ({ type, id }) => {
-      const r = findReferenceComponent(type, id);
+      const r = findReferenceComponent(type as (typeof REFERENCE_TYPES)[number], id);
       if (!r) {
+        const valid = getReferenceComponents({
+          type: type as (typeof REFERENCE_TYPES)[number],
+        }).map((x) => x.id);
         return asTextContent({
           error: `No reference component with type='${type}' id='${id}'.`,
-          hint: "Call find_reference_components({ type: '" + type + "' }) to list available ids.",
+          validIds: valid,
         });
       }
       return asTextContent({
@@ -963,6 +1071,14 @@ export function registerTools(server: McpServer) {
       });
     },
   );
+
+  // Late-bound profile: when neither options nor env decided, resolve
+  // from clientInfo at initialize and hide the non-lite tools for
+  // text-first OSS harnesses.
+  applyProfileOnInitialize(server, ctx, handles);
+
+  // Strip validator-hostile JSON-Schema keys from tools/list output.
+  sanitizeListedToolSchemas(server);
 }
 
 export const SERVER_INSTRUCTIONS = [

@@ -75,7 +75,7 @@ export function asTextContent(value: unknown) {
 /**
  * Same JSON text payload as `asTextContent`, plus a native `image`
  * content block per provided thumbnail URL — fetched in parallel,
- * AVIF-preferred with PNG fallback, in-process LRU-cached. Agents
+ * WebP-preferred with PNG fallback, in-process LRU-cached. Agents
  * see the thumbnails directly in the tool response instead of having
  * to curl each one and Read it.
  *
@@ -85,11 +85,17 @@ export function asTextContent(value: unknown) {
  *
  * Failed fetches are silently dropped — the JSON text always still
  * comes back, the agent can fall back to the URLs in the payload.
+ *
+ * `inline=false` (the text-first profile: most OSS harnesses either
+ * drop image blocks or run text-only models) skips the fetches and
+ * returns the JSON text alone.
  */
 export async function withImages(
   value: unknown,
   imageUrls: ReadonlyArray<string>,
+  inline = true,
 ) {
+  if (!inline) return asTextContent(value);
   const { thumbnailBlocks, MAX_INLINE_PER_CALL } = await import("./inline-images");
   const slice = imageUrls.slice(0, MAX_INLINE_PER_CALL);
   const blocks = await thumbnailBlocks(slice);

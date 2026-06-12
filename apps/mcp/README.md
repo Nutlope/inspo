@@ -75,6 +75,46 @@ The bin shim boots the TS server via `tsx` — no build step.
 
 Restart the client; the agent gains all the tools above.
 
+## Open-source models (Kimi K2.6, GLM, Qwen, DeepSeek, MiniMax)
+
+The server ships a second profile tuned to the harnesses OSS models
+actually run in. Two independent knobs:
+
+| Env var | Values | What it does |
+|---|---|---|
+| `INSPO_PROFILE` | `full` (default) / `lite` | `lite` exposes the 7 highest-leverage tools (`recommend`, `search_screens`, `get_screen`, `get_design_system`, `find_examples_for_macrostructure`, `find_reference_components`, `study`). Small models pick tools more reliably from a short list. |
+| `INSPO_IMAGES` | `thumbs` (default) / `none` | `none` returns text-only responses: no inline image blocks. Use it when the harness drops MCP images (Cline, OpenCode with a non-vision model) or the model is text-only (MiniMax, DeepSeek). Each result still carries the `autopsy` text (fold-composition breakdown), `northstar`, palette, and fonts, so the model "sees" through text. |
+
+**Zero-config defaults:** when neither knob is set, the server reads the
+client name from the MCP handshake. Kimi CLI, OpenCode, Cline, Roo,
+Crush, Goose, Aider, Continue, Droid, and iFlow get `lite` + text-only;
+Kilo and Qwen Code get `lite` + thumbnails (their image path works);
+everything else (Claude Code, Cursor, ...) keeps `full` + thumbnails.
+Env vars always win. On the hosted endpoint use query params instead:
+`https://.../mcp?profile=lite&images=none`.
+
+Schemas are flat (no `$ref`, no `$schema`, no `additionalProperties`)
+to satisfy strict validators (Moonshot's API, Together's
+function-calling layer, vLLM/xgrammar constrained decoding), and
+argument parsing is tolerant: `"Dark"`, `"Bento Grid"`, `limit: "8"`,
+out-of-range limits, and bare domains (`stripe.com`) are all accepted.
+Slug misses return `didYouMean` suggestions so the model can
+self-correct in one step.
+
+```jsonc
+// Example: Kimi CLI (~/.kimi/mcp.json), explicit; auto-detection
+// would land on the same settings
+{
+  "mcpServers": {
+    "inspo": {
+      "command": "npx",
+      "args": ["-y", "inspo-mcp"],
+      "env": { "INSPO_PROFILE": "lite", "INSPO_IMAGES": "none" }
+    }
+  }
+}
+```
+
 ## Run / develop
 
 ```bash

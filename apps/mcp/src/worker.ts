@@ -24,6 +24,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { ensureCatalogue } from "@inspo/db";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
+import { optionsFromUrl } from "./http-handler";
+import type { ImagesMode, Profile } from "./profile";
 import { verifyApiKeyEdge } from "./auth-edge";
 
 // Where the Worker fetches the catalogue from. Overridable per-env via
@@ -37,6 +39,9 @@ export interface Env {
   INSPO_BASE_URL?: string;
   INSPO_CATALOGUE_URL?: string;
   ENFORCE_AUTH?: string;
+  /** Default profile/images for every request (query params win). */
+  INSPO_PROFILE?: string;
+  INSPO_IMAGES?: string;
 }
 
 function bridgeEnv(env: Env) {
@@ -93,7 +98,17 @@ export default {
       { name: "inspo", version: "0.0.1" },
       { instructions: SERVER_INSTRUCTIONS },
     );
-    registerTools(server);
+    const envProfile = env.INSPO_PROFILE?.toLowerCase();
+    const envImages = env.INSPO_IMAGES?.toLowerCase();
+    registerTools(server, {
+      ...(envProfile === "lite" || envProfile === "full"
+        ? { profile: envProfile as Profile }
+        : {}),
+      ...(envImages === "none" || envImages === "thumbs"
+        ? { images: envImages as ImagesMode }
+        : {}),
+      ...optionsFromUrl(url),
+    });
 
     const transport = new WebStandardStreamableHTTPServerTransport({
       sessionIdGenerator: undefined, // stateless
