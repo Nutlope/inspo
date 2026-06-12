@@ -771,7 +771,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_reference_components",
     {
       description:
-        "List the Hallmark-stamped reference components — canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for that category; without filters you get a scan-view with names + notes. After picking, call `get_reference_jsx` for the full source of a specific one. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
+        "List the Hallmark-stamped reference components — canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
