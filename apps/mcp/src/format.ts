@@ -23,6 +23,7 @@ export function formatScreen(s: ScreenSummary, why?: string) {
     ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
     ...(s.mobileFullUrl ? { mobileFull: absolute(s.mobileFullUrl) } : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
+    ...(s.autopsy ? { autopsy: s.autopsy } : {}),
     description: s.description,
     palette: s.palette,
     fonts: s.fonts,

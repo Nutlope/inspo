@@ -124,6 +124,13 @@ export type ScreenSummary = {
    *  that haven't been through it. Surfaced on the detail hero +
    *  recommend() output. */
   northstar?: string;
+  /** Structured text breakdown of the first-viewport composition
+   *  (FOLD / TYPE / COLOR / SIGNATURE, ~100-150 words). Generated per
+   *  row by the worker's generate-autopsies pass from the hero capture.
+   *  This is how text-only models (and harnesses that drop MCP image
+   *  blocks) "see" the screenshot: dense enough to rebuild the layout
+   *  without pixels. Absent on rows not yet through the pass. */
+  autopsy?: string;
   palette: string[];
   fonts: string[];
   tech: string[];
