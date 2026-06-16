@@ -68,7 +68,7 @@ writeFileSync(
       description:
         "A curated archive of real website designs, served as an MCP server: 14 tools for search, study, components, palettes, and recommendations.",
       type: "module",
-      bin: { "inspo-mcp": "./inspo-mcp.mjs" },
+      bin: { "inspo-mcp": "inspo-mcp.mjs" },
       files: ["inspo-mcp.mjs", "README.md"],
       engines: { node: ">=18" },
       keywords: [
