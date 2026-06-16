@@ -44,4 +44,5 @@ coverage/
 # session backup snapshots (do not commit)
 packages/db/src/*.pre-*.json
 packages/db/src/*.pre-*.bin
+packages/db/src/_deleted-sites-*.json
 
