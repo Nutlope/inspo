@@ -209,7 +209,7 @@ export default async function UseCasesPage() {
                           href={`/screens/${s.slug}`}
                           className="group block"
                         >
-                          <div className="aspect-[4/3] overflow-hidden border rule">
+                          <div className="aspect-[16/10] overflow-hidden border rule">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={s.imageUrl}

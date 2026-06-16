@@ -90,7 +90,7 @@ export default async function CollectionPage({
 
               <ScreenTile
                 screen={screen}
-                variant={span === 3 ? "feature" : span === 1 ? "thumb" : "hero"}
+                variant="hero"
                 showCaption={false}
               />
 

@@ -43,6 +43,7 @@ interface MapPoint {
   slug: string;
   title: string;
   thumbUrl: string;
+  imageUrl: string;
   x: number;
   y: number;
   /** Coarse colour key for visual clustering — defaults to
@@ -95,6 +96,7 @@ export default async function MapPage() {
       slug,
       title: s.title,
       thumbUrl: s.thumbUrl,
+      imageUrl: s.imageUrl,
       x,
       y,
       group,

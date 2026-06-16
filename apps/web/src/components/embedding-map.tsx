@@ -24,6 +24,7 @@ export interface MapPoint {
   slug: string;
   title: string;
   thumbUrl: string;
+  imageUrl: string;
   x: number;
   y: number;
   group: string;
@@ -407,7 +408,7 @@ function HoverCard({ point, x, y, container }: { point: MapPoint; x: number; y: 
   return (
     <div role="tooltip" className="pointer-events-none absolute z-10 border rule bg-[var(--color-bg)] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.5)]" style={{ left: lx, top: ly, width: cardW }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={point.thumbUrl} alt="" className="aspect-[4/3] w-full object-cover" />
+      <img src={point.imageUrl} alt="" className="aspect-[16/10] w-full object-cover" />
       <div className="border-t rule p-2">
         <p className="font-display text-sm leading-tight truncate">{point.title}</p>
         <p className="text-meta mt-1 text-[var(--color-fg-muted)] truncate">{point.group.replace(/-/g, " ")}</p>
