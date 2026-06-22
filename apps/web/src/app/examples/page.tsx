@@ -23,6 +23,16 @@ export const metadata: Metadata = {
 /** Curated display order. Examples not listed are appended in source
  *  order, so the page stays correct as the set grows. */
 const ORDER = [
+  "switchboard",
+  "vestige",
+  "axiom-labs",
+  "fernroot",
+  "tracewell",
+  "chalkline",
+  "hewn-type",
+  "steeproom",
+  "vaultline",
+  "crate-and-cut",
   "subtone-records",
   "meridian-bank",
   "field-day-studio",

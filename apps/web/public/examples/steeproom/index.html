@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steeproom - Matcha & Tea Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee4;
+    --paper-2:#ece5d6;
+    --ink:#20271c;
+    --ink-soft:#5b6353;
+    --ink-faint:#8a8f7e;
+    --matcha:#3a4a2f;
+    --matcha-2:#5d7145;
+    --matcha-3:#8aa06b;
+    --sage:#dde3d2;
+    --sage-2:#c8d2b6;
+    --clay:#b0894f;
+    --clay-soft:#d8b98a;
+    --cream:#f7f3ea;
+    --line:rgba(32,39,28,.12);
+    --line-2:rgba(32,39,28,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--matcha);color:var(--cream)}
+
+  /* ---------- typography ---------- */
+  .serif{font-family:'Fraunces',Georgia,serif;font-weight:400}
+  .eyebrow{
+    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    font-weight:500;color:var(--matcha);
+  }
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:300;letter-spacing:-.01em;line-height:1.04}
+  h1{font-size:clamp(2.6rem,5.2vw,4.4rem)}
+  h2{font-size:clamp(2rem,3.8vw,3.1rem)}
+  h3{font-size:1.25rem;font-weight:400}
+  p{color:var(--ink-soft)}
+  .lead{font-size:1.05rem;line-height:1.7}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+  @media(min-width:768px){.wrap{padding:0 40px}}
+
+  /* ---------- nav ---------- */
+  nav.top{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    backdrop-filter:saturate(140%) blur(10px);
+    background:rgba(243,238,228,.82);
+    border-bottom:1px solid var(--line-2);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .brand .mark{
+    width:30px;height:30px;border-radius:50%;
+    background:radial-gradient(circle at 32% 30%,var(--matcha-3),var(--matcha) 70%);
+    box-shadow:inset 0 -2px 6px rgba(0,0,0,.18);
+    flex-shrink:0;
+  }
+  .brand .name{font-family:'Fraunces',serif;font-size:1.18rem;letter-spacing:.01em;font-weight:400}
+  .nav-links{display:none;gap:30px;align-items:center}
+  @media(min-width:860px){.nav-links{display:flex}}
+  .nav-links a{
+    text-decoration:none;color:var(--ink-soft);font-size:.9rem;
+    letter-spacing:.01em;transition:color .2s;
+  }
+  .nav-links a:hover{color:var(--matcha)}
+  .nav-cta{
+    text-decoration:none;font-size:.86rem;letter-spacing:.04em;
+    color:var(--cream);background:var(--matcha);
+    padding:10px 18px;border-radius:999px;
+    transition:background .2s,transform .2s;
+  }
+  .nav-cta:hover{background:var(--ink);transform:translateY(-1px)}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding-top:64px;
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:stretch;
+  }
+  @media(min-width:920px){
+    .hero{grid-template-columns:1.05fr .95fr}
+  }
+  .hero-text{
+    padding:clamp(2.5rem,6vw,5rem) clamp(1.5rem,4vw,4rem);
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+  }
+  .hero-text .eyebrow{margin-bottom:1.6rem}
+  .hero h1{margin-bottom:1.5rem}
+  .hero h1 em{font-style:italic;color:var(--matcha)}
+  .hero .lead{max-width:42ch;margin-bottom:2.2rem}
+  .hero-ctas{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    text-decoration:none;font-size:.92rem;font-weight:500;
+    padding:14px 24px;border-radius:999px;
+    transition:all .25s ease;
+    letter-spacing:.01em;
+  }
+  .btn.primary{background:var(--matcha);color:var(--cream)}
+  .btn.primary:hover{background:var(--ink);transform:translateY(-1px)}
+  .btn.ghost{color:var(--ink);border:1px solid var(--line);background:transparent}
+  .btn.ghost:hover{border-color:var(--matcha);color:var(--matcha)}
+  .hero-meta{
+    margin-top:auto;padding-top:2.5rem;
+    display:flex;gap:2.5rem;flex-wrap:wrap;
+    border-top:1px solid var(--line-2);
+ margin-top:3rem;padding-top:1.6rem;
+  }
+  .hero-meta .m{display:flex;flex-direction:column;gap:2px}
+  .hero-meta .m b{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:400;color:var(--ink)}
+  .hero-meta .m span{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+
+  /* atmospheric matcha panel */
+  .hero-panel{
+    position:relative;overflow:hidden;
+    min-height:340px;
+    background:
+      radial-gradient(120% 90% at 20% 10%,rgba(138,160,107,.55),transparent 55%),
+      radial-gradient(90% 70% at 90% 90%,rgba(58,74,47,.45),transparent 60%),
+      linear-gradient(160deg,#6e8550 0%,#3a4a2f 100%);
+  }
+  @media(min-width:920px){.hero-panel{min-height:auto}}
+  /* steam */
+  .steam{
+    position:absolute;top:18%;left:50%;transform:translateX(-50%);
+    width:60px;height:120px;opacity:.5;pointer-events:none;
+  }
+  .steam span{
+    position:absolute;bottom:0;width:8px;height:8px;border-radius:50%;
+    background:rgba(247,243,234,.6);
+    animation:rise 4.5s linear infinite;
+  }
+  .steam span:nth-child(2){left:18px;animation-delay:1.2s;background:rgba(247,243,234,.45)}
+  .steam span:nth-child(3){left:36px;animation-delay:2.4s;background:rgba(247,243,234,.5)}
+  .steam span:nth-child(4){left:8px;animation-delay:3.3s}
+  .steam span:nth-child(5){left:44px;animation-delay:.6s}
+  @keyframes rise{
+    0%{transform:translateY(0) scale(1);opacity:.6}
+    70%{opacity:.2}
+    100%{transform:translateY(-120px) scale(2.2);opacity:0}
+  }
+  /* bowl */
+  .bowl-wrap{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .bowl{
+    position:relative;width:min(62%,300px);aspect-ratio:1/1;
+  }
+  .bowl svg{width:100%;height:auto;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.28))}
+  .panel-caption{
+    position:absolute;left:24px;bottom:22px;right:24px;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    color:rgba(247,243,234,.82);
+    font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  }
+  .panel-caption .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--matcha-3);margin-right:8px;vertical-align:middle}
+
+  /* ---------- sections ---------- */
+  section{padding:clamp(4.5rem,9vw,7rem) 0}
+  .sec-head{display:flex;flex-direction:column;gap:1rem;max-width:60ch;margin-bottom:3.5rem}
+  .sec-head .eyebrow{margin-bottom:.2rem}
+  .sec-head h2{max-width:18ch}
+  .sec-head p{max-width:48ch;font-size:1.02rem}
+
+  /* ---------- menu ---------- */
+  .menu-grid{
+    display:grid;grid-template-columns:1fr;gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  }
+  @media(min-width:720px){.menu-grid{grid-template-columns:1fr 1fr}}
+  .menu-item{
+    background:var(--paper);padding:28px 28px 26px;
+    display:flex;flex-direction:column;gap:10px;
+    transition:background .25s;
+  }
+  .menu-item:hover{background:var(--cream)}
+  .menu-item .top{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+  .menu-item h3{font-family:'Fraunces',serif;font-size:1.22rem;font-weight:400;color:var(--ink)}
+  .menu-item .price{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--matcha);white-space:nowrap}
+  .menu-item .desc{font-size:.92rem;color:var(--ink-soft);line-height:1.55}
+  .menu-item .tag{
+    font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--clay);margin-top:4px;
+  }
+  .menu-item .dotline{
+    flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px);min-width:20px;
+  }
+
+  /* ---------- ceremony ---------- */
+  .ceremony{background:var(--paper-2)}
+  .ritual{
+    display:grid;grid-template-columns:1fr;gap:2.5rem;
+    counter-reset:step;
+  }
+  @media(min-width:880px){.ritual{grid-template-columns:repeat(3,1fr);gap:2rem}}
+  .step{
+    position:relative;padding-top:2.5rem;
+  }
+  .step::before{
+    counter-increment:step;content:counter(step,decimal-leading-zero);
+    position:absolute;top:0;left:0;
+    font-family:'Fraunces',serif;font-size:1rem;font-weight:400;
+    color:var(--matcha);letter-spacing:.04em;
+  }
+  .step .line{position:absolute;top:1.1rem;left:0;right:0;height:1px;background:var(--line)}
+  .step h3{font-size:1.5rem;margin-bottom:.7rem;font-weight:400}
+  .step p{font-size:.96rem;line-height:1.65}
+  .step .tag{
+    margin-top:1rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--clay);
+  }
+
+  /* ---------- the space ---------- */
+  .space-grid{
+    display:grid;grid-template-columns:1fr;gap:14px;
+  }
+  @media(min-width:760px){
+    .space-grid{grid-template-columns:repeat(12,1fr);grid-auto-rows:120px;gap:16px}
+  }
+  .tile{
+    border-radius:14px;overflow:hidden;position:relative;
+    display:flex;align-items:flex-end;padding:18px;
+    color:rgba(247,243,234,.92);
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    min-height:160px;
+  }
+  @media(min-width:760px){.tile{min-height:0}}
+  .tile .label{position:relative;z-index:2}
+  .tile::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.42));
+    z-index:1;
+  }
+  .tile.t1{
+    background:
+      radial-gradient(120% 100% at 30% 20%,rgba(138,160,107,.5),transparent 60%),
+      linear-gradient(150deg,#7d9460,#3a4a2f);
+  }
+  .tile.t2{
+    background:
+      radial-gradient(100% 80% at 70% 30%,rgba(216,185,138,.4),transparent 60%),
+      linear-gradient(160deg,#c9a877,#8a6a3c);
+  }
+  .tile.t3{
+    background:
+      radial-gradient(120% 90% at 20% 80%,rgba(221,227,210,.5),transparent 60%),
+      linear-gradient(170deg,#d8cdb8,#a89c84);
+  }
+  .tile.t4{
+    background:
+      radial-gradient(100% 80% at 50% 10%,rgba(93,113,69,.5),transparent 60%),
+      linear-gradient(180deg,#5d7145,#2c3722);
+  }
+  .tile.t5{
+    background:
+      radial-gradient(120% 90% at 80% 80%,rgba(176,137,79,.4),transparent 60%),
+      linear-gradient(165deg,#b0894f,#6a4e2c);
+  }
+  @media(min-width:760px){
+    .tile.t1{grid-column:span 7;grid-row:span 3}
+    .tile.t2{grid-column:span 5;grid-row:span 2}
+    .tile.t3{grid-column:span 5;grid-row:span 2}
+    .tile.t4{grid-column:span 4;grid-row:span 2}
+    .tile.t5{grid-column:span 8;grid-row:span 2}
+  }
+
+  /* ---------- locations ---------- */
+  .locations{background:var(--matcha);color:var(--cream)}
+  .locations .sec-head h2{color:var(--cream)}
+  .locations .sec-head p{color:rgba(247,243,234,.78)}
+  .locations .eyebrow{color:var(--matcha-3)}
+  .loc-grid{
+    display:grid;grid-template-columns:1fr;gap:1px;
+    background:rgba(247,243,234,.12);border:1px solid rgba(247,243,234,.14);
+    border-radius:16px;overflow:hidden;
+  }
+  @media(min-width:760px){.loc-grid{grid-template-columns:repeat(3,1fr)}}
+  .loc{
+    background:var(--matcha);padding:30px 26px 28px;
+    display:flex;flex-direction:column;gap:8px;
+    transition:background .25s;
+  }
+  .loc:hover{background:#44572f}
+  .loc .city{font-family:'Fraunces',serif;font-size:1.45rem;font-weight:400;color:var(--cream)}
+  .loc .addr{font-size:.9rem;color:rgba(247,243,234,.72);line-height:1.55}
+  .loc .hrs{font-size:.78rem;color:var(--matcha-3);letter-spacing:.08em;margin-top:6px}
+  .loc .go{
+    margin-top:14px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cream);text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+ border-bottom:1px solid rgba(247,243,234,.3);padding-bottom:4px;width:fit-content;
+    transition:border-color .2s;
+  }
+  .loc .go:hover{border-color:var(--cream)}
+
+  /* ---------- quote ---------- */
+  .quote{background:var(--paper)}
+  .quote-body{
+    max-width:30ch;margin:0 auto;text-align:center;
+    font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+    font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.3;color:var(--ink);
+  }
+  .quote-body::before{content:"“";color:var(--clay);font-size:1.4em;line-height:0;margin-right:.05em}
+  .quote-body::after{content:"”";color:var(--clay);font-size:1.4em;line-height:0}
+  .quote cite{
+    display:block;margin-top:1.6rem;font-style:normal;
+    font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+  }
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink);color:rgba(247,243,234,.7);padding:4.5rem 0 2.2rem}
+  .foot-grid{
+    display:grid;grid-template-columns:1fr;gap:2.5rem;
+    margin-bottom:3rem;
+  }
+  @media(min-width:760px){.foot-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}}
+  .foot-brand .brand .name{color:var(--cream)}
+  .foot-brand p{color:rgba(247,243,234,.55);font-size:.9rem;max-width:34ch;margin-top:14px;line-height:1.6}
+  footer h4{
+    font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--matcha-3);font-weight:500;margin-bottom:14px;
+  }
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  footer ul a{color:rgba(247,243,234,.72);text-decoration:none;font-size:.9rem;transition:color .2s}
+  footer ul a:hover{color:var(--cream)}
+  .foot-bottom{
+    border-top:1px solid rgba(247,243,234,.12);padding-top:1.6rem;
+    display:flex;flex-direction:column;gap:10px;
+    justify-content:space-between;align-items:flex-start;
+    font-size:.8rem;color:rgba(247,243,234,.5);
+  }
+  @media(min-width:680px){.foot-bottom{flex-direction:row;align-items:center}}
+  .foot-bottom .socials{display:flex;gap:16px}
+  .foot-bottom .socials a{color:rgba(247,243,234,.6);text-decoration:none;transition:color .2s}
+  .foot-bottom .socials a:hover{color:var(--cream)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none}
+    .steam span{animation:none;opacity:0}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Steeproom home">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="name">Steeproom</span>
+    </a>
+    <div class="nav-links">
+      <a href="#menu">Menu</a>
+      <a href="#ceremony">Ceremony</a>
+      <a href="#space">The Space</a>
+      <a href="#locations">Locations</a>
+    </div>
+    <a class="nav-cta" href="#locations">Reserve a seat</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="top">
+  <div class="hero-text">
+    <p class="eyebrow">Matcha &amp; Tea Bar</p>
+    <h1 class="serif">A quiet hour, <em>whisked</em> by hand.</h1>
+    <p class="lead">Stone-ground matcha, single-origin leaves, and a room built for slowing down. Open from morning light to evening dusk.</p>
+    <div class="hero-ctas">
+      <a class="btn primary" href="#menu">See the menu</a>
+      <a class="btn ghost" href="#ceremony">The ceremony →</a>
+    </div>
+    <div class="hero-meta">
+      <div class="m"><b>04</b><span>Tea houses</span></div>
+      <div class="m"><b>22</b><span>Teas poured</span></div>
+      <div class="m"><b>2017</b><span>First whisk</span></div>
+    </div>
+  </div>
+
+  <div class="hero-panel" aria-hidden="true">
+    <div class="steam">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="bowl-wrap">
+      <div class="bowl">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="tea" cx="42%" cy="38%" r="62%">
+              <stop offset="0%" stop-color="#a8c481"/>
+              <stop offset="55%" stop-color="#6e8a4a"/>
+              <stop offset="100%" stop-color="#465e2c"/>
+            </radialGradient>
+            <linearGradient id="bowlG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3a4a2f"/>
+              <stop offset="100%" stop-color="#1c2415"/>
+            </linearGradient>
+            <radialGradient id="foam" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#dfe6c8" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#dfe6c8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- mat -->
+          <ellipse cx="150" cy="232" rx="128" ry="22" fill="#0d130a" opacity="0.32"/>
+          <!-- bowl exterior -->
+          <path d="M40 138 Q150 96 260 138 Q252 240 150 250 Q48 240 40 138 Z" fill="url(#bowlG)"/>
+          <!-- bowl rim -->
+          <ellipse cx="150" cy="138" rx="110" ry="22" fill="#2a3520"/>
+          <!-- tea surface -->
+          <ellipse cx="150" cy="138" rx="104" ry="18" fill="url(#tea)"/>
+          <!-- foam islands -->
+          <ellipse cx="120" cy="134" rx="36" ry="9" fill="url(#foam)"/>
+          <ellipse cx="178" cy="142" rx="28" ry="6" fill="#dfe6c8" opacity="0.32"/>
+          <ellipse cx="150" cy="136" rx="18" ry="4" fill="#eef3df" opacity="0.45"/>
+          <!-- whisk -->
+          <g stroke="#c9a877" stroke-width="3.4" stroke-linecap="round" opacity="0.92">
+            <line x1="210" y1="78" x2="232" y2="44"/>
+          </g>
+          <g stroke="#d8b98a" stroke-width="1.6" stroke-linecap="round" opacity="0.9">
+            <line x1="206" y1="84" x2="224" y2="54"/>
+            <line x1="212" y1="82" x2="230" y2="52"/>
+            <line x1="216" y1="80" x2="234" y2="50"/>
+            <line x1="210" y1="88" x2="228" y2="58"/>
+          </g>
+          <!-- chasen handle -->
+          <rect x="228" y="38" width="8" height="16" rx="2" transform="rotate(34 232 46)" fill="#8a6a3c"/>
+        </svg>
+      </div>
+    </div>
+    <div class="panel-caption">
+      <span><span class="dot"></span>Now pouring - Uji Mizuba</span>
+      <span>Kyoto · 2024</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== MENU ===================== -->
+<section id="menu">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The Menu</p>
+      <h2 class="serif">A short list, made slowly.</h2>
+      <p>Six pours, each ground or steeped to order. No syrups, no rush - just leaves, water, and a few minutes of your time.</p>
+    </div>
+
+    <div class="menu-grid reveal">
+      <div class="menu-item">
+        <div class="top"><h3>Ceremonial Matcha</h3><span class="dotline"></span><span class="price">$8</span></div>
+        <p class="desc">Stone-ground Uji Mizuba, whisked with a bamboo chasen in a 60°C soft water pour. Deep, grassy, clean.</p>
+        <span class="tag">House standard</span>
+      </div>
+      <div class="menu-item">
+        <div class="top"><h3>Hojicha Latte</h3><span class="dotline"></span><span class="price">$7</span></div>
+        <p class="desc">Roasted bancha over lightly steamed oat. Toasted, caramel-leaning, low caffeine - the evening pour.</p>
+        <span class="tag">Caffeine - low</span>
+      </div>
+      <div class="menu-item">
+        <div class="top"><h3>Genmaicha</h3><span class="dotline"></span><span class="price">$6</span></div>
+        <p class="desc">Sencha blended with toasted rice. Nutty, warming, the cup we reach for on a grey afternoon.</p>
+        <span class="tag">Caffeine - medium</span>
+      </div>
+      <div class="menu-item">
+        <div class="top"><h3>Matcha Affogato</h3><span class="dotline"></span><span class="price">$9</span></div>
+        <p class="desc">A single scoop of vanilla bean gelato drowned in a fresh ceremonial shot. Sweet, bitter, gone in four spoons.</p>
+        <span class="tag">Seasonal</span>
+      </div>
+      <div class="menu-item">
+        <div class="top"><h3>Sencha Shincha</h3><span class="dotline"></span><span class="price">$7</span></div>
+        <p class="desc">First-spring steamed leaf from Shizuoka, brewed in a side-handle kyusu. Bright, umami, almost seaworthy.</p>
+        <span class="tag">Single origin</span>
+      </div>
+      <div class="menu-item">
+        <div class="top"><h3>Yuzu Cold Brew</h3><span class="dotline"></span><span class="price">$8</span></div>
+        <p class="desc">Cold-steeped sencha with a squeeze of yuzu and a single clear ice cube. The pour for a warm window seat.</p>
+        <span class="tag">Iced</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CEREMONY ===================== -->
+<section class="ceremony" id="ceremony">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The Ceremony</p>
+      <h2 class="serif">Three movements, four minutes.</h2>
+      <p>Every bowl follows the same quiet choreography - the same one we learned from a tea master in Uji, trimmed to a city afternoon.</p>
+    </div>
+
+    <div class="ritual reveal">
+      <div class="step">
+        <div class="line"></div>
+        <h3 class="serif">Warm the bowl</h3>
+        <p>Boiled water is poured into the chawan and tipped out. The bowl holds a gentle heat that wakes the powder without scorching it.</p>
+        <span class="tag">~ 30 seconds</span>
+      </div>
+      <div class="step">
+        <div class="line"></div>
+        <h3 class="serif">Sift &amp; whisk</h3>
+        <p>A heaping of matcha is sifted in, then 60°C water is added and whisked in a clean W until a soft, mossy foam crowns the surface.</p>
+        <span class="tag">~ 60 seconds</span>
+      </div>
+      <div class="step">
+        <div class="line"></div>
+        <h3 class="serif">Rest &amp; pour</h3>
+        <p>The bowl rests a moment, the foam settles just so, and it is set in front of you with both hands. Drink it before it cools.</p>
+        <span class="tag">~ 3 minutes</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THE SPACE ===================== -->
+<section id="space">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">The Space</p>
+      <h2 class="serif">A room that asks you to stay.</h2>
+      <p>Long oak counters, plaster walls the colour of wet stone, and north-facing windows that hold the light all morning. No music - just the bowl, the whisk, and the room.</p>
+    </div>
+
+    <div class="space-grid reveal">
+      <div class="tile t1"><span class="label">The long counter</span></div>
+      <div class="tile t2"><span class="label">Plaster &amp; oak</span></div>
+      <div class="tile t3"><span class="label">Morning light</span></div>
+      <div class="tile t4"><span class="label">The whisk shelf</span></div>
+      <div class="tile t5"><span class="label">Quiet corner, two seats</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUOTE ===================== -->
+<section class="quote">
+  <div class="wrap">
+    <p class="quote-body serif reveal">A bowl of matcha is the only appointment I never cancel on myself.</p>
+    <cite class="reveal">- Hana Mori, regular since 2019</cite>
+  </div>
+</section>
+
+<!-- ===================== LOCATIONS ===================== -->
+<section class="locations" id="locations">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Find a room</p>
+      <h2 class="serif">Four rooms, one pace.</h2>
+      <p>Each Steeproom is small on purpose - fourteen seats, no laptops after 4pm, and a kettle that is never off. Walk in, or reserve a bowl.</p>
+    </div>
+
+    <div class="loc-grid reveal">
+      <div class="loc">
+        <span class="city serif">Kyoto · Higashiyama</span>
+        <span class="addr">3-204 Sannei-zaka, Higashiyama-ku, Kyoto 605-0862</span>
+        <span class="hrs">07:00 - 18:00 · Daily</span>
+        <a class="go" href="#">Get directions →</a>
+      </div>
+      <div class="loc">
+        <span class="city serif">Brooklyn · Williamsburg</span>
+        <span class="addr">142 Bedford Avenue, Brooklyn, NY 11211</span>
+        <span class="hrs">07:30 - 19:00 · Daily</span>
+        <a class="go" href="#">Get directions →</a>
+      </div>
+      <div class="loc">
+        <span class="city serif">London · Shoreditch</span>
+        <span class="addr">8 Redchurch Street, London E2 7DP</span>
+        <span class="hrs">08:00 - 18:00 · Daily</span>
+        <a class="go" href="#">Get directions →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top" aria-label="Steeproom home">
+          <span class="mark" aria-hidden="true"></span>
+          <span class="name">Steeproom</span>
+        </a>
+        <p>A small matcha and tea bar built around one idea: that a quiet hour, well poured, is enough.</p>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <ul>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#ceremony">Ceremony</a></li>
+          <li><a href="#space">The Space</a></li>
+          <li><a href="#locations">Locations</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Steep</h4>
+        <ul>
+          <li><a href="#">Wholesale matcha</a></li>
+          <li><a href="#">Brew guides</a></li>
+          <li><a href="#">Gift tins</a></li>
+          <li><a href="#">Journal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Reach us</h4>
+        <ul>
+          <li><a href="mailto:hello@steeproom.co">hello@steeproom.co</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Private ceremonies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2024 Steeproom. Whisked by hand, in four rooms.</span>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">Are.na</a>
+        <a href="#">Newsletter</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // gentle reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:0.12, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

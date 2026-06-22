@@ -63,6 +63,1027 @@ export interface Example {
 
 export const EXAMPLES: Example[] = [
   {
+    "slug": "switchboard",
+    "brand": "Switchboard",
+    "tagline": "Small-batch mechanical keyboards built for the millisecond under your fingers.",
+    "prompt": "Switchboard: a studio designing and selling high-end mechanical keyboards for people who care how typing feels, precise, tactile, product-led.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.5,
+    "references": [
+      {
+        "slug": "hugeinc-com",
+        "took": "The one screen deep-studied via get_design_system. Supplied the type discipline: a single tight grotesk at near-1.0 line-height with negative tracking, anodized-dark mode, and a Specimen macrostructure that the build adopts wholesale (each keyboard treated like a type specimen)."
+      },
+      {
+        "slug": "hardwareoperations-com",
+        "took": "Top hit on both hardware searches. Modeled the macrostructure: mechanical hardware shown as gallery object on a calm dark stage, plus the warm metallic accent (copper/orange) over cool charcoal that became the page's --copper token."
+      },
+      {
+        "slug": "matveyan-com",
+        "took": "Dark technical reference. Confirmed the near-black ground, mono-labeled spec rows, and a single warm-rust accent against cool greys as the working palette for a precise, control-room product page."
+      },
+      {
+        "slug": "price-pierce-co-uk",
+        "took": "A Specimen-tagged industrial-material page. Reinforced the material-led layout language: all-caps mono datelines, restrained framing, and warm umber-on-dark for a craft-hardware feel."
+      },
+      {
+        "slug": "surface-com",
+        "took": "Premium-hardware product reference surfaced in the specs search. Informed the product-led structure: hero device staged above the fold, then a calm feature/spec stack with the hardware itself as the visual."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "high-end mechanical keyboards studio, precise, tactile, product-led, premium hardware",
+        "took": "Opening orchestrator call. Returned a Marquee-Hero pick plus exemplars and a palette suggestion, grounding the build in real references before any code was written."
+      },
+      {
+        "tool": "search_screens",
+        "args": "premium hardware product dark tactile",
+        "took": "Surfaced the dark hardware cluster (hardwareoperations, matveyan, dolby) that set the near-black ground and warm-metal accent direction."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "specimen",
+        "took": "Pulled Specimen exemplars, which became the page's organizing idea: each keyboard presented like a type specimen with mono datelines and rules."
+      },
+      {
+        "tool": "search_screens",
+        "args": "product detail specs hardware technical precise",
+        "took": "Returned product-detail and premium-hardware pages (surface, price-pierce) that shaped the bill-of-materials spec sheet and feature stack."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "hugeinc-com",
+        "took": "The deepest study. Pulled Huge's real tokens: tight grotesk type ramp at ~0.92 line-height, dark mode, Specimen structure, which the type and section rhythm closely follow."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Fetched canonical hero component shapes to anchor the above-the-fold lockup against the staged keyboard visual."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Second hero pass to compare hero variants before committing to the split headline-plus-product-mock layout."
+      },
+      {
+        "tool": "search_screens",
+        "args": "precise technical hardware specs grid",
+        "took": "Surfaced spec-grid and bento references (elastic, typotheque, lucide) that informed the four-up hero stat strip and the switches/spec grids."
+      },
+      {
+        "tool": "get_reference_jsx",
+        "args": "hero",
+        "took": "Retrieved the marquee hero JSX as the structural template for the hero, then re-implemented it in hand-written HTML/CSS with the CSS keyboard mock."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--ink",
+        "hex": "#0a0b0e",
+        "from": "Near-black page ground; the control-room dark mode the hardware searches converged on, letting the copper accent and metal keys glow."
+      },
+      {
+        "token": "--paper",
+        "hex": "#e8e6df",
+        "from": "Warm off-white body text and key legends; a paper-toned light against the ink, keeping the dark page from going clinical."
+      },
+      {
+        "token": "--copper",
+        "hex": "#c8743f",
+        "from": "Primary copper accent: CTAs, accent keys, force-curve bars, callout lines. The warm-metal note lifted from the hardware/render references."
+      },
+      {
+        "token": "--copper-2",
+        "hex": "#e08a4e",
+        "from": "Brighter copper for hover states, italic emphasis in headlines, and prices; the lit edge of the same metal."
+      },
+      {
+        "token": "--muted",
+        "hex": "#6b6f7a",
+        "from": "Cool grey for mono meta labels, datelines, and spec keys; the technical, low-key voice under the headlines."
+      },
+      {
+        "token": "--line",
+        "hex": "#23262e",
+        "from": "Hairline rule color separating every section, card, and spec row; the precise editorial grid that organizes the Specimen layout."
+      }
+    ],
+    "highlight": "Every keyboard on the page is pure CSS: flex-weighted key divs laid out across rows, then reused at three scales, a full 75% board on the hero stage, mini boards inside each catalogue card, and an exploded build diagram with a layered case stack and mono callouts on the spec sheet, no images anywhere."
+  },
+  {
+    "slug": "vestige",
+    "brand": "Vestige",
+    "tagline": "Quiet Vessels: twelve artists consider the container, across ceramic, textile, film and bronze.",
+    "prompt": "Vestige, a contemporary art gallery announcing its new exhibition: editorial, image-led, restrained typography.",
+    "stack": "pure-inspo",
+    "mode": "light",
+    "scoreSelf": 8.6,
+    "references": [
+      {
+        "slug": "gagosian-com",
+        "took": "palette + type: deep-studied via get_design_system. The warm-paper-and-ink editorial mood and the serif-body / restrained-display contrast became the page's core voice (Cormorant Garamond display over Inter Tight)."
+      },
+      {
+        "slug": "pacegallery-com",
+        "took": "macrostructure + layout: deep-studied via get_design_system. The asymmetric split of left text block against a single large art panel, plus the muted-on-warm restraint, shaped the hero grid and the works section."
+      },
+      {
+        "slug": "audocph-com",
+        "took": "palette: deep-studied via get_design_system. Its muted, earthy, near-monochrome studio palette (#958569 / #4d4537 / #c7bfb1) anchored the warm-paper-and-clay color choices."
+      },
+      {
+        "slug": "mori-art-museum",
+        "took": "macrostructure: top exemplar from the agent's own recommend(photographic) re-run. The exhibition-announcement shape, on-view date line and current-show eyebrow informed the hero meta block."
+      },
+      {
+        "slug": "serpentinegalleries-org",
+        "took": "type + accent: exemplar from the recommend/search re-run. The gallery 'now open' exhibition hero with a terracotta accent over restrained editorial type reinforced the muted clay accent and on-view framing."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "brief: contemporary art gallery announcing a new exhibition, editorial and image-led with restrained typography",
+        "took": "Set the direction: returned the Photographic macrostructure and gallery exemplars (Gagosian, Mori, Serpentine), pointing the build at warm-paper editorial restraint."
+      },
+      {
+        "tool": "search_screens",
+        "args": "query: contemporary art gallery editorial exhibition image-led restrained typography",
+        "took": "Widened the candidate pool with Pace, Artforum, ICA Boston and e-flux, confirming the muted-earthy, image-led gallery convention."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "gagosian-com",
+        "took": "Pulled the core voice: warm paper, ink text, serif-body / condensed-display contrast that became the page's typographic spine."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "pacegallery-com",
+        "took": "Recovered the split image/text layout and muted sage-on-warm palette that shaped the hero and works grid."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "photographic",
+        "took": "Confirmed the Photographic macrostructure with concrete gallery exemplars, validating the image-led, captioned-art-panel composition."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "audocph-com",
+        "took": "Locked the muted, earthy, near-monochrome palette that anchored the clay-and-paper color tokens."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Sought a canonical editorial hero shape to model the asymmetric meta-plus-art-panel fold (no canonical component matched, so the hero was hand-composed from the exemplars)."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--paper",
+        "hex": "#f4f1ea",
+        "from": "Warm off-white page ground, the gallery-paper base recovered from Gagosian's and Audocph's muted editorial backgrounds."
+      },
+      {
+        "token": "--ink",
+        "hex": "#1a1714",
+        "from": "Near-black warm ink for headlines and body, the high-contrast text color in the studied editorial references."
+      },
+      {
+        "token": "--accent",
+        "hex": "#7a3b2e",
+        "from": "Muted terracotta / clay accent for italic emphasis, links and primary-button hover, echoing the terracotta accents seen in Serpentine and the earthy reference palettes."
+      },
+      {
+        "token": "--muted",
+        "hex": "#857c6e",
+        "from": "Warm taupe for eyebrows, captions and metadata, lifted from Audocph's support/muted earth tones."
+      },
+      {
+        "token": "--paper-2",
+        "hex": "#ece7db",
+        "from": "Slightly deeper paper tone for image wells and the visit card, a quiet tonal step within the warm-paper system."
+      },
+      {
+        "token": "--line",
+        "hex": "#d8d1c2",
+        "from": "Hairline rule color separating sections, the restrained 1px divider that carries the editorial structure."
+      }
+    ],
+    "highlight": "No external images at all: every artwork in the hero and the staggered works grid is generative, a warm CSS gradient washed over an inline SVG line-drawing of a vessel, so the whole image-led gallery renders from pure markup."
+  },
+  {
+    "slug": "axiom-labs",
+    "brand": "Axiom",
+    "tagline": "Intelligence, understood: building the theoretical foundations of machine intelligence, and the systems that make them honest.",
+    "prompt": "Axiom, an AI research lab: serious and scientific, but beautiful.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.5,
+    "references": [
+      {
+        "slug": "anthropic-com",
+        "took": "The primary reference, deep-studied via get_design_system. Its design system handed over the exact palette the page runs on - warm near-black #141413, warm off-white #f0eee6, terracotta #d97757 - plus the serif-body-against-bold-sans pairing and the restrained, intellectual macrostructure (left-flush headline, supporting line, no loud CTA)."
+      },
+      {
+        "slug": "blackforestlabs-ai",
+        "took": "Deep-studied via get_design_system as the second AI-lab reference. Reinforced the frontier-lab register: a clean technical sans, a dark luminous canvas, and a single quiet accent glow - which the page echoes in its radial-gradient orbital hero viz."
+      },
+      {
+        "slug": "contralabs-com",
+        "took": "Surfaced by the 'deepmind anthropic openai research lab' search as a fellow 'frontier lab'. Confirmed the editorial-serif-on-warm-ground direction and the calm, manifesto-style mission voice that the page's serif Mission block adopts."
+      },
+      {
+        "slug": "digitalocean-com",
+        "took": "Top hit when the agent ran find_examples_for_macrostructure 'stat-led'. Supplied the macrostructure for the By-the-numbers section: a three-up grid of oversized figures with terse labels, which the page extends with superscript footnote markers."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "brief: AI research lab, serious and scientific but beautiful, mission, research areas",
+        "took": "Opened the run; returned the Specimen macrostructure pick plus exemplars, framing the editorial-on-warm direction before any code was written."
+      },
+      {
+        "tool": "search_screens",
+        "args": "AI research lab serious scientific dark",
+        "took": "Pulled the AI-lab cohort (Black Forest Labs, Anthropic, e2b) that became the visual reference set for a dark, technical lab."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "blackforestlabs-ai",
+        "took": "Pulled the first lab's design system: clean technical sans on a dark luminous canvas with a single accent glow, mirrored in the page's orbital hero viz."
+      },
+      {
+        "tool": "search_screens",
+        "args": "research lab manifesto stat led dark scientific",
+        "took": "Recovered stat-led references (DigitalOcean, Tinybird, Institute of Health), seeding the footnoted By-the-numbers grid."
+      },
+      {
+        "tool": "search_screens",
+        "args": "deepmind anthropic openai research lab",
+        "took": "Found Anthropic and Contra Labs - the closest peers - confirming Anthropic as the lead reference and the frontier-lab tone."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "anthropic-com",
+        "took": "The decisive call: returned the exact palette (#141413 near-black, #f0eee6 warm off-white, #d97757 terracotta) and serif/sans pairing the finished page is built on."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "stat-led",
+        "took": "Returned DigitalOcean as the canonical stat-led layout, shaping the three-up oversized-figure stats section."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Fetched canonical hero compositions to anchor the above-the-fold layout (eyebrow meta row, serif headline, supporting line, dual CTA) within the first viewport."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "stat",
+        "took": "Fetched canonical stat-block components, informing the figure-plus-label rhythm and superscript footnote treatment of the metrics section."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--bg",
+        "hex": "#141413",
+        "from": "Warm near-black canvas lifted verbatim from Anthropic's design system; the dark, intellectual ground the whole page sits on."
+      },
+      {
+        "token": "--fg",
+        "hex": "#f0eee6",
+        "from": "Warm off-white for body and headlines, again straight from the Anthropic palette; keeps the dark mode warm rather than clinical."
+      },
+      {
+        "token": "--accent",
+        "hex": "#d97757",
+        "from": "Terracotta accent (Anthropic's signature) used for italic headline words, hover states, the orbital hero dot, and superscript footnote marks."
+      },
+      {
+        "token": "--fg-muted",
+        "hex": "#87867f",
+        "from": "Muted warm grey for supporting copy and meta labels, holding the serious-but-readable hierarchy."
+      },
+      {
+        "token": "--surface",
+        "hex": "#211f1d",
+        "from": "Slightly raised warm-charcoal surface for card hovers and the stats section, giving depth without leaving the monochrome warm range."
+      },
+      {
+        "token": "--rule",
+        "hex": "rgba(240,238,230,0.09)",
+        "from": "Hairline rule tint (the off-white at low opacity) that draws the section borders and grid lines structuring the editorial layout."
+      }
+    ],
+    "highlight": "The standout move is the hero's orbital viz: a pure-SVG concentric-ring system with two counter-rotating bands of nodes orbiting a soft pulsing terracotta core over a radial-gradient halo - a quiet, scientific diagram of intelligence that reads as beautiful rather than decorative."
+  },
+  {
+    "slug": "fernroot",
+    "brand": "Fernroot",
+    "tagline": "Small-batch natural skincare grown from the forest floor, foraged in the Olympic foothills and never synthetic.",
+    "prompt": "Fernroot, a natural skincare brand: warm, editorial, tactile.",
+    "stack": "pure-inspo",
+    "mode": "light",
+    "scoreSelf": 8.4,
+    "references": [
+      {
+        "slug": "buly1803-com",
+        "took": "The apothecary anchor the agent flagged itself ('an actual apothecary/skincare brand'). Drove the heritage-shop voice: numbered preparations (Nº 01-04), the ingredient-glossary marquee, hand-poured ritual copy and the apothecary product taxonomy."
+      },
+      {
+        "slug": "fellowproducts-com",
+        "took": "Deep-studied design system. Source of the muted-mauve / warm-neutral tonal palette and the product-as-tonal-silhouette move, echoed in the hero stage where the amber dropper bottle emerges from a matching warm gradient rather than a hard cutout."
+      },
+      {
+        "slug": "joindawn-com",
+        "took": "Deep-studied for its warm editorial type pairing (Source Serif Pro + Figtree); informed the serif-display-over-clean-sans hierarchy that became Cormorant Garamond headlines with italic accent words against Inter body."
+      },
+      {
+        "slug": "ritual-com",
+        "took": "Recovered from the agent's own range/ingredients searches. Contributed the science-meets-warmth supplement-shop layout cues: italic-emphasis word in the headline, the stat band (98% / 12k+ / 1/10) and the trust-signal review macrostructure."
+      },
+      {
+        "slug": "hay-com",
+        "took": "Recovered from the apothecary/editorial search. Reinforced the warm-sand neutral ground and quiet centered-wordmark editorial restraint that shaped the parchment background and the calm catalogue grid of preparations."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "Warm editorial tactile natural skincare brand, hero product, ingredients ethos",
+        "took": "Opened the session: returned the macrostructure pick plus warm-vibe exemplars and a palette suggestion, orienting the agent toward an editorial product-led shape."
+      },
+      {
+        "tool": "search_screens",
+        "args": "warm editorial natural skincare beauty product page",
+        "took": "First broad scan for skincare-adjacent editorial pages to seed the reference shortlist."
+      },
+      {
+        "tool": "search_screens",
+        "args": "editorial skincare beauty product hero serif typography warm earthy",
+        "took": "Narrowed toward serif-driven, warm/earthy treatments, steering type direction to a high-contrast garamond display."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "photographic",
+        "took": "Pulled photographic-macrostructure exemplars; helped weigh a photo-led hero before settling on a built SVG product stage."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "fellowproducts-com",
+        "took": "Lifted the muted warm-neutral palette and product-as-silhouette logic that shaped the hero bottle staging and tonal range cards."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "specimen",
+        "took": "Surfaced specimen-style product/object exemplars, confirming the centered single-product focal treatment for the hero and range tiles."
+      },
+      {
+        "tool": "search_screens",
+        "args": "apothecary skincare product range ingredients ethos editorial",
+        "took": "The query that surfaced Buly 1803, the apothecary anchor; locked in the numbered-preparations and ingredient-ethos structure."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "buly1803-com",
+        "took": "Extracted the heritage-apothecary system: numbered SKUs, ingredient glossary and hand-poured ritual language that became the spine of the copy."
+      },
+      {
+        "tool": "search_screens",
+        "args": "natural organic skincare product ingredients botanical editorial warm",
+        "took": "Gathered botanical/ingredient framing references, feeding the six-botanical ethos list and the foraged field-note voice."
+      },
+      {
+        "tool": "search_screens",
+        "args": "product range grid collection skincare cosmetics warm neutral",
+        "took": "Confirmed the four-up warm-neutral catalogue grid pattern used for the range section."
+      },
+      {
+        "tool": "search_screens",
+        "args": "testimonial reviews editorial warm quote serif",
+        "took": "Sourced the serif quote-led testimonial treatment that became the pull-quote ritual band and the three review cards."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "joindawn-com",
+        "took": "Final reference: a warm editorial serif+sans pairing that confirmed the Cormorant + Inter type system and italic-accent headline approach."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--paper",
+        "hex": "#f3ebdd",
+        "from": "Warm parchment page background, the tactile soft-paper ground for the whole light-mode build, reinforced by a multiply paper-grain overlay."
+      },
+      {
+        "token": "--ink",
+        "hex": "#2a2418",
+        "from": "Near-black warm brown for headlines and body, keeping the editorial type rich rather than pure black."
+      },
+      {
+        "token": "--forest",
+        "hex": "#33402f",
+        "from": "Deep moss green for italic accent words, the primary CTA fill and the footer, carrying the 'forest floor' premise."
+      },
+      {
+        "token": "--amber",
+        "hex": "#a85a2a",
+        "from": "Burnt amber accent on eyebrows, links, the dropper-bottle glass gradient and selection highlight, the brand's warm signal color."
+      },
+      {
+        "token": "--ink-mute",
+        "hex": "#8a7c66",
+        "from": "Dusty taupe for eyebrows, captions and metadata, the quiet editorial micro-type layer."
+      },
+      {
+        "token": "--rose",
+        "hex": "#c98a72",
+        "from": "Clay rose used for the Salal Balm colorway and avatar gradients, broadening the botanical earth palette."
+      }
+    ],
+    "highlight": "The whole hero product is hand-built in SVG: an amber glass dropper bottle with a layered glass gradient, dropper bulb and inner stem, gently floating on a 7s loop above a warm radial 'stage' with sketched leaves and pip-dot ingredient chips, with each range card carrying its own miniature bottle in its own colorway."
+  },
+  {
+    "slug": "tracewell",
+    "brand": "Tracewell",
+    "tagline": "Every signal, one timeline: unified logs, traces, and metrics for the people who get paged.",
+    "prompt": "Tracewell, a developer observability platform for logs, traces and metrics: technical dark SaaS landing page.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.6,
+    "references": [
+      {
+        "slug": "unkey-com",
+        "took": "Primary reference, the only screen deep-studied via get_design_system. Set the whole palette logic: a single bright accent (Tracewell's teal #3dd6c4) glowing on a near-black ground, mono eyebrows with tracking, and the dark dev-tools restraint."
+      },
+      {
+        "slug": "temporal-io",
+        "took": "Code window pattern. Tracewell's tabbed, syntax-highlighted integration block (node.ts / main.go / app.py with mac-style dots, line numbers, and a copy button) mirrors Temporal's code-editor-as-proof on a dark technical ground."
+      },
+      {
+        "slug": "ghost-org",
+        "took": "Dark dashboard panel. Informed the framed hero product surface (window chrome bar, live dot, charts) and the metrics sparkline, lifting product UI into the hero as evidence."
+      },
+      {
+        "slug": "dovetail-com",
+        "took": "Macrostructure and proof layout. A Feature Stack with a dark product-UI panel as hero evidence and a left-aligned headline, the spine Tracewell follows."
+      },
+      {
+        "slug": "sourcegraph-com",
+        "took": "Feature-stack section rhythm. The vertical cadence of headline + sub + product proof per section, plus the developer-tools tone, maps to Tracewell's how-it-works, features, integrate, pricing, CTA stack."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "developer observability platform for logs, traces and metrics, technical dark SaaS",
+        "took": "Confirmed the dark dev-tools direction and surfaced exemplars (Novu, Mintlify, Hex); the agent leaned past the bento pick toward a feature-stack spine."
+      },
+      {
+        "tool": "search_screens",
+        "args": "dark developer observability logs traces metrics dashboard",
+        "took": "Surfaced Unkey plus the dark-dashboard cohort (Ghost, Dovetail, Sourcegraph, Fullstory), seeding the framed product-panel hero and the feature-stack layout."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "unkey-com",
+        "took": "The one deep study. Pulled Unkey's real tokens (near-black bg, single accent, mono h3, Inter body) which Tracewell adapted into its own teal-on-charcoal system."
+      },
+      {
+        "tool": "search_screens",
+        "args": "dark saas terminal code block syntax highlighting technical hero",
+        "took": "Returned Temporal, Tabnine and Sourcegraph; grounded the syntax-highlighted, multi-tab code window in the integration section."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "feature-stack",
+        "took": "Locked the page shape: real Feature Stack exemplars confirmed the stacked how-it-works to CTA structure before any code was written."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--bg",
+        "hex": "#08090c",
+        "from": "Near-black page ground, the dark technical SaaS base echoing Unkey's near-black canvas."
+      },
+      {
+        "token": "--accent",
+        "hex": "#3dd6c4",
+        "from": "Signal teal: primary CTA fill, eyebrows, the healthy trace spans and live pulse, the single bright accent on dark in the Unkey mold."
+      },
+      {
+        "token": "--surface",
+        "hex": "#11141b",
+        "from": "Raised panel fill for the hero trace window, feature cards, and code window, one step up from the bg."
+      },
+      {
+        "token": "--border",
+        "hex": "#1e2330",
+        "from": "Hairline borders separating sections, panels, and the nav, giving the page its precise, gridded technical feel."
+      },
+      {
+        "token": "--text",
+        "hex": "#e8ecf4",
+        "from": "Primary off-white body and headline ink for high legibility against the near-black ground."
+      },
+      {
+        "token": "--violet",
+        "hex": "#9d7af0",
+        "from": "One of the per-service span colors (with amber, rose, blue) coding the trace waterfall so each hop reads distinctly."
+      }
+    ],
+    "highlight": "The hero is a live trace-waterfall UI built in pure HTML and CSS: a windowed panel where each request hop (gateway, pay-svc, postgres, redis, a failing inv-svc span glowing rose) is an offset, color-coded bar, with a teal scanline sweeping the timeline, the product's whole pitch literalized as its own interface."
+  },
+  {
+    "slug": "chalkline",
+    "brand": "Chalkline",
+    "tagline": "18,000 sq ft of bouldering, lead walls, and a training cave, built by climbers for climbers in Brooklyn.",
+    "prompt": "Chalkline, a bouldering and climbing gym: bold and energetic.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.4,
+    "references": [
+      {
+        "slug": "generalcondition-com",
+        "took": "Deep-studied via get_design_system and the top hit on both searches. Set the core strategy the page runs on: a single electric accent burning on a near-black field (#fb1c0c on #0a0a0a) over a faint structural grid. Chalkline inherits that exact move, swapping red for ember orange and turning the grid into the SVG wall."
+      },
+      {
+        "slug": "tigerbeetle-com",
+        "took": "Deep-studied via get_design_system. A dark-mode, bold geometric-sans page whose orange support color (#ed541e) sits right next to Chalkline's ember (#ff4d1c). Confirmed the accent direction and the bold, technical type-on-black treatment."
+      },
+      {
+        "slug": "tempo-fit",
+        "took": "Top result for the agent's 'bold energetic sport fitness brand dark' search. A deep-crimson sport hero built on athlete energy and a left-text / right-visual split; informed the energetic fitness-brand framing and the confident asymmetric hero balance."
+      },
+      {
+        "slug": "underarmour-com",
+        "took": "Search hit. Hyper-condensed industrial all-caps headline slammed onto near-black athletic photography. Validated Chalkline's macrostructure choice: a Bebas Neue condensed display run uppercase at huge scale for raw athletic weight."
+      },
+      {
+        "slug": "analogue-co",
+        "took": "Search hit. Near-black canvas, a lone red accent, and monospace uppercase micro-labels above bold headings. Mirrors Chalkline's JetBrains Mono section numbers (01 / The Walls) and its single-accent, one-loud-color discipline."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "Bold energetic bouldering and climbing gym landing page",
+        "took": "Opened with a broad orchestrator pull to pick a macrostructure and surface exemplars; returned a Specimen pick plus bold-typography references that pointed toward a type-forward hero."
+      },
+      {
+        "tool": "search_screens",
+        "args": "bold energetic sport fitness brand dark",
+        "took": "Pulled the sport-brand cluster (tempo-fit, underarmour-com, generalcondition-com) that anchored the dark, energetic athletic direction and the electric-accent-on-black strategy."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "generalcondition-com",
+        "took": "Drilled into the reference's exact palette and grid: electric accent on near-black with a faint structural grid, the spine of Chalkline's whole look."
+      },
+      {
+        "tool": "search_screens",
+        "args": "bold typography hero dark energetic accent",
+        "took": "Second pass to confirm the bold-display-on-dark convention; reinforced the condensed uppercase headline and single-accent treatment seen across the hits."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "tigerbeetle-com",
+        "took": "Final check on a dark, bold geometric-sans page whose orange support color sits beside Chalkline's ember, locking in the accent hue and technical type tone before writing."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--bg",
+        "hex": "#0c0c0c",
+        "from": "Near-black canvas the whole page is built on, the dark mode the references converged on (generalcondition / tigerbeetle / analogue)."
+      },
+      {
+        "token": "--ember",
+        "hex": "#ff4d1c",
+        "from": "The single electric accent: CTAs, nav underlines, section numbers, the V6 route on the wall, and the full-bleed CTA banner. The one loud color, the way the references used theirs."
+      },
+      {
+        "token": "--chalk",
+        "hex": "#f4f1ea",
+        "from": "Warm off-white for body text and the wordmark, named for climbing chalk; the calm counterweight to ember on black."
+      },
+      {
+        "token": "--route",
+        "hex": "#b6e845",
+        "from": "Lime 'route' green used as a second route color on the SVG wall and on beginner class tags, adding a flash of energy without diluting the ember."
+      },
+      {
+        "token": "--bg-2",
+        "hex": "#141414",
+        "from": "Raised panel tone for cards, the wall SVG ground, and the ticker bar, giving the dark layout quiet depth."
+      },
+      {
+        "token": "--line",
+        "hex": "#2a2a2a",
+        "from": "Hairline borders that draw the grid of facility cards and class cells, echoing generalcondition's structural-grid framing."
+      }
+    ],
+    "highlight": "The hero centers a hand-built SVG bouldering wall: paneled overhang, scattered holds, and three color-coded route traces (chalk-white V2 slab, ember V6 roof, lime V10 project) climbing past floating mono grade tags toward a tiny stick-figure climber, the whole brand premise rendered as pure code."
+  },
+  {
+    "slug": "hewn-type",
+    "brand": "Hewn",
+    "tagline": "An independent foundry releasing Caxton, a contemporary book serif drawn for the long read.",
+    "prompt": "Hewn, an independent typeface foundry releasing a new serif; type-specimen led.",
+    "stack": "pure-inspo",
+    "mode": "light",
+    "scoreSelf": 8.6,
+    "references": [
+      {
+        "slug": "klim-co-nz",
+        "took": "Primary reference, deep-studied via get_design_system. Donated the whole colour logic: a single warm rust accent (Klim's #cc4716) landing on near-black ink over a warm-grey/paper ground, used sparingly on one pill and nothing else. Also set the restraint of the type-specimen-as-object hero."
+      },
+      {
+        "slug": "camelot-typefaces-com",
+        "took": "Primary reference, deep-studied via get_design_system. Contributed the specimen-as-content macrostructure and the high-contrast serif-display vs grotesque-label tension, plus the mono micro-labels and numbered section marginalia (Nº 02, Nº 03)."
+      },
+      {
+        "slug": "commercialtype-com",
+        "took": "Recovered from the agent's own search/recommend queries. Lent the editorial-catalogue spine: rigorous two-column section heads with left-rail labels, italicised publication names in the in-use quotes, and the academic licensing/foundry structure."
+      },
+      {
+        "slug": "thedesignersfoundry-com",
+        "took": "Recovered candidate from the live search. Reinforced the rust-red display accent on a light specimen page and the all-caps mono ticker/label treatment used across the strip and weight cells."
+      },
+      {
+        "slug": "ourtype-com",
+        "took": "Recovered candidate from the live search. Modelled the oversized high-contrast serif headline with italic accent flourish (the clamp(3.6rem,11.5vw,10.5rem) Caxton hero and the accent-coloured italic glyphs)."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "independent typeface foundry releasing a new serif - type specimen led landing p",
+        "took": "Anchored the build on the type-specimen macrostructure and surfaced Klim, Camelot, Commercial Type and Ourtype as exemplars."
+      },
+      {
+        "tool": "search_screens",
+        "args": "type foundry serif specimen release",
+        "took": "Confirmed the foundry exemplar set and exposed the rust/red-on-light specimen pages (Klim, The Designers Foundry) that shaped the accent."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "klim-co-nz",
+        "took": "Pulled Klim's real tokens: the warm-grey paper ground and the lone rust accent (#cc4716) that became Hewn's #b8451f."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "camelot-typefaces-com",
+        "took": "Grounded the high-contrast serif/grotesque pairing and the mono micro-labels driving the section numbering."
+      },
+      {
+        "tool": "find_examples_for_macrostructure",
+        "args": "type-specimen",
+        "took": "Validated the specimen page-shape (weights grid, anatomy trio, pangram, in-use, licensing) before writing."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "",
+        "took": "Checked for a canonical specimen component; none existed, so the page shape was written by hand from the autopsy notes."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Looked for canonical hero shapes to honour the above-the-fold rule for the oversized Caxton headline."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--paper",
+        "hex": "#f4f0e9",
+        "from": "Warm off-white ground, the 'screens that have learned to pretend they are paper' premise; echoes Klim's warm-grey canvas."
+      },
+      {
+        "token": "--ink",
+        "hex": "#161413",
+        "from": "Near-black body and display ink for the high-contrast serif, the dark half of the specimen's tonal pair."
+      },
+      {
+        "token": "--accent",
+        "hex": "#b8451f",
+        "from": "Rust/terracotta accent on the buy pill, italic glyphs and numbered labels, a single warm break lifted straight from Klim's #cc4716 orange."
+      },
+      {
+        "token": "--accent-2",
+        "hex": "#d9663b",
+        "from": "Lighter terracotta used in the dark footer for hover states and the italic wordmark flourish."
+      },
+      {
+        "token": "--muted",
+        "hex": "#8a8278",
+        "from": "Warm taupe-grey for mono datelines, glyph-count meta and dimmed secondary text."
+      },
+      {
+        "token": "--rule",
+        "hex": "#d8d1c4",
+        "from": "Hairline rules dividing the weight grid, feature cells and section bands, the quiet skeleton of the catalogue."
+      }
+    ],
+    "highlight": "The standout move is the interactive pangram board: a JetBrains-Mono toggle that flips a full Latin-Extended specimen line live between Regular, Italic, Bold and Bold Italic, turning the page into a working type tester rather than a static brochure."
+  },
+  {
+    "slug": "steeproom",
+    "brand": "Steeproom",
+    "tagline": "Stone-ground matcha, single-origin leaves, and a room built for slowing down.",
+    "prompt": "Steeproom, a modern matcha and tea bar: calm, minimal, refined.",
+    "stack": "pure-inspo",
+    "mode": "light",
+    "scoreSelf": 8.4,
+    "references": [
+      {
+        "slug": "cuyana-com",
+        "took": "Deep-studied via get_design_system. Source of the soft, muted warm-paper palette and the understated-luxury restraint: warm beige ground, muted earth accents, text floated directly on imagery with no card chrome."
+      },
+      {
+        "slug": "lyfehotels-com",
+        "took": "Deep-studied via get_design_system. Gave the page its split-studio macrostructure (text column beside an atmospheric panel) and its luxe-calm warm palette of olive, tan and cream."
+      },
+      {
+        "slug": "norrona-com",
+        "took": "Recovered from the agent's own search. A split-studio exemplar: confirmed the text-left / visual-right hero balance and the asymmetric-but-calm fold layout the build adopts."
+      },
+      {
+        "slug": "greenhouse-io",
+        "took": "Recovered from the agent's own search. A mint-green split-studio with an italicized serif accent word, echoed in Steeproom's green-matcha editorial type and the italic emphasis in the headline."
+      },
+      {
+        "slug": "sweetgreen-com",
+        "took": "Recovered from the agent's own search. A warm, food-and-hospitality reference that reinforced the appetite-warm tone, generous spacing and single-subject focus carried into the menu and hero."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "calm minimal refined matcha tea bar, ceremony, warm natural materials",
+        "took": "Opened the build: returned a macrostructure pick, five real exemplars and a canonical bento reference component, grounding the page in archive references before any code was written."
+      },
+      {
+        "tool": "search_screens",
+        "args": "minimalist cafe tea ceremony calm natural",
+        "took": "Surfaced the calm warm-toned hospitality and ecommerce set (Cuyana, Outdoor Voices, Norrona) that anchored the soft, natural-materials direction."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "cuyana-com",
+        "took": "Pulled Cuyana's real tokens: the warm-beige ground, muted earth accents and quiet serif treatment that became Steeproom's paper-and-matcha palette."
+      },
+      {
+        "tool": "search_screens",
+        "args": "matcha green tea ceremony japanese minimal",
+        "took": "Narrowed to the green-forward references (Sweetgreen, Greenhouse) that justified the matcha-green accents and the italic serif emphasis."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "lyfehotels-com",
+        "took": "Pulled Lyfehotels' warm olive-tan-cream system and split-studio shape, which set the hero's two-column structure and luxe-calm mood."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Fetched a canonical hero component for above-the-fold structure, informing the fold-fit split hero (nav, eyebrow, headline, CTAs and the matcha panel all complete in the first viewport)."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--paper",
+        "hex": "#f3eee4",
+        "from": "Warm off-white page ground, lifted from Cuyana's muted-beige canvas; carries the calm, paper-like base."
+      },
+      {
+        "token": "--ink",
+        "hex": "#20271c",
+        "from": "Near-black green-tinted ink for headings and body, keeping text warm rather than cold black."
+      },
+      {
+        "token": "--matcha",
+        "hex": "#3a4a2f",
+        "from": "Deep matcha green: the primary accent on CTAs, the logo mark, the locations section and italic headline emphasis."
+      },
+      {
+        "token": "--matcha-3",
+        "hex": "#8aa06b",
+        "from": "Light tea-leaf green used in the radial logo mark, footer eyebrows and the SVG bowl's foam highlights."
+      },
+      {
+        "token": "--clay",
+        "hex": "#b0894f",
+        "from": "Warm clay-brown secondary accent, echoing Lyfehotels' tan; lands on menu tags, quote marks and the whisk handle."
+      },
+      {
+        "token": "--cream",
+        "hex": "#f7f3ea",
+        "from": "Pale cream for text reversed onto the matcha panel, the dark footer and the green locations block."
+      }
+    ],
+    "highlight": "The split hero's right panel is a fully hand-built SVG: a glazed chawan bowl with a radial matcha surface, drifting foam islands and a bamboo chasen, crowned by a pure-CSS plume of rising, fading steam, no images, just gradients and keyframes."
+  },
+  {
+    "slug": "vaultline",
+    "brand": "Vaultline",
+    "tagline": "Your passwords, yours alone: encrypted on your device before they ever touch the cloud.",
+    "prompt": "Vaultline, a privacy-first password manager: clean and trustworthy.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.4,
+    "references": [
+      {
+        "slug": "featurebase-app",
+        "took": "Deep-studied via get_design_system; its violet support token (#5942e8 / #9d88f3) and dark raised surfaces (#1c144c) directly seeded Vaultline's #6e56cf accent ramp and layered near-black card stack, plus the Inter type system and feature-stack rhythm."
+      },
+      {
+        "slug": "obsidian-md",
+        "took": "Live search top hit and the closest mode/palette twin: near-black canvas with a single purple accent (#7c3ceb) on pills and headline emphasis. Confirmed Vaultline's restraint of one violet accent against deep dark, and the product-UI-as-proof hero composition."
+      },
+      {
+        "slug": "signal-org",
+        "took": "Live search top hit for the privacy brief. A proof-led, trust-first privacy product with indigo palette; reinforced the credibility framing (audit badges, plain-language security promise) carried into Vaultline's dateline eyebrow and hero proof row."
+      },
+      {
+        "slug": "kagi-com",
+        "took": "Live search hit; a privacy-focused SaaS whose calm, manifesto-style hero and trust copy ('restore your privacy') informed the structure of Vaultline's headline plus supporting trust line and the security-model section framing."
+      },
+      {
+        "slug": "ghost-org",
+        "took": "Live search hit; supplied the move of embedding a realistic dark product dashboard mock (stats, chart) as the hero's central proof, echoed in Vaultline's vault-card stack and the monospaced encryption-flow diagram."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "privacy-first password manager, clean and trustworthy, security-focused",
+        "took": "Opening orchestrator call to ground the build; returned a macrostructure pick plus exemplar set and a palette suggestion, setting the dark, technical direction."
+      },
+      {
+        "tool": "search_screens",
+        "args": "security privacy saas dark trustworthy minimal",
+        "took": "Surfaced the privacy/security cohort (Signal, Kagi, Obsidian, Ghost) that defined the dark, minimal, trust-led visual language Vaultline adopts."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "featurebase-app",
+        "took": "Pulled the full DESIGN.md for the strongest dark-SaaS match; its violet tokens and dark surfaces became Vaultline's accent ramp and card surfaces, and its Inter ramp set the type system."
+      },
+      {
+        "tool": "search_screens",
+        "args": "password vault encryption security hero badge",
+        "took": "Hunted specifically for vault/encryption hero patterns and trust badges, feeding the hero proof row (Cure53, SOC 2, GitHub) and the encrypted-status badge treatment."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Requested canonical hero component references to anchor the above-the-fold composition (eyebrow, headline, dual CTA, supporting visual)."
+      },
+      {
+        "tool": "get_reference_jsx",
+        "args": "hero",
+        "took": "Pulled the hero reference markup to model the split text-plus-visual layout that became the copy column beside the floating vault-card stack."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "features",
+        "took": "Gathered feature-section references that shaped the bento grid and the lead tile with its inline terminal/generator visual."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--bg",
+        "hex": "#0b0c14",
+        "from": "Near-black blue-tinted canvas; the dark base that anchors the whole page (mode: dark)."
+      },
+      {
+        "token": "--bg-card",
+        "hex": "#141726",
+        "from": "Raised card surface for vault cards, bento tiles and the crypto diagram, gradient-paired with --bg-elev #11131f."
+      },
+      {
+        "token": "--accent",
+        "hex": "#6e56cf",
+        "from": "Signature violet, derived from the featurebase reference; drives primary buttons, the brand mark, and accent glows."
+      },
+      {
+        "token": "--accent-bright",
+        "hex": "#8b73e8",
+        "from": "Lighter violet for headline emphasis (em), section labels, and hover states."
+      },
+      {
+        "token": "--fg",
+        "hex": "#e9eaf2",
+        "from": "Off-white primary text for headlines and body on the dark field."
+      },
+      {
+        "token": "--green",
+        "hex": "#4ade80",
+        "from": "Trust/status green for the Encrypted badge, check icons, and the live 'all systems encrypted' dot."
+      }
+    ],
+    "highlight": "The hero floats a stacked, slightly fanned set of vault cards (real favicons, masked passwords, an 'Argon2id / synced 2m ago' footer) crowned by a floating shield badge, then backs it with a pure-CSS, monospaced encryption-flow diagram that walks master password to Argon2id to XChaCha20 to cloud blob, turning abstract zero-knowledge crypto into something you can actually read."
+  },
+  {
+    "slug": "crate-and-cut",
+    "brand": "Crate & Cut",
+    "tagline": "Dig deeper, spin louder: new and vintage vinyl, hand-picked turntables, and the DJ gear the pros actually use, all under one Brooklyn roof.",
+    "prompt": "Crate & Cut, a shop for vinyl records and DJ equipment; retro-tech and bold.",
+    "stack": "pure-inspo",
+    "mode": "dark",
+    "scoreSelf": 8.5,
+    "references": [
+      {
+        "slug": "belledonne-com",
+        "took": "Deep-studied via get_design_system; the Specimen macrostructure and product-as-sculpture centering shaped the hero's single spotlit record, and its warm-tan-on-muted palette logic informed the tan (#c5a06a) hardware accent."
+      },
+      {
+        "slug": "idyllic-co-nz",
+        "took": "Top loud-vintage exemplar from the recommend pass; its maximalist energy and oversized cropped display type fed the Archivo Black headlines, the orange marquee, and the giant footer wordmark."
+      },
+      {
+        "slug": "raycast-com",
+        "took": "Surfaced on the dark/high-contrast search; its near-black field with a single hot accent and centered display type validated the #14110d ground plus orange-puncture treatment used across the page."
+      },
+      {
+        "slug": "matveyan-com",
+        "took": "Dark-mode candidate with a warm rust accent and a circular orbiting hero object; reinforced the spinning-record visual as the page's central motif against a monochrome dark field."
+      },
+      {
+        "slug": "deel-com",
+        "took": "High-contrast split-hero reference; its one color-broken accent word against a dark ground echoes the orange 'louder.' break in the headline and the asymmetric text-left / visual-right hero grid."
+      }
+    ],
+    "mcpCalls": [
+      {
+        "tool": "recommend",
+        "args": "retro-tech bold vinyl record shop and DJ equipment store, loud and warm with hig",
+        "took": "Returned the Specimen macrostructure pick plus warm/retro-leaning exemplars (belledonne-com et al), setting the page's product-spotlight spine."
+      },
+      {
+        "tool": "search_screens",
+        "args": "bold retro ecommerce shop editorial layout",
+        "took": "Pulled bold editorial commerce references that informed the bordered feature/category grids and the section-numbered editorial sequencing (01 Featured, 02 Departments, 03 Ethos)."
+      },
+      {
+        "tool": "get_design_system",
+        "args": "belledonne-com",
+        "took": "Mined the chosen exemplar's real tokens and Specimen layout, grounding the centered hero specimen and the warm-tan-on-dark accent direction."
+      },
+      {
+        "tool": "search_screens",
+        "args": "bold retro tech dark high contrast product showcase",
+        "took": "Surfaced dark high-contrast product showcases (raycast-com, matveyan-com) that confirmed the near-black ground with a single orange accent and a rotating hero object."
+      },
+      {
+        "tool": "find_reference_components",
+        "args": "hero",
+        "took": "Looked up canonical hero components to anchor the marquee-hero treatment GLM-5.2 layered onto the Specimen spine."
+      },
+      {
+        "tool": "get_reference_jsx",
+        "args": "hero",
+        "took": "Fetched the hero reference source to study its structure before writing the asymmetric two-column hero with the spinning-record visual."
+      }
+    ],
+    "palette": [
+      {
+        "token": "--ink",
+        "hex": "#14110d",
+        "from": "Near-black warm brown page ground; the dark, high-contrast retro-tech base the whole shop sits on."
+      },
+      {
+        "token": "--paper",
+        "hex": "#f4ede0",
+        "from": "Warm cream foreground for body text and primary buttons; the 'paper sleeve' contrast against the ink."
+      },
+      {
+        "token": "--orange",
+        "hex": "#ff5c1f",
+        "from": "Hot signal orange accent: the record label, headline 'louder.' break, CTAs, marquee dots, and active-nav underline."
+      },
+      {
+        "token": "--orange-deep",
+        "hex": "#c43d10",
+        "from": "Deeper burnt-orange used in the hero's radial glow gradients for warmth and depth."
+      },
+      {
+        "token": "--tan",
+        "hex": "#c5a06a",
+        "from": "Muted brass/tan for the turntable hardware, stylus arm, and SVG product line-art; the vintage-equipment tone."
+      },
+      {
+        "token": "--green",
+        "hex": "#3da558",
+        "from": "Secondary sale-badge green, the one cool note that keeps the warm palette from feeling monochrome."
+      }
+    ],
+    "highlight": "A pure-CSS vinyl record that actually spins on an 8-second loop (and pauses on hover for a tactile feel), complete with a tan SVG tonearm dropped at the groove and a hot-orange center label reading Crate & Cut."
+  },
+  {
     "slug": "subtone-records",
     "brand": "Subtone",
     "tagline": "Records for low rooms and long nights.",

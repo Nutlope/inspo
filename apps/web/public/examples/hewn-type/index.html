@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hewn - Caxton, a contemporary serif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f0e9;
+    --paper-2:#ece6db;
+    --ink:#161413;
+    --ink-2:#2a2622;
+    --muted:#8a8278;
+    --rule:#d8d1c4;
+    --accent:#b8451f;
+    --accent-2:#d9663b;
+    --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:'JetBrains Mono','Lucida Console',monaco,monospace;
+    --maxw:1320px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent);color:var(--paper)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+  .rule-t{border-top:1px solid var(--rule)}
+  .rule-b{border-bottom:1px solid var(--rule)}
+  .mono{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .serif{font-family:var(--serif)}
+
+  /* ─── NAV ─── */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(244,240,233,.92);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:baseline;gap:10px;font-family:var(--serif);font-weight:700;font-size:1.35rem;letter-spacing:-.02em}
+  .brand .reg{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;transform:translateY(-.15em)}
+  .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+  .nav-links a{font-size:.875rem;font-weight:500;position:relative;padding:.25rem 0;transition:color .2s}
+  .nav-links a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);transition:width .25s ease}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--ink);padding:.6rem 1.1rem;transition:all .2s}
+  .nav-cta:hover{background:var(--ink);color:var(--paper)}
+
+  /* ─── HERO ─── */
+  .hero{padding:28px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:end}
+  .hero-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .hero-eyebrow .dot{width:6px;height:6px;background:var(--accent);border-radius:50%}
+  .hero-eyebrow .mono{color:var(--ink-2)}
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:800;
+    font-size:clamp(3.6rem,11.5vw,10.5rem);
+    line-height:.88;
+    letter-spacing:-.035em;
+    margin-bottom:22px;
+  }
+  .hero h1 .ital{font-style:italic;font-weight:500;color:var(--accent)}
+  .hero-sub{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(1.05rem,1.55vw,1.35rem);
+    line-height:1.5;
+    max-width:46ch;
+    color:var(--ink-2);
+  }
+  .hero-sub em{font-style:italic;color:var(--ink)}
+  .hero-meta{display:flex;flex-direction:column;gap:18px;padding-bottom:6px}
+  .hero-meta .label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .hero-meta .val{font-family:var(--serif);font-size:1.05rem;font-weight:500;line-height:1.3}
+  .hero-meta .val .ac{color:var(--accent)}
+  .hero-meta .val .dim{color:var(--muted);font-weight:400;font-size:.95rem}
+  .hero-cta-row{display:flex;align-items:center;gap:24px;margin-top:30px;flex-wrap:wrap}
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:.6em;
+    background:var(--ink);color:var(--paper);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    padding:1rem 1.6rem;transition:all .22s;
+  }
+  .btn-primary:hover{background:var(--accent)}
+  .btn-primary .arrow{transition:transform .22s}
+  .btn-primary:hover .arrow{transform:translateX(4px)}
+  .btn-ghost{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);border-bottom:1px solid var(--ink);padding:.2rem 0;
+    transition:all .2s;
+  }
+  .btn-ghost:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* ─── SPECIMEN STRIP ─── */
+  .specimen-strip{
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    padding:26px 0;
+    overflow:hidden;
+    background:var(--paper);
+  }
+  .specimen-strip .inner{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .specimen-strip .glyphs{font-family:var(--serif);font-size:2.1rem;line-height:1;display:flex;gap:.7em;align-items:baseline}
+  .specimen-strip .glyphs .it{font-style:italic;color:var(--accent);font-weight:500}
+  .specimen-strip .glyphs .sm{font-size:1.3rem;color:var(--muted)}
+  .specimen-strip .meta-right{text-align:right}
+  .specimen-strip .meta-right .mono{display:block;margin-bottom:4px}
+  .specimen-strip .meta-right .val{font-family:var(--serif);font-size:.95rem;font-weight:500}
+
+  /* ─── SECTION HEAD ─── */
+  .section{padding:96px 0}
+  .section-head{display:grid;grid-template-columns:1fr 2fr;gap:48px;align-items:start;margin-bottom:64px}
+  .section-head .num{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block}
+  .section-head h2{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4vw,3.4rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
+  .section-head h2 .it{font-style:italic;font-weight:500;color:var(--accent)}
+  .section-head .desc{font-family:var(--serif);font-size:1.15rem;line-height:1.55;color:var(--ink-2);max-width:52ch;padding-top:.6rem}
+  .section-head .desc em{font-style:italic;color:var(--ink)}
+
+  /* ─── WEIGHTS ─── */
+  .weights-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule)}
+  .weight-cell{padding:36px 28px 32px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);position:relative;transition:background .25s}
+  .weight-cell:nth-child(4n){border-right:none}
+  .weight-cell:hover{background:var(--paper-2)}
+  .weight-cell .w-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;justify-content:space-between}
+  .weight-cell .w-label .num{color:var(--accent)}
+  .weight-cell .w-glyph{font-family:var(--serif);font-size:5.5rem;line-height:.9;margin-bottom:18px;letter-spacing:-.04em}
+  .weight-cell .w-glyph .it{font-style:italic}
+  .weight-cell .w-name{font-family:var(--serif);font-size:1.05rem;font-weight:500;margin-bottom:4px}
+  .weight-cell .w-meta{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+  /* ─── FEATURES (Anatomy) ─── */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule)}
+  .feature{padding:40px 32px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+  .feature:nth-child(3n){border-right:none}
+  .feature .f-glyph{font-family:var(--serif);font-size:4.5rem;line-height:1;margin-bottom:24px;color:var(--ink)}
+  .feature .f-glyph .it{font-style:italic;color:var(--accent)}
+  .feature .f-glyph .ul{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}
+  .feature h3{font-family:var(--serif);font-size:1.3rem;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
+  .feature p{font-size:.95rem;line-height:1.6;color:var(--ink-2)}
+
+  /* ─── IN-USE ─── */
+  .inuse-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:32px;margin-top:8px}
+  .inuse-card{
+    border:1px solid var(--rule);
+    padding:36px 32px 32px;
+    position:relative;
+    overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;
+    min-height:300px;
+    transition:border-color .25s;
+  }
+  .inuse-card:hover{border-color:var(--ink)}
+  .inuse-card .iu-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;display:flex;justify-content:space-between}
+  .inuse-card .iu-label .ac{color:var(--accent)}
+  .inuse-card .iu-quote{font-family:var(--serif);font-size:clamp(1.5rem,2.6vw,2.3rem);line-height:1.18;letter-spacing:-.015em;font-weight:500}
+  .inuse-card .iu-quote .it{font-style:italic;color:var(--accent);font-weight:500}
+  .inuse-card .iu-foot{display:flex;justify-content:space-between;align-items:end;margin-top:32px;gap:16px}
+  .inuse-card .iu-foot .src{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .inuse-card .iu-foot .src .by{color:var(--ink-2);display:block;margin-top:4px;letter-spacing:.08em}
+  .inuse-card .iu-foot .tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--rule);padding:.35rem .7rem}
+
+  /* ─── PANGRAM ─── */
+  .pangram{padding:84px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper-2)}
+  .pangram .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+  .pangram .head .mono{color:var(--ink-2)}
+  .pangram .head .toggle{display:flex;gap:0;border:1px solid var(--rule)}
+  .pangram .head .toggle button{
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+    background:transparent;border:none;padding:.5rem .9rem;cursor:pointer;color:var(--muted);
+    transition:all .2s;
+  }
+  .pangram .head .toggle button.on{background:var(--ink);color:var(--paper)}
+  .pangram .head .toggle button + button{border-left:1px solid var(--rule)}
+  .pangram .text{
+    font-family:var(--serif);
+    font-size:clamp(1.5rem,3.4vw,2.9rem);
+    line-height:1.25;
+    font-weight:400;
+    letter-spacing:-.01em;
+    max-width:30ch;
+    transition:font-style .3s,font-weight .3s;
+  }
+  .pangram .text.italic{font-style:italic;font-weight:500}
+  .pangram .text.bold{font-weight:800}
+  .pangram .text.italic-bold{font-style:italic;font-weight:700}
+
+  /* ─── LICENSING ─── */
+  .license-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule)}
+  .license-card{
+    padding:40px 32px 36px;
+    border-bottom:1px solid var(--rule);
+    border-right:1px solid var(--rule);
+    display:flex;flex-direction:column;
+    transition:background .25s;
+    position:relative;
+  }
+  .license-card:nth-child(3n){border-right:none}
+  .license-card:hover{background:var(--paper-2)}
+  .license-card.featured{background:var(--ink);color:var(--paper)}
+  .license-card.featured .l-label,.license-card.featured .l-price small,.license-card.featured .l-feat li .ck,.license-card.featured .l-desc{color:rgba(244,240,233,.65)}
+  .license-card.featured .l-feat li{border-color:rgba(244,240,233,.18)}
+  .license-card.featured .l-name{color:var(--paper)}
+  .license-card.featured .l-price{color:var(--paper)}
+  .license-card.featured .l-tag{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+  .license-card .l-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:28px}
+  .license-card .l-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .license-card .l-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--rule);padding:.3rem .55rem;color:var(--muted)}
+  .license-card .l-name{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+  .license-card .l-desc{font-size:.88rem;line-height:1.55;color:var(--ink-2);margin-bottom:24px;min-height:3.4em}
+  .license-card .l-price{font-family:var(--serif);font-size:2.6rem;font-weight:700;line-height:1;margin-bottom:2px;letter-spacing:-.02em}
+  .license-card .l-price small{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:400;display:block;margin-top:8px}
+  .license-card .l-feat{list-style:none;margin:24px 0 28px;flex:1}
+  .license-card .l-feat li{font-size:.86rem;padding:.7rem 0;border-top:1px solid var(--rule);display:flex;align-items:center;gap:.7rem;color:inherit}
+  .license-card .l-feat li .ck{font-family:var(--mono);color:var(--accent);font-size:.75rem;flex-shrink:0}
+  .license-card .l-feat li:last-child{border-bottom:1px solid var(--rule)}
+  .license-card .l-cta{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+    text-align:center;padding:.95rem 1rem;
+    border:1px solid var(--ink);transition:all .22s;
+    margin-top:auto;
+  }
+  .license-card.featured .l-cta{border-color:var(--paper);background:var(--paper);color:var(--ink)}
+  .license-card .l-cta:hover{background:var(--ink);color:var(--paper)}
+  .license-card.featured .l-cta:hover{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+
+  .license-note{margin-top:32px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .license-note p{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--ink-2)}
+  .license-note p a{color:var(--accent);border-bottom:1px solid var(--accent)}
+
+  /* ─── FOOTER ─── */
+  footer{background:var(--ink);color:var(--paper);padding:80px 0 36px;margin-top:0}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:48px;margin-bottom:64px}
+  .foot-brand .mark{font-family:var(--serif);font-size:2.6rem;font-weight:800;letter-spacing:-.03em;line-height:.95;margin-bottom:18px}
+  .foot-brand .mark .it{font-style:italic;font-weight:500;color:var(--accent-2)}
+  .foot-brand p{font-family:var(--serif);font-size:1.02rem;line-height:1.55;color:rgba(244,240,233,.7);max-width:42ch;margin-bottom:24px}
+  .foot-brand .news{display:flex;border:1px solid rgba(244,240,233,.22);max-width:340px}
+  .foot-brand .news input{flex:1;background:transparent;border:none;outline:none;color:var(--paper);font-family:var(--sans);font-size:.85rem;padding:.85rem 1rem}
+  .foot-brand .news input::placeholder{color:rgba(244,240,233,.4)}
+  .foot-brand .news button{background:var(--paper);color:var(--ink);border:none;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;padding:0 1.2rem;cursor:pointer;transition:background .2s}
+  .foot-brand .news button:hover{background:var(--accent-2)}
+  .foot-col h4{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,240,233,.5);margin-bottom:20px;font-weight:500}
+  .foot-col ul{list-style:none}
+  .foot-col li{margin-bottom:12px}
+  .foot-col a{font-family:var(--serif);font-size:1rem;color:rgba(244,240,233,.85);transition:color .2s;position:relative}
+  .foot-col a:hover{color:var(--accent-2)}
+  .foot-col a .ext{font-family:var(--mono);font-size:.6rem;color:rgba(244,240,233,.35);margin-left:.4em}
+  .foot-bottom{border-top:1px solid rgba(244,240,233,.15);padding-top:28px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  .foot-bottom .mono{color:rgba(244,240,233,.45)}
+  .foot-bottom .right{display:flex;gap:24px;align-items:center}
+  .foot-bottom .right a{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,240,233,.55);transition:color .2s}
+  .foot-bottom .right a:hover{color:var(--accent-2)}
+  .foot-colophon{font-family:var(--serif);font-style:italic;font-size:.95rem;color:rgba(244,240,233,.5);max-width:52ch;line-height:1.5;margin-top:32px;padding-top:24px;border-top:1px solid rgba(244,240,233,.1)}
+  .foot-colophon .ac{color:var(--accent-2);font-style:normal;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr;gap:32px}
+    .hero-meta{flex-direction:row;flex-wrap:wrap;gap:28px;border-top:1px solid var(--rule);padding-top:24px}
+    .hero-meta .meta-item{min-width:120px}
+    .section-head{grid-template-columns:1fr;gap:20px}
+    .weights-grid{grid-template-columns:repeat(2,1fr)}
+    .weight-cell:nth-child(2n){border-right:none}
+    .weight-cell:nth-child(4n){border-right:1px solid var(--rule)}
+    .features{grid-template-columns:1fr}
+    .feature{border-right:none}
+    .inuse-grid{grid-template-columns:1fr}
+    .license-grid{grid-template-columns:1fr}
+    .license-card{border-right:none}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:32px}
+    .foot-brand{grid-column:1/-1}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 20px}
+    .nav-links{display:none}
+    .nav-links.mobile{display:flex;gap:16px}
+    .nav-links.mobile a{font-size:.78rem}
+    .hero{padding:20px 0 32px}
+    .hero h1{font-size:clamp(3rem,16vw,5rem)}
+    .weights-grid{grid-template-columns:1fr}
+    .weight-cell{border-right:none}
+    .section{padding:64px 0}
+    .specimen-strip .inner{justify-content:flex-start;gap:20px}
+    .specimen-strip .glyphs{font-size:1.5rem;gap:.4em}
+    .foot-grid{grid-template-columns:1fr}
+    .foot-bottom{flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="brand">Hewn<span class="reg">Est. MMXIX</span></a>
+    <ul class="nav-links">
+      <li><a href="#specimen">Specimen</a></li>
+      <li><a href="#styles">Styles</a></li>
+      <li><a href="#inuse">In Use</a></li>
+      <li><a href="#license">License</a></li>
+    </ul>
+    <a href="#license" class="nav-cta">Buy Caxton</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<header class="hero" id="specimen">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="dot"></span>
+          <span class="mono">Release Nº 07 - Spring MMXXVI</span>
+        </div>
+        <h1>Caxton<span class="ital">,</span> a serif<br>for the long&nbsp;read.</h1>
+        <p class="hero-sub">A contemporary book serif drawn over three years by <em>Mara Ostrov</em>. Eight weights, matching italics, and a set of optical sizes built for screens that have learned to pretend they are paper.</p>
+        <div class="hero-cta-row">
+          <a href="#license" class="btn-primary">Buy the family <span class="arrow">→</span></a>
+          <a href="#styles" class="btn-ghost">Try the specimen</a>
+        </div>
+      </div>
+      <aside class="hero-meta">
+        <div class="meta-item">
+          <div class="label">Designed</div>
+          <div class="val">Mara Ostrov<br><span class="dim">Hewn Studio, Riga</span></div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Released</div>
+          <div class="val">12 May 2026<br><span class="dim">v1.000 · OTF + WOFF2</span></div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Family</div>
+          <div class="val"><span class="ac">8</span> weights · <span class="ac">2</span> italics<br><span class="dim">3 optical sizes</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<!-- ─── SPECIMEN STRIP ─── -->
+<div class="specimen-strip">
+  <div class="wrap inner">
+    <div class="glyphs">
+      <span>Aa</span>
+      <span class="it">Bg</span>
+      <span>Cç</span>
+      <span class="it">Æ</span>
+      <span>Œ</span>
+      <span class="it">fi</span>
+      <span>ﬂ</span>
+      <span class="sm">.,;:!?¶</span>
+    </div>
+    <div class="meta-right">
+      <span class="mono">Glyphs · 712 per style</span>
+      <span class="val">Latin Extended-A · Vietnamese · Greek</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SECTION 02 · WEIGHTS ─── -->
+<section class="section" id="styles">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="num">Nº 02 - The Family</span>
+        <h2>Eight weights, <span class="it">two</span> italics, one voice.</h2>
+      </div>
+      <p class="desc">Caxton is drawn across a full weight axis - from a hairline <em>Thin (100)</em> to a near-black <em>Black (900)</em> - each with a true italic, not a slanted roman. The italics carry their own drawing: a single-story <em>a</em>, a swash <em>f</em>, and a descending tail on the <em>Q</em> that clears the line below.</p>
+    </div>
+    <div class="weights-grid">
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 100</span><span class="num">01</span></div>
+        <div class="w-glyph" style="font-weight:100">Aa</div>
+        <div class="w-name">Thin</div>
+        <div class="w-meta">100 · Regular</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 300</span><span class="num">02</span></div>
+        <div class="w-glyph" style="font-weight:300">Aa</div>
+        <div class="w-name">Light</div>
+        <div class="w-meta">300 · Regular</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 400</span><span class="num">03</span></div>
+        <div class="w-glyph" style="font-weight:400">Aa</div>
+        <div class="w-name">Regular</div>
+        <div class="w-meta">400 · Regular + Italic</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 500</span><span class="num">04</span></div>
+        <div class="w-glyph" style="font-weight:500">Aa</div>
+        <div class="w-name">Medium</div>
+        <div class="w-meta">500 · Regular + Italic</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 600</span><span class="num">05</span></div>
+        <div class="w-glyph" style="font-weight:600">Aa</div>
+        <div class="w-name">SemiBold</div>
+        <div class="w-meta">600 · Regular + Italic</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 700</span><span class="num">06</span></div>
+        <div class="w-glyph" style="font-weight:700">Aa</div>
+        <div class="w-name">Bold</div>
+        <div class="w-meta">700 · Regular + Italic</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 800</span><span class="num">07</span></div>
+        <div class="w-glyph" style="font-weight:800">Aa</div>
+        <div class="w-name">ExtraBold</div>
+        <div class="w-meta">800 · Regular</div>
+      </div>
+      <div class="weight-cell">
+        <div class="w-label"><span>Weight 900</span><span class="num">08</span></div>
+        <div class="w-glyph" style="font-weight:900">Aa</div>
+        <div class="w-name">Black</div>
+        <div class="w-meta">900 · Regular</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 03 · ANATOMY / FEATURES ─── -->
+<section class="section rule-t" style="padding-top:96px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="num">Nº 03 - The Drawing</span>
+        <h2>Three years <span class="it">in the</span> details.</h2>
+      </div>
+      <p class="desc">Every curve in Caxton was redrawn at least four times. The result is a serif that holds its nerve at twelve pixels and breathes at a hundred and twenty - with the small <em>optical sizes</em> doing the quiet work in between.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="f-glyph"><span class="it">a</span></div>
+        <h3>A single-story italic</h3>
+        <p>The italic <em>a</em> drops its upper bowl entirely - a choice that traces back to the chancery hands Caxton's namesake set in type in 1476. It earns its keep in running text, where the roman <em>a</em> and its italic sibling stay legibly distinct at body size.</p>
+      </div>
+      <div class="feature">
+        <div class="f-glyph"><span class="ul">g</span></div>
+        <h3>A closed-loop descender</h3>
+        <p>The <em>g</em> carries a closed lower loop with a subtle ear - drawn so the counter never collapses under sub-pixel rendering. Tested against ClearType, Retina, and a 1998 CRT we keep in the studio for humility.</p>
+      </div>
+      <div class="feature">
+        <div class="f-glyph"><span class="it">Q</span></div>
+        <h3>A tail that clears the line</h3>
+        <p>The <em>Q</em>'s tail sweeps below the baseline but stops short of the descender line - so it never collides with the row beneath in tight leading. The italic version adds a swash that would make a Venetian printer blush.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 04 · PANGRAM (interactive) ─── -->
+<section class="pangram">
+  <div class="wrap">
+    <div class="head">
+      <span class="mono">Nº 04 - The Character Set · Latin Extended</span>
+      <div class="toggle" role="group" aria-label="Specimen style toggle">
+        <button class="on" data-style="regular">Regular</button>
+        <button data-style="italic">Italic</button>
+        <button data-style="bold">Bold</button>
+        <button data-style="italic-bold">Bold Italic</button>
+      </div>
+    </div>
+    <p class="text" id="pangram-text">The quick brown fox jumps over the lazy dog - whilst Caxton sets every letter of the Latin Extended-A block without substitution, fallback, or apology.</p>
+  </div>
+</section>
+
+<!-- ─── SECTION 05 · IN USE ─── -->
+<section class="section" id="inuse">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="num">Nº 05 - In Use</span>
+        <h2>Set by people <span class="it">who read</span>.</h2>
+      </div>
+      <p class="desc">Caxton shipped to four editorial teams before its public release. Below: a small selection of the work they made with it - from a literary quarterly to a wine label printed in a garage in Tuscany.</p>
+    </div>
+    <div class="inuse-grid">
+      <article class="inuse-card">
+        <div class="iu-label"><span>Editorial · Long-form</span><span class="ac">2025</span></div>
+        <p class="iu-quote">"We reset the entire <span class="it">Paris Review</span> archive in Caxton Regular over a weekend. The reading time on long essays dropped by a minute forty - and nobody asked why."</p>
+        <div class="iu-foot">
+          <div class="src">The Paris Review<span class="by">- Web redesign, Issue 248</span></div>
+          <span class="tag">Regular · 18px</span>
+        </div>
+      </article>
+      <article class="inuse-card">
+        <div class="iu-label"><span>Identity · Print</span><span class="ac">2024</span></div>
+        <p class="iu-quote">"Caxton Black Italic carries the <span class="it">Podere San Quirico</span> wordmark across every label - from the tasting room to the case-end sticker that survives the cellar."</p>
+        <div class="iu-foot">
+          <div class="src">Podere San Quirico<span class="by">- Estate wine identity, Tuscany</span></div>
+          <span class="tag">Black Italic</span>
+        </div>
+      </article>
+      <article class="inuse-card">
+        <div class="iu-label"><span>Web · Product</span><span class="ac">2026</span></div>
+        <p class="iu-quote">"Our pricing page used to be a table. Now it's a <span class="it">conversation</span>. Caxton SemiBold at 28px made the numbers feel like a sentence someone wrote, not a spreadsheet someone exported."</p>
+        <div class="iu-foot">
+          <div class="src">Folio Books<span class="by">- Independent bookseller, Brooklyn</span></div>
+          <span class="tag">SemiBold · 28px</span>
+        </div>
+      </article>
+      <article class="inuse-card">
+        <div class="iu-label"><span>Print · Journal</span><span class="ac">2025</span></div>
+        <p class="iu-quote">"The <span class="it">Granta</span> cover line is set in Caxton Bold at 96pt over a Duane Michals photograph. The kerning between the <em>V</em> and the <em>y</em> in 'Every' is the reason we picked it."</p>
+        <div class="iu-foot">
+          <div class="src">Granta Magazine<span class="by">- Issue 167 cover, Autumn 2025</span></div>
+          <span class="tag">Bold · 96pt</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 06 · LICENSING ─── -->
+<section class="section rule-t" id="license" style="padding-top:96px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="num">Nº 06 - Licensing</span>
+        <h2>Three ways <span class="it">to license</span> Caxton.</h2>
+      </div>
+      <p class="desc">Every license is perpetual - pay once, use forever, on as many projects as the license allows. Upgrades within v1 are free. <em>v2 will be a paid upgrade</em>, but you'll always keep the version you bought.</p>
+    </div>
+    <div class="license-grid">
+      <div class="license-card">
+        <div class="l-top">
+          <span class="l-label">License 01</span>
+          <span class="l-tag">Most common</span>
+        </div>
+        <div class="l-name">Desktop</div>
+        <p class="l-desc">Install on your workstations for print, static images, and logo lockups. One seat per license.</p>
+        <div class="l-price">$120<small>per seat · full family</small></div>
+        <ul class="l-feat">
+          <li><span class="ck">✓</span> All 8 weights + 2 italics</li>
+          <li><span class="ck">✓</span> OTF + WOFF2 + variable</li>
+          <li><span class="ck">✓</span> Print, PDF, static web images</li>
+          <li><span class="ck">✓</span> Logo &amp; wordmark use</li>
+          <li><span class="ck">✗</span> Live web embedding</li>
+        </ul>
+        <a href="#" class="l-cta">Add to cart</a>
+      </div>
+      <div class="license-card featured">
+        <div class="l-top">
+          <span class="l-label">License 02</span>
+          <span class="l-tag">Recommended</span>
+        </div>
+        <div class="l-name">Desktop + Web</div>
+        <p class="l-desc">Everything in Desktop, plus self-hosted web embedding with a pageview allowance that covers most editorial sites.</p>
+        <div class="l-price">$240<small>per seat · 1M pageviews/mo</small></div>
+        <ul class="l-feat">
+          <li><span class="ck">✓</span> Everything in Desktop</li>
+          <li><span class="ck">✓</span> Self-hosted @font-face</li>
+          <li><span class="ck">✓</span> Up to 1M pageviews / month</li>
+          <li><span class="ck">✓</span> Subsetting &amp; font-display control</li>
+          <li><span class="ck">✗</span> App &amp; game embedding</li>
+        </ul>
+        <a href="#" class="l-cta">Add to cart</a>
+      </div>
+      <div class="license-card">
+        <div class="l-top">
+          <span class="l-label">License 03</span>
+          <span class="l-tag">Custom</span>
+        </div>
+        <div class="l-name">Foundry</div>
+        <p class="l-desc">For agencies, app developers, and brands that need Caxton across products, teams, and unlimited pageviews. Talk to us.</p>
+        <div class="l-price">From $1,800<small>annual · team-wide</small></div>
+        <ul class="l-feat">
+          <li><span class="ck">✓</span> Unlimited pageviews</li>
+          <li><span class="ck">✓</span> App, game, &amp; OEM embedding</li>
+          <li><span class="ck">✓</span> Up to 25 seats included</li>
+          <li><span class="ck">✓</span> Custom subset service</li>
+          <li><span class="ck">✓</span> Direct line to the designer</li>
+        </ul>
+        <a href="#" class="l-cta">Request a quote</a>
+      </div>
+    </div>
+    <div class="license-note">
+      <p>Need an <a href="#">educational license</a> or a <a href="#">non-profit rate</a>? Students and registered charities get 60% off every tier - write to us with proof and we'll send a code.</p>
+      <a href="#" class="btn-ghost">Read the EULA →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="mark">Hewn<span class="it">.</span></div>
+        <p>An independent type foundry based in Riga, Latvia. We draw typefaces the slow way - by hand, on paper, then in Glyphs - and release them when they're ready, not when the quarter ends.</p>
+        <form class="news" onsubmit="event.preventDefault();this.querySelector('button').textContent='Thanks ✓';">
+          <input type="email" placeholder="your@email.address" aria-label="Email address">
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div class="foot-col">
+        <h4>Typefaces</h4>
+        <ul>
+          <li><a href="#">Caxton <span class="ext">→ 2026</span></a></li>
+          <li><a href="#">Vesper <span class="ext">→ 2024</span></a></li>
+          <li><a href="#">Grit <span class="ext">→ 2023</span></a></li>
+          <li><a href="#">Halftone <span class="ext">→ 2022</span></a></li>
+          <li><a href="#">Bibliotheca <span class="ext">→ 2021</span></a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Process</a></li>
+          <li><a href="#">Custom type</a></li>
+          <li><a href="#">Journal</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Licensing FAQ</a></li>
+          <li><a href="#">EULA</a></li>
+          <li><a href="#">Self-hosting guide</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Newsletter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-colophon">
+      <span class="ac">Colophon -</span> This page is set in Caxton Regular &amp; Italic, with labels in Inter and datelines in JetBrains Mono. Designed and built in Riga. The wordmark <em>Hewn</em> is a registered trademark of Hewn SIA. No part of this specimen may be reproduced without permission - but you are welcome to set your own words in it.
+    </div>
+    <div class="foot-bottom">
+      <span class="mono">© MMXXVI Hewn SIA · Stabu iela 32, Riga LV-1011, Latvia</span>
+      <div class="right">
+        <a href="#">Instagram</a>
+        <a href="#">Are.na</a>
+        <a href="#">GitHub</a>
+        <a href="#">RSS</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Pangram style toggle
+  (function(){
+    const buttons = document.querySelectorAll('.pangram .toggle button');
+    const target = document.getElementById('pangram-text');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const style = btn.dataset.style;
+        target.classList.remove('italic','bold','italic-bold');
+        if(style === 'italic') target.classList.add('italic');
+        else if(style === 'bold') target.classList.add('bold');
+        else if(style === 'italic-bold') target.classList.add('italic-bold');
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

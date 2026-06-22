@@ -1,0 +1,101 @@
+{
+  "label": "axiom-labs",
+  "model": "zai-org/GLM-5.2",
+  "vendor": "Together / Zhipu GLM-5.2",
+  "slug": "axiom-labs",
+  "durationSec": 186.6,
+  "writeStartSec": 1.04,
+  "promptTok": 42710,
+  "completionTok": 10692,
+  "totalTok": 53402,
+  "costUSD": 0.1068,
+  "inspoCalls": 9,
+  "loc": 772,
+  "ok": true,
+  "steps": [
+    {
+      "t": 1.62,
+      "kind": "think",
+      "label": "I'll start by consulting the Inspo archive for references on serious, scientific AI lab landing pages."
+    },
+    {
+      "t": 3.659,
+      "kind": "tool",
+      "label": "recommend",
+      "detail": "AI research lab, serious and scientific but beautiful, mission, research areas, "
+    },
+    {
+      "t": 5.208,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "AI research lab serious scientific dark"
+    },
+    {
+      "t": 6.109,
+      "kind": "think",
+      "label": "Let me get design systems for the most relevant AI lab references."
+    },
+    {
+      "t": 6.866,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "blackforestlabs-ai"
+    },
+    {
+      "t": 7.852,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "research lab manifesto stat led dark scientific"
+    },
+    {
+      "t": 9.009,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "deepmind anthropic openai research lab"
+    },
+    {
+      "t": 9.773,
+      "kind": "think",
+      "label": "Excellent — I found Anthropic, which is the most relevant reference. Let me get its design system and look at stat-led examples for the resu"
+    },
+    {
+      "t": 10.264,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "anthropic-com"
+    },
+    {
+      "t": 10.758,
+      "kind": "tool",
+      "label": "find_examples_for_macrostructure",
+      "detail": "stat-led"
+    },
+    {
+      "t": 12.195,
+      "kind": "think",
+      "label": "I have strong references now. Anthropic's design system gives me the key palette (#141413 near-black, #f0eee6 warm off-white, #d97757 terrac"
+    },
+    {
+      "t": 12.198,
+      "kind": "tool",
+      "label": "find_reference_components",
+      "detail": "hero"
+    },
+    {
+      "t": 12.2,
+      "kind": "tool",
+      "label": "find_reference_components",
+      "detail": "stat"
+    },
+    {
+      "t": 186.564,
+      "kind": "think",
+      "label": "I have everything I need. Here's my direction: **Direction:** A dark, warm-tinted near-black canvas (#141413) with a warm off-white (#f0eee6"
+    },
+    {
+      "t": 186.564,
+      "kind": "write",
+      "label": "wrote final page"
+    }
+  ]
+}

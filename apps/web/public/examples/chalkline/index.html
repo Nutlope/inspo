@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chalkline - Bouldering & Climbing, Brooklyn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c; --bg-2:#141414; --bg-3:#1d1d1d; --bg-4:#262626;
+  --chalk:#f4f1ea; --chalk-dim:#a8a59e; --chalk-faint:#5c5a55;
+  --ember:#ff4d1c; --ember-soft:#ff7a4d; --ember-deep:#b8330f;
+  --route:#b6e845; --route-deep:#7aa82e;
+  --line:#2a2a2a; --line-2:#363636;
+  --mxw:1320px;
+  --t:.35s cubic-bezier(.2,.7,.2,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--chalk);font-family:'Archivo',system-ui,sans-serif;font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+.display{font-family:'Bebas Neue','Archivo Expanded',Impact,sans-serif;font-weight:400;letter-spacing:.005em;line-height:.92;text-transform:uppercase}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+ul{list-style:none}
+
+.wrap{max-width:var(--mxw);margin:0 auto;padding:0 32px}
+@media(max-width:600px){.wrap{padding:0 20px}}
+
+/* ===== NAV ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(12,12,12,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:var(--mxw);margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+@media(max-width:600px){.nav-inner{padding:0 20px;height:58px}}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;line-height:1}
+.logo-mark{width:24px;height:24px;flex-shrink:0}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk-dim);transition:color var(--t);position:relative;padding:6px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--ember);transition:width var(--t)}
+.nav-links a:hover{color:var(--chalk)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--ember);color:#0c0c0c;padding:10px 18px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;transition:transform var(--t),background var(--t);white-space:nowrap}
+.nav-cta:hover{background:var(--chalk);transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ember)}
+.nav-burger{display:none;flex-direction:column;gap:5px;padding:6px}
+.nav-burger span{display:block;width:22px;height:2px;background:var(--chalk);transition:var(--t)}
+@media(max-width:880px){
+  .nav-links{position:fixed;inset:64px 0 auto 0;flex-direction:column;background:var(--bg);padding:24px 32px;gap:20px;border-bottom:1px solid var(--line);transform:translateY(-120%);transition:transform var(--t);align-items:flex-start}
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{font-size:14px}
+  .nav-burger{display:flex}
+}
+@media(max-width:600px){.nav-links{inset:58px 0 auto 0}}
+
+/* ===== HERO ===== */
+.hero{position:relative;min-height:100vh;padding-top:64px;display:flex;flex-direction:column;overflow:hidden;background:
+  radial-gradient(circle at 78% 32%,rgba(255,77,28,.16),transparent 42%),
+  radial-gradient(circle at 12% 78%,rgba(182,232,69,.05),transparent 35%),
+  linear-gradient(180deg,#0c0c0c 0%,#101010 100%)}
+@media(max-width:600px){.hero{padding-top:58px}}
+.hero-grain{position:absolute;inset:0;opacity:.5;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+.hero-content{flex:1;display:grid;grid-template-columns:1.32fr .68fr;gap:40px;align-items:center;max-width:var(--mxw);margin:0 auto;width:100%;padding:18px 32px 0}
+@media(max-width:980px){.hero-content{grid-template-columns:1fr;gap:18px;padding:12px 32px 0}}
+@media(max-width:600px){.hero-content{padding:8px 20px 0}}
+.hero-text{position:relative;z-index:3}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ember);margin-bottom:18px}
+.hero-eyebrow::before{content:"";width:28px;height:1px;background:var(--ember)}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,9.2vw,138px);line-height:.86;letter-spacing:.004em;text-transform:uppercase;margin-bottom:18px}
+.hero h1 .ember{color:var(--ember)}
+.hero h1 .stroke{-webkit-text-stroke:2px var(--chalk);color:transparent}
+@media(max-width:600px){.hero h1 .stroke{-webkit-text-stroke:1.4px var(--chalk)}}
+.hero h1 .line{display:block}
+.hero-sub{font-size:clamp(14px,1.4vw,17px);line-height:1.5;color:var(--chalk-dim);max-width:460px;margin-bottom:26px}
+.hero-cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--ember);color:#0c0c0c;padding:15px 24px;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;transition:transform var(--t),box-shadow var(--t),background var(--t)}
+.btn-primary:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--chalk)}
+.btn-primary svg{width:14px;height:14px}
+.btn-ghost{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--line-2);color:var(--chalk);transition:border-color var(--t),color var(--t),background var(--t)}
+.btn-ghost:hover{border-color:var(--chalk);background:rgba(244,241,234,.04)}
+
+/* hero visual */
+.hero-visual{position:relative;height:min(560px,72vh);display:flex;align-items:center;justify-content:center}
+@media(max-width:980px){.hero-visual{height:42vh;min-height:280px}}
+.wall-svg{width:100%;height:100%;max-width:380px}
+@media(max-width:980px){.wall-svg{max-width:300px}}
+@media(max-width:600px){.wall-svg{max-width:240px}}
+.hero-tag{position:absolute;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line-2);background:rgba(12,12,12,.7);backdrop-filter:blur(4px);white-space:nowrap}
+.hero-tag .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.hero-tag-1{top:10%;left:-2%;color:var(--route)}
+.hero-tag-1 .dot{background:var(--route)}
+.hero-tag-2{top:42%;right:-4%;color:var(--ember)}
+.hero-tag-2 .dot{background:var(--ember)}
+.hero-tag-3{bottom:14%;left:6%;color:var(--chalk-dim)}
+.hero-tag-3 .dot{background:var(--chalk-dim)}
+@media(max-width:980px){.hero-tag-1{top:6%;left:0}.hero-tag-2{top:38%;right:0}.hero-tag-3{bottom:8%;left:4%}}
+@media(max-width:600px){.hero-tag{font-size:9px;padding:4px 8px}}
+
+/* hero ticker */
+.hero-ticker{margin-top:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2);overflow:hidden;position:relative;z-index:2}
+.ticker-track{display:flex;gap:0;white-space:nowrap;animation:ticker 38s linear infinite;width:max-content}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-item{display:inline-flex;align-items:center;gap:14px;padding:14px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk)}
+.ticker-item .sep{color:var(--ember);font-size:14px}
+.ticker-item .num{color:var(--ember);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.04em}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}.ticker-track{flex-wrap:wrap}}
+
+/* ===== SECTION FRAME ===== */
+.section{padding:110px 0;position:relative}
+@media(max-width:768px){.section{padding:72px 0}}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:56px;flex-wrap:wrap}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--ember);text-transform:uppercase;margin-bottom:14px;display:block}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,84px);line-height:.9;text-transform:uppercase;letter-spacing:.005em;max-width:14ch}
+.sec-title .ember{color:var(--ember)}
+.sec-title .stroke{-webkit-text-stroke:1.5px var(--chalk);color:transparent}
+@media(max-width:600px){.sec-title .stroke{-webkit-text-stroke:1.2px var(--chalk)}}
+.sec-lead{font-size:15px;line-height:1.6;color:var(--chalk-dim);max-width:380px}
+
+/* ===== FACILITIES ===== */
+.fac-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+@media(max-width:880px){.fac-grid{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:560px){.fac-grid{grid-template-columns:1fr;gap:14px}}
+.fac-card{background:var(--bg-2);border:1px solid var(--line);padding:30px;position:relative;overflow:hidden;transition:transform var(--t),border-color var(--t);min-height:280px;display:flex;flex-direction:column}
+.fac-card:hover{transform:translateY(-4px);border-color:var(--chalk-faint)}
+.fac-card .glyph{margin-bottom:22px;color:var(--chalk-dim);transition:color var(--t)}
+.fac-card:hover .glyph{color:var(--ember)}
+.fac-card h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:8px;line-height:1}
+.fac-card .meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--ember);text-transform:uppercase;margin-bottom:14px}
+.fac-card p{font-size:14px;line-height:1.55;color:var(--chalk-dim);margin-top:auto}
+.fac-card .stats{display:flex;gap:18px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--chalk-dim)}
+.fac-card .stats b{color:var(--chalk);font-weight:700}
+.fac-1{grid-column:span 5}
+.fac-2{grid-column:span 4}
+.fac-3{grid-column:span 3}
+.fac-4{grid-column:span 4}
+.fac-5{grid-column:span 5}
+.fac-6{grid-column:span 3}
+@media(max-width:880px){
+  .fac-1,.fac-2,.fac-3,.fac-4,.fac-5,.fac-6{grid-column:span 3}
+  .fac-1,.fac-5{grid-column:span 6}
+}
+@media(max-width:560px){
+  .fac-1,.fac-2,.fac-3,.fac-4,.fac-5,.fac-6{grid-column:1}
+}
+
+/* ===== MEMBERSHIP ===== */
+.mem-section{background:linear-gradient(180deg,var(--bg) 0%,#0e0e0e 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:880px){.mem-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
+.mem-card{background:var(--bg-2);border:1px solid var(--line);padding:38px 32px;position:relative;transition:transform var(--t),border-color var(--t);display:flex;flex-direction:column}
+.mem-card:hover{transform:translateY(-6px);border-color:var(--chalk-faint)}
+.mem-card.featured{background:var(--chalk);color:var(--bg);border-color:var(--chalk)}
+.mem-card.featured .mem-name,.mem-card.featured .mem-price,.mem-card.featured .mem-feat li{color:var(--bg)}
+.mem-card.featured .mem-feat{border-color:rgba(12,12,12,.15)}
+.mem-card.featured .mem-feat li::before{color:var(--ember-deep)}
+.mem-card.featured .mem-sub{color:rgba(12,12,12,.6)}
+.mem-card.featured .btn-primary{background:var(--bg);color:var(--chalk)}
+.mem-card.featured .btn-primary:hover{background:var(--ember);color:#0c0c0c;box-shadow:5px 5px 0 var(--bg-2)}
+.mem-badge{position:absolute;top:-12px;right:24px;background:var(--ember);color:#0c0c0c;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;font-family:'JetBrains Mono',monospace}
+.mem-name{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:6px;line-height:1}
+.mem-sub{font-size:12px;color:var(--chalk-dim);margin-bottom:24px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;text-transform:uppercase}
+.mem-price{font-family:'Bebas Neue',sans-serif;font-size:74px;line-height:.9;margin-bottom:4px;display:flex;align-items:baseline;gap:4px}
+.mem-price .cur{font-size:28px;color:var(--ember);margin-right:2px}
+.mem-card.featured .mem-price .cur{color:var(--ember-deep)}
+.mem-price .per{font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;letter-spacing:.05em;color:var(--chalk-dim);text-transform:lowercase}
+.mem-card.featured .mem-price .per{color:rgba(12,12,12,.6)}
+.mem-feat{margin:24px 0 28px;display:flex;flex-direction:column;gap:11px;padding-top:20px;border-top:1px solid var(--line)}
+.mem-feat li{font-size:14px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.mem-feat li::before{content:"→";color:var(--ember);font-weight:700;flex-shrink:0}
+.mem-card .btn-primary{margin-top:auto;width:100%;justify-content:center}
+
+/* ===== CLASSES ===== */
+.cls-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line)}
+@media(max-width:768px){.cls-grid{grid-template-columns:1fr}}
+.cls-card{padding:36px 32px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;transition:background var(--t);display:flex;flex-direction:column;min-height:240px}
+.cls-grid > :nth-child(2n){border-right:none}
+.cls-grid > :nth-last-child(-n+2){border-bottom:none}
+@media(max-width:768px){
+  .cls-card{border-right:none!important;border-bottom:1px solid var(--line)!important}
+  .cls-grid > :last-child{border-bottom:none!important}
+}
+.cls-card:hover{background:var(--bg-2)}
+.cls-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.cls-level{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--line-2);color:var(--chalk-dim)}
+.cls-level.beg{color:var(--route);border-color:rgba(182,232,69,.3)}
+.cls-level.int{color:var(--ember-soft);border-color:rgba(255,122,77,.3)}
+.cls-level.adv{color:var(--ember);border-color:rgba(255,77,28,.4);background:rgba(255,77,28,.06)}
+.cls-level.all{color:var(--chalk);border-color:var(--line-2)}
+.cls-dur{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--chalk-faint);letter-spacing:.06em;text-transform:uppercase}
+.cls-card h3{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:10px;line-height:1}
+.cls-card p{font-size:14px;line-height:1.55;color:var(--chalk-dim);margin-bottom:18px}
+.cls-meta{margin-top:auto;display:flex;gap:18px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--chalk-faint);letter-spacing:.06em;text-transform:uppercase;padding-top:14px;border-top:1px solid var(--line)}
+.cls-meta b{color:var(--chalk);font-weight:700}
+
+/* ===== CTA BANNER ===== */
+.cta-banner{padding:90px 0;position:relative;overflow:hidden;background:var(--ember);color:#0c0c0c}
+@media(max-width:768px){.cta-banner{padding:60px 0}}
+.cta-banner::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");opacity:.5;pointer-events:none;mix-blend-mode:multiply}
+.cta-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:center}
+@media(max-width:880px){.cta-inner{grid-template-columns:1fr;gap:24px}}
+.cta-banner h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,7vw,96px);line-height:.88;text-transform:uppercase;letter-spacing:.005em}
+.cta-banner h2 .stroke{-webkit-text-stroke:2px #0c0c0c;color:transparent}
+.cta-banner p{font-size:16px;line-height:1.5;max-width:420px;margin-bottom:24px;font-weight:500}
+.cta-banner .btn-primary{background:#0c0c0c;color:var(--chalk)}
+.cta-banner .btn-primary:hover{background:var(--chalk);color:#0c0c0c;box-shadow:5px 5px 0 rgba(0,0,0,.3)}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--bg);padding:80px 0 32px;border-top:1px solid var(--line)}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:64px}
+@media(max-width:880px){.foot-top{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:560px){.foot-top{grid-template-columns:1fr;gap:28px}}
+.foot-brand h3{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:.02em;line-height:.9;margin-bottom:14px}
+.foot-brand p{font-size:14px;color:var(--chalk-dim);line-height:1.6;max-width:320px;margin-bottom:20px}
+.foot-socials{display:flex;gap:10px}
+.foot-socials a{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line-2);transition:border-color var(--t),color var(--t),background var(--t)}
+.foot-socials a:hover{border-color:var(--ember);color:var(--ember)}
+.foot-socials svg{width:16px;height:16px}
+.foot-col h4{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);margin-bottom:18px}
+.foot-col ul{display:flex;flex-direction:column;gap:10px}
+.foot-col a{font-size:14px;color:var(--chalk-dim);transition:color var(--t)}
+.foot-col a:hover{color:var(--chalk)}
+.foot-col .addr{font-size:14px;color:var(--chalk-dim);line-height:1.6}
+.foot-bottom{border-top:1px solid var(--line);padding-top:28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot-bottom p{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--chalk-faint);letter-spacing:.06em;text-transform:uppercase}
+.foot-legal{display:flex;gap:20px}
+.foot-legal a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--chalk-faint);letter-spacing:.06em;text-transform:uppercase;transition:color var(--t)}
+.foot-legal a:hover{color:var(--chalk)}
+
+/* ===== ANIM ===== */
+@media(prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}.reveal.d5{transition-delay:.4s}.reveal.d6{transition-delay:.48s}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo" aria-label="Chalkline home">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 21 L12 3 L20 21" stroke="#f4f1ea" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="3" r="2.4" fill="#ff4d1c"/>
+      </svg>
+      <span>CHALKLINE</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#walls">Walls</a></li>
+      <li><a href="#membership">Membership</a></li>
+      <li><a href="#classes">Classes</a></li>
+      <li><a href="#visit">Visit</a></li>
+    </ul>
+    <a href="#membership" class="nav-cta">Day Pass - $18</a>
+    <button class="nav-burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <span class="hero-eyebrow">Brooklyn · Est. 2019 · Open 6am-11pm</span>
+      <h1>
+        <span class="line">Climb</span>
+        <span class="line"><span class="ember">higher</span></span>
+        <span class="line"><span class="stroke">than</span> yesterday.</span>
+      </h1>
+      <p class="hero-sub">18,000 sq ft of bouldering, lead walls, and a training cave built by climbers, for climbers. From your first V0 to the project that's been shutting you down for months - this is where you send it.</p>
+      <div class="hero-cta-row">
+        <a href="#membership" class="btn-primary">
+          Start climbing
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#walls" class="btn-ghost">See the walls</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-tag hero-tag-1"><span class="dot"></span>V6 · Roof</div>
+      <div class="hero-tag hero-tag-2"><span class="dot"></span>V10 · Project</div>
+      <div class="hero-tag hero-tag-3"><span class="dot"></span>V2 · Slab</div>
+      <svg class="wall-svg" viewBox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
+        <!-- wall panels -->
+        <rect x="0" y="0" width="400" height="560" fill="#141414"/>
+        <g stroke="#2a2a2a" stroke-width="1">
+          <line x1="0" y1="140" x2="400" y2="140"/>
+          <line x1="0" y1="280" x2="400" y2="280"/>
+          <line x1="0" y1="420" x2="400" y2="420"/>
+          <line x1="100" y1="0" x2="100" y2="560"/>
+          <line x1="200" y1="0" x2="200" y2="560"/>
+          <line x1="300" y1="0" x2="300" y2="560"/>
+        </g>
+        <!-- overhang band -->
+        <path d="M 0 420 L 400 360 L 400 560 L 0 560 Z" fill="#1a1a1a"/>
+        <line x1="0" y1="420" x2="400" y2="360" stroke="#363636" stroke-width="1.5"/>
+
+        <!-- route 1: V2 slab (chalk) -->
+        <g>
+          <circle cx="70" cy="490" r="11" fill="#f4f1ea" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="120" cy="450" r="11" fill="#f4f1ea" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="90" cy="400" r="11" fill="#f4f1ea" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="150" cy="360" r="11" fill="#f4f1ea" stroke="#0c0c0c" stroke-width="2"/>
+          <polyline points="70,490 120,450 90,400 150,360" fill="none" stroke="#f4f1ea" stroke-width="1.5" stroke-dasharray="3 4" opacity=".5"/>
+        </g>
+
+        <!-- route 2: V6 roof (ember) -->
+        <g>
+          <circle cx="250" cy="500" r="13" fill="#ff4d1c" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="320" cy="460" r="13" fill="#ff4d1c" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="280" cy="410" r="13" fill="#ff4d1c" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="340" cy="370" r="13" fill="#ff4d1c" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="300" cy="320" r="13" fill="#ff4d1c" stroke="#0c0c0c" stroke-width="2"/>
+          <polyline points="250,500 320,460 280,410 340,370 300,320" fill="none" stroke="#ff4d1c" stroke-width="1.5" stroke-dasharray="3 4" opacity=".55"/>
+        </g>
+
+        <!-- route 3: V10 project (route green) -->
+        <g>
+          <circle cx="180" cy="280" r="10" fill="#b6e845" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="240" cy="220" r="10" fill="#b6e845" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="160" cy="180" r="10" fill="#b6e845" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="220" cy="120" r="10" fill="#b6e845" stroke="#0c0c0c" stroke-width="2"/>
+          <circle cx="140" cy="70" r="10" fill="#b6e845" stroke="#0c0c0c" stroke-width="2"/>
+          <polyline points="180,280 240,220 160,180 220,120 140,70" fill="none" stroke="#b6e845" stroke-width="1.5" stroke-dasharray="3 4" opacity=".5"/>
+        </g>
+
+        <!-- small filler holds -->
+        <circle cx="40" cy="300" r="7" fill="#2e2e2e" stroke="#3a3a3a" stroke-width="1"/>
+        <circle cx="360" cy="220" r="7" fill="#2e2e2e" stroke="#3a3a3a" stroke-width="1"/>
+        <circle cx="60" cy="150" r="7" fill="#2e2e2e" stroke="#3a3a3a" stroke-width="1"/>
+        <circle cx="380" cy="100" r="7" fill="#2e2e2e" stroke="#3a3a3a" stroke-width="1"/>
+        <circle cx="350" cy="540" r="7" fill="#2e2e2e" stroke="#3a3a3a" stroke-width="1"/>
+
+        <!-- climber silhouette -->
+        <g transform="translate(232470)" fill="#f4f1ea">
+          <circle cx="0" cy="-6" r="6.5"/>
+          <path d="M-3 0 L3 0 L5 14 L-5 14 Z"/>
+          <path d="M-4 1 L-14 12 L-11 15 L-1 6" stroke="#f4f1ea" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M4 1 L16 8 L14 12 L3 7" stroke="#f4f1ea" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M-4 14 L-9 28 L-5 29 L0 16" stroke="#f4f1ea" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M4 14 L11 26 L8 29 L2 16" stroke="#f4f1ea" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </g>
+ <line x1="232" y1="464" x2="232" y2="560" stroke="#f4f1ea" stroke-width="1" stroke-dasharray="2 3" opacity=".25"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ticker -->
+  <div class="hero-ticker ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item">Now set <span class="num">42</span> fresh problems <span class="sep">/</span></span>
+      <span class="ticker-item">Lead wall <span class="num">32ft</span> vertical <span class="sep">/</span></span>
+      <span class="ticker-item">Kilter board <span class="num">4×4</span> LED <span class="sep">/</span></span>
+      <span class="ticker-item">Members <span class="num">1,400</span> strong <span class="sep">/</span></span>
+      <span class="ticker-item">Open <span class="num">6am-11pm</span> daily <span class="sep">/</span></span>
+      <span class="ticker-item">First visit free <span class="sep">/</span></span>
+      <span class="ticker-item">Now set <span class="num">42</span> fresh problems <span class="sep">/</span></span>
+      <span class="ticker-item">Lead wall <span class="num">32ft</span> vertical <span class="sep">/</span></span>
+      <span class="ticker-item">Kilter board <span class="num">4×4</span> LED <span class="sep">/</span></span>
+      <span class="ticker-item">Members <span class="num">1,400</span> strong <span class="sep">/</span></span>
+      <span class="ticker-item">Open <span class="num">6am-11pm</span> daily <span class="sep">/</span></span>
+      <span class="ticker-item">First visit free <span class="sep">/</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FACILITIES ============ -->
+<section class="section" id="walls">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="reveal">
+        <span class="sec-num">01 / The Walls</span>
+        <h2 class="sec-title">Every <span class="ember">angle</span>,<br>every <span class="stroke">grade</span>.</h2>
+      </div>
+      <p class="sec-lead reveal d1">Six distinct climbing zones across 18,000 sq ft - from forgiving slabs to a 32-foot lead wall and a cave that eats shoulders for breakfast. Routes reset every Monday by our in-house setters.</p>
+    </div>
+
+    <div class="fac-grid">
+      <article class="fac-card fac-1 reveal d1">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M4 40 L22 6 L40 40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="28" r="3" fill="currentColor"/><circle cx="30" cy="28" r="3" fill="currentColor"/><circle cx="22" cy="18" r="3" fill="currentColor"/></svg>
+        </div>
+        <div class="meta">Main · Bouldering</div>
+        <h3>Bouldering Floor</h3>
+        <p>42 problems across every angle, reset weekly by our setting team. Top out on the14-foot freestanding boulder or work the 45-degree wall. Grades V0-V10.</p>
+        <div class="stats"><span><b>42</b> problems</span><span><b>V0-V10</b></span><span><b>14ft</b> top</span></div>
+      </article>
+
+      <article class="fac-card fac-2 reveal d2">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="6" y="4" width="32" height="36" stroke="currentColor" stroke-width="2.2"/><line x1="6" y1="14" x2="38" y2="14" stroke="currentColor" stroke-width="2"/><line x1="6" y1="24" x2="38" y2="24" stroke="currentColor" stroke-width="2"/><line x1="6" y1="34" x2="38" y2="34" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="9" r="2" fill="currentColor"/><circle cx="28" cy="19" r="2" fill="currentColor"/><circle cx="20" cy="29" r="2" fill="currentColor"/></svg>
+        </div>
+        <div class="meta">Vertical · Lead</div>
+        <h3>Lead Wall</h3>
+        <p>32 feet of vertical and gently-overhanging terrain with 12 lead routes and 8 top-rope lanes. Auto-belays on every line for solo sessions.</p>
+        <div class="stats"><span><b>32ft</b> height</span><span><b>20</b> lines</span></div>
+      </article>
+
+      <article class="fac-card fac-3 reveal d3">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M4 10 Q22 26 40 10 L40 40 L4 40 Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="14" cy="22" r="2.5" fill="currentColor"/><circle cx="30" cy="26" r="2.5" fill="currentColor"/><circle cx="22" cy="32" r="2.5" fill="currentColor"/></svg>
+        </div>
+        <div class="meta">Training · Cave</div>
+        <h3>The Cave</h3>
+        <p>Roof section and 45° overhang. Hangboards, campus rungs, and fingerboards for building contact strength.</p>
+        <div class="stats"><span><b>45°</b> overhang</span></div>
+      </article>
+
+      <article class="fac-card fac-4 reveal d3">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="4" y="6" width="36" height="32" stroke="currentColor" stroke-width="2.2"/><circle cx="14" cy="16" r="2.5" fill="currentColor"/><circle cx="30" cy="16" r="2.5" fill="currentColor"/><circle cx="22" cy="26" r="2.5" fill="currentColor"/><circle cx="14" cy="32" r="1.5" fill="currentColor"/><circle cx="30" cy="32" r="1.5" fill="currentColor"/></svg>
+        </div>
+        <div class="meta">Digital · Kilter</div>
+        <h3>Kilter Board</h3>
+        <p>4×4 LED training board with 3,000+ problems via the Kilter app. Filter by grade, angle, and style. Set your own and share.</p>
+        <div class="stats"><span><b>3,000+</b> problems</span></div>
+      </article>
+
+      <article class="fac-card fac-5 reveal d4">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 4 L22 40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="14" y="10" width="16" height="4" fill="currentColor"/><rect x="10" y="18" width="24" height="4" fill="currentColor"/><rect x="14" y="26" width="16" height="4" fill="currentColor"/><rect x="10" y="34" width="24" height="4" fill="currentColor"/></svg>
+        </div>
+        <div class="meta">Strength · Gym</div>
+        <h3>Training Gym</h3>
+        <p>Full lifting area with racks, kettlebells, and a finger-strength zone. Free weights, hangboards, and campus boards for climbers who want to train hard off the wall too.</p>
+        <div class="stats"><span><b>2,000</b> sq ft</span><span><b>Free</b> for members</span></div>
+      </article>
+
+      <article class="fac-card fac-6 reveal d5">
+        <div class="glyph">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M10 8 Q22 22 34 8" stroke="currentColor" stroke-width="2.2" fill="none"/><rect x="8" y="8" width="28" height="28" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M14 22 Q22 30 30 22" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>
+        </div>
+        <div class="meta">Community · Lounge</div>
+        <h3>The Lounge</h3>
+        <p>Espresso bar, work tables, and couches. Stay after your session - the community is the point.</p>
+        <div class="stats"><span><b>Open</b> to all</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MEMBERSHIP ============ -->
+<section class="section mem-section" id="membership">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="reveal">
+        <span class="sec-num">02 / Membership</span>
+        <h2 class="sec-title">Pick your <span class="ember">line</span>.</h2>
+      </div>
+      <p class="sec-lead reveal d1">No contracts, no sign-up fees, no fine print. Cancel anytime. Every membership includes the training gym, lounge, and free guest passes on your birthday month.</p>
+    </div>
+
+    <div class="mem-grid">
+      <article class="mem-card reveal d1">
+        <div class="mem-name">Day Pass</div>
+        <div class="mem-sub">Drop in, climb out</div>
+        <div class="mem-price"><span class="cur">$</span>18<span class="per">/ day</span></div>
+        <ul class="mem-feat">
+          <li>Full access, all walls</li>
+          <li>Shoe & harness rental included</li>
+          <li>Locker & towel</li>
+          <li>One free return within 7 days</li>
+        </ul>
+        <a href="#visit" class="btn-primary">Buy a day pass</a>
+      </article>
+
+      <article class="mem-card featured reveal d2">
+        <div class="mem-badge">Most popular</div>
+        <div class="mem-name">Monthly</div>
+        <div class="mem-sub">Climb whenever, no commitment</div>
+        <div class="mem-price"><span class="cur">$</span>89<span class="per">/ month</span></div>
+        <ul class="mem-feat">
+          <li>Unlimited climbing, all walls</li>
+          <li>Free shoe & harness rental</li>
+          <li>Two guest passes every month</li>
+          <li>10% off classes & workshops</li>
+          <li>Free fitness gym & lounge access</li>
+        </ul>
+        <a href="#visit" class="btn-primary">Start monthly</a>
+      </article>
+
+      <article class="mem-card reveal d3">
+        <div class="mem-name">Annual</div>
+        <div class="mem-sub">Two months on the house</div>
+        <div class="mem-price"><span class="cur">$</span>890<span class="per">/ year</span></div>
+        <ul class="mem-feat">
+          <li>Everything in Monthly</li>
+          <li>Two months free ($178 saved)</li>
+          <li>Free guest pass every month</li>
+          <li>20% off all classes</li>
+          <li>Priority comp registration</li>
+        </ul>
+        <a href="#visit" class="btn-primary">Go annual</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLASSES ============ -->
+<section class="section" id="classes">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="reveal">
+        <span class="sec-num">03 / Classes</span>
+        <h2 class="sec-title">Learn the <span class="ember">craft</span>.</h2>
+      </div>
+      <p class="sec-lead reveal d1">Coaches who've set routes at national comps. Small class sizes, hands-on feedback, and a clear progression from first-timer to redpoint machine.</p>
+    </div>
+
+    <div class="cls-grid">
+      <article class="cls-card reveal d1">
+        <div class="cls-top">
+          <span class="cls-level beg">Beginner</span>
+          <span class="cls-dur">90 min · 4 weeks</span>
+        </div>
+        <h3>Bouldering 101</h3>
+        <p>Never climbed before? This four-week intro covers footwork, falling safely, reading problems, and building confidence on the wall. By week four you'll be flashing V2s.</p>
+        <div class="cls-meta"><span>Next: <b>Mon Jan 13</b></span><span><b>$120</b> / 4 weeks</span></div>
+      </article>
+
+      <article class="cls-card reveal d2">
+        <div class="cls-top">
+          <span class="cls-level int">Intermediate</span>
+          <span class="cls-dur">2 hr · 6 weeks</span>
+        </div>
+        <h3>Technique Lab</h3>
+        <p>Heel hooks, toe hooks, drop knees, and dynos. Six weeks of movement drills that turn thrutching into flowing. For climbers solid in the V3-V5 range.</p>
+        <div class="cls-meta"><span>Next: <b>Wed Jan 15</b></span><span><b>$180</b> / 6 weeks</span></div>
+      </article>
+
+      <article class="cls-card reveal d3">
+        <div class="cls-top">
+          <span class="cls-level adv">Advanced</span>
+          <span class="cls-dur">2 hr · 8 weeks</span>
+        </div>
+        <h3>Send Train</h3>
+        <p>Project-focused coaching for V6+ climbers. Eight weeks of structured sessions on your hardest projects, with video analysis and a personalized training plan.</p>
+        <div class="cls-meta"><span>Next: <b>Tue Jan 14</b></span><span><b>$280</b> / 8 weeks</span></div>
+      </article>
+
+      <article class="cls-card reveal d4">
+        <div class="cls-top">
+          <span class="cls-level all">All levels</span>
+          <span class="cls-dur">60 min · weekly</span>
+        </div>
+        <h3>Strength &amp; Conditioning</h3>
+        <p>Climber-specific strength training - pull power, finger strength, and core. Drop in weekly or book the full cycle. Free for monthly and annual members.</p>
+        <div class="cls-meta"><span>Every: <b>Sat 10am</b></span><span><b>$20</b> drop-in</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BANNER ============ -->
+<section class="cta-banner">
+  <div class="wrap cta-inner">
+    <div class="reveal">
+      <h2>First visit's<br><span class="stroke">on us.</span></h2>
+    </div>
+    <div class="reveal d1">
+      <p>Walk in, grab shoes, and climb. No appointment, no pressure. Mention "first climb" at the front desk and your day pass is free.</p>
+      <a href="#visit" class="btn-primary">Claim your free day</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer" id="visit">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <h3>CHALKLINE</h3>
+        <p>Bouldering & climbing gym. Built by climbers, for climbers. Brooklyn since 2019.</p>
+        <div class="foot-socials">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Strava"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3h-3l5 11h3L15 3zM9 3L3 17h3l3-7 3 7h3L9 3z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Climb</h4>
+        <ul>
+          <li><a href="#walls">Walls & Facilities</a></li>
+          <li><a href="#membership">Membership</a></li>
+          <li><a href="#classes">Classes</a></li>
+          <li><a href="#">Team & comps</a></li>
+          <li><a href="#">Youth programs</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Visit</h4>
+        <div class="addr">
+          118 Bogart St<br>
+          Brooklyn, NY 11206<br><br>
+          Mon-Fri · 6am-11pm<br>
+          Sat-Sun · 8am-10pm
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@chalkline.climb">hello@chalkline.climb</a></li>
+          <li><a href="tel:+17185550199">(718) 555-0199</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Waiver</a></li>
+          <li><a href="#">Gift cards</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2025 Chalkline Climbing LLC · Brooklyn, NY</p>
+      <div class="foot-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Mobile nav toggle
+  var burger = document.getElementById('burger');
+  var navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', function(){
+    var open = navLinks.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  navLinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      navLinks.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Reveal on scroll
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>

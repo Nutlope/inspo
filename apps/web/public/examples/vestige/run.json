@@ -1,0 +1,84 @@
+{
+  "label": "vestige",
+  "model": "zai-org/GLM-5.2",
+  "vendor": "Together / Zhipu GLM-5.2",
+  "slug": "vestige",
+  "durationSec": 68.87,
+  "writeStartSec": 0.65,
+  "promptTok": 25800,
+  "completionTok": 8239,
+  "totalTok": 34039,
+  "costUSD": 0.0724,
+  "inspoCalls": 7,
+  "loc": 438,
+  "ok": true,
+  "steps": [
+    {
+      "t": 0.964,
+      "kind": "think",
+      "label": "I'll consult the Inspo archive first to ground this in real editorial/gallery references."
+    },
+    {
+      "t": 4.116,
+      "kind": "tool",
+      "label": "recommend",
+      "detail": "contemporary art gallery announcing a new exhibition, editorial and image-led wi"
+    },
+    {
+      "t": 5.816,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "contemporary art gallery editorial exhibition image-led restrained typography"
+    },
+    {
+      "t": 6.579,
+      "kind": "think",
+      "label": "Let me drill into the top gallery references for real palettes and type systems."
+    },
+    {
+      "t": 7.442,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "gagosian-com"
+    },
+    {
+      "t": 17.447,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "pacegallery-com"
+    },
+    {
+      "t": 18.202,
+      "kind": "tool",
+      "label": "find_examples_for_macrostructure",
+      "detail": "photographic"
+    },
+    {
+      "t": 20.027,
+      "kind": "think",
+      "label": "I have strong references. Let me pull one more design system and a hero reference component to nail the editorial hero shape."
+    },
+    {
+      "t": 20.506,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "audocph-com"
+    },
+    {
+      "t": 20.508,
+      "kind": "tool",
+      "label": "find_reference_components",
+      "detail": "hero"
+    },
+    {
+      "t": 68.821,
+      "kind": "think",
+      "label": "I have everything I need. The references converge clearly: Gagosian's warm-paper editorial (light mode, serif body + condensed sans display,"
+    },
+    {
+      "t": 68.821,
+      "kind": "write",
+      "label": "wrote final page"
+    }
+  ]
+}

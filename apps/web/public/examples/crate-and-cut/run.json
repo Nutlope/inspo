@@ -1,0 +1,78 @@
+{
+  "label": "crate-and-cut",
+  "model": "zai-org/GLM-5.2",
+  "vendor": "Together / Zhipu GLM-5.2",
+  "slug": "crate-and-cut",
+  "durationSec": 74.49,
+  "writeStartSec": 0.83,
+  "promptTok": 27256,
+  "completionTok": 13213,
+  "totalTok": 40469,
+  "costUSD": 0.0963,
+  "inspoCalls": 6,
+  "loc": 864,
+  "ok": true,
+  "steps": [
+    {
+      "t": 1.489,
+      "kind": "think",
+      "label": "I'll consult the Inspo archive to ground this in real references before building."
+    },
+    {
+      "t": 2.444,
+      "kind": "tool",
+      "label": "recommend",
+      "detail": "retro-tech bold vinyl record shop and DJ equipment store, loud and warm with hig"
+    },
+    {
+      "t": 3.34,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "bold retro ecommerce shop editorial layout"
+    },
+    {
+      "t": 4.896,
+      "kind": "think",
+      "label": "Good. The Specimen macrostructure was picked, and I have warm/retro-leaning references. Let me drill into a couple of exemplars and a marque"
+    },
+    {
+      "t": 4.901,
+      "kind": "tool",
+      "label": "get_design_system",
+      "detail": "belledonne-com"
+    },
+    {
+      "t": 6.211,
+      "kind": "tool",
+      "label": "search_screens",
+      "detail": "bold retro tech dark high contrast product showcase"
+    },
+    {
+      "t": 6.212,
+      "kind": "tool",
+      "label": "find_reference_components",
+      "detail": "hero"
+    },
+    {
+      "t": 7.42,
+      "kind": "think",
+      "label": "Excellent. I now have a clear direction. Let me pull the marquee hero reference source to study its structure, since it fits the bold retro-"
+    },
+    {
+      "t": 7.423,
+      "kind": "tool",
+      "label": "get_reference_jsx",
+      "detail": "hero"
+    },
+    {
+      "t": 74.442,
+      "kind": "think",
+      "label": "I have everything I need. Here's my direction: **Direction.** Crate & Cut gets a **Marquee-Hero** treatment with a **Specimen**-style produc"
+    },
+    {
+      "t": 74.442,
+      "kind": "write",
+      "label": "wrote final page"
+    }
+  ]
+}

@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crate & Cut - Vinyl Records & DJ Equipment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14110d;
+    --ink-2:#1d1914;
+    --ink-3:#2a241c;
+    --paper:#f4ede0;
+    --paper-dim:#d8cfbd;
+    --paper-mute:#9c9484;
+    --rule:rgba(244,237,224,.14);
+    --rule-strong:rgba(244,237,224,.32);
+    --orange:#ff5c1f;
+    --orange-deep:#c43d10;
+    --tan:#c5a06a;
+    --green:#3da558;
+    --max:1320px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--paper);
+    font-family:'Space Mono',ui-monospace,monospace;
+    font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--orange);color:var(--ink)}
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  .display{font-family:'Archivo Black',sans-serif;font-weight:400}
+  .mono{font-family:'Space Mono',monospace}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+  .rule-t{border-top:1px solid var(--rule)}
+  .rule-b{border-bottom:1px solid var(--rule)}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-mute)}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700;
+    padding:14px 22px;border:1.5px solid var(--paper);
+    background:var(--paper);color:var(--ink);
+    transition:background .15s,color .15s,border-color .15s,transform .1s;
+    cursor:pointer;
+  }
+  .btn:hover{background:var(--orange);border-color:var(--orange);color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+  .btn-ghost{background:transparent;color:var(--paper)}
+  .btn-ghost:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .btn-orange{background:var(--orange);border-color:var(--orange);color:var(--ink)}
+  .btn-orange:hover{background:var(--paper);border-color:var(--paper)}
+
+  /* ============ NAV ============ */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(20,17,13,.88);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--rule);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;gap:24px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:.02em}
+  .logo-mark{width:26px;height:26px;background:var(--orange);display:grid;place-items:center;font-size:13px;color:var(--ink)}
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .nav-links a{color:var(--paper-dim);transition:color .15s;position:relative}
+  .nav-links a:hover{color:var(--orange)}
+  .nav-links a.active{color:var(--paper)}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:2px;background:var(--orange)}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .cart-btn{
+    display:flex;align-items:center;gap:8px;
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    padding:8px 14px;border:1px solid var(--rule-strong);color:var(--paper);
+    transition:border-color .15s,background .15s;cursor:pointer;
+  }
+  .cart-btn:hover{border-color:var(--orange);background:rgba(255,92,31,.08)}
+  .cart-count{background:var(--orange);color:var(--ink);padding:1px 7px;font-weight:700}
+  .menu-toggle{display:none;background:none;border:1px solid var(--rule-strong);color:var(--paper);width:38px;height:38px;cursor:pointer;font-size:16px}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;padding:40px 0 30px;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 78% 30%, rgba(255,92,31,.10), transparent 42%),
+      radial-gradient(circle at 12% 80%, rgba(196,61,16,.07), transparent 50%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid;grid-template-columns:1.35fr 1fr;
+    gap:48px;align-items:center;
+    position:relative;min-height:540px;
+  }
+  .hero-left{display:flex;flex-direction:column;gap:22px}
+  .hero-eyebrow-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hero-eyebrow-row .dot{width:7px;height:7px;background:var(--orange);border-radius:50%;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+  .hero h1{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(46px,7.4vw,104px);
+    line-height:.9;letter-spacing:-.025em;
+    text-transform:uppercase;
+  }
+  .hero h1 .accent{color:var(--orange)}
+  .hero h1 .italic{font-family:'Space Mono',monospace;font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em}
+  .hero-sub{
+    font-size:15px;line-height:1.6;color:var(--paper-dim);
+    max-width:46ch;margin-top:4px;
+  }
+  .hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+  .hero-meta{
+    display:flex;gap:28px;flex-wrap:wrap;
+    padding-top:18px;border-top:1px solid var(--rule);margin-top:10px;
+  }
+  .hero-meta-item{display:flex;flex-direction:column;gap:3px}
+  .hero-meta-item .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-mute)}
+  .hero-meta-item .v{font-family:'Archivo Black',sans-serif;font-size:18px;color:var(--paper)}
+  .hero-meta-item .v .small{font-family:'Space Mono',monospace;font-size:11px;color:var(--paper-mute);font-weight:400;margin-left:4px}
+
+  /* Record visual */
+  .hero-right{display:flex;justify-content:center;align-items:center;position:relative}
+  .record-stage{position:relative;width:100%;max-width:380px;aspect-ratio:1}
+  .record{
+    position:absolute;inset:0;border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at center,
+        #1a1611 0px,#1a1611 1px,#0c0a07 2px,#0c0a07 3px),
+      radial-gradient(circle at center,#0c0a07 0%,#1a1611 100%);
+    box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(244,237,224,.06);
+    animation:spin 8s linear infinite;
+  }
+  .record-label{
+    position:absolute;top:50%;left:50%;
+    width:36%;height:36%;border-radius:50%;
+    background:var(--orange);
+    transform:translate(-50%,-50%);
+    display:grid;place-items:center;text-align:center;
+    z-index:2;box-shadow:0 0 0 3px var(--ink),0 0 0 4px rgba(244,237,224,.1);
+  }
+  .record-label-inner{
+    font-family:'Archivo Black',sans-serif;
+    color:var(--ink);font-size:clamp(9px,1.6vw,13px);
+    line-height:1;text-transform:uppercase;letter-spacing:.02em;
+    padding:8px;
+  }
+  .record-label-inner span{display:block;font-size:.6em;margin-top:4px;letter-spacing:.1em}
+  .record-hole{
+    position:absolute;top:50%;left:50%;width:10px;height:10px;
+    background:var(--ink);border-radius:50%;transform:translate(-50%,-50%);
+    z-index:3;box-shadow:0 0 0 2px rgba(244,237,224,.15);
+  }
+  .record-stylus{
+    position:absolute;top:-6%;right:-2%;width:42%;height:62%;
+    z-index:4;pointer-events:none;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hero-tag{
+    position:absolute;font-family:'Space Mono',monospace;font-size:10px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--paper-mute);
+    white-space:nowrap;
+  }
+  .hero-tag.t1{top:2%;left:-4%}
+  .hero-tag.t2{bottom:6%;right:-6%;color:var(--orange)}
+  .hero-tag.t3{top:48%;left:-8%}
+
+  /* ============ MARQUEE ============ */
+  .marquee{
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    background:var(--ink-2);overflow:hidden;
+    padding:14px 0;position:relative;
+  }
+  .marquee-track{
+    display:flex;gap:0;white-space:nowrap;
+    animation:marquee 38s linear infinite;
+    font-family:'Archivo Black',sans-serif;font-size:15px;
+    letter-spacing:.04em;text-transform:uppercase;
+  }
+  .marquee-track span{padding:0 22px;display:inline-flex;align-items:center;gap:22px}
+  .marquee-track span::after{content:"●";color:var(--orange);font-size:10px}
+  .marquee-track .alt{color:var(--paper-mute)}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+
+  /* ============ SECTION HEAD ============ */
+  .section{padding:72px 0;border-top:1px solid var(--rule)}
+  .section-head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:24px;margin-bottom:40px;flex-wrap:wrap;
+  }
+  .section-head h2{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(34px,5vw,64px);line-height:.95;
+    letter-spacing:-.02em;text-transform:uppercase;
+  }
+  .section-head h2 .accent{color:var(--orange)}
+  .section-head .lead{font-size:14px;color:var(--paper-dim);max-width:42ch;line-height:1.6}
+  .section-num{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;display:block}
+
+  /* ============ FEATURED GRID ============ */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .feat-card{
+    background:var(--ink);padding:26px 24px 24px;
+    display:flex;flex-direction:column;gap:16px;
+    transition:background .2s;position:relative;
+  }
+  .feat-card:hover{background:var(--ink-2)}
+  .feat-card:hover .feat-img{transform:scale(1.04)}
+  .feat-img{
+    aspect-ratio:1;background:var(--ink-3);
+    display:grid;place-items:center;position:relative;overflow:hidden;
+    transition:transform .3s;
+  }
+  .feat-img svg{width:78%;height:78%}
+  .feat-badge{
+    position:absolute;top:12px;left:12px;
+    font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase;padding:4px 8px;font-weight:700;
+  }
+  .feat-badge.new{background:var(--orange);color:var(--ink)}
+  .feat-badge.sale{background:var(--green);color:var(--ink)}
+  .feat-badge.rare{background:var(--paper);color:var(--ink)}
+  .feat-tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-mute)}
+  .feat-name{font-family:'Archivo Black',sans-serif;font-size:18px;line-height:1.15;text-transform:uppercase;letter-spacing:-.01em}
+  .feat-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:14px;border-top:1px solid var(--rule)}
+  .feat-price{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--paper)}
+  .feat-price .strike{color:var(--paper-mute);text-decoration:line-through;font-weight:400;margin-right:6px;font-size:13px}
+  .feat-add{
+    font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;font-weight:700;color:var(--orange);
+    cursor:pointer;transition:color .15s;
+  }
+  .feat-add:hover{color:var(--paper)}
+  .feat-add::after{content:" →"}
+
+  /* ============ CATEGORIES ============ */
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .cat-card{
+    background:var(--ink);padding:30px 24px 26px;
+    display:flex;flex-direction:column;gap:14px;
+    transition:background .2s;cursor:pointer;position:relative;
+    min-height:210px;
+  }
+  .cat-card:hover{background:var(--ink-2)}
+  .cat-card:hover .cat-arrow{transform:translateX(6px);color:var(--orange)}
+  .cat-icon{width:42px;height:42px;display:grid;place-items:center;color:var(--orange)}
+  .cat-name{font-family:'Archivo Black',sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:-.01em;line-height:1.05}
+  .cat-desc{font-size:12px;color:var(--paper-mute);line-height:1.5}
+  .cat-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:14px;border-top:1px solid var(--rule)}
+  .cat-count{font-family:'Space Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:.1em}
+  .cat-arrow{font-size:18px;color:var(--paper-mute);transition:transform .2s,color .15s}
+
+  /* ============ ETHOS ============ */
+  .ethos{padding:90px 0;border-top:1px solid var(--rule);position:relative;overflow:hidden}
+  .ethos::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 85% 50%,rgba(255,92,31,.07),transparent 55%);
+    pointer-events:none;
+  }
+  .ethos-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:center;position:relative}
+  .ethos-left{display:flex;flex-direction:column;gap:18px}
+  .ethos-num{font-family:'Archivo Black',sans-serif;font-size:clamp(80px,12vw,160px);line-height:.85;color:var(--ink-3);-webkit-text-stroke:1.5px var(--orange);text-stroke:1.5px var(--orange)}
+  .ethos-label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-mute);max-width:24ch;line-height:1.6}
+  .ethos-quote{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(26px,3.6vw,46px);line-height:1.08;
+    letter-spacing:-.02em;text-transform:uppercase;
+  }
+  .ethos-quote .accent{color:var(--orange)}
+  .ethos-quote .italic{font-family:'Space Mono',monospace;font-style:italic;font-weight:400;text-transform:lowercase;letter-spacing:-.01em}
+  .ethos-body{font-size:15px;line-height:1.7;color:var(--paper-dim);max-width:54ch;margin-top:8px}
+  .ethos-stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--rule);border:1px solid var(--rule);margin-top:30px;
+  }
+  .ethos-stat{background:var(--ink);padding:20px 18px;display:flex;flex-direction:column;gap:6px}
+  .ethos-stat .n{font-family:'Archivo Black',sans-serif;font-size:28px;color:var(--orange);line-height:1}
+  .ethos-stat .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-mute);line-height:1.4}
+
+  /* ============ NEWSLETTER ============ */
+  .news{padding:56px 0;border-top:1px solid var(--rule);background:var(--ink-2)}
+  .news-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .news h3{font-family:'Archivo Black',sans-serif;font-size:clamp(24px,3vw,38px);line-height:1.05;text-transform:uppercase;letter-spacing:-.02em}
+  .news h3 .accent{color:var(--orange)}
+  .news p{font-size:13px;color:var(--paper-dim);margin-top:10px;max-width:42ch;line-height:1.6}
+  .news-form{display:flex;gap:0;border:1.5px solid var(--paper);background:var(--ink)}
+  .news-form input{
+    flex:1;background:transparent;border:none;outline:none;
+    color:var(--paper);font-family:'Space Mono',monospace;font-size:13px;
+    padding:16px 18px;
+  }
+  .news-form input::placeholder{color:var(--paper-mute)}
+  .news-form button{
+    background:var(--orange);color:var(--ink);border:none;
+    font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    padding:0 26px;cursor:pointer;transition:background .15s;
+  }
+  .news-form button:hover{background:var(--paper)}
+
+  /* ============ FOOTER ============ */
+  .footer{padding:64px 0 32px;border-top:1px solid var(--rule)}
+  .footer-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+  .footer-brand{display:flex;flex-direction:column;gap:14px}
+  .footer-brand .logo{font-size:18px}
+  .footer-brand p{font-size:13px;color:var(--paper-mute);max-width:34ch;line-height:1.6}
+  .footer-col h4{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:16px}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .footer-col a{font-size:13px;color:var(--paper-dim);transition:color .15s}
+  .footer-col a:hover{color:var(--orange)}
+  .footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--rule);gap:20px;flex-wrap:wrap}
+  .footer-bottom p{font-size:11px;color:var(--paper-mute);letter-spacing:.08em}
+  .footer-social{display:flex;gap:10px}
+  .footer-social a{
+    width:36px;height:36px;display:grid;place-items:center;
+    border:1px solid var(--rule-strong);font-size:14px;
+    transition:border-color .15s,background .15s,color .15s;
+  }
+  .footer-social a:hover{border-color:var(--orange);background:var(--orange);color:var(--ink)}
+  .footer-big{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(60px,16vw,200px);line-height:.85;
+    letter-spacing:-.04em;text-transform:uppercase;
+    color:var(--ink-3);text-align:center;margin:40px 0 20px;
+    user-select:none;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1024px){
+    .hero-grid{grid-template-columns:1fr;gap:32px;min-height:auto}
+    .hero-right{order:-1}
+    .record-stage{max-width:280px}
+    .feat-grid{grid-template-columns:repeat(2,1fr)}
+    .cat-grid{grid-template-columns:repeat(2,1fr)}
+    .ethos-grid{grid-template-columns:1fr;gap:36px}
+    .ethos-num{font-size:100px}
+    .news-inner{grid-template-columns:1fr;gap:24px}
+    .footer-top{grid-template-columns:1fr 1fr;gap:32px}
+    .footer-brand{grid-column:1/-1}
+  }
+  @media (max-width:680px){
+    .nav-links{display:none}
+    .menu-toggle{display:grid;place-items:center}
+    .nav-right .cart-btn .label{display:none}
+    .feat-grid{grid-template-columns:1fr}
+    .cat-grid{grid-template-columns:1fr}
+    .ethos-stats{grid-template-columns:1fr}
+    .footer-top{grid-template-columns:1fr}
+    .footer-bottom{flex-direction:column;align-items:flex-start;gap:16px}
+    .hero-meta{gap:18px}
+    .hero-tag{display:none}
+    .section{padding:56px 0}
+    .ethos{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">◐</span>
+      <span>CRATE &amp; CUT</span>
+    </a>
+    <div class="nav-links">
+      <a href="#gear" class="active">Shop</a>
+      <a href="#gear">Gear</a>
+      <a href="#records">Records</a>
+      <a href="#categories">Categories</a>
+      <a href="#ethos">Ethos</a>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn"><span>Cart</span><span class="cart-count">2</span></button>
+      <button class="menu-toggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-eyebrow-row">
+          <span class="dot"></span>
+          <span class="eyebrow">Est. 2014 · Brooklyn, NY</span>
+          <span class="eyebrow" style="color:var(--orange)">● Open till 8pm tonight</span>
+        </div>
+        <h1>
+          Dig deeper.<br>
+          <span class="italic">spin</span> <span class="accent">louder.</span>
+        </h1>
+        <p class="hero-sub">
+          New and vintage vinyl, hand-picked turntables, and the DJ gear the          pros actually use - all under one roof in Williamsburg. No algorithm,
+ no filler. Just crates worth digging through.
+        </p>
+        <div class="hero-cta-row">
+          <a href="#gear" class="btn btn-orange">Shop the crates →</a>
+          <a href="#ethos" class="btn btn-ghost">Our story</a>
+        </div>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <span class="k">In stock</span>
+            <span class="v">12,400<span class="small">titles</span></span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="k">Turntables</span>
+            <span class="v">38<span class="small">models</span></span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="k">Since</span>
+            <span class="v">2014</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="record-stage">
+          <span class="hero-tag t1">33⅓ RPM</span>
+          <span class="hero-tag t2">★ Now Spinning</span>
+          <span class="hero-tag t3">Side A</span>
+          <div class="record">
+            <div class="record-label">
+              <div class="record-label-inner">
+                Crate<span>&amp; Cut</span>
+              </div>
+            </div>
+            <div class="record-hole"></div>
+          </div>
+          <!-- Stylus arm -->
+          <svg class="record-stylus" viewBox="0 0 200 300" fill="none">
+            <circle cx="180" cy="40" r="18" fill="#2a241c" stroke="#c5a06a" stroke-width="2"/>
+            <circle cx="180" cy="40" r="6" fill="#c5a06a"/>
+            <path d="M180 58 L160 150 L130 240" stroke="#c5a06a" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <path d="M180 58 L160 150 L130 240" stroke="#f4ede0" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".4"/>
+            <path d="M125 238 L135 242 L128 252 Z" fill="#ff5c1f"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>New Arrivals Weekly</span><span class="alt">Free Local Delivery</span><span>Vintage Pressings</span><span class="alt">Pro DJ Gear</span><span>Trade-Ins Welcome</span><span class="alt">Listening Station Open</span><span>New Arrivals Weekly</span><span class="alt">Free Local Delivery</span><span>Vintage Pressings</span><span class="alt">Pro DJ Gear</span><span>Trade-Ins Welcome</span><span class="alt">Listening Station Open</span>
+  </div>
+</div>
+
+<!-- ============ FEATURED GEAR & RECORDS ============ -->
+<section class="section" id="gear">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-num">01 - Featured</span>
+        <h2>This week's <span class="accent">crate.</span></h2>
+      </div>
+      <p class="lead">
+        Six pieces our staff pulled this week - fresh pressings, a refurbished
+        classic, and the mixer everyone's after. Updated every Tuesday.
+      </p>
+    </div>
+    <div class="feat-grid">
+      <!-- 1: Turntable -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge new">New</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="14" y="40" width="172" height="120" rx="2" fill="#2a241c" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="14" y="40" width="172" height="14" fill="#c5a06a" opacity=".25"/>
+            <circle cx="100" cy="105" r="46" fill="#0c0a07" stroke="#c5a06a" stroke-width="1.5"/>
+            <circle cx="100" cy="105" r="40" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".4"/>
+            <circle cx="100" cy="105" r="34" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".4"/>
+            <circle cx="100" cy="105" r="28" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".4"/>
+            <circle cx="100" cy="105" r="14" fill="#ff5c1f"/>
+            <circle cx="100" cy="105" r="3" fill="#14110d"/>
+            <rect x="150" y="60" width="28" height="36" rx="1" fill="#2a241c" stroke="#c5a06a" stroke-width="1"/>
+            <circle cx="164" cy="78" r="4" fill="#ff5c1f"/>
+            <line x1="164" y1="58" x2="164" y2="92" stroke="#c5a06a" stroke-width="1" opacity=".5"/>
+          </svg>
+        </div>
+        <span class="feat-tag">Turntables</span>
+        <h3 class="feat-name">Technics SL-1200 MK7</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">Direct-drive. Coreless motor. The deck that's powered every booth since 1972 - reissued and better.</p>
+        <div class="feat-meta">
+          <span class="feat-price">$999</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+      <!-- 2: Vinyl -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge rare">Rare</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="30" y="20" width="140" height="160" fill="#3da558" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="30" y="20" width="140" height="50" fill="#14110d"/>
+            <text x="100" y="42" text-anchor="middle" fill="#f4ede0" font-family="Archivo Black" font-size="11">SUN RA</text>
+            <text x="100" y="56" text-anchor="middle" fill="#ff5c1f" font-family="Space Mono" font-size="6" letter-spacing="1">SPACE IS THE PLACE</text>
+            <circle cx="100" cy="120" r="36" fill="#0c0a07"/>
+            <circle cx="100" cy="120" r="30" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".5"/>
+            <circle cx="100" cy="120" r="24" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".5"/>
+            <circle cx="100" cy="120" r="10" fill="#ff5c1f"/>
+            <circle cx="100" cy="120" r="2.5" fill="#14110d"/>
+          </svg>
+        </div>
+        <span class="feat-tag">Vinyl · Jazz · 1973</span>
+        <h3 class="feat-name">Sun Ra - Space Is The Place</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">Original 1973 Impulse! pressing. Gatefold sleeve VG+. The Arkestra at full thrust.</p>
+        <div class="feat-meta">
+          <span class="feat-price">$120</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+      <!-- 3: Mixer -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge new">New</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="20" y="60" width="160" height="90" rx="3" fill="#2a241c" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="20" y="60" width="160" height="18" fill="#0c0a07"/>
+            <text x="100" y="73" text-anchor="middle" fill="#c5a06a" font-family="Space Mono" font-size="7" letter-spacing="1">PIONEER DJM-900NXS2</text>
+            <rect x="30" y="86" width="36" height="50" rx="1" fill="#0c0a07" stroke="#c5a06a" stroke-width=".5"/>
+            <rect x="74" y="86" width="36" height="50" rx="1" fill="#0c0a07" stroke="#c5a06a" stroke-width=".5"/>
+            <rect x="118" y="86" width="36" height="50" rx="1" fill="#0c0a07" stroke="#c5a06a" stroke-width=".5"/>
+            <rect x="160" y="86" width="14" height="50" rx="1" fill="#0c0a07" stroke="#c5a06a" stroke-width=".5"/>
+            <line x1="48" y1="96" x2="48" y2="126" stroke="#ff5c1f" stroke-width="2"/>
+            <line x1="92" y1="96" x2="92" y2="126" stroke="#ff5c1f" stroke-width="2"/>
+            <line x1="136" y1="96" x2="136" y2="126" stroke="#ff5c1f" stroke-width="2"/>
+            <circle cx="48" cy="138" r="3" fill="#c5a06a"/>
+            <circle cx="92" cy="138" r="3" fill="#c5a06a"/>
+            <circle cx="136" cy="138" r="3" fill="#c5a06a"/>
+          </svg>
+        </div>
+        <span class="feat-tag">DJ Mixers</span>
+        <h3 class="feat-name">Pioneer DJM-900NXS2</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">4-channel club standard. Sound Color FX, Beat FX, 64-bit DSP. The booth mixer, full stop.</p>
+        <div class="feat-meta">
+          <span class="feat-price">$1,899</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+      <!-- 4: Headphones -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge sale">Sale</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <path d="M60 100 Q60 50 100 50 Q140 50 140 100" stroke="#c5a06a" stroke-width="4" fill="none"/>
+            <rect x="44" y="98" width="32" height="48" rx="6" fill="#2a241c" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="124" y="98" width="32" height="48" rx="6" fill="#2a241c" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="48" y="106" width="24" height="32" rx="3" fill="#0c0a07"/>
+            <rect x="128" y="106" width="24" height="32" rx="3" fill="#0c0a07"/>
+            <circle cx="60" cy="122" r="6" fill="#ff5c1f"/>
+            <circle cx="140" cy="122" r="6" fill="#ff5c1f"/>
+            <text x="100" y="172" text-anchor="middle" fill="#c5a06a" font-family="Space Mono" font-size="7" letter-spacing="1">SONY MDR-7506</text>
+          </svg>
+        </div>
+        <span class="feat-tag">Headphones</span>
+        <h3 class="feat-name">Sony MDR-7506</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">The monitoring headphone every studio and booth relies on. Foldable, replaceable pads, bulletproof.</p>
+        <div class="feat-meta">
+          <span class="feat-price"><span class="strike">$149</span>$119</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+      <!-- 5: Vinyl -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge new">New</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="30" y="20" width="140" height="160" fill="#ff5c1f" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="30" y="20" width="140" height="50" fill="#14110d"/>
+            <text x="100" y="42" text-anchor="middle" fill="#f4ede0" font-family="Archivo Black" font-size="10">KHRUANGBIN</text>
+            <text x="100" y="56" text-anchor="middle" fill="#ff5c1f" font-family="Space Mono" font-size="6" letter-spacing="1">A LA SALA</text>
+            <circle cx="100" cy="120" r="36" fill="#0c0a07"/>
+            <circle cx="100" cy="120" r="30" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".5"/>
+            <circle cx="100" cy="120" r="24" fill="none" stroke="#c5a06a" stroke-width=".5" opacity=".5"/>
+            <circle cx="100" cy="120" r="10" fill="#f4ede0"/>
+            <circle cx="100" cy="120" r="2.5" fill="#14110d"/>
+          </svg>
+        </div>
+        <span class="feat-tag">Vinyl · Funk · 2024</span>
+        <h3 class="feat-name">Khruangbin - A La Sala</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">2024 Dead Oceans pressing, 180g. Gatefold, hype-stickered. Their warmest record yet.</p>
+        <div class="feat-meta">
+          <span class="feat-price">$28</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+      <!-- 6: Cartridge -->
+      <article class="feat-card">
+        <div class="feat-img">
+          <span class="feat-badge rare">Staff Pick</span>
+          <svg viewBox="0 0 200 200" fill="none">
+            <rect x="60" y="70" width="80" height="50" rx="2" fill="#2a241c" stroke="#c5a06a" stroke-width="1.5"/>
+            <rect x="60" y="70" width="80" height="12" fill="#0c0a07"/>
+            <text x="100" y="80" text-anchor="middle" fill="#c5a06a" font-family="Space Mono" font-size="5" letter-spacing="1">ORTOFON 2M RED</text>
+            <circle cx="75" cy="100" r="3" fill="#ff5c1f"/>
+            <circle cx="125" cy="100" r="3" fill="#ff5c1f"/>
+            <rect x="92" y="120" width="16" height="30" fill="#2a241c" stroke="#c5a06a" stroke-width="1"/>
+            <path d="M96 150 L100 156 L104 150 Z" fill="#ff5c1f"/>
+            <rect x="55" y="135" width="90" height="4" rx="1" fill="#c5a06a" opacity=".4"/>
+            <line x1="100" y1="156" x2="100" y2="170" stroke="#ff5c1f" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <span class="feat-tag">Cartridges</span>
+        <h3 class="feat-name">Ortofon 2M Red</h3>
+        <p style="font-size:12px;color:var(--paper-mute);line-height:1.5">Entry-level elliptical stylus from the Danish masters. The upgrade your entry deck deserves.</p>
+        <div class="feat-meta">
+          <span class="feat-price">$99</span>
+          <span class="feat-add">Add to cart</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section class="section" id="categories">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-num">02 - Departments</span>
+        <h2>Shop by <span class="accent">category.</span></h2>
+      </div>
+      <p class="lead">
+        Four departments, one floor. From the listening station to the DJ booth,
+        every section is curated by someone who actually uses the gear.
+      </p>
+    </div>
+    <div class="cat-grid">
+      <a href="#" class="cat-card">
+        <div class="cat-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <circle cx="21" cy="21" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="21" cy="21" r="12" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/>
+            <circle cx="21" cy="21" r="6" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/>
+            <circle cx="21" cy="21" r="2.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3 class="cat-name">Vinyl Records</h3>
+        <p class="cat-desc">New, used, and rare pressings across every genre. Crates restocked weekly.</p>
+        <div class="cat-bottom">
+          <span class="cat-count">12,400+ titles</span>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a href="#" class="cat-card">
+        <div class="cat-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <rect x="4" y="10" width="34" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="14" cy="21" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="26" y1="17" x2="34" y2="17" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="26" y1="21" x2="34" y2="21" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="26" y1="25" x2="32" y2="25" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="cat-name">Turntables</h3>
+        <p class="cat-desc">From beginner decks to audiophile direct-drives. Set up and tested in-house.</p>
+        <div class="cat-bottom">
+          <span class="cat-count">38 models</span>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a href="#" class="cat-card">
+        <div class="cat-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <rect x="3" y="14" width="36" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="18" width="8" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="19" y="18" width="8" height="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="33" cy="23" r="3" fill="currentColor"/>
+            <line x1="3" y1="10" x2="39" y2="10" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="cat-name">DJ Gear</h3>
+        <p class="cat-desc">Mixers, controllers, media players, and the cables that hold it all together.</p>
+        <div class="cat-bottom">
+          <span class="cat-count">210+ units</span>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a href="#" class="cat-card">
+        <div class="cat-icon">
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+            <path d="M10 22 Q10 8 21 8 Q32 8 32 22" stroke="currentColor" stroke-width="2" fill="none"/>
+            <rect x="5" y="20" width="10" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="27" y="20" width="10" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="24" width="4" height="8" fill="currentColor" opacity=".4"/>
+            <rect x="30" y="24" width="4" height="8" fill="currentColor" opacity=".4"/>
+          </svg>
+        </div>
+        <h3 class="cat-name">Headphones &amp; Audio</h3>
+        <p class="cat-desc">Monitoring cans, speakers, preamps, and the accessories that finish the rig.</p>
+        <div class="cat-bottom">
+          <span class="cat-count">94 items</span>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ETHOS ============ -->
+<section class="ethos" id="ethos">
+  <div class="wrap">
+    <div class="ethos-grid">
+      <div class="ethos-left">
+        <div class="ethos-num">03</div>
+        <p class="ethos-label">Our ethos - filed under: why a record store still matters in 2025.</p>
+      </div>
+      <div>
+        <p class="ethos-quote">
+          We believe a record store should <span class="italic">smell like dust</span>,
+          sound like a <span class="accent">needle drop</span>, and treat every
+          crate like it's got <span class="italic">gold</span> at the bottom.
+        </p>
+        <p class="ethos-body">
+          Crate &amp; Cut opened in 2014 in a 400-square-foot space off Bedford Ave.
+          We're still there - just with more turntables, a listening station that
+          gets daily use, and a staff of working DJs and collectors who'll tell
+          you the truth about every piece of gear. No drop-ship, no algorithmic
+          recommendations. We listen to it, we stock it, we stand behind it.
+        </p>
+        <div class="ethos-stats">
+          <div class="ethos-stat">
+            <span class="n">11</span>
+            <span class="l">Years on Bedford Ave</span>
+          </div>
+          <div class="ethos-stat">
+            <span class="n">3</span>
+            <span class="l">Working DJs on staff</span>
+          </div>
+          <div class="ethos-stat">
+            <span class="n">100%</span>
+            <span class="l">Tested before it ships</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEWSLETTER ============ -->
+<section class="news">
+  <div class="wrap">
+    <div class="news-inner">
+      <div>
+        <h3>Get the <span class="accent">drop list.</span></h3>
+        <p>Every Tuesday: new arrivals, restocks, and one record we think you need to hear. No spam, unsubscribe anytime.</p>
+      </div>
+      <form class="news-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='✓ Subscribed';">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="logo-mark">◐</span>
+          <span>CRATE &amp; CUT</span>
+        </a>
+        <p>A record store and DJ gear shop in Williamsburg, Brooklyn. Open7 days. Listening station always on.</p>
+        <p style="font-size:12px;color:var(--paper-mute)">218 Bedford Ave, Brooklyn NY 11211<br>(718) 555-0142 · hello@crateandcut.com</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Vinyl Records</a></li>
+          <li><a href="#">Turntables</a></li>
+          <li><a href="#">DJ Gear</a></li>
+          <li><a href="#">Headphones</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Store</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Trade-Ins</a></li>
+          <li><a href="#">Gift Cards</a></li>
+          <li><a href="#">Shipping &amp; Returns</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hours</h4>
+        <ul>
+          <li><span style="color:var(--paper-dim)">Mon-Thu</span> 11-7</li>
+          <li><span style="color:var(--paper-dim)">Fri-Sat</span> 11-9</li>
+          <li><span style="color:var(--paper-dim)">Sun</span> 12-6</li>
+          <li style="margin-top:8px"><span style="color:var(--orange);font-weight:700">●</span> <span style="color:var(--paper-dim)">Open now</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-big">CRATE &amp; CUT</div>
+    <div class="footer-bottom">
+      <p>© 2025 Crate &amp; Cut Records LLC · Brooklyn, NY</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="Twitter">TW</a>
+        <a href="#" aria-label="Discogs">DC</a>
+        <a href="#" aria-label="Bandcamp">BC</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  document.querySelector('.menu-toggle').addEventListener('click', () => {
+    const links = document.querySelector('.nav-links');
+    const isShown = links.style.display === 'flex';
+    links.style.display = isShown ? '' : 'flex';
+    links.style.position = 'absolute';
+    links.style.top = '60px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.flexDirection = 'column';
+    links.style.background = 'var(--ink)';
+    links.style.padding = '20px 28px';
+    links.style.borderBottom = '1px solid var(--rule)';
+    links.style.gap = '16px';
+  });
+
+  // Cart increment demo
+  let cartCount = 2;
+  document.querySelectorAll('.feat-add').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      cartCount++;
+      document.querySelector('.cart-count').textContent = cartCount;
+      const card = btn.closest('.feat-card');
+      const name = card.querySelector('.feat-name').textContent;
+      btn.textContent = '✓ Added';
+      setTimeout(() => { btn.textContent = 'Add to cart'; }, 1600);
+    });
+  });
+
+  // Pause record spin on hover (feels tactile)
+  const record = document.querySelector('.record');
+  if (record) {
+    const stage = document.querySelector('.record-stage');
+    stage.addEventListener('mouseenter', () => { record.style.animationPlayState = 'paused'; });
+    stage.addEventListener('mouseleave', () => { record.style.animationPlayState = 'running'; });
+  }
+</script>
+
+</body>
+</html>

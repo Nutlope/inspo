@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vaultline - Privacy-first password manager</title>
+<meta name="description" content="Vaultline keeps your passwords encrypted on your device with zero-knowledge end-to-end encryption. Your vault never leaves your hands." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0c14;
+    --bg-elev: #11131f;
+    --bg-card: #141726;
+    --border: #232740;
+    --border-soft: #1a1d30;
+    --fg: #e9eaf2;
+    --fg-muted: #9499b4;
+    --fg-dim: #5d6280;
+    --accent: #6e56cf;
+    --accent-bright: #8b73e8;
+    --accent-soft: rgba(110, 86, 207, 0.12);
+    --accent-glow: rgba(110, 86, 207, 0.35);
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --maxw: 1180px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  img, svg { display: block; }
+
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- Background field ---------- */
+  .field {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(110, 86, 207, 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 85% 20%, rgba(110, 86, 207, 0.08), transparent 50%),
+      var(--bg);
+  }
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 30%, transparent 80%);
+  }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(11, 12, 20, 0.72);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: linear-gradient(140deg, var(--accent-bright), var(--accent));
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 0 1px rgba(139,115,232,0.3), 0 6px 20px -6px var(--accent-glow);
+  }
+  .brand-mark svg { width: 16px; height: 16px; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--fg-muted);
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-cta { display: flex; align-items: center; gap: 14px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 9px;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+  .btn-ghost { color: var(--fg-muted); }
+  .btn-ghost:hover { color: var(--fg); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(139,115,232,0.4), 0 8px 24px -8px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: var(--accent-bright);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(139,115,232,0.6), 0 12px 32px -8px var(--accent-glow);
+  }
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--fg);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent-bright); }
+
+  .menu-btn { display: none; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 56px 0 64px;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .dateline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .dateline::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-size: clamp(38px, 5vw, 60px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+    color: var(--fg);
+    margin-bottom: 20px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent-bright);
+  }
+  .hero-sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--fg-muted);
+    max-width: 46ch;
+    margin-bottom: 32px;
+  }
+  .hero-ctas {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .hero-proof {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    flex-wrap: wrap;
+  }
+  .hero-proof span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .hero-proof svg { width: 14px; height: 14px; color: var(--green); }
+
+  /* ---------- Hero visual: vault card stack ---------- */
+  .vault-visual {
+    position: relative;
+    height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vault-card {
+    position: absolute;
+    width: 340px;
+    background: linear-gradient(160deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+ transition: transform 0.3s ease;
+  }
+  .vault-card.c1 {
+    transform: translate(-30px, 24px) rotate(-6deg);
+    opacity: 0.5;
+    z-index: 1;
+  }
+  .vault-card.c2 {
+    transform: translate(20px, 12px) rotate(4deg);
+    opacity: 0.7;
+    z-index: 2;
+  }
+  .vault-card.c3 {
+    z-index: 3;
+    box-shadow: 0 0 0 1px rgba(110,86,207,0.25), 0 30px 70px -20px rgba(0,0,0,0.7), 0 0 60px -10px var(--accent-glow);
+  }
+  .vault-card.c3:hover { transform: translateY(-4px); }
+  .vc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .vc-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .vc-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(110,86,207,0.3);
+    display: grid;
+    place-items: center;
+    color: var(--accent-bright);
+  }
+  .vc-icon svg { width: 16px; height: 16px; }
+  .vc-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .vc-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+  .vc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .vc-row:last-child { border-bottom: none; }
+  .vc-row-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vc-favicon {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .vc-name { font-size: 13px; font-weight: 500; }
+  .vc-user { font-size: 11px; color: var(--fg-dim); }
+  .vc-pw {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg-muted);
+    letter-spacing: 0.1em;
+  }
+  .vc-foot {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--fg-dim);
+  }
+  .vc-foot .mono { color: var(--accent-bright); }
+
+  /* floating shield badge */
+  .shield-badge {
+    position: absolute;
+    top: 8px;
+    right: -8px;
+    z-index: 4;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(140deg, var(--accent-bright), var(--accent));
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 0 1px rgba(139,115,232,0.4), 0 10px 30px -6px var(--accent-glow);
+    animation: float 4s ease-in-out infinite;
+  }
+  .shield-badge svg { width: 26px; height: 26px; color: #fff; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ---------- Section primitives ---------- */
+  section.block { padding: 88px 0; }
+  .section-head { margin-bottom: 48px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    max-width: 22ch;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: var(--fg-muted);
+    max-width: 56ch;
+    margin-top: 14px;
+  }
+
+  /* ---------- Security model ---------- */
+  .security {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .security-text h3 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .security-text p {
+    color: var(--fg-muted);
+    margin-bottom: 24px;
+  }
+  .security-points {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .sp-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .sp-icon {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(110,86,207,0.25);
+    display: grid;
+    place-items: center;
+    color: var(--accent-bright);
+  }
+  .sp-icon svg { width: 18px; height: 18px; }
+  .sp-text strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .sp-text span {
+    font-size: 14px;
+    color: var(--fg-muted);
+  }
+
+  /* encryption diagram */
+  .crypto-diagram {
+    background: linear-gradient(160deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px;
+    position: relative;
+  }
+  .cd-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .cd-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .cd-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-bright);
+    background: var(--accent-soft);
+    border: 1px solid rgba(110,86,207,0.3);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .cd-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .cd-node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+  }
+  .cd-node.highlight {
+    border-color: rgba(110,86,207,0.4);
+    background: var(--accent-soft);
+  }
+  .cd-node-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .cd-node-icon svg { width: 16px; height: 16px; }
+  .cd-node-text { flex: 1; }
+  .cd-node-text strong { display: block; font-size: 14px; font-weight: 600; }
+  .cd-node-text span { font-size: 12px; color: var(--fg-dim); font-family: 'JetBrains Mono', monospace; }
+  .cd-arrow {
+    text-align: center;
+    color: var(--fg-dim);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .cd-node-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- Features bento ---------- */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .bento-tile {
+    background: linear-gradient(160deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .bento-tile:hover {
+    border-color: rgba(110,86,207,0.4);
+    transform: translateY(-2px);
+  }
+  .bento-tile.lead {
+    grid-column: span 2;
+    grid-row: span 2;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 20%, rgba(110,86,207,0.12), transparent 60%),
+      linear-gradient(160deg, var(--bg-card), var(--bg-elev));
+  }
+  .bento-tile.wide { grid-column: span 2; }
+  .bt-icon {
+    width: 44px; height: 44px;
+    border-radius: 11px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(110,86,207,0.25);
+    display: grid;
+    place-items: center;
+    color: var(--accent-bright);
+    margin-bottom: 20px;
+  }
+  .bt-icon svg { width: 22px; height: 22px; }
+  .bento-tile h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    margin-bottom: 10px;
+  }
+  .bento-tile.lead h3 { font-size: 26px; }
+  .bento-tile p {
+    font-size: 14px;
+    color: var(--fg-muted);
+    line-height: 1.6;
+  }
+  .bento-tile.lead p { font-size: 16px; max-width: 44ch; }
+  .bt-tag {
+    margin-top: auto;
+    padding-top: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .bt-lead-visual {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg-muted);
+    line-height: 1.7;
+  }
+  .bt-lead-visual .k { color: var(--accent-bright); }
+  .bt-lead-visual .v { color: var(--green); }
+  .bt-lead-visual .dim { color: var(--fg-dim); }
+
+  /* ---------- Platforms ---------- */
+  .platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .platform-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .platform-card:hover {
+    border-color: rgba(110,86,207,0.4);
+    background: var(--bg-card);
+  }
+  .platform-icon {
+    width: 52px; height: 52px;
+    margin: 0 auto 16px;
+    border-radius: 13px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+  }
+  .platform-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .platform-card span {
+    font-size: 12px;
+    color: var(--fg-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ---------- Pricing teaser ---------- */
+  .pricing-card {
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(110,86,207,0.14), transparent 60%),
+      linear-gradient(160deg, var(--bg-card), var(--bg-elev));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(110,86,207,0.5), transparent);
+  }
+  .pc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    background: var(--accent-soft);
+    border: 1px solid rgba(110,86,207,0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .pc-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .pc-price .amount {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .pc-price .period {
+    font-size: 17px;
+    color: var(--fg-muted);
+  }
+  .pc-desc {
+    color: var(--fg-muted);
+    margin-bottom: 24px;
+    font-size: 15px;
+  }
+  .pc-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .pc-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--fg);
+  }
+  .pc-features svg { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }
+  .pc-visual {
+    position: relative;
+    height: 100%;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pc-visual-card {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .pc-visual-card .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pc-visual-card .label { color: var(--fg-dim); }
+  .pc-visual-card .val { color: var(--fg); }
+  .pc-visual-card .val.accent { color: var(--accent-bright); }
+  .pc-visual-card .val.green { color: var(--green); }
+  .pc-visual-card .divider {
+    height: 1px;
+    background: var(--border-soft);
+    margin: 12px 0;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--border-soft);
+    padding: 64px 0 32px;
+    margin-top: 40px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+  .footer-brand p {
+    color: var(--fg-muted);
+    font-size: 14px;
+    max-width: 32ch;
+    margin-top: 14px;
+  }
+  .footer-col h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 16px;
+  }
+  .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a {
+    font-size: 14px;
+    color: var(--fg-muted);
+    transition: color 0.15s;
+  }
+  .footer-col a:hover { color: var(--accent-bright); }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 13px;
+    color: var(--fg-dim);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-bottom .security-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .footer-bottom .security-note::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .vault-visual { height: 320px; margin-top: 8px; }
+    .security { grid-template-columns: 1fr; gap: 40px; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .bento-tile.lead { grid-column: span 2; grid-row: auto; }
+    .bento-tile.wide { grid-column: span 2; }
+    .platforms-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-card { grid-template-columns: 1fr; padding: 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 680px) {
+    .container { padding: 0 20px; }
+    .nav-links { display: none; }
+    .menu-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+    .nav-cta .btn-ghost { display: none; }
+    .hero { padding: 36px 0 48px; }
+    .hero h1 { font-size: 34px; }
+    section.block { padding: 60px 0; }
+    .bento { grid-template-columns: 1fr; }
+    .bento-tile.lead, .bento-tile.wide { grid-column: auto; }
+    .platforms-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+    .vault-card { width: 280px; }
+  }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .shield-badge { animation: none; }
+    * { scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="field"></div>
+<div class="grid-overlay"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      </span>
+      Vaultline
+    </a>
+    <ul class="nav-links">
+      <li><a href="#security">Security</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#platforms">Platforms</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Sign in</a>
+      <a href="#" class="btn btn-primary">Get Vaultline</a>
+      <button class="menu-btn" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="dateline">Zero-knowledge · End-to-end encrypted · Open source</p>
+        <h1>Your passwords,<br /><em>yours alone.</em></h1>
+        <p class="hero-sub">
+          Vaultline encrypts every credential on your device before it touches the cloud. We can't see your vault. Nobody can - except you.
+        </p>
+        <div class="hero-ctas">
+          <a href="#" class="btn btn-primary">
+            Create your vault
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#security" class="btn btn-outline">See the security model</a>
+        </div>
+        <div class="hero-proof">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Audited by Cure53</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>SOC 2 Type II</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Source on GitHub</span>
+        </div>
+      </div>
+
+      <div class="vault-visual">
+        <div class="vault-card c1">
+          <div class="vc-head">
+            <div class="vc-title"><span class="vc-favicon" style="background:#5865F2;">G</span> GitHub</div>
+          </div>
+          <div class="vc-row"><span class="vc-pw">••••••••••••</span></div>
+        </div>
+        <div class="vault-card c2">
+          <div class="vc-head">
+            <div class="vc-title"><span class="vc-favicon" style="background:#0A66C2;">in</span> LinkedIn</div>
+          </div>
+          <div class="vc-row"><span class="vc-pw">••••••••••••••</span></div>
+        </div>
+
+        <div class="vault-card c3">
+          <div class="vc-head">
+            <div class="vc-title">
+              <span class="vc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/></svg>
+              </span>
+              My Vault
+            </div>
+            <span class="vc-badge">Encrypted</span>
+          </div>
+          <div class="vc-row">
+            <div class="vc-row-label">
+              <span class="vc-favicon" style="background:#E50914;">N</span>
+              <div>
+                <div class="vc-name">Netflix</div>
+                <div class="vc-user">alex@hey.com</div>
+              </div>
+            </div>
+            <span class="vc-pw">••••••••••</span>
+          </div>
+          <div class="vc-row">
+            <div class="vc-row-label">
+              <span class="vc-favicon" style="background:#1DB954;">Sp</span>
+              <div>
+                <div class="vc-name">Spotify</div>
+                <div class="vc-user">alex@hey.com</div>
+              </div>
+            </div>
+            <span class="vc-pw">•••••••••••</span>
+          </div>
+          <div class="vc-row">
+            <div class="vc-row-label">
+              <span class="vc-favicon" style="background:#FF6900;">Fg</span>
+              <div>
+                <div class="vc-name">Figma</div>
+                <div class="vc-user">alex@hey.com</div>
+              </div>
+            </div>
+            <span class="vc-pw">••••••••••••</span>
+          </div>
+          <div class="vc-foot">
+            <span>247 items · synced 2m ago</span>
+            <span class="mono">Argon2id</span>
+          </div>
+        </div>
+
+        <div class="shield-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SECURITY MODEL ============ -->
+<section class="block" id="security">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-label">Security model</p>
+      <h2 class="section-title">Encryption happens on your device. Not ours.</h2>
+      <p class="section-sub">Your master password never leaves your machine. We store only ciphertext - a scrambled blob even we can't read. Here's the chain of trust.</p>
+    </div>
+
+    <div class="security">
+      <div class="security-text reveal">
+        <div class="security-points">
+          <div class="sp-item">
+            <div class="sp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="sp-text">
+              <strong>Zero-knowledge by design</strong>
+              <span>Your master password is hashed locally with Argon2id. We receive an encryption key we mathematically cannot reverse.</span>
+            </div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/><path d="M14 4l-4 16"/></svg>
+            </div>
+            <div class="sp-text">
+              <strong>XChaCha20-Poly1305</strong>
+              <span>Every credential is encrypted with authenticated symmetric cryptography before it ever touches sync. Tampering is detected, not just prevented.</span>
+            </div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
+            </div>
+            <div class="sp-text">
+              <strong>Open source, audited</strong>
+              <span>The crypto library is MIT-licensed and peer-reviewed. Independent audits by Cure53 (2024) and Trail of Bits (2025) found zero critical issues.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="crypto-diagram reveal">
+        <div class="cd-head">
+          <span class="cd-title">Encryption flow</span>
+          <span class="cd-pill">client-side</span>
+        </div>
+        <div class="cd-flow">
+          <div class="cd-node">
+            <div class="cd-node-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-muted)"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <div class="cd-node-text">
+              <strong>Master password</strong>
+              <span>entered on device</span>
+            </div>
+            <span class="cd-node-key">••••••••</span>
+          </div>
+          <div class="cd-arrow">↓</div>
+          <div class="cd-node highlight">
+            <div class="cd-node-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-bright)"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+            </div>
+            <div class="cd-node-text">
+              <strong>Argon2id key derivation</strong>
+              <span>256-bit key · 64MB memory</span>
+            </div>
+            <span class="cd-node-key">🔑 derived</span>
+          </div>
+          <div class="cd-arrow">↓</div>
+          <div class="cd-node">
+            <div class="cd-node-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="cd-node-text">
+              <strong>XChaCha20 encrypt</strong>
+              <span>ciphertext only - no plaintext</span>
+            </div>
+            <span class="cd-node-key">🔐 locked</span>
+          </div>
+          <div class="cd-arrow">↓</div>
+          <div class="cd-node">
+            <div class="cd-node-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-muted)"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            </div>
+            <div class="cd-node-text">
+              <strong>Sync to cloud</strong>
+              <span>we see only the blob</span>
+            </div>
+            <span class="cd-node-key" style="color:var(--fg-dim)">blob → server</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="block" id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-label">Features</p>
+      <h2 class="section-title">Everything a vault should do. Nothing it shouldn't.</h2>
+    </div>
+
+    <div class="bento">
+      <article class="bento-tile lead reveal">
+        <div class="bt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </div>
+        <h3>Password generator that actually resists cracking</h3>
+        <p>Generate passphrases and random strings with full entropy control. Every character drawn from a CSPRNG - never Math.random. Tunable length, character classes, and Diceware word lists for human-typable strength.</p>
+        <div class="bt-lead-visual">
+          <span class="dim">$ vaultline generate --length 24 --diceware</span><br/>
+          <span class="k">→</span> <span class="v">correct-horse-battery-staple-9!Qz</span><br/>
+          <span class="dim">entropy: 156 bits · crack time: 4.8×10³⁶ years</span>
+        </div>
+        <span class="bt-tag">CSPRNG · Diceware · Entropy meter</span>
+      </article>
+
+      <article class="bento-tile reveal">
+        <div class="bt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <h3>Unified search</h3>
+        <p>Find any credential by name, URL, or tag in &lt;30ms. Spotlight-style, keyboard-first, available everywhere.</p>
+        <span class="bt-tag">⌘K · fuzzy · offline</span>
+      </article>
+
+      <article class="bento-tile reveal">
+        <div class="bt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        </div>
+        <h3>Breach monitor</h3>
+        <p>Continuously checks12B+ leaked credentials. Alerts you the moment a stored login appears in a breach corpus.</p>
+        <span class="bt-tag">k-anonymity · HIBP API</span>
+      </article>
+
+      <article class="bento-tile wide reveal">
+        <div class="bt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Autofill that respects your privacy</h3>
+        <p>Browser extensions and native apps fill credentials directly from the encrypted vault - no clipboard, no intermediate plaintext. Fields are matched on-device against stored entry metadata, so autofill never leaks which sites you use to any third party.</p>
+        <span class="bt-tag">Native autofill · no clipboard · on-device matching</span>
+      </article>
+
+      <article class="bento-tile reveal">
+        <div class="bt-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Secure sharing</h3>
+        <p>Share a credential with end-to-end encryption. Recipients decrypt with a passphrase you share out-of-band.</p>
+        <span class="bt-tag">E2E · expiring links</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLATFORMS ============ -->
+<section class="block" id="platforms">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-label">Platforms</p>
+      <h2 class="section-title">Everywhere you type a password.</h2>
+      <p class="section-sub">Native apps for every platform. One vault, synced end-to-end, available offline.</p>
+    </div>
+
+    <div class="platforms-grid">
+      <div class="platform-card reveal">
+        <div class="platform-icon">🪟</div>
+        <h4>Windows</h4>
+        <span>10, 11 · ARM</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">🍎</div>
+        <h4>macOS</h4>
+        <span>12+ · Universal</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">🐧</div>
+        <h4>Linux</h4>
+        <span>deb · rpm · Flatpak</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">📱</div>
+        <h4>iOS &amp; Android</h4>
+        <span>15.0+ · 10+</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">🧭</div>
+        <h4>Chrome</h4>
+        <span>Extension · MV3</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">🦊</div>
+        <h4>Firefox</h4>
+        <span>Extension</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">🧩</div>
+        <h4>Safari</h4>
+        <span>Extension · 16+</span>
+      </div>
+      <div class="platform-card reveal">
+        <div class="platform-icon">⌨️</div>
+        <h4>CLI</h4>
+        <span>brew · scoop · cargo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING TEASER ============ -->
+<section class="block" id="pricing">
+  <div class="container">
+    <div class="pricing-card reveal">
+      <div class="pc-left">
+        <span class="pc-badge">★ Most loved</span>
+        <div class="pc-price">
+          <span class="amount">$2.49</span>
+          <span class="period">/ month</span>
+        </div>
+        <p class="pc-desc">Unlimited devices, unlimited items, full encrypted sync. Billed annually. Cancel anytime - your vault stays yours.</p>
+        <ul class="pc-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Unlimited devices &amp; vault items</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Encrypted sync across all platforms</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Breach monitoring &amp; secure sharing</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Email aliases &amp; 2FA codes built-in</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>30-day refund, no questions asked</li>
+        </ul>
+        <div class="hero-ctas">
+          <a href="#" class="btn btn-primary">Start your 14-day trial</a>
+          <a href="#" class="btn btn-outline">Compare plans</a>
+        </div>
+      </div>
+      <div class="pc-visual">
+        <div class="pc-visual-card">
+          <div class="row"><span class="label">plan</span><span class="val accent">Premium</span></div>
+          <div class="row"><span class="label">billing</span><span class="val">annual</span></div>
+          <div class="row"><span class="label">devices</span><span class="val">unlimited</span></div>
+          <div class="row"><span class="label">items</span><span class="val">unlimited</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="label">encryption</span><span class="val green">XChaCha20</span></div>
+          <div class="row"><span class="label">kdf</span><span class="val green">Argon2id</span></div>
+          <div class="row"><span class="label">audits</span><span class="val green">Cure53 · ToB</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="label">status</span><span class="val green">● encrypted</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          Vaultline
+        </a>
+        <p>Privacy-first password management. Your credentials encrypted on your device, synced end-to-end, open source and audited.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#security">Security model</a></li>
+          <li><a href="#platforms">Download</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Release notes</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Security whitepaper</a></li>
+          <li><a href="#">Audit reports</a></li>
+          <li><a href="#">GitHub ↗</a></li>
+          <li><a href="#">Status page</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Help center</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Vaultline. Built by people who care about your privacy.</span>
+      <span class="security-note">All systems encrypted · Last audit: Trail of Bits, Jan 2025</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Mobile menu toggle ----
+  const menuBtn = document.querySelector('.menu-btn');
+  const navLinks = document.querySelector('.nav-links');
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      const open = navLinks.style.display === 'flex';
+      if (open) {
+        navLinks.style.display = '';
+ navLinks.style.position = '';
+        navLinks.style.flexDirection = '';
+        navLinks.style.background = '';
+        navLinks.style.border = '';
+        navLinks.style.padding = '';
+        navLinks.style.flexDirection = '';
+      } else {
+        navLinks.style.display = 'flex';
+        navLinks.style.position = 'absolute';
+        navLinks.style.top = '64px';
+        navLinks.style.left = '0';
+        navLinks.style.right = '0';
+        navLinks.style.flexDirection = 'column';
+        navLinks.style.background = 'var(--bg)';
+        navLinks.style.borderBottom = '1px solid var(--border)';
+        navLinks.style.padding = '20px';
+        navLinks.style.gap = '16px';
+      }
+    });
+  }
+
+  // ---- Reveal on scroll ----
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add('in'));
+  }
+
+  // ---- Smooth anchor close on mobile ----
+  document.querySelectorAll('.nav-links a').forEach((a) => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 680) {
+        navLinks.style.display = '';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
