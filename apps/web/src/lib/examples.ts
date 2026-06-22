@@ -1016,7 +1016,6 @@ export const EXAMPLES: Example[] = [
       highlight:
         "get_design_system on Heath Ceramics with live:true returned the brand's actual muted palette (#26211b / #f5f4ee / #dd5640) — far quieter than the loud yellow-gold hero crops. That live token pull set the whole paper/ink/clay system and kept the studio feeling earthy and hand-made.",
       references: [
-        { slug: "heathceramics-com", took: "Highest-signal call — live palette #26211b / #f5f4ee / #dd5640 + fonts Benton Sans / Monaco set the paper/ink/clay tokens." },
         { slug: "artek-fi", took: "Warm-wood neutrals (#866b4b) + the tight near-lowercase wordmark influenced the brand mark." },
         { slug: "apartamentomagazine-com", took: "Editorial warm-paper magazine reference for the section rhythm." },
       ],
