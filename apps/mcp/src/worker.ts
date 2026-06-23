@@ -50,6 +50,9 @@ export interface Env {
   INSPO_IMAGES?: string;
   /** Per-caller rate limiter for the /mcp route (free Workers binding). */
   MCP_LIMITER?: RateLimiter;
+  /** Dev escape hatch: allow serving with no rate limiter bound (e.g.
+   *  `wrangler dev`, which does not provision the native limiter). */
+  ALLOW_NO_LIMITER?: string;
 }
 
 /** Reject JSON-RPC bodies larger than this before doing any work. */
@@ -62,15 +65,14 @@ function jsonError(status: number, message: string): Response {
   });
 }
 
-/** Rate-limit key: a hash of IP + user-agent (Cloudflare advises against
- *  keying on raw IP alone). */
+/** Rate-limit key from the edge-trusted client IP only. IPv6 is folded
+ *  to its /64 so one allocation can't mint unlimited buckets; the
+ *  user-agent is deliberately NOT included (client-controlled, so
+ *  rotating it would evade the limit). */
 async function clientKey(request: Request): Promise<string> {
-  const ip = request.headers.get("cf-connecting-ip") ?? "0";
-  const ua = request.headers.get("user-agent") ?? "";
-  const buf = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(`${ip}|${ua}`),
-  );
+  let ip = request.headers.get("cf-connecting-ip") ?? "0";
+  if (ip.includes(":")) ip = ip.split(":").slice(0, 4).join(":") + "::/64";
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip));
   return [...new Uint8Array(buf)]
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
@@ -111,13 +113,18 @@ export default {
         return jsonError(413, "request too large");
       }
 
-      // Per-caller rate limit (free Workers binding, keyed on a hash of
-      // IP + user-agent). Keeps the open, unauthenticated endpoint
-      // abuse-resistant without charging anyone for access.
+      // Per-caller rate limit (free Workers binding, keyed on the client
+      // IP). Keeps the open, unauthenticated endpoint abuse-resistant.
       if (env.MCP_LIMITER) {
         const key = await clientKey(request);
         const { success } = await env.MCP_LIMITER.limit({ key });
         if (!success) return jsonError(429, "rate limit exceeded, slow down");
+      } else if (env.ENFORCE_AUTH !== "1" && env.ALLOW_NO_LIMITER !== "1") {
+        // Fail closed: the limiter is the only abuse control on the open
+        // path, so refuse to serve open + unlimited if it isn't bound.
+        // Set ALLOW_NO_LIMITER=1 for local dev (wrangler dev has no
+        // native limiter).
+        return jsonError(503, "service unavailable");
       }
 
       // Auth: soft by default; flip ENFORCE_AUTH=1 to require it.
@@ -130,6 +137,41 @@ export default {
       }
       if (env.ENFORCE_AUTH === "1" && !userId) {
         return jsonError(401, "unauthenticated: pass Authorization: Bearer inspo_...");
+      }
+
+      // Authoritative body cap: stream the request body through a byte
+      // counter (the Content-Length check above is only a fast-path; a
+      // chunked or lying Content-Length would otherwise slip past). Hand
+      // the transport a Request reconstructed from the bounded bytes.
+      let forwarded = request;
+      if (request.method === "POST" && request.body) {
+        const reader = request.body.getReader();
+        const chunks: Uint8Array[] = [];
+        let total = 0;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (!value) continue;
+          total += value.byteLength;
+          if (total > MAX_BODY_BYTES) {
+            await reader.cancel().catch(() => {});
+            return jsonError(413, "request too large");
+          }
+          chunks.push(value);
+        }
+        const body = new Uint8Array(total);
+        let off = 0;
+        for (const c of chunks) {
+          body.set(c, off);
+          off += c.byteLength;
+        }
+        const headers = new Headers(request.headers);
+        headers.delete("content-length");
+        forwarded = new Request(request.url, {
+          method: request.method,
+          headers,
+          body,
+        });
       }
 
       // The workerd build doesn't bundle the seed; fetch + inject the
@@ -171,7 +213,7 @@ export default {
       });
       await server.connect(transport);
 
-      return await transport.handleRequest(request);
+      return await transport.handleRequest(forwarded);
     } catch {
       // Error hygiene: never leak stack traces or internals to the wire.
       return jsonError(500, "internal error");

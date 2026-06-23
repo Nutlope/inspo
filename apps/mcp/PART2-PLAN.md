@@ -69,3 +69,23 @@ of security hardening. The service stays free and unauthenticated throughout.
    `global_fetch_strictly_public` flag take effect on deploy. Needs wrangler
    4.36+ for the rate-limit binding.
 3. Add the free WAF rate rule on `/mcp` in the Cloudflare dashboard.
+
+## Red-team residuals (deferred; low / latent after the fixes shipped)
+A multi-agent red-team reviewed the security work; the HIGH/MEDIUM findings
+(name-only SSRF guard, Content-Length-trusting body cap, UA-evadable +
+fail-open rate limiter) are FIXED. Remaining low/latent items:
+- DNS rebinding TOCTOU in `study()`: the guard now resolves and rejects
+  private IPs (closes nip.io / sslip.io / static-private / lookup-time
+  private), but a sophisticated low-TTL rebind between our lookup and
+  fetch's own resolve still exists on the Node/web path. Full close: pin
+  the vetted IP via an undici dispatcher with a custom `lookup` (Node
+  only). Token-only exfil + per-hop timeout keep residual risk low.
+- `apps/web/.../api/mcp-demo/study` route: add per-IP rate/concurrency
+  limiting + a total cross-hop deadline (today it is per-hop 10s x up to
+  6 hops, so worst case ~70s of held sockets).
+- Worker env parsing uses an inline parser that ignores the on/off/text
+  image aliases; switch to the canonical `parseProfile`/`parseImages`
+  (informational; documented values work).
+- `find_by_color` / `find_components` fallback dedupe requires a
+  `slug===siteSlug` canonical row (0/870 sites affected today); switch to
+  "representative per siteSlug" or assert the invariant.

@@ -877,7 +877,11 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           return s ? { ...fmt(detail)(s), editorNote: entry.editorNote } : null;
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
-      return asTextContent({ ...formatCollection(c), screens: enriched });
+      return withImages(
+        { ...formatCollection(c), screens: enriched },
+        enriched.map((e) => e.thumb),
+        ctx.inlineImages(),
+      );
     },
   );
 

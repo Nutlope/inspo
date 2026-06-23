@@ -365,6 +365,59 @@ function renderDesignMd(r: Omit<StudyResult, "designMd">): string {
 
 /* ──────────────────── main entry ──────────────────── */
 
+/** True if an IP literal is in private / loopback / link-local / CGNAT /
+ *  IPv4-mapped-IPv6 space (or is malformed). */
+function isPrivateIp(ip: string): boolean {
+  const a = ip.toLowerCase();
+  if (a.includes(":")) {
+    if (a === "::1" || a === "::") return true;
+    if (/^fe[89ab]/.test(a)) return true; // fe80::/10 link-local
+    if (/^f[cd]/.test(a)) return true; // fc00::/7 unique-local
+    const mapped = a.match(/(?:::ffff:)(\d+\.\d+\.\d+\.\d+)$/);
+    if (mapped) return isPrivateIp(mapped[1]!);
+    return false;
+  }
+  const p = a.split(".").map(Number);
+  if (p.length !== 4 || p.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return true;
+  const [x, y] = p as [number, number, number, number];
+  if (x === 0 || x === 10 || x === 127) return true;
+  if (x === 169 && y === 254) return true; // link-local + cloud metadata
+  if (x === 192 && y === 168) return true;
+  if (x === 172 && y >= 16 && y <= 31) return true;
+  if (x === 100 && y >= 64 && y <= 127) return true; // CGNAT
+  return false;
+}
+
+/** Resolve the host and refuse if ANY address is non-public. Closes the
+ *  public-name-to-private bypass (127.0.0.1.nip.io, *.localtest.me,
+ *  <ip>.sslip.io) that a string-only guard misses. On runtimes without
+ *  node:dns (Cloudflare Workers) this is a no-op; there the
+ *  global_fetch_strictly_public compat flag enforces public-only fetch. */
+async function assertPublicHost(host: string): Promise<void> {
+  type DnsLookup = (
+    h: string,
+    opts: { all: true },
+  ) => Promise<Array<{ address: string }>>;
+  let lookup: DnsLookup | null = null;
+  try {
+    const dns = await import("node:dns/promises");
+    lookup = dns.lookup as unknown as DnsLookup;
+  } catch {
+    return; // Workers / no node:dns: rely on global_fetch_strictly_public
+  }
+  if (!lookup) return;
+  let addrs: string[];
+  try {
+    addrs = (await lookup(host, { all: true })).map(
+      (r: { address: string }) => r.address,
+    );
+  } catch {
+    throw new StudyError("URL not allowed");
+  }
+  if (addrs.length === 0) throw new StudyError("URL not allowed");
+  for (const a of addrs) if (isPrivateIp(a)) throw new StudyError("URL not allowed");
+}
+
 async function safeFetch(
   rawUrl: string,
   maxBytes: number,
@@ -374,8 +427,11 @@ async function safeFetch(
   let url: URL;
   try {
     // Re-validate on every hop: a clean public URL can 30x into a
-    // private target, so each Location must clear the SSRF guard too.
+    // private target, so each Location must clear the guard too. The
+    // textual check is fast; assertPublicHost then resolves DNS and
+    // rejects names that map to non-public space.
     url = validatePublicUrl(rawUrl);
+    await assertPublicHost(url.hostname);
   } catch {
     return null;
   }

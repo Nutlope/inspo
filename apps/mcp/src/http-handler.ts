@@ -36,7 +36,22 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
     { name: "inspo", version: "0.0.1" },
     { instructions: SERVER_INSTRUCTIONS },
   );
-  registerTools(server, optionsFromUrl(new URL(request.url)));
+  // OSS-first hosted default, mirroring the Worker: query > env >
+  // lite + images=none. clientInfo isn't visible on the stateless HTTP
+  // transport, and most hosted callers are OSS-model harnesses; vision
+  // clients opt up with ?profile=full&images=thumbs.
+  const fromUrl = optionsFromUrl(new URL(request.url));
+  const envProfile = process.env.INSPO_PROFILE?.toLowerCase();
+  const envImages = process.env.INSPO_IMAGES?.toLowerCase();
+  const profile: Profile =
+    fromUrl.profile ??
+    (envProfile === "lite" || envProfile === "full" ? (envProfile as Profile) : undefined) ??
+    "lite";
+  const images: ImagesMode =
+    fromUrl.images ??
+    (envImages === "none" || envImages === "thumbs" ? (envImages as ImagesMode) : undefined) ??
+    "none";
+  registerTools(server, { profile, images });
 
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined, // stateless
