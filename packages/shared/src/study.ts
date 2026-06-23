@@ -74,8 +74,13 @@ function validatePublicUrl(raw: string): URL {
   const host = u.hostname.toLowerCase();
   if (!host) throw new StudyError("URL not allowed");
   if (host.startsWith("[") || host.includes(":")) throw new StudyError("URL not allowed"); // IPv6 literal
-  if (/^[0-9.]+$/.test(host)) throw new StudyError("URL not allowed"); // IPv4 / numeric / obfuscated host
-  if (!host.includes(".")) throw new StudyError("URL not allowed"); // no public TLD (localhost, intranet)
+  const labels = host.split(".");
+  const tld = labels[labels.length - 1] ?? "";
+  // Require a real alphabetic (or punycode) TLD. One rule that rejects
+  // every IP literal and obfuscated numeric/hex/octal host (127.0.0.1,
+  // 2130706433, 0x7f.0.0.1, 0177.0.0.1) plus single-label names like
+  // localhost or intranet hostnames.
+  if (!/^(xn--[a-z0-9]+|[a-z]{2,63})$/.test(tld)) throw new StudyError("URL not allowed");
   if (PRIVATE_HOST_RE.test(host)) throw new StudyError("URL not allowed");
   return u;
 }
