@@ -1,14 +1,14 @@
 /**
- * Public DESIGN.md mirror — `GET /d/<slug>/DESIGN.md`.
+ * Public DESIGN.md mirror - `GET /d/<slug>/DESIGN.md`.
  *
  * Mirrors the internal `/api/design/<slug>` route at a curl-friendly
  * URL that any coding agent can pipe straight into a prompt:
  *
- *   curl https://inspo.dev/d/linear-app/DESIGN.md | claude code
+ *   curl https://inspo.design/d/linear-app/DESIGN.md | claude code
  *
  * Same payload, same caching headers. We intentionally keep the
  * `/api/design/<slug>` route for in-app fetches (the CopyDesignMd +
- * ExportBlock components both call it) — this public route is for
+ * ExportBlock components both call it) - this public route is for
  * external distribution.
  *
  * If the slug isn't in the catalogue we return a tiny markdown 404
@@ -27,11 +27,12 @@ export async function GET(
   ctx: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await ctx.params;
+  const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
   const screen = await findScreen(slug);
   if (!screen) {
     const body =
       `# Not found\n\nNo site with slug \`${slug}\` is in the Inspo catalogue.\n\n` +
-      `Browse the archive at https://inspo.dev/screens or search for a similar site.\n`;
+      `Browse the archive at ${base}/screens or search for a similar site.\n`;
     return new Response(body, {
       status: 404,
       headers: { "Content-Type": "text/markdown; charset=utf-8" },
@@ -42,7 +43,7 @@ export async function GET(
   return new Response(md, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      // Public, longish cache — DESIGN.md only changes when the site
+      // Public, longish cache - DESIGN.md only changes when the site
       // is re-captured + re-enriched, which is a deliberate event.
       "Cache-Control": "public, max-age=600, stale-while-revalidate=86400",
       "Content-Disposition": `inline; filename="DESIGN-${slug}.md"`,

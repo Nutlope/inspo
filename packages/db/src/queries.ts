@@ -2,8 +2,8 @@
  * Public query layer.
  *
  * Every function works in two modes:
- *   1. DATABASE_URL set       — query Postgres via Drizzle
- *   2. DATABASE_URL not set   — return fixture data (dev convenience)
+ *   1. DATABASE_URL set       - query Postgres via Drizzle
+ *   2. DATABASE_URL not set   - return fixture data (dev convenience)
  *
  * Both paths return the exact same `ScreenSummary` / `Collection` shape,
  * so the gallery and MCP server are oblivious to which is in use.
@@ -34,14 +34,14 @@ import type { ReferenceComponent } from "@inspo/shared";
 
 /**
  * The active catalogue rows used whenever DATABASE_URL is missing, DB
- * reads are off (the default — see client.ts), OR a live Neon query
+ * reads are off (the default - see client.ts), OR a live Neon query
  * throws. Resolution order:
  *
- *   1. `_injectedScreens` — set at runtime by the edge Worker after it
+ *   1. `_injectedScreens` - set at runtime by the edge Worker after it
  *      fetches the catalogue from the CDN (`loadCatalogueFromUrl`).
- *   2. `bundledScreens` — the static seed inlined at build time in Node
+ *   2. `bundledScreens` - the static seed inlined at build time in Node
  *      (web + stdio MCP). Null in the workerd build (not bundled).
- *   3. demo fixtures — last resort when running outside the monorepo.
+ *   3. demo fixtures - last resort when running outside the monorepo.
  */
 let _injectedScreens: typeof fixtureScreens | null = null;
 
@@ -72,17 +72,17 @@ export type ScreenFilter = {
 
 /**
  * Sort modes for the home grid.
- *  latest   — most recently captured first (default)
- *  varied   — round-robin one screen per macrostructure, then refill from latest
- *  random   — shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
- *  featured — design-interest score desc: front-loads the most visually
+ *  latest   - most recently captured first (default)
+ *  varied   - round-robin one screen per macrostructure, then refill from latest
+ *  random   - shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
+ *  featured - design-interest score desc: front-loads the most visually
  *             striking work (bold macrostructures/styles + award-winning
  *             captures) so the landing grid reads as a highlight reel.
  */
 export type ScreenSort = "latest" | "varied" | "random" | "featured";
 
 /* ─── design-interest scoring (drives the "featured" sort) ───
- * Hand-tuned weights. The point isn't precision — it's pushing the
+ * Hand-tuned weights. The point isn't precision - it's pushing the
  * cooler, more distinctive designs to the front and the generic
  * minimal-SaaS long tail toward the back. Adjust freely.
  */
@@ -157,7 +157,7 @@ export function featuredScore(s: ScreenSummary): number {
   const style = maxWeight(s.tags.style ?? [], STYLE_WEIGHT);
   const vibe = maxWeight(s.tags.vibe ?? [], VIBE_WEIGHT);
   // Award bonus: rows captured during the 2026-05 gallery harvest came
-  // from awards / gallery / Lapa etc. — curated-for-cool by definition.
+  // from awards / gallery / Lapa etc. - curated-for-cool by definition.
   // (Safe to feature now that their tile images are uploaded to Blob;
   // before upload this front-loaded broken thumbnails, so it was held.)
   const award = s.capturedAt >= "2026-05-27" ? 2 : 0;
@@ -311,14 +311,14 @@ export async function getAllScreens(
   // Style + industry are stored as joined tags; for v1 we filter via
   // jsonb tags blob in fixtures and via tag-join in DB. To keep this
   // shippable the DB path applies macrostructure/mode in SQL and the
-  // taxonomy filters in JS — fine at our seed scale, hot-pathable later.
+  // taxonomy filters in JS - fine at our seed scale, hot-pathable later.
   // Sort: latest = ORDER BY captured_at; random = ORDER BY random();
   // varied = SQL ordered by latest, then re-grouped in JS (cheap at our
   // scale, swap to a pgvector clustering pass if it ever bites).
   const orderClause =
     sort === "random" ? sql`random()` : desc(screensT.capturedAt);
 
-  // Explicit column projection — SKIP cssVariables (40–80KB per row),
+  // Explicit column projection - SKIP cssVariables (40-80KB per row),
   // embedding_image, embedding_text (1024-d float arrays). At 3,598
   // rows the SELECT * version was hitting Neon's 64MB HTTP cap. The
   // listing pages don't render cssVariables; the detail page can
@@ -374,7 +374,7 @@ export async function getAllScreens(
     return applyFiltersFixture(catalogueRows(), filter);
   }
 
-  // For now, tags are not normalized in returned shape — but since we
+  // For now, tags are not normalized in returned shape - but since we
   // store them in jsonb on the row in the seed flow, return as-is.
   const summaries: ScreenSummary[] = rows.map((r) =>
     rowToSummary(r, {
@@ -457,7 +457,7 @@ export async function findSimilar(
  * 'landing'), the hero is that row. For sites whose landing wasn't
  * captured (rare), we fall back to the earliest captured row.
  *
- * Filters apply to the hero's properties — which is what the user
+ * Filters apply to the hero's properties - which is what the user
  * means by "show me sites that match X" since hero == brand identity.
  */
 export type SiteTile = ScreenSummary & { pageCount: number };
@@ -504,7 +504,7 @@ export type SiteSummary = {
   designerCredit?: string;
   sourceUrl: string;
   hero: ScreenSummary;
-  pages: ScreenSummary[]; // includes hero — sorted by pageType priority
+  pages: ScreenSummary[]; // includes hero - sorted by pageType priority
   pageCount: number;
 };
 
@@ -629,12 +629,32 @@ export async function getMultiPageSites(): Promise<
 
 import type { ComponentRegion, ComponentType } from "@inspo/shared";
 
+/** Map the 10 component types to the screen-level tags.components
+ *  vocabulary, for the findComponents fallback when no per-element crop
+ *  regions exist. 'cta' has no exact tag analogue, so it borrows
+ *  hero-with-cta (which carries the primary CTA). */
+const TYPE_TO_TAG_COMPONENTS: Record<ComponentType, string[]> = {
+  nav: ["sticky-nav"],
+  hero: ["hero-with-cta", "hero-fullbleed"],
+  pricing: ["pricing-3-col", "pricing-toggle"],
+  features: ["feature-trio", "feature-alternating"],
+  cta: ["hero-with-cta"],
+  testimonial: ["testimonial-quote", "testimonial-wall"],
+  "logo-cloud": ["logo-cloud", "marquee-logos"],
+  footer: ["footer-compact", "footer-mega-menu"],
+  faq: ["faq-accordion"],
+  stat: ["stat-strip"],
+};
+
 export type ComponentHit = {
   screen: ScreenSummary;
-  /** Position of the region within screen.components — the URL the crop
-   *  service reads. */
+  /** Position of the region within screen.components - the URL the crop
+   *  service reads. -1 for tag-based fallback hits (no crop region). */
   idx: number;
   region: ComponentRegion;
+  /** True when this came from the tags.components fallback (per-element
+   *  crops aren't populated for this site yet). */
+  fallback?: boolean;
 };
 
 /** Browse / search component regions. Filters apply to the parent
@@ -642,8 +662,8 @@ export type ComponentHit = {
  *  one hit per matching region.
  *
  *  Optional filters:
- *    type      — only this component type (hero | pricing | …)
- *    macrostructure / mode / style / industry — screen-level filters
+ *    type      - only this component type (hero | pricing | …)
+ *    macrostructure / mode / style / industry - screen-level filters
  *
  *  Ordering: latest captured first, then components in the order the
  *  scanner emitted them (hero → pricing → footer …).  */
@@ -670,6 +690,33 @@ export async function findComponents(opts: {
       out.push({ screen: s, idx, region });
     });
     if (out.length >= limit) break;
+  }
+
+  // Fallback: the per-element crop dataset (screen.components regions)
+  // isn't populated across the catalogue yet, so the region loop can
+  // come back empty. Rather than return nothing for an advertised tool,
+  // surface real sites that carry the requested component type via the
+  // screen-level tags.components vocabulary - one hit per site, parent
+  // page thumb as the image, flagged so callers know there's no crop.
+  if (out.length === 0 && opts.type) {
+    const tagSet = TYPE_TO_TAG_COMPONENTS[opts.type] ?? [];
+    if (tagSet.length) {
+      const seenSite = new Set<string>();
+      for (const s of all) {
+        if (out.length >= limit) break;
+        if (s.slug !== s.siteSlug) continue; // one canonical row per site
+        if (seenSite.has(s.siteSlug)) continue;
+        if (s.tags.components.some((c) => tagSet.includes(c))) {
+          seenSite.add(s.siteSlug);
+          out.push({
+            screen: s,
+            idx: -1,
+            region: { type: opts.type, top: 0, left: 0, width: 0, height: 0 },
+            fallback: true,
+          });
+        }
+      }
+    }
   }
   return out;
 }
@@ -806,7 +853,7 @@ export async function screensInCollection(slug: string): Promise<
 
 /* ──────────────────── reference components ────────────────────
  *
- * Read from `reference-components.json` — the manifest built by
+ * Read from `reference-components.json` - the manifest built by
  *   pnpm --filter @inspo/web build:reference-manifest
  * from the 68 Hallmark-stamped components under
  * apps/web/src/components/reference/<type>/<id>.tsx. Bundled with
@@ -817,7 +864,7 @@ const REFERENCE_COMPONENTS = referenceManifestJson as ReferenceComponent[];
 
 export function getReferenceComponents(filter?: {
   type?: ReferenceComponent["type"];
-  /** Case-insensitive substring match against the .macro field —
+  /** Case-insensitive substring match against the .macro field -
    *  "marquee" matches "Marquee Hero", "marquee with rail", etc. */
   macroQuery?: string;
 }): ReferenceComponent[] {

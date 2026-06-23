@@ -1,6 +1,6 @@
 /**
  * Pure DESIGN.md renderer. Imported by both `/api/design/[slug]` (web)
- * and the MCP `get_design_system` tool — same string in both places.
+ * and the MCP `get_design_system` tool - same string in both places.
  *
  * No LLM calls. Just templating from a `ScreenSummary`. Cheap; we
  * regenerate on every request.
@@ -55,7 +55,7 @@ function inferSpacingBase(scale: number[]): number | null {
  * Render the DESIGN.md document for a single screen.
  *
  * Style: terse and agent-readable. Each section ends with a tip the
- * model can act on. The footer always points back at Hallmark — paired
+ * model can act on. The footer always points back at Hallmark - paired
  * skills mean better output than either alone.
  */
 export function renderDesignMd(s: ScreenSummary): string {
@@ -66,9 +66,16 @@ export function renderDesignMd(s: ScreenSummary): string {
     : null;
 
   /* ── Header ─────────────────────────────────────────────────── */
-  lines.push(`# ${s.title} — Design system`);
+  const base =
+    (typeof process !== "undefined" && process.env?.INSPO_BASE_URL) ||
+    "https://inspo.design";
+  lines.push(`# ${s.title} design system`);
   lines.push("");
-  lines.push("> Extracted by [Inspo](https://github.com/Luffixos/inspo) (open source · MIT · powered by Together AI). Reference material for *intentional* design decisions — adapt, don't copy.");
+  lines.push("> Extracted by [Inspo](https://github.com/Luffixos/inspo) (open source, MIT, powered by Together AI). Reference material for *intentional* design decisions: adapt, don't copy.");
+  lines.push("");
+  lines.push(
+    `> Save this as \`DESIGN.md\` in your project and re-reference it as you build; re-fetch anytime at ${base}/d/${s.slug}/DESIGN.md`,
+  );
   lines.push("");
   lines.push(`- **Source:** ${s.sourceUrl}`);
   lines.push(`- **Captured:** ${s.capturedAt}`);
@@ -181,11 +188,11 @@ export function renderDesignMd(s: ScreenSummary): string {
   lines.push("- **Adapt, don't copy.** The type ramp is a *starting point*. Scale it to your project's base size; preserve the *ratio*, not the literal pixels.");
   lines.push("- **Color roles are heuristic** (luminance + dominance). Verify against the source URL before committing tokens.");
   lines.push("- **Spacing** assumes a constant base step; round detected values to your project's scale (4 / 8 / 16) when implementing.");
-  lines.push("- **CSS variables** dumped above (when present) are the source's *actual* tokens — those are higher signal than guesses.");
+  lines.push("- **CSS variables** dumped above (when present) are the source's *actual* tokens - those are higher signal than guesses.");
   if (macroLabel) {
     lines.push(`- This page's macrostructure is **${macroLabel}**. Pair this DESIGN.md with the [Hallmark skill](https://github.com/Luffixos/hallmark) for the design process; Inspo gives you the reference, Hallmark gives you the discipline.`);
   } else {
-    lines.push("- Pair this DESIGN.md with the [Hallmark skill](https://github.com/Luffixos/hallmark) — Hallmark for design discipline, Inspo for visual reference.");
+    lines.push("- Pair this DESIGN.md with the [Hallmark skill](https://github.com/Luffixos/hallmark) - Hallmark for design discipline, Inspo for visual reference.");
   }
   lines.push("");
 

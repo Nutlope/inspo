@@ -1,12 +1,12 @@
 /**
- * Inspo MCP server — Cloudflare Worker entry, Streamable HTTP transport.
+ * Inspo MCP server - Cloudflare Worker entry, Streamable HTTP transport.
  *
  * Shape:
  *   POST /mcp   ←  bidirectional MCP messages (Streamable HTTP)
  *   GET  /mcp   ←  optional SSE upgrade (some clients use it)
  *   GET  /      ←  trivial OK so health-checks pass
  *
- * Auth: optional `Authorization: Bearer inspo_<key>` — verified against
+ * Auth: optional `Authorization: Bearer inspo_<key>` - verified against
  * the api_keys table. Without auth we currently accept the request to
  * keep onboarding simple; flip `ENFORCE_AUTH=1` once the catalogue has
  * paywalled tiers.
@@ -17,7 +17,7 @@
  * the CDN (`INSPO_CATALOGUE_URL`) and injects them into @inspo/db via
  * `ensureCatalogue()`. The workerd build of `@inspo/db/seed-source`
  * exports null, so nothing is inlined. (Neon is only consulted if
- * DATABASE_URL is set AND INSPO_USE_DB=1 — off by default.)
+ * DATABASE_URL is set AND INSPO_USE_DB=1 - off by default.)
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -34,6 +34,12 @@ import { verifyApiKeyEdge } from "./auth-edge";
 const DEFAULT_CATALOGUE_URL =
   "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/catalogue";
 
+/** Cloudflare native rate-limit binding (configured in wrangler.toml).
+ *  Optional so local dev and typecheck work without it bound. */
+interface RateLimiter {
+  limit(opts: { key: string }): Promise<{ success: boolean }>;
+}
+
 export interface Env {
   DATABASE_URL?: string;
   INSPO_BASE_URL?: string;
@@ -42,6 +48,32 @@ export interface Env {
   /** Default profile/images for every request (query params win). */
   INSPO_PROFILE?: string;
   INSPO_IMAGES?: string;
+  /** Per-caller rate limiter for the /mcp route (free Workers binding). */
+  MCP_LIMITER?: RateLimiter;
+}
+
+/** Reject JSON-RPC bodies larger than this before doing any work. */
+const MAX_BODY_BYTES = 256 * 1024;
+
+function jsonError(status: number, message: string): Response {
+  return new Response(JSON.stringify({ error: message }), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+/** Rate-limit key: a hash of IP + user-agent (Cloudflare advises against
+ *  keying on raw IP alone). */
+async function clientKey(request: Request): Promise<string> {
+  const ip = request.headers.get("cf-connecting-ip") ?? "0";
+  const ua = request.headers.get("user-agent") ?? "";
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(`${ip}|${ua}`),
+  );
+  return [...new Uint8Array(buf)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function bridgeEnv(env: Env) {
@@ -56,66 +88,93 @@ function bridgeEnv(env: Env) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    bridgeEnv(env);
+    try {
+      bridgeEnv(env);
 
-    const url = new URL(request.url);
+      const url = new URL(request.url);
 
-    // Health check
-    if (request.method === "GET" && url.pathname === "/") {
-      return new Response("inspo-mcp · POST /mcp\n", {
-        status: 200,
-        headers: { "content-type": "text/plain" },
-      });
-    }
+      // Health check
+      if (request.method === "GET" && url.pathname === "/") {
+        return new Response("inspo-mcp · POST /mcp\n", {
+          status: 200,
+          headers: { "content-type": "text/plain" },
+        });
+      }
 
-    if (url.pathname !== "/mcp") {
-      return new Response("Not found", { status: 404 });
-    }
+      if (url.pathname !== "/mcp") {
+        return new Response("Not found", { status: 404 });
+      }
 
-    // Auth — soft for now; flip ENFORCE_AUTH=1 to make required.
-    const auth = request.headers.get("authorization") ?? "";
-    const bearer = auth.startsWith("Bearer ") ? auth.slice(7) : null;
-    let userId: string | null = null;
-    if (bearer) {
-      const verified = await verifyApiKeyEdge(bearer);
-      if (verified) userId = verified.userId;
-    }
-    if (env.ENFORCE_AUTH === "1" && !userId) {
-      return new Response(
-        JSON.stringify({ error: "unauthenticated — pass `Authorization: Bearer inspo_…`" }),
-        { status: 401, headers: { "content-type": "application/json" } },
+      // Reject oversized request bodies before doing any work.
+      const cl = Number(request.headers.get("content-length"));
+      if (Number.isFinite(cl) && cl > MAX_BODY_BYTES) {
+        return jsonError(413, "request too large");
+      }
+
+      // Per-caller rate limit (free Workers binding, keyed on a hash of
+      // IP + user-agent). Keeps the open, unauthenticated endpoint
+      // abuse-resistant without charging anyone for access.
+      if (env.MCP_LIMITER) {
+        const key = await clientKey(request);
+        const { success } = await env.MCP_LIMITER.limit({ key });
+        if (!success) return jsonError(429, "rate limit exceeded, slow down");
+      }
+
+      // Auth: soft by default; flip ENFORCE_AUTH=1 to require it.
+      const auth = request.headers.get("authorization") ?? "";
+      const bearer = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+      let userId: string | null = null;
+      if (bearer) {
+        const verified = await verifyApiKeyEdge(bearer);
+        if (verified) userId = verified.userId;
+      }
+      if (env.ENFORCE_AUTH === "1" && !userId) {
+        return jsonError(401, "unauthenticated: pass Authorization: Bearer inspo_...");
+      }
+
+      // The workerd build doesn't bundle the seed; fetch + inject the
+      // catalogue (memoized once per isolate) before any tool runs.
+      await ensureCatalogue(env.INSPO_CATALOGUE_URL ?? DEFAULT_CATALOGUE_URL);
+
+      // Build a fresh server per request: isolated state, fits Workers'
+      // model, cost is just function calls.
+      const server = new McpServer(
+        { name: "inspo", version: "0.0.1" },
+        { instructions: SERVER_INSTRUCTIONS },
       );
+
+      // Profile resolution for the hosted endpoint. Query params win,
+      // then env, then default to the OSS-first lite + images=none: most
+      // hosted callers are OSS-model harnesses, and clientInfo isn't
+      // visible on the stateless HTTP transport so we cannot auto-detect
+      // here. Vision clients opt up with ?profile=full&images=thumbs.
+      const fromUrl = optionsFromUrl(url);
+      const envProfile = env.INSPO_PROFILE?.toLowerCase();
+      const envImages = env.INSPO_IMAGES?.toLowerCase();
+      const profile: Profile =
+        fromUrl.profile ??
+        (envProfile === "lite" || envProfile === "full"
+          ? (envProfile as Profile)
+          : undefined) ??
+        "lite";
+      const images: ImagesMode =
+        fromUrl.images ??
+        (envImages === "none" || envImages === "thumbs"
+          ? (envImages as ImagesMode)
+          : undefined) ??
+        "none";
+      registerTools(server, { profile, images });
+
+      const transport = new WebStandardStreamableHTTPServerTransport({
+        sessionIdGenerator: undefined, // stateless
+        enableJsonResponse: true,
+      });
+      await server.connect(transport);
+
+      return await transport.handleRequest(request);
+    } catch {
+      // Error hygiene: never leak stack traces or internals to the wire.
+      return jsonError(500, "internal error");
     }
-
-    // The workerd build doesn't bundle the seed — fetch + inject the
-    // catalogue (memoized: once per isolate) before any tool runs.
-    await ensureCatalogue(env.INSPO_CATALOGUE_URL ?? DEFAULT_CATALOGUE_URL);
-
-    // Build a fresh server per request — keeps state isolated and fits
-    // Workers' execution model. The cost is negligible since registration
-    // is just function calls.
-    const server = new McpServer(
-      { name: "inspo", version: "0.0.1" },
-      { instructions: SERVER_INSTRUCTIONS },
-    );
-    const envProfile = env.INSPO_PROFILE?.toLowerCase();
-    const envImages = env.INSPO_IMAGES?.toLowerCase();
-    registerTools(server, {
-      ...(envProfile === "lite" || envProfile === "full"
-        ? { profile: envProfile as Profile }
-        : {}),
-      ...(envImages === "none" || envImages === "thumbs"
-        ? { images: envImages as ImagesMode }
-        : {}),
-      ...optionsFromUrl(url),
-    });
-
-    const transport = new WebStandardStreamableHTTPServerTransport({
-      sessionIdGenerator: undefined, // stateless
-      enableJsonResponse: true,
-    });
-    await server.connect(transport);
-
-    return await transport.handleRequest(request);
   },
 };

@@ -55,6 +55,8 @@ export const LITE_TOOLS: ReadonlySet<string> = new Set([
   "find_examples_for_macrostructure",
   "find_reference_components",
   "study",
+  "get_site_pages",
+  "get_filters",
 ]);
 
 /** Harnesses that are predominantly used with OSS models AND either
@@ -97,6 +99,10 @@ export interface ServerContext {
   staticProfile: Profile | null;
   profile(): Profile;
   inlineImages(): boolean;
+  /** True when list results should default to the lean concise shape
+   *  (the text-only profile, images=none). Overridable per call via a
+   *  `detail` arg. Keeps a search a few hundred tokens for small models. */
+  concise(): boolean;
 }
 
 export function createServerContext(
@@ -123,17 +129,22 @@ export function createServerContext(
     return n !== "" && VISION_LITE_CLIENTS.some((c) => n.includes(c));
   };
 
+  const inlineImages = (): boolean => {
+    if (staticImages) return staticImages === "thumbs";
+    if (isTextFirst()) return false;
+    return true;
+  };
+
   return {
     staticProfile,
     profile() {
       if (staticProfile) return staticProfile;
       return isTextFirst() || isVisionLite() ? "lite" : "full";
     },
-    inlineImages() {
-      if (staticImages) return staticImages === "thumbs";
-      if (isTextFirst()) return false;
-      return true;
-    },
+    inlineImages,
+    // Concise list shape is the default whenever images are off (the
+    // text-only profile). Vision profiles (thumbs) keep the full shape.
+    concise: () => !inlineImages(),
   };
 }
 

@@ -1,23 +1,23 @@
 # Inspo MCP
 
-**A curated archive of ~1,300 real production websites — queryable over MCP — that gives coding agents visual taste before they write UI.**
+**A curated archive of 870 curated production sites (2,550 captured screens) - queryable over MCP - that gives coding agents visual taste before they write UI.**
 
-Every result is grounded in a real, shipped site: real fonts, frequency-ranked palettes traced to source, detected tech, named macrostructures, component crops, and — now — **desktop + mobile pairs** so an agent learns responsiveness, not just the desktop look. Works standalone; pairs with the [Hallmark](https://github.com/Luffixos/hallmark) design skill.
+Every result is grounded in a real, shipped site: real fonts, frequency-ranked palettes traced to source, detected tech, named macrostructures, component crops, and - now - **desktop + mobile pairs** so an agent learns responsiveness, not just the desktop look. Works standalone; pairs with the [Hallmark](https://github.com/Luffixos/hallmark) design skill.
 
-This is, and stays, a standard **MCP server** — packaging it for one-line install just makes the same server trivially addable to any MCP client (Cursor, Claude Code, Claude Desktop, …). Two transports, same tools:
+This is, and stays, a standard **MCP server** - packaging it for one-line install just makes the same server trivially addable to any MCP client (Cursor, Claude Code, Claude Desktop, …). Two transports, same tools:
 
-- **stdio** (`src/server.ts`) — runs locally, reads the bundled static seed (no DB needed).
-- **Streamable HTTP** (`src/worker.ts`) — a Cloudflare Worker for a hosted URL.
+- **stdio** (`src/server.ts`) - runs locally, reads the bundled static seed (no DB needed).
+- **Streamable HTTP** (`src/worker.ts`) - a Cloudflare Worker for a hosted URL.
 
 ## Tools
 
 | Tool | What it does |
 |---|---|
 | `search_screens(query, style?, industry?, macrostructure?, mode?, vibe?, color?, pageType?, limit?)` | Hybrid lexical + vector search across the archive. Returns palette, fonts, tech, tags, **desktop + mobile** image URLs, inline thumbnails. |
-| `recommend(brief, macrostructure?, …)` | One-call moodboard: a macrostructure pick, 5 exemplars, canonical reference JSX, a palette suggestion — and **`heroGuidance`** (compose the hero to fit the first viewport). Start here. |
-| `get_design_system(slug, live?)` | Full DESIGN.md for a site — real fonts, palette + CSS vars, type ramp, detected tech. `live:true` supplements thin rows by fetching the source. |
-| `study(url)` | Same extraction for **any** live URL (not just the archive) — fonts, palette, CSS vars, tech. |
-| `compare(slugs[])` | 2–4 sites side by side: shared style tags, distinct macrostructures, register agreement. |
+| `recommend(brief, macrostructure?, …)` | One-call moodboard: a macrostructure pick, 5 exemplars, canonical reference JSX, a palette suggestion - and **`heroGuidance`** (compose the hero to fit the first viewport). Start here. |
+| `get_design_system(slug, live?)` | Full DESIGN.md for a site - real fonts, palette + CSS vars, type ramp, detected tech. `live:true` supplements thin rows by fetching the source. |
+| `study(url)` | Same extraction for **any** live URL (not just the archive) - fonts, palette, CSS vars, tech. |
+| `compare(slugs[])` | 2-4 sites side by side: shared style tags, distinct macrostructures, register agreement. |
 | `find_by_color(hex, tolerance?, limit?)` | Real sites whose palette sits near a target colour (OKLAB distance). |
 | `find_similar(slug, limit?)` | A site's visual + structural neighbours. |
 | `find_examples_for_macrostructure(name, limit?)` | Exemplars of one of the 21 Hallmark macrostructures (`Bento Grid`, `Specimen`, …). |
@@ -26,11 +26,11 @@ This is, and stays, a standard **MCP server** — packaging it for one-line inst
 
 Image URLs are absolute (against `INSPO_BASE_URL`, default `https://inspo.design`), so an agent can fetch them or hand them to a vision model directly.
 
-**Baked-in guidance:** the server instructions + `recommend()` tell every agent to *compose the hero to fit the first viewport (~1280×800 / `100svh`) — never overflow it.* That single rule kills the most common "AI-built page" failure (an oversized hero cut off below the fold).
+**Baked-in guidance:** the server instructions + `recommend()` tell every agent to *compose the hero to fit the first viewport (~1280×800 / `100svh`) - never overflow it.* That single rule kills the most common "AI-built page" failure (an oversized hero cut off below the fold).
 
 ## Install (one line per client)
 
-### Hosted (recommended — no clone, no deps)
+### Hosted (recommended - no clone, no deps)
 
 Once the Worker is deployed (`pnpm --filter @inspo/mcp worker:deploy` → gives an `https://…workers.dev` URL or your custom domain), add it as a remote MCP server:
 
@@ -40,13 +40,13 @@ claude mcp add --transport http inspo https://inspo-mcp.<your-subdomain>.workers
 ```
 
 ```jsonc
-// Cursor — ~/.cursor/mcp.json  ·  Claude Desktop — claude_desktop_config.json
+// Cursor - ~/.cursor/mcp.json  ·  Claude Desktop - claude_desktop_config.json
 { "mcpServers": { "inspo": { "url": "https://inspo-mcp.<your-subdomain>.workers.dev/mcp" } } }
 ```
 
 ### `npx` (zero-config, once published)
 
-No clone and no hosting — the stdio server runs straight from npm and fetches
+No clone and no hosting - the stdio server runs straight from npm and fetches
 the catalogue from the CDN:
 
 ```jsonc
@@ -59,7 +59,7 @@ Optional `env`: `TOGETHER_API_KEY` (enables query-embedding semantic search) and
 
 ### Local (stdio, from a clone)
 
-The bin shim boots the TS server via `tsx` — no build step.
+The bin shim boots the TS server via `tsx` - no build step.
 
 ```jsonc
 // Claude Code: ~/.claude.json  ·  Cursor: ~/.cursor/mcp.json  ·  Claude Desktop: config
@@ -75,7 +75,7 @@ The bin shim boots the TS server via `tsx` — no build step.
 
 Restart the client; the agent gains all the tools above.
 
-## Open-source models (Kimi K2.6, GLM, Qwen, DeepSeek, MiniMax)
+## Open-source models (Kimi K2.7, GLM 5.2, Qwen, DeepSeek V4, MiniMax)
 
 The server ships a second profile tuned to the harnesses OSS models
 actually run in. Two independent knobs:
@@ -90,8 +90,7 @@ client name from the MCP handshake. Kimi CLI, OpenCode, Cline, Roo,
 Crush, Goose, Aider, Continue, Droid, and iFlow get `lite` + text-only;
 Kilo and Qwen Code get `lite` + thumbnails (their image path works);
 everything else (Claude Code, Cursor, ...) keeps `full` + thumbnails.
-Env vars always win. On the hosted endpoint use query params instead:
-`https://.../mcp?profile=lite&images=none`.
+Env vars always win. The hosted endpoint now defaults to `lite` + `images=none` (OSS-first: the stateless HTTP transport can't read the client name, and most hosted callers are OSS-model harnesses); vision clients opt up with `https://.../mcp?profile=full&images=thumbs`. Text-only OSS models (GLM 5.2, DeepSeek V4) and the harnesses above get `lite` + text automatically.
 
 Schemas are flat (no `$ref`, no `$schema`, no `additionalProperties`)
 to satisfy strict validators (Moonshot's API, Together's
@@ -119,7 +118,7 @@ self-correct in one step.
 
 ```bash
 pnpm --filter @inspo/mcp start            # stdio server
-pnpm --filter @inspo/mcp test             # smoke test — boots in-process, calls every tool
+pnpm --filter @inspo/mcp test             # smoke test - boots in-process, calls every tool
 pnpm --filter @inspo/mcp inspect          # MCP Inspector UI
 pnpm --filter @inspo/mcp worker:dev       # Cloudflare Worker locally
 ```
@@ -138,14 +137,14 @@ pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
 pnpm --filter @inspo/mcp worker:deploy
 ```
 
-`INSPO_CATALOGUE_URL` (in `wrangler.toml`) points at the published store —
+`INSPO_CATALOGUE_URL` (in `wrangler.toml`) points at the published store -
 override it to host the data anywhere. The stdio server still reads the
 bundled seed, so local installs need no CDN.
 
 ### Deploy on Vercel (no Cloudflare)
 
 The same MCP is exposed as a Next.js Route Handler in the web app, so it ships
-with your existing Vercel deployment — no extra account. Once `apps/web` is
+with your existing Vercel deployment - no extra account. Once `apps/web` is
 deployed, the endpoint is:
 
 ```
@@ -160,19 +159,19 @@ host independent of the site.
 
 ## Hallmark integration
 
-Inspo is the **data/reference** layer; [Hallmark](https://github.com/Luffixos/hallmark) is the **process/judgment** layer. An agent following Hallmark picks a macrostructure, then calls `find_examples_for_macrostructure` / `recommend` to ground it in real sites — process from Hallmark, taste from Inspo. Inspo works fine on its own too (see the `/examples` gallery: full pages built with nothing but this MCP).
+Inspo is the **data/reference** layer; [Hallmark](https://github.com/Luffixos/hallmark) is the **process/judgment** layer. An agent following Hallmark picks a macrostructure, then calls `find_examples_for_macrostructure` / `recommend` to ground it in real sites - process from Hallmark, taste from Inspo. Inspo works fine on its own too (see the `/examples` gallery: full pages built with nothing but this MCP).
 
 ## Security
 
 - **Read-only.** No write/mutate tools; the server only reads the curated catalogue.
 - **No secrets in the response surface.** The Worker reads `DATABASE_URL` / tokens from Cloudflare secrets (never returned to clients). `.env` is gitignored; only `.env.example` is tracked.
 - **Auth:** soft by default (`ENFORCE_AUTH=0`). Set `ENFORCE_AUTH=1` + provision `api_keys` to require `Authorization: Bearer inspo_…` on the hosted endpoint before exposing it widely.
-- **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). On a public hosted deployment this is a mild SSRF surface — keep it behind auth / a network allowlist if that matters for your environment.
+- **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). Every URL (and every redirect) is validated by an SSRF guard before fetch: public http(s) named hosts only, no private / loopback / link-local / cloud-metadata or IP-literal targets, ports 80/443 only. The response body is byte-capped while streaming, and the hosted Worker runs with the `global_fetch_strictly_public` compatibility flag plus a per-caller rate limit. The endpoint stays free and unauthenticated while remaining abuse-resistant.
 
 ## Publishing `npx inspo-mcp`
 
 The build esbuild-bundles the stdio server into one self-contained file with a
-clean, dependency-free `package.json` — the ~16MB seed is **not** bundled (it's
+clean, dependency-free `package.json` - the ~16MB seed is **not** bundled (it's
 fetched from the CDN at runtime), so the package stays ~1.5MB.
 
 ```bash
@@ -181,17 +180,17 @@ node apps/mcp/dist/inspo-mcp.mjs     # optional: smoke-test (speaks MCP on stdio
 cd apps/mcp/dist && npm publish       # needs `npm login`; publishes the public package
 ```
 
-The monorepo `package.json` stays `private` — only the generated `dist/`
+The monorepo `package.json` stays `private` - only the generated `dist/`
 artifact is published, so nothing here leaks. Re-run `build:npm` (and
 `publish-catalogue-to-blob.ts`) after seed changes, then bump `VERSION` in
 `scripts/build-npm.mjs` and re-publish.
 
 ## Files
 
-- `src/server.ts` — stdio entry (monorepo) · `src/worker.ts` — Cloudflare Worker
-- `src/server-npm.ts` — standalone stdio entry for the published package (CDN catalogue)
-- `src/http-handler.ts` — shared Streamable-HTTP handler (Worker + Vercel route)
-- `src/tools.ts` — all tool registrations + `HERO_GUIDANCE` (shared by all transports)
-- `src/format.ts` — wire format (absolute URLs, inline image blocks, mobile fields)
-- `src/call.ts` — one-shot CLI client (`tsx src/call.ts <tool> '<json>'`)
-- `src/smoke.ts` — `pnpm test` · `scripts/build-npm.mjs` — `npx` bundle builder
+- `src/server.ts` - stdio entry (monorepo) · `src/worker.ts` - Cloudflare Worker
+- `src/server-npm.ts` - standalone stdio entry for the published package (CDN catalogue)
+- `src/http-handler.ts` - shared Streamable-HTTP handler (Worker + Vercel route)
+- `src/tools.ts` - all tool registrations + `HERO_GUIDANCE` (shared by all transports)
+- `src/format.ts` - wire format (absolute URLs, inline image blocks, mobile fields)
+- `src/call.ts` - one-shot CLI client (`tsx src/call.ts <tool> '<json>'`)
+- `src/smoke.ts` - `pnpm test` · `scripts/build-npm.mjs` - `npx` bundle builder

@@ -2,7 +2,7 @@
 name = "inspo-mcp"
 main = "src/worker.ts"
 compatibility_date = "2026-04-01"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
 # Vars are set per-environment. For local dev:
 #   wrangler dev --var DATABASE_URL=$DATABASE_URL --var INSPO_BASE_URL=http://localhost:3000
@@ -11,10 +11,17 @@ compatibility_flags = ["nodejs_compat"]
 #   wrangler secret put DATABASE_URL
 #   wrangler secret put INSPO_BASE_URL
 
+# Per-caller rate limit for the /mcp route (free Workers binding) so the
+# open, unauthenticated endpoint stays abuse-resistant. period is 10 or 60.
+[[ratelimits]]
+name = "MCP_LIMITER"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
+
 [vars]
 ENFORCE_AUTH = "0"
 # Where the Worker fetches the curated catalogue (seed + embeddings) at
-# runtime — it isn't bundled. Defaults to the published Vercel Blob store
+# runtime - it isn't bundled. Defaults to the published Vercel Blob store
 # if unset; re-publish with publish-catalogue-to-blob.ts after seed edits.
 INSPO_CATALOGUE_URL = "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/catalogue"
 

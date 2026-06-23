@@ -18,7 +18,7 @@ export function formatScreen(s: ScreenSummary, why?: string) {
     image: absolute(s.imageUrl),
     fullPage: absolute(s.fullPageUrl),
     thumb: absolute(s.thumbUrl),
-    // Mobile (375px) capture, when backfilled — pass both breakpoints so
+    // Mobile (375px) capture, when backfilled - pass both breakpoints so
     // the agent can study how the design reflows, not just the desktop.
     ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
     ...(s.mobileFullUrl ? { mobileFull: absolute(s.mobileFullUrl) } : {}),
@@ -42,6 +42,35 @@ export function formatScreen(s: ScreenSummary, why?: string) {
         }
       : null,
     hallmarkTheme: s.tags.hallmarkTheme ?? null,
+    ...(why ? { whyThisMatches: why } : {}),
+  };
+}
+
+/**
+ * Lean result shape for the text-first profile (images=none). Drops the
+ * long autopsy + description + full tags + tech so a multi-result search
+ * stays a few hundred tokens instead of a few thousand; keeps the
+ * pick-the-right-one essentials (northstar one-liner, palette, fonts,
+ * mode, macrostructure, thumb). The agent drills into get_screen, or
+ * passes detail:"full", for the complete breakdown.
+ */
+export function formatScreenConcise(s: ScreenSummary, why?: string) {
+  return {
+    slug: s.slug,
+    title: s.title,
+    sourceUrl: s.sourceUrl,
+    thumb: absolute(s.thumbUrl),
+    ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
+    ...(s.northstar ? { northstar: s.northstar } : {}),
+    palette: s.palette,
+    fonts: s.fonts,
+    mode: s.mode,
+    macrostructure: s.tags.macrostructure
+      ? {
+          slug: s.tags.macrostructure,
+          label: MACROSTRUCTURE_LABELS[s.tags.macrostructure],
+        }
+      : null,
     ...(why ? { whyThisMatches: why } : {}),
   };
 }
@@ -75,7 +104,7 @@ export function asTextContent(value: unknown) {
 
 /**
  * Same JSON text payload as `asTextContent`, plus a native `image`
- * content block per provided thumbnail URL — fetched in parallel,
+ * content block per provided thumbnail URL - fetched in parallel,
  * WebP-preferred with PNG fallback, in-process LRU-cached. Agents
  * see the thumbnails directly in the tool response instead of having
  * to curl each one and Read it.
@@ -84,7 +113,7 @@ export function asTextContent(value: unknown) {
  * caller is expected to pass in the same order as the `results`
  * array in `value`), so agents can correlate JSON ↔ image by index.
  *
- * Failed fetches are silently dropped — the JSON text always still
+ * Failed fetches are silently dropped - the JSON text always still
  * comes back, the agent can fall back to the URLs in the payload.
  *
  * `inline=false` (the text-first profile: most OSS harnesses either

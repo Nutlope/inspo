@@ -1,5 +1,5 @@
 /**
- * Tool registration — shared by both transports (stdio + Cloudflare Worker).
+ * Tool registration - shared by both transports (stdio + Cloudflare Worker).
  *
  * Pulled out so adding a tool means editing exactly one file.
  */
@@ -23,6 +23,7 @@ import {
   findReferenceComponent,
   findScreen,
   findSimilar,
+  findSite,
   getAllCollections,
   getAllScreens,
   getReferenceComponents,
@@ -42,6 +43,7 @@ import {
   MODES,
   VIBES,
   COLOR_WORDS,
+  COMPONENTS,
   isMacrostructure,
   type Style,
   type Industry,
@@ -75,7 +77,7 @@ const REFERENCE_TYPES = [
   "faq",
   "stat",
 ] as const;
-import { asTextContent, formatCollection, formatScreen, withImages } from "./format";
+import { asTextContent, formatCollection, formatScreen, formatScreenConcise, withImages } from "./format";
 import { absolute } from "./url";
 import { searchScreens } from "./search";
 // study() was moved to @inspo/shared so the web playground can call
@@ -87,7 +89,7 @@ import { searchScreens } from "./search";
  *  thumbnail) reads as cut-off and unfinished. Surfaced in the server
  *  instructions + recommend() so it reaches any agent building a page. */
 const HERO_GUIDANCE =
-  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, eyebrow, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold — nothing important cut off. Size display type to land in 2–3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
+  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, eyebrow, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold - nothing important cut off. Size display type to land in 2-3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
 
 /* ────────────── tolerant argument parsing ──────────────
  *
@@ -151,14 +153,28 @@ const flexUrl = () =>
       return `https://${s}`;
     }
     return s;
-  }, z.string().url());
+  }, z.string().url().max(2048));
 
 /** Tip line for screen-list responses, phrased for whichever response
  *  shape the connecting harness actually receives. */
-function resultsTip(inline: boolean): string {
-  return inline
-    ? "Each result has an inline thumbnail (image block) plus full-resolution URLs. The thumbnails are WebP when available, PNG otherwise."
-    : "Text-only profile: no inline image blocks. Read each result's `autopsy` (fold composition breakdown), `northstar`, palette, and fonts instead; they carry the visual essence. Image URLs are included if your harness can fetch them.";
+function resultsTip(inline: boolean, concise: boolean): string {
+  const mobile =
+    " Each result also carries `mobile` (375px) image URLs where captured, so you can study how the design reflows, not just the desktop look.";
+  const search =
+    typeof process !== "undefined" && process.env?.TOGETHER_API_KEY
+      ? ""
+      : " Ranking is lexical-only right now (no TOGETHER_API_KEY set, so semantic vector search is off); set it for sharper relevance.";
+  if (inline) {
+    return (
+      "Each result has an inline thumbnail (image block) plus full-resolution URLs (WebP when available, PNG otherwise)." +
+      mobile +
+      search
+    );
+  }
+  const base = concise
+    ? 'Text-only profile, concise results: each carries `northstar` (one-line essence), palette, fonts, mode and macrostructure. Call get_screen(slug), or pass detail:"full", for the full `autopsy` (fold breakdown) + description + tags + tech.'
+    : "Text-only profile: read each result's `autopsy` (fold composition breakdown), `northstar`, palette and fonts; they carry the visual essence.";
+  return base + mobile + search + " Image URLs are included if your harness can fetch them.";
 }
 
 /** Error payload for a slug miss, with close-match suggestions so the
@@ -188,6 +204,22 @@ async function unknownSlug(slug: string) {
 export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   const ctx = createServerContext(server, opts);
   const handles = new Map<string, RegisteredTool>();
+
+  // Result-shape control. The text-only profile (images=none) defaults
+  // to the lean concise shape so a multi-result search stays a few
+  // hundred tokens for small models; vision profiles keep the full
+  // shape. An explicit `detail` arg always wins.
+  const fmt = (detail?: string) =>
+    (detail ? detail === "concise" : ctx.concise())
+      ? formatScreenConcise
+      : formatScreen;
+  const detailArg = () => ({
+    detail: flexEnum(["concise", "full"])
+      .optional()
+      .describe(
+        "Result verbosity. Defaults to concise on the text-only profile, full otherwise. 'full' adds the autopsy (fold breakdown), description, all tags and tech; 'concise' keeps northstar + palette + fonts. Use get_screen for one screen's full record.",
+      ),
+  });
 
   /** registerTool, minus the tools excluded by a statically-known lite
    *  profile. When the profile is client-detected instead, everything
@@ -227,16 +259,17 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe("light or dark"),
         vibe: flexEnum(VIBES as unknown as [string, ...string[]])
           .optional()
-          .describe("Mood / vibe — 'calm', 'loud', 'luxe', 'technical', 'soft', etc."),
+          .describe("Mood / vibe - 'calm', 'loud', 'luxe', 'technical', 'soft', etc."),
         color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
-          .describe("Color word — 'warm', 'cool', 'monochrome', 'neon', 'earthy'"),
+          .describe("Color word - 'warm', 'cool', 'monochrome', 'neon', 'earthy'"),
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe(
             "Filter to a page kind: 'landing' (default homepages), 'pricing', 'features', 'auth', 'about', 'blog', 'changelog', 'docs', 'other'",
           ),
-        limit: flexInt(1, 20).default(8),
+        limit: flexInt(1, 20).default(6),
+        ...detailArg(),
       },
     },
     async (args) => {
@@ -263,8 +296,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
 
       const inline = ctx.inlineImages();
+      const concise = args.detail ? args.detail === "concise" : ctx.concise();
       const matched = await searchScreens(filtered, args.query, args.limit);
-      const results = matched.map((s) => formatScreen(s));
+      const results = matched.map((s) => fmt(args.detail)(s));
       return withImages(
         {
           query: args.query,
@@ -280,7 +314,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           count: matched.length,
           tip:
             matched.length > 0
-              ? resultsTip(inline)
+              ? resultsTip(inline, concise)
               : "No matches. Try fewer filters or a broader query.",
           results,
         },
@@ -295,7 +329,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_screen",
     {
       description:
-        "Fetch the full record for one screen by slug — every viewport variant, palette, fonts, tech stack, designer credit.",
+        "Fetch the full record for one screen by slug - every viewport variant, palette, fonts, tech stack, designer credit.",
       inputSchema: { slug: flexSlug().describe("Screen slug, e.g. 'atelier-mira'") },
     },
     async ({ slug }) => {
@@ -311,7 +345,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_design_system",
     {
       description:
-        "Return the full DESIGN.md for one screen — real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens. Pairs with Hallmark.",
+        "Return the full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens. Pairs with Hallmark.",
       inputSchema: {
         slug: flexSlug()
           .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
@@ -345,7 +379,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         s.designSystem.typeRamp.length > 0 ||
         Object.keys(s.designSystem.cssVariables).length > 0;
 
-      // If the captured data is already rich, return it as-is —
+      // If the captured data is already rich, return it as-is -
       // saves a network call on hot rows.
       if (!live || hasRichCaptured) {
         return {
@@ -394,18 +428,19 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_similar",
     {
       description:
-        "Given a screen slug, return its visual + structural neighbours — same macrostructure first, then overlapping industry / style / mode.",
+        "Given a screen slug, return its visual + structural neighbours - same macrostructure first, then overlapping industry / style / mode.",
       inputSchema: {
         slug: flexSlug(),
         limit: flexInt(1, 20).default(8),
+        ...detailArg(),
       },
     },
-    async ({ slug, limit }) => {
+    async ({ slug, limit, detail }) => {
       const target = await findScreen(slug);
       if (!target) return asTextContent(await unknownSlug(slug));
       const similar = await findSimilar(slug, limit);
       const results = similar.map((s) =>
-        formatScreen(
+        fmt(detail)(
           s,
           s.tags.macrostructure === target.tags.macrostructure
             ? `Same macrostructure (${target.tags.macrostructure})`
@@ -429,7 +464,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "compare",
     {
       description:
-        "Compare 2–4 captured sites side by side across design dimensions — palette, typefaces, macrostructure, mode, style tags, type-scale + spacing + radius scales, container width. Returns a per-site breakdown plus a `shared` block (style tags every site has in common, the set of distinct macrostructures, whether they share a light/dark register). Use it to answer 'what do linear, stripe, and vercel share visually' or to triangulate a house style from a few references. Inline thumbnails included.",
+        "Compare 2-4 captured sites side by side across design dimensions - palette, typefaces, macrostructure, mode, style tags, type-scale + spacing + radius scales, container width. Returns a per-site breakdown plus a `shared` block (style tags every site has in common, the set of distinct macrostructures, whether they share a light/dark register). Use it to answer 'what do linear, stripe, and vercel share visually' or to triangulate a house style from a few references. Inline thumbnails included.",
       inputSchema: {
         slugs: z
           .preprocess(
@@ -438,7 +473,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             z.array(flexSlug()).min(2).max(4),
           )
           .describe(
-            "2–4 screen slugs to compare, e.g. ['linear-app','stripe-com','vercel-com']. Discover slugs with search_screens / find_similar.",
+            "2-4 screen slugs to compare, e.g. ['linear-app','stripe-com','vercel-com']. Discover slugs with search_screens / find_similar.",
           ),
       },
     },
@@ -471,7 +506,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         containerWidth: s.designSystem.containerWidth,
       }));
 
-      // Shared signals — intersection of style tags, set of distinct
+      // Shared signals - intersection of style tags, set of distinct
       // macrostructures, register agreement.
       const styleSets = screens.map((s) => new Set(s.tags.style));
       const commonStyles = [...styleSets[0]!].filter((st) =>
@@ -510,7 +545,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_by_color",
     {
       description:
-        "Given a hex colour, return real production sites whose extracted palette includes a close match. Distance is Euclidean in OKLAB — the colour space where perceived difference and numeric distance line up — so 'close' means same family of colour, not just same hue. Useful when a brief specifies a particular accent / brand colour and you want sites already living near it. Pairs with `get_design_system` to harvest the matching palette tokens.",
+        "Given a hex colour, return real production sites whose extracted palette includes a close match. Distance is Euclidean in OKLAB - the colour space where perceived difference and numeric distance line up - so 'close' means same family of colour, not just same hue. Useful when a brief specifies a particular accent / brand colour and you want sites already living near it. Pairs with `get_design_system` to harvest the matching palette tokens.",
       inputSchema: {
         hex: z
           .preprocess(looseTrim, z.string())
@@ -523,9 +558,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             "Max OKLAB distance to count as a match. Defaults to 0.15 ('same family'). 0.05 ≈ 'near-identical', 0.30 ≈ 'in the same hue zip code'.",
           ),
         limit: flexInt(1, 40).default(12),
+        ...detailArg(),
       },
     },
-    async ({ hex, tolerance, limit }) => {
+    async ({ hex, tolerance, limit, detail }) => {
       const target = normalizeHex(hex);
       if (!target) {
         return asTextContent({
@@ -533,7 +569,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         });
       }
       const all = await getAllScreens();
-      // Score one row per site — sub-pages inherit the parent's palette
+      // Score one row per site - sub-pages inherit the parent's palette
       // so scoring all 3,000+ rows is wasted work + would double-list
       // sites whose sub-pages share the same hex. Group by siteSlug,
       // take the landing row (slug === siteSlug) as the canonical one.
@@ -550,7 +586,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       scored.sort((a, b) => a.d - b.d);
       const top = scored.slice(0, limit);
       const results = top.map(({ s, d }) =>
-        formatScreen(s, `Δ ${d.toFixed(3)} from ${target}`),
+        fmt(detail)(s, `Δ ${d.toFixed(3)} from ${target}`),
       );
       return withImages(
         {
@@ -578,9 +614,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             "Macrostructure name. e.g. 'bento-grid', 'Bento Grid', 'specimen', 'Marquee Hero'.",
           ),
         limit: flexInt(1, 20).default(4),
+        ...detailArg(),
       },
     },
-    async ({ name, limit }) => {
+    async ({ name, limit, detail }) => {
       const slug = name
         .toLowerCase()
         .trim()
@@ -597,7 +634,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       const screens = await getAllScreens({ macrostructure: slug });
       const top = screens.slice(0, limit);
-      const results = top.map((s) => formatScreen(s));
+      const results = top.map((s) => fmt(detail)(s));
       const inline = ctx.inlineImages();
       return withImages(
         {
@@ -622,7 +659,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "list_collections",
     {
       description:
-        "List every editor-curated issue. Use this for thematic browsing — e.g. all 'Editorial Layouts' or 'Dark Product Pages'.",
+        "List every editor-curated issue. Use this for thematic browsing - e.g. all 'Editorial Layouts' or 'Dark Product Pages'.",
       inputSchema: {},
     },
     async () => {
@@ -634,12 +671,84 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     },
   );
 
+  /* ────────────── get_filters ────────────── */
+  reg(
+    "get_filters",
+    {
+      description:
+        "List every filter value the search / find tools accept: styles, industries, macrostructures (+ labels), modes, vibes, colors, page types, component types, and the tag-component vocabulary. Zero input. Call this first when unsure what a filter expects - an out-of-vocabulary enum value errors with no suggestion, so use these exact slugs.",
+      inputSchema: {},
+    },
+    async () =>
+      asTextContent({
+        style: STYLES,
+        industry: INDUSTRIES,
+        macrostructure: MACROSTRUCTURES.map((m) => ({
+          slug: m,
+          label: MACROSTRUCTURE_LABELS[m],
+        })),
+        mode: MODES,
+        vibe: VIBES,
+        color: COLOR_WORDS,
+        pageType: PAGE_TYPES,
+        componentType: REFERENCE_TYPES,
+        tagComponents: COMPONENTS,
+        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components.",
+      }),
+  );
+
+  /* ────────────── get_site_pages ────────────── */
+  reg(
+    "get_site_pages",
+    {
+      description:
+        "Given a site, return all of its captured pages in reading order (landing → pricing → features → auth → about → blog → ...). Use it to study a real product's page sequence - how its homepage, pricing, and other pages relate. Accepts a siteSlug or any screen slug (resolved to its site).",
+      inputSchema: {
+        siteSlug: flexSlug().describe(
+          "Site slug (e.g. 'linear-app') or any screen slug from that site.",
+        ),
+      },
+    },
+    async ({ siteSlug }) => {
+      let site = await findSite(siteSlug);
+      if (!site) {
+        // Maybe a screen slug was passed - resolve it to its site.
+        const s = await findScreen(siteSlug);
+        if (s) site = await findSite(s.siteSlug);
+      }
+      if (!site) return asTextContent(await unknownSlug(siteSlug));
+      const pages = site.pages.map((p) => ({
+        slug: p.slug,
+        pageType: p.pageType,
+        title: p.title,
+        image: absolute(p.imageUrl),
+        thumb: absolute(p.thumbUrl),
+        ...(p.northstar ? { northstar: p.northstar } : {}),
+      }));
+      return withImages(
+        {
+          siteSlug: site.siteSlug,
+          title: site.title,
+          sourceUrl: site.sourceUrl,
+          pageCount: site.pageCount,
+          tip:
+            site.pageCount > 1
+              ? "Real captured pages in reading order. Coverage varies by site (many have only a landing page, and 'other' is a broad bucket) - this is the page set we captured, not a guaranteed funnel. Call get_screen(slug) for one page's full design."
+              : "Only the landing page was captured for this site.",
+          pages,
+        },
+        pages.map((p) => p.thumb),
+        ctx.inlineImages(),
+      );
+    },
+  );
+
   /* ────────────── find_components ────────────── */
   reg(
     "find_components",
     {
       description:
-        "Find specific UI components (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat) cropped from real sites. Returns image URLs the agent can fetch — perfect for 'show me 12 pricing cards' or 'study how 8 sites do their CTAs'.",
+        "Find real sites that feature a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat). Returns each parent page's image (a per-element crop where the crop dataset is populated, otherwise the whole-page thumb) - for 'show me sites with pricing tables' or 'study how 8 sites handle their CTAs'. For copy-pasteable canonical code for a component, use find_reference_components / get_reference_jsx.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Which component type to find"),
@@ -653,10 +762,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         mode: flexEnum(MODES as unknown as [string, ...string[]]).optional(),
         vibe: flexEnum(VIBES as unknown as [string, ...string[]])
           .optional()
-          .describe("Mood — 'calm', 'loud', 'luxe', etc."),
+          .describe("Mood - 'calm', 'loud', 'luxe', etc."),
         color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
-          .describe("Color word — 'warm', 'cool', 'monochrome', etc."),
+          .describe("Color word - 'warm', 'cool', 'monochrome', etc."),
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe("Only components from this page kind (e.g. 'pricing')"),
@@ -686,6 +795,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         return true;
       });
       const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
+      const anyFallback = filtered.some((h) => h.fallback);
       const components = filtered.map((h) => ({
         siteSlug: h.screen.siteSlug,
         siteTitle: h.screen.title,
@@ -696,16 +806,21 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             return h.screen.sourceUrl;
           }
         })(),
-        imageUrl: `${base}/api/component/${h.screen.slug}/${h.idx}`,
-        // Fallback for inline preview — the parent site's whole-page
-        // thumb. The cropped imageUrl serves the actual component
-        // (e.g. just the pricing table); the thumb gives the agent
-        // page-level context.
-        thumb: h.screen.thumbUrl,
+        // Real per-element crop when we have a region; otherwise (tag
+        // fallback) the parent page thumb, since the crop dataset isn't
+        // populated for this site yet.
+        imageUrl: h.fallback
+          ? absolute(h.screen.thumbUrl)
+          : `${base}/api/component/${h.screen.slug}/${h.idx}`,
+        thumb: absolute(h.screen.thumbUrl),
         siteUrl: `${base}/sites/${h.screen.siteSlug}`,
-        width: h.region.width,
-        height: h.region.height,
-        label: h.region.label ?? null,
+        ...(h.fallback
+          ? { fallback: true }
+          : {
+              width: h.region.width,
+              height: h.region.height,
+              label: h.region.label ?? null,
+            }),
         palette: h.screen.palette.slice(0, 5),
         mode: h.screen.mode,
       }));
@@ -722,6 +837,11 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             pageType: args.pageType ?? null,
           },
           count: filtered.length,
+          ...(anyFallback
+            ? {
+                note: "Per-element crops aren't populated for these sites yet, so each result is the parent page (whole-page thumb) that contains this component type, matched via tags. Use get_screen / get_design_system on a siteSlug to study it, or get_reference_jsx for canonical code for this component type.",
+              }
+            : {}),
           components,
         },
         components.map((c) => c.thumb),
@@ -738,9 +858,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         "Fetch one issue by slug, including the editor's blurb and ordered screen list.",
       inputSchema: {
         slug: flexSlug().describe("Collection slug, e.g. 'editorial-layouts'"),
+        ...detailArg(),
       },
     },
-    async ({ slug }) => {
+    async ({ slug, detail }) => {
       const c = await findCollection(slug);
       if (!c) {
         const all = await getAllCollections();
@@ -753,7 +874,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const enriched = c.screens
         .map((entry) => {
           const s = screens.find((x) => x.slug === entry.slug);
-          return s ? { ...formatScreen(s), editorNote: entry.editorNote } : null;
+          return s ? { ...fmt(detail)(s), editorNote: entry.editorNote } : null;
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
       return asTextContent({ ...formatCollection(c), screens: enriched });
@@ -762,7 +883,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 
   /* ────── find_reference_components (canonical-JSX catalogue) ──────
    *
-   * Lists the 68 Hallmark-stamped reference components — the canonical
+   * Lists the 68 Hallmark-stamped reference components - the canonical
    * shapes for hero / pricing / footer / etc. Without filters, returns
    * a list view (no source) so the agent can scan. Filtered by type,
    * returns the full source for each match.
@@ -771,7 +892,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_reference_components",
     {
       description:
-        "List the Hallmark-stamped reference components — canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
+        "List the Hallmark-stamped reference components - canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -780,7 +901,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .preprocess(looseTrim, z.string())
           .optional()
           .describe(
-            "Substring match on the component's macro field — e.g. 'Marquee' matches 'Marquee Hero'.",
+            "Substring match on the component's macro field - e.g. 'Marquee' matches 'Marquee Hero'.",
           ),
       },
     },
@@ -812,7 +933,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       return asTextContent({
         count: list.length,
-        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source — read them; they explain when to reach for this archetype.",
+        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source - read them; they explain when to reach for this archetype.",
         components: list,
       });
     },
@@ -820,7 +941,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 
   /* ────────────── study (live URL → DESIGN.md) ──────────
    *
-   * Fetch any live URL and return the brand's design system —
+   * Fetch any live URL and return the brand's design system -
    * fonts / palette / CSS variables / tech, extracted from HTML and
    * CSS at request time. The MCP doesn't need the URL to be in the
    * catalogue.
@@ -833,7 +954,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "study",
     {
       description:
-        "Fetch any live URL and return its design system — real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Pairs with Hallmark's `study` verb.",
+        "Fetch any live URL and return its design system - real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Pairs with Hallmark's `study` verb.",
       inputSchema: {
         url: flexUrl().describe(
           "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'. A bare domain ('stripe.com') is accepted.",
@@ -852,25 +973,25 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    *
    * One call that returns everything an agent needs to start writing
    * a page: a macrostructure pick, 5 real exemplars (with inline
-   * thumbnails), 1–3 canonical reference JSX components matching that
+   * thumbnails), 1-3 canonical reference JSX components matching that
    * macrostructure, and a palette suggestion extracted from the top
    * exemplar.
    *
    * Hallmark-compatible:
    *   - If `macrostructure` is passed (Hallmark already picked one)
-   *     the recommend tool uses it directly — no pick, no LLM call.
+   *     the recommend tool uses it directly - no pick, no LLM call.
    *   - If omitted, recommend runs the hybrid search on the brief
    *     and the top result's macrostructure becomes the pick.
    *
    * No LLM call inside. Composes search_screens + find_examples_for_
-   * macrostructure + find_reference_components — anything you could
+   * macrostructure + find_reference_components - anything you could
    * do by hand, but in one round-trip.
    */
   reg(
     "recommend",
     {
       description:
-        "Hallmark-compatible orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1–3 canonical reference JSX components, and a palette suggestion — everything an agent needs to start a page. If you're following Hallmark, pass the macrostructure you've picked; otherwise the tool picks one from the brief via hybrid search. No LLM call — composes search + find_examples + find_reference_components.",
+        "Hallmark-compatible orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. If you're following Hallmark, pass the macrostructure you've picked; otherwise the tool picks one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -894,6 +1015,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
           .describe("Optional colour word."),
+        ...detailArg(),
       },
     },
     async (args) => {
@@ -947,7 +1069,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         }
         if (!picked && top[0]) picked = top[0].tags.macrostructure;
         rationale = picked
-          ? `Picked ${MACROSTRUCTURE_LABELS[picked]} — most common macrostructure (${bestN} of ${top.length}) among the top hybrid-search hits for the brief.`
+          ? `Picked ${MACROSTRUCTURE_LABELS[picked]} - most common macrostructure (${bestN} of ${top.length}) among the top hybrid-search hits for the brief.`
           : "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
       }
 
@@ -957,12 +1079,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         ? ranked.filter((s) => s.tags.macrostructure === picked).slice(0, 5)
         : ranked.slice(0, 5);
       if (exemplars.length === 0) exemplars = ranked.slice(0, 5);
-      const exemplarsFmt = exemplars.map((s) => formatScreen(s));
+      const exemplarsFmt = exemplars.map((s) => fmt(args.detail)(s));
 
       // Canonical reference component(s) that match the picked
       // macrostructure. Substring-match on the first word of the
       // display label (e.g. "Marquee" → matches hero/marquee) AND
-      // on the slug. Returns 0–3 matches.
+      // on the slug. Returns 0-3 matches.
       const refMatches: ReturnType<typeof getReferenceComponents> = [];
       if (picked) {
         const label = MACROSTRUCTURE_LABELS[picked];
@@ -993,7 +1115,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         })
         .slice(0, 3);
 
-      // Palette suggestion — top exemplar's palette is the safest
+      // Palette suggestion - top exemplar's palette is the safest
       // signal. If somehow empty, fall back to the second.
       const palette =
         (exemplarsFmt[0]?.palette?.length ?? 0) > 0
@@ -1001,9 +1123,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           : (exemplarsFmt[1]?.palette ?? []);
 
       const inline = ctx.inlineImages();
+      const conciseEx = args.detail ? args.detail === "concise" : ctx.concise();
       const exemplarStudyPhrase = inline
         ? "Study the inline exemplar thumbnails"
-        : "Study each exemplar's autopsy + palette + fonts";
+        : conciseEx
+          ? "Study each exemplar's northstar + palette + fonts (call get_screen for the full autopsy)"
+          : "Study each exemplar's autopsy + palette + fonts";
       return withImages(
         {
           brief: args.brief,
@@ -1042,7 +1167,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_reference_jsx",
     {
       description:
-        "Return the full canonical JSX source for one Hallmark-stamped reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content — including the Hallmark `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
+        "Return the full canonical JSX source for one Hallmark-stamped reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content - including the Hallmark `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Component category"),
