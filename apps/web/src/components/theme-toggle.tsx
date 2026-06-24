@@ -70,11 +70,8 @@ export function ThemeToggle() {
           : "Theme"
       }
       className="
-        relative inline-flex h-7 w-7 shrink-0 items-center justify-center
-        border rule
+        util-seg relative flex shrink-0 items-center justify-center px-2.5
         text-[var(--color-fg-muted)]
-        transition-colors duration-200
-        hover:border-[var(--color-link)] hover:text-[var(--color-link)]
       "
     >
       <span

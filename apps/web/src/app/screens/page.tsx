@@ -187,9 +187,9 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
         type="search"
         name="q"
         defaultValue={defaultValue}
-        placeholder="search styles, brands, fonts - or paste a URL"
+        placeholder="Search styles, brands, fonts - or paste a URL"
         autoComplete="off"
-        className="flex-1 min-w-0 bg-transparent outline-none font-mono text-base placeholder:text-[var(--color-fg-muted)]"
+        className="flex-1 min-w-0 bg-transparent outline-none text-base placeholder:text-[var(--color-fg-muted)]"
       />
     </form>
   );

@@ -80,7 +80,7 @@ export default function MCPPage() {
         <div className="lg:col-span-10">
           <h1 className="font-display max-w-[18ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-[6.5rem]">
             Your agent doesn&rsquo;t have taste.{" "}
-            <em className="italic">Lend it some.</em>
+            <em className="not-italic text-[var(--color-link)]">Lend it some.</em>
           </h1>
           <p className="mt-10 max-w-[64ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">
             Install once and Claude Code, Cursor, Codex, and Zed get a
@@ -97,7 +97,7 @@ export default function MCPPage() {
         <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="mcp-section-label">Install</p>
-            <p className="text-meta mt-2 max-w-[18ch]">
+            <p className="mt-2 max-w-[20ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
               One command. Free, hosted, no auth.
             </p>
           </div>
@@ -117,7 +117,7 @@ export default function MCPPage() {
               {clients.map((c) => (
                 <li key={c.name} className="border-l rule pl-3">
                   <p className="text-sm">{c.name}</p>
-                  <p className="text-meta">{c.config}</p>
+                  <p className="mt-0.5 text-xs text-[var(--color-fg-muted)]">{c.config}</p>
                 </li>
               ))}
             </ul>
@@ -130,12 +130,9 @@ export default function MCPPage() {
         <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="mcp-section-label">Tools exposed</p>
-            <p className="text-meta mt-2 max-w-[24ch]">
-              16 tools on the full profile, 9 on the lite text-first profile.
-              Returns URLs, so your agent fetches only what it needs. On the
-              text-only profile (images=none) the list tools return a lean
-              shape (northstar + palette + fonts); pass detail:&quot;full&quot;
-              or call get_screen for the full autopsy.
+            <p className="mt-2 max-w-[26ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
+              Sixteen on the full profile, nine on the lite. Each returns
+              URLs, so your agent fetches only what it needs.
             </p>
           </div>
 
@@ -171,7 +168,7 @@ export default function MCPPage() {
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="mcp-section-label">Try it now</p>
-            <p className="text-meta mt-3 max-w-[20ch] text-[var(--color-fg-muted)]">
+            <p className="mt-3 max-w-[22ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
               Real MCP code, in the browser. No install.
             </p>
           </div>
@@ -191,12 +188,12 @@ export default function MCPPage() {
           <div className="lg:col-span-10">
             <h2 className="font-display max-w-[20ch] text-balance text-4xl leading-tight tracking-tight sm:text-5xl">
               Name the macrostructure.{" "}
-              <em className="italic">Inspo gives you the reference.</em>
+              <em className="not-italic text-[var(--color-link)]">Inspo gives you the reference.</em>
             </h2>
             <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
               Before writing code, an agent can pick one of the 21 named
               macrostructures -{" "}
-              <em className="italic">Bento, Specimen, Manifesto, Workbench…</em>
+              <em className="not-italic text-[var(--color-link)]">Bento, Specimen, Manifesto, Workbench…</em>
               {" "}- and call{" "}
               <code className="font-mono text-[0.95em] text-[var(--color-fg)]">find_examples_for_macrostructure</code>{" "}
               at that exact step to get four real production sites that

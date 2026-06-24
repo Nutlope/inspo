@@ -75,7 +75,7 @@ export default function ExamplesPage() {
         </div>
         <div className="lg:col-span-9">
           <h1 className="font-display max-w-[20ch] text-balance text-[clamp(2.5rem,5.5vw,5rem)] leading-[0.95] tracking-tight">
-            Made with <em className="italic">Inspo</em>.
+            Made with <em className="not-italic text-[var(--color-link)]">Inspo</em>.
           </h1>
           <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
             Each page below was built by a coding agent given one sentence

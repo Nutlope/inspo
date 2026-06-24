@@ -9,7 +9,12 @@
   /* Type families */
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  /* Mono retired. The site runs on two families now: display (Fraunces)
+     and sans (Inter Tight). This token is kept but repointed at the sans
+     stack so the many existing `font-mono` / `.text-meta` call sites
+     collapse to Inter Tight without a 40-file rename. New code should use
+     --font-sans directly; `font-mono` is effectively an alias. */
+  --font-mono: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
 
   /* Editorial palette (light) */
   --color-paper: #f4f1ec;
@@ -50,7 +55,9 @@
 
   --text-meta: 0.75rem;
   --text-meta-line-height: 1.4;
-  --text-meta-letter-spacing: 0.04em;
+  /* Uppercase Inter Tight wants a hair more tracking than mono did to
+     keep small caps-labels crisp rather than cramped. */
+  --text-meta-letter-spacing: 0.08em;
 }
 
 @variant dark (&:where(.dark, .dark *));
@@ -183,8 +190,55 @@ textarea:focus-visible {
   color: var(--color-fg-muted);
 }
 
+/* ─── Optical eyebrow / heading alignment ──────────────────
+   A small eyebrow label top-aligned in a grid next to a big
+   heading used to float above the heading's caps: the grid aligns
+   line-box tops, but a heading carries extra half-leading above
+   its cap height, and that gap scales with font size - so it read
+   fine next to small headings and visibly wrong next to large
+   ones. text-box-trim removes the over-cap leading so the label
+   and the heading both sit on their true cap line; a plain
+   top-aligned grid then lines them up exactly, at every size.
+   Baselines are untouched, so baseline-aligned rows (e.g. tile
+   title + tag) are unaffected. Progressive enhancement: browsers
+   without text-box-trim (currently Firefox) keep the prior
+   alignment - nothing breaks. */
+h1,
+h2,
+.text-meta,
+.mcp-section-label {
+  text-box-trim: trim-start;
+  text-box-edge: cap alphabetic;
+}
+
 .rule {
   border-color: var(--color-border);
+}
+
+/* ─── Masthead utility cluster · segmented controls ────────
+   The GitHub-star / ⌘K / theme controls live inside one hairline
+   enclosure (border rule on the wrapper) and read as a single
+   filed unit rather than three jostling boxes. Each control is a
+   .util-seg: a hairline divider to its left (every segment after
+   the first) and a hover that lifts only that segment with a faint
+   ink wash plus accent type. The enclosing border never changes,
+   so the cluster stays calm; the hover echoes the nav links (a
+   colour shift), just carried on a surface instead of an underline.
+*/
+.util-seg {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+.util-seg + .util-seg {
+  border-left: 1px solid var(--color-border);
+}
+.util-seg:hover {
+  background-color: color-mix(in oklab, var(--color-fg) 6%, transparent);
+  color: var(--color-link);
+}
+.util-seg:active {
+  background-color: color-mix(in oklab, var(--color-fg) 11%, transparent);
 }
 
 /* ─── Grid stagger fade-in ──────────────────────────────────

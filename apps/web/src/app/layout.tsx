@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Fraunces, Inter_Tight } from "next/font/google";
 import ReactDOM from "react-dom";
 import { Masthead } from "@/components/masthead";
 import { Colophon } from "@/components/colophon";
@@ -18,12 +18,6 @@ const fraunces = Fraunces({
 const interTight = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-inter-tight",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -68,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable}`}
+      className={`${fraunces.variable} ${interTight.variable}`}
     >
       <body className="flex min-h-screen flex-col">
         <Masthead />

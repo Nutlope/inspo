@@ -27,7 +27,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight">
             A thousand sites we&rsquo;d{" "}
-            <em className="italic">actually study</em>.
+            <em className="not-italic text-[var(--color-link)]">actually study</em>.
           </h1>
 
           <p className="mx-auto mt-7 max-w-[44ch] text-[var(--color-fg-muted)] sm:mt-8">
@@ -65,52 +65,35 @@ export default async function HomePage() {
       {/* MCP STRIP ────────────────────────────────────────────── */}
       <section className="border-t rule pt-12 pb-24">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <p className="text-meta lg:col-span-2">For agents</p>
+          <p className="text-meta lg:col-span-2">For coding agents</p>
 
           <div className="lg:col-span-10">
             <h2 className="font-display max-w-[24ch] text-4xl leading-tight tracking-tight sm:text-5xl">
               Your agent doesn&rsquo;t have taste.{" "}
-              <em className="italic">Lend it some.</em>
+              <em className="not-italic text-[var(--color-link)]">Lend it some.</em>
             </h2>
 
-            <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
-              One install and Claude Code, Cursor, Codex, and Zed reach a
-              new server. Ask for &ldquo;minimalist editorial agency
-              portfolios&rdquo; - your agent gets eight real captures to
-              study, the canonical{" "}
+            <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
+              Browse it yourself, or point a coding agent at the same archive.
+              One line makes it an MCP server: ask for a vibe and your agent
+              pulls real captures,{" "}
               <Link
                 href="/components"
                 className="underline-offset-4 hover:text-[var(--color-fg)] hover:underline"
               >
                 reference components
-              </Link>{" "}
-              to copy from, and each site&rsquo;s{" "}
-              <code className="font-mono text-[0.95em] text-[var(--color-fg)]">
-                DESIGN.md
-              </code>{" "}
-              with palette roles + type ramp already extracted. Three
-              surfaces, one MCP server.
+              </Link>
+              , and each site&rsquo;s DESIGN.md to build from.
             </p>
 
-            <pre className="mt-8 overflow-x-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] p-4 font-mono text-sm leading-relaxed">
-              <code>{"$ npx inspo init"}</code>
-              {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  ✓ detected Claude Code, Cursor"}
-              </code>
-              {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  ✓ added inspo MCP server"}
-              </code>
-              {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  → opening browser to authenticate…"}
-              </code>
-            </pre>
+            <div className="mt-8 inline-flex items-center gap-3 border rule px-4 py-3">
+              <span aria-hidden className="text-[var(--color-fg-muted)]">$</span>
+              <code className="text-[var(--color-fg)]">npx -y inspo-mcp</code>
+            </div>
 
             <p className="text-meta mt-6">
               <Link href="/mcp" className="hover:text-[var(--color-link)]">
-                Tool reference →
+                See what it can do →
               </Link>
             </p>
           </div>

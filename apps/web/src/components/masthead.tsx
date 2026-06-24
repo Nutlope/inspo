@@ -26,9 +26,11 @@ export function Masthead() {
             <NavLink key={item.href} href={item.href} label={item.label} />
           ))}
 
-          {/* Utilities cluster - tighter gap than the nav links above
-              and a leading spacer so the cluster reads as a distinct group. */}
-          <div className="ml-1 flex items-center gap-1.5 sm:ml-2">
+          {/* Utilities cluster - one filed unit: a single hairline
+              enclosure with hairline dividers between segments (see
+              .util-seg in globals.css), so the three controls read as
+              one object instead of three boxes with an awkward gap. */}
+          <div className="ml-1.5 flex h-8 items-stretch border rule sm:ml-3">
             <GithubStar />
             <CommandHint />
             <ThemeToggle />

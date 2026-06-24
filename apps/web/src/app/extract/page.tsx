@@ -31,7 +31,7 @@ export default async function ExtractPage({
           <div className="space-y-6">
             <h1 className="font-display max-w-[18ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-7xl">
               Paste a URL.{" "}
-              <em className="italic">Take a design system.</em>
+              <em className="not-italic text-[var(--color-link)]">Take a design system.</em>
             </h1>
             <p className="max-w-[58ch] text-lg leading-relaxed text-[var(--color-fg-muted)]">
               Inspo will visit the page, capture three viewports, extract its

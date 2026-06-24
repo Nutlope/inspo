@@ -39,7 +39,7 @@ const QUICK_ACTIONS = [
   {
     label: "Copy MCP install command",
     href: "#",
-    hint: "npx inspo init → clipboard",
+    hint: "claude mcp add … → clipboard",
     action: "copy-install",
   },
   {
@@ -176,7 +176,11 @@ export function CommandPalette() {
 
   function onAction(name: string) {
     if (name === "copy-install") {
-      navigator.clipboard.writeText("npx inspo init").catch(() => {});
+      navigator.clipboard
+        .writeText(
+          "claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp",
+        )
+        .catch(() => {});
     } else if (name === "toggle-theme") {
       const html = document.documentElement;
       const dark = !html.classList.contains("dark");

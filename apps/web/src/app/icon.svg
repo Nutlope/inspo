@@ -1,0 +1,11 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Inspo. monogram: a high-contrast editorial serif "I" on warm paper,
+       with the wordmark's accent period. Mirrors the masthead logo. -->
+  <rect width="100" height="100" rx="20" fill="#F4F1EC"/>
+  <g fill="#1A1A1A">
+    <rect x="25" y="27" width="30" height="6.5" rx="1.5"/>
+    <rect x="35" y="27" width="10" height="46"/>
+    <rect x="25" y="66.5" width="30" height="6.5" rx="1.5"/>
+  </g>
+  <circle cx="70" cy="67" r="6.5" fill="#C7402F"/>
+</svg>

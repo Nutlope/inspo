@@ -122,7 +122,7 @@ export default async function MapPage() {
             embeddings · built {sidecar.generatedAt.slice(0, 10)}
           </p>
           <h1 className="font-display mt-1.5 text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.02] tracking-tight">
-            The catalogue&rsquo;s <em className="italic">visual neighbourhood.</em>
+            The catalogue&rsquo;s <em className="not-italic text-[var(--color-link)]">visual neighbourhood.</em>
           </h1>
         </div>
         <p className="text-meta max-w-[52ch] text-[var(--color-fg-muted)]">

@@ -18,7 +18,7 @@ export default function AboutPage() {
 
         <div className="lg:col-span-9 space-y-12">
           <h1 className="font-display max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-7xl">
-            An archive, <em className="italic">in public</em>.
+            An archive, <em className="not-italic text-[var(--color-link)]">in public</em>.
           </h1>
 
 

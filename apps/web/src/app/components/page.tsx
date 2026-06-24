@@ -62,7 +62,7 @@ export default async function ComponentsIndex() {
         <div className="lg:col-span-10 space-y-6">
           <h1 className="font-display max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-7xl">
             The building blocks,{" "}
-            <em className="italic">filed by archetype</em>.
+            <em className="not-italic text-[var(--color-link)]">filed by archetype</em>.
           </h1>
           <p className="max-w-[60ch] text-[var(--color-fg-muted)]">
             Canonical patterns built fresh: each one a distinct

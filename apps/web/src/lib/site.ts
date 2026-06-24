@@ -10,7 +10,7 @@ export const site = {
     title: "Editorial Layouts",
   },
   colophon: {
-    typefaces: ["Fraunces", "Inter Tight", "JetBrains Mono"],
+    typefaces: ["Fraunces", "Inter Tight"],
     stack: ["Next.js", "Tailwind", "Postgres", "Together AI"],
     year: new Date().getFullYear(),
   },

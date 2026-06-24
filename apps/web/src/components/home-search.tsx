@@ -61,11 +61,11 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         name="q"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="search styles, brands, fonts - or paste a URL"
+        placeholder="Search styles, brands, fonts - or paste a URL"
         autoComplete="off"
         className="
           flex-1 min-w-0 bg-transparent outline-none
-          font-mono text-base sm:text-lg
+          text-base sm:text-lg
           placeholder:text-[var(--color-fg-muted)]
         "
       />

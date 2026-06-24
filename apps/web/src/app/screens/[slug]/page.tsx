@@ -33,6 +33,24 @@ import {
 // that an SSR/render-on-demand pass is fast (~200ms).
 export const dynamic = "force-dynamic";
 
+/**
+ * Sub-section header for the design-system breakdown: a small caps label
+ * with a hairline rule running to the right edge, so each block (type
+ * ramp, spacing, radius…) reads as a deliberate filed section rather
+ * than a lone label floating over sparse content.
+ */
+function SectionRule({ label }: { label: string }) {
+  return (
+    <div className="mb-5 flex items-center gap-4">
+      <p className="text-meta whitespace-nowrap">{label}</p>
+      <span
+        aria-hidden
+        className="h-px flex-1 bg-[color-mix(in_oklab,var(--color-border)_70%,transparent)]"
+      />
+    </div>
+  );
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -295,7 +313,7 @@ export default async function ScreenDetailPage({
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="text-meta">Palette</p>
-            <p className="text-meta mt-2 max-w-[20ch]">
+            <p className="mt-2 max-w-[24ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
               Click any value to copy. Roles are suggestions, not gospel.
             </p>
           </div>
@@ -317,7 +335,7 @@ export default async function ScreenDetailPage({
           <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
             <div className="lg:col-span-2">
               <p className="text-meta">How to build one like this</p>
-              <p className="text-meta mt-2 max-w-[24ch]">
+              <p className="mt-2 max-w-[28ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
                 Read off the live site. Treat it as reference, not a recipe.
               </p>
               <div className="mt-6">
@@ -325,11 +343,11 @@ export default async function ScreenDetailPage({
               </div>
             </div>
 
-            <div className="lg:col-span-10 space-y-16">
+            <div className="lg:col-span-10 space-y-14">
               {/* Type ramp */}
               {screen.designSystem.typeRamp.length > 0 && (
                 <section>
-                  <p className="text-meta mb-5">Type ramp</p>
+                  <SectionRule label="Type ramp" />
                   <TypeRamp ramp={screen.designSystem.typeRamp} />
                 </section>
               )}
@@ -337,7 +355,7 @@ export default async function ScreenDetailPage({
               {/* Spacing */}
               {screen.designSystem.spacingScale.length > 0 && (
                 <section>
-                  <p className="text-meta mb-5">Spacing scale</p>
+                  <SectionRule label="Spacing scale" />
                   <ScaleRuler values={screen.designSystem.spacingScale} />
                 </section>
               )}
@@ -345,7 +363,7 @@ export default async function ScreenDetailPage({
               {/* Radius */}
               {screen.designSystem.radiusScale.length > 0 && (
                 <section>
-                  <p className="text-meta mb-5">Radius scale</p>
+                  <SectionRule label="Radius scale" />
                   <ScaleRuler
                     values={screen.designSystem.radiusScale}
                     capPx={64}
@@ -356,7 +374,7 @@ export default async function ScreenDetailPage({
               {/* Container */}
               {screen.designSystem.containerWidth && (
                 <section>
-                  <p className="text-meta mb-3">Container</p>
+                  <SectionRule label="Container" />
                   <p className="font-display text-2xl">
                     Max content width{" "}
                     <span className="text-[var(--color-link)]">
@@ -368,7 +386,7 @@ export default async function ScreenDetailPage({
 
               {/* Export - CSS / Tailwind v4 / Markdown tabs */}
               <section>
-                <p className="text-meta mb-5">Export</p>
+                <SectionRule label="Export" />
                 <ExportBlock
                   slug={screen.slug}
                   palette={screen.palette}

@@ -126,7 +126,7 @@ export default async function UseCasesPage() {
         </div>
         <div className="lg:col-span-10">
           <h1 className="font-display max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl">
-            What the MCP <em className="italic">actually</em> does.
+            What the MCP <em className="not-italic text-[var(--color-link)]">actually</em> does.
           </h1>
           <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-[var(--color-fg-muted)]">
             Three real prompts. Same agent - once without Inspo, once with.

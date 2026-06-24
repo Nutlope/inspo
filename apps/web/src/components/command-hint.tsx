@@ -25,17 +25,13 @@ export function CommandHint() {
       onClick={open}
       aria-label="Open command palette"
       className="
-        hidden h-7 shrink-0 items-center justify-center gap-0.5
-        border rule px-2
-        font-mono text-[0.7rem] leading-none tracking-wider
+        util-seg hidden shrink-0 items-center justify-center px-3
+        font-mono text-[0.72rem] leading-none
         text-[var(--color-fg-muted)]
-        transition-colors duration-200
-        hover:border-[var(--color-link)] hover:text-[var(--color-link)]
-        sm:inline-flex
+        sm:flex
       "
     >
-      <span aria-hidden>⌘</span>
-      <span aria-hidden>K</span>
+      <span aria-hidden>⌘K</span>
     </button>
   );
 }
