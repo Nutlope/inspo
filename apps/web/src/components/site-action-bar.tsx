@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * Sticky bottom action bar — appears on /sites/[slug] and /screens/[slug]
+ * Sticky bottom action bar - appears on /sites/[slug] and /screens/[slug]
  * detail pages. Centred pill at the foot of the viewport with the
  * actions readers most often want once they've reached the bottom of
  * a long screenshot: copy the design system, copy the page URL, save
  * to ⌘K, or visit the live site.
  *
- * Editorial chrome — paper background, hairline border, subtle
+ * Editorial chrome - paper background, hairline border, subtle
  * shadow. Pill stays at the centre on every breakpoint; on mobile
  * the actions collapse to icons-only with sr-only labels.
  *
@@ -154,7 +154,7 @@ export function SiteActionBar({
           font-mono text-[0.7rem] uppercase tracking-[0.12em]
         "
       >
-        {/* Primary CTA — filled so the most-wanted action reads at a
+        {/* Primary CTA - filled so the most-wanted action reads at a
             glance. Ink-on-paper in light mode, paper-on-ink in dark.
             Matches the in-page CopyDesignMd button. */}
         <button

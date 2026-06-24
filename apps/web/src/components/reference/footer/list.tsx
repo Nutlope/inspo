@@ -1,4 +1,4 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Ft1 Index · diversification: differs from Statement on
  *   density (high vs airy) + structure (typographic list vs proclamation)
  * states: default + hover (every link gets accent shift)
@@ -8,7 +8,7 @@
 import Link from "next/link";
 
 /**
- * Index footer — a hand-set table of contents at the foot of a long
+ * Index footer - a hand-set table of contents at the foot of a long
  * scroll. Numbered, mono, no underlines. Reads like the back-matter of
  * a magazine. Good for sites with deep content (docs, archives, atlases)
  * where the footer needs to navigate, not narrate.

@@ -36,7 +36,7 @@ export default function ErrorPage({
           </h1>
           <p className="max-w-[60ch] text-lg leading-relaxed text-[var(--color-fg-muted)]">
             The page hit an error mid-render. We&rsquo;ve logged it. Try
-            again — most of these are transient.
+            again - most of these are transient.
           </p>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4">

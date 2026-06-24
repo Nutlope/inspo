@@ -17,9 +17,9 @@ export function Dateline({
         Issue {site.marker}
         {issue}
       </span>
-      <span aria-hidden>—</span>
+      <span aria-hidden>-</span>
       <span>{date}</span>
-      <span aria-hidden>—</span>
+      <span aria-hidden>-</span>
       <span>{label}</span>
     </p>
   );

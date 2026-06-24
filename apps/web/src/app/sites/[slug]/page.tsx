@@ -5,7 +5,7 @@ import { findSite } from "@inspo/db";
 import { SiteViewer } from "@/components/site-viewer";
 import { SiteActionBar } from "@/components/site-action-bar";
 
-// Runtime-rendered — pre-rendering 1k sites is wasteful at build time.
+// Runtime-rendered - pre-rendering 1k sites is wasteful at build time.
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
@@ -17,7 +17,7 @@ export async function generateMetadata({
   const site = await findSite(slug);
   if (!site) return { title: "Not found" };
   return {
-    title: `${site.title} — ${site.pageCount} pages`,
+    title: `${site.title} - ${site.pageCount} pages`,
     description: site.hero.description,
   };
 }
@@ -43,7 +43,7 @@ export default async function SiteDetailPage({
 
   return (
     <div>
-      {/* Header — site title, designer credit, tags ──────────── */}
+      {/* Header - site title, designer credit, tags ──────────── */}
       <div className="mx-auto max-w-[120rem] px-6 pt-12 sm:px-10 sm:pt-16">
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
@@ -84,7 +84,7 @@ export default async function SiteDetailPage({
         <SiteViewer hero={hero} pages={site.pages} />
       </div>
 
-      {/* Sticky action toast — Copy DESIGN.md + quick actions ── */}
+      {/* Sticky action toast - Copy DESIGN.md + quick actions ── */}
       <SiteActionBar slug={hero.slug} sourceUrl={site.sourceUrl} />
     </div>
   );

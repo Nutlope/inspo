@@ -35,7 +35,7 @@ export function Colophon() {
             <a href="/dmca" className="hover:text-[var(--color-link)]">
               Takedowns
             </a>
-            {" — "}
+            {" - "}
             <a href="/colophon" className="hover:text-[var(--color-link)]">
               Colophon
             </a>

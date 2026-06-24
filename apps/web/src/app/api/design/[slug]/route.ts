@@ -2,7 +2,7 @@
  * GET /api/design/<slug>  →  text/markdown DESIGN.md for one screen.
  *
  * Same string the MCP `get_design_system` tool returns. Pure templating
- * via `renderDesignMd()` in @inspo/db — no LLM call, cheap on every hit.
+ * via `renderDesignMd()` in @inspo/db - no LLM call, cheap on every hit.
  */
 
 import { findScreen, renderDesignMd } from "@inspo/db";

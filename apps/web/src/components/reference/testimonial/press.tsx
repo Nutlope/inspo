@@ -1,10 +1,10 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Press + quote · diversification: a single quote with
  *   credibility from a small press wordmark
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Honest copy — quote + outlet are placeholdered. Replace with real
+ * Honest copy - quote + outlet are placeholdered. Replace with real
  * verifiable press mentions before shipping; faked press credit is
  * legally risky and visually corrosive.
  */
@@ -17,7 +17,7 @@ export function TestimonialPress() {
           className="font-display leading-[1.1] text-balance"
           style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
         >
-          &ldquo;[Press quote — one line that captures the read. Replace before
+          &ldquo;[Press quote - one line that captures the read. Replace before
           shipping.]&rdquo;
         </p>
 

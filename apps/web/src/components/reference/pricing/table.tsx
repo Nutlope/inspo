@@ -1,4 +1,4 @@
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: Tabular comparison · diversification: differs from 3-card +
  *   toggle on structure (table vs cards) + density (high vs medium)
  * states: default · hover (rows lift)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Comparison table — feature matrix across tiers. Reads like a magazine
+ * Comparison table - feature matrix across tiers. Reads like a magazine
  * spec sheet: thin rules, mono labels, no zebra striping (zebras
  * shout). Hover lifts the row so the eye can track across columns
  * without a colour change.
@@ -34,7 +34,7 @@ export function PricingTable() {
           </p>
         </div>
         <p className="lg:col-span-9 max-w-[58ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
-          Inspo is free in every tier — the tiers differ in how much of
+          Inspo is free in every tier - the tiers differ in how much of
           the stack you run yourself. Read for the gallery, Studio for
           the source, Together for the hosted instance.
         </p>
@@ -87,7 +87,7 @@ export function PricingTable() {
                         </span>
                       ) : (
                         <span aria-label="not included" className="opacity-30">
-                          —
+                          -
                         </span>
                       )
                     ) : (

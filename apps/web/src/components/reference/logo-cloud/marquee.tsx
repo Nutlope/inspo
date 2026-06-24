@@ -1,4 +1,4 @@
-/* Hallmark · component: logo-cloud · genre: editorial · theme: Inspo-paper
+/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
  * archetype: Infinite marquee · diversification: differs from Strip on
  *   motion (auto-scroll vs static) + edge (mask-fade vs hard cut)
  * states: default · animation pauses on hover, on focus, on reduced-motion
@@ -6,7 +6,7 @@
  */
 
 /**
- * Marquee — wordmarks scroll horizontally on an infinite loop. The
+ * Marquee - wordmarks scroll horizontally on an infinite loop. The
  * track is duplicated so the seam is invisible; mask-image fades the
  * edges so logos don't pop in/out. Honours prefers-reduced-motion via
  * the .marquee-track::-webkit-animation pause rule below.
@@ -14,7 +14,7 @@
 const MARKS = [
   "Studio 01",
   "STUDIO 02",
-  "S—03 / Co",
+  "S-03 / Co",
   "Studio 04",
   "Studio · 05",
   "Atelier 06",

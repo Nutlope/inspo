@@ -1,7 +1,7 @@
 "use client";
 
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Marquee · diversification: motion-led — the action is the
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
+ * archetype: Marquee · diversification: motion-led - the action is the
  *   loop, not a button
  * states: default · hover (loop pauses) · prefers-reduced-motion
  * contrast: pass (46-50)
@@ -10,11 +10,11 @@
 import { useState } from "react";
 
 /**
- * Marquee CTA — a single phrase scrolls left-to-right on infinite
+ * Marquee CTA - a single phrase scrolls left-to-right on infinite
  * loop. The whole strip is clickable. Pauses on hover so the reader
  * can rest their eye; collapses to a static line under reduced-motion.
  */
-const PHRASE = "Open the archive — Open the archive — Open the archive —";
+const PHRASE = "Open the archive - Open the archive - Open the archive -";
 
 export function CtaMarquee() {
   const [paused, setPaused] = useState(false);

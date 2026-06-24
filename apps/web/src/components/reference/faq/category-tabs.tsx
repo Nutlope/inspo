@@ -1,8 +1,8 @@
 "use client";
 
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Category tabs · diversification: questions sliced by
- *   audience or topic — useful when the FAQ serves multiple roles
+ *   audience or topic - useful when the FAQ serves multiple roles
  * states: default · hover · active (tab) · focus-visible
  * contrast: pass (46-50)
  */
@@ -11,11 +11,11 @@ import { useState } from "react";
 
 const CATEGORIES = {
   Designers: [
-    { q: "Can I just browse without an account?", a: "Yes. Everything in the gallery is public — no signup required." },
+    { q: "Can I just browse without an account?", a: "Yes. Everything in the gallery is public - no signup required." },
     { q: "Where do I find palettes?", a: "Open any site detail page; the brand palette band shows the extracted swatches." },
   ],
   Engineers: [
-    { q: "How does the MCP server authenticate?", a: "OAuth via the browser on first install — your editor remembers the token after." },
+    { q: "How does the MCP server authenticate?", a: "OAuth via the browser on first install - your editor remembers the token after." },
     { q: "Can I run the worker locally?", a: "Yes. Playwright + Chromium on any Node host. See DEPLOY.md." },
   ],
   Curators: [

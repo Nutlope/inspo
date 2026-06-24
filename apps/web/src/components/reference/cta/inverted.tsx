@@ -1,12 +1,12 @@
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Inverted · diversification: ink ground, paper button —
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
+ * archetype: Inverted · diversification: ink ground, paper button -
  *   visually loud through contrast, not chrome
  * states: default · hover (button: paper-fill wipe) · focus-visible
  * contrast: pass (46-50)
  */
 
 /**
- * Inverted CTA — black ground, paper button. The contrast does the
+ * Inverted CTA - black ground, paper button. The contrast does the
  * work; no accent colour, no gradient, no chrome. Reach for it when
  * the brand has earned a quiet authoritative end-state.
  */

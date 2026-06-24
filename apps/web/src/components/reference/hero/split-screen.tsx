@@ -1,4 +1,4 @@
-/* Hallmark · component: hero · genre: editorial · theme: Inspo-paper
+/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
  * archetype: Split-screen · diversification: half typography, half
  *   atmospheric panel (accent-tinted)
  * states: default (static)
@@ -6,10 +6,10 @@
  */
 
 /**
- * Split-screen — typography lives on one half, an atmospheric panel
+ * Split-screen - typography lives on one half, an atmospheric panel
  * fills the other. The panel is a pure CSS composition (gradient + a
- * single rule of marginalia) — not an image placeholder. Honours
- * Hallmark's "never ship invented stock photos" rule.
+ * single rule of marginalia) - not an image placeholder. Honours
+ * the "never ship invented stock photos" rule.
  */
 export function HeroSplitScreen() {
   return (
@@ -30,7 +30,7 @@ export function HeroSplitScreen() {
           </p>
         </div>
 
-        {/* Atmospheric panel — pure CSS, no image. Two-step gradient
+        {/* Atmospheric panel - pure CSS, no image. Two-step gradient
             with a faint paper texture overlay. */}
         <div
           className="relative min-h-[24rem] lg:min-h-0"
@@ -43,7 +43,7 @@ export function HeroSplitScreen() {
         >
           <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-14">
             <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
-              Panel — accent tint, no imagery
+              Panel - accent tint, no imagery
             </p>
           </div>
         </div>

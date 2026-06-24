@@ -1,11 +1,11 @@
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
  * archetype: Quiet text-link · diversification: anti-banner CTA
  * states: default + hover (single link)
  * contrast: pass (46-50)
  */
 
 /**
- * Quiet CTA — a typographic appeal, not a button. Reads as the end of
+ * Quiet CTA - a typographic appeal, not a button. Reads as the end of
  * an article, not a sales push. Use when the audience is informed and
  * the action is a reading or browsing one. Refuses the loud "Sign up
  * free" pattern by design.

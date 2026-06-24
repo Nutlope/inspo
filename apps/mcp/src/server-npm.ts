@@ -2,7 +2,7 @@
  * Standalone stdio entry for the published `inspo-mcp` npm package
  * (`npx inspo-mcp`).
  *
- * Same 14 tools as the monorepo server (./server.ts), but the catalogue
+ * Same 16 tools as the monorepo server (./server.ts), but the catalogue
  * is FETCHED from the CDN at startup rather than bundled — the build
  * (scripts/build-npm.mjs) aliases `@inspo/db/seed-source` to the edge
  * (null) variant, so the ~16MB seed never lands in the published bundle.

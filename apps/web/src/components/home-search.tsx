@@ -5,7 +5,7 @@ import { useState } from "react";
 /**
  * The marquee search input on the home hero.
  *
- * Single horizontal row — icon + input + submit hint share one focus
+ * Single horizontal row - icon + input + submit hint share one focus
  * container so hover/focus state lights up everything together. No
  * internal vertical dividers; the focus indicator is an animated
  * underline that grows from the centre.
@@ -61,7 +61,7 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         name="q"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="search styles, brands, fonts — or paste a URL"
+        placeholder="search styles, brands, fonts - or paste a URL"
         autoComplete="off"
         className="
           flex-1 min-w-0 bg-transparent outline-none
@@ -70,10 +70,10 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         "
       />
 
-      {/* Submit — pill with a clean SVG arrow.
+      {/* Submit - pill with a clean SVG arrow.
           On hover: ink fills from the bottom (200ms wipe), the icon
           colour flips to paper, and the arrow nudges 2px right on
-          the same easing — the colour shift and the motion read as
+          the same easing - the colour shift and the motion read as
           one gesture rather than two effects piled together. */}
       <button
         type="submit"
@@ -90,7 +90,7 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
           focus-visible:ring-2 focus-visible:ring-[var(--color-link)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]
         "
       >
-        {/* Ink wipe — scales from bottom on hover. */}
+        {/* Ink wipe - scales from bottom on hover. */}
         <span
           aria-hidden
           className="
@@ -121,7 +121,7 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         </svg>
       </button>
 
-      {/* Animated underline — grows from centre on focus, retracts on blur. */}
+      {/* Animated underline - grows from centre on focus, retracts on blur. */}
       <span
         aria-hidden
         className="

@@ -33,7 +33,7 @@ export function TimeMachine({
   revisions: Rev[];
 }) {
   const last = revisions.length - 1;
-  // Default to the newest — that's what /screens/<slug> already shows
+  // Default to the newest - that's what /screens/<slug> already shows
   // and it's the most familiar starting point.
   const [i, setI] = useState(last);
 
@@ -93,7 +93,7 @@ export function TimeMachine({
         <img
           key={cur.file}
           src={`/api/captures/${slug}/${cur.file}`}
-          alt={`${slug} — capture ${dateStr}`}
+          alt={`${slug} - capture ${dateStr}`}
           className="h-auto w-full"
           loading="eager"
           decoding="async"

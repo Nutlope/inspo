@@ -1,18 +1,18 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Conversation snippet · diversification: chat-style exchange,
- *   not a single quote — invites the reader to overhear
+ *   not a single quote - invites the reader to overhear
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Honest copy — exchange is placeholdered ([speaker], [message]).
+ * Honest copy - exchange is placeholdered ([speaker], [message]).
  * Replace with a real attributed conversation before shipping; faked
  * chat-style testimonials are an immediate trust-break.
  */
 
 const LINES = [
-  { who: "[Designer]", message: "[Question — what did the agent surprise you with?]" },
-  { who: "[Engineer]", message: "[Answer — one sentence about the workflow change.]" },
-  { who: "[Designer]", message: "[Follow-up — one short reaction.]" },
+  { who: "[Designer]", message: "[Question - what did the agent surprise you with?]" },
+  { who: "[Engineer]", message: "[Answer - one sentence about the workflow change.]" },
+  { who: "[Designer]", message: "[Follow-up - one short reaction.]" },
 ];
 
 export function TestimonialConversation() {

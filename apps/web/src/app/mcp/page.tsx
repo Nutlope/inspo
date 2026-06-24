@@ -19,7 +19,7 @@ const tools = [
   {
     name: "get_screen",
     sig: "(id)",
-    desc: "One screen's full record — every viewport, the curator note, the source link.",
+    desc: "One screen's full record - every viewport, the curator note, the source link.",
     example: 'get_screen("atelier-mira")',
   },
   {
@@ -31,9 +31,21 @@ const tools = [
   {
     name: "find_examples_for_macrostructure",
     sig: '(name: "Bento" | "Specimen" | …)',
-    desc: "Pass one of the 21 Hallmark macrostructures, get real sites that embody it.",
+    desc: "Pass one of the 21 named macrostructures, get real sites that embody it.",
     example: 'find_examples_for_macrostructure("Bento Grid")',
     accent: true,
+  },
+  {
+    name: "get_site_pages",
+    sig: "(slug)",
+    desc: "A site's captured pages in reading order, so the agent can walk a whole flow.",
+    example: 'get_site_pages("mercury-com")',
+  },
+  {
+    name: "get_filters",
+    sig: "()",
+    desc: "Zero input. Lists every accepted filter and enum value, so the agent never guesses.",
+    example: "get_filters()",
   },
   {
     name: "list_collections",
@@ -44,7 +56,7 @@ const tools = [
   {
     name: "get_collection",
     sig: "(slug)",
-    desc: "One issue — the editor's blurb plus its ordered screens.",
+    desc: "One issue - the editor's blurb plus its ordered screens.",
     example: 'get_collection("editorial-layouts")',
   },
 ];
@@ -73,7 +85,7 @@ export default function MCPPage() {
           <p className="mt-10 max-w-[64ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">
             Install once and Claude Code, Cursor, Codex, and Zed get a
             handful of new tools. Your agent gets three things from one
-            server: <strong className="text-[var(--color-fg)]">a thousand real screenshots</strong> to study,{" "}
+            server: <strong className="text-[var(--color-fg)]">2,550 real screens across 870 curated sites</strong> to study,{" "}
             <strong className="text-[var(--color-fg)]">a curated set of reference components</strong> to copy from, and a{" "}
             <strong className="text-[var(--color-fg)]"><code className="font-mono text-[0.95em]">DESIGN.md</code> per site</strong> with palette roles, type ramp, and spacing scale already extracted.
           </p>
@@ -86,24 +98,19 @@ export default function MCPPage() {
           <div className="lg:col-span-2">
             <p className="mcp-section-label">Install</p>
             <p className="text-meta mt-2 max-w-[18ch]">
-              One command. Authenticates in the browser.
+              One command. Free, hosted, no auth.
             </p>
           </div>
           <div className="lg:col-span-10">
             <pre className="overflow-x-auto border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] px-5 py-4 font-mono text-sm leading-relaxed">
-              <code className="text-[var(--color-fg)]">{"$ npx inspo init"}</code>
+              <code className="text-[var(--color-fg-muted)]">{"# Hosted endpoint - live, free, no auth"}</code>
               {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  ✓ detected Claude Code, Cursor"}
-              </code>
+              <code className="text-[var(--color-fg)]">{"$ claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp"}</code>
               {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  ✓ added inspo MCP server"}
-              </code>
               {"\n"}
-              <code className="text-[var(--color-fg-muted)]">
-                {"  → opening browser to authenticate…"}
-              </code>
+              <code className="text-[var(--color-fg-muted)]">{"# Or run it locally over stdio"}</code>
+              {"\n"}
+              <code className="text-[var(--color-fg)]">{"$ npx -y inspo-mcp"}</code>
             </pre>
 
             <ul className="mt-8 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -123,8 +130,12 @@ export default function MCPPage() {
         <div className="grid grid-cols-1 gap-y-10 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
             <p className="mcp-section-label">Tools exposed</p>
-            <p className="text-meta mt-2 max-w-[20ch]">
-              Six tools. Returns URLs, so your agent fetches only what it needs.
+            <p className="text-meta mt-2 max-w-[24ch]">
+              16 tools on the full profile, 9 on the lite text-first profile.
+              Returns URLs, so your agent fetches only what it needs. On the
+              text-only profile (images=none) the list tools return a lean
+              shape (northstar + palette + fonts); pass detail:&quot;full&quot;
+              or call get_screen for the full autopsy.
             </p>
           </div>
 
@@ -170,36 +181,27 @@ export default function MCPPage() {
         </div>
       </section>
 
-      {/* Hallmark ────────────────────────────────────────── */}
+      {/* Macrostructures ─────────────────────────────────── */}
       <section className="border-y rule pt-12 pb-24">
         <div className="grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-2">
-            <p className="mcp-section-label">Pairs with</p>
+            <p className="mcp-section-label">Pick a shape</p>
           </div>
 
           <div className="lg:col-span-10">
             <h2 className="font-display max-w-[20ch] text-balance text-4xl leading-tight tracking-tight sm:text-5xl">
-              Hallmark gives the agent a process.{" "}
-              <em className="italic">Inspo gives it the reference.</em>
+              Name the macrostructure.{" "}
+              <em className="italic">Inspo gives you the reference.</em>
             </h2>
             <p className="mt-6 max-w-[60ch] text-[var(--color-fg-muted)]">
-              The{" "}
-              <a
-                href="https://github.com/Luffixos/hallmark"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
-              >
-                Hallmark skill
-              </a>{" "}
-              forces the agent through a design-context gate and asks it to
-              pick one of 21 named macrostructures —{" "}
+              Before writing code, an agent can pick one of the 21 named
+              macrostructures -{" "}
               <em className="italic">Bento, Specimen, Manifesto, Workbench…</em>
-              — before writing code. With Inspo installed, the same agent can
-              call <code className="font-mono text-[0.95em] text-[var(--color-fg)]">find_examples_for_macrostructure</code>{" "}
-              at that exact step and get four real production sites that
-              embody it. Process and reference, in one prompt. Both stacks
-              run on{" "}
+              {" "}- and call{" "}
+              <code className="font-mono text-[0.95em] text-[var(--color-fg)]">find_examples_for_macrostructure</code>{" "}
+              at that exact step to get four real production sites that
+              embody it. Shape and reference, in one prompt. Inspo is open
+              source, owned and operated by{" "}
               <a
                 href="https://www.together.ai"
                 target="_blank"
@@ -211,7 +213,7 @@ export default function MCPPage() {
             </p>
 
             <pre className="mt-8 overflow-x-auto border rule px-5 py-4 font-mono text-sm leading-relaxed">
-              <code className="text-[var(--color-fg-muted)]">{"// Inside a Hallmark run"}</code>
+              <code className="text-[var(--color-fg-muted)]">{"// Pick a shape, get exemplars"}</code>
               {"\n"}
               <code>{'agent.call("find_examples_for_macrostructure", { name: "Bento Grid" })'}</code>
               {"\n"}
@@ -246,6 +248,13 @@ export default function MCPPage() {
                 Together&nbsp;AI
               </a>
               . Free for everyone. No tiers, no paywall.
+            </p>
+            <p className="max-w-[60ch] text-[var(--color-fg-muted)]">
+              The catalogue is read-only. The hosted endpoint is free and
+              unauthenticated but abuse-resistant:{" "}
+              <code className="font-mono text-[0.95em] text-[var(--color-fg)]">study(url)</code>{" "}
+              is SSRF-guarded (public named http(s) hosts only) and rate-limited
+              per IP.
             </p>
             <p className="text-meta">
               <Link href="/about" className="hover:text-[var(--color-link)]">

@@ -1,5 +1,5 @@
 /**
- * Better Auth — browser client.
+ * Better Auth - browser client.
  * Used by /signin and /dashboard to call the server actions.
  */
 

@@ -1,19 +1,19 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: 6-stat grid · diversification: 3×2 grid of figures with
- *   editorial captions — denser than the 4-stat row
+ *   editorial captions - denser than the 4-stat row
  * states: default + hover (cell highlight)
  * contrast: pass (46-50)
  */
 
 /**
- * 6-stat grid — three columns of two stats each. Each stat carries
+ * 6-stat grid - three columns of two stats each. Each stat carries
  * its figure (display), label (mono), and a short editorial sentence
- * underneath. Real catalogue numbers throughout — Hallmark forbids
+ * underneath. Real catalogue numbers throughout - No
  * invented stats.
  */
 const STATS = [
   { value: "1,019", label: "Sites filed", note: "Curated and published, May 2026" },
-  { value: "21", label: "Macrostructures", note: "Hallmark-named page shapes" },
+  { value: "21", label: "Macrostructures", note: "Named page shapes" },
   { value: "28", label: "References", note: "Reference components, every type populated" },
   { value: "3", label: "Viewports", note: "Desktop, tablet, mobile captured per site" },
   { value: "9.4", label: "Avg pages/site", note: "Median pages captured per site" },

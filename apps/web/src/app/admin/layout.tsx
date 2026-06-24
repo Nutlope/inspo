@@ -20,7 +20,7 @@ export default async function AdminLayout({
     <div className="border-t-2 border-[var(--color-link)]">
       <div className="mx-auto max-w-[120rem] px-6 py-4 sm:px-10">
         <p className="text-meta">
-          <span className="text-[var(--color-link)]">●</span> Admin —{" "}
+          <span className="text-[var(--color-link)]">●</span> Admin -{" "}
           <Link href="/admin/curator" className="hover:text-[var(--color-link)]">
             Curator queue
           </Link>

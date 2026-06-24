@@ -1,11 +1,11 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft3 Sitemap · diversification: 4-column link map — the
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
+ * archetype: Ft3 Sitemap · diversification: 4-column link map - the
  *   most-AI-recognised footer shape. Included as the canonical
  *   "this is what the field defaults to" reference.
  * states: default + hover
  * contrast: pass (46-50)
  *
- * Hallmark note — Ft3 is the easiest footer to spot as templated. Use
+ * Note - Ft3 is the easiest footer to spot as templated. Use
  * only when the site genuinely needs a deep link map (docs root, hub
  * page). Otherwise prefer Ft1 Index, Ft5 Statement, or Ft7 Colophon.
  */

@@ -9,7 +9,7 @@ import type { ScreenSummary } from "@inspo/shared";
  * How many tiles to render per page. The /screens archive holds ~1,000
  * sites; rendering them all at once was the page's worst perf bug
  * (~47 MB of PNG thumbs, ~1,000 DOM nodes, ~1,000 client-component
- * hydrations). 60 fills a 3-column grid for 20 rows — enough to scroll
+ * hydrations). 60 fills a 3-column grid for 20 rows - enough to scroll
  * through before hitting the pagination control.
  */
 const PAGE_SIZE = 60;
@@ -136,9 +136,9 @@ export function ScreensGrid({
       );
     }
     if (active.hex) {
-      // Perceptual filter — a site matches if any of its palette
+      // Perceptual filter - a site matches if any of its palette
       // colours sits within HEX_FAMILY_THRESHOLD of the anchor in OKLAB.
-      // We compute the per-site score once per render — at 1.2k sites
+      // We compute the per-site score once per render - at 1.2k sites
       // this is ~10ms on a desktop, no need to memoise per palette.
       const anchor = active.hex;
       list = list.filter(
@@ -168,12 +168,12 @@ export function ScreensGrid({
     return list;
   }, [screens, active]);
 
-  /* ─────── filter chip click — wrap in View Transition ─────── */
+  /* ─────── filter chip click - wrap in View Transition ─────── */
   function setFilter(param: keyof Filters, value: string | undefined) {
     const next = new URLSearchParams(searchParams.toString());
     if (value) next.set(param, String(value));
     else next.delete(param);
-    // Any filter change resets pagination — staying on page 7 makes
+    // Any filter change resets pagination - staying on page 7 makes
     // no sense after narrowing the set to 12 results.
     if (param !== "page") next.delete("page");
     const href = next.toString() ? `/screens?${next.toString()}` : "/screens";
@@ -200,7 +200,7 @@ export function ScreensGrid({
 
   /* ─────── pagination slice ─────── */
   const pageCount = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
-  // Clamp — a filter change may have left `page` past the new end.
+  // Clamp - a filter change may have left `page` past the new end.
   const currentPage = Math.min(active.page ?? 1, pageCount);
   const startIdx = (currentPage - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
@@ -346,7 +346,7 @@ export function ScreensGrid({
                     index={startIdx + i + 1}
                     variant="hero"
                     // Only the first row of the FIRST page gets the
-                    // priority hint — beyond that, we lazy-load.
+                    // priority hint - beyond that, we lazy-load.
                     priority={currentPage === 1 && i < 6}
                     pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
                     hoverScroll
@@ -373,7 +373,7 @@ export function ScreensGrid({
  *
  * Editorial-minimal: prev / 1 2 … 7 8 9 … 18 / next. Always shows the
  * first + last page plus a window of 3 around the current. Uses native
- * <a> via next/link — bookmarkable, back-button respects history, no
+ * <a> via next/link - bookmarkable, back-button respects history, no
  * JS needed for the click itself. Filter state survives because
  * setFilter is the only path that mutates filter params; pagination
  * mutates only `?page=`. */
@@ -479,14 +479,14 @@ function FilterGroup({
 }) {
   // A unique view-transition name per group so the active marker
   // smoothly slides between buttons when the user switches filters.
-  // Names must be unique on the page — scoping by param key gives us
+  // Names must be unique on the page - scoping by param key gives us
   // one marker per filter group, which is exactly what we want.
   const vtName = `filter-marker-${String(param)}`;
   // Hide-zero-match optimisation only kicks in when the dataset has
   // tag data to filter by. If every chip in this group reports 0
   // (which happens in production where the static seed ships without
   // per-row tags), show all options instead of collapsing the whole
-  // group — the filter still works, it just doesn't pre-narrow.
+  // group - the filter still works, it just doesn't pre-narrow.
   const hasAnyMatches = count ? options.some((o) => count(o) > 0) : true;
   const live =
     count && hasAnyMatches

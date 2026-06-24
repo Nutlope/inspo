@@ -253,7 +253,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe("Filter to one industry (e.g. 'saas', 'fintech', 'portfolio')"),
         macrostructure: flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional()
-          .describe("Filter to a Hallmark macrostructure (e.g. 'bento-grid')"),
+          .describe("Filter to a macrostructure (e.g. 'bento-grid')"),
         mode: flexEnum(MODES as unknown as [string, ...string[]])
           .optional()
           .describe("light or dark"),
@@ -345,7 +345,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_design_system",
     {
       description:
-        "Return the full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens. Pairs with Hallmark.",
+        "Return the full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens.",
       inputSchema: {
         slug: flexSlug()
           .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
@@ -601,12 +601,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     },
   );
 
-  /* ────── find_examples_for_macrostructure (Hallmark-aware) ────── */
+  /* ────── find_examples_for_macrostructure ────── */
   reg(
     "find_examples_for_macrostructure",
     {
       description:
-        "Hallmark-aware. Given one of the 21 named macrostructures, return real production sites that exemplify it. Designed to be called from inside a Hallmark design flow at the macrostructure-pick step. Accepts both kebab-case slugs ('bento-grid') and Hallmark display names ('Bento Grid').",
+        "Given one of the 21 named macrostructures, return real production sites that exemplify it. Call this at the macrostructure-pick step to ground the choice in real exemplars. Accepts both kebab-case slugs ('bento-grid') and display names ('Bento Grid').",
       inputSchema: {
         name: z
           .preprocess(looseTrim, z.string())
@@ -887,7 +887,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 
   /* ────── find_reference_components (canonical-JSX catalogue) ──────
    *
-   * Lists the 68 Hallmark-stamped reference components - the canonical
+   * Lists the 68 canonical reference components - the canonical
    * shapes for hero / pricing / footer / etc. Without filters, returns
    * a list view (no source) so the agent can scan. Filtered by type,
    * returns the full source for each match.
@@ -896,7 +896,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_reference_components",
     {
       description:
-        "List the Hallmark-stamped reference components - canonical JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pairs perfectly with the Hallmark skill: Hallmark picks the macrostructure → this returns the canonical code shape that embodies it.",
+        "List the canonical reference components - JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pick the macrostructure, then this returns the canonical code shape that embodies it.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -950,15 +950,14 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    * CSS at request time. The MCP doesn't need the URL to be in the
    * catalogue.
    *
-   * Pairs directly with Hallmark's `study <url>` verb: the agent
-   * passes the brand URL, gets a DESIGN.md, then uses it as the
-   * token block when writing code.
+   * The agent passes a brand URL, gets a DESIGN.md, then uses it as
+   * the token block when writing code.
    */
   reg(
     "study",
     {
       description:
-        "Fetch any live URL and return its design system - real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Pairs with Hallmark's `study` verb.",
+        "Fetch any live URL and return its design system - real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Public named http(s) hosts only (SSRF-guarded).",
       inputSchema: {
         url: flexUrl().describe(
           "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'. A bare domain ('stripe.com') is accepted.",
@@ -973,7 +972,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     },
   );
 
-  /* ────────────── recommend (Hallmark-aware orchestrator) ──────────
+  /* ────────────── recommend (orchestrator) ──────────
    *
    * One call that returns everything an agent needs to start writing
    * a page: a macrostructure pick, 5 real exemplars (with inline
@@ -981,8 +980,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    * macrostructure, and a palette suggestion extracted from the top
    * exemplar.
    *
-   * Hallmark-compatible:
-   *   - If `macrostructure` is passed (Hallmark already picked one)
+   *   - If `macrostructure` is passed (the caller already picked one)
    *     the recommend tool uses it directly - no pick, no LLM call.
    *   - If omitted, recommend runs the hybrid search on the brief
    *     and the top result's macrostructure becomes the pick.
@@ -995,7 +993,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "recommend",
     {
       description:
-        "Hallmark-compatible orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. If you're following Hallmark, pass the macrostructure you've picked; otherwise the tool picks one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
+        "Orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. Pass a macrostructure you've already picked, or let the tool pick one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -1005,7 +1003,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         macrostructure: flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]])
           .optional()
           .describe(
-            "Optional: a macrostructure already picked (typically by Hallmark). Skips the pick step.",
+            "Optional: a macrostructure already picked. Skips the pick step.",
           ),
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -1048,7 +1046,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       // site so the top of the list is genuinely diverse.
       const ranked = await searchScreens(pool, args.brief, 24);
 
-      // Pick a macrostructure. If Hallmark gave us one, honour it.
+      // Pick a macrostructure. If the caller gave us one, honour it.
       // Otherwise: take the most common macrostructure among the top
       // 6 ranked results (defends against one outlier dragging the
       // pick toward an unrelated macro).
@@ -1056,7 +1054,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       let rationale: string;
       if (args.macrostructure) {
         picked = args.macrostructure as Macrostructure;
-        rationale = `Honouring the macrostructure passed in by the caller (typically Hallmark's pick).`;
+        rationale = `Honouring the macrostructure passed in by the caller.`;
       } else {
         const top = ranked.slice(0, 6);
         const counts = new Map<Macrostructure, number>();
@@ -1171,7 +1169,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_reference_jsx",
     {
       description:
-        "Return the full canonical JSX source for one Hallmark-stamped reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content - including the Hallmark `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
+        "Return the full canonical JSX source for one reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content - including the `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Component category"),
@@ -1218,9 +1216,11 @@ export const SERVER_INSTRUCTIONS = [
   "etc.) call `search_screens` first and study the returned palette,",
   "fonts, and component breakdowns before generating code.",
   "",
-  "If the user is following the Hallmark design skill, call",
-  "`find_examples_for_macrostructure` at the macrostructure-pick step",
-  "to get exemplars of e.g. 'Bento Grid' or 'Specimen'.",
+  "When picking a macrostructure, call",
+  "`find_examples_for_macrostructure` to get real exemplars of e.g.",
+  "'Bento Grid' or 'Specimen'. Use `get_filters` (zero input) to see",
+  "every accepted filter value, and `get_site_pages` to study a real",
+  "product's page sequence in reading order.",
   "",
   "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
 ].join(" ");

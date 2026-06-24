@@ -1,5 +1,5 @@
-/* Hallmark · macrostructure: Index Hub · theme: Inspo-paper
- * Diverges from /screens (Marquee Hero) on macrostructure type — a
+/* macrostructure: Index Hub · theme: Inspo-paper
+ * Diverges from /screens (Marquee Hero) on macrostructure type: a
  * grid of type-cards with live mini-previews acts as a deliberate
  * sibling page, not a copy.
  */
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Components",
   description:
-    "Canonical patterns — heroes, pricing, footers, CTAs — built fresh, Hallmark-disciplined, distinct macrostructures.",
+    "Canonical reference components (heroes, pricing, footers, CTAs) built fresh, each a distinct macrostructure.",
 };
 
 const TYPES: { type: ComponentType; label: string; hint: string }[] = [
@@ -65,7 +65,7 @@ export default async function ComponentsIndex() {
             <em className="italic">filed by archetype</em>.
           </h1>
           <p className="max-w-[60ch] text-[var(--color-fg-muted)]">
-            Canonical patterns built fresh — each one a distinct
+            Canonical patterns built fresh: each one a distinct
             macrostructure, each one rendered live so you can inspect the
             markup. Real captures from the archive sit alongside as
             cropped reference once the backfill catches up.
@@ -94,7 +94,7 @@ export default async function ComponentsIndex() {
                     `}
                   >
                     {populated ? (
-                      /* Typographic preview — calmer than rendering the
+                      /* Typographic preview - calmer than rendering the
                          live component at 32% scale (which used to mean
                          10 components on one page, including a marquee
                          animation looping). Surfaces the count + the
@@ -147,7 +147,7 @@ export default async function ComponentsIndex() {
                     <p className="text-meta whitespace-nowrap">
                       {populated
                         ? `${t.refCount} ref${t.refCount === 1 ? "" : "s"}`
-                        : "—"}
+                        : "-"}
                     </p>
                   </div>
                   <p className="text-meta mt-1 normal-case tracking-normal text-[var(--color-fg-muted)]">

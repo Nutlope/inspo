@@ -1,4 +1,4 @@
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N8 Breadcrumb-led · diversification: path is the primary
  *   nav, top-level links collapse to actions
  * states: default · hover · focus-visible
@@ -6,7 +6,7 @@
  */
 
 /**
- * Breadcrumb-led nav — the page tells you exactly where you are
+ * Breadcrumb-led nav - the page tells you exactly where you are
  * before it tells you where else to go. Reach for it on deep
  * hierarchies (docs, atlases, catalogue subsections). The wordmark
  * stays in the path; actions sit to the right.

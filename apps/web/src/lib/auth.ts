@@ -1,5 +1,5 @@
 /**
- * Better Auth — server instance.
+ * Better Auth - server instance.
  *
  * - Drizzle adapter pointed at our Postgres schema (in @inspo/db).
  * - Email-OTP plugin: 6-digit code, 10-minute TTL.
@@ -7,7 +7,7 @@
  *   In prod, replace `sendOTP` with a real provider (Resend/Postmark).
  *
  * If DATABASE_URL is unset we still construct an instance but on a
- * memory adapter — auth will work for a single dev session only.
+ * memory adapter - auth will work for a single dev session only.
  * That keeps the gallery booting friction-free without Neon.
  */
 

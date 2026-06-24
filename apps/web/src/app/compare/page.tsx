@@ -1,5 +1,5 @@
 /**
- * Side-by-side comparison page — /compare?slugs=foo,bar,baz
+ * Side-by-side comparison page - /compare?slugs=foo,bar,baz
  *
  * Up to 4 sites in parallel. Each design dimension (palette, type,
  * spacing, macrostructure, tags) renders as a row spanning all
@@ -7,7 +7,7 @@
  * lineup at a glance. This is the layout gallery / gallery don't have
  * and the one designers + agents both want.
  *
- * Server-rendered. No client state — the URL is the source of truth,
+ * Server-rendered. No client state - the URL is the source of truth,
  * which makes the compare set shareable / re-openable.
  *
  * Sites that can't be found (typo'd slug, deleted row) are skipped
@@ -41,9 +41,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slugs } = await searchParams;
   const list = parseSlugs(slugs);
-  if (list.length === 0) return { title: "Compare — Inspo" };
+  if (list.length === 0) return { title: "Compare - Inspo" };
   return {
-    title: `Compare: ${list.join(", ")} — Inspo`,
+    title: `Compare: ${list.join(", ")} - Inspo`,
     description: `Side-by-side design-system breakdown for ${list.length} ${list.length === 1 ? "site" : "sites"}.`,
   };
 }
@@ -99,7 +99,7 @@ export default async function ComparePage({
         <p className="mt-3 max-w-prose text-[var(--color-fg-muted)]">
           One row per dimension. Read across to compare a single trait;
           read down for a full picture of a site. Up to {MAX_COMPARE} at
-          once — share the URL to share the lineup.
+          once - share the URL to share the lineup.
         </p>
       </div>
 
@@ -151,7 +151,7 @@ export default async function ComparePage({
               <p className="font-display text-2xl leading-tight">
                 {cell.screen.tags.macrostructure
                   ? MACROSTRUCTURE_LABELS[cell.screen.tags.macrostructure]
-                  : "—"}
+                  : "-"}
               </p>
               <p className="text-meta">
                 {cell.screen.mode === "dark" ? "Dark mode" : "Light mode"}

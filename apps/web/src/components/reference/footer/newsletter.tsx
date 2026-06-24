@@ -1,6 +1,6 @@
 "use client";
 
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Ft6 Newsletter inline · diversification: subscription is
  *   the primary action, link map collapses to a minimal index
  * states: default · hover · focus · success
@@ -10,7 +10,7 @@
 import { useState, type FormEvent } from "react";
 
 /**
- * Newsletter footer — subscribe is the only action that earns a row of
+ * Newsletter footer - subscribe is the only action that earns a row of
  * its own. Three minimal links underneath; no four-column sitemap.
  * Reach for it when the site is content-led (essays, weekly notes)
  * and the email list is the asset.

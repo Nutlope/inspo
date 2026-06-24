@@ -1,9 +1,9 @@
 /**
- * /map — the catalogue's design space, projected to 2D via UMAP.
+ * /map - the catalogue's design space, projected to 2D via UMAP.
  *
  * Server: loads the umap-2d.json sidecar (offline-computed) and joins
  * it with the SiteTile list (for thumb URLs + titles + macrostructure
- * for colouring). Sends a compact list to the client — title, slug,
+ * for colouring). Sends a compact list to the client - title, slug,
  * thumbUrl, coords, and one tag for category colour.
  *
  * Client: canvas-based plot in <EmbeddingMap>. Pan / zoom / hover
@@ -25,7 +25,7 @@ import { EmbeddingMap } from "@/components/embedding-map";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Map — Inspo",
+  title: "Map - Inspo",
   description:
     "A 2D projection of the catalogue's text embeddings. Wander the design space.",
 };
@@ -46,7 +46,7 @@ interface MapPoint {
   imageUrl: string;
   x: number;
   y: number;
-  /** Coarse colour key for visual clustering — defaults to
+  /** Coarse colour key for visual clustering - defaults to
    *  macrostructure but falls back to first style tag. */
   group: string;
 }
@@ -114,7 +114,7 @@ export default async function MapPage() {
 
   return (
     <div className="px-4 sm:px-6">
-      {/* Compact header — the map itself is the page. */}
+      {/* Compact header - the map itself is the page. */}
       <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3 pt-9 pb-5">
         <div>
           <p className="text-meta text-[var(--color-fg-muted)]">

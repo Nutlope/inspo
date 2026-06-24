@@ -1,11 +1,11 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: Annotated stat · diversification: numbers with editorial
- *   footnotes — invites the reader to ask "according to what?"
+ *   footnotes - invites the reader to ask "according to what?"
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Real numbers — every figure is a measured catalogue value; the
- * footnotes name the method. Hallmark's anti-invented-metrics rule:
+ * Real numbers - every figure is a measured catalogue value; the
+ * footnotes name the method. the anti-invented-metrics rule:
  * if you can't cite it, don't show it.
  */
 
@@ -18,7 +18,7 @@ const STATS = [
   {
     value: "28",
     label: "Reference components",
-    foot: "² At /components, all Hallmark-stamped, every type populated",
+    foot: "² At /components, all Stamped, every type populated",
   },
   {
     value: "9.4",

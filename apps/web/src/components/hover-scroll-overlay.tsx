@@ -10,16 +10,16 @@
  *     (60 tiles × hydration was a real perf bug, see screen-tile.tsx).
  *   - We can't render the full-page <picture> server-side because
  *     that would force all 60 tiles to fetch their 1440-wide full
- *     PNGs upfront — ~12 MB of dead-weight payload on a viewport
+ *     PNGs upfront - ~12 MB of dead-weight payload on a viewport
  *     where the user may never hover anything.
  *   - Trick: render nothing until the first pointerenter. The CSS
  *     hover state on the parent `.group` handles every subsequent
- *     show/hide/scroll cycle for free — no React state per hover.
+ *     show/hide/scroll cycle for free - no React state per hover.
  *
  * The actual scroll animation is driven by `object-position` going
  * from `50% 0%` → `50% 100%`, which the browser interpolates over
  * an image rendered with `object-fit: cover`. No JS-driven timeline,
- * no IntersectionObserver — the cheapest possible mechanism.
+ * no IntersectionObserver - the cheapest possible mechanism.
  *
  * Respects prefers-reduced-motion via the class rules in globals.css.
  */
@@ -38,7 +38,7 @@ export function HoverScrollOverlay({
   fullUrl,
   fullVariants,
   /** Animation length when scrolling top → bottom on hover. ~5.5 s
-   *  feels right for a typical desktop hero (≈ 4–6× the visible tile
+   *  feels right for a typical desktop hero (≈ 4-6× the visible tile
    *  height). Shorter sites finish early; taller sites still convey
    *  the bulk of the page within the budget. */
   durationMs = 5500,

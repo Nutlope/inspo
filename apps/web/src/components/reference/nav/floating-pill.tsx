@@ -1,4 +1,4 @@
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N5 Floating pill · diversification: differs from N1 Inline
  *   on shape (centred pill vs full-width row) + edge (floating vs banded)
  * states: default · hover (link colour) · focus-visible (ring)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Floating pill — centred nav that doesn't sit on a full-width band.
+ * Floating pill - centred nav that doesn't sit on a full-width band.
  * Sits over content with a hairline border + paper bg + subtle shadow.
  * Useful when the hero is full-bleed imagery and a banded nav would
  * cut the composition.

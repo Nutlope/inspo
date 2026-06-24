@@ -1,12 +1,12 @@
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: Per-use · diversification: line-item pricing instead of
- *   tiered plans — pay for what you use
+ *   tiered plans - pay for what you use
  * states: default + hover (rows)
  * contrast: pass (46-50)
  */
 
 /**
- * Per-use pricing — line items with quantity slots. Reads as a menu
+ * Per-use pricing - line items with quantity slots. Reads as a menu
  * rather than a comparison. Good for usage-based products (API,
  * inference, captures). The "0" rate honestly reflects Inspo's free
  * status; would carry real numbers in a paid product.
@@ -32,7 +32,7 @@ export function PricingPerUse() {
             Pay for what you use.
           </p>
           <p className="mt-4 text-sm text-[var(--color-fg-muted)]">
-            Each call costs nothing today — Together AI absorbs the
+            Each call costs nothing today - Together AI absorbs the
             hosted-instance bill. Self-host to remove the rate-limit.
           </p>
         </div>

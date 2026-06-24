@@ -5,7 +5,7 @@ import type { ScreenSort } from "@inspo/db";
  * Three text-tab links beneath the home hero. Active gets the accent-red
  * underline; the rest stay muted. Mono caption typography.
  *
- * "Most varied" is the editorial answer to gallery's "Trending" — Inspo
+ * "Most varied" is the editorial answer to gallery's "Trending" - Inspo
  * doesn't track view counts (no telemetry, per the open-source posture),
  * so we curate variety instead of popularity.
  */

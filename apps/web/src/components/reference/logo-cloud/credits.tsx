@@ -1,12 +1,12 @@
-/* Hallmark · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: Credits list · diversification: vertical credit roll —
+/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
+ * archetype: Credits list · diversification: vertical credit roll -
  *   reads like a film end-credit, not a trust strip
  * states: default + hover
  * contrast: pass (46-50)
  */
 
 /**
- * Credits list — partner roster as a vertical list with roles. The
+ * Credits list - partner roster as a vertical list with roles. The
  * shape inverts the usual horizontal trust-strip: readers scan
  * vertically and the credit format invites verbatim reading. Reach
  * for it when partners did real work and deserve named attribution.

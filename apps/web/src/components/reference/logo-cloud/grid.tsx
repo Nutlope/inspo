@@ -1,12 +1,12 @@
-/* Hallmark · component: logo-cloud · genre: editorial · theme: Inspo-paper
+/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
  * archetype: 4×3 grid · diversification: fixed grid instead of marquee
- *   or strip — reads as a contact sheet
+ *   or strip - reads as a contact sheet
  * states: default + hover (cell border accent)
  * contrast: pass (46-50)
  */
 
 /**
- * 4×3 logo grid — twelve marks in a hairline-ruled grid. Each cell
+ * 4×3 logo grid - twelve marks in a hairline-ruled grid. Each cell
  * is a typographic wordmark; hover deepens the cell border in
  * accent. Reach for it when the brand wants to display a substantial
  * partner roster without scrolling.
@@ -14,7 +14,7 @@
 const MARKS = [
   { mark: "Together AI", style: "font-display" },
   { mark: "STUDIO / 01", style: "font-mono uppercase tracking-[0.18em] text-sm" },
-  { mark: "S—02", style: "font-display italic" },
+  { mark: "S-02", style: "font-display italic" },
   { mark: "Atelier 03", style: "font-display" },
   { mark: "MARK 04", style: "font-mono uppercase tracking-[0.12em] text-sm" },
   { mark: "Studio · 05", style: "font-display" },
@@ -23,7 +23,7 @@ const MARKS = [
   { mark: "M 08", style: "font-display tracking-tight" },
   { mark: "STUDIO 09", style: "font-mono uppercase tracking-[0.12em] text-sm" },
   { mark: "Atelier 10", style: "font-display" },
-  { mark: "S—11", style: "font-display" },
+  { mark: "S-11", style: "font-display" },
 ];
 
 export function LogoCloudGrid() {

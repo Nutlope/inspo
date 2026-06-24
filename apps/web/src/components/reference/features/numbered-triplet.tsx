@@ -1,4 +1,4 @@
-/* Hallmark · component: features · genre: editorial · theme: Inspo-paper
+/* Inspo · component: features · genre: editorial · theme: Inspo-paper
  * archetype: Numbered triplet · diversification: differs from Bento on
  *   structure (equal columns vs irregular spans) + voice (process vs catalog)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Numbered triplet — three steps, each prefaced by a big mono ordinal.
+ * Numbered triplet - three steps, each prefaced by a big mono ordinal.
  * Reads like a process diagram without a diagram. Each column is the
  * same width; the variety comes from the type, not the layout.
  */
@@ -19,12 +19,12 @@ const STEPS = [
   {
     n: "02",
     label: "Study",
-    body: "Each tile lifts to a site detail page — palette, type ramp, components, designer credit.",
+    body: "Each tile lifts to a site detail page - palette, type ramp, components, designer credit.",
   },
   {
     n: "03",
     label: "Build",
-    body: "Hand the design system to your agent over MCP — or copy DESIGN.md to clipboard yourself.",
+    body: "Hand the design system to your agent over MCP - or copy DESIGN.md to clipboard yourself.",
   },
 ];
 

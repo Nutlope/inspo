@@ -26,7 +26,7 @@ export function CopyDesignMd({ slug }: { slug: string }) {
       : state === "ok"
       ? "Copied to clipboard"
       : state === "err"
-      ? "Couldn't copy — try the download"
+      ? "Couldn't copy - try the download"
       : "Copy DESIGN.md";
 
   return (

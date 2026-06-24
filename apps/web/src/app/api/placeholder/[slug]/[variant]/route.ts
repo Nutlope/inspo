@@ -6,9 +6,9 @@ import { findScreen, getPendingScreens } from "@inspo/db";
 /**
  * Image route. Two modes, decided per request:
  *
- *   1. Real PNG on disk  — if `apps/worker/captures/<slug>/<viewport>-<variant>-*.png`
+ *   1. Real PNG on disk  - if `apps/worker/captures/<slug>/<viewport>-<variant>-*.png`
  *      exists, stream it back. This is how live captures show up.
- *   2. SVG placeholder    — otherwise, generate a stylised mockup from the
+ *   2. SVG placeholder    - otherwise, generate a stylised mockup from the
  *      screen's palette. Every fixture row uses this path, and any DB row
  *      whose capture hasn't landed on disk yet falls back here gracefully.
  *
@@ -21,7 +21,7 @@ const CAPTURES_DIR =
   process.env.INSPO_CAPTURES_DIR ??
   resolve(join(process.cwd(), "..", "worker", "captures"));
 
-// Disable disk lookups in production — the captures dir doesn't ship
+// Disable disk lookups in production - the captures dir doesn't ship
 // with Vercel deployments. The SVG placeholder branch handles every
 // row gracefully until R2/Blob is wired up.
 const DISK_ENABLED = process.env.NODE_ENV !== "production";
@@ -106,7 +106,7 @@ function render(
   const heroTop = Math.round(h * (isFull ? 0.08 : 0.22));
   const heroH = Math.round(h * (isFull ? 0.18 : 0.4));
 
-  // Hero text width — varied by slug for compositional variety
+  // Hero text width - varied by slug for compositional variety
   const headlineW = Math.round((w - padX * 2) * (0.55 + r() * 0.35));
   const subW = Math.round((w - padX * 2) * (0.35 + r() * 0.2));
 
@@ -132,7 +132,7 @@ function render(
   function drawSection(f: number, y: number): number {
     let next = y;
     if (f === 0) {
-      // stat strip — 4 big numbers
+      // stat strip - 4 big numbers
       const cols = 4;
       const gap = 24;
       const cellW = Math.round((usableW - gap * (cols - 1)) / cols);
@@ -145,7 +145,7 @@ function render(
       }
       next = y + cellH + 96;
     } else if (f === 1) {
-      // bento — varied tile sizes
+      // bento - varied tile sizes
       const rowH = 200;
       const gap = 16;
       // row 1: big + small + small
@@ -177,7 +177,7 @@ function render(
       body += `<rect x="${padX}" y="${y + imgH}" width="${Math.round(usableW * 0.4)}" height="40" fill="transparent"/>`;
       next = y + imgH + 96;
     } else {
-      // manifesto — oversized type
+      // manifesto - oversized type
       body += `<rect x="${padX}" y="${y}" width="${Math.round(usableW * 0.85)}" height="68" fill="${ink}" opacity="0.92"/>`;
       body += `<rect x="${padX}" y="${y + 84}" width="${Math.round(usableW * 0.7)}" height="68" fill="${ink}" opacity="0.92"/>`;
       body += `<rect x="${padX}" y="${y + 168}" width="${Math.round(usableW * 0.5)}" height="68" fill="${accent}" opacity="0.85"/>`;
@@ -195,7 +195,7 @@ function render(
     <line x1="${padX}" y1="${navY + 30}" x2="${w - padX}" y2="${navY + 30}" stroke="${ink}" stroke-opacity="0.12"/>
   `;
 
-  // Hero — display headline + subhead + CTA
+  // Hero - display headline + subhead + CTA
   const cta = padX + headlineW * 0.0;
   const hero = `
     <rect x="${padX}" y="${heroTop}" width="${headlineW}" height="42" rx="2" fill="${ink}" opacity="0.95"/>
@@ -209,7 +209,7 @@ function render(
   // Footer-ish bottom rule
   const footer = `<line x1="${padX}" y1="${h - 32}" x2="${w - padX}" y2="${h - 32}" stroke="${ink}" stroke-opacity="0.15"/>`;
 
-  // Marker label (mono caption — subtle)
+  // Marker label (mono caption - subtle)
   const label = `<text x="${padX}" y="${h - 8}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="${ink}" fill-opacity="0.4" letter-spacing="1">${escapeXml(title.toUpperCase())} · PLACEHOLDER</text>`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>

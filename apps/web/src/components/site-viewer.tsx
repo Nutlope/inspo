@@ -1,18 +1,18 @@
 /**
- * Master-detail viewer for /sites/[slug] — gallery-style two-pane.
+ * Master-detail viewer for /sites/[slug] - gallery-style two-pane.
  *
  * Desktop: DESIGN.md (palette, type, fonts, tech, tags, tokens) sticks
  * on the LEFT half while the site's captured pages scroll on the
- * RIGHT — read the system once, scan the screens against it. Mobile
+ * RIGHT - read the system once, scan the screens against it. Mobile
  * stacks: DESIGN.md first, then the screens.
  *
  * Screens use the above-the-fold HERO capture, which is clean at
  * 1440-wide for every site (the full-page captures can carry baked-in
- * horizontal-overflow whitespace on ~1% of sites — that's why the old
+ * horizontal-overflow whitespace on ~1% of sites - that's why the old
  * full-page layout showed dead space). Each screen links to its full
  * /screens/[slug] detail for the scroll + type ramp + similar grid.
  *
- * Server component — no client state needed for the two-pane scroll.
+ * Server component - no client state needed for the two-pane scroll.
  */
 
 import Link from "next/link";
@@ -50,7 +50,7 @@ export function SiteViewer({
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
       <div className="grid grid-cols-1 gap-x-12 gap-y-12 lg:grid-cols-12">
-        {/* DESIGN.md — left, sticky ─────────────────────────── */}
+        {/* DESIGN.md - left, sticky ─────────────────────────── */}
         <aside className="lg:col-span-5 lg:sticky lg:top-8 lg:self-start lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-2">
           <div className="flex items-baseline justify-between border-b rule pb-3">
             <p className="text-meta">DESIGN.md</p>
@@ -122,7 +122,7 @@ export function SiteViewer({
           </div>
         </aside>
 
-        {/* Screens — right, scrolling ───────────────────────── */}
+        {/* Screens - right, scrolling ───────────────────────── */}
         <div className="lg:col-span-7 space-y-12">
           {flat.map((p, i) => (
             <figure key={p.slug} id={`page-${i}`} className="scroll-mt-8">
@@ -152,7 +152,7 @@ export function SiteViewer({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.imageUrl}
-                  alt={`${p.title} — ${PAGE_TYPE_LABELS[p.pageType]}`}
+                  alt={`${p.title} - ${PAGE_TYPE_LABELS[p.pageType]}`}
                   className="h-auto w-full"
                   loading={i < 2 ? "eager" : "lazy"}
                   decoding="async"

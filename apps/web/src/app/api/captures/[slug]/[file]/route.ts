@@ -1,5 +1,5 @@
 /**
- * Local-only capture-revision streamer — `GET /api/captures/<slug>/<file>`.
+ * Local-only capture-revision streamer - `GET /api/captures/<slug>/<file>`.
  *
  * Reads a single PNG/AVIF/WebP from the worker's captures directory
  * and streams it back with the right Content-Type. Used by the time
@@ -69,7 +69,7 @@ export async function GET(
     return new Response(buf, {
       headers: {
         "Content-Type": MIME[ext] ?? "application/octet-stream",
-        // Hash is in the filename — cache forever, immutable.
+        // Hash is in the filename - cache forever, immutable.
         "Cache-Control": "public, max-age=31536000, immutable",
         "Last-Modified": new Date(s.mtimeMs).toUTCString(),
       },

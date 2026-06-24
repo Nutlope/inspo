@@ -1,10 +1,10 @@
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
  * archetype: Sticky compact · diversification: floats at the foot, low
  *   contrast, single short action
  * states: default · hover · focus-visible
  * contrast: pass (46-50)
  *
- * Note — this is rendered inline here for the gallery. On a real page
+ * Note - this is rendered inline here for the gallery. On a real page
  * the parent would add `position: fixed; bottom: 1rem; inset-inline: 0`
  * with z-index above the page body. See the commented sticky styles.
  */

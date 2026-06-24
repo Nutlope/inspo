@@ -1,4 +1,4 @@
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
  * archetype: Two-button · diversification: primary + ghost secondary,
  *   single typography block above
  * states: default · hover · focus-visible (both buttons)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Two-button CTA — primary action and a quiet secondary "learn more"
+ * Two-button CTA - primary action and a quiet secondary "learn more"
  * path. The pair sits below a single tight headline. Don't add a
  * third button (the page will read as a feature comparison, not a
  * conversion ask).

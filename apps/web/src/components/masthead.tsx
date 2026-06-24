@@ -12,7 +12,7 @@ export function Masthead() {
         <Link
           href="/"
           className="font-display text-2xl tracking-tight transition-opacity hover:opacity-70"
-          aria-label={`${site.name} — home`}
+          aria-label={`${site.name} - home`}
         >
           {site.name}
           <span className="text-[var(--color-link)]">.</span>
@@ -26,7 +26,7 @@ export function Masthead() {
             <NavLink key={item.href} href={item.href} label={item.label} />
           ))}
 
-          {/* Utilities cluster — tighter gap than the nav links above
+          {/* Utilities cluster - tighter gap than the nav links above
               and a leading spacer so the cluster reads as a distinct group. */}
           <div className="ml-1 flex items-center gap-1.5 sm:ml-2">
             <GithubStar />

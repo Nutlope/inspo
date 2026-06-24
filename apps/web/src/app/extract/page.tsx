@@ -7,7 +7,7 @@ import { getSession } from "@/lib/session";
 export const metadata: Metadata = {
   title: "Extract a design system",
   description:
-    "Paste any URL and Inspo extracts its design system — palette, type ramp, spacing scale, components — and writes a DESIGN.md your coding agent can consume.",
+    "Paste any URL and Inspo extracts its design system - palette, type ramp, spacing scale, components - and writes a DESIGN.md your coding agent can consume.",
 };
 
 export const dynamic = "force-dynamic";
@@ -81,14 +81,14 @@ export default async function ExtractPage({
           <div className="border-t rule pt-12 space-y-4 text-meta">
             <p>What you&rsquo;ll get</p>
             <ul className="space-y-2 text-sm text-[var(--color-fg)]">
-              <li>· Palette — five hex values, role-guessed (surface / ink / accent / muted)</li>
-              <li>· Typography — six roles × family / size / weight / line-height / letter-spacing</li>
-              <li>· Spacing scale — every distinct gap / padding / margin clustered</li>
-              <li>· Radius scale — every distinct border-radius from buttons / cards / inputs</li>
-              <li>· Container width — body content max-width</li>
-              <li>· Raw CSS variables — every <code className="font-mono">--*</code> the source declared</li>
-              <li>· Components present — taxonomy-tagged list</li>
-              <li>· The full <code className="font-mono">DESIGN.md</code> — agent-readable, copy or download</li>
+              <li>· Palette - five hex values, role-guessed (surface / ink / accent / muted)</li>
+              <li>· Typography - six roles × family / size / weight / line-height / letter-spacing</li>
+              <li>· Spacing scale - every distinct gap / padding / margin clustered</li>
+              <li>· Radius scale - every distinct border-radius from buttons / cards / inputs</li>
+              <li>· Container width - body content max-width</li>
+              <li>· Raw CSS variables - every <code className="font-mono">--*</code> the source declared</li>
+              <li>· Components present - taxonomy-tagged list</li>
+              <li>· The full <code className="font-mono">DESIGN.md</code> - agent-readable, copy or download</li>
             </ul>
           </div>
         </div>

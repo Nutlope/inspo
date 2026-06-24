@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Archive",
   description:
-    "The full archive — every site we've filed. Browse by hand or query from your agent over MCP.",
+    "The full archive - every site we've filed. Browse by hand or query from your agent over MCP.",
 };
 
 type SearchParams = {
@@ -31,7 +31,7 @@ type SearchParams = {
 };
 
 /**
- * /screens — fully-client-filtered archive.
+ * /screens - fully-client-filtered archive.
  *
  * Server pulls the full screen list once (one Postgres query) and
  * SSRs a thin shell (header + search input). The client `<ScreensGrid>`
@@ -39,7 +39,7 @@ type SearchParams = {
  * the swap. URL stays in sync via router.replace so links remain
  * bookmarkable.
  *
- * URL-paste detection runs server-side — pasting a known host
+ * URL-paste detection runs server-side - pasting a known host
  * redirects straight to its detail page.
  */
 export default async function ArchivePage({
@@ -68,7 +68,7 @@ export default async function ArchivePage({
 
   // Trim the per-row payload before shipping to the client filter.
   // Earlier this carried description (240 chars), fonts, tech, full
-  // image URL, designerCredit, etc — ~400 chars/row × 1000 = 400KB
+  // image URL, designerCredit, etc - ~400 chars/row × 1000 = 400KB
   // of HTML. The grid only needs the filter surface + the visible
   // pixels. Per-screen detail loads from /screens/[slug] which fetches
   // the full record server-side. ~110 chars/row → ~110KB.
@@ -104,7 +104,7 @@ export default async function ArchivePage({
 
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
-      {/* Header — search-only, airy ──────────────────────────── */}
+      {/* Header - search-only, airy ──────────────────────────── */}
       <section className="pt-10 pb-8 sm:pt-14">
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-12 space-y-4">
@@ -127,7 +127,7 @@ export default async function ArchivePage({
         </div>
       </section>
 
-      {/* Body — client filter + grid (instant filter, paginated render) ─── */}
+      {/* Body - client filter + grid (instant filter, paginated render) ─── */}
       <section className="border-t rule pt-10 pb-24">
         <ScreensGrid
           screens={compact}
@@ -187,7 +187,7 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
         type="search"
         name="q"
         defaultValue={defaultValue}
-        placeholder="search styles, brands, fonts — or paste a URL"
+        placeholder="search styles, brands, fonts - or paste a URL"
         autoComplete="off"
         className="flex-1 min-w-0 bg-transparent outline-none font-mono text-base placeholder:text-[var(--color-fg-muted)]"
       />

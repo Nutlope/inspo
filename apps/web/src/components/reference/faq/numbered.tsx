@@ -1,4 +1,4 @@
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Numbered list · diversification: differs from Accordion +
  *   Two-column on hierarchy (ordered list vs paired columns)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Numbered FAQ — the questions read as a list of arguments. Numbered
+ * Numbered FAQ - the questions read as a list of arguments. Numbered
  * prefix in mono, question in display weight, answer flush-left
  * underneath. No collapsing, no chrome. Reads like a manifesto's
  * "frequently asked, briefly answered."
@@ -14,7 +14,7 @@
 const QA = [
   {
     q: "Is the catalogue ever-growing?",
-    a: "Yes — but slowly. Curation is the moat, not coverage.",
+    a: "Yes - but slowly. Curation is the moat, not coverage.",
   },
   {
     q: "Can I submit a site?",

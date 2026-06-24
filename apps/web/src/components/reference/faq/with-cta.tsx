@@ -1,4 +1,4 @@
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: FAQ + closing CTA · diversification: ends the FAQ with a
  *   "still asking?" affordance so reads convert
  * states: default + hover
@@ -6,14 +6,14 @@
  */
 
 /**
- * FAQ with closing CTA — three open Q&A rows followed by a quiet
+ * FAQ with closing CTA - three open Q&A rows followed by a quiet
  * conversion strip ("Still asking? Reach us at …"). Reaches the
  * reader who got most of the way through the page and still has
  * questions; converts them to a real conversation.
  */
 const QA = [
   { q: "Is the catalogue ever wrong?", a: "Sometimes. Audit runs every few weeks; bad captures get re-shot or rejected. Open an issue if you find one." },
-  { q: "Can I use this commercially?", a: "Yes. MIT licence. Use the catalogue, the components, the worker — own your fork." },
+  { q: "Can I use this commercially?", a: "Yes. MIT licence. Use the catalogue, the components, the worker - own your fork." },
   { q: "Will the schema change?", a: "Slowly, and only with a migration path. Drizzle migrations live in packages/db/src/migrations." },
 ];
 
@@ -42,7 +42,7 @@ export function FaqWithCta() {
         ))}
       </dl>
 
-      {/* Closing strip — quiet, one action. */}
+      {/* Closing strip - quiet, one action. */}
       <div className="mt-10 flex flex-wrap items-baseline justify-between gap-4 border-y-2 border-[var(--color-fg)] py-6">
         <p className="font-display text-2xl leading-tight">
           Question we didn&rsquo;t answer?

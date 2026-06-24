@@ -8,7 +8,7 @@
  * browser's broken-image glyph.
  *
  * Split out of ScreenTile (which stays a server component for the 60×
- * hydration win) — this is the one piece that genuinely needs client
+ * hydration win) - this is the one piece that genuinely needs client
  * behaviour. It's tiny, so the per-tile hydration cost is negligible.
  */
 
@@ -32,7 +32,7 @@ export function TileImage({
   alt: string;
   sizes: string;
   priority?: boolean;
-  /** Override the <img> classes — e.g. natural-height for the phone
+  /** Override the <img> classes - e.g. natural-height for the phone
    *  frame on the detail page (`block w-full h-auto`). */
   imgClassName?: string;
 }) {
@@ -56,7 +56,7 @@ export function TileImage({
         className={imgClassName}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
-        // @ts-expect-error — fetchpriority is valid HTML, React types lag
+        // @ts-expect-error - fetchpriority is valid HTML, React types lag
         fetchpriority={priority ? "high" : undefined}
         onError={() => setFailed(true)}
       />

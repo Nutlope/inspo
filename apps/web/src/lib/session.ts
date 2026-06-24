@@ -1,5 +1,5 @@
 /**
- * Server-side session helpers — call from Server Components / route handlers.
+ * Server-side session helpers - call from Server Components / route handlers.
  * Auth-related routes set `dynamic = "force-dynamic"` so reading headers is safe.
  */
 

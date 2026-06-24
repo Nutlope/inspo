@@ -1,18 +1,18 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Reviews row · diversification: numeric proof + short
- *   placeholder quotes — honest about being placeholders
+ *   placeholder quotes - honest about being placeholders
  * states: default + hover
  * contrast: pass (46-50)
  *
- * Honest copy — star totals and counts are placeholdered ([XX]).
+ * Honest copy - star totals and counts are placeholdered ([XX]).
  * Replace with real moderated review numbers before shipping;
- * Hallmark forbids invented review counts.
+ * No invented review counts.
  */
 
 const REVIEWS = [
-  { stars: 5, quote: "[Short review — replace before shipping.]", who: "[Name · Studio]" },
-  { stars: 5, quote: "[Short review — keep it to one line.]", who: "[Name · Studio]" },
-  { stars: 4, quote: "[Short review — even mixed reviews build trust.]", who: "[Name · Studio]" },
+  { stars: 5, quote: "[Short review - replace before shipping.]", who: "[Name · Studio]" },
+  { stars: 5, quote: "[Short review - keep it to one line.]", who: "[Name · Studio]" },
+  { stars: 4, quote: "[Short review - even mixed reviews build trust.]", who: "[Name · Studio]" },
 ];
 
 function Stars({ n }: { n: number }) {

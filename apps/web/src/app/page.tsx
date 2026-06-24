@@ -1,6 +1,6 @@
-/* Hallmark · macrostructure: Marquee Hero */
+/* macrostructure: Marquee Hero */
 
-// Runtime-rendered — pre-rendering at build hits Neon hard.
+// Runtime-rendered - pre-rendering at build hits Neon hard.
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default async function HomePage() {
   // One tile per site, not per captured screen (gallery-style). The
   // "featured" sort front-loads the most visually striking work
   // (award-winning captures + bold macrostructures/styles) rather than
-  // the capture order — the landing grid is a highlight reel, not a
+  // the capture order - the landing grid is a highlight reel, not a
   // changelog.
   const allSites = await getAllSites({}, "featured");
   const totalCount = allSites.length;
@@ -31,7 +31,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="mx-auto mt-7 max-w-[44ch] text-[var(--color-fg-muted)] sm:mt-8">
-            Search, scroll, or paste a URL. Your coding agent can do the same —
+            Search, scroll, or paste a URL. Your coding agent can do the same -
             see <Link href="/mcp" className="underline-offset-4 hover:text-[var(--color-link)] hover:underline">the MCP</Link>.
           </p>
 
@@ -76,7 +76,7 @@ export default async function HomePage() {
             <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
               One install and Claude Code, Cursor, Codex, and Zed reach a
               new server. Ask for &ldquo;minimalist editorial agency
-              portfolios&rdquo; — your agent gets eight real captures to
+              portfolios&rdquo; - your agent gets eight real captures to
               study, the canonical{" "}
               <Link
                 href="/components"
@@ -110,7 +110,7 @@ export default async function HomePage() {
 
             <p className="text-meta mt-6">
               <Link href="/mcp" className="hover:text-[var(--color-link)]">
-                Tool reference + Hallmark integration →
+                Tool reference →
               </Link>
             </p>
           </div>

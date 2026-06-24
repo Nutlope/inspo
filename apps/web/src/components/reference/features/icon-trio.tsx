@@ -1,10 +1,10 @@
-/* Hallmark · component: features · genre: editorial · theme: Inspo-paper
+/* Inspo · component: features · genre: editorial · theme: Inspo-paper
  * archetype: Icon trio · diversification: three features each carrying
- *   a typographic mark — no SVG iconography
+ *   a typographic mark - no SVG iconography
  * states: default + hover (mark colour shift)
  * contrast: pass (46-50)
  *
- * Hallmark note: rotational SVG iconography (rounded squares + line
+ * Note: rotational SVG iconography (rounded squares + line
  * icons) is one of the strongest AI fingerprints. The typographic
  * marks here (a single mono letter inside a hairline square) carry
  * the same hierarchy without the slop tell.
@@ -19,7 +19,7 @@ const ITEMS = [
   {
     mark: "C",
     label: "Crop",
-    body: "Every captured page has its component regions cropped — heroes, pricing, footers — addressable from the MCP.",
+    body: "Every captured page has its component regions cropped - heroes, pricing, footers - addressable from the MCP.",
   },
   {
     mark: "D",

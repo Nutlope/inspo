@@ -1,6 +1,6 @@
 "use client";
 
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
  * archetype: Form-led · diversification: differs from Banded on
  *   action shape (input vs button) + paper band (paper vs accent)
  * states: default · hover · focus · success (after submit)
@@ -10,7 +10,7 @@
 import { useState, type FormEvent } from "react";
 
 /**
- * Form-led CTA — the input *is* the action. Single email field with an
+ * Form-led CTA - the input *is* the action. Single email field with an
  * inline submit affordance, a small value-prop above. The success state
  * collapses the form to a confirmation line; failure shows under the
  * input in mono caption type. Reach for it when the conversion is a
@@ -32,7 +32,7 @@ export function CtaFormLed() {
   return (
     <section className="border-y rule bg-[var(--color-bg)] px-8 py-20 sm:px-14 sm:py-24">
       <div className="mx-auto max-w-2xl">
-        <p className="text-meta">Field notes — every other Friday</p>
+        <p className="text-meta">Field notes - every other Friday</p>
         <p
           className="font-display mt-4 text-balance leading-[1.1]"
           style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}

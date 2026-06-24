@@ -1,4 +1,4 @@
-/* Hallmark · component: hero · genre: editorial · theme: Inspo-paper
+/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
  * macrostructure: Manifesto · diversification: differs from Stat-Led on
  *   paper band (dark vs light) + accent application (bleed vs corner)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Manifesto — a single declaration on a black ground, set in display
+ * Manifesto - a single declaration on a black ground, set in display
  * weight, with one phrase punched out in accent red. No CTAs, no proof
  * strip, no nav. The voice carries the brand. Reach for it when the
  * brief is opinionated and the user knows it.
@@ -20,10 +20,10 @@ export function HeroManifesto() {
         px-8 py-24 sm:px-14 sm:py-32
       "
     >
-      {/* Marginalia — small mono datelines top and bottom. They place
+      {/* Marginalia - small mono datelines top and bottom. They place
           the manifesto in time and give the type something to push off. */}
       <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-paper)]/60">
-        Manifesto Nº01 — May 2026
+        Manifesto Nº01 - May 2026
       </p>
 
       <p
@@ -40,7 +40,7 @@ export function HeroManifesto() {
       </p>
 
       <p className="font-mono mt-16 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-paper)]/60">
-        Signed — the editors
+        Signed - the editors
       </p>
     </section>
   );

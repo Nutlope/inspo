@@ -1,8 +1,8 @@
 "use client";
 
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Search-led · diversification: filter input above an open
- *   list — search beats accordion when the FAQ runs long
+ *   list - search beats accordion when the FAQ runs long
  * states: default · focus · filtered · empty
  * contrast: pass (46-50)
  */
@@ -10,7 +10,7 @@
 import { useMemo, useState } from "react";
 
 const QA = [
-  { q: "Is Inspo free?", a: "Yes — open source, MIT, free in every tier." },
+  { q: "Is Inspo free?", a: "Yes - open source, MIT, free in every tier." },
   { q: "How do I install the MCP?", a: "`npx inspo init` writes the server entry into your editor's config." },
   { q: "Can I self-host?", a: "Every dependency has a free tier or local equivalent." },
   { q: "Where does the catalogue come from?", a: "Curated by hand from a seed list, then captured by the worker." },
@@ -66,7 +66,7 @@ export function FaqSearchLed() {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="search the FAQ — try 'install' or 'self-host'"
+          placeholder="search the FAQ - try 'install' or 'self-host'"
           className="flex-1 min-w-0 bg-transparent outline-none font-mono text-sm placeholder:text-[var(--color-fg-muted)]"
         />
       </form>

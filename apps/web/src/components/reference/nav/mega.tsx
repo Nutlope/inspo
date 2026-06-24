@@ -1,8 +1,8 @@
 "use client";
 
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N3 Mega menu · diversification: hover reveals a panel
- *   instead of a flyout — index-page-style sub-nav
+ *   instead of a flyout - index-page-style sub-nav
  * states: default · hover · focus-within (keyboard)
  * contrast: pass (46-50)
  */
@@ -10,7 +10,7 @@
 import { useState } from "react";
 
 /**
- * Mega menu — top-level links that reveal a multi-column panel on
+ * Mega menu - top-level links that reveal a multi-column panel on
  * hover or focus. Each panel reads like a sub-index. Reach for it on
  * deep sites (docs, large product catalogues) where flyouts get
  * unwieldy.
@@ -67,7 +67,7 @@ export function NavMega() {
         </nav>
       </div>
 
-      {/* Panel — fades in on hover/focus. One panel per top-level link. */}
+      {/* Panel - fades in on hover/focus. One panel per top-level link. */}
       {open && (
         <div className="absolute inset-x-0 top-full z-10 border-b rule bg-[var(--color-bg)] px-8 py-10 sm:px-14">
           <p className="text-meta">{open}</p>

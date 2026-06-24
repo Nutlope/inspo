@@ -1,12 +1,12 @@
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Two-column open · diversification: differs from Accordion
- *   on interaction (none — all open) + structure (Q-left, A-right)
+ *   on interaction (none - all open) + structure (Q-left, A-right)
  * states: default (static)
  * contrast: pass (46-50)
  */
 
 /**
- * Two-column open — every Q&A on display, no toggle. Question sits in
+ * Two-column open - every Q&A on display, no toggle. Question sits in
  * the left column, answer in the right. Reads as a magazine Q&A
  * interview, not a help-desk FAQ. Good when the questions are short
  * and the answers are the meat.
@@ -18,11 +18,11 @@ const QA = [
   },
   {
     q: "Why MCP and not a REST API?",
-    a: "Both, actually. The MCP wraps the same query surface a REST API exposes — the value is in the catalogue, not the protocol.",
+    a: "Both, actually. The MCP wraps the same query surface a REST API exposes - the value is in the catalogue, not the protocol.",
   },
   {
     q: "Who is this for?",
-    a: "Designers and the coding agents they work alongside. The website is for humans — browse, study, copy a DESIGN.md. The MCP is for agents — same catalogue, addressed by tool calls.",
+    a: "Designers and the coding agents they work alongside. The website is for humans - browse, study, copy a DESIGN.md. The MCP is for agents - same catalogue, addressed by tool calls.",
   },
   {
     q: "What about copyright?",

@@ -39,8 +39,8 @@ const BLOB_ORIGIN = "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s — ${site.name}`,
+    default: `${site.name} - ${site.tagline}`,
+    template: `%s - ${site.name}`,
   },
   description: site.description,
   openGraph: {
@@ -59,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   // Preconnect to the blob origin so the TLS handshake overlaps with
-  // HTML parsing — saves ~80–200 ms on first image on cold page loads,
+  // HTML parsing - saves ~80-200 ms on first image on cold page loads,
   // where every gallery tile pulls from this host. Next 16's preferred
   // API is ReactDOM.preconnect/prefetchDNS rather than raw <link> tags.
   ReactDOM.preconnect(BLOB_ORIGIN, { crossOrigin: "anonymous" });

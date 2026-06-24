@@ -1,15 +1,15 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: 4-stat row · diversification: real numbers from the
- *   project — no invented metrics (Hallmark anti-invented-metrics rule)
+ *   project - no invented metrics (anti-invented-metrics rule)
  * states: default (static)
  * contrast: pass (46-50)
  */
 
 /**
- * Stat row — four real catalogue numbers, set in display weight,
+ * Stat row - four real catalogue numbers, set in display weight,
  * separated by hairline rules. Tabular-nums so the digits align even
  * if values change across renders. Numbers are real (catalogue size,
- * tag count, etc.) — never invented to inflate proof.
+ * tag count, etc.) - never invented to inflate proof.
  */
 const STATS = [
   { value: "1,019", label: "Sites filed" },

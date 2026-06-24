@@ -1,10 +1,10 @@
-/* Hallmark · component: features · genre: editorial · theme: Inspo-paper
+/* Inspo · component: features · genre: editorial · theme: Inspo-paper
  * archetype: Compare grid · diversification: feature comparison without
- *   naming competitors — categorical "before / with" framing
+ *   naming competitors - categorical "before / with" framing
  * states: default · hover (cells)
  * contrast: pass (46-50)
  *
- * Hallmark note: comparison tables that name competitors slip into
+ * Note: comparison tables that name competitors slip into
  * marketing slop fast. Frame the comparison categorically (before /
  * with) so the page is honest about *what changes*, not which
  * neighbour you're trying to beat.
@@ -14,17 +14,17 @@ const ROWS = [
   {
     capability: "Visual reference",
     before: "Browse a screenshot site by hand",
-    after: "search_screens via MCP — agent gets URLs",
+    after: "search_screens via MCP - agent gets URLs",
   },
   {
     capability: "Design tokens",
     before: "Read the source and translate by eye",
-    after: "get_design_system — palette, type ramp, spacing",
+    after: "get_design_system - palette, type ramp, spacing",
   },
   {
     capability: "Component patterns",
     before: "Hunt Storybook or copy from competitors",
-    after: "find_components — real crops + canonical code",
+    after: "find_components - real crops + canonical code",
   },
   {
     capability: "Cost",

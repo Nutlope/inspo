@@ -1,4 +1,4 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: Horizontal bar chart · diversification: numbers shown as
  *   relative magnitudes, not isolated figures
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Bar chart — five categories with horizontal bars proportional to
+ * Bar chart - five categories with horizontal bars proportional to
  * real catalogue counts. Each bar carries the figure as a typographic
  * label at the end of the line. Pure CSS, no chart library. The
  * proportions are real (sites per industry); replace with your own

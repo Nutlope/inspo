@@ -1,4 +1,4 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Ft8 Address card · diversification: real-world contact info,
  *   no link map, no social row
  * states: default + hover
@@ -6,7 +6,7 @@
  */
 
 /**
- * Address card — for studios and agencies whose footer is a business
+ * Address card - for studios and agencies whose footer is a business
  * card. Postal + email + phone, set in mono caption type. Reads like
  * the back of a printed brochure. No social icons (icons in footers
  * are an AI tell).
@@ -40,9 +40,9 @@ export function FooterAddress() {
         <div>
           <p className="text-meta">Hours</p>
           <p className="mt-4 text-sm leading-relaxed text-[var(--color-fg)]">
-            Mon — Fri
+            Mon - Fri
             <br />
-            <span className="text-[var(--color-fg-muted)]">10:00 — 18:00 ET</span>
+            <span className="text-[var(--color-fg-muted)]">10:00 - 18:00 ET</span>
           </p>
         </div>
         <div>

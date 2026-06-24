@@ -1,10 +1,10 @@
-/* Hallmark · component: logo-cloud · genre: editorial · theme: Inspo-paper
+/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
  * archetype: Single-row strip · diversification: typographic wordmarks,
  *   no rasterised real logos (no invented "trusted by")
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Note — wordmark placeholders. The text reads "Studio name" + a real
+ * Note - wordmark placeholders. The text reads "Studio name" + a real
  * Inspo designer credit (drawn from credit field, not invented).
  * Replace with the real customer wordmarks at ship.
  */
@@ -13,7 +13,7 @@ const MARKS = [
   { label: "Studio 01", weight: "font-display" },
   { label: "STUDIO 02", weight: "font-mono uppercase tracking-[0.18em] text-sm" },
   { label: "Studio 03", weight: "font-display italic" },
-  { label: "S—04", weight: "font-mono uppercase tracking-[0.12em] text-base" },
+  { label: "S-04", weight: "font-mono uppercase tracking-[0.12em] text-base" },
   { label: "Studio 05", weight: "font-display tracking-tight" },
 ];
 

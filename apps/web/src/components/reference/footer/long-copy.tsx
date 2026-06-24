@@ -1,12 +1,12 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Long copy · diversification: closes the page with a small
- *   essay rather than a link map — manifesto in miniature
+ *   essay rather than a link map - manifesto in miniature
  * states: default + hover (single link)
  * contrast: pass (46-50)
  */
 
 /**
- * Long-copy footer — a small essay at the end of the page. Reads as
+ * Long-copy footer - a small essay at the end of the page. Reads as
  * the closing paragraph of a magazine piece. Reach for it when the
  * brand voice deserves the last word.
  */
@@ -18,7 +18,7 @@ export function FooterLongCopy() {
         <div className="lg:col-span-10 space-y-5 max-w-[68ch] text-base leading-relaxed text-[var(--color-fg)]">
           <p>
             Inspo is a reference layer. Every site here was made by
-            someone who cared about the work — we file it, credit it,
+            someone who cared about the work - we file it, credit it,
             and address it so the next person doesn&rsquo;t have to
             re-derive the same lessons from scratch. The catalogue
             grows slowly, by hand. Curation is the moat.
@@ -30,7 +30,7 @@ export function FooterLongCopy() {
         </div>
       </div>
       <div className="mt-12 flex flex-wrap items-baseline justify-between gap-3 border-t rule pt-6 text-meta">
-        <span>© {new Date().getFullYear()} — MIT</span>
+        <span>© {new Date().getFullYear()} - MIT</span>
         <a
           href="https://github.com/Luffixos/inspo"
           target="_blank"

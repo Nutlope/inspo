@@ -21,16 +21,16 @@ const TYPE_LABELS: Record<ComponentType, string> = {
 };
 
 const TYPE_HINTS: Record<ComponentType, string> = {
-  hero: "The line everyone reads first — and the macrostructure that frames it.",
+  hero: "The line everyone reads first - and the macrostructure that frames it.",
   pricing: "Plan comparisons, price cards, billing toggles.",
   features: "Bento grids, feature trios, product blocks.",
-  cta: "Mid-page conversion sections — earn loudness by being singular.",
+  cta: "Mid-page conversion sections - earn loudness by being singular.",
   nav: "Top navigation rows.",
   footer: "Site colophons, link maps, fine print.",
   testimonial: "Customer quotes, reviews, social proof.",
   "logo-cloud": "The strip of partner / customer logos.",
   faq: "Question stacks, accordion-style FAQ blocks.",
-  stat: "Rows of big numbers — usage stats, revenue, scale.",
+  stat: "Rows of big numbers - usage stats, revenue, scale.",
 };
 
 const TYPES = Object.keys(TYPE_LABELS) as ComponentType[];
@@ -86,7 +86,7 @@ export default async function ComponentTypePage({
         </div>
       </section>
 
-      {/* References — Hallmark-disciplined live examples ───────── */}
+      {/* References: canonical reference components, live examples ── */}
       {references.length > 0 && (
         <section className="border-t rule pb-24 pt-16 space-y-24">
           {references.map((ref, i) => (
@@ -109,7 +109,7 @@ export default async function ComponentTypePage({
               </header>
               <div className="grid grid-cols-1 gap-x-10 lg:grid-cols-12">
                 <div className="lg:col-span-12">
-                  {/* Live render. The example IS the artifact — no crop,
+                  {/* Live render. The example IS the artifact - no crop,
                       no screenshot, no PNG. Designers can inspect, copy,
                       and read hover behaviour in their devtools. */}
                   <ref.Component />
@@ -120,7 +120,7 @@ export default async function ComponentTypePage({
         </section>
       )}
 
-      {/* Real captures — extracted crops from production sites.
+      {/* Real captures - extracted crops from production sites.
           Empty in production today (no component coords in the static
           seed). Kept so when the backfill lands the grid populates
           without code changes. */}

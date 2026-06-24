@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
  *
  * Server Component: the count is fetched at build / hourly revalidation
  * (ISR), so there's no client JS and GitHub's API is hit at most once an
- * hour — the fetch is deduped + cached across every page that renders the
+ * hour - the fetch is deduped + cached across every page that renders the
  * masthead. Degrades to a plain "Star" CTA if the API is unreachable
  * (rate-limited, offline, private repo).
  */
@@ -44,7 +44,7 @@ export async function GithubStar() {
       rel="noopener noreferrer"
       aria-label={
         stars !== null
-          ? `Star Inspo on GitHub — ${stars.toLocaleString()} stars`
+          ? `Star Inspo on GitHub - ${stars.toLocaleString()} stars`
           : "Star Inspo on GitHub"
       }
       className="

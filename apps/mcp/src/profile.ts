@@ -6,8 +6,8 @@
  * Two independent axes:
  *
  *   profile  "full" | "lite"
- *     full: all 14 tools (today's behaviour).
- *     lite: the 7 highest-leverage tools. Small models degrade as the
+ *     full: all 16 tools (today's behaviour).
+ *     lite: the 9 highest-leverage tools. Small models degrade as the
  *     tool count grows (selection accuracy falls off past ~10 tools),
  *     and most OSS harnesses are used with small-to-mid models.
  *
@@ -43,8 +43,8 @@ export interface RegisterOptions {
 
 /** The lite tool surface. Everything an agent needs to go from brief
  *  to page: orchestrate (recommend), browse (search_screens), drill in
- *  (get_screen), harvest tokens (get_design_system, study), follow
- *  Hallmark (find_examples_for_macrostructure), and grab canonical
+ *  (get_screen), harvest tokens (get_design_system, study), pick a
+ *  macrostructure (find_examples_for_macrostructure), and grab canonical
  *  code (find_reference_components, which returns full JSX when
  *  filtered by type). */
 export const LITE_TOOLS: ReadonlySet<string> = new Set([

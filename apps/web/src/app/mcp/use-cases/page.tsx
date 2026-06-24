@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Use cases · MCP",
   description:
-    "Three concrete examples of how the Inspo MCP changes what your coding agent produces — including the design briefs and the screens it pulls.",
+    "Three concrete examples of how the Inspo MCP changes what your coding agent produces - including the design briefs and the screens it pulls.",
 };
 
 type UseCase = {
@@ -34,16 +34,16 @@ const USE_CASES: UseCase[] = [
         {
           tool: "search_screens",
           args: '{ query: "fintech editorial typography dashboard" }',
-          returns: "8 hits — top: mercury-com, ramp-com, brex-com, linear-app, longbow-fintech",
+          returns: "8 hits - top: mercury-com, ramp-com, brex-com, linear-app, longbow-fintech",
         },
         {
           tool: "get_design_system",
           args: '{ slug: "mercury-com" }',
-          returns: "DESIGN.md with Mercury's actual type ramp, palette, spacing scale, CSS variables, and Hallmark macrostructure (Quote-Led).",
+          returns: "DESIGN.md with Mercury's actual type ramp, palette, spacing scale, CSS variables, and named macrostructure (Quote-Led).",
         },
       ],
       designSummary:
-        "Agent receives Mercury's real type ramp (h1 60px / 510 weight / -1.5px tracking), real spacing (8 / 12 / 16 / 24 / 40 / 64 / 96), the warm-paper palette, and the macrostructure pick. It now generates a dashboard that looks like a deliberate Mercury-class design — not an AI's imagination of one.",
+        "Agent receives Mercury's real type ramp (h1 60px / 510 weight / -1.5px tracking), real spacing (8 / 12 / 16 / 24 / 40 / 64 / 96), the warm-paper palette, and the macrostructure pick. It now generates a dashboard that looks like a deliberate Mercury-class design - not an AI's imagination of one.",
       referenceSlugs: ["mercury-com", "ramp-com", "linear-app", "longbow-fintech"],
     },
     takeaway:
@@ -59,7 +59,7 @@ const USE_CASES: UseCase[] = [
         {
           tool: "find_examples_for_macrostructure",
           args: '{ name: "Photographic" }',
-          returns: "75 matches — top: salon-east, ruby-archive, robin-noguier, boulevard-bar, a24films-com",
+          returns: "75 matches - top: salon-east, ruby-archive, robin-noguier, boulevard-bar, a24films-com",
         },
         {
           tool: "get_design_system",
@@ -68,23 +68,23 @@ const USE_CASES: UseCase[] = [
         },
       ],
       designSummary:
-        "Agent picks Ruby Archive as its reference because the brief asks for 'photographer portfolio' — the macrostructure is genuinely Photographic. Receives real Garamond/Inter pairing, the actual hover-reveal index pattern, and the asymmetric crop ratios. Output is index-first not grid-first — a real editorial choice the LLM wouldn't make alone.",
+        "Agent picks Ruby Archive as its reference because the brief asks for 'photographer portfolio' - the macrostructure is genuinely Photographic. Receives real Garamond/Inter pairing, the actual hover-reveal index pattern, and the asymmetric crop ratios. Output is index-first not grid-first - a real editorial choice the LLM wouldn't make alone.",
       referenceSlugs: ["ruby-archive", "salon-east", "robin-noguier"],
     },
     takeaway:
-      "Hallmark's macrostructure vocabulary points the agent at the right shape (Photographic vs Portfolio Grid). Inspo gives it 75 real ones to study. Pairing matters.",
+      "The macrostructure vocabulary points the agent at the right shape (Photographic vs Portfolio Grid). Inspo gives it 75 real ones to study. The shape narrows the search; the references give it taste.",
   },
   {
     slug: "saas-bento",
     prompt: "Make a SaaS landing page using a bento grid.",
     withoutMCP:
-      "Bento grid in the abstract — three columns, varying card sizes, a stat in the middle, a logo cloud at the bottom. No taste; just the abstraction.",
+      "Bento grid in the abstract - three columns, varying card sizes, a stat in the middle, a logo cloud at the bottom. No taste; just the abstraction.",
     withMCP: {
       toolCalls: [
         {
           tool: "find_examples_for_macrostructure",
           args: '{ name: "Bento Grid" }',
-          returns: "240 matches — top: linear-app, ui-shadcn-com, magicui-design, supabase-com, vercel-com",
+          returns: "240 matches - top: linear-app, ui-shadcn-com, magicui-design, supabase-com, vercel-com",
         },
         {
           tool: "search_screens",
@@ -94,7 +94,7 @@ const USE_CASES: UseCase[] = [
         {
           tool: "get_design_system",
           args: '{ slug: "linear-app" }',
-          returns: "Linear's actual asymmetric bento — large hero card 55% width, three small support cards alternating right.",
+          returns: "Linear's actual asymmetric bento - large hero card 55% width, three small support cards alternating right.",
         },
       ],
       designSummary:
@@ -102,7 +102,7 @@ const USE_CASES: UseCase[] = [
       referenceSlugs: ["linear-app", "ui-shadcn-com", "magicui-design", "supabase-com"],
     },
     takeaway:
-      "Bento Grid is 240 captures wide. The macrostructure name alone isn't enough — picking *which* Bento to study is the design decision. Inspo lets the agent make that decision with real data.",
+      "Bento Grid is 240 captures wide. The macrostructure name alone isn't enough - picking *which* Bento to study is the design decision. Inspo lets the agent make that decision with real data.",
   },
 ];
 
@@ -129,7 +129,7 @@ export default async function UseCasesPage() {
             What the MCP <em className="italic">actually</em> does.
           </h1>
           <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-[var(--color-fg-muted)]">
-            Three real prompts. Same agent — once without Inspo, once with.
+            Three real prompts. Same agent - once without Inspo, once with.
             Inspo doesn&rsquo;t make your agent smarter. It hands it real
             production sites to study first.
           </p>
@@ -244,8 +244,8 @@ export default async function UseCasesPage() {
           <p className="text-meta lg:col-span-2">Install</p>
           <div className="lg:col-span-10 space-y-4">
             <p className="font-display text-3xl leading-snug">
-              One <code className="font-mono">npx inspo init</code> and your
-              agent has Inspo&rsquo;s tools too.
+              One <code className="font-mono">claude mcp add</code> against the
+              free hosted endpoint and your agent has Inspo&rsquo;s tools too.
             </p>
             <p className="text-meta">
               <Link

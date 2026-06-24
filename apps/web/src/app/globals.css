@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Inspo — Editorial Design Tokens
+   Inspo - Editorial Design Tokens
    Vibe: archive / magazine / colophon (A24, MUBI, Are.na)
    ============================================================ */
 
@@ -25,7 +25,7 @@
   --color-rule-dark: #2a2825;
   --color-accent-dark: #e36b58;
 
-  /* Active surface tokens — flipped by .dark */
+  /* Active surface tokens - flipped by .dark */
   --color-bg: var(--color-paper);
   --color-fg: var(--color-ink);
   --color-fg-muted: var(--color-ink-muted);
@@ -83,13 +83,13 @@ body {
   font-feature-settings: "ss01", "cv11";
 }
 
-/* Selection — editorial red highlight */
+/* Selection - editorial red highlight */
 ::selection {
   background: var(--color-link);
   color: var(--color-bg);
 }
 
-/* Focus — global ring for links/buttons; inputs handle their own
+/* Focus - global ring for links/buttons; inputs handle their own
    focus state (the home search uses an animated underline). */
 :focus-visible {
   outline: 2px solid var(--color-link);
@@ -220,7 +220,7 @@ textarea:focus-visible {
 
 /* ─── Skeleton shimmer ─────────────────────────────────────
    A faint diagonal sheen sweeps the tile placeholder every 1.6s.
-   Calmer than a typical shimmer (no high-contrast white bar) — keeps
+   Calmer than a typical shimmer (no high-contrast white bar) - keeps
    the page from feeling like it's busy doing nothing.
 */
 @keyframes screens-skeleton-shimmer-sweep {
@@ -295,7 +295,7 @@ textarea:focus-visible {
 }
 
 
-/* View Transitions — quick editorial crossfade between routes.
+/* View Transitions - quick editorial crossfade between routes.
    Only fires in browsers that support the View Transitions API
    (Chrome/Edge stable, Safari TP, Firefox behind flag). Otherwise
    the page swaps instantly as usual. */
@@ -320,7 +320,7 @@ textarea:focus-visible {
 
 /* ─── ⌘K palette · group rhythm ────────────────────────────
    cmdk gives us [cmdk-group] wrappers and [cmdk-group-heading]
-   labels with no default styling. The defaults read as shouty —
+   labels with no default styling. The defaults read as shouty -
    too much top margin, plain text. Replace with a small lowercase
    mono caption, faint colour, hairline rule to the right so each
    section reads like a magazine sub-deck rather than a label.
@@ -355,13 +355,13 @@ textarea:focus-visible {
   padding-top: 6px;
 }
 /* When the active item is in a group, give the heading a hint of
-   accent so the eye knows where it is. Subtle — about a 10% tint. */
+   accent so the eye knows where it is. Subtle - about a 10% tint. */
 [cmdk-group]:has([aria-selected="true"]) > [cmdk-group-heading] {
   color: color-mix(in oklab, var(--color-link) 75%, var(--color-fg-muted));
 }
 
 /* ─── MCP page · section labels ───────────────────────────
-   The thin labels in the left rail of the MCP page were too quiet —
+   The thin labels in the left rail of the MCP page were too quiet -
    the page is the project's elevator pitch and these need to catch
    the eye. Same mono caption typography as .text-meta but with full
    foreground contrast: ink on light, pure white on dark. Slightly

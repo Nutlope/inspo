@@ -1,32 +1,32 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Mosaic · diversification: differs from Pull-Quote on
  *   density (4 voices vs 1) + composition (grid vs hero)
  * states: default · hover (subtle lift)
  * contrast: pass (46-50)
  *
- * Note — quotes are placeholder slots. Replace with real attributed
- * customer voices before shipping; Hallmark forbids invented
+ * Note - quotes are placeholder slots. Replace with real attributed
+ * customer voices before shipping; No invented
  * customer testimonials.
  */
 
 const QUOTES = [
   {
-    text: "[Quote slot 01 — replace before shipping.]",
+    text: "[Quote slot 01 - replace before shipping.]",
     who: "[Name]",
     role: "[Role]",
   },
   {
-    text: "[Quote slot 02 — keep it short. One sentence beats four.]",
+    text: "[Quote slot 02 - keep it short. One sentence beats four.]",
     who: "[Name]",
     role: "[Role]",
   },
   {
-    text: "[Quote slot 03 — focus on what changed, not adjectives.]",
+    text: "[Quote slot 03 - focus on what changed, not adjectives.]",
     who: "[Name]",
     role: "[Role]",
   },
   {
-    text: "[Quote slot 04 — the strongest voice goes here.]",
+    text: "[Quote slot 04 - the strongest voice goes here.]",
     who: "[Name]",
     role: "[Role]",
   },
@@ -54,7 +54,7 @@ export function TestimonialMosaic() {
               &ldquo;{q.text}&rdquo;
             </p>
             <div className="mt-8 flex items-baseline gap-3 border-t rule pt-4">
-              <span className="text-meta">—</span>
+              <span className="text-meta">-</span>
               <p className="text-sm">
                 <span className="text-[var(--color-fg)]">{q.who}</span>
                 <span className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)]"> · {q.role}</span>

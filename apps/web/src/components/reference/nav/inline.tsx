@@ -1,11 +1,11 @@
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N1 Inline minimal · diversification: canonical wordmark + links
  * states: default · hover (link colour) · focus-visible (outline)
  * contrast: pass (46-50)
  */
 
 /**
- * Inline minimal — wordmark left, links inline, utilities right. The
+ * Inline minimal - wordmark left, links inline, utilities right. The
  * mono utility cluster (search · theme) sits tighter than the nav links
  * so it reads as a separate group rather than another nav row.
  */

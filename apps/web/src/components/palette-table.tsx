@@ -1,12 +1,12 @@
 /**
- * Palette table — replaces the chip+hex row in the detail page's
+ * Palette table - replaces the chip+hex row in the detail page's
  * palette band. Renders each colour as: large swatch · hex · OKLCH
  * equivalent · suggested role · per-row copy buttons (hex + CSS var).
  *
  * Roles are inferred from index: extracted palettes (node-vibrant)
  * are returned roughly sorted by prominence, so index 0 = dominant,
  * 1 = secondary surface, 2 = ink, 3 = accent candidate, 4 = detail.
- * This is a heuristic, not a contract — the column is labelled
+ * This is a heuristic, not a contract - the column is labelled
  * "Suggested role" to be honest about it.
  *
  * The OKLCH conversion is best-effort. We accept #rgb / #rrggbb only
@@ -51,7 +51,7 @@ export function PaletteTable({
       )}
 
       <div className="border rule overflow-hidden">
-        {/* Header — visible on lg, hidden on small (the rows label
+        {/* Header - visible on lg, hidden on small (the rows label
             themselves with inline meta). */}
         <div
           className="hidden lg:grid lg:grid-cols-[5.5rem_minmax(7rem,1fr)_minmax(11rem,1.4fr)_minmax(6rem,0.8fr)_auto] gap-x-6 items-center border-b rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] px-4 py-3"
@@ -85,7 +85,7 @@ export function PaletteTable({
                 <div className="flex items-baseline gap-3 lg:gap-0 lg:flex-col lg:items-start">
                   <span className="lg:hidden text-meta">OKLCH</span>
                   <span className="font-mono text-xs text-[var(--color-fg-muted)] break-all">
-                    {oklch ?? "—"}
+                    {oklch ?? "-"}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-3 lg:gap-0 lg:flex-col lg:items-start">

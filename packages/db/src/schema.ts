@@ -98,7 +98,7 @@ export const screens = pgTable(
     tech: jsonb("tech").$type<string[]>().notNull().default([]),
     mode: text("mode").$type<Mode>().notNull().default("light"),
 
-    // Hallmark vocabulary (denormalized for filter speed)
+    // Named macrostructure + theme vocabulary (denormalized for filter speed)
     macrostructure: text("macrostructure"),
     hallmarkTheme: text("hallmark_theme"),
 

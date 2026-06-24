@@ -1,6 +1,6 @@
 "use client";
 
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Accordion · diversification: native <details>, single-open
  *   behaviour, no JS-only library
  * states: default · hover · open · focus-visible
@@ -10,15 +10,15 @@
 import { useRef } from "react";
 
 /**
- * Accordion — built on native <details>/<summary> so keyboard, screen
+ * Accordion - built on native <details>/<summary> so keyboard, screen
  * reader, and no-JS behaviour all work for free. The "single open at a
  * time" pattern is enforced by closing siblings on each toggle. The
- * affordance is a typographic "+ / —" pair, not an SVG chevron.
+ * affordance is a typographic "+ / -" pair, not an SVG chevron.
  */
 const QA = [
   {
     q: "Is Inspo free?",
-    a: "Yes — open source, MIT, owned by Together AI. Free in every tier. The tiers differ in how much of the stack you run yourself.",
+    a: "Yes - open source, MIT, owned by Together AI. Free in every tier. The tiers differ in how much of the stack you run yourself.",
   },
   {
     q: "How do I install the MCP server?",

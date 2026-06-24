@@ -69,17 +69,17 @@ export default async function CollectionPage({
         </div>
       </section>
 
-      {/* The pages — asymmetric magazine layout ───────────── */}
+      {/* The pages - asymmetric magazine layout ───────────── */}
       <section className="grid grid-cols-1 gap-x-6 gap-y-16 pt-20 pb-24 lg:grid-cols-12 lg:gap-y-24">
         {entries.map(({ screen, editorNote, span }, i) => {
           const colSpan = SPAN_CLASSES[span ?? 2];
-          // Alternate offset to break the rhythm — odd indices push right
+          // Alternate offset to break the rhythm - odd indices push right
           const offset = i % 3 === 1 ? "lg:col-start-3" : i % 3 === 2 ? "lg:col-start-6" : "lg:col-start-2";
 
           return (
             <article key={screen.slug} className={`${colSpan} ${offset}`}>
               <p className="text-meta mb-4">
-                Plate {String(i + 1).padStart(2, "0")} —{" "}
+                Plate {String(i + 1).padStart(2, "0")} -{" "}
                 <Link
                   href={`/screens/${screen.slug}`}
                   className="text-[var(--color-fg)] hover:text-[var(--color-link)]"
@@ -101,7 +101,7 @@ export default async function CollectionPage({
               )}
 
               <div className="mt-3 flex items-baseline justify-between text-meta">
-                <span>{screen.designerCredit ?? "—"}</span>
+                <span>{screen.designerCredit ?? "-"}</span>
                 <span>{screen.tags.style[0]}</span>
               </div>
             </article>

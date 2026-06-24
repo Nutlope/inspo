@@ -1,13 +1,13 @@
 /**
- * /examples — "Made with Inspo". A clean, uniform gallery of real pages
+ * /examples - "Made with Inspo". A clean, uniform gallery of real pages
  * an agent built using only the catalogue. Every card shows the actual
- * page (live, scaled iframe) at a fixed 16:10 hero — crisp, consistent,
+ * page (live, scaled iframe) at a fixed 16:10 hero - crisp, consistent,
  * never cropped to a sliver, moderate size. Hover reveals the one-line
  * prompt + build stats; click opens the case study (prompt, references,
  * MCP calls, traced palette).
  *
  * (The desktop↔mobile responsiveness showcase lives on the catalogue
- * detail pages — /screens/[slug] — as a paired view.)
+ * detail pages - /screens/[slug] - as a paired view.)
  */
 
 import Link from "next/link";
@@ -15,7 +15,7 @@ import type { Metadata } from "next";
 import { EXAMPLES, type Example } from "@/lib/examples";
 
 export const metadata: Metadata = {
-  title: "Examples — Made with Inspo",
+  title: "Examples - Made with Inspo",
   description:
     "Real landing pages built by an agent with nothing but the Inspo MCP. See the prompt, the references it studied, and the design system it traced.",
 };
@@ -79,7 +79,7 @@ export default function ExamplesPage() {
           </h1>
           <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
             Each page below was built by a coding agent given one sentence
-            and nothing but the Inspo MCP — no design skill, no templates,
+            and nothing but the Inspo MCP - no design skill, no templates,
             no component library. Hover any card for the prompt; open it
             for the references it studied, every tool call it made, and the
             palette it traced back to real sites.
@@ -100,13 +100,13 @@ export default function ExamplesPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/examples/${ex.slug}/thumb.jpg`}
-                    alt={`${ex.brand} — preview`}
+                    alt={`${ex.brand} - preview`}
                     className="block aspect-[16/10] w-full bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))] object-cover object-top"
                     loading="lazy"
                     decoding="async"
                   />
 
-                  {/* Hover tooltip — prompt + build stats */}
+                  {/* Hover tooltip - prompt + build stats */}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
                     <div className="bg-gradient-to-t from-black/85 via-black/55 to-transparent p-4 pt-10">
                       <p className="max-w-[42ch] text-sm leading-snug text-white">

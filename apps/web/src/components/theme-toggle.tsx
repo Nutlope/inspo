@@ -6,7 +6,7 @@
  * globals.css flip atomically.
  *
  * Icons are inline SVGs at a fixed 14px stroke-weight box so sun and moon
- * occupy the *same* optical area — Unicode `☼` / `◐` glyphs differ in
+ * occupy the *same* optical area - Unicode `☼` / `◐` glyphs differ in
  * baseline and width and never looked right in a square cell.
  */
 

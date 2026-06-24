@@ -1,4 +1,4 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Ft5 Statement · diversification: differs from Colophon on
  *   density (high-air vs three-column) + voice (proclamation vs metadata)
  * states: default + hover (single link)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Statement footer — one big sentence, one quiet sign-off. The brand's
+ * Statement footer - one big sentence, one quiet sign-off. The brand's
  * last word on the page. No link map, no copyright noise. Use when the
  * site has a strong editorial voice and you want it to land last.
  */

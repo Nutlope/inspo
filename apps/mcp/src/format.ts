@@ -41,7 +41,7 @@ export function formatScreen(s: ScreenSummary, why?: string) {
           label: MACROSTRUCTURE_LABELS[s.tags.macrostructure],
         }
       : null,
-    hallmarkTheme: s.tags.hallmarkTheme ?? null,
+    theme: s.tags.hallmarkTheme ?? null,
     ...(why ? { whyThisMatches: why } : {}),
   };
 }

@@ -2,7 +2,7 @@
 
 /**
  * ⌘K hint in the masthead. Clicking dispatches a Cmd+K keydown so the same
- * code path opens the palette as keyboard. Sized to match <ThemeToggle> —
+ * code path opens the palette as keyboard. Sized to match <ThemeToggle> -
  * same height, same border treatment, same colour transitions.
  */
 

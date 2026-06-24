@@ -1,28 +1,28 @@
 /**
- * "Made with Inspo" — case-study manifest for the /examples pages.
+ * "Made with Inspo" - case-study manifest for the /examples pages.
  *
  * Every entry is a REAL page an agent built using only the Inspo MCP
- * (the pure-Inspo arm of the mcp-eval-3 experiment — no design skill,
- * no Hallmark templates, no reference JSX). The generated HTML is
- * copied verbatim into public/examples/<slug>/index.html and iframed.
+ * (the pure-Inspo arm of the mcp-eval-3 experiment, nothing but the
+ * Inspo MCP). The generated HTML is copied verbatim into
+ * public/examples/<slug>/index.html and iframed.
  *
  * The metadata here is transcribed from each build's NOTES.md:
- *   - `prompt`      — the one-line brief the agent was given
- *   - `references`  — the catalogue screens it studied + what it took
+ *   - `prompt`      - the one-line brief the agent was given
+ *   - `references`  - the catalogue screens it studied + what it took
  *                     (slugs all verified present in static-screens.json
  *                      so the /screens links never 404)
- *   - `mcpCalls`    — the actual tool calls it issued
- *   - `palette`     — final tokens, each traced to where it came from
- *   - `scoreSelf`   — the agent's own self-score (honest; the eval
+ *   - `mcpCalls`    - the actual tool calls it issued
+ *   - `palette`     - final tokens, each traced to where it came from
+ *   - `scoreSelf`   - the agent's own self-score (honest; the eval
  *                     report notes self-scores skew high)
  *
- * Effort is expressed as MCP calls + references studied — the truthful
+ * Effort is expressed as MCP calls + references studied - the truthful
  * "how long it took" for an agent build (no wall-clock stopwatch was
  * recorded; calls + refs are the real signal of work done).
  */
 
 export interface ExampleReference {
-  /** Catalogue siteSlug — links to /screens/<slug>. Verified to exist. */
+  /** Catalogue siteSlug - links to /screens/<slug>. Verified to exist. */
   slug: string;
   /** What this reference contributed to the build. */
   took: string;
@@ -48,8 +48,8 @@ export interface Example {
   tagline: string;
   /** The brief the agent was handed. */
   prompt: string;
-  /** Which toolchain — all current entries are pure Inspo. */
-  stack: "pure-inspo" | "hallmark-inspo";
+  /** Which toolchain - all current entries are pure Inspo. */
+  stack: "pure-inspo";
   /** Light/dark register of the generated page (drives preview chrome). */
   mode: "light" | "dark";
   /** Agent's own self-score out of 10. */
@@ -1091,7 +1091,7 @@ export const EXAMPLES: Example[] = [
     "stack": "pure-inspo",
     "mode": "dark",
     "scoreSelf": 8.6,
-    "highlight": "Tight fold-complete hero (verified at 1280×800: hero 92→800, the headline, both CTAs and the featured-release card all inside) with generative CSS/SVG cover art and a mono studio-logbook system, traced to yannnovak / astrodither / hugeinc. The giant overflowing wordmark of the prior version is gone — the brand now lives in the nav.",
+    "highlight": "Tight fold-complete hero (verified at 1280×800: hero 92→800, the headline, both CTAs and the featured-release card all inside) with generative CSS/SVG cover art and a mono studio-logbook system, traced to yannnovak / astrodither / hugeinc. The giant overflowing wordmark of the prior version is gone - the brand now lives in the nav.",
     "references": [
       {
         "slug": "yannnovak-com",
@@ -1185,7 +1185,7 @@ export const EXAMPLES: Example[] = [
       {
         "token": "--lime",
         "hex": "#c8f24a",
-        "from": "hot signal — ghostly-com's #51feff role"
+        "from": "hot signal - ghostly-com's #51feff role"
       },
       {
         "token": "--paper",
@@ -1197,44 +1197,44 @@ export const EXAMPLES: Example[] = [
   {
       "slug": "meridian-bank",
       "brand": "Meridian",
-      "tagline": "The business bank that reads like a balance sheet, not a billboard — high-yield treasury, corporate cards, and wires that clear, for founders and finance teams done with toy fintech.",
+      "tagline": "The business bank that reads like a balance sheet, not a billboard - high-yield treasury, corporate cards, and wires that clear, for founders and finance teams done with toy fintech.",
       "prompt": "Create a marketing site for a modern business bank.",
       "stack": "pure-inspo",
       "mode": "light",
       "scoreSelf": 8.4,
-      "highlight": "The whole page rejects the cold violet/teal/dark-mode default that the fintech cluster (Wealthfront, Qonto, Increase, Payhawk) falls into, and commits instead to a warm-paper editorial private-bank register traced to the two most credible names in the archive: Mercury (captured clay #dcbeae over green-black ink, actually running Tiempos Headline serif) and Brex (live-extracted to Flecha serif + Space Mono + burnt #ff5900). The standout build move is the hero: a Split Studio (Mercury/Qonto macrostructure) whose right half is a fully hand-built treasury console in pure CSS/SVG — a live-ticking tabular-Fraunces balance, an inline SVG yield sparkline, a four-row transaction ledger, and a floating 'wire approved, 2 of 2 signers' chip — with not a single raster image anywhere. Serif display + grotesk + mono-for-figures on warm paper is what keeps a money product from looking like every cold crypto dashboard in the set.",
+      "highlight": "The whole page rejects the cold violet/teal/dark-mode default that the fintech cluster (Wealthfront, Qonto, Increase, Payhawk) falls into, and commits instead to a warm-paper editorial private-bank register traced to the two most credible names in the archive: Mercury (captured clay #dcbeae over green-black ink, actually running Tiempos Headline serif) and Brex (live-extracted to Flecha serif + Space Mono + burnt #ff5900). The standout build move is the hero: a Split Studio (Mercury/Qonto macrostructure) whose right half is a fully hand-built treasury console in pure CSS/SVG - a live-ticking tabular-Fraunces balance, an inline SVG yield sparkline, a four-row transaction ledger, and a floating 'wire approved, 2 of 2 signers' chip - with not a single raster image anywhere. Serif display + grotesk + mono-for-figures on warm paper is what keeps a money product from looking like every cold crypto dashboard in the set.",
       "references": [
         {
           "slug": "mercury-com",
-          "took": "The pivotal proof: captured warm clay accent #dcbeae over green-black ink #0c1c29, Split Studio macrostructure, soft/editorial vibe, and a live design system running Tiempos Headline serif — the entire warm-serif-bank thesis and the --clay/--ink tokens."
+          "took": "The pivotal proof: captured warm clay accent #dcbeae over green-black ink #0c1c29, Split Studio macrostructure, soft/editorial vibe, and a live design system running Tiempos Headline serif - the entire warm-serif-bank thesis and the --clay/--ink tokens."
         },
         {
           "slug": "brex-com",
-          "took": "Live-extracted to Flecha (serif) + Inter + Space Mono on warm muted #ccc4b4 with burnt #ff5900 — validated serif-display + mono-figures + ember-accent as a real fintech pattern; source of --ember and --ink-mute."
+          "took": "Live-extracted to Flecha (serif) + Inter + Space Mono on warm muted #ccc4b4 with burnt #ff5900 - validated serif-display + mono-figures + ember-accent as a real fintech pattern; source of --ember and --ink-mute."
         },
         {
           "slug": "italic-com",
-          "took": "Warm-paper Split Studio with Martina Plantijn serif and sand #d4c5a6/#d1ae81 ('Life is luxury') — anchored the --paper page surface and the luxe-editorial tone."
+          "took": "Warm-paper Split Studio with Martina Plantijn serif and sand #d4c5a6/#d1ae81 ('Life is luxury') - anchored the --paper page surface and the luxe-editorial tone."
         },
         {
           "slug": "antimetal-com",
-          "took": "Editorial Split Studio with Test Signifier serif + Geist on gold/sand #d8971f/#c5bba7 — confirmed the serif+grotesk-on-warm pattern and seeded --gold and the paper hairlines."
+          "took": "Editorial Split Studio with Test Signifier serif + Geist on gold/sand #d8971f/#c5bba7 - confirmed the serif+grotesk-on-warm pattern and seeded --gold and the paper hairlines."
         },
         {
           "slug": "unit-co",
-          "took": "Suisse with tight negative letter-spacing on headings and --colour--dark-green #053222 — informed the tight-grotesk heading treatment and the --moss 'old money' green on the card + security band."
+          "took": "Suisse with tight negative letter-spacing on headings and --colour--dark-green #053222 - informed the tight-grotesk heading treatment and the --moss 'old money' green on the card + security band."
         },
         {
           "slug": "qonto-com",
-          "took": "Split Studio business-account reference; real 4px spacing base, 0–24 radii, 1440 container, plus a hidden warm sand/gold layer in its CSS vars that justified going warm."
+          "took": "Split Studio business-account reference; real 4px spacing base, 0-24 radii, 1440 container, plus a hidden warm sand/gold layer in its CSS vars that justified going warm."
         },
         {
           "slug": "increase-com",
-          "took": "The dark-mode banking-API default (Untitled Sans, .25rem base, 0/4/8/12 radii) I deliberately rejected — the negative reference that proved the cold register was the slop to avoid."
+          "took": "The dark-mode banking-API default (Untitled Sans, .25rem base, 0/4/8/12 radii) I deliberately rejected - the negative reference that proved the cold register was the slop to avoid."
         },
         {
           "slug": "knoll-com",
-          "took": "Surfaced by find_by_color on Mercury's clay tone (#d7beb2, luxe/calm) — part of the warm 'quiet luxury' editorial cluster that set the hairline and surface family."
+          "took": "Surfaced by find_by_color on Mercury's clay tone (#d7beb2, luxe/calm) - part of the warm 'quiet luxury' editorial cluster that set the hairline and surface family."
         }
       ],
       "mcpCalls": [
@@ -1256,27 +1256,27 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "get_design_system",
           "args": "{\"slug\":\"increase-com\",\"live\":true}",
-          "took": "Untitled Sans, .25rem base, tight 0/4/8/12 radii — the dark default I chose to avoid."
+          "took": "Untitled Sans, .25rem base, tight 0/4/8/12 radii - the dark default I chose to avoid."
         },
         {
           "tool": "get_design_system",
           "args": "{\"slug\":\"unit-co\",\"live\":true}",
-          "took": "Tight negative heading tracking and --colour--dark-green #053222 / cream tokens — fed --moss and the heading style."
+          "took": "Tight negative heading tracking and --colour--dark-green #053222 / cream tokens - fed --moss and the heading style."
         },
         {
           "tool": "get_design_system",
           "args": "{\"slug\":\"mercury-com\",\"live\":true}",
-          "took": "The pivot: Mercury runs --font-tiempos-headline (serif) + arcadia — proof a serious bank can be warm + serif."
+          "took": "The pivot: Mercury runs --font-tiempos-headline (serif) + arcadia - proof a serious bank can be warm + serif."
         },
         {
           "tool": "get_design_system",
           "args": "{\"slug\":\"brex-com\",\"live\":true}",
-          "took": "Flecha serif + Inter + Space Mono, palette #ffffff/#ff5900/#15191e/#ccc4b4 — locked serif+mono+ember as a real pattern."
+          "took": "Flecha serif + Inter + Space Mono, palette #ffffff/#ff5900/#15191e/#ccc4b4 - locked serif+mono+ember as a real pattern."
         },
         {
           "tool": "find_by_color",
           "args": "{\"hex\":\"#dcbeae\"}",
-          "took": "Traced Mercury's clay into a coherent warm editorial cluster (Knoll, Brunello Cucinelli, MoMA) — the quiet-luxury paper family."
+          "took": "Traced Mercury's clay into a coherent warm editorial cluster (Knoll, Brunello Cucinelli, MoMA) - the quiet-luxury paper family."
         },
         {
           "tool": "compare",
@@ -1286,7 +1286,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "recommend",
           "args": "{\"brief\":\"warm, trustworthy business bank for founders, serif display, paper tones, editorial not crypto\"}",
-          "took": "Picked Split Studio; returned serif-forward exemplars and the canonical Hallmark Split-Screen 'no stock photos' component I followed for the hero."
+          "took": "Picked Split Studio; returned serif-forward exemplars and the canonical Split-Screen 'no stock photos' component I followed for the hero."
         }
       ],
       "palette": [
@@ -1328,7 +1328,7 @@ export const EXAMPLES: Example[] = [
         {
           "token": "--moss",
           "hex": "#1E3A2B",
-          "from": "unit-co --colour--dark-green #053222 / italic-com #174e36 — 'old money' green"
+          "from": "unit-co --colour--dark-green #053222 / italic-com #174e36 - 'old money' green"
         },
         {
           "token": "--gold",
@@ -1345,7 +1345,7 @@ export const EXAMPLES: Example[] = [
     "stack": "pure-inspo",
     "mode": "dark",
     "scoreSelf": 8.7,
-    "highlight": "Type-forward obsidian hero — General Condition's confidence + Diffusion Studio's discipline, with Diffusion's --gradient-horizon recreated as a warm 'field day' glow behind the wordmark; verified complete in a 1280×800 fold with the headline, dual CTAs and the trusted-by row all inside.",
+    "highlight": "Type-forward obsidian hero - General Condition's confidence + Diffusion Studio's discipline, with Diffusion's --gradient-horizon recreated as a warm 'field day' glow behind the wordmark; verified complete in a 1280×800 fold with the headline, dual CTAs and the trusted-by row all inside.",
     "references": [
       {
         "slug": "diffusion-studio",
@@ -1353,7 +1353,7 @@ export const EXAMPLES: Example[] = [
       },
       {
         "slug": "generalcondition-com",
-        "took": "Type-forward confidence — giant display type filling the fold, heat red."
+        "took": "Type-forward confidence - giant display type filling the fold, heat red."
       },
       {
         "slug": "phantom-land",
@@ -1445,16 +1445,16 @@ export const EXAMPLES: Example[] = [
   {
       "slug": "still-app",
       "brand": "Still",
-      "tagline": "A meditation & sleep app built around one quiet hour — a single, unbroken sixty-minute descent that ends with you already asleep, with no streaks, badges, or morning to optimise.",
+      "tagline": "A meditation & sleep app built around one quiet hour - a single, unbroken sixty-minute descent that ends with you already asleep, with no streaks, badges, or morning to optimise.",
       "prompt": "Build a landing page for a meditation & sleep app.",
       "stack": "pure-inspo",
       "mode": "dark",
       "scoreSelf": 8.6,
-      "highlight": "The hero is a living, breathing lamp: a soft radial amber glow sits low-center behind a hairline Fraunces serif headline and slowly breathes on a 4-7-8 cadence (21% inhale, hold, long exhale) — the exact breath the app's body-scan is paced to, and the copy says so ('the same cadence the light on this page is breathing'). It's pure CSS, mirrored in the closing CTA's lamp, layered with drifting dust motes and a faint Flos-style film grain over a warm near-black night field. So the page doesn't just describe a wind-down, it performs one. Fully disabled under prefers-reduced-motion. The whole 'warm light in the dark' concept came directly from tracing the meditation brief into Inspo's lighting-brand cluster (Flos, Louis Poulsen) rather than the obvious pastel-wellness default.",
+      "highlight": "The hero is a living, breathing lamp: a soft radial amber glow sits low-center behind a hairline Fraunces serif headline and slowly breathes on a 4-7-8 cadence (21% inhale, hold, long exhale) - the exact breath the app's body-scan is paced to, and the copy says so ('the same cadence the light on this page is breathing'). It's pure CSS, mirrored in the closing CTA's lamp, layered with drifting dust motes and a faint Flos-style film grain over a warm near-black night field. So the page doesn't just describe a wind-down, it performs one. Fully disabled under prefers-reduced-motion. The whole 'warm light in the dark' concept came directly from tracing the meditation brief into Inspo's lighting-brand cluster (Flos, Louis Poulsen) rather than the obvious pastel-wellness default.",
       "references": [
         {
           "slug": "davidwhyte-com",
-          "took": "The keystone reference — a poet's site giving the hairline high-contrast serif display (Canela at weight 100, italic accents), the ochre/sage/deep-brown palette, and the contemplative editorial tone. Drove the type system and most palette tokens."
+          "took": "The keystone reference - a poet's site giving the hairline high-contrast serif display (Canela at weight 100, italic accents), the ochre/sage/deep-brown palette, and the contemplative editorial tone. Drove the type system and most palette tokens."
         },
         {
           "slug": "eightsleep-com",
@@ -1487,7 +1487,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "search_screens",
           "args": "{\"query\":\"deep night dark calm serene ambient wellness\",\"mode\":\"dark\",\"limit\":8}",
-          "took": "Showed most dark hits are cold/techy (wrong calm) and surfaced the one gem, davidwhyte-com — confirming the contemplative warm-dark direction."
+          "took": "Showed most dark hits are cold/techy (wrong calm) and surfaced the one gem, davidwhyte-com - confirming the contemplative warm-dark direction."
         },
         {
           "tool": "find_similar",
@@ -1507,7 +1507,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "find_by_color",
           "args": "{\"hex\":\"#ad8253\",\"limit\":6}",
-          "took": "Pulled the warm-dark luxe family — Louis Poulsen #d49434, Flos #2c2014/#d5bca3, Huck — from which I traced the amber accent and the deep ink."
+          "took": "Pulled the warm-dark luxe family - Louis Poulsen #d49434, Flos #2c2014/#d5bca3, Huck - from which I traced the amber accent and the deep ink."
         },
         {
           "tool": "get_design_system",
@@ -1539,7 +1539,7 @@ export const EXAMPLES: Example[] = [
         {
           "token": "--amber",
           "hex": "#D49434",
-          "from": "Louis Poulsen #d49434 — the lamplight accent"
+          "from": "Louis Poulsen #d49434 - the lamplight accent"
         },
         {
           "token": "--amber-soft",
@@ -1561,12 +1561,12 @@ export const EXAMPLES: Example[] = [
   {
     "slug": "tally-finance",
     "brand": "Tally",
-    "tagline": "Money that feels calmer — friendly budgeting that actually sticks.",
+    "tagline": "Money that feels calmer - friendly budgeting that actually sticks.",
     "prompt": "Build a landing page for a friendly personal-finance & budgeting app.",
     "stack": "pure-inspo",
     "mode": "light",
     "scoreSelf": 8.7,
-    "highlight": "Warm oatmeal + terracotta/sage register traced to pi-ai & owo (escaping the cold-teal fintech default), with a left-headline / right phone-mock hero — budget ring, safe-to-spend, transactions, floating chips — that renders complete and balanced at exactly 1280×800.",
+    "highlight": "Warm oatmeal + terracotta/sage register traced to pi-ai & owo (escaping the cold-teal fintech default), with a left-headline / right phone-mock hero - budget ring, safe-to-spend, transactions, floating chips - that renders complete and balanced at exactly 1280×800.",
     "references": [
       {
         "slug": "pi-ai",
@@ -1671,12 +1671,12 @@ export const EXAMPLES: Example[] = [
   {
       "slug": "osteria-nera",
       "brand": "Osteria Nera",
-      "tagline": "A 14-seat tasting-menu restaurant in Torino where chef Lucia Maranzano serves one nightly 11-course menu by candlelight — no choices but the wine.",
+      "tagline": "A 14-seat tasting-menu restaurant in Torino where chef Lucia Maranzano serves one nightly 11-course menu by candlelight - no choices but the wine.",
       "prompt": "Create a landing page for a fine-dining tasting-menu restaurant.",
       "stack": "pure-inspo",
       "mode": "dark",
       "scoreSelf": 8.6,
-      "highlight": "A candlelit table composed entirely in CSS — since restaurants have no stock photos in the archive, the hero atmosphere is built from primitives: a warm-grain near-black ground, two layered radial gradients that pool candlelight and fall off into black (tracing Louis Poulsen's 'golden liquid light' and Eleven Madison Park's warm earth), a plated fifth course rendered from gradients and border-radius (sauce smear, quenelle, foraged leaf, scattered spice-dust), and a keyframed flickering taper (killed under prefers-reduced-motion). The 11-course menu is then set as a numbered Roman carte in Dinner by Heston's Specimen voice, so the movements themselves are the hero content rather than decoration around a photo — restrained, expensive, and the deliberate dark opposite of the warm-light coffee example, drawn from the same archive.",
+      "highlight": "A candlelit table composed entirely in CSS - since restaurants have no stock photos in the archive, the hero atmosphere is built from primitives: a warm-grain near-black ground, two layered radial gradients that pool candlelight and fall off into black (tracing Louis Poulsen's 'golden liquid light' and Eleven Madison Park's warm earth), a plated fifth course rendered from gradients and border-radius (sauce smear, quenelle, foraged leaf, scattered spice-dust), and a keyframed flickering taper (killed under prefers-reduced-motion). The 11-course menu is then set as a numbered Roman carte in Dinner by Heston's Specimen voice, so the movements themselves are the hero content rather than decoration around a photo - restrained, expensive, and the deliberate dark opposite of the warm-light coffee example, drawn from the same archive.",
       "references": [
         {
           "slug": "deathandcompany-com",
@@ -1688,7 +1688,7 @@ export const EXAMPLES: Example[] = [
         },
         {
           "slug": "dinnerbyheston-com",
-          "took": "The Specimen macrostructure for fine dining — typography as the hero, monochrome 'quiet authority' — modeled by the numbered menu carte and restrained type ramp."
+          "took": "The Specimen macrostructure for fine dining - typography as the hero, monochrome 'quiet authority' - modeled by the numbered menu carte and restrained type ramp."
         },
         {
           "slug": "atomixnyc-com",
@@ -1696,7 +1696,7 @@ export const EXAMPLES: Example[] = [
         },
         {
           "slug": "olsonkundig-com",
-          "took": "Dark Type-Specimen scaffold — proof that a near-black field plus a large serif plus vast space reads as 'considered ethos'; used for the menu band."
+          "took": "Dark Type-Specimen scaffold - proof that a near-black field plus a large serif plus vast space reads as 'considered ethos'; used for the menu band."
         },
         {
           "slug": "louispoulsen-com",
@@ -1712,7 +1712,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "search_screens",
           "args": "{\"query\":\"luxe hospitality elegant serif warm\",\"limit\":8}",
-          "took": "Confirmed the luxe spine (Goyard, Chanel, Italic) — restraint + serif + huge negative space."
+          "took": "Confirmed the luxe spine (Goyard, Chanel, Italic) - restraint + serif + huge negative space."
         },
         {
           "tool": "search_screens",
@@ -1727,7 +1727,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "get_design_system",
           "args": "{\"slug\":\"deathandcompany-com\",\"live\":true}",
-          "took": "Keystone: live EB Garamond + #000/#fff + brand red #b32614 — elegant serif on near-black with oxblood accent."
+          "took": "Keystone: live EB Garamond + #000/#fff + brand red #b32614 - elegant serif on near-black with oxblood accent."
         },
         {
           "tool": "get_design_system",
@@ -1737,7 +1737,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "find_similar",
           "args": "{\"slug\":\"deathandcompany-com\",\"limit\":6}",
-          "took": "Death & Co sub-pages (all Marquee-Hero) + louispoulsen 'warm golden liquid light' — validated warm-glow-on-dark."
+          "took": "Death & Co sub-pages (all Marquee-Hero) + louispoulsen 'warm golden liquid light' - validated warm-glow-on-dark."
         },
         {
           "tool": "compare",
@@ -1747,7 +1747,7 @@ export const EXAMPLES: Example[] = [
         {
           "tool": "find_by_color",
           "args": "{\"hex\":\"#8a1c12\"}",
-          "took": "Tight real cluster around the oxblood (#882219, #871812, #86201c, #872414) — proves the accent is from real captures."
+          "took": "Tight real cluster around the oxblood (#882219, #871812, #86201c, #872414) - proves the accent is from real captures."
         },
         {
           "tool": "get_screen",
@@ -1764,7 +1764,7 @@ export const EXAMPLES: Example[] = [
         {
           "token": "--bone",
           "hex": "#ECE6D8",
-          "from": "Death & Co live #fff warmed toward bone — EMP/Atomix neutrals are warm, never cold white"
+          "from": "Death & Co live #fff warmed toward bone - EMP/Atomix neutrals are warm, never cold white"
         },
         {
           "token": "--oxblood",
@@ -1779,12 +1779,12 @@ export const EXAMPLES: Example[] = [
         {
           "token": "--amber",
           "hex": "#C9882E",
-          "from": "Eleven Madison Park #c57838 / Louis Poulsen #d49434 — the candle-gold accent"
+          "from": "Eleven Madison Park #c57838 / Louis Poulsen #d49434 - the candle-gold accent"
         },
         {
           "token": "--flesh",
           "hex": "#E3A074",
-          "from": "EMP #e1b997 + Atomix #e3a696 — warm highlight on serif emphasis and the plated food"
+          "from": "EMP #e1b997 + Atomix #e3a696 - warm highlight on serif emphasis and the plated food"
         }
       ]
     },
@@ -1796,7 +1796,7 @@ export const EXAMPLES: Example[] = [
     "stack": "pure-inspo",
     "mode": "light",
     "scoreSelf": 8.7,
-    "highlight": "Warm editorial coffee hero, rebuilt to fit 1280×800 exactly (CTAs at 670px, panel at 795px — all above the fold), keeping a CSS-composed coffee-bag product card as the visual device. Palette and the playful-serif/grotesque/mono type system traced to Stumptown, Fellow and Intelligentsia.",
+    "highlight": "Warm editorial coffee hero, rebuilt to fit 1280×800 exactly (CTAs at 670px, panel at 795px - all above the fold), keeping a CSS-composed coffee-bag product card as the visual device. Palette and the playful-serif/grotesque/mono type system traced to Stumptown, Fellow and Intelligentsia.",
     "references": [
       {
         "slug": "stumptowncoffee-com",
@@ -1816,7 +1816,7 @@ export const EXAMPLES: Example[] = [
       },
       {
         "slug": "bluebottlecoffee-com",
-        "took": "Ample negative space in the hero — room for the headline's left column to breathe."
+        "took": "Ample negative space in the hero - room for the headline's left column to breathe."
       }
     ],
     "mcpCalls": [
@@ -1828,7 +1828,7 @@ export const EXAMPLES: Example[] = [
       {
         "tool": "search_screens",
         "args": "{\"query\":\"coffee roastery subscription\"}",
-        "took": "Surfaced the coffee cluster — Stumptown, Intelligentsia, Blue Bottle, Fellow."
+        "took": "Surfaced the coffee cluster - Stumptown, Intelligentsia, Blue Bottle, Fellow."
       },
       {
         "tool": "get_design_system",
@@ -1892,12 +1892,12 @@ export const EXAMPLES: Example[] = [
   {
     "slug": "vox-runtime",
     "brand": "Larynx",
-    "tagline": "The runtime for production voice agents — write it in code, point it at a number, ship.",
+    "tagline": "The runtime for production voice agents - write it in code, point it at a number, ship.",
     "prompt": "Build a product page for an AI voice-agents platform.",
     "stack": "pure-inspo",
     "mode": "dark",
     "scoreSelf": 8.7,
-    "highlight": "Balanced split hero measured to fit 1280×800 exactly (CTAs at y532–578, ~160px of below-fold headroom); a warm amber-on-brown-black live-call console — animated waveform, transcript + live tool-call chip, latency meters — deliberately distinct from Conduit's blue dashboard.",
+    "highlight": "Balanced split hero measured to fit 1280×800 exactly (CTAs at y532-578, ~160px of below-fold headroom); a warm amber-on-brown-black live-call console - animated waveform, transcript + live tool-call chip, latency meters - deliberately distinct from Conduit's blue dashboard.",
     "references": [
       {
         "slug": "vapi-ai",
@@ -1999,30 +1999,30 @@ export const EXAMPLES: Example[] = [
   {
       slug: "conduit",
       brand: "Conduit",
-      tagline: "A durable background-job / workflow runtime — in the Inngest / Temporal / Trigger.dev space.",
+      tagline: "A durable background-job / workflow runtime - in the Inngest / Temporal / Trigger.dev space.",
       prompt: "Create a developer infrastructure product page.",
       stack: "pure-inspo",
       mode: "dark",
       scoreSelf: 8.6,
       highlight:
-        "The hero's right-hand dashboard mock is a believable product UI — workspaces sidebar with counts, a live timeline that ticks every 1.2s, a runs list with status dots that actually mean something (ok / running / warn / DLQ / fail), one of them blinking. Not a hero illustration; the product itself.",
+        "The hero's right-hand dashboard mock is a believable product UI - workspaces sidebar with counts, a live timeline that ticks every 1.2s, a runs list with status dots that actually mean something (ok / running / warn / DLQ / fail), one of them blinking. Not a hero illustration; the product itself.",
       references: [
-        { slug: "railway-com", took: "Its real font stack (Inter Tight + JetBrains Mono + IBM Plex Serif), deep slate bg hsl(250 24% 9%), and the left-headline + right-dashboard composition — adopted outright." },
-        { slug: "vercel-com", took: "Geist + Geist Mono; the one centered-hero outlier in the genre — studied, then deliberately avoided." },
-        { slug: "supabase-com", took: "Confirmed the single --brand-default accent with everything else grayscale — the one-accent rule." },
-        { slug: "bun-sh", took: "The italic-serif accent word inside a sans H1 ('Bun is a *fast* package manager') — adopted the device, not the words." },
+        { slug: "railway-com", took: "Its real font stack (Inter Tight + JetBrains Mono + IBM Plex Serif), deep slate bg hsl(250 24% 9%), and the left-headline + right-dashboard composition - adopted outright." },
+        { slug: "vercel-com", took: "Geist + Geist Mono; the one centered-hero outlier in the genre - studied, then deliberately avoided." },
+        { slug: "supabase-com", took: "Confirmed the single --brand-default accent with everything else grayscale - the one-accent rule." },
+        { slug: "bun-sh", took: "The italic-serif accent word inside a sans H1 ('Bun is a *fast* package manager') - adopted the device, not the words." },
         { slug: "neon-tech", took: "Dark ground + a single saturated accent." },
         { slug: "postman-com", took: "Genre anchor for the developer-platform aesthetic." },
       ],
       mcpCalls: [
-        { tool: "search_screens", args: '{"query":"developer infrastructure platform API","limit":6}', took: "Six genre anchors — Apple dev, Postman, Insomnia, Supabase, Render, Linode. Dark, monochrome, single accent." },
-        { tool: "search_screens", args: '{"query":"edge compute serverless platform deploy","limit":6}', took: "Vercel, Heroku, Railway, Travis — triangulated the hero composition split." },
+        { tool: "search_screens", args: '{"query":"developer infrastructure platform API","limit":6}', took: "Six genre anchors - Apple dev, Postman, Insomnia, Supabase, Render, Linode. Dark, monochrome, single accent." },
+        { tool: "search_screens", args: '{"query":"edge compute serverless platform deploy","limit":6}', took: "Vercel, Heroku, Railway, Travis - triangulated the hero composition split." },
         { tool: "find_similar", args: '{"slug":"railway-com","limit":4}', took: "Pulled Bun + Anthropic; Bun's italic-serif-in-sans headline device." },
-        { tool: "get_design_system", args: '{"slug":"railway-com"}', took: "Real fonts Inter Tight + JetBrains Mono, bg hsl(250 24% 9%) — adopted the stack." },
+        { tool: "get_design_system", args: '{"slug":"railway-com"}', took: "Real fonts Inter Tight + JetBrains Mono, bg hsl(250 24% 9%) - adopted the stack." },
         { tool: "get_design_system", args: '{"slug":"vercel-com"}', took: "Geist + Geist Mono; confirmed mono is part of the genre's lingua franca." },
       ],
       palette: [
-        { token: "--accent", hex: "#F0A657", from: "Soft saffron — warm family, but deliberately none of Vercel-yellow / Supabase-green / Bun-pink / Railway-purple / Neon-turquoise" },
+        { token: "--accent", hex: "#F0A657", from: "Soft saffron - warm family, but deliberately none of Vercel-yellow / Supabase-green / Bun-pink / Railway-purple / Neon-turquoise" },
         { token: "--ground", hex: "#0B0D12", from: "Deep near-black, in the Railway slate family" },
       ],
     },
@@ -2035,22 +2035,22 @@ export const EXAMPLES: Example[] = [
       mode: "light",
       scoreSelf: 8.0,
       highlight:
-        "get_design_system on Heath Ceramics with live:true returned the brand's actual muted palette (#26211b / #f5f4ee / #dd5640) — far quieter than the loud yellow-gold hero crops. That live token pull set the whole paper/ink/clay system and kept the studio feeling earthy and hand-made.",
+        "get_design_system on Heath Ceramics with live:true returned the brand's actual muted palette (#26211b / #f5f4ee / #dd5640) - far quieter than the loud yellow-gold hero crops. That live token pull set the whole paper/ink/clay system and kept the studio feeling earthy and hand-made.",
       references: [
         { slug: "artek-fi", took: "Warm-wood neutrals (#866b4b) + the tight near-lowercase wordmark influenced the brand mark." },
         { slug: "apartamentomagazine-com", took: "Editorial warm-paper magazine reference for the section rhythm." },
       ],
       mcpCalls: [
         { tool: "search_screens", args: '{"query":"ceramics studio handmade stoneware"}', took: "Found the craft-studio cluster." },
-        { tool: "get_design_system", args: '{"slug":"heathceramics-com","live":true}', took: "Live muted palette + Benton Sans / Monaco — the data point the whole system hangs on." },
-        { tool: "search_screens", args: '{"query":"editorial serif natural materials atelier studio","style":"editorial"}', took: "Studio Gang + Antinomy — warm-paper confirmation." },
+        { tool: "get_design_system", args: '{"slug":"heathceramics-com","live":true}', took: "Live muted palette + Benton Sans / Monaco - the data point the whole system hangs on." },
+        { tool: "search_screens", args: '{"query":"editorial serif natural materials atelier studio","style":"editorial"}', took: "Studio Gang + Antinomy - warm-paper confirmation." },
         { tool: "search_screens", args: '{"query":"furniture wooden handmade workshop earth tones"}', took: "Artek's warm-wood neutrals informed the wordmark." },
       ],
       palette: [
         { token: "--paper", hex: "#F3EDE4", from: "Heath's live #f5f4ee, knocked slightly warmer" },
         { token: "--espresso", hex: "#1F1813", from: "Heath's #26211b near-black" },
         { token: "--terracotta", hex: "#A44A25", from: "Tighter reading of Heath #dd5640 / Alden #ad411a / Antinomy #b48944" },
-        { token: "--moss", hex: "#3A4A32", from: "Single cool note — used only for the 'Garden series' badge" },
+        { token: "--moss", hex: "#3A4A32", from: "Single cool note - used only for the 'Garden series' badge" },
         { token: "--gold", hex: "#C98B3B", from: "Dark-section eyebrow accent" },
       ],
     }

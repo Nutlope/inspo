@@ -1,4 +1,4 @@
-/* Hallmark · component: features · genre: editorial · theme: Inspo-paper
+/* Inspo · component: features · genre: editorial · theme: Inspo-paper
  * archetype: Long-form prose · diversification: features described as
  *   essay paragraphs, not bullet points
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Long-form prose — features written as connected paragraphs in a
+ * Long-form prose - features written as connected paragraphs in a
  * single column with marginal headings. The default AI-page output
  * is a 3-column feature grid; this is the alternative when the brand
  * voice deserves to be read, not scanned.
@@ -18,11 +18,11 @@ const NOTES = [
   },
   {
     label: "On talking to your agent",
-    body: "The MCP server hands the same catalogue to Claude Code, Cursor, Codex, and Zed as tool calls. Search by mood, paste a URL, pull a DESIGN.md — the agent sees what you see, and writes from that reference instead of from training-data averages.",
+    body: "The MCP server hands the same catalogue to Claude Code, Cursor, Codex, and Zed as tool calls. Search by mood, paste a URL, pull a DESIGN.md - the agent sees what you see, and writes from that reference instead of from training-data averages.",
   },
   {
     label: "On the reference layer",
-    body: "The components page is the second surface: twenty-eight Hallmark-disciplined sections, each one stamped with its macrostructure. Copy the markup, study the rule, and your output stops looking like every other AI page.",
+    body: "The components page is the second surface: twenty-eight Disciplined sections, each one stamped with its macrostructure. Copy the markup, study the rule, and your output stops looking like every other AI page.",
   },
 ];
 

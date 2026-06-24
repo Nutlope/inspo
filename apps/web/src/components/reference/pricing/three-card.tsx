@@ -1,11 +1,11 @@
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: 3-card horizontal · diversification: canonical plan comparison
  * states: default · hover (cards) · focus-visible (buttons)
  * contrast: pass (46-50)
  */
 
 /**
- * Three-card horizontal — the classic. One recommended tier raised by a
+ * Three-card horizontal - the classic. One recommended tier raised by a
  * thin accent rule along the top; the other two stay quiet. Generous
  * vertical air inside each card so the line items have room to breathe.
  * No "Most popular" badge; the visual emphasis is the rule, not chrome.

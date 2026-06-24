@@ -5,10 +5,9 @@
  * and the MCP server. Hard allow-lists prevent taxonomy drift across
  * thousands of captures.
  *
- * Hallmark integration — STYLES, MACROSTRUCTURES, and HALLMARK_THEMES
- * mirror the canonical vocabulary from the Hallmark design skill
- * (github.com/Luffixos/hallmark) so a screenshot tagged here can be
- * referenced directly by an agent following Hallmark's design flow.
+ * STYLES, MACROSTRUCTURES, and HALLMARK_THEMES are Inspo's canonical
+ * design vocabulary, so a screenshot tagged here can be referenced
+ * directly by an agent picking a named whole-page shape or theme.
  */
 
 export const STYLES = [
@@ -111,9 +110,9 @@ export const TYPE_ROLES = [
 export const VIEWPORTS = ["desktop", "tablet", "mobile"] as const;
 
 /**
- * Hallmark macrostructures — the 21 named whole-page shapes from
- * `hallmark/skill/references/macrostructures.md`. The agent picks one
- * before writing code; Inspo lets it browse real exemplars per name.
+ * The 21 named macrostructures, Inspo's named whole-page shapes. The
+ * agent picks one before writing code; Inspo lets it browse real
+ * exemplars per name.
  */
 export const MACROSTRUCTURES = [
   "bento-grid",
@@ -140,7 +139,7 @@ export const MACROSTRUCTURES = [
 ] as const;
 
 /**
- * Hallmark themes — 12 themes across 4 categories.
+ * Named themes - 12 themes across 4 categories.
  * Stored as `category:theme` for easy filtering on either axis.
  */
 export const HALLMARK_THEMES = [
@@ -169,7 +168,7 @@ export type Macrostructure = (typeof MACROSTRUCTURES)[number];
 export type HallmarkTheme = (typeof HALLMARK_THEMES)[number];
 export type TypeRole = (typeof TYPE_ROLES)[number];
 
-/** Allow-list validators — used to reject LLM tag output that drifts. */
+/** Allow-list validators - used to reject LLM tag output that drifts. */
 export const isStyle = (v: string): v is Style =>
   (STYLES as readonly string[]).includes(v);
 export const isIndustry = (v: string): v is Industry =>

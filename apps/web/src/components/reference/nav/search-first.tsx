@@ -1,12 +1,12 @@
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N9 Search-first · diversification: the search input *is*
- *   the nav row — every action funnels through it
+ *   the nav row - every action funnels through it
  * states: default · hover · focus-within
  * contrast: pass (46-50)
  */
 
 /**
- * Search-first nav — instead of a row of links, the wordmark sits
+ * Search-first nav - instead of a row of links, the wordmark sits
  * next to a wide search input that does everything (browse, paste a
  * URL, run a command). Common in archives, catalogues, and ⌘K-led
  * products. The few links it does carry sit to the far right as
@@ -40,7 +40,7 @@ export function NavSearchFirst() {
           </span>
           <input
             type="search"
-            placeholder="search the catalogue — or paste a URL"
+            placeholder="search the catalogue - or paste a URL"
             className="flex-1 min-w-0 bg-transparent outline-none font-mono text-sm placeholder:text-[var(--color-fg-muted)]"
           />
           <kbd className="text-meta hidden text-[var(--color-fg-muted)] sm:inline-block">⌘K</kbd>

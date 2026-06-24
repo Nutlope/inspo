@@ -1,11 +1,11 @@
 /**
- * Colour math — hex → OKLAB → perceptual distance.
+ * Colour math - hex → OKLAB → perceptual distance.
  *
  * Shared across @inspo/web (palette UI, `?hex=` filter) and
  * @inspo/mcp (`find_by_color` tool). Lives here so both consume the
  * same conversion + distance function rather than drifting copies.
  *
- * Distance is Euclidean in OKLAB — the colour space where Euclidean
+ * Distance is Euclidean in OKLAB - the colour space where Euclidean
  * distance best correlates with perceived difference. Threshold
  * defaults are tuned by spot-checking the catalogue: looser than
  * 0.10 (too strict on warm-paper palettes), tighter than 0.20 (which

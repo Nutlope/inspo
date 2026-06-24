@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Canvas-based 2D embedding map — the catalogue projected via UMAP.
+ * Canvas-based 2D embedding map - the catalogue projected via UMAP.
  *
  * Renders ~1.3k sites as dots; pan / zoom / hover / click-to-detail.
  * On top of the base scatter it adds three things that make it a real
@@ -36,7 +36,7 @@ const HIT_RADIUS = 9;
 const THUMB_W = 92; // thumbnail cell width (px) at thumbnail zoom
 const THUMB_ZOOM = 2.6; // show thumbnails once scale > base * this
 
-/** Curated categorical palette — distinct, harmonious OKLCH hues
+/** Curated categorical palette - distinct, harmonious OKLCH hues
  *  (leads with the brand clay). Far cleaner than hashed hues. The top
  *  groups by frequency take palette slots; the long tail goes neutral. */
 const HUES = [28, 250, 150, 322, 58, 200, 292, 95, 348, 172, 262, 120, 38, 308];
@@ -96,7 +96,7 @@ export function EmbeddingMap({
     return m;
   }, [groupOrder, dark]);
 
-  // Cluster label anchors — centroid of each top group with enough points.
+  // Cluster label anchors - centroid of each top group with enough points.
   const labels = useMemo(() => {
     const acc = new Map<string, { x: number; y: number; n: number }>();
     for (const p of points) {

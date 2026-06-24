@@ -1,11 +1,11 @@
-/* Hallmark · component: hero · genre: editorial · theme: Inspo-paper
+/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
  * archetype: Question · diversification: hero as inquiry, not assertion
  * states: default (static)
  * contrast: pass (46-50)
  */
 
 /**
- * Question — the hero asks rather than tells. Useful when the brief is
+ * Question - the hero asks rather than tells. Useful when the brief is
  * exploratory or invitational. The "answer" in mono caption underneath
  * is brief and confident, framing the rest of the page as the long
  * answer.

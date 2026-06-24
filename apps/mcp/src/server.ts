@@ -3,7 +3,7 @@
  * Inspo MCP server — local stdio transport.
  *
  * For tool definitions see ./tools.ts (shared with the Cloudflare Worker
- * variant in ./worker.ts). For the Hallmark integration story see /mcp.
+ * variant in ./worker.ts). For the full server story see /mcp.
  */
 
 // Walk up from this file looking for a .env so the server picks up

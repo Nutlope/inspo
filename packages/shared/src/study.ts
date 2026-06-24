@@ -6,7 +6,7 @@
  * Why this exists: until now the MCP could only return facts about
  * sites in the curated archive. `study(url)` lets agents look at any
  * brand - competitors, references the user pastes in, partners not
- * yet captured. Direct match for Hallmark's `study` verb.
+ * yet captured.
  *
  * Stays light: pure `fetch` + regex extraction. No Playwright (the
  * MCP also ships on Cloudflare Workers, where native deps don't

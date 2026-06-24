@@ -4,7 +4,7 @@
  * accent color. One JSON response, cacheable, ~50KB gzipped at 1000
  * sites.
  *
- * This is intentionally separate from /screens HTML payload — it loads
+ * This is intentionally separate from /screens HTML payload - it loads
  * once on first palette open and stays cached for the rest of the
  * session, keeping ⌘K snappy regardless of which page you're on.
  */

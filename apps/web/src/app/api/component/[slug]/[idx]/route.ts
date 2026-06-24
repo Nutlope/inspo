@@ -3,7 +3,7 @@
  *
  *   /api/component/<slug>/<idx>
  *
- * `idx` is the position in the screen's `components` array — saved at
+ * `idx` is the position in the screen's `components` array - saved at
  * extract time, page-absolute coords.
  *
  * Source PNG resolution, in order:

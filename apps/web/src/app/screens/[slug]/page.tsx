@@ -101,7 +101,7 @@ export default async function ScreenDetailPage({
               {screen.title}
             </h1>
 
-            {/* Northstar — the design's soul in one line */}
+            {/* Northstar - the design's soul in one line */}
             {screen.northstar && (
               <p className="mt-5 max-w-[44ch] font-display text-xl italic leading-snug text-[var(--color-fg-muted)] lg:text-2xl">
                 {screen.northstar}
@@ -133,7 +133,7 @@ export default async function ScreenDetailPage({
         </div>
       </div>
 
-      {/* Hero plate — desktop, paired with the mobile capture when the
+      {/* Hero plate - desktop, paired with the mobile capture when the
           row has been backfilled. The pair is the responsiveness signal:
           one real page at two widths, side by side. ─────────────── */}
       <div className="mx-auto mt-12 max-w-[120rem] px-6 sm:mt-16 sm:px-10">
@@ -160,7 +160,7 @@ export default async function ScreenDetailPage({
                 <TileImage
                   variants={screen.mobileVariants}
                   fallbackSrc={screen.mobileImageUrl}
-                  alt={`${screen.title} — mobile`}
+                  alt={`${screen.title} - mobile`}
                   sizes="240px"
                   imgClassName="block h-auto w-full"
                 />
@@ -174,8 +174,8 @@ export default async function ScreenDetailPage({
         <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 text-meta">
           <span>
             {screen.mobileImageUrl
-              ? "Hero — desktop 1440 × 900 · mobile 375"
-              : "Hero — desktop · 1440 × 900"}
+              ? "Hero - desktop 1440 × 900 · mobile 375"
+              : "Hero - desktop · 1440 × 900"}
           </span>
           <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
             <AddToCompare slug={screen.slug} title={screen.title} />
@@ -206,7 +206,7 @@ export default async function ScreenDetailPage({
               <p className="text-meta">What it&rsquo;s made of</p>
               <dl className="mt-4">
                 <MetaRow label="Designer">
-                  {screen.designerCredit ?? "—"}
+                  {screen.designerCredit ?? "-"}
                 </MetaRow>
                 <MetaRow label="Captured">
                   <time dateTime={screen.capturedAt}>{screen.capturedAt}</time>
@@ -250,12 +250,12 @@ export default async function ScreenDetailPage({
             </div>
           </aside>
 
-          {/* Full-page scroll viewer — desktop, with the mobile scroll
+          {/* Full-page scroll viewer - desktop, with the mobile scroll
               alongside it when the row has a mobile capture. */}
           <div className="lg:col-span-8">
             <p className="text-meta mb-3">
               The whole page, top to bottom
-              {screen.mobileFullUrl ? " — desktop & mobile" : ""}
+              {screen.mobileFullUrl ? " - desktop & mobile" : ""}
             </p>
             <div
               className={
@@ -268,7 +268,7 @@ export default async function ScreenDetailPage({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={screen.fullPageUrl}
-                  alt={`${screen.title} — full page scroll`}
+                  alt={`${screen.title} - full page scroll`}
                   className="block w-full"
                   loading="lazy"
                   decoding="async"
@@ -279,7 +279,7 @@ export default async function ScreenDetailPage({
                   <TileImage
                     variants={screen.mobileFullVariants}
                     fallbackSrc={screen.mobileFullUrl}
-                    alt={`${screen.title} — mobile full page`}
+                    alt={`${screen.title} - mobile full page`}
                     sizes="190px"
                     imgClassName="block h-auto w-full"
                   />
@@ -366,7 +366,7 @@ export default async function ScreenDetailPage({
                 </section>
               )}
 
-              {/* Export — CSS / Tailwind v4 / Markdown tabs */}
+              {/* Export - CSS / Tailwind v4 / Markdown tabs */}
               <section>
                 <p className="text-meta mb-5">Export</p>
                 <ExportBlock
@@ -376,7 +376,7 @@ export default async function ScreenDetailPage({
                 />
               </section>
 
-              {/* Agent prompt — drop-in for Cursor / Claude Code */}
+              {/* Agent prompt - drop-in for Cursor / Claude Code */}
               <AgentPromptGuide
                 slug={screen.slug}
                 title={screen.title}
@@ -404,7 +404,7 @@ export default async function ScreenDetailPage({
         </div>
       </div>
 
-      {/* Sticky action toast — Copy DESIGN.md + quick actions ── */}
+      {/* Sticky action toast - Copy DESIGN.md + quick actions ── */}
       <SiteActionBar slug={screen.slug} sourceUrl={screen.sourceUrl} />
     </div>
   );
@@ -450,7 +450,7 @@ async function SiteBacklink({ slug }: { slug: string }) {
       >
         {isHero
           ? `See all ${site.pageCount} pages of ${site.title} →`
-          : `Part of ${site.title} — ${site.pageCount} pages captured →`}
+          : `Part of ${site.title} - ${site.pageCount} pages captured →`}
       </Link>
     </p>
   );
@@ -471,7 +471,7 @@ async function AppearsIn({ slug }: { slug: string }) {
           href={`/collections/${c.slug}`}
           className="block text-sm hover:text-[var(--color-link)]"
         >
-          Issue Nº{c.number} — {c.title} →
+          Issue Nº{c.number} - {c.title} →
         </Link>
       ))}
     </div>

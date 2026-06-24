@@ -1,4 +1,4 @@
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: Enterprise contact · diversification: no prices visible,
  *   contact is the action
  * states: default · hover (button) · focus-visible
@@ -6,7 +6,7 @@
  */
 
 /**
- * Enterprise contact — the page that doesn't quote prices. Sets out
+ * Enterprise contact - the page that doesn't quote prices. Sets out
  * what's covered, what's negotiable, and where to reach. The
  * implicit promise: a real conversation, not a calculator.
  */

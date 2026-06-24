@@ -1,19 +1,19 @@
-/* Hallmark · component: logo-cloud · genre: editorial · theme: Inspo-paper
+/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
  * archetype: Pill chips · diversification: each logo sits inside a
- *   rounded chip — denser, more playful
+ *   rounded chip - denser, more playful
  * states: default + hover (chip border accent)
  * contrast: pass (46-50)
  */
 
 /**
- * Pill-chip logos — each wordmark in its own rounded chip with a
+ * Pill-chip logos - each wordmark in its own rounded chip with a
  * hairline border. Reads denser than a strip; useful when the
  * partner count is high and a row would force a marquee.
  */
 const CHIPS = [
   "Together AI",
   "Studio 01",
-  "S—02",
+  "S-02",
   "Atelier 03",
   "MARK 04",
   "Studio · 05",

@@ -25,7 +25,7 @@ export default function AboutPage() {
           <div className="prose-style max-w-[64ch] space-y-6 text-lg leading-relaxed text-[var(--color-fg)]">
             <p>
               A thousand real production sites, filed by hand, queryable by
-              your coding agent over MCP. Agents have tools but not taste —
+              your coding agent over MCP. Agents have tools but not taste -
               and the open web already holds every reference one could need.
               We just had to assemble, tag, and address it.
             </p>
@@ -42,21 +42,12 @@ export default function AboutPage() {
                 Together&nbsp;AI
               </a>
               . The hosted instance is free for everyone. No tiers, no paywall.
-              The pair to Hallmark — its{" "}
-              <a
-                href="https://github.com/Luffixos/hallmark"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
-              >
-                sibling skill
-              </a>{" "}
-              gives your agent a design process; Inspo gives it the
+              Agents have tools but not taste; Inspo gives your agent the
               reference.
             </p>
           </div>
 
-          {/* Three-layer positioning — the real moat ─────────────── */}
+          {/* Three-layer positioning - the real moat ─────────────── */}
           <div className="space-y-6 border-t rule pt-12">
             <p className="text-meta">Why one server</p>
             <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
@@ -72,7 +63,7 @@ export default function AboutPage() {
                   <strong className="text-[var(--color-fg)]">
                     Visual range
                   </strong>{" "}
-                  — a thousand hand-curated captures across three
+                  - a thousand hand-curated captures across three
                   viewports each. Palettes, type ramps, tech fingerprints
                   extracted. The agent gets real designs to study, not
                   generative slop to remix.
@@ -84,7 +75,7 @@ export default function AboutPage() {
                   <strong className="text-[var(--color-fg)]">
                     Canonical code
                   </strong>{" "}
-                  — twenty-eight Hallmark-stamped reference components.
+                  - twenty-eight canonical reference components.
                   Each one demonstrates a named macrostructure or
                   archetype, rendered live at{" "}
                   <Link
@@ -102,7 +93,7 @@ export default function AboutPage() {
                   <strong className="text-[var(--color-fg)]">
                     Design systems on tap
                   </strong>{" "}
-                  — every captured site has a{" "}
+                  - every captured site has a{" "}
                   <code className="font-mono text-[0.95em]">
                     DESIGN.md
                   </code>{" "}
@@ -113,7 +104,7 @@ export default function AboutPage() {
               </ol>
               <p>
                 Other tools ship one of these. Inspo ships all three,
-                queryable from one place — which is what makes the
+                queryable from one place - which is what makes the
                 combination useful to an agent that doesn&rsquo;t read
                 your design system the way a human would.
               </p>
@@ -124,14 +115,14 @@ export default function AboutPage() {
             <p className="text-meta">Self-host & contribute</p>
             <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
               <p>
-                Every dependency has a free tier — Postgres on Neon, gallery
+                Every dependency has a free tier - Postgres on Neon, gallery
                 on Vercel, MCP on Cloudflare Workers, capture worker on
                 Fly.io (or any Node host with Chromium). One Together AI key,
                 one Neon URL, one{" "}
                 <code className="font-mono text-[0.95em]">
                   pnpm capture:seed
                 </code>
-                {" "}— you have your own instance.
+                {" "}- you have your own instance.
               </p>
               <p>
                 Want to add a site you love? Append it to{" "}
@@ -164,7 +155,7 @@ export default function AboutPage() {
               >
                 /dmca
               </Link>{" "}
-              — we&rsquo;ll honour it.
+              - we&rsquo;ll honour it.
             </p>
           </div>
         </div>

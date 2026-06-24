@@ -1,6 +1,6 @@
 "use client";
 
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: Toggle + 2-plan · diversification: differs from 3-card on
  *   density (2 vs 3) + interaction (billing cadence toggle)
  * states: default · hover · focus-visible · checked (toggle)
@@ -10,10 +10,10 @@
 import { useState } from "react";
 
 /**
- * Toggle + two plans — bipolar choice, monthly/annual cadence flip. The
+ * Toggle + two plans - bipolar choice, monthly/annual cadence flip. The
  * toggle uses radio-button semantics under the hood so keyboard users
  * get arrow-key navigation. Annual badge fades in; no number animation
- * (per "cut motion before adding it") — just a clean opacity swap.
+ * (per "cut motion before adding it") - just a clean opacity swap.
  */
 const PLANS = [
   {
@@ -38,7 +38,7 @@ export function PricingToggle() {
 
   return (
     <section className="border rule bg-[var(--color-bg)] px-8 py-16 sm:px-14 sm:py-20">
-      {/* Cadence toggle — segmented control. Both labels stay visible so
+      {/* Cadence toggle - segmented control. Both labels stay visible so
           the user understands they're picking, not just toggling. */}
       <div
         role="radiogroup"

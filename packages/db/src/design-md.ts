@@ -55,8 +55,7 @@ function inferSpacingBase(scale: number[]): number | null {
  * Render the DESIGN.md document for a single screen.
  *
  * Style: terse and agent-readable. Each section ends with a tip the
- * model can act on. The footer always points back at Hallmark - paired
- * skills mean better output than either alone.
+ * model can act on.
  */
 export function renderDesignMd(s: ScreenSummary): string {
   const ds = s.designSystem;
@@ -80,7 +79,7 @@ export function renderDesignMd(s: ScreenSummary): string {
   lines.push(`- **Source:** ${s.sourceUrl}`);
   lines.push(`- **Captured:** ${s.capturedAt}`);
   lines.push(`- **Mode:** ${s.mode}`);
-  if (macroLabel) lines.push(`- **Macrostructure (Hallmark):** ${macroLabel}`);
+  if (macroLabel) lines.push(`- **Macrostructure:** ${macroLabel}`);
   if (s.designerCredit) lines.push(`- **Designer:** ${s.designerCredit}`);
   if (s.tech.length) lines.push(`- **Stack:** ${s.tech.join(", ")}`);
   lines.push("");
@@ -190,9 +189,7 @@ export function renderDesignMd(s: ScreenSummary): string {
   lines.push("- **Spacing** assumes a constant base step; round detected values to your project's scale (4 / 8 / 16) when implementing.");
   lines.push("- **CSS variables** dumped above (when present) are the source's *actual* tokens - those are higher signal than guesses.");
   if (macroLabel) {
-    lines.push(`- This page's macrostructure is **${macroLabel}**. Pair this DESIGN.md with the [Hallmark skill](https://github.com/Luffixos/hallmark) for the design process; Inspo gives you the reference, Hallmark gives you the discipline.`);
-  } else {
-    lines.push("- Pair this DESIGN.md with the [Hallmark skill](https://github.com/Luffixos/hallmark) - Hallmark for design discipline, Inspo for visual reference.");
+    lines.push(`- This page's macrostructure is **${macroLabel}**.`);
   }
   lines.push("");
 

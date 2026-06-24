@@ -1,5 +1,5 @@
 /**
- * /examples/[slug] — case study for one Inspo-built page.
+ * /examples/[slug] - case study for one Inspo-built page.
  *
  * Top to bottom: the prompt, the live generated page, the standout
  * move, the catalogue references it studied (real tiles linking back
@@ -31,7 +31,7 @@ export async function generateMetadata({
   const ex = getExample(slug);
   if (!ex) return { title: "Not found" };
   return {
-    title: `${ex.brand} — Made with Inspo`,
+    title: `${ex.brand} - Made with Inspo`,
     description: `“${ex.prompt}” → ${ex.tagline} Built with the Inspo MCP.`,
   };
 }
@@ -73,7 +73,7 @@ export default async function ExampleDetailPage({
             </h1>
             <p className="mt-5 max-w-[58ch] text-lg text-[var(--color-fg-muted)]">
               The agent invented{" "}
-              <span className="text-[var(--color-fg)]">{ex.brand}</span> —{" "}
+              <span className="text-[var(--color-fg)]">{ex.brand}</span> -{" "}
               {ex.tagline}
             </p>
           </div>
@@ -93,7 +93,7 @@ export default async function ExampleDetailPage({
       {/* The page itself ──────────────────────────────────── */}
       <div className="mx-auto mt-12 max-w-[120rem] px-6 sm:mt-16 sm:px-10">
         <div className="flex items-baseline justify-between text-meta mb-3">
-          <span>The page it shipped — live, scaled</span>
+          <span>The page it shipped - live, scaled</span>
           <a
             href={src}
             target="_blank"
@@ -106,7 +106,7 @@ export default async function ExampleDetailPage({
         <div className="border rule">
           <ExamplePreview
             src={src}
-            title={`${ex.brand} — full preview`}
+            title={`${ex.brand} - full preview`}
             aspect={16 / 11}
             interactive
           />
@@ -148,7 +148,7 @@ export default async function ExampleDetailPage({
                   >
                     {screen?.title ?? ref.slug}
                   </Link>{" "}
-                  — {ref.took}
+                  - {ref.took}
                 </p>
               </li>
             ))}
@@ -226,7 +226,7 @@ export default async function ExampleDetailPage({
             <Link href="/mcp" className="hover:text-[var(--color-link)]">
               Inspo MCP
             </Link>{" "}
-            — try it on your own brief.
+            - try it on your own brief.
           </span>
           <Link href="/examples" className="hover:text-[var(--color-link)]">
             ← All examples

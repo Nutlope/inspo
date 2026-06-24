@@ -8,7 +8,7 @@
  * Source URL: prefer a small WebP variant if it exists on blob,
  * otherwise fall back to the PNG thumb (which exists for every
  * captured site). Never AVIF: the model APIs we care about decode
- * PNG/JPEG/WebP/GIF only (Anthropic, Moonshot K2.6/MoonViT, Qwen-VL),
+ * PNG/JPEG/WebP only (Anthropic, Moonshot K2.7/MoonViT, Qwen-VL),
  * so an inlined AVIF block is a wasted ~7 KB the model errors on or
  * silently drops. As the encoder backfill uploads variants, WebPs
  * progressively become available and the per-result payload drops

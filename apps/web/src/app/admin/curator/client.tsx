@@ -27,7 +27,7 @@ export function CuratorActions({
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error ?? `HTTP ${res.status}`);
       }
-      setMsg(action === "approve" ? "✓ approved — published" : "✓ rejected");
+      setMsg(action === "approve" ? "✓ approved - published" : "✓ rejected");
       router.refresh();
     } catch (e) {
       setMsg(e instanceof Error ? `⚠ ${e.message}` : "failed");
@@ -59,7 +59,7 @@ export function CuratorActions({
         <button
           onClick={async () => {
             await navigator.clipboard.writeText(`pnpm capture ${sourceUrl}`);
-            setMsg("✓ copied — paste into a worker terminal to re-capture");
+            setMsg("✓ copied - paste into a worker terminal to re-capture");
           }}
           className="font-mono text-meta border rule px-4 py-2 transition-colors hover:text-[var(--color-link)]"
         >

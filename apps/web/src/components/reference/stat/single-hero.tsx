@@ -1,4 +1,4 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: Single hero stat · diversification: differs from Row on
  *   count (1 vs 4) + framing (a single fact carried by typography)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Single hero stat — one number, set as large as the page allows, with
+ * Single hero stat - one number, set as large as the page allows, with
  * a fragment of supporting copy. The whole composition is the figure;
  * the copy is its caption. Reach for it when the catalogue's strongest
  * claim is countable and singular.

@@ -1,5 +1,5 @@
 /**
- * `/api/mcp-demo/search` — playground endpoint that mirrors the MCP
+ * `/api/mcp-demo/search` - playground endpoint that mirrors the MCP
  * `search_screens` tool. POST a JSON body `{ query, limit? }`; get
  * back the same hybrid lexical + cosine top-N the agent would see.
  *

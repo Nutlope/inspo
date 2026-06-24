@@ -1,6 +1,6 @@
 "use client";
 
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N4 Off-canvas · diversification: minimal top row, full
  *   nav slides in from the side on demand
  * states: default · open · focus-visible · prefers-reduced-motion
@@ -10,7 +10,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * Off-canvas nav — the page leads with just the wordmark and a
+ * Off-canvas nav - the page leads with just the wordmark and a
  * "menu" affordance. The full navigation slides in from the right as
  * a drawer. Body scroll locks while open; Esc closes. Reach for it
  * when the site wants to be content-led and the nav is the second

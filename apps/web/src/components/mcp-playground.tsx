@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Live MCP playground — embedded on /mcp so visitors (and recruiters)
+ * Live MCP playground - embedded on /mcp so visitors (and recruiters)
  * can see what the agent actually receives without installing anything.
  *
  * Two tabs:
@@ -15,7 +15,7 @@
  *
  * The output is deliberately rendered as a JSON-ish card stack rather
  * than a fake chat bubble. The point is: "this is what your agent
- * gets" — and what your agent gets is structured data, not prose.
+ * gets" - and what your agent gets is structured data, not prose.
  */
 
 import { useCallback, useState } from "react";
@@ -363,7 +363,7 @@ function StudyTab() {
       <div className="mt-6">
         {state.kind === "idle" && (
           <p className="text-meta text-[var(--color-fg-muted)]">
-            Press Run, or pick an example above. Most sites finish in 2–5 s.
+            Press Run, or pick an example above. Most sites finish in 2-5 s.
           </p>
         )}
         {state.kind === "loading" && <Loading />}

@@ -1,5 +1,5 @@
 /**
- * Cross-app shared types — the wire format the MCP server returns,
+ * Cross-app shared types - the wire format the MCP server returns,
  * the gallery consumes, and the worker writes.
  */
 
@@ -15,7 +15,7 @@ import type {
   TypeRole,
 } from "@inspo/taxonomy";
 
-/** Phase 2 — one row of a captured type ramp. */
+/** Phase 2 - one row of a captured type ramp. */
 export type TypeRampEntry = {
   role: TypeRole;
   family: string;
@@ -25,7 +25,7 @@ export type TypeRampEntry = {
   letterSpacing: string;
 };
 
-/** Phase 2 — the design-system block extracted per capture. */
+/** Phase 2 - the design-system block extracted per capture. */
 export type DesignSystem = {
   typeRamp: TypeRampEntry[];
   spacingScale: number[];
@@ -35,7 +35,7 @@ export type DesignSystem = {
   colorWords: ColorWord[];
 };
 
-/** Phase 8 — one detected component region on a captured page.
+/** Phase 8 - one detected component region on a captured page.
  *  Coords are page-absolute (top accounts for scroll). */
 export type ComponentType =
   | "nav"
@@ -74,7 +74,7 @@ export type PageType =
 export type ImageVariant = {
   /** Pixel width the variant was encoded at (e.g. 384, 768, 1440). */
   w: number;
-  /** Public URL — already cache-busted with `?v=<unixSeconds>`. */
+  /** Public URL - already cache-busted with `?v=<unixSeconds>`. */
   url: string;
 };
 
@@ -104,22 +104,22 @@ export type ScreenSummary = {
   fullVariants?: RoleVariants;
   /** Tile-sized variants (384-wide). Used in every grid. */
   thumbVariants?: RoleVariants;
-  /** Mobile (375px-wide) capture — present once the mobile backfill has
+  /** Mobile (375px-wide) capture - present once the mobile backfill has
    *  encoded + uploaded for this row. `mobileImageUrl` is the above-the-
    *  fold phone hero; `mobileFullUrl` the full phone scroll. Powers the
    *  desktop↔mobile responsive pair on /screens/[slug] + the MCP payload
    *  (the responsiveness signal no competitor pairs). Absent on rows not
-   *  yet backfilled — the UI shows desktop-only then. */
+   *  yet backfilled - the UI shows desktop-only then. */
   mobileImageUrl?: string;
   mobileFullUrl?: string;
   mobileVariants?: RoleVariants;
   mobileFullVariants?: RoleVariants;
-  /** 16-wide AVIF base64 data URL, ~50–80 bytes after compression.
+  /** 16-wide AVIF base64 data URL, ~50-80 bytes after compression.
    *  Painted as a CSS background-image for instant first paint
    *  before the real tile decodes. */
   lqip?: string;
   description: string;
-  /** One-line evocative "design soul" tagline (8–14 words). Generated
+  /** One-line evocative "design soul" tagline (8-14 words). Generated
    *  per site by the worker's generate-northstars pass; absent on rows
    *  that haven't been through it. Surfaced on the detail hero +
    *  recommend() output. */
@@ -143,14 +143,14 @@ export type ScreenSummary = {
     macrostructure?: Macrostructure;
     hallmarkTheme?: HallmarkTheme;
   };
-  /** Phase 2 — present when extracted; empty defaults otherwise. */
+  /** Phase 2 - present when extracted; empty defaults otherwise. */
   designSystem: DesignSystem;
-  /** Phase 7 — multi-page grouping. siteSlug = parent site; pageType =
+  /** Phase 7 - multi-page grouping. siteSlug = parent site; pageType =
    *  this page's classification. For legacy single-page rows siteSlug
    *  equals slug and pageType = 'landing'. */
   siteSlug: string;
   pageType: PageType;
-  /** Phase 8 — detected component regions (page-absolute coords).
+  /** Phase 8 - detected component regions (page-absolute coords).
    *  Empty array on legacy rows until extract:components runs. */
   components: ComponentRegion[];
 };
@@ -188,7 +188,7 @@ export type Collection = {
   screens: { slug: string; editorNote?: string; span?: 1 | 2 | 3 }[];
 };
 
-/** One Hallmark-stamped reference component. Generated from
+/** One canonical reference component. Generated from
  *  apps/web/src/components/reference by
  *  `pnpm --filter @inspo/web build:reference-manifest`. Surfaced
  *  over the MCP via `find_reference_components` + `get_reference_jsx`. */
@@ -196,13 +196,13 @@ export type ReferenceComponent = {
   id: string;
   type: ComponentType;
   label: string;
-  /** Sub-macro / archetype label from the component's Hallmark stamp.
-   *  Free-form descriptive — not strictly the same enum as
+  /** Sub-macro / archetype label from the component's stamp.
+   *  Free-form descriptive - not strictly the same enum as
    *  ScreenSummary.macrostructure (e.g. "Ft7 Colophon"). */
   macro: string;
   /** One-sentence editorial note on what this component is and when
    *  to reach for it. */
   note: string;
-  /** Full .tsx source as a string — Hallmark stamp + JSDoc + export. */
+  /** Full .tsx source as a string: the stamp + JSDoc + export. */
   source: string;
 };

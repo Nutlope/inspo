@@ -1,14 +1,14 @@
-/* Hallmark · component: footer · genre: editorial · theme: Inspo-paper
+/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
  * archetype: Ft7 Colophon · diversification: magazine-style credit block
  * states: default + hover (links)
  * contrast: pass (46-50)
  */
 
 /**
- * Colophon footer — a magazine end-credit. Typefaces, stack, owner, year.
+ * Colophon footer - a magazine end-credit. Typefaces, stack, owner, year.
  * Mono caption type throughout so it reads as metadata, not body copy.
  * Three columns at desktop, single stack on mobile. No social row, no
- * link map — those go in a different archetype (Ft1 or Ft3).
+ * link map - those go in a different archetype (Ft1 or Ft3).
  */
 export function FooterColophon() {
   return (
@@ -42,7 +42,7 @@ export function FooterColophon() {
             Owned and operated by Together AI.
             <br />
             <span className="text-[var(--color-fg-muted)]">
-              © {new Date().getFullYear()} — all sites credited to their
+              © {new Date().getFullYear()} - all sites credited to their
               designers.
             </span>
           </p>

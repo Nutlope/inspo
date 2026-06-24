@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Inline "Add to compare" button — sits on the detail page so the
+ * Inline "Add to compare" button - sits on the detail page so the
  * user can build a compare set as they browse. Mirrors the dock's
  * state so toggling here updates the floating dock instantly.
  */

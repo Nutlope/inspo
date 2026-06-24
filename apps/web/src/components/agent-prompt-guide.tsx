@@ -1,5 +1,5 @@
 /**
- * Agent-prompt guide — a small block at the foot of the detail page
+ * Agent-prompt guide - a small block at the foot of the detail page
  * with a pre-formatted prompt that drops the captured site's design
  * system into a coding agent's context. Mirrors a snippet you'd
  * normally hand-paste into Cursor / Claude Code.
@@ -23,7 +23,7 @@ export function AgentPromptGuide({
   fonts: string[];
   macrostructure?: string | null;
 }) {
-  // Build a small, ready-to-paste prompt. Keep it short — agents do
+  // Build a small, ready-to-paste prompt. Keep it short - agents do
   // better with under 200 words of brief than with 2 pages of spec.
   const promptLines = [
     `Build a landing page in the visual style of ${title}.`,

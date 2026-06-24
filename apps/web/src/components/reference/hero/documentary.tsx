@@ -1,4 +1,4 @@
-/* Hallmark · component: hero · genre: editorial · theme: Inspo-paper
+/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
  * archetype: Documentary · diversification: caption-led hero, credit
  *   block as marginalia
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Documentary — the headline reads as the caption of a missing
+ * Documentary - the headline reads as the caption of a missing
  * photograph. A documentary credit block sits to the right (date,
  * photographer, source) the way it would in a Sunday-paper supplement.
  */
@@ -15,7 +15,7 @@ export function HeroDocumentary() {
     <section className="border rule bg-[var(--color-bg)] px-8 py-20 sm:px-14 sm:py-24">
       <div className="grid grid-cols-1 gap-x-10 gap-y-8 lg:grid-cols-12">
         <div className="lg:col-span-9">
-          <p className="text-meta">Plate Nº — May 2026</p>
+          <p className="text-meta">Plate Nº - May 2026</p>
           <h1
             className="font-display mt-8 max-w-[22ch] text-balance leading-[1.05] tracking-tight"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
@@ -30,7 +30,7 @@ export function HeroDocumentary() {
           </p>
           <p className="mt-3 text-sm leading-relaxed text-[var(--color-fg)]">
             Curated edition. Filed by hand from a list of sites whose
-            craft holds up — and that an agent can usefully study.
+            craft holds up - and that an agent can usefully study.
           </p>
         </aside>
       </div>

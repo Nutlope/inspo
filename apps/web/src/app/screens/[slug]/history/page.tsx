@@ -1,9 +1,9 @@
 /**
- * Time machine — `/screens/<slug>/history`.
+ * Time machine - `/screens/<slug>/history`.
  *
  * Lists every desktop-hero-*.png revision of a site on disk, oldest →
  * newest, and lets the user scrub between them. We already keep every
- * recapture without overwriting (see Step 1 of the dedupe report —
+ * recapture without overwriting (see Step 1 of the dedupe report -
  * 447 dirs had >1 hero). Surfacing this is a differentiator: nobody
  * else (gallery, gallery, awards) shows site evolution over time.
  *
@@ -11,7 +11,7 @@
  * scrubber. The client component manages the selected revision +
  * pre-fetches neighbours so scrubbing feels instant.
  *
- * Dev-only for now — the streamer at /api/captures/[slug]/[file]
+ * Dev-only for now - the streamer at /api/captures/[slug]/[file]
  * reads from the worker captures dir, which isn't part of the deploy.
  * Marked clearly in the empty-state.
  */
@@ -44,7 +44,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  return { title: `${slug} — history — Inspo` };
+  return { title: `${slug} - history - Inspo` };
 }
 
 function listRevisions(slug: string): Revision[] {
@@ -159,7 +159,7 @@ function SingleRev({ slug, rev }: { slug: string; rev: Revision }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/api/captures/${slug}/${rev.file}`}
-          alt={`${slug} — latest capture`}
+          alt={`${slug} - latest capture`}
           className="h-auto w-full"
           loading="eager"
           decoding="async"

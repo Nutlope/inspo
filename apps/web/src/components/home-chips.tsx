@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /**
- * A second strip beneath the home sort tabs — quick filter chips that
+ * A second strip beneath the home sort tabs - quick filter chips that
  * route directly to /screens with a Mood or Color filter pre-applied.
  *
  * Curated subset, not the full taxonomy: showing every Mood × Color

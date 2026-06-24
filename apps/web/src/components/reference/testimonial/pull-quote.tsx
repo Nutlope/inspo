@@ -1,9 +1,9 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Pull quote · diversification: single voice, generous air
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Note — placeholder voice, marked as such. Hallmark forbids invented
+ * Note - placeholder voice, marked as such. No invented
  * customer metrics; the quote here is a generic about-craft placeholder
  * the developer should replace with a real attributed quote before ship.
  */
@@ -23,8 +23,8 @@ export function TestimonialPullQuote() {
         </p>
 
         <figcaption className="mt-12 flex items-center justify-center gap-3 text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
-          {/* Honest placeholder — labelled, not invented. */}
-          <span className="font-mono text-meta">—</span>
+          {/* Honest placeholder - labelled, not invented. */}
+          <span className="font-mono text-meta">-</span>
           <span>
             <span className="text-[var(--color-fg)]">[Attribution]</span> ·
             replace before publishing

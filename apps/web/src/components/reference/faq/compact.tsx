@@ -1,8 +1,8 @@
 "use client";
 
-/* Hallmark · component: faq · genre: editorial · theme: Inspo-paper
+/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
  * archetype: Compact list · diversification: Q-only by default, click
- *   to expand A inline — dense list scanning
+ *   to expand A inline - dense list scanning
  * states: default · hover · open · focus-visible
  * contrast: pass (46-50)
  */
@@ -14,7 +14,7 @@ const QA = [
   { q: "Does it train on my prompts?", a: "No. Search logs are anonymised; we do not retain prompt content." },
   { q: "Can I bring my own catalogue?", a: "Self-host the worker, point it at your seed list. Same schema." },
   { q: "What about images we don't own?", a: "Editorial commentary precedent. Credit + takedown honoured at /dmca." },
-  { q: "Is there a desktop app?", a: "No. The MCP runs in your editor — your editor IS the app." },
+  { q: "Is there a desktop app?", a: "No. The MCP runs in your editor - your editor IS the app." },
   { q: "How often does the catalogue grow?", a: "Slowly. Curation is the moat, not coverage." },
 ];
 

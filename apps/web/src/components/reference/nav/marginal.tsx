@@ -1,4 +1,4 @@
-/* Hallmark · component: nav · genre: editorial · theme: Inspo-paper
+/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
  * archetype: N7 Marginal · diversification: differs from Inline + Pill
  *   on orientation (vertical left margin vs horizontal top)
  * states: default · hover (link slides right) · focus-visible
@@ -6,7 +6,7 @@
  */
 
 /**
- * Marginal nav — vertical index in the left margin. Numbered, mono,
+ * Marginal nav - vertical index in the left margin. Numbered, mono,
  * stays put while the page scrolls. The shape is editorial: it reads
  * like a table-of-contents pulled into the chrome. Hover slides the
  * label 4px right so the eye can track without a colour change.

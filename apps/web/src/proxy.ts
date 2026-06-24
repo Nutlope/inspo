@@ -1,5 +1,5 @@
 /**
- * Next.js 16 "proxy" (renamed from middleware). Optimistic auth gate —
+ * Next.js 16 "proxy" (renamed from middleware). Optimistic auth gate -
  * checks for the Better Auth cookie's existence and bounces unsigned
  * users to /signin. The hard authz check still happens in the page
  * itself via `requireUser` / `requireRole`.

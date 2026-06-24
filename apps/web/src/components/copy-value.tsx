@@ -7,7 +7,7 @@
  *
  * Why a fresh component instead of reusing CopyDesignMd: the existing
  * copy is a primary CTA with full-bleed type. This one needs to be
- * unobtrusive — visible on hover, ghost-quiet otherwise.
+ * unobtrusive - visible on hover, ghost-quiet otherwise.
  */
 
 import { useState } from "react";
@@ -30,7 +30,7 @@ export function CopyValue({
       setDone(true);
       setTimeout(() => setDone(false), 1400);
     } catch {
-      /* Quietly fail — clipboard API can be blocked by permission
+      /* Quietly fail - clipboard API can be blocked by permission
        *  policy in some embedded contexts. The value is still
        *  visible on screen so the user can copy manually. */
     }

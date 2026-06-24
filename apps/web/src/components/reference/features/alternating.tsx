@@ -1,4 +1,4 @@
-/* Hallmark · component: features · genre: editorial · theme: Inspo-paper
+/* Inspo · component: features · genre: editorial · theme: Inspo-paper
  * archetype: Alternating rows · diversification: differs from Bento +
  *   triplet on structure (vertical scroll vs grid) + density (low vs high)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Alternating rows — three feature blocks stacked vertically, label
+ * Alternating rows - three feature blocks stacked vertically, label
  * slot flipping side per row to break the column rhythm. No images;
  * a typographic mark (lettered ordinal in mono) sits where the image
  * would. The shape comes from the alternation, not asset variety.
@@ -15,7 +15,7 @@ const ROWS = [
   {
     mark: "A",
     label: "Search the way you think",
-    body: "Type a mood. Paste a URL. Hit ⌘K. The catalogue answers however you ask it — lex, vector, hostname. Hybrid retrieval is the unsexy choice that works.",
+    body: "Type a mood. Paste a URL. Hit ⌘K. The catalogue answers however you ask it - lex, vector, hostname. Hybrid retrieval is the unsexy choice that works.",
   },
   {
     mark: "B",

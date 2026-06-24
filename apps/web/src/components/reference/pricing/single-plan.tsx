@@ -1,22 +1,22 @@
-/* Hallmark · component: pricing · genre: editorial · theme: Inspo-paper
+/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
  * archetype: Single plan focus · diversification: one plan, no
- *   comparison — the page IS the plan
+ *   comparison - the page IS the plan
  * states: default · hover (button) · focus-visible
  * contrast: pass (46-50)
  */
 
 /**
- * Single plan — when the product has one offering, show one card.
+ * Single plan - when the product has one offering, show one card.
  * Reads as a brochure: lead with the headline, list what's in, end
  * with the action. No "Most popular" framing; nothing to be popular
  * against.
  */
 const INCLUDED = [
-  "Full catalogue access — 1,000+ sites",
+  "Full catalogue access - 1,000+ sites",
   "URL-paste lookups + lex search",
   "MCP server for Claude Code, Cursor, Codex",
   "DESIGN.md export per site",
-  "Twenty-eight Hallmark reference components",
+  "Twenty-eight Inspo reference components",
   "All future updates",
 ];
 

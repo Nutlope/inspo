@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Tabbed export block — replaces the bare <pre> for CSS variables on
+ * Tabbed export block - replaces the bare <pre> for CSS variables on
  * the detail page. Three tabs:
  *   - CSS    :root { … }
  *   - Tailwind v4 @theme block (palette + spacing tokens)
@@ -53,7 +53,7 @@ export function ExportBlock({
   const [md, setMd] = useState<string | null>(null);
   // Avoid cascading-render warning by using a ref for the in-flight
   // flag instead of state. The user only needs to see "Loading…" once,
-  // and the markdown either resolves or sticks at the error message —
+  // and the markdown either resolves or sticks at the error message -
   // both via setState calls that don't fire during render.
   const mdFetchedRef = useRef(false);
 

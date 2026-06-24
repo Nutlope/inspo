@@ -9,9 +9,9 @@
  *
  * Scale is measured from the container width via ResizeObserver so a
  * 320px card and a 900px detail hero both render the page at the same
- * 1280px design viewport — only the zoom differs.
+ * 1280px design viewport - only the zoom differs.
  *
- *   interactive=false (default): pointer-events off — it's a preview.
+ *   interactive=false (default): pointer-events off - it's a preview.
  *   interactive=true: the iframe is live and scrollable (detail page).
  */
 

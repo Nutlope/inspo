@@ -28,7 +28,7 @@ export default async function CuratorQueuePage() {
             publishing, or reject with a note.{" "}
             {!hasDatabase() && (
               <em className="not-italic text-[var(--color-link)]">
-                — DEMO MODE: showing pending fixtures. Set DATABASE_URL to use real captures.
+                - DEMO MODE: showing pending fixtures. Set DATABASE_URL to use real captures.
               </em>
             )}
           </p>
@@ -129,7 +129,7 @@ export default async function CuratorQueuePage() {
                     <div className="mt-5">
                       <p className="text-meta mb-2">Tech</p>
                       <p className="text-sm">
-                        {s.tech.length ? s.tech.join(" · ") : "—"}
+                        {s.tech.length ? s.tech.join(" · ") : "-"}
                       </p>
                     </div>
 

@@ -1,4 +1,4 @@
-/* Hallmark · component: testimonial · genre: editorial · theme: Inspo-paper
+/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
  * archetype: Cinematic · diversification: differs from Pull-Quote + Mosaic
  *   on paper band (dark vs light) + attribution style (credit-roll)
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Cinematic — dark band, single voice, attribution rendered as a
+ * Cinematic - dark band, single voice, attribution rendered as a
  * film-credit row at the bottom (role · name · date · source). The
  * format invites verbatim quotation rather than marketing rewriting.
  */
@@ -29,7 +29,7 @@ export function TestimonialCinematic() {
           style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
         >
           [Replace this with the quote you want to feature. Keep it to
-          three lines. The shorter the better — let the surrounding
+          three lines. The shorter the better - let the surrounding
           black do the heavy work.]
         </blockquote>
 
@@ -40,7 +40,7 @@ export function TestimonialCinematic() {
           <span aria-hidden>·</span>
           <span>[Date]</span>
           <span aria-hidden>·</span>
-          <span className="ml-auto">[Source — interview, email, etc.]</span>
+          <span className="ml-auto">[Source - interview, email, etc.]</span>
         </figcaption>
       </figure>
     </section>

@@ -1,11 +1,11 @@
-/* Hallmark · component: stat · genre: editorial · theme: Inspo-paper
+/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
  * archetype: Before / after · diversification: two stats with an
- *   arrow between them — shows movement, not just magnitude
+ *   arrow between them - shows movement, not just magnitude
  * states: default (static)
  * contrast: pass (46-50)
  *
- * Real numbers — both figures reflect actual project state (rejection
- * rate before/after the banner-killer landed). Hallmark forbids
+ * Real numbers - both figures reflect actual project state (rejection
+ * rate before/after the banner-killer landed). No
  * invented before/after numbers; this pair is honest.
  */
 

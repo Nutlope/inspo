@@ -1,4 +1,4 @@
-/* Hallmark · component: cta · genre: editorial · theme: Inspo-paper
+/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
  * archetype: Banded · diversification: differs from Quiet on paper band
  *   (accent-bleed vs paper) + voice (declarative vs invitational)
  * states: default + hover (button: ink wipe), focus-visible (ring)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Banded CTA — full-bleed accent ribbon with a single action. The
+ * Banded CTA - full-bleed accent ribbon with a single action. The
  * pattern earns its loudness by being the only one of its kind on the
  * page. Reserve for the singular conversion ask; never stack two of
  * these on one page.
@@ -34,7 +34,7 @@ export function CtaBanded() {
         </div>
 
         <div className="lg:col-span-4 lg:justify-self-end">
-          {/* Inverse button — paper background on accent ground. Hover
+          {/* Inverse button - paper background on accent ground. Hover
               wipes to ink so the button stays the heaviest thing in
               the band even after the eye adjusts to the red. */}
           <a

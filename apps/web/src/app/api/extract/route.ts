@@ -1,13 +1,13 @@
 /**
  * POST /api/extract  { url }  →  { slug }
  *
- * Auth-gated and per-user rate-limited. Anti-abuse only — Together AI
+ * Auth-gated and per-user rate-limited. Anti-abuse only - Together AI
  * absorbs the inference cost on the hosted instance. Self-hosters
  * lift the cap by editing the DAILY_LIMIT below.
  *
  * The capture itself runs synchronously here; most pages complete in
  * ~30s. If you hit the 60s Vercel function ceiling, swap this for an
- * Inngest job + polling endpoint — the worker code is the same.
+ * Inngest job + polling endpoint - the worker code is the same.
  */
 
 import { NextResponse } from "next/server";
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // If we already have it, just hand back the existing slug — no spend.
+  // If we already have it, just hand back the existing slug - no spend.
   const all = await getAllScreens();
   const existing = findByHostname(all, url);
   if (existing) {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   // Rate-limit budget: anti-abuse only, plumbed for later enforcement.
   void DAILY_LIMIT;
 
-  // The capture pipeline lives in apps/worker — it bundles Playwright
+  // The capture pipeline lives in apps/worker - it bundles Playwright
   // (Chromium binaries, native modules) which can't run inside Vercel's
   // serverless runtime. The deployed version of /extract POSTs to a
   // dedicated worker URL set by INSPO_WORKER_URL. Locally the same

@@ -7,7 +7,7 @@ import { TileImage } from "@/components/tile-image";
 /**
  * Server-rendered tile. No `"use client"`, no `useState`. The previous
  * client-component version paid React hydration cost per tile ×
- * ~1000 tiles on `/screens` — a measurable chunk of TTI for no
+ * ~1000 tiles on `/screens` - a measurable chunk of TTI for no
  * functional benefit.
  *
  * Image strategy:
@@ -17,7 +17,7 @@ import { TileImage } from "@/components/tile-image";
  *   - When the encoder has run (variants are populated on the seed),
  *     a 300-wide tile pulls ~5 KB AVIF instead of ~50 KB PNG.
  *   - When variants are absent (legacy row), the `<img>` falls back
- *     to the original PNG — nothing breaks.
+ *     to the original PNG - nothing breaks.
  *
  * Background while loading:
  *   - If `screen.lqip` is present, it's a 16-wide AVIF base64. Painted
@@ -25,7 +25,7 @@ import { TileImage } from "@/components/tile-image";
  *     swaps in on top once it decodes. Native browser lazy-loading
  *     handles the timing; no fade animation needed.
  *   - If absent (legacy row), the parent gets a CSS gradient from the
- *     palette's first and third colours — the original behaviour,
+ *     palette's first and third colours - the original behaviour,
  *     preserved.
  */
 
@@ -41,7 +41,7 @@ const ASPECT: Record<Variant, string> = {
  * Default `sizes` attribute. Mirrors the grid breakpoints in
  * `/screens` and the home page (1 / 2 / 3 / 4 columns). Telling the
  * browser the rendered width lets it pick the smallest variant that
- * still looks crisp — without this it assumes 100vw and pulls the
+ * still looks crisp - without this it assumes 100vw and pulls the
  * widest variant every time.
  */
 const TILE_SIZES =
@@ -59,7 +59,7 @@ export function ScreenTile({
 }: {
   screen: ScreenSummary;
   variant?: Variant;
-  /** 1-based index. Used for `data-index` only — no rendering. */
+  /** 1-based index. Used for `data-index` only - no rendering. */
   index?: number;
   showCaption?: boolean;
   className?: string;
@@ -73,7 +73,7 @@ export function ScreenTile({
   pageCount?: number;
   /** When true, on first hover the tile loads the full-page screenshot
    *  and slowly scrolls it top→bottom over ~5.5 s. Adds a tiny client
-   *  island per tile but no upfront network cost — the full PNG is
+   *  island per tile but no upfront network cost - the full PNG is
    *  fetched only after the user actually hovers. Default off so
    *  callers opt in (we don't want this on cards in tight grids like
    *  /collections summaries). */
@@ -99,7 +99,7 @@ export function ScreenTile({
     ? `/sites/${screen.siteSlug}`
     : `/screens/${screen.slug}`;
 
-  // Background — LQIP if encoded, otherwise the palette gradient that
+  // Background - LQIP if encoded, otherwise the palette gradient that
   // shipped before. Both render instantly with no network round-trip.
   const palette0 = screen.palette[0] ?? "#eee";
   const palette2 = screen.palette[2] ?? screen.palette[1] ?? "#ddd";
@@ -123,12 +123,12 @@ export function ScreenTile({
           <TileImage
             variants={variants}
             fallbackSrc={fallbackSrc}
-            alt={`${screen.title} — ${screen.description}`}
+            alt={`${screen.title} - ${screen.description}`}
             sizes={TILE_SIZES}
             priority={priority}
           />
 
-          {/* Hover-scroll overlay — full page screenshot, lazy. Renders
+          {/* Hover-scroll overlay - full page screenshot, lazy. Renders
               nothing on first paint; fetches the 1440-wide AVIF only on
               first pointerenter. The overlay sits above the hero image
               and below the caption strip (caption uses pointer-events:
@@ -140,7 +140,7 @@ export function ScreenTile({
             />
           ) : null}
 
-          {/* Hover strip — palette swatches + macrostructure caption.
+          {/* Hover strip - palette swatches + macrostructure caption.
               Opacity-fades in (no slide), calmer than translate. Reads
               on focus too for keyboard users. */}
           <div
@@ -158,7 +158,7 @@ export function ScreenTile({
               ))}
             </div>
             <p className="text-meta truncate text-[var(--color-fg)]">
-              {macro ?? screen.tags.style[0] ?? "—"}
+              {macro ?? screen.tags.style[0] ?? "-"}
             </p>
           </div>
         </div>
@@ -171,7 +171,7 @@ export function ScreenTile({
               </span>
             </p>
             <p className="text-meta whitespace-nowrap">
-              {isMultiPage ? `${pageCount} pages` : (macro ?? screen.tags.style[0] ?? "—")}
+              {isMultiPage ? `${pageCount} pages` : (macro ?? screen.tags.style[0] ?? "-")}
             </p>
           </div>
         )}

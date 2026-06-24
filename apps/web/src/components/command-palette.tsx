@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * ⌘K command palette — Linear / Vercel / gallery pattern.
+ * ⌘K command palette - Linear / Vercel / gallery pattern.
  *
  * - Cmd+K (Ctrl+K on Windows/Linux) toggles
  * - Esc closes
@@ -11,7 +11,7 @@
  * - Per-site quick actions: open, copy DESIGN.md, save/unsave
  *
  * Built on cmdk (the headless palette used by Linear's). Styling is
- * editorial — mono caption text, paper bg, accent-red highlight on
+ * editorial - mono caption text, paper bg, accent-red highlight on
  * the active row, no shadows, hairline rule borders.
  */
 
@@ -162,11 +162,11 @@ export function CommandPalette() {
       const text = await res.text();
       await navigator.clipboard.writeText(text);
     } catch {
-      /* swallow — user will see no change */
+      /* swallow - user will see no change */
     }
     setOpen(false);
     setQuery("");
-    // Tiny visual breadcrumb in the URL — no, just close. Title arg kept for future toast.
+    // Tiny visual breadcrumb in the URL - no, just close. Title arg kept for future toast.
     void title;
   }
 
@@ -230,7 +230,7 @@ export function CommandPalette() {
           <Command.Input
             value={query}
             onValueChange={setQuery}
-            placeholder="search sites, pages, commands — or save / copy DESIGN.md"
+            placeholder="search sites, pages, commands - or save / copy DESIGN.md"
             autoFocus
             className="flex-1 bg-transparent py-4 pr-5 text-base placeholder:text-[var(--color-fg-muted)] focus:outline-none"
           />
@@ -308,7 +308,7 @@ export function CommandPalette() {
             ))}
           </Command.Group>
 
-          {/* Sites — each has 3 hidden actions: open, copy DESIGN.md, save */}
+          {/* Sites - each has 3 hidden actions: open, copy DESIGN.md, save */}
           {index === null ? (
             <div className="px-4 py-3 text-meta text-[var(--color-fg-muted)]">
               loading sites…
@@ -356,7 +356,7 @@ function SiteRow({
   onCopy: () => void;
   onToggleSave: () => void;
 }) {
-  // Single Command.Item — the keyboard shortcuts ⌘C / ⌘S below the
+  // Single Command.Item - the keyboard shortcuts ⌘C / ⌘S below the
   // input route to onCopy / onToggleSave when this row is highlighted.
   return (
     <Command.Item

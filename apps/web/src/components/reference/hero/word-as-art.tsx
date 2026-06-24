@@ -1,4 +1,4 @@
-/* Hallmark · component: hero · genre: editorial · theme: Inspo-paper
+/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
  * archetype: Word-as-art · diversification: single word stretched edge
  *   to edge, the headline is reduced to its essence
  * states: default (static)
@@ -6,7 +6,7 @@
  */
 
 /**
- * Word-as-art — one word, set to fill the viewport width. The page
+ * Word-as-art - one word, set to fill the viewport width. The page
  * doesn't lead with a sentence; it leads with a noun. Marginalia
  * underneath supplies the rest. Common in foundry catalogues and
  * cinema posters; reach for it when the brief has *one* core word.
@@ -35,7 +35,7 @@ export function HeroWordAsArt() {
           noun · ar·chive · /ˈɑːkaɪv/
         </p>
         <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)] sm:col-span-2">
-          A collection of historical documents or records — filed,
+          A collection of historical documents or records - filed,
           credited, addressable. Studied, not copied.
         </p>
       </div>

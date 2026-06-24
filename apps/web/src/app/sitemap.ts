@@ -3,14 +3,14 @@ import { getAllScreens, getAllCollections } from "@inspo/db";
 
 const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
 
-// Runtime, not build-time — sitemap iterates 1k+ screens which would
+// Runtime, not build-time - sitemap iterates 1k+ screens which would
 // otherwise burn Neon's data-transfer quota every deploy.
 export const dynamic = "force-dynamic";
 export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // If the DB is unreachable (e.g. Neon quota hit), ship a minimal
-  // sitemap of static routes only — the deploy still works.
+  // sitemap of static routes only - the deploy still works.
   let screens: Awaited<ReturnType<typeof getAllScreens>> = [];
   let collections: Awaited<ReturnType<typeof getAllCollections>> = [];
   try {
