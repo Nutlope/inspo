@@ -56,6 +56,11 @@ export async function GET(
   _req: NextRequest,
   ctx: { params: Promise<{ slug: string; file: string }> },
 ) {
+  // Dev-only route: the captures dir isn't part of the deployment, so
+  // return 404 in prod without touching the filesystem.
+  if (process.env.NODE_ENV === "production") {
+    return new Response("Not found", { status: 404 });
+  }
   const { slug, file } = await ctx.params;
   const path = safeJoin(slug, file);
   if (!path) {

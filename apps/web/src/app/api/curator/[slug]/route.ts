@@ -22,19 +22,20 @@ export async function PATCH(
 
   const { slug } = await ctx.params;
   const { action, note } = (await req.json().catch(() => ({}))) as {
-    action: "approve" | "reject";
+    action: "approve" | "reject" | "unpublish";
     note?: string;
   };
 
-  if (action !== "approve" && action !== "reject") {
+  // "unpublish" takes an already-published screen back out of the public
+  // archive (the DMCA / takedown lever); it maps to the same "rejected"
+  // status as a fresh reject.
+  if (action !== "approve" && action !== "reject" && action !== "unpublish") {
     return NextResponse.json({ error: "bad action" }, { status: 400 });
   }
 
-  await updateScreenStatus(
-    slug,
-    action === "approve" ? "published" : "rejected",
-  );
+  const status = action === "approve" ? "published" : "rejected";
+  await updateScreenStatus(slug, status);
   if (note) await updateScreenCuratorNote(slug, note);
 
-  return NextResponse.json({ ok: true, slug, status: action === "approve" ? "published" : "rejected" });
+  return NextResponse.json({ ok: true, slug, status });
 }

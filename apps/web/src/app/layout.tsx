@@ -6,6 +6,7 @@ import { Colophon } from "@/components/colophon";
 import { CommandPalette } from "@/components/command-palette";
 import { CompareDock } from "@/components/compare-dock";
 import { site } from "@/lib/site";
+import { BASE_URL } from "@/lib/base-url";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -21,7 +22,7 @@ const interTight = Inter_Tight({
   display: "swap",
 });
 
-const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
+const BASE = BASE_URL;
 
 // The host that serves every captured screenshot. Hard-coded because
 // the build environment may not have INSPO_BLOB_BASE_URL set, and we

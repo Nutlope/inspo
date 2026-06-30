@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { BASE_URL } from "@/lib/base-url";
 
-const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
+const BASE = BASE_URL;
 
 export default function robots(): MetadataRoute.Robots {
   return {

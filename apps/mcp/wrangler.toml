@@ -4,6 +4,12 @@ main = "src/worker.ts"
 compatibility_date = "2026-04-01"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
+# Retain Worker logs (console.error in the top-level catch + per-request)
+# so 500s on the open, unauthenticated endpoint are visible instead of
+# vanishing. View with `wrangler tail` or the Cloudflare dashboard.
+[observability]
+enabled = true
+
 # Vars are set per-environment. For local dev:
 #   wrangler dev --var DATABASE_URL=$DATABASE_URL --var INSPO_BASE_URL=http://localhost:3000
 #

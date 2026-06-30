@@ -19,6 +19,7 @@
 
 import { findScreen, renderDesignMd } from "@inspo/db";
 import type { NextRequest } from "next/server";
+import { BASE_URL } from "@/lib/base-url";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export async function GET(
   ctx: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await ctx.params;
-  const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
+  const base = BASE_URL;
   const screen = await findScreen(slug);
   if (!screen) {
     const body =

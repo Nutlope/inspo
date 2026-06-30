@@ -5,7 +5,7 @@ import { TagPill } from "@/components/tag-pill";
 import { getPendingScreens } from "@inspo/db";
 import { hasDatabase } from "@inspo/db";
 import { MACROSTRUCTURE_LABELS, type Macrostructure } from "@inspo/taxonomy";
-import { CuratorActions } from "./client";
+import { CuratorActions, TakedownForm } from "./client";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +32,22 @@ export default async function CuratorQueuePage() {
               </em>
             )}
           </p>
+        </div>
+      </section>
+
+      {/* Take down a published screen (DMCA / takedown lever) */}
+      <section className="border-t rule pt-8 pb-8">
+        <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-12 lg:gap-x-10">
+          <div className="lg:col-span-2">
+            <p className="text-meta">Take down</p>
+            <p className="mt-2 max-w-[24ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
+              Unpublish an already-live screen (e.g. on a takedown request).
+              Removes it from the public archive immediately.
+            </p>
+          </div>
+          <div className="lg:col-span-10">
+            <TakedownForm />
+          </div>
         </div>
       </section>
 

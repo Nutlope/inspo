@@ -214,8 +214,11 @@ export default {
       await server.connect(transport);
 
       return await transport.handleRequest(forwarded);
-    } catch {
-      // Error hygiene: never leak stack traces or internals to the wire.
+    } catch (err) {
+      // Log for observability (Cloudflare retains it once [observability]
+      // is enabled in wrangler.toml) but never leak stack traces or
+      // internals to the wire.
+      console.error("[inspo-mcp] worker request failed:", err);
       return jsonError(500, "internal error");
     }
   },

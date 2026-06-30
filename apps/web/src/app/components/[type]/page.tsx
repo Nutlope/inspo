@@ -60,6 +60,11 @@ export default async function ComponentTypePage({
 
   const references = getReferences(type);
   const crops = await findComponents({ type, limit: 60 });
+  // Only genuine per-element crops belong in the "from the archive" grid.
+  // Tag-based fallback hits carry idx:-1 (no crop), and
+  // /api/component/<slug>/-1 returns HTTP 400 - rendering them paints a
+  // wall of broken images. Until the crop backfill lands, drop them.
+  const realCrops = crops.filter((h) => !h.fallback && h.idx >= 0);
   const label = TYPE_LABELS[type];
   const hint = TYPE_HINTS[type];
 
@@ -75,7 +80,7 @@ export default async function ComponentTypePage({
           </p>
           <p className="text-meta mt-2">
             {references.length} reference{references.length === 1 ? "" : "s"}
-            {crops.length > 0 ? ` · ${crops.length} captured` : ""}
+            {realCrops.length > 0 ? ` · ${realCrops.length} captured` : ""}
           </p>
         </div>
         <div className="lg:col-span-10 space-y-4">
@@ -124,7 +129,7 @@ export default async function ComponentTypePage({
           Empty in production today (no component coords in the static
           seed). Kept so when the backfill lands the grid populates
           without code changes. */}
-      {crops.length > 0 && (
+      {realCrops.length > 0 && (
         <section className="border-t rule pt-16 pb-24">
           <div className="mb-10 grid grid-cols-1 gap-y-3 lg:grid-cols-12 lg:gap-x-10">
             <div className="lg:col-span-2">
@@ -136,7 +141,7 @@ export default async function ComponentTypePage({
           </div>
 
           <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {crops.map((h) => (
+            {realCrops.map((h) => (
               <li key={`${h.screen.slug}-${h.idx}`}>
                 <Link
                   href={`/sites/${h.screen.siteSlug}`}
@@ -167,7 +172,7 @@ export default async function ComponentTypePage({
         </section>
       )}
 
-      {references.length === 0 && crops.length === 0 && (
+      {references.length === 0 && realCrops.length === 0 && (
         <section className="border-t rule pb-24 pt-16">
           <p className="text-meta py-20 text-center">
             Nothing on file for {label.toLowerCase()} yet.

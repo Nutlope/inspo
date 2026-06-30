@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllScreens, getAllCollections } from "@inspo/db";
+import { BASE_URL } from "@/lib/base-url";
 
-const BASE = process.env.INSPO_BASE_URL ?? "http://localhost:3737";
+const BASE = BASE_URL;
 
 // Runtime, not build-time - sitemap iterates 1k+ screens which would
 // otherwise burn Neon's data-transfer quota every deploy.

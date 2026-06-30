@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     "/api/placeholder/**": ["../worker/captures/**"],
     "/api/component/**": ["../worker/captures/**"],
+    // These two also read the dev-only captures dir; without the
+    // exclusion Next traces the whole ~30K-file / 35GB directory into the
+    // lambda and blows the function-size limit when captures are present.
+    "/api/captures/**": ["../worker/captures/**"],
+    "/screens/[slug]/history/**": ["../worker/captures/**"],
   },
   images: {
     // The gallery still ships raw <img> + <picture> for now — Vercel's

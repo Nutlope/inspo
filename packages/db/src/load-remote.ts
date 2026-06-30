@@ -67,7 +67,15 @@ export async function loadCatalogueFromUrl(
  * request; only the first triggers a fetch.
  */
 export function ensureCatalogue(base: string): Promise<CatalogueLoadResult> {
-  if (!_loaded) _loaded = loadCatalogueFromUrl(base);
+  // Reset the memo on rejection so a transient cold-start failure (CDN
+  // blip, non-200, DNS hiccup) doesn't permanently brick the isolate:
+  // the next request retries instead of re-awaiting a rejected promise.
+  if (!_loaded) {
+    _loaded = loadCatalogueFromUrl(base).catch((e) => {
+      _loaded = null;
+      throw e;
+    });
+  }
   return _loaded;
 }
 
@@ -101,6 +109,14 @@ async function loadSidecarFromUrl(base: string): Promise<boolean> {
 }
 
 export function ensureSidecarFromUrl(base: string): Promise<boolean> {
-  if (!_sidecarLoaded) _sidecarLoaded = loadSidecarFromUrl(base);
+  // Same retry-on-failure guard as ensureCatalogue. loadSidecarFromUrl
+  // already swallows to `false`, but this keeps a thrown rejection from
+  // sticking if its internals ever change.
+  if (!_sidecarLoaded) {
+    _sidecarLoaded = loadSidecarFromUrl(base).catch((e) => {
+      _sidecarLoaded = null;
+      throw e;
+    });
+  }
   return _sidecarLoaded;
 }

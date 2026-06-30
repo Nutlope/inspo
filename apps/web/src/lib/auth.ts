@@ -16,6 +16,24 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { emailOTP } from "better-auth/plugins";
 import { hasDatabase, getDb, schema } from "@inspo/db";
 
+// Fail closed in production: never sign sessions with the public dev
+// fallback secret, and never run on a localhost base URL (which breaks
+// auth redirects). In dev these fall back so the gallery boots without
+// any setup.
+const IS_PROD = process.env.NODE_ENV === "production";
+// `next build` evaluates this module (to collect /api/auth route data)
+// with NODE_ENV=production but without the runtime secrets - don't fail
+// the build for that. The guard fires at runtime / server start instead.
+const IS_BUILD = process.env.NEXT_PHASE === "phase-production-build";
+if (IS_PROD && !IS_BUILD && !process.env.BETTER_AUTH_SECRET) {
+  throw new Error(
+    "BETTER_AUTH_SECRET is required in production - refusing to sign sessions with the public dev fallback.",
+  );
+}
+if (IS_PROD && !IS_BUILD && !process.env.BETTER_AUTH_URL) {
+  throw new Error("BETTER_AUTH_URL is required in production.");
+}
+
 export const auth = betterAuth({
   appName: "Inspo",
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",

@@ -48,6 +48,9 @@ export async function generateMetadata({
 }
 
 function listRevisions(slug: string): Revision[] {
+  // Dev-only: the captures dir never ships to prod. Skip the fs work
+  // there entirely (the page already renders an empty state).
+  if (process.env.NODE_ENV === "production") return [];
   const dir = join(CAPTURES_ROOT, slug);
   if (!existsSync(dir)) return [];
   let files: string[];
