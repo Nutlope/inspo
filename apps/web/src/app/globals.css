@@ -55,9 +55,9 @@
 
   --text-meta: 0.75rem;
   --text-meta-line-height: 1.4;
-  /* Uppercase Inter Tight wants a hair more tracking than mono did to
-     keep small caps-labels crisp rather than cramped. */
-  --text-meta-letter-spacing: 0.08em;
+  /* Meta labels are natural case (not all-caps). Keep tracking near
+     normal - the wide caps-tracking reads as spaced-out in sentence case. */
+  --text-meta-letter-spacing: 0.01em;
 }
 
 @variant dark (&:where(.dark, .dark *));
@@ -186,7 +186,6 @@ textarea:focus-visible {
   font-size: var(--text-meta);
   line-height: var(--text-meta-line-height);
   letter-spacing: var(--text-meta-letter-spacing);
-  text-transform: uppercase;
   color: var(--color-fg-muted);
 }
 
@@ -425,8 +424,7 @@ h2,
   font-family: var(--font-mono);
   font-size: 0.75rem;
   line-height: 1.4;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   font-weight: 500;
   color: var(--color-fg);
 }
