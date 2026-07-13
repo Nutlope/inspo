@@ -14,7 +14,7 @@
  * would otherwise poison every absolute URL if INSPO_BASE_URL were unset.
  */
 export const BASE_URL =
-  process.env.INSPO_BASE_URL ??
+  process.env.INSPO_BASE_URL?.trim() ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3737");

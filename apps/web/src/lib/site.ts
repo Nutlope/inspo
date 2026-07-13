@@ -27,8 +27,7 @@ export const site = {
     url: "https://github.com/Luffixos/inspo",
   },
   // Where DMCA / takedown requests land (see /dmca).
-  // TODO: point this at a real monitored inbox before launch.
   contact: {
-    dmca: "takedowns@inspo.design",
+    dmca: "speedyoussef@gmail.com",
   },
 } as const;
