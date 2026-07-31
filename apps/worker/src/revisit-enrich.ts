@@ -45,7 +45,7 @@ import {
 } from "./dismiss.js";
 import { stabilize } from "./stabilize.js";
 import { extract } from "./extract.js";
-import { applyViewport } from "./screenshot.js";
+import { applyViewport, mobileContextOptions } from "./screenshot.js";
 import { saveLocal } from "./storage.js";
 import { badPageReason, sameRegistrableDomain } from "./bad-capture.js";
 import type { Shot } from "./screenshot.js";
@@ -196,13 +196,30 @@ function gateRegions(
   return { accepted: [], gate: "drift-gated", drift };
 }
 
+/**
+ * Re-shoot mobile at retina. This needs its OWN context: Playwright
+ * fixes deviceScaleFactor at context creation, so resizing the desktop
+ * page to 375x812 yields a 1x capture at best - and combined with a raw
+ * `Emulation` override, a full-size desktop frame mislabelled as mobile.
+ * A dedicated DSF-2 mobile context is the only thing that produces the
+ * 750px-wide shot we actually want.
+ */
 async function shootMobile(
-  page: Page,
+  mobileCtx: BrowserContext,
+  url: string,
   slug: string,
   which: "both" | "hero" | "none",
 ): Promise<boolean> {
   if (which === "none") return false;
-  await applyViewport(page, "mobile");
+  const page = await mobileCtx.newPage();
+  try {
+  const response = await page.goto(url, {
+    waitUntil: "domcontentloaded",
+    timeout: 30_000,
+  });
+  if (response && response.status() >= 400) return false;
+  await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => {});
+  await dismissBanners(page);
   await page.evaluate(() => new Promise((r) => setTimeout(r, 250)));
   await stabilize(page);
   const hero = await page.screenshot({ fullPage: false, type: "png" });
@@ -242,12 +259,19 @@ async function shootMobile(
   }
   for (const s of shots) await saveLocal(slug, s);
   return true;
+  } finally {
+    await page.close().catch(() => {});
+  }
 }
 
 async function processOne(
   ctx: BrowserContext,
   row: SeedRow,
-  opts: { mobile: "both" | "hero" | "none"; components: boolean },
+  opts: {
+    mobile: "both" | "hero" | "none";
+    components: boolean;
+    mobileCtx: BrowserContext;
+  },
 ): Promise<RowReport> {
   const page = await ctx.newPage();
   try {
@@ -338,9 +362,12 @@ async function processOne(
       }
     }
 
-    const mobile = await shootMobile(page, row.slug, opts.mobile).catch(
-      () => false,
-    );
+    const mobile = await shootMobile(
+      opts.mobileCtx,
+      row.sourceUrl,
+      row.slug,
+      opts.mobile,
+    ).catch(() => false);
 
     row.enrichedAt = new Date().toISOString().slice(0, 10);
     return {
@@ -410,7 +437,18 @@ async function main() {
     deviceScaleFactor: 1,
     colorScheme: "light",
   });
+  // Retina mobile needs its own context: deviceScaleFactor is fixed at
+  // context creation and cannot be changed on a live page.
+  const mobileCtx = await browser.newContext({
+    userAgent:
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    locale: "en-US",
+    timezoneId: "America/New_York",
+    colorScheme: "light",
+    ...mobileContextOptions(),
+  });
   await blockConsentNetworks(ctx);
+  await blockConsentNetworks(mobileCtx);
 
   const reports: RowReport[] = [];
   let done = 0;
@@ -435,7 +473,11 @@ async function main() {
         /* best-effort */
       }
       const report = await Promise.race([
-        processOne(ctx, row, { mobile, components: !noComponents }),
+        processOne(ctx, row, {
+          mobile,
+          components: !noComponents,
+          mobileCtx,
+        }),
         new Promise<RowReport>((r) =>
           setTimeout(
             () => r({ slug: row.slug, status: "error", error: "hard timeout" }),

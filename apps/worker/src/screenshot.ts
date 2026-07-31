@@ -4,7 +4,7 @@
  */
 
 import { createHash } from "node:crypto";
-import type { CDPSession, Page } from "playwright";
+import type { Page } from "playwright";
 import type { Viewport } from "./types";
 import { VIEWPORT_SIZES } from "./types";
 
@@ -21,42 +21,40 @@ export type Shot = {
 /** Chromium refuses/garbles screenshots past ~16k physical px on a side. */
 const MAX_PHYSICAL_PX = 16000;
 
-/* One CDP session per Page, created lazily. Playwright can't change
- * deviceScaleFactor after context creation (page.setViewportSize only
- * moves width/height), so retina viewports need the Emulation domain. */
-const cdpSessions = new WeakMap<Page, CDPSession | null>();
-
-async function cdpFor(page: Page): Promise<CDPSession | null> {
-  if (cdpSessions.has(page)) return cdpSessions.get(page) ?? null;
-  try {
-    const session = await page.context().newCDPSession(page);
-    cdpSessions.set(page, session);
-    return session;
-  } catch {
-    // Non-Chromium or remote transport without CDP: degrade to DSF 1.
-    cdpSessions.set(page, null);
-    return null;
-  }
-}
-
 /**
- * Apply a viewport INCLUDING its deviceScaleFactor. This is the fix for
- * the "mobile captured at 1x" bug: VIEWPORT_SIZES declares DSF 2 for
- * tablet/mobile but setViewportSize can never apply it.
+ * Resize a page to a viewport's CSS dimensions.
+ *
+ * This does NOT change deviceScaleFactor, and it cannot: in Playwright
+ * DSF is fixed when the CONTEXT is created. Driving
+ * `Emulation.setDeviceMetricsOverride` over a raw CDP session does not
+ * work around it either - `page.screenshot()` captures at the viewport
+ * Playwright itself knows about and silently ignores the override, so
+ * an override plus a screenshot yields the ORIGINAL context size, not
+ * the requested one. (Measured: a 1440x900 context overridden to
+ * 375x812 @2x screenshots at 1440x900.)
+ *
+ * For a retina viewport, open a context with the right
+ * deviceScaleFactor - see `mobileContextOptions()`.
  */
 export async function applyViewport(page: Page, vp: Viewport): Promise<void> {
   const size = VIEWPORT_SIZES[vp];
-  const cdp = await cdpFor(page);
-  if (cdp) {
-    await cdp.send("Emulation.setDeviceMetricsOverride", {
-      width: size.width,
-      height: size.height,
-      deviceScaleFactor: size.deviceScaleFactor,
-      mobile: vp === "mobile",
-    });
-  } else {
-    await page.setViewportSize({ width: size.width, height: size.height });
-  }
+  await page.setViewportSize({ width: size.width, height: size.height });
+}
+
+/**
+ * Context options that actually produce a retina mobile capture: 375
+ * CSS px at DSF 2 gives 750 physical px. `isMobile` also turns on the
+ * mobile meta-viewport and touch heuristics, so sites serve their
+ * phone layout rather than a squeezed desktop one.
+ */
+export function mobileContextOptions() {
+  const size = VIEWPORT_SIZES.mobile;
+  return {
+    viewport: { width: size.width, height: size.height },
+    deviceScaleFactor: size.deviceScaleFactor,
+    isMobile: true,
+    hasTouch: true,
+  };
 }
 
 export async function captureAllViewports(
@@ -66,6 +64,12 @@ export async function captureAllViewports(
 ): Promise<Shot[]> {
   const out: Shot[] = [];
   const viewports: Viewport[] = ["desktop", "tablet", "mobile"];
+
+  // The real scale factor comes from the context, not from
+  // VIEWPORT_SIZES: a page opened in a DSF-1 context stays DSF 1 at
+  // every viewport. Record what was actually captured rather than what
+  // the table wishes for, or downstream sizing is wrong by 2x.
+  const dsf = await page.evaluate(() => window.devicePixelRatio || 1);
 
   for (const vp of viewports) {
     const size = VIEWPORT_SIZES[vp];
@@ -82,8 +86,8 @@ export async function captureAllViewports(
       viewport: vp,
       fullPage: false,
       buffer: Buffer.from(hero),
-      width: size.width * size.deviceScaleFactor,
-      height: size.height * size.deviceScaleFactor,
+      width: size.width * dsf,
+      height: size.height * dsf,
       contentHash: hashOf(hero),
     });
 
@@ -112,8 +116,8 @@ export async function captureAllViewports(
         document.body?.scrollHeight ?? 0,
       ),
     );
-    const maxCssH = Math.floor(MAX_PHYSICAL_PX / size.deviceScaleFactor);
-    const clamped = size.deviceScaleFactor > 1 && scrollH > maxCssH;
+    const maxCssH = Math.floor(MAX_PHYSICAL_PX / dsf);
+    const clamped = dsf > 1 && scrollH > maxCssH;
     const full = clamped
       ? await page.screenshot({
           clip: { x: 0, y: 0, width: size.width, height: maxCssH },
@@ -124,7 +128,7 @@ export async function captureAllViewports(
       viewport: vp,
       fullPage: true,
       buffer: Buffer.from(full),
-      width: size.width * size.deviceScaleFactor,
+      width: size.width * dsf,
       height: 0, // unknown without metadata; storage layer can fill in
       contentHash: hashOf(full),
     });
