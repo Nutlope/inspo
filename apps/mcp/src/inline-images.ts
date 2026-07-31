@@ -111,29 +111,37 @@ async function fetchOne(url: string): Promise<InlineImage | null> {
 }
 
 /**
- * Fetch a thumbnail block for a result. Tries the WebP variant first
- * (~10 KB once the backfill is up); falls back to the PNG thumb
- * (~50 KB) which exists for every captured site today. Returns null
- * if neither resolves.
+ * Fetch a thumbnail block for a result. Accepts either one URL or an
+ * ordered candidate list (smallest/most-efficient first); the first
+ * candidate that resolves wins. A bare `.../thumb.png` URL still gets
+ * its `.384.webp` sibling synthesized and tried first, so callers that
+ * pass a single PNG keep the WebP-preferred behavior.
  */
 export async function thumbnailBlock(
-  thumbUrl: string,
+  candidates: string | ReadonlyArray<string>,
 ): Promise<InlineImage | null> {
-  const webpCandidate = webpVariantFor(thumbUrl);
-  if (webpCandidate) {
-    const webp = await fetchOne(webpCandidate);
-    if (webp) return webp;
+  const list = typeof candidates === "string" ? [candidates] : [...candidates];
+  const expanded: string[] = [];
+  for (const url of list) {
+    const webpCandidate = url.endsWith(".webp") ? null : webpVariantFor(url);
+    if (webpCandidate && !list.includes(webpCandidate))
+      expanded.push(webpCandidate);
+    expanded.push(url);
   }
-  return fetchOne(thumbUrl);
+  for (const url of expanded) {
+    const block = await fetchOne(url);
+    if (block) return block;
+  }
+  return null;
 }
 
 /**
- * Fetch many thumbnails in parallel. Returns one block per input URL,
+ * Fetch many thumbnails in parallel. Returns one block per input entry,
  * with `null` slots for ones that failed/timed out. The caller is
  * expected to filter nulls out.
  */
 export async function thumbnailBlocks(
-  thumbUrls: ReadonlyArray<string>,
+  thumbUrls: ReadonlyArray<string | ReadonlyArray<string>>,
 ): Promise<Array<InlineImage | null>> {
   return Promise.all(thumbUrls.map((u) => thumbnailBlock(u)));
 }
@@ -145,3 +153,12 @@ export async function thumbnailBlocks(
  *  many results should keep the limit modest (e.g. limit=6) to stay
  *  inside a reasonable response envelope. */
 export const MAX_INLINE_PER_CALL = 12;
+
+/** Total decoded-byte budget for ALL inline images in one response.
+ *  Blocks past the budget are dropped in order (the JSON URLs remain,
+ *  so the agent can still fetch what was cut). Override with
+ *  INSPO_MAX_INLINE_BYTES. */
+export const MAX_INLINE_TOTAL_BYTES = (() => {
+  const raw = Number(process.env.INSPO_MAX_INLINE_BYTES ?? "");
+  return Number.isFinite(raw) && raw > 0 ? raw : 800 * 1024;
+})();

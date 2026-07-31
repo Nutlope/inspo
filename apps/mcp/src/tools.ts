@@ -26,7 +26,10 @@ import {
   findSite,
   getAllCollections,
   getAllScreens,
+  getMultiPageSites,
+  getAllSites,
   getReferenceComponents,
+  isLowQuality,
   renderDesignMd,
 } from "@inspo/db";
 import {
@@ -44,6 +47,7 @@ import {
   VIBES,
   COLOR_WORDS,
   COMPONENTS,
+  CAPTURE_DEVICES,
   isMacrostructure,
   type Style,
   type Industry,
@@ -51,6 +55,7 @@ import {
   type Mode,
   type Vibe,
   type ColorWord,
+  type CaptureDevice,
 } from "@inspo/taxonomy";
 
 const PAGE_TYPES = [
@@ -77,7 +82,14 @@ const REFERENCE_TYPES = [
   "faq",
   "stat",
 ] as const;
-import { asTextContent, formatCollection, formatScreen, formatScreenConcise, withImages } from "./format";
+import {
+  asTextContent,
+  formatCollection,
+  formatScreen,
+  formatScreenConcise,
+  inlineThumbCandidates,
+  withImages,
+} from "./format";
 import { absolute } from "./url";
 import { searchScreens } from "./search";
 // study() was moved to @inspo/shared so the web playground can call
@@ -220,6 +232,13 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         "Result verbosity. Defaults to concise on the text-only profile, full otherwise. 'full' adds the autopsy (fold breakdown), description, all tags and tech; 'concise' keeps northstar + palette + fonts. Use get_screen for one screen's full record.",
       ),
   });
+  const deviceArg = () => ({
+    device: flexEnum(CAPTURE_DEVICES as unknown as [string, ...string[]])
+      .optional()
+      .describe(
+        "'mobile' restricts to sites with a mobile (375px) capture pair and inlines the mobile thumbnail instead of the desktop one - use it when designing phone-first. Nearly the whole archive has mobile pairs; 'desktop' is the default behavior.",
+      ),
+  });
 
   /** registerTool, minus the tools excluded by a statically-known lite
    *  profile. When the profile is client-detected instead, everything
@@ -268,6 +287,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe(
             "Filter to a page kind: 'landing' (default homepages), 'pricing', 'features', 'auth', 'about', 'blog', 'changelog', 'docs', 'other'",
           ),
+        ...deviceArg(),
         limit: flexInt(1, 20).default(6),
         ...detailArg(),
       },
@@ -278,6 +298,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         industry: args.industry as Industry | undefined,
         macrostructure: args.macrostructure as Macrostructure | undefined,
         mode: args.mode as Mode | undefined,
+        device: args.device as CaptureDevice | undefined,
       });
 
       // Apply the new in-JS filters that the DB layer doesn't index.
@@ -310,6 +331,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             vibe: args.vibe ?? null,
             color: args.color ?? null,
             pageType: args.pageType ?? null,
+            device: args.device ?? null,
           },
           count: matched.length,
           tip:
@@ -318,7 +340,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               : "No matches. Try fewer filters or a broader query.",
           results,
         },
-        results.map((r) => r.thumb),
+        matched.map((s) =>
+          inlineThumbCandidates(s, args.device as CaptureDevice | undefined),
+        ),
         inline,
       );
     },
@@ -614,10 +638,11 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             "Macrostructure name. e.g. 'bento-grid', 'Bento Grid', 'specimen', 'Marquee Hero'.",
           ),
         limit: flexInt(1, 20).default(4),
+        ...deviceArg(),
         ...detailArg(),
       },
     },
-    async ({ name, limit, detail }) => {
+    async ({ name, limit, detail, device }) => {
       const slug = name
         .toLowerCase()
         .trim()
@@ -632,11 +657,18 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           })),
         });
       }
-      const screens = await getAllScreens({ macrostructure: slug });
+      const screens = await getAllScreens({
+        macrostructure: slug,
+        device: device as CaptureDevice | undefined,
+      });
+      // Exemplars must be presentable: drop low-quality captures, but
+      // never let the gate empty an otherwise non-empty list.
+      const clean = screens.filter((s) => !isLowQuality(s));
+      const pool = clean.length > 0 ? clean : screens;
       // One exemplar per site: prefer the canonical capture over its
       // --archive twin so the list never repeats the same site.
       const bySite = new Map<string, (typeof screens)[number]>();
-      for (const s of screens) {
+      for (const s of pool) {
         const existing = bySite.get(s.siteSlug);
         if (!existing) bySite.set(s.siteSlug, s);
         else if (existing.slug.includes("--archive") && !s.slug.includes("--archive"))
@@ -657,7 +689,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               : `No screens tagged ${MACROSTRUCTURE_LABELS[slug]} yet. Try search_screens with a broader query.`,
           results,
         },
-        results.map((r) => r.thumb),
+        top.map((s) =>
+          inlineThumbCandidates(s, device as CaptureDevice | undefined),
+        ),
         inline,
       );
     },
@@ -700,9 +734,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         vibe: VIBES,
         color: COLOR_WORDS,
         pageType: PAGE_TYPES,
+        device: CAPTURE_DEVICES,
         componentType: REFERENCE_TYPES,
         tagComponents: COMPONENTS,
-        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components.",
+        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components. device: 'mobile' restricts to sites with a mobile capture pair and inlines mobile thumbnails.",
       }),
   );
 
@@ -711,14 +746,43 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_site_pages",
     {
       description:
-        "Given a site, return all of its captured pages in reading order (landing → pricing → features → auth → about → blog → ...). Use it to study a real product's page sequence - how its homepage, pricing, and other pages relate. Accepts a siteSlug or any screen slug (resolved to its site).",
+        "Given a site, return its captured pages as an ordered FLOW (landing → pricing → features → auth → about → blog → ...) with per-step titles, northstars and thumbnails - study how a real product sequences its pages before designing a multi-page experience. Call with NO arguments to get a directory of flow-capable sites (3+ captured pages) to pick from. Accepts a siteSlug or any screen slug (resolved to its site).",
       inputSchema: {
-        siteSlug: flexSlug().describe(
-          "Site slug (e.g. 'linear-app') or any screen slug from that site.",
-        ),
+        siteSlug: flexSlug()
+          .optional()
+          .describe(
+            "Site slug (e.g. 'linear-app') or any screen slug from that site. Omit to list flow-capable sites instead.",
+          ),
+        limit: flexInt(1, 50)
+          .default(25)
+          .describe("Directory mode only: max sites to list."),
       },
     },
-    async ({ siteSlug }) => {
+    async ({ siteSlug, limit }) => {
+      if (!siteSlug) {
+        // Directory mode: which sites have enough captured pages to
+        // study as a flow?
+        const [multi, sites] = await Promise.all([
+          getMultiPageSites(),
+          getAllSites(),
+        ]);
+        const titles = new Map(sites.map((s) => [s.siteSlug, s.title]));
+        const flowable = multi
+          .filter((m) => m.pageCount >= 3)
+          .sort((a, b) => b.pageCount - a.pageCount)
+          .slice(0, limit)
+          .map((m) => ({
+            siteSlug: m.siteSlug,
+            title: titles.get(m.siteSlug) ?? m.siteSlug,
+            pageCount: m.pageCount,
+          }));
+        return asTextContent({
+          mode: "directory",
+          count: flowable.length,
+          tip: "Call get_site_pages({siteSlug}) on one of these to walk its captured pages as an ordered flow.",
+          sites: flowable,
+        });
+      }
       let site = await findSite(siteSlug);
       if (!site) {
         // Maybe a screen slug was passed - resolve it to its site.
@@ -726,7 +790,8 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         if (s) site = await findSite(s.siteSlug);
       }
       if (!site) return asTextContent(await unknownSlug(siteSlug));
-      const pages = site.pages.map((p) => ({
+      const pages = site.pages.map((p, i) => ({
+        step: i + 1,
         slug: p.slug,
         pageType: p.pageType,
         title: p.title,
@@ -734,12 +799,14 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         thumb: absolute(p.thumbUrl),
         ...(p.northstar ? { northstar: p.northstar } : {}),
       }));
+      const sequence = [...new Set(pages.map((p) => p.pageType))].join(" → ");
       return withImages(
         {
           siteSlug: site.siteSlug,
           title: site.title,
           sourceUrl: site.sourceUrl,
           pageCount: site.pageCount,
+          sequence,
           tip:
             site.pageCount > 1
               ? "Real captured pages in reading order. Coverage varies by site (many have only a landing page, and 'other' is a broad bucket) - this is the page set we captured, not a guaranteed funnel. Call get_screen(slug) for one page's full design."
@@ -778,6 +845,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
           .describe("Only components from this page kind (e.g. 'pricing')"),
+        ...deviceArg(),
         limit: flexInt(1, 40).default(12),
       },
     },
@@ -796,11 +864,13 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const pageType = args.pageType as
         | (typeof PAGE_TYPES)[number]
         | undefined;
+      const device = args.device as CaptureDevice | undefined;
       const filtered = hits.filter((h) => {
         if (vibe && !h.screen.tags.vibe.includes(vibe)) return false;
         if (color && !h.screen.designSystem.colorWords.includes(color))
           return false;
         if (pageType && h.screen.pageType !== pageType) return false;
+        if (device === "mobile" && !h.screen.mobileImageUrl) return false;
         return true;
       });
       const base =
@@ -1038,15 +1108,21 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         color: flexEnum(COLOR_WORDS as unknown as [string, ...string[]])
           .optional()
           .describe("Optional colour word."),
+        ...deviceArg(),
         ...detailArg(),
       },
     },
     async (args) => {
-      const all = await getAllScreens();
+      const all = await getAllScreens({
+        device: args.device as CaptureDevice | undefined,
+      });
+      // Exemplar surfaces should not showcase damaged captures.
+      const allClean = all.filter((s) => !isLowQuality(s));
+      const base = allClean.length >= 24 ? allClean : all;
       // Apply any caller-supplied filters before searching. When the
       // caller didn't pass a mode, infer it from the brief: "dark dev
       // tool" must not surface light exemplars.
-      let pool = all;
+      let pool = base;
       let inferredMode: Mode | null = null;
       if (!args.mode) {
         const b = ` ${args.brief.toLowerCase()} `;
@@ -1057,7 +1133,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const effectiveMode = (args.mode as Mode | undefined) ?? inferredMode;
       if (effectiveMode) {
         pool = pool.filter((s) => s.mode === effectiveMode);
-        if (pool.length < 6) pool = all; // tiny pool: fall back to everything
+        if (pool.length < 6) pool = base; // tiny pool: fall back to everything
       }
       if (args.vibe) {
         const v = args.vibe as Vibe;
@@ -1171,6 +1247,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             ...(inferredMode ? { inferredMode } : {}),
             vibe: args.vibe ?? null,
             color: args.color ?? null,
+            device: args.device ?? null,
           },
           pick: picked
             ? {
@@ -1190,7 +1267,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               ? `Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief. Then honour heroGuidance: compose the hero to fit the first viewport.`
               : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance: compose the hero to fit the first viewport.`,
         },
-        exemplarsFmt.map((r) => r.thumb),
+        exemplars.map((s) =>
+          inlineThumbCandidates(s, args.device as CaptureDevice | undefined),
+        ),
         inline,
       );
     },

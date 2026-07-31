@@ -5,8 +5,48 @@
  */
 
 import type { ScreenSummary, Collection } from "@inspo/shared";
+import type { CaptureDevice } from "@inspo/taxonomy";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 import { absolute } from "./url";
+
+type RoleVariants = NonNullable<ScreenSummary["thumbVariants"]>;
+
+/** Smallest WebP variant URL for a role, if the seed carries one. */
+function smallestWebp(v: RoleVariants | undefined): string | undefined {
+  const list = v?.webp;
+  if (!list || list.length === 0) return undefined;
+  return [...list].sort((a, b) => a.w - b.w)[0]!.url;
+}
+
+/** Largest WebP variant URL for a role, if the seed carries one. */
+function largestWebp(v: RoleVariants | undefined): string | undefined {
+  const list = v?.webp;
+  if (!list || list.length === 0) return undefined;
+  return [...list].sort((a, b) => b.w - a.w)[0]!.url;
+}
+
+/**
+ * Ordered inline-thumbnail candidates for one screen: cheapest first.
+ * device="mobile" prefers the mobile capture (its 384 WebP is live on
+ * Blob for nearly every row); desktop prefers the seed's thumb WebP
+ * variant, then the synthesized `.384.webp` sibling (inline-images
+ * derives it), then the PNG thumb which always exists.
+ */
+export function inlineThumbCandidates(
+  s: ScreenSummary,
+  device?: CaptureDevice,
+): string[] {
+  const out: string[] = [];
+  if (device === "mobile") {
+    const mobileWebp = smallestWebp(s.mobileVariants);
+    if (mobileWebp) out.push(absolute(mobileWebp));
+    if (s.mobileImageUrl) out.push(absolute(s.mobileImageUrl));
+  }
+  const thumbWebp = smallestWebp(s.thumbVariants);
+  if (thumbWebp) out.push(absolute(thumbWebp));
+  out.push(absolute(s.thumbUrl));
+  return out;
+}
 
 export function formatScreen(s: ScreenSummary, why?: string) {
   return {
@@ -18,10 +58,21 @@ export function formatScreen(s: ScreenSummary, why?: string) {
     image: absolute(s.imageUrl),
     fullPage: absolute(s.fullPageUrl),
     thumb: absolute(s.thumbUrl),
+    // Small WebP variants when encoded - fetch these instead of the PNGs
+    // to spend ~5x fewer bytes/tokens per image.
+    ...(smallestWebp(s.thumbVariants)
+      ? { thumbWebp: absolute(smallestWebp(s.thumbVariants)!) }
+      : {}),
+    ...(largestWebp(s.heroVariants)
+      ? { imageWebp: absolute(largestWebp(s.heroVariants)!) }
+      : {}),
     // Mobile (375px) capture, when backfilled - pass both breakpoints so
     // the agent can study how the design reflows, not just the desktop.
     ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
     ...(s.mobileFullUrl ? { mobileFull: absolute(s.mobileFullUrl) } : {}),
+    ...(smallestWebp(s.mobileVariants)
+      ? { mobileThumb: absolute(smallestWebp(s.mobileVariants)!) }
+      : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     ...(s.autopsy ? { autopsy: s.autopsy } : {}),
     description: s.description,
@@ -60,7 +111,13 @@ export function formatScreenConcise(s: ScreenSummary, why?: string) {
     title: s.title,
     sourceUrl: s.sourceUrl,
     thumb: absolute(s.thumbUrl),
+    ...(smallestWebp(s.thumbVariants)
+      ? { thumbWebp: absolute(smallestWebp(s.thumbVariants)!) }
+      : {}),
     ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
+    ...(smallestWebp(s.mobileVariants)
+      ? { mobileThumb: absolute(smallestWebp(s.mobileVariants)!) }
+      : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     palette: s.palette,
     fonts: s.fonts,
@@ -122,20 +179,41 @@ export function asTextContent(value: unknown) {
  */
 export async function withImages(
   value: unknown,
-  imageUrls: ReadonlyArray<string>,
+  imageUrls: ReadonlyArray<string | ReadonlyArray<string>>,
   inline = true,
 ) {
   if (!inline) return asTextContent(value);
-  const { thumbnailBlocks, MAX_INLINE_PER_CALL } = await import("./inline-images");
+  const { thumbnailBlocks, MAX_INLINE_PER_CALL, MAX_INLINE_TOTAL_BYTES } =
+    await import("./inline-images");
   const slice = imageUrls.slice(0, MAX_INLINE_PER_CALL);
-  const blocks = await thumbnailBlocks(slice);
+  const fetched = await thumbnailBlocks(slice);
+  const blocks = fetched.filter((b) => b !== null);
+  // Enforce a total decoded-byte budget across the whole response.
+  // Order is result order, so what survives is the top of the list.
+  const kept: typeof blocks = [];
+  let spent = 0;
+  for (const b of blocks) {
+    const bytes = Math.ceil((b.data.length * 3) / 4);
+    if (spent + bytes > MAX_INLINE_TOTAL_BYTES && kept.length > 0) continue;
+    kept.push(b);
+    spent += bytes;
+  }
+  const dropped = blocks.length - kept.length;
   return {
     content: [
       {
         type: "text" as const,
         text: JSON.stringify(value, null, 2),
       },
-      ...blocks.filter((b): b is NonNullable<typeof b> => b !== null),
+      ...kept,
+      ...(dropped > 0
+        ? [
+            {
+              type: "text" as const,
+              text: `(${dropped} inline thumbnail${dropped === 1 ? "" : "s"} omitted to fit the response budget; every result still carries its image URLs.)`,
+            },
+          ]
+        : []),
     ],
   };
 }

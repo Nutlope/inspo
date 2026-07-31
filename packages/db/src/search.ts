@@ -22,6 +22,7 @@ import type { ScreenSummary } from "@inspo/shared";
 // here even with `transpilePackages` set. The tsx runtime (worker /
 // MCP) resolves either form.
 import { embedQuery, loadSidecar, cosineSim } from "./vector";
+import { isLowQuality } from "./quality";
 
 const URL_RE = /^https?:\/\//i;
 
@@ -135,11 +136,13 @@ export async function searchScreens(
   if (!q) return screens.slice(0, limit);
 
   // Pre-compute lexical scores for everyone (cheap at this scale).
+  // Low-quality captures (vision-scored) are down-weighted, not
+  // excluded: they stay reachable when they are genuinely the match.
   const tokens = q.split(/\s+/).filter(Boolean);
   type Scored = { s: ScreenSummary; lex: number; cos: number };
   const allScored: Scored[] = screens.map((s) => ({
     s,
-    lex: lexicalScore(s, tokens),
+    lex: lexicalScore(s, tokens) * (isLowQuality(s) ? 0.5 : 1),
     cos: 0,
   }));
 
@@ -184,7 +187,9 @@ export async function searchScreens(
 
   const blended = allScored.map((x) => ({
     s: x.s,
-    score: lexWeight * (x.lex / maxLex) + vecWeight * Math.max(0, x.cos),
+    score:
+      (lexWeight * (x.lex / maxLex) + vecWeight * Math.max(0, x.cos)) *
+      (isLowQuality(x.s) ? 0.5 : 1),
   }));
 
   // Dedupe by siteSlug: when every sub-page of a site shares the

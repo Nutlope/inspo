@@ -60,6 +60,51 @@ async function main() {
           ? null
           : "collection resolved to 0 screens",
     },
+    {
+      name: "search_screens",
+      args: { query: "", device: "mobile", limit: 3 },
+      // device=mobile must only surface rows with a mobile capture pair.
+      expect: (obj) => {
+        const results = (obj.results as Array<{ mobile?: string }>) ?? [];
+        if (results.length === 0) return "no mobile results";
+        return results.every((r) => typeof r.mobile === "string")
+          ? null
+          : "result without mobile url leaked through device filter";
+      },
+    },
+    {
+      name: "get_filters",
+      args: {},
+      expect: (obj) =>
+        Array.isArray(obj.device) && (obj.device as string[]).includes("mobile")
+          ? null
+          : "get_filters missing device values",
+    },
+    {
+      name: "get_site_pages",
+      args: {},
+      // Zero-arg directory mode: flow-capable sites (3+ pages).
+      expect: (obj) => {
+        if (obj.mode !== "directory") return "expected directory mode";
+        const sites = (obj.sites as Array<{ pageCount: number }>) ?? [];
+        if (sites.length < 10) return `directory too small: ${sites.length}`;
+        return sites.every((s) => s.pageCount >= 3)
+          ? null
+          : "directory contains a site with fewer than 3 pages";
+      },
+    },
+    {
+      name: "get_site_pages",
+      args: { siteSlug: "linear-app" },
+      expect: (obj) => {
+        const pages = (obj.pages as Array<{ step?: number }>) ?? [];
+        if (pages.length === 0) return "no pages";
+        if (typeof obj.sequence !== "string") return "missing sequence";
+        return pages.every((p, i) => p.step === i + 1)
+          ? null
+          : "pages missing 1-based step numbers";
+      },
+    },
     { name: "get_screen", args: { slug: "missing-slug" } }, // expected error path
     { name: "find_examples_for_macrostructure", args: { name: "not-a-real-thing" } }, // expected error path
   ];

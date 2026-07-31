@@ -165,7 +165,12 @@ export function featuredScore(s: ScreenSummary): number {
   // (Safe to feature now that their tile images are uploaded to Blob;
   // before upload this front-loaded broken thumbnails, so it was held.)
   const award = s.capturedAt >= "2026-05-27" ? 2 : 0;
-  return macro + style + vibe + award + slugJitter(s.slug);
+  // Vision quality nudge: strong captures float, weak ones sink a bit.
+  const quality =
+    typeof s.qualityScore === "number"
+      ? Math.max(-2, Math.min(3, (s.qualityScore - 50) / 12))
+      : 0;
+  return macro + style + vibe + award + quality + slugJitter(s.slug);
 }
 
 function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
