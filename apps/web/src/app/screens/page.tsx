@@ -103,6 +103,12 @@ export default async function ArchivePage({
     components: [],
     // Device filter surface: presence only, the URL itself isn't shown.
     mobileImageUrl: s.mobileImageUrl,
+    // The tile's <picture> needs these or every cell falls back to the
+    // PNG. Two 384-wide URLs per row costs ~240 chars of payload and
+    // saves ~117 KB per visible tile (12 KB WebP vs 129 KB PNG), so it
+    // pays for itself on the first screenful. heroVariants stays out:
+    // the tile only ever renders the thumb-sized set.
+    thumbVariants: s.thumbVariants,
   }));
 
   return (

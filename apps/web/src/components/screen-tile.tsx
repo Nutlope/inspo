@@ -63,7 +63,7 @@ export function ScreenTile({
   index?: number;
   showCaption?: boolean;
   className?: string;
-  /** First 12 tiles get loading="eager" + fetchpriority="high" so the
+  /** First 12 tiles get loading="eager" + fetchPriority="high" so the
    *  above-the-fold grid paints crisp. Below the fold stays lazy. */
   priority?: boolean;
   /** When set and > 1, the tile represents a multi-page site:

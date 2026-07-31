@@ -56,8 +56,7 @@ export function TileImage({
         className={imgClassName}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
-        // @ts-expect-error - fetchpriority is valid HTML, React types lag
-        fetchpriority={priority ? "high" : undefined}
+        fetchPriority={priority ? "high" : undefined}
         onError={() => setFailed(true)}
       />
     </picture>
