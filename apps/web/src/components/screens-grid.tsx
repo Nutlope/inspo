@@ -21,6 +21,7 @@ import {
   MACROSTRUCTURE_LABELS,
   MODES,
   VIBES,
+  CAPTURE_DEVICES,
   isStyle,
   isIndustry,
   isMacrostructure,
@@ -50,6 +51,8 @@ type Filters = {
   mode?: string;
   mood?: string;
   color?: string;
+  /** "mobile" keeps only sites with a mobile capture pair. */
+  device?: string;
   /** Perceptual-distance colour anchor (?hex=%23c7402f). Normalised
    *  to `#aabbcc`. Filters to sites with at least one palette colour
    *  within HEX_FAMILY_THRESHOLD in OKLAB. Distinct from `color`,
@@ -96,6 +99,7 @@ export function ScreensGrid({
       mode: get("mode"),
       mood: get("mood"),
       color: get("color"),
+      device: get("device"),
       hex: hexRaw ? (normalizeHex(hexRaw) ?? undefined) : undefined,
       page: pageNum,
     };
@@ -128,6 +132,9 @@ export function ScreensGrid({
     if (active.mood && isVibe(active.mood)) {
       const m = active.mood;
       list = list.filter((x) => x.tags.vibe.includes(m));
+    }
+    if (active.device === "mobile") {
+      list = list.filter((x) => Boolean(x.mobileImageUrl));
     }
     if (active.color && isColorWord(active.color)) {
       const c = active.color;
@@ -270,6 +277,18 @@ export function ScreensGrid({
             current={active.mode}
             onSelect={setFilter}
             count={(v) => screens.filter((x) => x.mode === v).length}
+          />
+          <FilterGroup
+            label="Device"
+            options={CAPTURE_DEVICES}
+            param="device"
+            current={active.device}
+            onSelect={setFilter}
+            count={(v) =>
+              v === "mobile"
+                ? screens.filter((x) => Boolean(x.mobileImageUrl)).length
+                : screens.length
+            }
           />
         </div>
       </aside>

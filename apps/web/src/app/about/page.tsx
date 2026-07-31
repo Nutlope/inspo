@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Dateline } from "@/components/dateline";
+import { getArchiveStats } from "@inspo/db";
 
 export const metadata: Metadata = {
   title: "About",
@@ -8,7 +9,11 @@ export const metadata: Metadata = {
     "Inspo is an open-source, editorial archive of real-website screenshots queryable by AI coding agents over MCP. Owned and operated by Together AI.",
 };
 
-export default function AboutPage() {
+// Counts come from the live seed; re-render at most daily.
+export const revalidate = 86400;
+
+export default async function AboutPage() {
+  const stats = await getArchiveStats();
   return (
     <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
       <section className="grid grid-cols-1 gap-y-10 pt-16 pb-24 sm:pt-24 lg:grid-cols-12 lg:gap-x-10">
@@ -24,10 +29,11 @@ export default function AboutPage() {
 
           <div className="prose-style max-w-[64ch] space-y-6 text-lg leading-relaxed text-[var(--color-fg)]">
             <p>
-              A thousand real production sites, filed by hand, queryable by
-              your coding agent over MCP. Agents have tools but not taste -
-              and the open web already holds every reference one could need.
-              We just had to assemble, tag, and address it.
+              {stats.sites.toLocaleString()} real production sites, filed by
+              hand, queryable by your coding agent over MCP. Agents have
+              tools but not taste - and the open web already holds every
+              reference one could need. We just had to assemble, tag, and
+              address it.
             </p>
             <p>
               Inspo is{" "}
@@ -63,10 +69,10 @@ export default function AboutPage() {
                   <strong className="text-[var(--color-fg)]">
                     Visual range
                   </strong>{" "}
-                  - a thousand hand-curated captures across three
-                  viewports each. Palettes, type ramps, tech fingerprints
-                  extracted. The agent gets real designs to study, not
-                  generative slop to remix.
+                  - {stats.screens.toLocaleString()} hand-curated captures,
+                  nearly all with a desktop and mobile pair. Palettes, type
+                  ramps, tech fingerprints extracted. The agent gets real
+                  designs to study, not generative slop to remix.
                 </li>
                 <li>
                   <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
@@ -75,7 +81,7 @@ export default function AboutPage() {
                   <strong className="text-[var(--color-fg)]">
                     Canonical code
                   </strong>{" "}
-                  - twenty-eight canonical reference components.
+                  - {stats.references} canonical reference components.
                   Each one demonstrates a named macrostructure or
                   archetype, rendered live at{" "}
                   <Link

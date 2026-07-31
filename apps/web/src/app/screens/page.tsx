@@ -20,6 +20,7 @@ type SearchParams = {
   mode?: string;
   mood?: string;
   color?: string;
+  device?: string;
   /** Perceptual colour-anchor filter (?hex=%23c7402f). Normalised on
    *  the client; on the server we trust whatever URL the user pasted
    *  and let the client sanitise / drop bad inputs. */
@@ -100,6 +101,8 @@ export default async function ArchivePage({
     pageType: s.pageType,
     pageCount: s.pageCount,
     components: [],
+    // Device filter surface: presence only, the URL itself isn't shown.
+    mobileImageUrl: s.mobileImageUrl,
   }));
 
   return (

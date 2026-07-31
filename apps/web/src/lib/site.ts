@@ -1,9 +1,9 @@
 export const site = {
   name: "Inspo",
   marker: "Nº",
-  tagline: "A thousand websites worth studying.",
+  tagline: "Real websites worth studying.",
   description:
-    "A reference layer for AI coding agents - a thousand real production sites, twenty-eight canonical reference components, and a DESIGN.md per site, all queryable from one MCP server.",
+    "A reference layer for AI coding agents - real production sites with desktop and mobile captures, canonical reference components, and a DESIGN.md per site, all queryable from one MCP server.",
   issue: {
     number: "01",
     date: "04 - 2026",

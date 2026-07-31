@@ -12,7 +12,7 @@
  * invented stats.
  */
 const STATS = [
-  { value: "1,019", label: "Sites filed", note: "Curated and published, May 2026" },
+  { value: "870", label: "Sites filed", note: "Curated and published, May 2026" },
   { value: "21", label: "Macrostructures", note: "Named page shapes" },
   { value: "28", label: "References", note: "Reference components, every type populated" },
   { value: "3", label: "Viewports", note: "Desktop, tablet, mobile captured per site" },

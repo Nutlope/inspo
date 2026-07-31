@@ -34,7 +34,7 @@ const USE_CASES: UseCase[] = [
         {
           tool: "search_screens",
           args: '{ query: "fintech editorial typography dashboard" }',
-          returns: "8 hits - top: mercury-com, ramp-com, brex-com, linear-app, longbow-fintech",
+          returns: "real fintech exemplars - top: mercury-com, ramp-com, brex-com, linear-app, longbow-fintech",
         },
         {
           tool: "get_design_system",
@@ -59,7 +59,7 @@ const USE_CASES: UseCase[] = [
         {
           tool: "find_examples_for_macrostructure",
           args: '{ name: "Photographic" }',
-          returns: "75 matches - top: salon-east, ruby-archive, robin-noguier, boulevard-bar, a24films-com",
+          returns: "real photographic exemplars - top: salon-east, ruby-archive, robin-noguier, boulevard-bar, a24films-com",
         },
         {
           tool: "get_design_system",
@@ -72,7 +72,7 @@ const USE_CASES: UseCase[] = [
       referenceSlugs: ["ruby-archive", "salon-east", "robin-noguier"],
     },
     takeaway:
-      "The macrostructure vocabulary points the agent at the right shape (Photographic vs Portfolio Grid). Inspo gives it 75 real ones to study. The shape narrows the search; the references give it taste.",
+      "The macrostructure vocabulary points the agent at the right shape (Photographic vs Portfolio Grid). Inspo gives it real ones to study. The shape narrows the search; the references give it taste.",
   },
   {
     slug: "saas-bento",
@@ -84,12 +84,12 @@ const USE_CASES: UseCase[] = [
         {
           tool: "find_examples_for_macrostructure",
           args: '{ name: "Bento Grid" }',
-          returns: "240 matches - top: linear-app, ui-shadcn-com, magicui-design, supabase-com, vercel-com",
+          returns: "one of the widest shelves in the archive - top: linear-app, ui-shadcn-com, magicui-design, supabase-com, vercel-com",
         },
         {
           tool: "search_screens",
           args: '{ query: "bento dark dev tool", filters: { mode: "dark" } }',
-          returns: "50 hits, sharper to the brief.",
+          returns: "a tighter set, sharper to the brief.",
         },
         {
           tool: "get_design_system",
@@ -102,7 +102,7 @@ const USE_CASES: UseCase[] = [
       referenceSlugs: ["linear-app", "ui-shadcn-com", "magicui-design", "supabase-com"],
     },
     takeaway:
-      "Bento Grid is 240 captures wide. The macrostructure name alone isn't enough - picking *which* Bento to study is the design decision. Inspo lets the agent make that decision with real data.",
+      "Bento Grid is one of the widest shelves in the archive. The macrostructure name alone isn't enough - picking *which* Bento to study is the design decision. Inspo lets the agent make that decision with real data.",
   },
 ];
 

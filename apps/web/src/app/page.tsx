@@ -26,7 +26,7 @@ export default async function HomePage() {
       <section className="pt-12 pb-14 sm:pt-20 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight">
-            A thousand sites we&rsquo;d{" "}
+            The sites we&rsquo;d{" "}
             <em className="not-italic text-[var(--color-link)]">actually study</em>.
           </h1>
 

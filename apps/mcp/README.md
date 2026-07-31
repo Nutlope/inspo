@@ -26,7 +26,7 @@ This is, and stays, a standard **MCP server** - packaging it for one-line instal
 | `get_site_pages(slug)` | A site's captured pages in reading order. |
 | `get_screen(slug)` / `list_collections()` / `get_collection(slug)` | Single record · editor-curated issues. |
 
-Image URLs are absolute (against `INSPO_BASE_URL`, default `https://inspo.design`), so an agent can fetch them or hand them to a vision model directly.
+Image URLs are absolute (against `INSPO_BASE_URL`, default `https://inspo-three.vercel.app`), so an agent can fetch them or hand them to a vision model directly.
 
 **Baked-in guidance:** the server instructions + `recommend()` tell every agent to *compose the hero to fit the first viewport (~1280×800 / `100svh`) - never overflow it.* That single rule kills the most common "AI-built page" failure (an oversized hero cut off below the fold).
 
@@ -48,7 +48,7 @@ claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp
 
 ### `npx` (zero-config)
 
-No clone and no hosting - the stdio server (`inspo-mcp@0.1.1`) runs straight
+No clone and no hosting - the stdio server (`inspo-mcp`) runs straight
 from npm via `npx -y inspo-mcp` and fetches the catalogue from the CDN:
 
 ```jsonc
@@ -76,6 +76,28 @@ The bin shim boots the TS server via `tsx` - no build step.
 ```
 
 Restart the client; the agent gains all the tools above.
+
+## MCP registry
+
+The server is described by [`server.json`](./server.json) for the official
+MCP registry (name: `io.github.luffixos/inspo`), covering both the npm
+stdio package and the hosted streamable-http endpoint. To publish or
+update the listing (needs the GitHub account that owns the repo):
+
+```bash
+brew install mcp-publisher
+cd apps/mcp
+mcp-publisher login github
+mcp-publisher publish
+```
+
+Note: the npm package must be published with the matching `mcpName`
+field first (build-npm.mjs stamps it), and `server.json`'s versions
+should match the published package version.
+
+Telemetry: the hosted Worker records per-tool usage counts and
+durations only (no IPs, no query text). Local stdio/npx servers emit
+zero telemetry.
 
 ## Open-source models (Kimi K2.7, GLM 5.2, Qwen, DeepSeek V4, MiniMax)
 

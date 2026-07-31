@@ -44,7 +44,7 @@ export function FeaturesBento() {
         <article className="border rule p-6">
           <p className="text-meta">Sites filed</p>
           <p className="font-display mt-3 text-4xl leading-none tracking-tight">
-            1,019
+            870
           </p>
           <p className="mt-3 text-sm text-[var(--color-fg-muted)]">
             published rows, palettes extracted, queryable from MCP.

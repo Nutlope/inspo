@@ -12,7 +12,7 @@
  * tag count, etc.) - never invented to inflate proof.
  */
 const STATS = [
-  { value: "1,019", label: "Sites filed" },
+  { value: "870", label: "Sites filed" },
   { value: "21", label: "Macrostructures" },
   { value: "9", label: "Component types" },
   { value: "MIT", label: "Licence" },

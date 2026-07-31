@@ -28,8 +28,8 @@ export function FooterAddress() {
         <div>
           <p className="text-meta">Write</p>
           <p className="mt-4 text-sm leading-relaxed">
-            <a href="mailto:hello@inspo.design" className="text-[var(--color-fg)] hover:text-[var(--color-link)]">
-              hello@inspo.design
+            <a href="mailto:speedyoussef@gmail.com" className="text-[var(--color-fg)] hover:text-[var(--color-link)]">
+              speedyoussef@gmail.com
             </a>
             <br />
             <span className="text-[var(--color-fg-muted)]">

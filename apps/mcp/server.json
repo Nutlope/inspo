@@ -1,0 +1,51 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.luffixos/inspo",
+  "description": "Design inspiration for coding agents: real production sites with palettes, fonts, fold autopsies, and canonical reference JSX.",
+  "repository": {
+    "url": "https://github.com/Luffixos/inspo",
+    "source": "github"
+  },
+  "version": "0.1.5",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "inspo-mcp",
+      "version": "0.1.5",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "TOGETHER_API_KEY",
+          "description": "Optional. Enables query-embedding semantic search; everything else works without it.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "INSPO_CATALOGUE_URL",
+          "description": "Optional. Point at a self-hosted catalogue instead of the public CDN.",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "INSPO_PROFILE",
+          "description": "Optional. 'lite' or 'full' tool surface (auto-detected per client by default).",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "INSPO_IMAGES",
+          "description": "Optional. 'thumbs' or 'none' - whether tool results inline thumbnail image blocks.",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://inspo-mcp.luffixos.workers.dev/mcp"
+    }
+  ]
+}

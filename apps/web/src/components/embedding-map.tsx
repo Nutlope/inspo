@@ -108,7 +108,7 @@ export function EmbeddingMap({
       .slice(0, HUES.length)
       .map((g) => {
         const a = acc.get(g);
-        return a && a.n >= 14 ? { group: g, x: a.x / a.n, y: a.y / a.n, n: a.n } : null;
+        return a && a.n >= 8 ? { group: g, x: a.x / a.n, y: a.y / a.n, n: a.n } : null;
       })
       .filter((v): v is { group: string; x: number; y: number; n: number } => v !== null);
   }, [points, groupOrder]);
@@ -202,7 +202,7 @@ export function EmbeddingMap({
         const sy = (l.y + offsetY) * scale;
         if (sx < 0 || sy < 0 || sx > size.w || sy > size.h) continue;
         ctx.fillStyle = dark ? "rgba(244,241,236,0.34)" : "rgba(26,26,26,0.32)";
-        ctx.fillText(l.group.replace(/-/g, " ").toUpperCase(), sx, sy);
+        ctx.fillText(l.group.replace(/-/g, " "), sx, sy);
       }
       ctx.textAlign = "start";
     }
@@ -383,7 +383,7 @@ export function EmbeddingMap({
       </div>
 
       <Legend
-        groups={groupOrder.slice(0, 10)}
+        groups={groupOrder.slice(0, HUES.length)}
         groupColor={groupColor}
         isolated={isolated}
         onPick={(g) => setIsolated((cur) => (cur === g ? null : g))}

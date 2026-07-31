@@ -163,13 +163,13 @@ export default async function ScreenDetailPage({
           }
         >
           <div className="overflow-hidden border rule">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={screen.imageUrl}
+            <TileImage
+              variants={screen.heroVariants}
+              fallbackSrc={screen.imageUrl}
               alt={screen.description}
-              className="h-auto w-full"
-              loading="eager"
-              decoding="async"
+              sizes="(min-width: 1024px) 72vw, 100vw"
+              priority
+              imgClassName="h-auto w-full"
             />
           </div>
           {screen.mobileImageUrl && (
@@ -283,13 +283,12 @@ export default async function ScreenDetailPage({
               }
             >
               <div className="max-h-[80vh] overflow-y-auto border rule">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={screen.fullPageUrl}
+                <TileImage
+                  variants={screen.fullVariants}
+                  fallbackSrc={screen.fullPageUrl}
                   alt={`${screen.title} - full page scroll`}
-                  className="block w-full"
-                  loading="lazy"
-                  decoding="async"
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  imgClassName="block w-full"
                 />
               </div>
               {screen.mobileFullUrl && (

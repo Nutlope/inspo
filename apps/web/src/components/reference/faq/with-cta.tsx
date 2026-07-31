@@ -48,13 +48,13 @@ export function FaqWithCta() {
           Question we didn&rsquo;t answer?
         </p>
         <a
-          href="mailto:hello@inspo.design"
+          href="mailto:speedyoussef@gmail.com"
           className="
             font-mono text-sm uppercase tracking-[0.12em]
             text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]
           "
         >
-          hello@inspo.design ↗
+          speedyoussef@gmail.com ↗
         </a>
       </div>
     </section>

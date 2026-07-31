@@ -66,7 +66,11 @@ writeFileSync(
       name: "inspo-mcp",
       version: VERSION,
       description:
-        "A curated archive of real website designs, served as an MCP server: 14 tools for search, study, components, palettes, and recommendations.",
+        "A curated archive of real website designs, served as an MCP server: 16 tools for search, study, components, palettes, flows, and recommendations.",
+      // Ties the npm package to the MCP registry entry
+      // (apps/mcp/server.json); the registry validates ownership
+      // through this field at `mcp-publisher publish` time.
+      mcpName: "io.github.luffixos/inspo",
       type: "module",
       bin: { "inspo-mcp": "inspo-mcp.mjs" },
       files: ["inspo-mcp.mjs", "README.md"],

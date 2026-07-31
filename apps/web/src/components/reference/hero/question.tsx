@@ -23,7 +23,7 @@ export function HeroQuestion() {
         </h1>
 
         <div className="mt-16 border-t rule pt-6">
-          <p className="text-meta">Answered, in 1,019 plates →</p>
+          <p className="text-meta">Answered, in 870 plates →</p>
         </div>
       </div>
     </section>

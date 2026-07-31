@@ -36,7 +36,7 @@ export function PricingEnterprise() {
             Built for your set, on your terms.
           </p>
           <a
-            href="mailto:enterprise@inspo.design"
+            href="mailto:speedyoussef@gmail.com"
             className="
               mt-10 inline-flex h-12 items-center gap-3 border-2 px-7
               font-mono text-sm uppercase tracking-[0.12em]
