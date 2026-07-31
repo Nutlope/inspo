@@ -30,7 +30,7 @@ const REPO_ROOT = resolve(MCP_ROOT, "..", "..");
 const OUT_DIR = resolve(MCP_ROOT, "dist");
 const OUT_FILE = resolve(OUT_DIR, "inspo-mcp.mjs");
 
-const VERSION = "0.1.4";
+const VERSION = "0.1.5";
 
 mkdirSync(OUT_DIR, { recursive: true });
 
