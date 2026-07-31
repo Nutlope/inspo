@@ -446,30 +446,30 @@ export const collections: Collection[] = [
     slug: "editorial-layouts",
     title: "Editorial Layouts",
     number: "01",
-    date: "04 — 2026",
+    date: "07 - 2026",
     editorBlurb:
-      "Six sites that read like printed objects. Drop caps, single columns, footnotes set in mono. The screen, finally, behaving like a page.",
-    coverScreenSlug: "atelier-mira",
+      "Six real sites that read like printed objects. Monumental mastheads, figure captions, restraint. The screen, finally, behaving like a page.",
+    coverScreenSlug: "awards-com",
     screens: [
       {
-        slug: "atelier-mira",
+        slug: "awards-com",
         editorNote:
-          "The opening — a foundry-grade specimen page that knows when to stop talking.",
+          "Ultra-condensed caps over an archival photograph; credential tags as marginalia.",
         span: 3,
       },
       {
-        slug: "field-notes-cms",
+        slug: "magazine-b-com",
         editorNote:
-          "The CMS, written like a manifesto. Drop caps and a sidenote rail.",
+          "One book, one dot-ring, one sentence of type. The product is the layout.",
         span: 2,
       },
-      { slug: "ruby-archive", span: 1 },
+      { slug: "herzogdemeuron-com", span: 1 },
       {
-        slug: "post-office-wire",
-        editorNote: "Black on white, set in serif, set on fire.",
+        slug: "rijksmuseum-nl",
+        editorNote: "The museum name set as a scrim across the masterpiece itself.",
         span: 2,
       },
-      { slug: "linen-co", span: 1 },
+      { slug: "apartamentomagazine-com", span: 1 },
     ],
   },
   {
@@ -477,25 +477,25 @@ export const collections: Collection[] = [
     slug: "dark-product-pages",
     title: "Dark Product Pages",
     number: "02",
-    date: "04 — 2026",
+    date: "07 - 2026",
     editorBlurb:
-      "Five product pages that earn their dark mode — not by inverting a light theme, but by composing for it from the start.",
-    coverScreenSlug: "compass-bento",
+      "Five product pages that earn their dark mode, composed for it from the start rather than inverted from a light theme.",
+    coverScreenSlug: "novu-co",
     screens: [
       {
-        slug: "compass-bento",
+        slug: "novu-co",
         editorNote:
-          "An asymmetric bento — every card a different size, all in service of a single hierarchy.",
+          "A component literal in the headline; the UI itself treated as copy.",
         span: 3,
       },
       {
-        slug: "longbow-fintech",
-        editorNote: "Treasury for grown-ups. The data is the marketing.",
+        slug: "milanote-com",
+        editorNote: "Product screenshot as hero, tilted, lit like an object.",
         span: 2,
       },
-      { slug: "switchyard-os", span: 1 },
-      { slug: "rave-tools", span: 1 },
-      { slug: "boulevard-bar", span: 2 },
+      { slug: "mintlify-com", span: 1 },
+      { slug: "campaignmonitor-com", span: 1 },
+      { slug: "featurebase-app", span: 2 },
     ],
   },
   {
@@ -503,16 +503,24 @@ export const collections: Collection[] = [
     slug: "soft-commerce",
     title: "Soft Commerce",
     number: "03",
-    date: "04 — 2026",
+    date: "07 - 2026",
     editorBlurb:
-      "Five commerce sites that don't shout. Slow scroll, single columns, cream and clay, the merchandise allowed to be the loudest thing on the page.",
-    coverScreenSlug: "salon-east",
+      "Commerce that does not shout. Cream and clay, gentle serifs, the merchandise allowed to be the loudest thing on the page.",
+    coverScreenSlug: "bellroy-com",
     screens: [
-      { slug: "salon-east", span: 3 },
-      { slug: "linen-co", span: 2 },
-      { slug: "fern-and-co", span: 1 },
-      { slug: "boulevard-bar", span: 2 },
-      { slug: "stack-academy", span: 1 },
+      {
+        slug: "bellroy-com",
+        editorNote: "Soft greys and warm beige; the product photography carries it.",
+        span: 3,
+      },
+      {
+        slug: "casper-com",
+        editorNote: "Starburst sparkles as literal punctuation around the sale.",
+        span: 2,
+      },
+      { slug: "thrilljockey-com", span: 1 },
+      { slug: "bellroy-com--products-bio-phone-case", span: 2 },
+      { slug: "magazine-b-com", span: 1 },
     ],
   },
 ];

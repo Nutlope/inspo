@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { BASE_URL } from "@/lib/base-url";
 
 export const runtime = "edge";
 export const alt = "Inspo - A thousand websites worth studying.";
@@ -47,7 +48,7 @@ export default async function OpengraphImage() {
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 22, color: "#6b6862", letterSpacing: 1 }}>
           <span style={{ color: "#C7402F" }}>●</span>
-          <span>inspo.design</span>
+          <span>{new URL(BASE_URL).host}</span>
         </div>
       </div>
     ),

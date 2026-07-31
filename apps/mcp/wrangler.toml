@@ -26,6 +26,8 @@ simple = { limit = 120, period = 60 }
 
 [vars]
 ENFORCE_AUTH = "0"
+# Canonical web origin for links in tool responses (siteUrl, DESIGN.md).
+INSPO_BASE_URL = "https://inspo-three.vercel.app"
 # Where the Worker fetches the curated catalogue (seed + embeddings) at
 # runtime - it isn't bundled. Defaults to the published Vercel Blob store
 # if unset; re-publish with publish-catalogue-to-blob.ts after seed edits.

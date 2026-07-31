@@ -633,7 +633,16 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         });
       }
       const screens = await getAllScreens({ macrostructure: slug });
-      const top = screens.slice(0, limit);
+      // One exemplar per site: prefer the canonical capture over its
+      // --archive twin so the list never repeats the same site.
+      const bySite = new Map<string, (typeof screens)[number]>();
+      for (const s of screens) {
+        const existing = bySite.get(s.siteSlug);
+        if (!existing) bySite.set(s.siteSlug, s);
+        else if (existing.slug.includes("--archive") && !s.slug.includes("--archive"))
+          bySite.set(s.siteSlug, s);
+      }
+      const top = [...bySite.values()].slice(0, limit);
       const results = top.map((s) => fmt(detail)(s));
       const inline = ctx.inlineImages();
       return withImages(
@@ -794,7 +803,8 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         if (pageType && h.screen.pageType !== pageType) return false;
         return true;
       });
-      const base = process.env.INSPO_BASE_URL ?? "https://inspo.design";
+      const base =
+        process.env.INSPO_BASE_URL?.trim() || "https://inspo-three.vercel.app";
       const anyFallback = filtered.some((h) => h.fallback);
       const components = filtered.map((h) => ({
         siteSlug: h.screen.siteSlug,
@@ -878,7 +888,18 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
       return withImages(
-        { ...formatCollection(c), screens: enriched },
+        {
+          ...formatCollection(c),
+          screens: enriched,
+          // Never return a silently empty issue: if the curated slugs
+          // drifted out of the catalogue, say so instead of hiding it.
+          ...(enriched.length === 0 && c.screens.length > 0
+            ? {
+                note: "This issue's screens are not in the current catalogue snapshot; showing raw slugs. Use search_screens to browse instead.",
+                rawScreens: c.screens,
+              }
+            : {}),
+        },
         enriched.map((e) => e.thumb),
         ctx.inlineImages(),
       );
@@ -1022,11 +1043,21 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     },
     async (args) => {
       const all = await getAllScreens();
-      // Apply any caller-supplied filters before searching.
+      // Apply any caller-supplied filters before searching. When the
+      // caller didn't pass a mode, infer it from the brief: "dark dev
+      // tool" must not surface light exemplars.
       let pool = all;
-      if (args.mode) {
-        const m = args.mode as Mode;
-        pool = pool.filter((s) => s.mode === m);
+      let inferredMode: Mode | null = null;
+      if (!args.mode) {
+        const b = ` ${args.brief.toLowerCase()} `;
+        if (/\b(dark|noir|black|midnight)\b/.test(b)) inferredMode = "dark";
+        else if (/\b(light|bright|airy|white|paper|cream|pastel)\b/.test(b))
+          inferredMode = "light";
+      }
+      const effectiveMode = (args.mode as Mode | undefined) ?? inferredMode;
+      if (effectiveMode) {
+        pool = pool.filter((s) => s.mode === effectiveMode);
+        if (pool.length < 6) pool = all; // tiny pool: fall back to everything
       }
       if (args.vibe) {
         const v = args.vibe as Vibe;
@@ -1137,6 +1168,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           filters: {
             pageType: args.pageType ?? null,
             mode: args.mode ?? null,
+            ...(inferredMode ? { inferredMode } : {}),
             vibe: args.vibe ?? null,
             color: args.color ?? null,
           },
@@ -1223,4 +1255,9 @@ export const SERVER_INSTRUCTIONS = [
   "product's page sequence in reading order.",
   "",
   "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
+  "",
+  "Deliverable hygiene: when you write a standalone HTML file, always",
+  "include <meta charset=\"utf-8\"> in <head>. Inspo's exemplars lean on",
+  "typographic glyphs (middle dots, arrows, true quotes); without the",
+  "charset declaration they render as mojibake.",
 ].join(" ");

@@ -699,22 +699,39 @@ export async function findComponents(opts: {
   // screen-level tags.components vocabulary - one hit per site, parent
   // page thumb as the image, flagged so callers know there's no crop.
   if (out.length === 0 && opts.type) {
+    const seenSite = new Set<string>();
+    const pushFallback = (s: ScreenSummary) => {
+      seenSite.add(s.siteSlug);
+      out.push({
+        screen: s,
+        idx: -1,
+        region: { type: opts.type!, top: 0, left: 0, width: 0, height: 0 },
+        fallback: true,
+      });
+    };
     const tagSet = TYPE_TO_TAG_COMPONENTS[opts.type] ?? [];
     if (tagSet.length) {
-      const seenSite = new Set<string>();
       for (const s of all) {
         if (out.length >= limit) break;
         if (s.slug !== s.siteSlug) continue; // one canonical row per site
         if (seenSite.has(s.siteSlug)) continue;
-        if (s.tags.components.some((c) => tagSet.includes(c))) {
-          seenSite.add(s.siteSlug);
-          out.push({
-            screen: s,
-            idx: -1,
-            region: { type: opts.type, top: 0, left: 0, width: 0, height: 0 },
-            fallback: true,
-          });
-        }
+        if (s.tags.components.some((c) => tagSet.includes(c))) pushFallback(s);
+      }
+    }
+    // Second fallback: a captured pricing/features PAGE is itself an
+    // exemplar of that component type, even without a crop region or a
+    // component tag on the canonical row. This is what makes
+    // find_components('pricing') useful across the catalogue.
+    const TYPE_TO_PAGE_TYPE: Partial<Record<ComponentType, string>> = {
+      pricing: "pricing",
+      features: "features",
+    };
+    const pt = TYPE_TO_PAGE_TYPE[opts.type];
+    if (pt) {
+      for (const s of all) {
+        if (out.length >= limit) break;
+        if (seenSite.has(s.siteSlug)) continue;
+        if (s.pageType === pt) pushFallback(s);
       }
     }
   }

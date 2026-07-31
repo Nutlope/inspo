@@ -66,8 +66,8 @@ export function renderDesignMd(s: ScreenSummary): string {
 
   /* ── Header ─────────────────────────────────────────────────── */
   const base =
-    (typeof process !== "undefined" && process.env?.INSPO_BASE_URL) ||
-    "https://inspo.design";
+    (typeof process !== "undefined" && process.env?.INSPO_BASE_URL?.trim()) ||
+    "https://inspo-three.vercel.app";
   lines.push(`# ${s.title} design system`);
   lines.push("");
   lines.push("> Extracted by [Inspo](https://github.com/Luffixos/inspo) (open source, MIT, powered by Together AI). Reference material for *intentional* design decisions: adapt, don't copy.");
@@ -158,7 +158,12 @@ export function renderDesignMd(s: ScreenSummary): string {
   }
 
   /* ── CSS variables ──────────────────────────────────────────── */
-  const cssVars = Object.entries(ds.cssVariables);
+  // Drop framework runtime noise (Tailwind ring/transform shims, editor
+  // kits): they say nothing about the design and drown the real tokens.
+  const FRAMEWORK_NOISE = /^--(tw|mly-tw|radix|reach|cdk|mui|chakra|mantine|headlessui|nextui)-/;
+  const cssVars = Object.entries(ds.cssVariables).filter(
+    ([name]) => !FRAMEWORK_NOISE.test(name),
+  );
   if (cssVars.length) {
     lines.push("## CSS variables exposed by the source");
     lines.push("");
