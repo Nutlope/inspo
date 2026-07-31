@@ -47,16 +47,33 @@ function newestPng(files: string[], dir: string, prefix: string) {
   return matching[0] ?? null;
 }
 
+/** Width from the PNG IHDR chunk (bytes 16-19), no image lib needed. */
+function pngWidth(path: string): number | null {
+  try {
+    const fd = readFileSync(path);
+    if (fd.length < 24) return null;
+    return fd.readUInt32BE(16);
+  } catch {
+    return null;
+  }
+}
+
 function variantBlock(
   files: string[],
   stem: string,
   slug: string,
   key: "mobile" | "mobile-full",
   v: number,
+  /** Source PNG width: variants wider than the source are upsampled
+   *  duplicates (the pre-DSF-fix 375px era) and are omitted. */
+  srcWidth: number | null,
 ): RoleVariants | undefined {
   const avif: Variant[] = [];
   const webp: Variant[] = [];
-  for (const w of WIDTHS[key]) {
+  const widths = WIDTHS[key].filter(
+    (w) => srcWidth == null || w <= srcWidth * 1.1,
+  );
+  for (const w of widths) {
     if (files.includes(`${stem}.${w}.avif`))
       avif.push({ w, url: `${BLOB_BASE}/${slug}/${key}.${w}.avif?v=${v}` });
     if (files.includes(`${stem}.${w}.webp`))
@@ -87,13 +104,28 @@ function inspectMobile(slug: string): MobileFields | null {
   const out: MobileFields = {
     mobileImageUrl: `${BLOB_BASE}/${slug}/mobile.png?v=${v}`,
   };
-  const heroVar = variantBlock(files, hero.f.slice(0, -4), slug, "mobile", v);
+  const heroW = pngWidth(join(dir, hero.f));
+  const heroVar = variantBlock(
+    files,
+    hero.f.slice(0, -4),
+    slug,
+    "mobile",
+    v,
+    heroW,
+  );
   if (heroVar) out.mobileVariants = heroVar;
 
   const full = newestPng(files, dir, "mobile-full-");
   if (full) {
     out.mobileFullUrl = `${BLOB_BASE}/${slug}/mobile-full.png?v=${v}`;
-    const fullVar = variantBlock(files, full.f.slice(0, -4), slug, "mobile-full", v);
+    const fullVar = variantBlock(
+      files,
+      full.f.slice(0, -4),
+      slug,
+      "mobile-full",
+      v,
+      pngWidth(join(dir, full.f)),
+    );
     if (fullVar) out.mobileFullVariants = fullVar;
   }
   return out;
@@ -104,6 +136,21 @@ function main() {
   // --only=<slug> augments just that one row (testing / incremental
   // updates), leaving every other row untouched.
   const only = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1];
+  // --from-file=<path>: newline-separated slugs; ONLY those rows are
+  // touched. This is the safe mode for CI / partial capture dirs: an
+  // unscoped run strips mobile fields from every row whose capture dir
+  // is not on THIS machine, which is catastrophic in a fresh checkout.
+  const fromFile = process.argv
+    .find((a) => a.startsWith("--from-file="))
+    ?.split("=")[1];
+  const scoped: Set<string> | null = fromFile
+    ? new Set(
+        readFileSync(fromFile, "utf8")
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l && !l.startsWith("#")),
+      )
+    : null;
   const rows = JSON.parse(readFileSync(SEED, "utf8")) as Array<
     Record<string, unknown>
   >;
@@ -114,6 +161,7 @@ function main() {
   for (const row of rows) {
     const slug = String(row.slug);
     if (only && slug !== only) continue;
+    if (scoped && !scoped.has(slug)) continue;
     // Strip any prior mobile fields first (idempotent).
     delete row.mobileImageUrl;
     delete row.mobileFullUrl;

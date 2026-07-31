@@ -153,6 +153,14 @@ export type ScreenSummary = {
   /** Phase 8 - detected component regions (page-absolute coords).
    *  Empty array on legacy rows until extract:components runs. */
   components: ComponentRegion[];
+  /** Vision-scored capture quality 0-100 (generate-quality pass).
+   *  Absent = unscored; consumers must never penalize unscored rows. */
+  qualityScore?: number;
+  /** Damage flags from the quality pass (cookie-wall, blank-or-loading,
+   *  error-page, ...). Absent or empty = clean. */
+  qualityFlags?: string[];
+  /** ISO date stamped by the revisit-enrich pass (idempotency marker). */
+  enrichedAt?: string;
 };
 
 export type SearchResult = ScreenSummary & {

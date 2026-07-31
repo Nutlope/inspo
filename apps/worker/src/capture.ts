@@ -24,7 +24,7 @@ import {
   blockConsentNetworks,
 } from "./dismiss.js";
 import { stabilize } from "./stabilize.js";
-import { captureAllViewports } from "./screenshot.js";
+import { applyViewport, captureAllViewports } from "./screenshot.js";
 import { saveLocal } from "./storage.js";
 import { encodeVariants } from "./encode-variants.js";
 import { extract } from "./extract.js";
@@ -162,7 +162,7 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     // sample type/spacing/container-width at 375px and report mobile
     // metrics for a desktop-class design system.
     console.log("  extracting metadata…");
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await applyViewport(page, "desktop");
     await page.evaluate(() => new Promise((r) => setTimeout(r, 200)));
     const meta = await extract(page, mainHeaders, heroShot.buffer);
 

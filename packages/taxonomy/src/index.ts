@@ -109,6 +109,10 @@ export const TYPE_ROLES = [
 
 export const VIEWPORTS = ["desktop", "tablet", "mobile"] as const;
 
+/** Devices a capture pair actually ships for (tablet is shot but not
+ *  surfaced). Used by the `device` search filter. */
+export const CAPTURE_DEVICES = ["desktop", "mobile"] as const;
+
 /**
  * The 21 named macrostructures, Inspo's named whole-page shapes. The
  * agent picks one before writing code; Inspo lets it browse real
@@ -164,6 +168,7 @@ export type Vibe = (typeof VIBES)[number];
 export type ColorWord = (typeof COLOR_WORDS)[number];
 export type Mode = (typeof MODES)[number];
 export type Viewport = (typeof VIEWPORTS)[number];
+export type CaptureDevice = (typeof CAPTURE_DEVICES)[number];
 export type Macrostructure = (typeof MACROSTRUCTURES)[number];
 export type HallmarkTheme = (typeof HALLMARK_THEMES)[number];
 export type TypeRole = (typeof TYPE_ROLES)[number];

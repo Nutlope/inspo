@@ -16,6 +16,7 @@ import type {
   Industry,
   Macrostructure,
   Mode,
+  CaptureDevice,
 } from "@inspo/taxonomy";
 import { hasDatabase, useDbReads, getDb } from "./client";
 import {
@@ -68,6 +69,9 @@ export type ScreenFilter = {
   industry?: Industry;
   macrostructure?: Macrostructure;
   mode?: Mode;
+  /** "mobile" restricts to rows with a mobile capture pair. "desktop"
+   *  is a no-op (every row has a desktop capture). */
+  device?: CaptureDevice;
 };
 
 /**
@@ -284,6 +288,7 @@ function applyFiltersFixture(
     )
       return false;
     if (filter.mode && s.mode !== filter.mode) return false;
+    if (filter.device === "mobile" && !s.mobileImageUrl) return false;
     return true;
   });
 }
@@ -388,6 +393,7 @@ export async function getAllScreens(
   const filtered = applyFiltersFixture(summaries, {
     style: filter.style,
     industry: filter.industry,
+    device: filter.device,
   });
 
   if (sort === "varied") return variedOrder(filtered);

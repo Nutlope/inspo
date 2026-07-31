@@ -23,6 +23,8 @@ export {
   type SiteSummary,
 } from "./queries";
 export { renderDesignMd } from "./design-md";
+export { getArchiveStats, type ArchiveStats } from "./stats";
+export { QUALITY_FLOOR, isDamaged, isLowQuality } from "./quality";
 export {
   lexicalSearch,
   searchScreens,
