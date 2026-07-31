@@ -19,6 +19,11 @@
  *   pnpm capture:upload-to-blob --go --slug=linear-app
  *   pnpm capture:upload-to-blob --go --concurrency=8
  *   pnpm capture:upload-to-blob --go --pngs-only    skip variants (legacy mode)
+ *
+ * Surgical backfills - push only the small variants the MCP inlines
+ * and the gallery serves, without re-pushing PNGs already on Blob:
+ *
+ *   ... --go --variants-only --roles=thumb,hero --max-width=768
  */
 
 import "./env.js";
@@ -76,27 +81,54 @@ type UploadOutcome = {
   variantCount: number;
 };
 
+type UploadOpts = { variants: boolean; pngs: boolean; maxWidth: number };
+
+/** Bytes a dry run would push for one slug+role, so `--variants-only
+ *  --roles=... --max-width=...` can be sized before committing to it. */
+function dryRunBytes(slug: string, variant: Variant, opts: UploadOpts): number {
+  const src = newestPng(join(CAPTURES_DIR, slug), PREFIX[variant]);
+  if (!src) return 0;
+  let bytes = opts.pngs ? statSync(src).size : 0;
+  if (!opts.variants) return bytes;
+  const stem = src.slice(0, -".png".length);
+  for (const w of WIDTHS_PER_VARIANT[variant]) {
+    if (w > opts.maxWidth) continue;
+    for (const format of ["avif", "webp"] as const) {
+      const path = `${stem}.${w}.${format}`;
+      if (existsSync(path)) bytes += statSync(path).size;
+    }
+  }
+  return bytes;
+}
+
 async function uploadOne(
   slug: string,
   variant: Variant,
-  opts: { variants: boolean },
+  opts: UploadOpts,
 ): Promise<UploadOutcome> {
   const dir = join(CAPTURES_DIR, slug);
   const src = newestPng(dir, PREFIX[variant]);
   if (!src) return { pngUrl: null, variantCount: 0 };
 
-  const buf = readFileSync(src);
-  const pngKey = `captures/${slug}/${variant}.png`;
-  const png = await put(pngKey, buf, {
-    access: "public",
-    addRandomSuffix: false,
-    contentType: "image/png",
-    cacheControlMaxAge: 60 * 60 * 24 * 30,
-    allowOverwrite: true,
-  });
+  // --variants-only skips the PNG: deterministic keys mean it is
+  // already on Blob from an earlier run, and the PNGs are by far the
+  // heaviest thing here (a desktop-full PNG runs several MB).
+  let pngUrl: string | null = null;
+  if (opts.pngs) {
+    const buf = readFileSync(src);
+    const pngKey = `captures/${slug}/${variant}.png`;
+    const png = await put(pngKey, buf, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: "image/png",
+      cacheControlMaxAge: 60 * 60 * 24 * 30,
+      allowOverwrite: true,
+    });
+    pngUrl = png.url;
+  }
 
   if (!opts.variants) {
-    return { pngUrl: png.url, variantCount: 0 };
+    return { pngUrl, variantCount: 0 };
   }
 
   // Ship the AVIF + WebP siblings that live next to the source PNG.
@@ -106,6 +138,7 @@ async function uploadOne(
   const stem = src.slice(0, -".png".length);
   let variantCount = 0;
   for (const w of WIDTHS_PER_VARIANT[variant]) {
+    if (w > opts.maxWidth) continue;
     for (const format of ["avif", "webp"] as const) {
       const path = `${stem}.${w}.${format}`;
       if (!existsSync(path)) continue;
@@ -120,7 +153,7 @@ async function uploadOne(
       variantCount += 1;
     }
   }
-  return { pngUrl: png.url, variantCount };
+  return { pngUrl, variantCount };
 }
 
 async function main() {
@@ -134,6 +167,21 @@ async function main() {
   // --full-only: ship just the desktop full-page png+variants (e.g. after
   // re-cropping an overflow capture), without re-pushing hero/thumb/mobile.
   const fullOnly = argv.includes("--full-only");
+  // --variants-only: skip the PNGs (already on Blob under the same
+  // deterministic keys) and push only the AVIF/WebP siblings. Pairs
+  // with --roles / --max-width to backfill just the small variants the
+  // MCP inlines, without re-pushing gigabytes of full-page PNGs.
+  const variantsOnly = argv.includes("--variants-only");
+  // --roles=thumb,hero : which of hero|full|thumb|mobile|mobile-full.
+  const rolesArg = argv.find((a) => a.startsWith("--roles="))?.split("=")[1];
+  const rolesFilter = rolesArg
+    ? new Set(rolesArg.split(",").map((r) => r.trim()).filter(Boolean))
+    : null;
+  // --max-width=768 : skip variants wider than this. The 1440s are
+  // 10-20x the bytes of the 384s and nothing inlines them.
+  const maxWidth = Number(
+    argv.find((a) => a.startsWith("--max-width="))?.split("=")[1] ?? Infinity,
+  );
   const slugFilter = argv.find((a) => a.startsWith("--slug="))?.split("=")[1];
   // --from-file=path : upload only the slugs listed (one per line).
   // Lets us push just the newly-captured set instead of re-uploading
@@ -192,23 +240,32 @@ async function main() {
       try {
         let pngsThisSlug = 0;
         let variantsThisSlug = 0;
-        const variants = (
+        let variants = (
           mobileOnly
             ? ["mobile", "mobile-full"]
             : fullOnly
               ? ["full"]
               : ["hero", "full", "thumb", "mobile", "mobile-full"]
         ) as Variant[];
+        if (rolesFilter) variants = variants.filter((v) => rolesFilter.has(v));
         for (const v of variants) {
           if (!go) {
             const src = newestPng(join(CAPTURES_DIR, slug), PREFIX[v]);
             if (src) {
-              totalBytes += statSync(src).size;
+              totalBytes += dryRunBytes(slug, v, {
+                variants: !pngsOnly,
+                pngs: !variantsOnly,
+                maxWidth,
+              });
               pngsThisSlug += 1;
             }
             continue;
           }
-          const r = await uploadOne(slug, v, { variants: !pngsOnly });
+          const r = await uploadOne(slug, v, {
+            variants: !pngsOnly,
+            pngs: !variantsOnly,
+            maxWidth,
+          });
           if (r.pngUrl) pngsThisSlug += 1;
           variantsThisSlug += r.variantCount;
         }
@@ -216,10 +273,12 @@ async function main() {
           if (pngsThisSlug > 0) okSlugs += 1;
           continue;
         }
-        if (pngsThisSlug === 0) {
+        // Under --variants-only there are no PNG uploads to count, so
+        // "nothing on disk" is the absence of both.
+        if (pngsThisSlug === 0 && variantsThisSlug === 0) {
           missing += 1;
           if (missing < 10)
-            console.log(`${tag} · ${slug.padEnd(45)} no pngs on disk — skip`);
+            console.log(`${tag} · ${slug.padEnd(45)} nothing on disk — skip`);
           continue;
         }
         totalPngs += pngsThisSlug;
