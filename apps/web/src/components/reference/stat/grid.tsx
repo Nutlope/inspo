@@ -14,9 +14,9 @@
 const STATS = [
   { value: "870", label: "Sites filed", note: "Curated and published, May 2026" },
   { value: "21", label: "Macrostructures", note: "Named page shapes" },
-  { value: "28", label: "References", note: "Reference components, every type populated" },
-  { value: "3", label: "Viewports", note: "Desktop, tablet, mobile captured per site" },
-  { value: "9.4", label: "Avg pages/site", note: "Median pages captured per site" },
+  { value: "68", label: "References", note: "Reference components, every type populated" },
+  { value: "2", label: "Viewports", note: "Desktop and mobile captured per site" },
+  { value: "2.9", label: "Avg pages/site", note: "Mean pages captured per site" },
   { value: "MIT", label: "Licence", note: "Free, open, owned by Together AI" },
 ];
 

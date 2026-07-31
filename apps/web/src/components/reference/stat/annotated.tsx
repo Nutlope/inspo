@@ -16,14 +16,14 @@ const STATS = [
     foot: "¹ Published rows in screens where status = 'published'",
   },
   {
-    value: "28",
+    value: "68",
     label: "Reference components",
     foot: "² At /components, all Stamped, every type populated",
   },
   {
-    value: "9.4",
+    value: "2.9",
     label: "Avg pages per site",
-    foot: "³ Median across catalogue, sub-pages incl. pricing + auth",
+    foot: "³ Mean across catalogue, sub-pages incl. pricing + auth",
   },
 ];
 

@@ -30,7 +30,7 @@ const QA = [
   },
   {
     q: "Where does the catalogue come from?",
-    a: "Curated by hand from a seed list of sites. The worker captures three viewports, extracts palette + type ramp + tech, runs a vision-LLM pass for tags, then waits for curator review.",
+    a: "Curated by hand from a seed list of sites. The worker captures desktop and mobile, extracts palette + type ramp + tech, runs a vision-LLM pass for tags, then waits for curator review.",
   },
 ];
 
