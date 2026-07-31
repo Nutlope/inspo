@@ -19,6 +19,8 @@ import type {
   CaptureDevice,
 } from "@inspo/taxonomy";
 import { hasDatabase, useDbReads, getDb } from "./client";
+import { cosineSim, loadRowSidecar } from "./vector";
+import { isDamaged } from "./quality";
 import {
   collections as collectionsT,
   collectionScreens as collectionScreensT,
@@ -433,29 +435,109 @@ export async function findScreen(slug: string): Promise<ScreenSummary | null> {
   });
 }
 
+export type FindSimilarOptions = {
+  limit?: number;
+  /** Include other pages of the target's own site (default false). */
+  sameSite?: boolean;
+};
+
+export type SimilarResult = {
+  results: ScreenSummary[];
+  /** "embedding" when the per-row vector sidecar ranked the list;
+   *  "tags" when it was absent and the tag arithmetic fallback ran. */
+  method: "embedding" | "tags";
+};
+
+/** Dedupe a scored list to the best row per site, dropping the target's
+ *  own site unless sameSite, and damaged captures always. */
+function pickSimilar(
+  scored: Array<{ s: ScreenSummary; score: number }>,
+  target: ScreenSummary,
+  limit: number,
+  sameSite: boolean,
+): ScreenSummary[] {
+  scored.sort((a, b) => b.score - a.score);
+  const seenSite = new Set<string>();
+  const out: ScreenSummary[] = [];
+  for (const { s } of scored) {
+    if (s.slug === target.slug) continue;
+    if (!sameSite && s.siteSlug === target.siteSlug) continue;
+    if (isDamaged(s)) continue;
+    if (seenSite.has(s.siteSlug)) continue;
+    seenSite.add(s.siteSlug);
+    out.push(s);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+function similarByTags(
+  all: ScreenSummary[],
+  target: ScreenSummary,
+  limit: number,
+  sameSite: boolean,
+): ScreenSummary[] {
+  const scored = all.map((s) => {
+    let score = 0;
+    if (s.tags.macrostructure === target.tags.macrostructure) score += 4;
+    if (s.mode === target.mode) score += 1;
+    score +=
+      s.tags.industry.filter((i) => target.tags.industry.includes(i)).length *
+      2;
+    score += s.tags.style.filter((i) => target.tags.style.includes(i)).length;
+    return { s, score };
+  });
+  return pickSimilar(scored, target, limit, sameSite);
+}
+
+export async function findSimilarDetailed(
+  slug: string,
+  opts: FindSimilarOptions = {},
+): Promise<SimilarResult> {
+  const limit = opts.limit ?? 3;
+  const sameSite = opts.sameSite ?? false;
+  const all = await getAllScreens();
+  const target = all.find((s) => s.slug === slug);
+  if (!target) return { results: [], method: "tags" };
+
+  // Cosine over per-row vectors when the rows sidecar is present; tags
+  // act as a small structural tiebreak on top. Falls back to pure tag
+  // arithmetic when the sidecar (or the target's vector) is missing.
+  const rows = loadRowSidecar();
+  const targetVec = rows?.get(slug);
+  if (rows && targetVec) {
+    const scored = all
+      .filter((s) => rows.has(s.slug))
+      .map((s) => {
+        let score = cosineSim(targetVec, rows.get(s.slug)!);
+        if (s.tags.macrostructure === target.tags.macrostructure)
+          score += 0.06;
+        if (s.mode === target.mode) score += 0.02;
+        score +=
+          0.02 *
+          Math.min(
+            s.tags.style.filter((i) => target.tags.style.includes(i)).length,
+            3,
+          );
+        return { s, score };
+      });
+    return {
+      results: pickSimilar(scored, target, limit, sameSite),
+      method: "embedding",
+    };
+  }
+  return {
+    results: similarByTags(all, target, limit, sameSite),
+    method: "tags",
+  };
+}
+
 export async function findSimilar(
   slug: string,
   limit = 3,
 ): Promise<ScreenSummary[]> {
-  const all = await getAllScreens();
-  const target = all.find((s) => s.slug === slug);
-  if (!target) return [];
-
-  return all
-    .filter((s) => s.slug !== slug)
-    .map((s) => {
-      let score = 0;
-      if (s.tags.macrostructure === target.tags.macrostructure) score += 4;
-      if (s.mode === target.mode) score += 1;
-      score +=
-        s.tags.industry.filter((i) => target.tags.industry.includes(i)).length *
-        2;
-      score += s.tags.style.filter((i) => target.tags.style.includes(i)).length;
-      return { s, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((x) => x.s);
+  const { results } = await findSimilarDetailed(slug, { limit });
+  return results;
 }
 
 /* ──────────────────── sites (grid view) ──────────────────── */

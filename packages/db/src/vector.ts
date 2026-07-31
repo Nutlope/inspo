@@ -35,13 +35,51 @@ const EMBED_MODEL =
 // `import.meta.url` is undefined there, which would throw at module load.
 // In that runtime the sidecar is injected via setSidecar() instead, so
 // returning null here is fine.
-function sidecarPaths(): { bin: string; idx: string } | null {
+function sidecarPaths(stem: string): { bin: string; idx: string } | null {
   try {
     const dir = dirname(fileURLToPath(import.meta.url));
     return {
-      bin: resolve(dir, "./embeddings.bin"),
-      idx: resolve(dir, "./embeddings.idx.json"),
+      bin: resolve(dir, `./${stem}.bin`),
+      idx: resolve(dir, `./${stem}.idx.json`),
     };
+  } catch {
+    return null;
+  }
+}
+
+type SidecarIdx = { slugs: string[]; dims: number; count?: number };
+
+/** Parse an idx + raw bin pair into a slug-keyed vector map. Returns
+ *  null on dims/byte-length mismatch so callers degrade gracefully. */
+function parseSidecar(
+  idx: SidecarIdx,
+  bin: ArrayBuffer,
+): Map<string, Float32Array> | null {
+  if (idx.dims !== EMBEDDING_DIMS) return null;
+  if (bin.byteLength !== idx.slugs.length * EMBEDDING_DIMS * 4) return null;
+  const view = new Float32Array(bin);
+  const map = new Map<string, Float32Array>();
+  for (let i = 0; i < idx.slugs.length; i++) {
+    map.set(
+      idx.slugs[i]!,
+      view.slice(i * EMBEDDING_DIMS, (i + 1) * EMBEDDING_DIMS),
+    );
+  }
+  return map;
+}
+
+function loadSidecarFromDisk(stem: string): Map<string, Float32Array> | null {
+  const paths = sidecarPaths(stem);
+  if (!paths || !existsSync(paths.bin) || !existsSync(paths.idx)) return null;
+  try {
+    const idx = JSON.parse(readFileSync(paths.idx, "utf8")) as SidecarIdx;
+    const buf = readFileSync(paths.bin);
+    // Copy into a standalone ArrayBuffer (buf may be a pooled slice).
+    const ab = buf.buffer.slice(
+      buf.byteOffset,
+      buf.byteOffset + buf.byteLength,
+    );
+    return parseSidecar(idx, ab);
   } catch {
     return null;
   }
@@ -58,55 +96,36 @@ let _sidecar: Map<string, Float32Array> | null = null;
  * from the CDN. Returns false on a dims mismatch / malformed input so
  * vector tools degrade to lexical search instead of throwing.
  */
-export function setSidecar(
-  idx: { slugs: string[]; dims: number; count?: number },
-  bin: ArrayBuffer,
-): boolean {
-  if (idx.dims !== EMBEDDING_DIMS) return false;
-  if (bin.byteLength !== idx.slugs.length * EMBEDDING_DIMS * 4) return false;
-  const view = new Float32Array(bin);
-  const map = new Map<string, Float32Array>();
-  for (let i = 0; i < idx.slugs.length; i++) {
-    map.set(
-      idx.slugs[i]!,
-      view.slice(i * EMBEDDING_DIMS, (i + 1) * EMBEDDING_DIMS),
-    );
-  }
+export function setSidecar(idx: SidecarIdx, bin: ArrayBuffer): boolean {
+  const map = parseSidecar(idx, bin);
+  if (!map) return false;
   _sidecar = map;
   return true;
 }
 
 export function loadSidecar(): Map<string, Float32Array> | null {
   if (_sidecar) return _sidecar;
-  const paths = sidecarPaths();
-  if (!paths || !existsSync(paths.bin) || !existsSync(paths.idx)) return null;
-  try {
-    const idx = JSON.parse(readFileSync(paths.idx, "utf8")) as {
-      slugs: string[];
-      dims: number;
-      count: number;
-    };
-    if (idx.dims !== EMBEDDING_DIMS) return null;
-    const buf = readFileSync(paths.bin);
-    const view = new Float32Array(
-      buf.buffer,
-      buf.byteOffset,
-      buf.byteLength / 4,
-    );
-    const map = new Map<string, Float32Array>();
-    for (let i = 0; i < idx.slugs.length; i++) {
-      // Slice so each vector is a stand-alone Float32Array (not a
-      // view that pins the whole buffer).
-      map.set(
-        idx.slugs[i]!,
-        view.slice(i * EMBEDDING_DIMS, (i + 1) * EMBEDDING_DIMS),
-      );
-    }
-    _sidecar = map;
-    return _sidecar;
-  } catch {
-    return null;
-  }
+  _sidecar = loadSidecarFromDisk("embeddings");
+  return _sidecar;
+}
+
+/* Per-ROW sidecar (embeddings-rows.*): one vector per screen slug
+ * (2,550) instead of one per site (870). Powers find_similar's cosine
+ * ranking; the per-site sidecar keeps powering search_screens. */
+
+let _rowSidecar: Map<string, Float32Array> | null = null;
+
+export function setRowSidecar(idx: SidecarIdx, bin: ArrayBuffer): boolean {
+  const map = parseSidecar(idx, bin);
+  if (!map) return false;
+  _rowSidecar = map;
+  return true;
+}
+
+export function loadRowSidecar(): Map<string, Float32Array> | null {
+  if (_rowSidecar) return _rowSidecar;
+  _rowSidecar = loadSidecarFromDisk("embeddings-rows");
+  return _rowSidecar;
 }
 
 /* ────────────────────── embed query (cached) ────────────────────── */

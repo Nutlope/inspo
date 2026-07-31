@@ -18,23 +18,47 @@
  */
 
 import { setCatalogue } from "./queries";
-import { setSidecar } from "./vector";
+import { setRowSidecar, setSidecar } from "./vector";
 
 export interface CatalogueLoadResult {
   screens: number;
   vectors: number;
+  /** Per-row vectors (embeddings-rows.*) powering find_similar. */
+  rowVectors: number;
 }
 
 let _loaded: Promise<CatalogueLoadResult> | null = null;
+
+type SidecarIdx = { slugs: string[]; dims: number; count?: number };
+
+async function fetchSidecarPair(
+  b: string,
+  stem: string,
+  inject: (idx: SidecarIdx, bin: ArrayBuffer) => boolean,
+): Promise<number> {
+  try {
+    const [idxRes, binRes] = await Promise.all([
+      fetch(`${b}/${stem}.idx.json`),
+      fetch(`${b}/${stem}.bin`),
+    ]);
+    if (!idxRes.ok || !binRes.ok) return 0;
+    const idx = (await idxRes.json()) as SidecarIdx;
+    const bin = await binRes.arrayBuffer();
+    return inject(idx, bin) ? (idx.count ?? idx.slugs.length) : 0;
+  } catch {
+    /* vectors are optional — keep lexical search working */
+    return 0;
+  }
+}
 
 export async function loadCatalogueFromUrl(
   base: string,
 ): Promise<CatalogueLoadResult> {
   const b = base.replace(/\/+$/, "");
-  const [screensRes, idxRes, binRes] = await Promise.all([
+  const [screensRes, vectors, rowVectors] = await Promise.all([
     fetch(`${b}/static-screens.json`),
-    fetch(`${b}/embeddings.idx.json`),
-    fetch(`${b}/embeddings.bin`),
+    fetchSidecarPair(b, "embeddings", setSidecar),
+    fetchSidecarPair(b, "embeddings-rows", setRowSidecar),
   ]);
   if (!screensRes.ok) {
     throw new Error(
@@ -43,22 +67,7 @@ export async function loadCatalogueFromUrl(
   }
   const screens = (await screensRes.json()) as unknown[];
   setCatalogue(screens);
-
-  let vectors = 0;
-  if (idxRes.ok && binRes.ok) {
-    try {
-      const idx = (await idxRes.json()) as {
-        slugs: string[];
-        dims: number;
-        count?: number;
-      };
-      const bin = await binRes.arrayBuffer();
-      if (setSidecar(idx, bin)) vectors = idx.count ?? idx.slugs.length;
-    } catch {
-      /* vectors are optional — keep lexical search working */
-    }
-  }
-  return { screens: screens.length, vectors };
+  return { screens: screens.length, vectors, rowVectors };
 }
 
 /**
@@ -89,23 +98,12 @@ export function ensureCatalogue(base: string): Promise<CatalogueLoadResult> {
 let _sidecarLoaded: Promise<boolean> | null = null;
 
 async function loadSidecarFromUrl(base: string): Promise<boolean> {
-  try {
-    const b = base.replace(/\/+$/, "");
-    const [idxRes, binRes] = await Promise.all([
-      fetch(`${b}/embeddings.idx.json`),
-      fetch(`${b}/embeddings.bin`),
-    ]);
-    if (!idxRes.ok || !binRes.ok) return false;
-    const idx = (await idxRes.json()) as {
-      slugs: string[];
-      dims: number;
-      count?: number;
-    };
-    const bin = await binRes.arrayBuffer();
-    return setSidecar(idx, bin);
-  } catch {
-    return false;
-  }
+  const b = base.replace(/\/+$/, "");
+  const [vectors, rowVectors] = await Promise.all([
+    fetchSidecarPair(b, "embeddings", setSidecar),
+    fetchSidecarPair(b, "embeddings-rows", setRowSidecar),
+  ]);
+  return vectors > 0 || rowVectors > 0;
 }
 
 export function ensureSidecarFromUrl(base: string): Promise<boolean> {

@@ -20,17 +20,21 @@
  */
 
 import "./env.js";
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { put } from "@vercel/blob";
 
 const REPO_ROOT = resolve(import.meta.dirname, "..", "..", "..");
 const DB_SRC = join(REPO_ROOT, "packages", "db", "src");
 
-const FILES: { file: string; key: string; contentType: string }[] = [
+const FILES: { file: string; key: string; contentType: string; optional?: boolean }[] = [
   { file: "static-screens.json", key: "catalogue/static-screens.json", contentType: "application/json" },
   { file: "embeddings.idx.json", key: "catalogue/embeddings.idx.json", contentType: "application/json" },
   { file: "embeddings.bin", key: "catalogue/embeddings.bin", contentType: "application/octet-stream" },
+  // Per-row vectors (find_similar). Optional until build-row-embeddings
+  // has run at least once.
+  { file: "embeddings-rows.idx.json", key: "catalogue/embeddings-rows.idx.json", contentType: "application/json", optional: true },
+  { file: "embeddings-rows.bin", key: "catalogue/embeddings-rows.bin", contentType: "application/octet-stream", optional: true },
   { file: "umap-2d.json", key: "catalogue/umap-2d.json", contentType: "application/json" },
 ];
 
@@ -46,8 +50,12 @@ async function main() {
 
   console.log(`\n  publish-catalogue-to-blob · go=${go}\n`);
   const urls: string[] = [];
-  for (const { file, key, contentType } of FILES) {
+  for (const { file, key, contentType, optional } of FILES) {
     const path = join(DB_SRC, file);
+    if (optional && !existsSync(path)) {
+      console.log(`  - skipping ${file} (not built yet)`);
+      continue;
+    }
     const buf = readFileSync(path);
     const size = mb(statSync(path).size);
     if (!go) {

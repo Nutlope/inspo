@@ -22,7 +22,7 @@ import {
   findComponents,
   findReferenceComponent,
   findScreen,
-  findSimilar,
+  findSimilarDetailed,
   findSite,
   getAllCollections,
   getAllScreens,
@@ -452,28 +452,51 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_similar",
     {
       description:
-        "Given a screen slug, return its visual + structural neighbours - same macrostructure first, then overlapping industry / style / mode.",
+        "Given a screen slug, return its nearest design neighbours - ranked by overall design-similarity embeddings when available (with structural tags as tiebreak), falling back to macrostructure / industry / style overlap. One result per site.",
       inputSchema: {
         slug: flexSlug(),
         limit: flexInt(1, 20).default(8),
+        sameSite: flexBool()
+          .default(false)
+          .describe(
+            "Include other pages of the same site (default false: neighbours are other sites).",
+          ),
         ...detailArg(),
       },
     },
-    async ({ slug, limit, detail }) => {
+    async ({ slug, limit, sameSite, detail }) => {
       const target = await findScreen(slug);
       if (!target) return asTextContent(await unknownSlug(slug));
-      const similar = await findSimilar(slug, limit);
-      const results = similar.map((s) =>
-        fmt(detail)(
-          s,
+      const { results: similar, method } = await findSimilarDetailed(slug, {
+        limit,
+        sameSite,
+      });
+      const results = similar.map((s) => {
+        const structural: string[] = [];
+        if (
+          s.tags.macrostructure &&
           s.tags.macrostructure === target.tags.macrostructure
-            ? `Same macrostructure (${target.tags.macrostructure})`
-            : "Overlapping industry / style / mode",
-        ),
-      );
+        )
+          structural.push(
+            `same macrostructure (${MACROSTRUCTURE_LABELS[s.tags.macrostructure]})`,
+          );
+        const sharedIndustry = s.tags.industry.filter((i) =>
+          target.tags.industry.includes(i),
+        );
+        if (sharedIndustry.length > 0)
+          structural.push(`overlapping industry: ${sharedIndustry[0]}`);
+        const why =
+          method === "embedding"
+            ? `Nearest by overall design similarity${structural.length ? "; " + structural.join("; ") : ""}`
+            : structural.length
+              ? structural.join("; ")
+              : "Overlapping industry / style / mode";
+        return fmt(detail)(s, why);
+      });
       return withImages(
         {
           reference: { slug: target.slug, title: target.title },
+          method,
           count: similar.length,
           results,
         },

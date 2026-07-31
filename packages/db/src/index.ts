@@ -4,6 +4,9 @@ export {
   getAllScreens,
   findScreen,
   findSimilar,
+  findSimilarDetailed,
+  type FindSimilarOptions,
+  type SimilarResult,
   findSite,
   getMultiPageSites,
   getAllSites,
@@ -32,7 +35,15 @@ export {
   hostnameOf,
   isUrl,
 } from "./search";
-export { embedQuery, loadSidecar, setSidecar, cosineSim, EMBEDDING_DIMS } from "./vector";
+export {
+  embedQuery,
+  loadSidecar,
+  setSidecar,
+  loadRowSidecar,
+  setRowSidecar,
+  cosineSim,
+  EMBEDDING_DIMS,
+} from "./vector";
 export { setCatalogue } from "./queries";
 export {
   loadCatalogueFromUrl,

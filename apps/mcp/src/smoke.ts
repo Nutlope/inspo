@@ -36,7 +36,21 @@ async function main() {
     { name: "search_screens", args: { query: "dark editorial agency", limit: 3 }, expect: noError },
     { name: "search_screens", args: { query: "", macrostructure: "bento-grid", limit: 5 }, expect: noError },
     { name: "get_screen", args: { slug: "novu-co" }, expect: noError },
-    { name: "find_similar", args: { slug: "novu-co", limit: 3 }, expect: noError },
+    {
+      name: "find_similar",
+      args: { slug: "novu-co", limit: 5 },
+      // Both ranking paths must dedupe by site and report their method.
+      expect: (obj) => {
+        if (obj.method !== "embedding" && obj.method !== "tags")
+          return `bad method: ${obj.method}`;
+        const results = (obj.results as Array<{ slug: string }>) ?? [];
+        if (results.length === 0) return "no results";
+        const sites = results.map((r) => r.slug.split("--")[0]);
+        return new Set(sites).size === sites.length
+          ? null
+          : "duplicate site among similar results";
+      },
+    },
     {
       name: "find_examples_for_macrostructure",
       args: { name: "Bento Grid" },
