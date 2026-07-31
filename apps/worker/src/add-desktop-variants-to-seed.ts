@@ -20,6 +20,11 @@
  *   tsx src/add-desktop-variants-to-seed.ts                 dry-run
  *   tsx src/add-desktop-variants-to-seed.ts --write
  *   tsx src/add-desktop-variants-to-seed.ts --write --from-file=slugs.txt
+ *   tsx src/add-desktop-variants-to-seed.ts --write --roles=thumb,hero
+ *
+ * --roles / --max-width MUST match how upload-to-blob was run: the seed
+ * stores Blob URLs, so a variant that exists on disk but was never
+ * uploaded becomes a 404 in the published catalogue.
  */
 
 import "./env.js";
@@ -65,6 +70,19 @@ function pngWidth(path: string): number | null {
 
 function main() {
   const write = process.argv.includes("--write");
+  // Keep these in lockstep with upload-to-blob: the seed records Blob
+  // URLs, so emitting a variant that was never uploaded writes a 404
+  // into the catalogue. Local file existence is NOT sufficient proof.
+  const rolesArg = process.argv
+    .find((a) => a.startsWith("--roles="))
+    ?.split("=")[1];
+  const rolesFilter = rolesArg
+    ? new Set(rolesArg.split(",").map((r) => r.trim()).filter(Boolean))
+    : null;
+  const maxWidth = Number(
+    process.argv.find((a) => a.startsWith("--max-width="))?.split("=")[1] ??
+      Infinity,
+  );
   const fromFile = process.argv
     .find((a) => a.startsWith("--from-file="))
     ?.split("=")[1];
@@ -98,13 +116,14 @@ function main() {
 
     let any = false;
     for (const role of ROLES) {
+      if (rolesFilter && !rolesFilter.has(role.key)) continue;
       const src = newestPng(files, dir, role.prefix);
       if (!src) continue;
       const v = Math.floor(src.m / 1000);
       const stem = src.f.slice(0, -4);
       const srcW = pngWidth(join(dir, src.f));
       const widths = role.widths.filter(
-        (w) => srcW == null || w <= srcW * 1.1,
+        (w) => w <= maxWidth && (srcW == null || w <= srcW * 1.1),
       );
       const avif: Variant[] = [];
       const webp: Variant[] = [];
