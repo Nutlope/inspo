@@ -91,9 +91,22 @@ import {
   withImages,
 } from "./format";
 import { absolute } from "./url";
+import {
+  MAX_BUDGET_TOKENS,
+  MIN_BUDGET_TOKENS,
+  resolveBudget,
+} from "./budget";
 import { searchScreens } from "./search";
 // study() was moved to @inspo/shared so the web playground can call
 // it without depending on the MCP-SDK side of @inspo/mcp.
+
+/** How many of `recommend`'s exemplars come back with an inline
+ *  thumbnail. All 5 stay in the JSON with their image URLs; only the
+ *  top few are inlined, because images are ~85% of this response's
+ *  token cost and an agent writing one page studies the first one or
+ *  two. Measured: 5 thumbs put a hosted recommend at ~69 KB, 3 at
+ *  ~44 KB, text alone at ~10 KB. */
+const RECOMMEND_INLINE_EXEMPLARS = 3;
 
 /** Guidance every Inspo consumer should honour when composing a page's
  *  hero. Real production sites compose their first screen to the fold;
@@ -220,9 +233,14 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   // Result-shape control. The text-only profile (images=none) defaults
   // to the lean concise shape so a multi-result search stays a few
   // hundred tokens for small models; vision profiles keep the full
-  // shape. An explicit `detail` arg always wins.
-  const fmt = (detail?: string) =>
-    (detail ? detail === "concise" : ctx.concise())
+  // shape. A maxTokens budget also implies concise, because a full
+  // result runs ~3 KB and a tight budget would otherwise spend the
+  // whole allowance on one row when the caller clearly wanted several
+  // lean ones. An explicit `detail` arg always wins over both.
+  const fmt = (detail?: string, maxTokens?: number | null) =>
+    (detail
+      ? detail === "concise"
+      : ctx.concise() || resolveBudget(maxTokens, opts.maxTokens) !== null)
       ? formatScreenConcise
       : formatScreen;
   const detailArg = () => ({
@@ -238,6 +256,23 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       .describe(
         "'mobile' restricts to sites with a mobile (375px) capture pair and inlines the mobile thumbnail instead of the desktop one - use it when designing phone-first. Nearly the whole archive has mobile pairs; 'desktop' is the default behavior.",
       ),
+  });
+  // Hard ceiling on what one call may spend. Trims the tail of the
+  // ranked results, then the inline thumbnails, keeping the top hit and
+  // every scalar field intact. Server-wide default: INSPO_MAX_TOKENS.
+  const budgetArg = () => ({
+    maxTokens: flexInt(MIN_BUDGET_TOKENS, MAX_BUDGET_TOKENS)
+      .optional()
+      .describe(
+        "Approximate token ceiling for this response. Trims lower-ranked results and inline thumbnails to fit; the top result and all URLs always survive. Use it when context is tight.",
+      ),
+  });
+  /** Budget for one response: the per-call `maxTokens` when the tool
+   *  exposes it, else the server-wide default. Pass trimResults:false
+   *  when the caller named the list entries explicitly. */
+  const budget = (perCall?: number, trimResults = true) => ({
+    maxTokens: resolveBudget(perCall, opts.maxTokens),
+    trimResults,
   });
 
   /** registerTool, minus the tools excluded by a statically-known lite
@@ -317,6 +352,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         ...deviceArg(),
         limit: flexInt(1, 20).default(6),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
     async (args) => {
@@ -346,7 +382,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const inline = ctx.inlineImages();
       const concise = args.detail ? args.detail === "concise" : ctx.concise();
       const matched = await searchScreens(filtered, args.query, args.limit);
-      const results = matched.map((s) => fmt(args.detail)(s));
+      const results = matched.map((s) => fmt(args.detail, args.maxTokens)(s));
       return withImages(
         {
           query: args.query,
@@ -371,6 +407,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           inlineThumbCandidates(s, args.device as CaptureDevice | undefined),
         ),
         inline,
+        budget(args.maxTokens),
       );
     },
   );
@@ -387,7 +424,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const s = await findScreen(slug);
       if (!s) return asTextContent(await unknownSlug(slug));
       const formatted = formatScreen(s);
-      return withImages(formatted, [formatted.thumb], ctx.inlineImages());
+      return withImages(
+        formatted,
+        [formatted.thumb],
+        ctx.inlineImages(),
+        budget(),
+      );
     },
   );
 
@@ -489,9 +531,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             "Include other pages of the same site (default false: neighbours are other sites).",
           ),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
-    async ({ slug, limit, sameSite, detail }) => {
+    async ({ slug, limit, sameSite, detail, maxTokens }) => {
       const target = await findScreen(slug);
       if (!target) return asTextContent(await unknownSlug(slug));
       const { results: similar, method } = await findSimilarDetailed(slug, {
@@ -518,7 +561,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             : structural.length
               ? structural.join("; ")
               : "Overlapping industry / style / mode";
-        return fmt(detail)(s, why);
+        return fmt(detail, maxTokens)(s, why);
       });
       return withImages(
         {
@@ -529,6 +572,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         },
         results.map((r) => r.thumb),
         ctx.inlineImages(),
+        budget(maxTokens),
       );
     },
   );
@@ -610,6 +654,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         payload,
         screens.map((s) => absolute(s.thumbUrl)),
         ctx.inlineImages(),
+        // The caller named these slugs; dropping one would answer a
+        // different question. A budget only takes the thumbnails.
+        budget(undefined, false),
       );
     },
   );
@@ -633,9 +680,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           ),
         limit: flexInt(1, 40).default(12),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
-    async ({ hex, tolerance, limit, detail }) => {
+    async ({ hex, tolerance, limit, detail, maxTokens }) => {
       const target = normalizeHex(hex);
       if (!target) {
         return asTextContent({
@@ -660,7 +708,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       scored.sort((a, b) => a.d - b.d);
       const top = scored.slice(0, limit);
       const results = top.map(({ s, d }) =>
-        fmt(detail)(s, `Δ ${d.toFixed(3)} from ${target}`),
+        fmt(detail, maxTokens)(s, `Δ ${d.toFixed(3)} from ${target}`),
       );
       return withImages(
         {
@@ -671,6 +719,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         },
         results.map((r) => r.thumb),
         ctx.inlineImages(),
+        budget(maxTokens),
       );
     },
   );
@@ -690,9 +739,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         limit: flexInt(1, 20).default(4),
         ...deviceArg(),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
-    async ({ name, limit, detail, device }) => {
+    async ({ name, limit, detail, device, maxTokens }) => {
       const slug = name
         .toLowerCase()
         .trim()
@@ -725,7 +775,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           bySite.set(s.siteSlug, s);
       }
       const top = [...bySite.values()].slice(0, limit);
-      const results = top.map((s) => fmt(detail)(s));
+      const results = top.map((s) => fmt(detail, maxTokens)(s));
       const inline = ctx.inlineImages();
       return withImages(
         {
@@ -743,6 +793,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           inlineThumbCandidates(s, device as CaptureDevice | undefined),
         ),
         inline,
+        budget(maxTokens),
       );
     },
   );
@@ -806,9 +857,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         limit: flexInt(1, 50)
           .default(25)
           .describe("Directory mode only: max sites to list."),
+        ...budgetArg(),
       },
     },
-    async ({ siteSlug, limit }) => {
+    async ({ siteSlug, limit, maxTokens }) => {
       if (!siteSlug) {
         // Directory mode: which sites have enough captured pages to
         // study as a flow?
@@ -865,6 +917,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         },
         pages.map((p) => p.thumb),
         ctx.inlineImages(),
+        budget(maxTokens),
       );
     },
   );
@@ -897,6 +950,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe("Only components from this page kind (e.g. 'pricing')"),
         ...deviceArg(),
         limit: flexInt(1, 40).default(12),
+        ...budgetArg(),
       },
     },
     async (args) => {
@@ -976,6 +1030,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         },
         components.map((c) => c.thumb),
         ctx.inlineImages(),
+        budget(args.maxTokens),
       );
     },
   );
@@ -989,9 +1044,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       inputSchema: {
         slug: flexSlug().describe("Collection slug, e.g. 'editorial-layouts'"),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
-    async ({ slug, detail }) => {
+    async ({ slug, detail, maxTokens }) => {
       const c = await findCollection(slug);
       if (!c) {
         const all = await getAllCollections();
@@ -1004,7 +1060,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       const enriched = c.screens
         .map((entry) => {
           const s = screens.find((x) => x.slug === entry.slug);
-          return s ? { ...fmt(detail)(s), editorNote: entry.editorNote } : null;
+          return s
+            ? { ...fmt(detail, maxTokens)(s), editorNote: entry.editorNote }
+            : null;
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
       return withImages(
@@ -1022,6 +1080,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         },
         enriched.map((e) => e.thumb),
         ctx.inlineImages(),
+        budget(maxTokens),
       );
     },
   );
@@ -1116,10 +1175,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   /* ────────────── recommend (orchestrator) ──────────
    *
    * One call that returns everything an agent needs to start writing
-   * a page: a macrostructure pick, 5 real exemplars (with inline
-   * thumbnails), 1-3 canonical reference JSX components matching that
-   * macrostructure, and a palette suggestion extracted from the top
-   * exemplar.
+   * a page: a macrostructure pick, 5 real exemplars, 1-3 canonical
+   * reference JSX components matching that macrostructure, and a
+   * palette suggestion extracted from the top exemplar.
    *
    *   - If `macrostructure` is passed (the caller already picked one)
    *     the recommend tool uses it directly - no pick, no LLM call.
@@ -1129,12 +1187,18 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    * No LLM call inside. Composes search_screens + find_examples_for_
    * macrostructure + find_reference_components - anything you could
    * do by hand, but in one round-trip.
+   *
+   * Inline thumbnails stop at RECOMMEND_INLINE_EXEMPLARS. Images are
+   * ~85% of this response's cost on the vision profile, and an agent
+   * writing one page studies the top one or two exemplars, not five;
+   * the rest keep their URLs so a genuinely curious agent can still
+   * fetch them, or call get_screen for the full record.
    */
   reg(
     "recommend",
     {
       description:
-        "Orchestrator. One call returns: a macrostructure pick, 5 real exemplars (inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. Pass a macrostructure you've already picked, or let the tool pick one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
+        "Orchestrator. One call returns: a macrostructure pick, 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. Pass a macrostructure you've already picked, or let the tool pick one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -1160,6 +1224,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe("Optional colour word."),
         ...deviceArg(),
         ...detailArg(),
+        ...budgetArg(),
       },
     },
     async (args) => {
@@ -1238,7 +1303,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         ? ranked.filter((s) => s.tags.macrostructure === picked).slice(0, 5)
         : ranked.slice(0, 5);
       if (exemplars.length === 0) exemplars = ranked.slice(0, 5);
-      const exemplarsFmt = exemplars.map((s) => fmt(args.detail)(s));
+      const exemplarsFmt = exemplars.map((s) => fmt(args.detail, args.maxTokens)(s));
 
       // Canonical reference component(s) that match the picked
       // macrostructure. Substring-match on the first word of the
@@ -1283,8 +1348,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 
       const inline = ctx.inlineImages();
       const conciseEx = args.detail ? args.detail === "concise" : ctx.concise();
+      const inlined = inline
+        ? Math.min(RECOMMEND_INLINE_EXEMPLARS, exemplars.length)
+        : 0;
       const exemplarStudyPhrase = inline
-        ? "Study the inline exemplar thumbnails"
+        ? `Study the ${inlined} inline exemplar thumbnail${inlined === 1 ? "" : "s"}${
+            exemplars.length > inlined
+              ? ` (the remaining ${exemplars.length - inlined} carry image URLs; fetch one only if the first ${inlined} don't fit the brief)`
+              : ""
+          }`
         : conciseEx
           ? "Study each exemplar's northstar + palette + fonts (call get_screen for the full autopsy)"
           : "Study each exemplar's autopsy + palette + fonts";
@@ -1317,10 +1389,13 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               ? `Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief. Then honour heroGuidance: compose the hero to fit the first viewport.`
               : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance: compose the hero to fit the first viewport.`,
         },
-        exemplars.map((s) =>
-          inlineThumbCandidates(s, args.device as CaptureDevice | undefined),
-        ),
+        exemplars
+          .slice(0, RECOMMEND_INLINE_EXEMPLARS)
+          .map((s) =>
+            inlineThumbCandidates(s, args.device as CaptureDevice | undefined),
+          ),
         inline,
+        budget(args.maxTokens),
       );
     },
   );

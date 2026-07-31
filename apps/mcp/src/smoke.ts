@@ -119,6 +119,41 @@ async function main() {
           : "pages missing 1-based step numbers";
       },
     },
+    {
+      // A tight budget must trim the ranked tail, keep the top hit, and
+      // say so - never return an empty list the agent can't act on.
+      name: "search_screens",
+      args: { query: "dark editorial agency", limit: 12, maxTokens: 700 },
+      expect: (obj) => {
+        const results = (obj.results as unknown[]) ?? [];
+        if (results.length === 0) return "budget emptied the results";
+        if (results.length >= 12) return "budget did not trim anything";
+        if (typeof obj.budgetNote !== "string") return "missing budgetNote";
+        if (!obj.tip) return "budget dropped a scalar field (tip)";
+        return null;
+      },
+    },
+    {
+      // A budget far above the response size must change nothing.
+      name: "search_screens",
+      args: { query: "dark editorial agency", limit: 3, maxTokens: 100000 },
+      expect: (obj) => {
+        if ("budgetNote" in obj) return "trimmed a response that already fit";
+        return ((obj.results as unknown[]) ?? []).length === 3
+          ? null
+          : "generous budget changed the result count";
+      },
+    },
+    {
+      name: "recommend",
+      args: { brief: "calm meditation app", maxTokens: 900 },
+      expect: (obj) => {
+        const ex = (obj.exemplars as unknown[]) ?? [];
+        if (ex.length === 0) return "budget emptied the exemplars";
+        if (!obj.heroGuidance) return "budget dropped heroGuidance";
+        return null;
+      },
+    },
     { name: "get_screen", args: { slug: "missing-slug" } }, // expected error path
     { name: "find_examples_for_macrostructure", args: { name: "not-a-real-thing" } }, // expected error path
   ];

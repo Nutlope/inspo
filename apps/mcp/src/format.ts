@@ -8,6 +8,7 @@ import type { ScreenSummary, Collection } from "@inspo/shared";
 import type { CaptureDevice } from "@inspo/taxonomy";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 import { absolute } from "./url";
+import { imagesAffordable, textCharsFor, trimToChars } from "./budget";
 
 type RoleVariants = NonNullable<ScreenSummary["thumbVariants"]>;
 
@@ -176,16 +177,54 @@ export function asTextContent(value: unknown) {
  * `inline=false` (the text-first profile: most OSS harnesses either
  * drop image blocks or run text-only models) skips the fetches and
  * returns the JSON text alone.
+ *
+ * `budget.maxTokens` caps the whole response: the ranked results list
+ * is trimmed from the tail first, then whatever tokens are left decide
+ * how many thumbnails are still affordable. Set `trimResults: false`
+ * for payloads whose list the caller named explicitly (compare), where
+ * dropping an entry answers a different question than the one asked.
  */
+export interface ResponseBudget {
+  maxTokens?: number | null;
+  trimResults?: boolean;
+}
+
 export async function withImages(
   value: unknown,
   imageUrls: ReadonlyArray<string | ReadonlyArray<string>>,
   inline = true,
+  budget?: ResponseBudget,
 ) {
-  if (!inline) return asTextContent(value);
+  // Image URLs stay in the payload whatever the budget does, so nothing
+  // becomes unreachable under a cap - just uninlined.
+  let body = value;
+  let images = imageUrls;
+  const maxTokens = budget?.maxTokens ?? null;
+  if (maxTokens) {
+    if (budget?.trimResults !== false) {
+      const trimmed = trimToChars(body, textCharsFor(maxTokens, inline));
+      body = trimmed.value;
+      // Images are passed as a prefix of the results (one per result, or
+      // the top few of them), so a trimmed list must take the thumbnails
+      // down with it or a surviving image would caption a result that is
+      // no longer in the JSON. More images than results means the arrays
+      // aren't index-aligned, so leave them alone.
+      if (
+        trimmed.keptEntries !== null &&
+        images.length <= trimmed.originalEntries
+      ) {
+        images = images.slice(0, trimmed.keptEntries);
+      }
+    }
+    if (inline) {
+      const spentChars = JSON.stringify(body, null, 2).length;
+      images = images.slice(0, imagesAffordable(maxTokens, spentChars));
+    }
+  }
+  if (!inline || images.length === 0) return asTextContent(body);
   const { thumbnailBlocks, MAX_INLINE_PER_CALL, MAX_INLINE_TOTAL_BYTES } =
     await import("./inline-images");
-  const slice = imageUrls.slice(0, MAX_INLINE_PER_CALL);
+  const slice = images.slice(0, MAX_INLINE_PER_CALL);
   const fetched = await thumbnailBlocks(slice);
   const blocks = fetched.filter((b) => b !== null);
   // Enforce a total decoded-byte budget across the whole response.
@@ -203,7 +242,7 @@ export async function withImages(
     content: [
       {
         type: "text" as const,
-        text: JSON.stringify(value, null, 2),
+        text: JSON.stringify(body, null, 2),
       },
       ...kept,
       ...(dropped > 0

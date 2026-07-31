@@ -39,6 +39,10 @@ export type ImagesMode = "thumbs" | "none";
 export interface RegisterOptions {
   profile?: Profile;
   images?: ImagesMode;
+  /** Server-wide response ceiling in tokens, for hosts that can set a
+   *  policy but can't make the model pass a per-call `maxTokens`.
+   *  Per-call always wins; INSPO_MAX_TOKENS is the fallback. */
+  maxTokens?: number | null;
   /** Per-tool-call metrics hook (name, success, duration). Wired by
    *  the hosted Worker into Analytics Engine; stdio/npm servers pass
    *  nothing, so local users emit zero telemetry. Must never throw

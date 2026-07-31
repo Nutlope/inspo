@@ -25,6 +25,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { ensureCatalogue } from "@inspo/db";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
 import { optionsFromUrl } from "./http-handler";
+import { parseBudget } from "./budget";
 import type { ImagesMode, Profile } from "./profile";
 import { verifyApiKeyEdge } from "./auth-edge";
 
@@ -58,6 +59,9 @@ export interface Env {
   /** Default profile/images for every request (query params win). */
   INSPO_PROFILE?: string;
   INSPO_IMAGES?: string;
+  /** Default response ceiling in tokens (?maxTokens= and a per-call
+   *  `maxTokens` argument both win over it). Unset means no ceiling. */
+  INSPO_MAX_TOKENS?: string;
   /** Per-caller rate limiter for the /mcp route (free Workers binding). */
   MCP_LIMITER?: RateLimiter;
   /** Dev escape hatch: allow serving with no rate limiter bound (e.g.
@@ -223,6 +227,7 @@ export default {
       registerTools(server, {
         profile,
         images,
+        maxTokens: fromUrl.maxTokens ?? parseBudget(env.INSPO_MAX_TOKENS),
         onToolCall: (m) =>
           env.MCP_ANALYTICS?.writeDataPoint({
             blobs: [m.tool, profile, images, m.ok ? "ok" : "err"],

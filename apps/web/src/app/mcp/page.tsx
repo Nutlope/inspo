@@ -29,8 +29,8 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
     tools: [
       {
         name: "recommend",
-        sig: "(brief, filters?)",
-        desc: "The orchestrator. One call returns a macrostructure pick, five real exemplars, canonical reference JSX, and a palette suggestion for a plain-English brief.",
+        sig: "(brief, filters?, maxTokens?)",
+        desc: "The orchestrator. One call returns a macrostructure pick, five real exemplars (the top three with inline thumbnails), canonical reference JSX, and a palette suggestion for a plain-English brief.",
         example: 'recommend({ brief: "calm banking app for families" })',
         lite: true,
         accent: true,
@@ -276,6 +276,13 @@ export default async function MCPPage() {
               <span className="border rule px-1.5 py-0.5 text-xs">lite</span>{" "}
               form the lean profile served to text-first clients. Each
               returns URLs, so your agent fetches only what it needs.
+            </p>
+            <p className="mt-4 max-w-[26ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
+              Every list tool takes{" "}
+              <code className="font-mono text-xs">maxTokens</code>, a hard
+              ceiling on what one response may spend. Under it, results go
+              concise and the ranked tail drops before the thumbnails do; the
+              top result always survives.
             </p>
           </div>
 

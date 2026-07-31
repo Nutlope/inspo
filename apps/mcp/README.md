@@ -108,6 +108,18 @@ actually run in. Two independent knobs:
 |---|---|---|
 | `INSPO_PROFILE` | `full` (default) / `lite` | `full` exposes 16 tools; `lite` exposes the 9 highest-leverage tools (`recommend`, `search_screens`, `get_screen`, `get_design_system`, `find_examples_for_macrostructure`, `find_reference_components`, `study`, `get_site_pages`, `get_filters`). Small models pick tools more reliably from a short list. |
 | `INSPO_IMAGES` | `thumbs` (default) / `none` | `none` returns text-only responses: no inline image blocks. Use it when the harness drops MCP images (Cline, OpenCode with a non-vision model) or the model is text-only (MiniMax, DeepSeek). Each result still carries the `autopsy` text (fold-composition breakdown), `northstar`, palette, and fonts, so the model "sees" through text. On the text-only profile (`images=none`) the list tools return a lean shape (`northstar` + palette + fonts); pass `detail:"full"` or call `get_screen` for the full autopsy. Inline images are PNG / JPEG / WebP (never AVIF). |
+| `INSPO_MAX_TOKENS` | unset (default) / an integer, 300-200000 | Hard ceiling on what one tool response may spend. Results are formatted concise, then the ranked tail is dropped, then inline thumbnails, until the response fits; the top result and every scalar field (tips, filters, hero guidance) always survive, and trimmed responses carry a `budgetNote` saying how many entries were dropped. Set this when the context window is tight. Every list tool also takes a per-call `maxTokens` argument, which wins over the env var. |
+
+### Why a budget matters more here than for a text-only MCP
+
+Tool results do not cost you once: they stay in the conversation and are
+re-read on every subsequent turn. In our own A/B evaluation, cache reads
+ran 3.3x cache writes, so a result pulled early is paid for many times
+over. Inline images are the dominant term - one `recommend` call is
+~10 KB of text with images off and ~41 KB with thumbnails on - which is
+why the cheapest lever is fewer, better-targeted calls, and the second
+cheapest is `images=none`. `INSPO_MAX_TOKENS` is the backstop for when
+neither is under your control.
 
 **Zero-config defaults:** when neither knob is set, the server reads the
 client name from the MCP handshake. Kimi CLI, OpenCode, Cline, Roo,

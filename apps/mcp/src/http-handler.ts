@@ -17,6 +17,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
 import type { ImagesMode, Profile, RegisterOptions } from "./profile";
+import { parseBudget } from "./budget";
 
 /** Stateless HTTP never sees the client's initialize on the instance
  *  serving tools/list, so clientInfo auto-detection can't apply here.
@@ -25,9 +26,11 @@ import type { ImagesMode, Profile, RegisterOptions } from "./profile";
 export function optionsFromUrl(url: URL): RegisterOptions {
   const p = url.searchParams.get("profile")?.toLowerCase();
   const i = url.searchParams.get("images")?.toLowerCase();
+  const t = parseBudget(url.searchParams.get("maxTokens") ?? undefined);
   return {
     ...(p === "lite" || p === "full" ? { profile: p as Profile } : {}),
     ...(i === "none" || i === "thumbs" ? { images: i as ImagesMode } : {}),
+    ...(t ? { maxTokens: t } : {}),
   };
 }
 
@@ -54,7 +57,12 @@ export async function handleMcpRequest(
     fromUrl.images ??
     (envImages === "none" || envImages === "thumbs" ? (envImages as ImagesMode) : undefined) ??
     "none";
-  registerTools(server, { profile, images, onToolCall: extra?.onToolCall });
+  registerTools(server, {
+    profile,
+    images,
+    maxTokens: fromUrl.maxTokens,
+    onToolCall: extra?.onToolCall,
+  });
 
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined, // stateless
