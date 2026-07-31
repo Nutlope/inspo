@@ -40,6 +40,16 @@ interface RateLimiter {
   limit(opts: { key: string }): Promise<{ success: boolean }>;
 }
 
+/** Cloudflare Analytics Engine dataset binding (configured in
+ *  wrangler.toml). Optional so local dev works without it. */
+interface AnalyticsDataset {
+  writeDataPoint(point: {
+    blobs?: string[];
+    doubles?: number[];
+    indexes?: string[];
+  }): void;
+}
+
 export interface Env {
   DATABASE_URL?: string;
   INSPO_BASE_URL?: string;
@@ -53,6 +63,11 @@ export interface Env {
   /** Dev escape hatch: allow serving with no rate limiter bound (e.g.
    *  `wrangler dev`, which does not provision the native limiter). */
   ALLOW_NO_LIMITER?: string;
+  /** Per-tool usage metrics. Zero PII by design: tool name, profile,
+   *  images mode, ok/err, duration. No IPs, no query text, no UA.
+   *  Query later via the Analytics Engine SQL API, e.g.
+   *  SELECT blob1 AS tool, count() FROM inspo_mcp_tools GROUP BY tool. */
+  MCP_ANALYTICS?: AnalyticsDataset;
 }
 
 /** Reject JSON-RPC bodies larger than this before doing any work. */
@@ -205,7 +220,16 @@ export default {
           ? (envImages as ImagesMode)
           : undefined) ??
         "none";
-      registerTools(server, { profile, images });
+      registerTools(server, {
+        profile,
+        images,
+        onToolCall: (m) =>
+          env.MCP_ANALYTICS?.writeDataPoint({
+            blobs: [m.tool, profile, images, m.ok ? "ok" : "err"],
+            doubles: [m.ms],
+            indexes: [m.tool],
+          }),
+      });
 
       const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: undefined, // stateless

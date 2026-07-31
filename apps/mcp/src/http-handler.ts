@@ -31,7 +31,10 @@ export function optionsFromUrl(url: URL): RegisterOptions {
   };
 }
 
-export async function handleMcpRequest(request: Request): Promise<Response> {
+export async function handleMcpRequest(
+  request: Request,
+  extra?: Pick<RegisterOptions, "onToolCall">,
+): Promise<Response> {
   const server = new McpServer(
     { name: "inspo", version: "0.0.1" },
     { instructions: SERVER_INSTRUCTIONS },
@@ -51,7 +54,7 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
     fromUrl.images ??
     (envImages === "none" || envImages === "thumbs" ? (envImages as ImagesMode) : undefined) ??
     "none";
-  registerTools(server, { profile, images });
+  registerTools(server, { profile, images, onToolCall: extra?.onToolCall });
 
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined, // stateless

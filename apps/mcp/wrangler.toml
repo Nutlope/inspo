@@ -24,6 +24,19 @@ name = "MCP_LIMITER"
 namespace_id = "1001"
 simple = { limit = 120, period = 60 }
 
+# Per-tool usage metrics (name, profile, ok/err, duration). Zero PII:
+# no IPs, no query text. Query via the Analytics Engine SQL API:
+#   SELECT blob1 AS tool, count() AS calls, avg(double1) AS avg_ms
+#   FROM inspo_mcp_tools GROUP BY tool ORDER BY calls DESC
+#
+# DISABLED until Analytics Engine is enabled on the account (one click:
+# https://dash.cloudflare.com/2d054aa587099f897cdff0c46ba9d97f/workers/analytics-engine
+# ). Then uncomment and `wrangler deploy` - worker.ts already writes the
+# datapoints whenever the binding exists.
+# [[analytics_engine_datasets]]
+# binding = "MCP_ANALYTICS"
+# dataset = "inspo_mcp_tools"
+
 [vars]
 ENFORCE_AUTH = "0"
 # Canonical web origin for links in tool responses (siteUrl, DESIGN.md).

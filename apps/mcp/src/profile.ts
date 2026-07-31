@@ -39,6 +39,11 @@ export type ImagesMode = "thumbs" | "none";
 export interface RegisterOptions {
   profile?: Profile;
   images?: ImagesMode;
+  /** Per-tool-call metrics hook (name, success, duration). Wired by
+   *  the hosted Worker into Analytics Engine; stdio/npm servers pass
+   *  nothing, so local users emit zero telemetry. Must never throw
+   *  into the response path (callers wrap it defensively anyway). */
+  onToolCall?: (m: { tool: string; ok: boolean; ms: number }) => void;
 }
 
 /** The lite tool surface. Everything an agent needs to go from brief

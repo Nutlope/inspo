@@ -29,7 +29,18 @@ const CATALOGUE_URL =
 
 async function handle(request: Request): Promise<Response> {
   await ensureSidecarFromUrl(CATALOGUE_URL).catch(() => {});
-  return handleMcpRequest(request);
+  return handleMcpRequest(request, {
+    // One structured log line per tool call, visible in Vercel logs.
+    // Nothing is stored: no IPs, no query text, just tool/ok/duration.
+    // (The Cloudflare Worker path writes the same shape to Analytics
+    // Engine; the searchLogs table stays unused on purpose - writing
+    // Neon from an unauthenticated hot path would add latency and a
+    // query-text store we do not want.)
+    onToolCall: (m) =>
+      console.log(
+        JSON.stringify({ evt: "mcp_tool", tool: m.tool, ok: m.ok, ms: m.ms }),
+      ),
+  });
 }
 
 export async function POST(request: Request): Promise<Response> {

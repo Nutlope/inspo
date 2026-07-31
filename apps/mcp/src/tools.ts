@@ -249,7 +249,34 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     cb: ToolCallback<Args>,
   ): void => {
     if (ctx.staticProfile === "lite" && !LITE_TOOLS.has(name)) return;
-    handles.set(name, server.registerTool(name, config, cb));
+    // Metrics wrapper: time every call and report name/ok/duration to
+    // the host's hook (Analytics Engine on the Worker; nothing on
+    // stdio). The hook is fire-and-forget and can never break a
+    // response or turn a success into a failure.
+    const onToolCall = opts.onToolCall;
+    const wrapped = (onToolCall
+      ? async (...cbArgs: Parameters<ToolCallback<Args>>) => {
+          const started = Date.now();
+          let ok = true;
+          try {
+            const result = await (cb as (...a: unknown[]) => Promise<{ isError?: boolean }>)(
+              ...(cbArgs as unknown[]),
+            );
+            ok = result?.isError !== true;
+            return result;
+          } catch (err) {
+            ok = false;
+            throw err;
+          } finally {
+            try {
+              onToolCall({ tool: name, ok, ms: Date.now() - started });
+            } catch {
+              /* metrics must never break the response */
+            }
+          }
+        }
+      : cb) as ToolCallback<Args>;
+    handles.set(name, server.registerTool(name, config, wrapped));
   };
   /* ────────────── search_screens ────────────── */
   reg(
