@@ -1,0 +1,34 @@
+{
+  "date": "2026-07-31",
+  "release": "0.1.4",
+  "model": "claude-fable-5",
+  "effort": "low",
+  "serverConfig": "local stdio, profile=full, images=thumbs (the most expensive configuration Inspo offers; the hosted endpoint defaults to lite + images=none)",
+  "pricing": { "inputPerMTok": 10, "outputPerMTok": 50, "cacheWrite": 1.25, "cacheRead": 0.1 },
+  "verdicts": {
+    "inspoWon": ["t1", "t2", "t4"],
+    "inspoLost": ["t3"],
+    "split": ["t5"],
+    "notes": "t3 lost on Inspo's own charset slip (mojibake from typographic glyphs without meta charset), fixed the same day by adding a charset line to SERVER_INSTRUCTIONS."
+  },
+  "runs": [
+    { "id": "t1", "arm": "without", "secs": 99.5, "cacheWrite": 40644, "cacheRead": 29295, "ctx": 69943, "out": 5105, "cost": 0.7926, "toolCalls": 2, "htmlBytes": 18800 },
+    { "id": "t1", "arm": "with", "secs": 132.2, "cacheWrite": 41584, "cacheRead": 138546, "ctx": 180138, "out": 5658, "cost": 0.9413, "toolCalls": 4, "htmlBytes": 20900 },
+    { "id": "t2", "arm": "without", "secs": 98.5, "cacheWrite": 41156, "cacheRead": 29291, "ctx": 70451, "out": 5395, "cost": 0.8135, "toolCalls": 2, "htmlBytes": 19902 },
+    { "id": "t2", "arm": "with", "secs": 168.3, "cacheWrite": 77526, "cacheRead": 257156, "ctx": 334694, "out": 7537, "cost": 1.6032, "toolCalls": 6, "htmlBytes": 28042 },
+    { "id": "t3", "arm": "without", "secs": 135.7, "cacheWrite": 44794, "cacheRead": 29307, "ctx": 74105, "out": 6970, "cost": 0.9378, "toolCalls": 2, "htmlBytes": 25886 },
+    { "id": "t3", "arm": "with", "secs": 142.5, "cacheWrite": 71226, "cacheRead": 229149, "ctx": 300387, "out": 6419, "cost": 1.4405, "toolCalls": 6, "htmlBytes": 23792 },
+    { "id": "t4", "arm": "without", "secs": 101.1, "cacheWrite": 21674, "cacheRead": 48808, "ctx": 70486, "out": 5124, "cost": 0.5760, "toolCalls": 2, "htmlBytes": 18870 },
+    { "id": "t4", "arm": "with", "secs": 90.7, "cacheWrite": 55921, "cacheRead": 116982, "ctx": 172911, "out": 3787, "cost": 1.0054, "toolCalls": 4, "htmlBytes": 13789 },
+    { "id": "t5", "arm": "without", "secs": 106.4, "cacheWrite": 42840, "cacheRead": 29290, "ctx": 72134, "out": 6331, "cost": 0.8814, "toolCalls": 2, "htmlBytes": 23458 },
+    { "id": "t5", "arm": "with", "secs": 114.4, "cacheWrite": 63015, "cacheRead": 121139, "ctx": 184162, "out": 5749, "cost": 1.1964, "toolCalls": 4, "htmlBytes": 21246 }
+  ],
+  "summary": {
+    "ctxRatio": 3.3,
+    "costRatio": 1.55,
+    "wallRatio": 1.2,
+    "outputTokens": "identical across arms (~29k each), so the entire delta is input-side",
+    "readMe": "cacheRead ran 3.3x cacheWrite in the with-Inspo arm: every tool result is re-read on each subsequent turn, so call count drives cost almost linearly (t2 made 6 calls at $1.60, t4 made 4 at $1.01). Fewer, better-targeted calls beats shrinking any single result.",
+    "caveat": "Output tokens are estimated from emitted file bytes at ~3.8 chars/token. Per-message usage in the agent transcripts is a message_start snapshot and is unreliable except on messages carrying an `iterations` key; runs are deduped by message.id because multi-block assistant messages log as separate lines sharing one usage object."
+  }
+}

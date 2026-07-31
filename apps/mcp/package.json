@@ -19,7 +19,9 @@
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
     "build:npm": "node scripts/build-npm.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "bench": "node bench/response-cost.mjs",
+    "bench:check": "node bench/response-cost.mjs --check"
   },
   "dependencies": {
     "@inspo/db": "workspace:*",

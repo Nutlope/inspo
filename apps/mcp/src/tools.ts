@@ -570,7 +570,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           count: similar.length,
           results,
         },
-        results.map((r) => r.thumb),
+        similar.map((s) => inlineThumbCandidates(s)),
         ctx.inlineImages(),
         budget(maxTokens),
       );
@@ -652,7 +652,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       };
       return withImages(
         payload,
-        screens.map((s) => absolute(s.thumbUrl)),
+        screens.map((s) => inlineThumbCandidates(s)),
         ctx.inlineImages(),
         // The caller named these slugs; dropping one would answer a
         // different question. A budget only takes the thumbnails.
@@ -717,7 +717,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           count: results.length,
           results,
         },
-        results.map((r) => r.thumb),
+        top.map(({ s }) => inlineThumbCandidates(s)),
         ctx.inlineImages(),
         budget(maxTokens),
       );
@@ -915,7 +915,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               : "Only the landing page was captured for this site.",
           pages,
         },
-        pages.map((p) => p.thumb),
+        site.pages.map((p) => inlineThumbCandidates(p)),
         ctx.inlineImages(),
         budget(maxTokens),
       );
@@ -1057,14 +1057,19 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         });
       }
       const screens = await getAllScreens();
-      const enriched = c.screens
+      // Keep the source rows alongside the formatted ones: the inline
+      // thumbnails need the row's recorded WebP variants, not the PNG
+      // URL the formatter exposes.
+      const enrichedRows = c.screens
         .map((entry) => {
-          const s = screens.find((x) => x.slug === entry.slug);
-          return s
-            ? { ...fmt(detail, maxTokens)(s), editorNote: entry.editorNote }
-            : null;
+          const row = screens.find((x) => x.slug === entry.slug);
+          return row ? { row, editorNote: entry.editorNote } : null;
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
+      const enriched = enrichedRows.map(({ row, editorNote }) => ({
+        ...fmt(detail, maxTokens)(row),
+        editorNote,
+      }));
       return withImages(
         {
           ...formatCollection(c),
@@ -1078,7 +1083,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
               }
             : {}),
         },
-        enriched.map((e) => e.thumb),
+        enrichedRows.map(({ row }) => inlineThumbCandidates(row)),
         ctx.inlineImages(),
         budget(maxTokens),
       );

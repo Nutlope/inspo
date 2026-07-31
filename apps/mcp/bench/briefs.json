@@ -1,0 +1,47 @@
+{
+  "note": "Frozen A/B corpus. Do not edit these strings - the whole point is that every release's numbers are comparable to every other release's. Add new briefs with new ids instead of rewording existing ones.",
+  "frozenAt": "2026-07-31",
+  "model": "claude-fable-5",
+  "effort": "low",
+  "rules": [
+    "One sentence per brief, no design direction in the prompt: the point is what the model reaches for unprompted.",
+    "Both arms get the same brief and the same model settings.",
+    "The 'with' arm has the Inspo MCP connected and NOTHING else - no other MCP, no skills.",
+    "The 'without' arm has no MCP and no skills.",
+    "Each arm writes one standalone HTML file; judge at 1280x800 (the fold the hero guidance targets)."
+  ],
+  "briefs": [
+    {
+      "id": "t1",
+      "subject": "Driftmail, email automation for indie developers",
+      "prompt": "Build a landing page for Driftmail, an email automation tool for indie developers."
+    },
+    {
+      "id": "t2",
+      "subject": "Meridian, an online architecture magazine",
+      "prompt": "Design the homepage for Meridian, an online architecture magazine."
+    },
+    {
+      "id": "t3",
+      "subject": "Wavecast, podcast analytics dashboard",
+      "prompt": "Create the analytics dashboard for Wavecast, a podcast hosting platform, with realistic placeholder data."
+    },
+    {
+      "id": "t4",
+      "subject": "Studio Volta, Berlin motion design studio",
+      "prompt": "Make the portfolio site for Studio Volta, a Berlin motion design studio."
+    },
+    {
+      "id": "t5",
+      "subject": "Vaultline, team password manager pricing",
+      "prompt": "Build the pricing page for Vaultline, a team password manager."
+    }
+  ],
+  "rubric": [
+    "Does the hero fit 1280x800 with nav, headline, supporting line and CTA all complete? (the single most common failure)",
+    "Is the type system deliberate - a real pairing and ramp, not one font at three sizes?",
+    "Does the palette read as a chosen brand rather than default blue-on-white?",
+    "Is the page shape a recognisable macrostructure, or an undifferentiated stack of centred sections?",
+    "Deliverable hygiene: meta charset present, no mojibake, no broken layout below the fold."
+  ]
+}
