@@ -1,0 +1,100 @@
+{
+  "schemas": {
+    "vision": {
+      "tools": 16,
+      "chars": 19931,
+      "tokens": 4983
+    },
+    "text": {
+      "tools": 9,
+      "chars": 11625,
+      "tokens": 2906
+    }
+  },
+  "calls": {
+    "recommend [vision]": {
+      "textChars": 21200,
+      "textTokens": 5300,
+      "images": 3,
+      "imageKb": 15
+    },
+    "search_screens [vision]": {
+      "textChars": 21629,
+      "textTokens": 5407,
+      "images": 6,
+      "imageKb": 58
+    },
+    "search_screens/mobile [vision]": {
+      "textChars": 21633,
+      "textTokens": 5408,
+      "images": 6,
+      "imageKb": 62
+    },
+    "search_screens/budgeted [vision]": {
+      "textChars": 5956,
+      "textTokens": 1489,
+      "images": 5,
+      "imageKb": 36
+    },
+    "find_examples_for_macrostructure [vision]": {
+      "textChars": 14973,
+      "textTokens": 3743,
+      "images": 4,
+      "imageKb": 79
+    },
+    "get_screen [vision]": {
+      "textChars": 3400,
+      "textTokens": 850,
+      "images": 1,
+      "imageKb": 13
+    },
+    "find_similar [vision]": {
+      "textChars": 29875,
+      "textTokens": 7469,
+      "images": 8,
+      "imageKb": 103
+    },
+    "get_site_pages [vision]": {
+      "textChars": 3752,
+      "textTokens": 938,
+      "images": 7,
+      "imageKb": 70
+    },
+    "find_components [vision]": {
+      "textChars": 4881,
+      "textTokens": 1220,
+      "images": 8,
+      "imageKb": 114
+    },
+    "recommend [text]": {
+      "textChars": 9385,
+      "textTokens": 2346,
+      "images": 0,
+      "imageKb": 0
+    },
+    "search_screens [text]": {
+      "textChars": 6892,
+      "textTokens": 1723,
+      "images": 0,
+      "imageKb": 0
+    },
+    "find_examples_for_macrostructure [text]": {
+      "textChars": 4408,
+      "textTokens": 1102,
+      "images": 0,
+      "imageKb": 0
+    },
+    "get_screen [text]": {
+      "textChars": 3400,
+      "textTokens": 850,
+      "images": 0,
+      "imageKb": 0
+    },
+    "get_design_system [text]": {
+      "textChars": 5733,
+      "textTokens": 1433,
+      "images": 0,
+      "imageKb": 0
+    }
+  }
+}
