@@ -1,0 +1,51 @@
+name: Weekly catalogue intake
+
+on:
+  schedule:
+    # Mondays 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many queued URLs to intake"
+        required: false
+        default: "25"
+
+permissions:
+  contents: write
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    # Match the Playwright version pinned in apps/worker (Dockerfile +
+    # lockfile) so browsers are preinstalled.
+    container: mcr.microsoft.com/playwright:v1.49.1-noble
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure git author
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "inspo-intake[bot]"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Run intake pipeline
+        working-directory: apps/worker
+        env:
+          TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        run: |
+          npx tsx src/pipeline.ts --go --n=${{ github.event.inputs.count || 25 }}

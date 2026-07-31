@@ -1,0 +1,14 @@
+# Inspo intake queue - one URL per line, consumed top-down by
+# src/pipeline.ts (weekly GitHub Action takes up to 25 per run).
+# URLs whose hostname is already in the catalogue are skipped.
+# Add candidates here as you find them; comments start with #.
+https://resend.com
+https://liveblocks.io
+https://tally.so
+https://pitch.com
+https://cron.com
+https://warp.dev
+https://raycast.com
+https://arc.net
+https://reflect.app
+https://cal.com
