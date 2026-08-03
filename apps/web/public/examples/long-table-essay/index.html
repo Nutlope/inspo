@@ -1,0 +1,271 @@
+<meta charset="utf-8">
+<title>The Long Table - Who actually feeds a city?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f3ec;
+    --paper-2:#ece7dc;
+    --ink:#1f1c17;
+    --muted:#77705f;
+    --ochre:#a06a24;
+    --rule:#ddd6c6;
+
+    --t-display:clamp(2.6rem,5vw,4.4rem);
+    --t-head:clamp(1.5rem,2.5vw,2.1rem);
+    --t-sub:1.375rem;
+    --t-body:1.125rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1160px;margin:0 auto;padding:0 32px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  .serif{font-family:Fraunces,Georgia,serif;font-weight:300}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:var(--t-display);line-height:1.04;letter-spacing:-.018em}
+  h2{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:var(--t-head);line-height:1.18;letter-spacing:-.01em}
+  h3{font-size:var(--t-sub);font-weight:500;line-height:1.34;letter-spacing:-.012em}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+  .mark{font-family:Fraunces,serif;font-weight:400;font-size:var(--t-sub);letter-spacing:-.01em}
+  .nl{display:flex;gap:28px}
+  .nl a{color:var(--muted);text-decoration:none;font-size:var(--t-meta);transition:color .18s}
+  .nl a:hover{color:var(--ink)}
+  .sub-btn{border:1px solid var(--ink);color:var(--ink);text-decoration:none;border-radius:2px;
+           padding:9px 18px;font-size:var(--t-meta);transition:.18s}
+  .sub-btn:hover{background:var(--ink);color:var(--paper)}
+
+  /* fold: an essay opening, not a product hero */
+  .hero{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;
+        border-top:1px solid var(--rule);padding:34px 0 40px}
+  .kicker{color:var(--ochre)}
+  .standfirst{margin-top:20px;max-width:38ch;font-size:var(--t-sub);line-height:1.5;color:#514a3e;
+              font-family:Fraunces,serif;font-weight:300}
+  .byline{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+  .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(140deg,#c89a5c,#8a6230);flex:none}
+
+  /* the chart carries the argument */
+  .figure{border:1px solid var(--rule);background:var(--paper-2);border-radius:3px;padding:22px}
+  .figure svg{width:100%;display:block}
+  .fcap{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+
+  section{padding:74px 0}
+  .band{background:var(--paper-2);border-block:1px solid var(--rule)}
+  .col{max-width:64ch;margin:0 auto}
+  .col p{margin-top:20px}
+  .col p:first-of-type{margin-top:0}
+  .col h2{margin-top:46px;margin-bottom:4px}
+  .col h2:first-child{margin-top:0}
+  .drop::first-letter{font-family:Fraunces,serif;font-weight:300;float:left;font-size:3.6rem;line-height:.82;
+                      padding:6px 10px 0 0;color:var(--ochre)}
+  .pull{font-family:Fraunces,serif;font-weight:300;font-style:italic;font-size:var(--t-head);
+        line-height:1.34;color:var(--ink);margin:34px 0;padding-left:22px;border-left:2px solid var(--ochre);max-width:30ch}
+  .note{font-size:var(--t-meta);color:var(--muted);border-top:1px solid var(--rule);padding-top:14px;margin-top:34px}
+
+  /* the four numbers */
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .fact{background:var(--paper);padding:24px 20px}
+  .fact .n{font-family:Fraunces,serif;font-weight:300;font-size:2.2rem;line-height:1;color:var(--ochre)}
+  .fact p:last-child{font-size:var(--t-meta);color:var(--muted);margin-top:10px;line-height:1.55}
+
+  /* further reading */
+  .reads{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .read{border-top:1px solid var(--rule);padding-top:16px}
+  .read h3{margin-top:8px}
+  .read p{color:var(--muted);font-size:var(--t-meta);margin-top:7px;line-height:1.6}
+
+  .closer{padding:70px 0;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center}
+  .closer p{color:var(--muted);max-width:44ch;margin-top:10px}
+  footer{border-top:1px solid var(--rule);padding:26px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero,.closer{grid-template-columns:1fr;gap:32px;padding:32px 0 52px}
+    .facts,.reads{grid-template-columns:1fr}
+    .nl{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <p class="mark">The Long Table</p>
+    <div class="nl">
+      <a href="#essay">Essays</a>
+      <a href="#numbers">Data</a>
+      <a href="#reading">Reading</a>
+      <a href="#">Archive</a>
+    </div>
+    <a class="sub-btn" href="#">Subscribe — free</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="meta kicker">Issue 34 · Food systems · 18 minutes</p>
+      <h1 style="margin-top:14px">Who actually feeds a city?</h1>
+      <p class="standfirst">Not the farms you are picturing. We followed
+        every tonne of vegetables that entered one British city for a
+        week, and almost none of it came from anywhere near it.</p>
+      <div class="byline">
+        <span class="av"></span>
+        <div>
+          <p style="font-size:var(--t-meta)">Hannah Ekwueme</p>
+          <p class="meta">Published 6 November · Reporting from Sheffield</p>
+        </div>
+      </div>
+    </div>
+
+    <figure class="figure">
+      <svg viewBox="0 0 520 300" aria-label="Bar chart of where one city's weekly vegetable supply originates, by distance travelled">
+        <g stroke="var(--rule)" stroke-width="1">
+          <path d="M112 20v238M112 258h396"/>
+        </g>
+        <g font-family="Inter Tight, sans-serif" font-size="11" fill="#77705f">
+          <text x="104" y="46" text-anchor="end">Within 50 km</text>
+          <text x="104" y="90" text-anchor="end">50 – 250 km</text>
+          <text x="104" y="134" text-anchor="end">Rest of UK</text>
+          <text x="104" y="178" text-anchor="end">Europe</text>
+          <text x="104" y="222" text-anchor="end">Beyond Europe</text>
+        </g>
+        <g>
+          <rect x="112" y="32" width="24" height="20" fill="#a06a24"/>
+          <rect x="112" y="76" width="63" height="20" fill="#b98b4c"/>
+          <rect x="112" y="120" width="149" height="20" fill="#c9a678"/>
+          <rect x="112" y="164" width="206" height="20" fill="#8a9b7a"/>
+          <rect x="112" y="208" width="118" height="20" fill="#6f8470"/>
+        </g>
+        <g font-family="Inter Tight, sans-serif" font-size="11.5" fill="#1f1c17">
+          <text x="144" y="46">3.1%</text>
+          <text x="183" y="90">8.2%</text>
+          <text x="269" y="134">19.4%</text>
+          <text x="326" y="178">26.8%</text>
+          <text x="238" y="222">15.3%</text>
+        </g>
+        <g font-family="Inter Tight, sans-serif" font-size="10.5" fill="#77705f">
+          <text x="112" y="278">0</text><text x="212" y="278">10%</text>
+          <text x="312" y="278">20%</text><text x="412" y="278">30%</text>
+        </g>
+        <text x="508" y="20" text-anchor="end" font-family="Inter Tight, sans-serif" font-size="10.5" fill="#77705f">
+          Remaining 27.2% unclassified at wholesale
+        </text>
+      </svg>
+      <figcaption class="fcap">
+        <p class="meta">Figure 1 — Origin of vegetables entering Sheffield wholesale
+          and retail, one week in September. Source: our own audit of 14 depots.</p>
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<section id="essay" class="wrap">
+  <div class="col">
+    <p class="drop">The lorry arrives at the wholesale market at ten past
+      four in the morning, and the driver has been awake since Rotterdam.
+      Inside are courgettes that were cut in Almería four days ago, sorted
+      in Murcia, and are now going to a greengrocer eleven miles from a
+      Yorkshire field that grows courgettes.</p>
+
+    <p>This is not a story about food miles, which turn out to be a poor
+      proxy for almost everything, including carbon. It is a story about
+      who holds the contracts. Over one week in September we stood in
+      fourteen depots, read the paperwork on every pallet of vegetables
+      that came through, and traced each one back as far as the documents
+      allowed. The picture that came out of it was not the one anybody we
+      spoke to expected, including the growers.</p>
+
+    <h2 class="serif">The farms are there. The route is not.</h2>
+
+    <p>Within fifty kilometres of the city centre there are roughly four
+      hundred hectares of commercial vegetable production. They supply
+      3.1% of what the city eats. The growers are not idle and the land is
+      not fallow: almost all of that produce leaves the region on the same
+      motorway the Spanish courgettes arrive on, bound for two national
+      distribution centres, one of which is 190 miles away.</p>
+
+    <p class="pull">A cabbage grown eleven miles from the market can travel
+      four hundred miles to reach it, and every step of that is somebody
+      behaving rationally.</p>
+
+    <p>Nobody in this chain is being foolish. The distribution centre pays
+      on thirty days and takes the whole crop; the local wholesaler pays on
+      sixty and takes what it can sell. A grower with a harvest window of
+      nine days and a bank covenant does not agonise over that choice.
+      The infrastructure that would let them do otherwise, a packhouse
+      within an hour's drive, was sold for housing in 2011.</p>
+
+    <h2 class="serif">What the unclassified quarter hides</h2>
+
+    <p>The most uncomfortable number in Figure 1 is the one with no bar.
+      Just over a quarter of everything we logged could not be assigned an
+      origin at all: the paperwork stopped at a repacker, and the repacker
+      was under no obligation to say more. When we asked, four of six
+      declined, politely, on commercial grounds.</p>
+
+    <p>This matters more than the percentages either side of it. A city
+      cannot plan a food system it cannot see, and every serious proposal
+      we have read for regional food resilience assumes a level of
+      visibility that does not currently exist anywhere in the chain.</p>
+
+    <p class="note">Methodology: pallet-level audit, 14 depots, 6–12
+      September. Weights from delivery notes, not estimates. Full dataset
+      and the four refusals are published alongside this piece.</p>
+  </div>
+</section>
+
+<div class="band">
+  <section id="numbers" class="wrap">
+    <div class="facts">
+      <div class="fact"><p class="n">3.1%</p><p>Of the city's vegetables grown within 50 km of it</p></div>
+      <div class="fact"><p class="n">27.2%</p><p>Whose origin could not be established at all</p></div>
+      <div class="fact"><p class="n">14</p><p>Depots audited, pallet by pallet</p></div>
+      <div class="fact"><p class="n">2011</p><p>Year the last regional packhouse was sold</p></div>
+    </div>
+  </section>
+</div>
+
+<section id="reading" class="wrap">
+  <div class="sh" style="margin-bottom:26px">
+    <h2>Read next</h2>
+  </div>
+  <div class="reads">
+    <article class="read">
+      <p class="meta kicker">Issue 33 · 12 minutes</p>
+      <h3>The packhouse problem</h3>
+      <p>Britain lost two thirds of its regional pack and grade capacity in twenty years. Nobody decided to.</p>
+    </article>
+    <article class="read">
+      <p class="meta kicker">Issue 31 · 9 minutes</p>
+      <h3>Thirty days versus sixty</h3>
+      <p>Payment terms shape what a country grows more directly than subsidy does, and they are barely regulated.</p>
+    </article>
+    <article class="read">
+      <p class="meta kicker">Issue 28 · 15 minutes</p>
+      <h3>What Almería knows</h3>
+      <p>The province that feeds a continent, reported from inside the greenhouses rather than from above them.</p>
+    </article>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <div class="closer">
+      <div>
+        <h2>One long piece, every fortnight.</h2>
+        <p>Reported, sourced, and free. We publish the dataset with every
+          issue, including the parts that undercut our own argument.</p>
+      </div>
+      <a class="sub-btn" href="#">Subscribe — free</a>
+    </div>
+    <footer>
+      <p class="meta">The Long Table · Reader-funded · Datasets released under CC-BY</p>
+      <p class="meta">Made with Inspo</p>
+    </footer>
+  </div>
+</div>

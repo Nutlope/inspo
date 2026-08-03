@@ -1,0 +1,257 @@
+<meta charset="utf-8">
+<title>Rill - Community radio from a shed in Peckham</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#151119;
+    --raise:#1e1822;
+    --card:#251d2a;
+    --cream:#f6efe6;
+    --muted:#9b8ea3;
+    --peach:#f2915e;
+    --lilac:#a98cf0;
+    --mint:#63d0a8;
+    --rule:rgba(246,239,230,.13);
+
+    --t-display:clamp(2.7rem,5vw,4.3rem);
+    --t-head:clamp(1.6rem,2.8vw,2.4rem);
+    --t-sub:1.25rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--night);color:var(--cream);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:0 30px}
+  .fold{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  h1{font-size:var(--t-display);line-height:1.05;letter-spacing:-.032em;font-weight:600}
+  h2{font-size:var(--t-head);line-height:1.16;letter-spacing:-.024em;font-weight:600}
+  h3{font-size:var(--t-sub);line-height:1.3;letter-spacing:-.014em;font-weight:600}
+
+  .glowfield{position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 46% 50% at 12% 4%,rgba(242,145,94,.18),transparent 64%),
+      radial-gradient(ellipse 42% 46% at 88% 16%,rgba(169,140,240,.16),transparent 62%)}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;position:relative}
+  .brand{display:flex;align-items:center;gap:10px;font-size:var(--t-sub);font-weight:700;letter-spacing:-.03em}
+  .nl{display:flex;gap:26px}
+  .nl a{color:var(--muted);text-decoration:none;font-size:var(--t-meta);transition:color .16s}
+  .nl a:hover{color:var(--cream)}
+  .btn{display:inline-block;text-decoration:none;border-radius:999px;font-weight:600;font-size:var(--t-meta);padding:11px 22px;transition:transform .16s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-1{background:var(--peach);color:#2a1409}
+  .btn-2{border:1px solid var(--rule);color:var(--cream)}
+
+  .hero{flex:1;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:46px;padding:16px 0 28px;position:relative}
+  .live{display:inline-flex;align-items:center;gap:8px;color:var(--peach);font-size:var(--t-meta)}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--peach);animation:blink 2s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .lede{margin-top:16px;max-width:42ch;color:#c0b3c6;font-size:var(--t-sub);line-height:1.55}
+  .cta{display:flex;gap:11px;margin-top:24px;flex-wrap:wrap;align-items:center}
+
+  /* now playing */
+  .player{background:var(--raise);border:1px solid var(--rule);border-radius:18px;padding:22px}
+  .ptop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+  .art{height:150px;border-radius:13px;display:flex;align-items:flex-end;padding:16px;
+       background:linear-gradient(135deg,#f2915e,#a98cf0 62%,#63d0a8)}
+  .art p{color:#1c1220;font-weight:600;font-size:var(--t-sub);letter-spacing:-.02em;text-shadow:0 1px 0 rgba(255,255,255,.25)}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:34px;margin:18px 0 14px}
+  .bars i{flex:1;background:var(--lilac);border-radius:2px;animation:eq 1.1s ease-in-out infinite}
+  .bars i:nth-child(3n){background:var(--peach)}
+  .bars i:nth-child(4n){background:var(--mint)}
+  @keyframes eq{0%,100%{height:22%}50%{height:100%}}
+  .prow{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--rule);font-size:var(--t-meta)}
+  .prow span:last-child{color:var(--muted)}
+
+  section{padding:76px 0}
+  .band{background:var(--raise);border-block:1px solid var(--rule)}
+  .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:30px;flex-wrap:wrap}
+  .sh p{margin-top:8px;color:var(--muted);max-width:44ch}
+
+  /* schedule */
+  .day{display:grid;grid-template-columns:96px 1fr 150px 90px;gap:18px;align-items:center;
+       padding:16px 0;border-bottom:1px solid var(--rule);transition:background .16s}
+  .day:hover{background:rgba(246,239,230,.03)}
+  .day .time{color:var(--muted);font-size:var(--t-meta)}
+  .day .host{color:var(--muted);font-size:var(--t-meta)}
+  .chip{border-radius:999px;padding:4px 11px;font-size:var(--t-meta);text-align:center;font-weight:500}
+
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:24px}
+  .card p{margin-top:8px;color:var(--muted);font-size:var(--t-meta);line-height:1.65}
+  .card .n{font-size:2rem;font-weight:600;letter-spacing:-.03em;line-height:1}
+
+  .closer{text-align:center;padding:76px 0}
+  .closer h2{max-width:20ch;margin:0 auto 12px}
+  .closer p{color:var(--muted);max-width:48ch;margin:0 auto 22px}
+  footer{border-top:1px solid var(--rule);padding:28px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero{grid-template-columns:1fr;gap:32px;padding:32px 0 52px}
+    .three{grid-template-columns:1fr}
+    .day{grid-template-columns:78px 1fr;gap:8px}
+    .day .host,.day .chip{grid-column:2}
+    .nl{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <div class="glowfield"></div>
+  <nav>
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="#f2915e" stroke-width="1.8"/>
+        <path d="M8 14V10M12 16V8M16 13v-2" stroke="#a98cf0" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      Rill
+    </div>
+    <div class="nl">
+      <a href="#schedule">Schedule</a>
+      <a href="#shows">Shows</a>
+      <a href="#about">About</a>
+      <a href="#">Archive</a>
+    </div>
+    <a class="btn btn-1" href="#">Listen live</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="live"><i></i>On air now · Sunfall with Naomi Ọ.</p>
+      <h1 style="margin-top:12px">Community radio from a shed in Peckham.</h1>
+      <p class="lede">Forty-one shows a week, every one of them made by
+        someone who lives within a bus ride of the studio. No playlist,
+        no algorithm, no adverts. Just people with records.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#">Listen live</a>
+        <a class="btn btn-2" href="#schedule">See what's on</a>
+        <span class="meta">Supported by 812 members</span>
+      </div>
+    </div>
+
+    <div class="player">
+      <div class="ptop">
+        <p class="live"><i></i>Live</p>
+        <p class="meta">16:00 – 18:00</p>
+      </div>
+      <div class="art"><p>Sunfall</p></div>
+      <div class="bars">
+        <i style="animation-delay:0s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i>
+        <i style="animation-delay:.3s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.45s"></i>
+        <i style="animation-delay:.25s"></i><i style="animation-delay:.55s"></i><i style="animation-delay:.05s"></i>
+        <i style="animation-delay:.35s"></i><i style="animation-delay:.6s"></i><i style="animation-delay:.2s"></i>
+        <i style="animation-delay:.5s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.4s"></i>
+        <i style="animation-delay:.3s"></i><i style="animation-delay:.65s"></i><i style="animation-delay:.15s"></i>
+      </div>
+      <div class="prow"><span>Naomi Ọ.</span><span>Host since 2019</span></div>
+      <div class="prow"><span>Now playing</span><span>Alice Coltrane — Turiya and Ramakrishna</span></div>
+      <div class="prow"><span>Up next</span><span>The Long Wave, 18:00</span></div>
+    </div>
+  </div>
+</div>
+
+<section id="schedule" class="wrap">
+  <div class="sh">
+    <div>
+      <h2>Today on Rill</h2>
+      <p>Thursday, 6 November. Everything is repeated the following
+        Tuesday, and the archive keeps it for a year.</p>
+    </div>
+    <p class="meta">All times London</p>
+  </div>
+
+  <div class="day">
+    <span class="time">07:00</span>
+    <div><h3>Early Doors</h3><p class="host">Marcus Bell · ambient, dub, and the odd field recording</p></div>
+    <span class="host">Weekdays</span>
+    <span class="chip" style="background:rgba(99,208,168,.16);color:var(--mint)">Repeat</span>
+  </div>
+  <div class="day">
+    <span class="time">10:00</span>
+    <div><h3>Kitchen Table</h3><p class="host">Ifeoma Danjuma · talk, callers, and a lot of tangents</p></div>
+    <span class="host">Thu &amp; Fri</span>
+    <span class="chip" style="background:rgba(169,140,240,.16);color:var(--lilac)">Talk</span>
+  </div>
+  <div class="day">
+    <span class="time">13:00</span>
+    <div><h3>Rare Groove Hour</h3><p class="host">Delroy Ashworth · funk and soul, all from his own shelves</p></div>
+    <span class="host">Thursdays</span>
+    <span class="chip" style="background:rgba(242,145,94,.16);color:var(--peach)">Music</span>
+  </div>
+  <div class="day">
+    <span class="time">16:00</span>
+    <div><h3>Sunfall</h3><p class="host">Naomi Ọ. · spiritual jazz into whatever comes next</p></div>
+    <span class="host">Thursdays</span>
+    <span class="chip" style="background:var(--peach);color:#2a1409">On air</span>
+  </div>
+  <div class="day">
+    <span class="time">18:00</span>
+    <div><h3>The Long Wave</h3><p class="host">Sam Okonjo · two hours, four records, no talking over them</p></div>
+    <span class="host">Thursdays</span>
+    <span class="chip" style="background:rgba(242,145,94,.16);color:var(--peach)">Music</span>
+  </div>
+  <div class="day">
+    <span class="time">20:00</span>
+    <div><h3>Estate Sounds</h3><p class="host">Rotating hosts from the Rye Lane youth programme</p></div>
+    <span class="host">Thursdays</span>
+    <span class="chip" style="background:rgba(169,140,240,.16);color:var(--lilac)">New</span>
+  </div>
+  <div class="day">
+    <span class="time">22:00</span>
+    <div><h3>Nightporter</h3><p class="host">Unattended playlist, assembled by whoever locks up</p></div>
+    <span class="host">Nightly</span>
+    <span class="chip" style="background:rgba(155,142,163,.16);color:var(--muted)">Unhosted</span>
+  </div>
+</section>
+
+<div class="band">
+  <section id="about" class="wrap">
+    <div class="sh">
+      <div>
+        <h2>Paid for by the people who listen.</h2>
+        <p>Rill has no advertising and no commercial owner. Members cover
+          the rent, the licence and the electricity, in that order.</p>
+      </div>
+    </div>
+    <div class="three">
+      <article class="card">
+        <p class="n" style="color:var(--peach)">812</p>
+        <h3 style="margin-top:10px">Members</h3>
+        <p>Paying between £3 and £30 a month. Around 60% of the running costs, which is more than most stations our size manage.</p>
+      </article>
+      <article class="card">
+        <p class="n" style="color:var(--lilac)">41</p>
+        <h3 style="margin-top:10px">Shows a week</h3>
+        <p>Every host is unpaid and every host is local. We provide the room, the desk and the licence; they bring the records.</p>
+      </article>
+      <article class="card">
+        <p class="n" style="color:var(--mint)">6</p>
+        <h3 style="margin-top:10px">Years in the shed</h3>
+        <p>The shed is really a shed. There is a proper studio going in next spring, funded entirely by members, and we will miss the shed.</p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="closer">
+    <h2>Three pounds a month keeps a show on air.</h2>
+    <p>Membership pays the rent and nothing else. If we ever have money
+      left over at the end of a year, we spend it on equipment and say so
+      in the accounts.</p>
+    <a class="btn btn-1" href="#">Become a member</a>
+  </div>
+  <footer>
+    <p class="meta">Rill Community Radio · Peckham, London · Community licence CR-1188</p>
+    <p class="meta">Made with Inspo</p>
+  </footer>
+</div>

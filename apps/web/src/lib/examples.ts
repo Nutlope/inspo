@@ -836,6 +836,346 @@ export const EXAMPLES: Example[] = [
     ],
     highlight: "The fold is a three-column balance almost nobody attempts: the name right-aligned on the left, the flacon centred, and the note breakdown left-aligned on the right, so the bottle is literally the axis of the composition. The flacon is SVG with a five-stop glass gradient, a brass stopper, a fill line at the juice level and engraved lettering, and the whole page carries one accent colour used five times.",
   },
+  {
+    slug: "alder-money",
+    brand: "Alder",
+    tagline: "A shared account for the bills you both pay, and separate ones for everything else.",
+    prompt: "A joint-finances app for couples: soft, warm, playful, reassuring, bento grid.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.5,
+    references: [
+      {
+        slug: "owo-app",
+        took: "The closest peer: a money product that reads as warm rather than institutional. Its playful-hues-on-a-soft-canvas approach is where the sage-and-clay palette came from, and it proved a finance page does not have to be blue.",
+      },
+      {
+        slug: "brightful-me",
+        took: "Lead exemplar for the brief. Contributed the pastel-on-generous-white register and the rounded, roomy card treatment that keeps a dashboard mock feeling friendly instead of clinical.",
+      },
+      {
+        slug: "matveyan-com",
+        took: "A fintech designer's own bento. Informed the discipline of the tile contents: one figure per tile, a short label above it, and no chart where a number will do.",
+      },
+      {
+        slug: "cdbaby-com",
+        took: "Returned in the same bento set. Reinforced the irregular-span grid where one tile carries the lead idea at four times the area of its neighbours.",
+      },
+      {
+        slug: "basement-studio",
+        took: "The dark counterweight in the returned set. Read as the register to avoid here, which is what pushed the page toward warm paper and away from charcoal.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a joint-finances app for couples: soft, warm, playful, reassuring, bento grid",
+        took: "Returned a Bento Grid pick with all six exemplars agreeing on it, plus the canonical bento component whose note - irregular spans defeat the 3x2 sameness - is the rule the hero grid follows.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#fbf7f2",
+        from: "Warm off-white ground. The reassurance argument fails on a cold page, and every warm exemplar in the set started here.",
+      },
+      {
+        token: "--sage",
+        hex: "#5f7a5c",
+        from: "Muted sage for the primary button, the brand mark and positive figures. Green without being a bank's green.",
+      },
+      {
+        token: "--clay",
+        hex: "#d97a55",
+        from: "Warm clay as the second party's colour. The two people in the page each get a hue, which is the whole visual argument.",
+      },
+      {
+        token: "--sage-soft",
+        hex: "#e4ecdf",
+        from: "Tinted fill for Priya's share, the status pill and the mid-page band.",
+      },
+      {
+        token: "--clay-soft",
+        hex: "#fbe6dc",
+        from: "The matching tint for Sam's share, so the split reads before you read the percentages.",
+      },
+      {
+        token: "--muted",
+        hex: "#7a726a",
+        from: "Warm grey for labels and secondary copy, holding the hierarchy without going cold.",
+      },
+    ],
+    highlight: "The hero grid is a real joint account rather than a decorative mock: a shared pot with the actual split shown as two tinted panels, three bills as proportional bars, and, on its own full-width row, a separate personal account labelled 'yours alone, Priya never sees it'. The product's hardest promise is the one the layout spends the most space on.",
+  },
+  {
+    slug: "fieldnote-db",
+    brand: "Fieldnote",
+    tagline: "An embedded time-series database: one dependency, one file, no server.",
+    prompt: "An open-source embedded time-series database: quiet, technical, reference-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.5,
+    references: [
+      {
+        slug: "daisyui-com--docs-install-lit",
+        took: "The closest structural peer: a documentation page that leads with the install line and puts a code block immediately beside the pitch. The install strip and the copy button come straight from this pattern.",
+      },
+      {
+        slug: "huggingface-co--docs",
+        took: "Ecosystem-index reference. Contributed the two-column reference list where each entry is a signature, a one-line description and a version, rather than a card with an icon.",
+      },
+      {
+        slug: "designbetter-co--docs",
+        took: "The third docs capture. Reinforced the quiet grey-on-near-white register and the practice of letting rules, not boxes, do the dividing.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "search_screens",
+        args: "open source documentation reference index quiet technical (pageType: docs)",
+        took: "Filtered straight to real captured documentation pages. All three returned an Ecosystem Index macrostructure, which settled the page shape before any code was written: install, why, reference, benchmarks.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#fcfcfa",
+        from: "Near-white with a hint of warmth. Documentation is read for a long time, so the ground stays quiet.",
+      },
+      {
+        token: "--moss",
+        hex: "#3f6b4a",
+        from: "Muted green on the primary button, the function signatures and the winning benchmark figures. One accent, used only where it means something.",
+      },
+      {
+        token: "--code",
+        hex: "#1a1c1a",
+        from: "The code window's ground, dark enough to separate from the page without becoming a second theme.",
+      },
+      {
+        token: "--rust",
+        hex: "#a8552c",
+        from: "A second accent held back almost entirely - it appears in the mark and nowhere else.",
+      },
+      {
+        token: "--muted",
+        hex: "#6d716b",
+        from: "Grey for descriptions, table values and the version chips.",
+      },
+      {
+        token: "--rule",
+        hex: "#e2e2dc",
+        from: "Hairlines. The whole page is organised by rules; there is not a single drop shadow.",
+      },
+    ],
+    highlight: "The benchmark table includes the row where Fieldnote loses, and says why: 'fan-out across 6 nodes — not supported', because it is a library and not a cluster. The closing line is 'if you need a cluster, use a cluster'. It is the rare generated page that argues its scope honestly instead of claiming to win everywhere.",
+  },
+  {
+    slug: "tidepool-trust",
+    brand: "Tidepool Trust",
+    tagline: "Kelp forest restoration on the Atlantic shelf, with the survey data published either way.",
+    prompt: "A marine conservation nonprofit: deep ocean, quiet, evidence-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.6,
+    references: [
+      {
+        slug: "lafamigliamysteryunfolds-gucci-com",
+        took: "The strongest compositional reference returned: a very dark page lit by a single warm glow, with restrained serif display type floating over it. Adapted from amber-on-night to teal-on-deep-water.",
+      },
+      {
+        slug: "archigreendesigns-com",
+        took: "Lead exemplar for the brief. Contributed the calm, spacious environmental register and the practice of letting one large image well carry the fold beside a quiet text column.",
+      },
+      {
+        slug: "mikkisindhunata-com",
+        took: "The dark high-contrast counterweight in the set. Its discipline of one saturated accent against a near-monochrome ground is what kept the palette to kelp-green plus a single amber.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a marine conservation nonprofit: deep ocean, quiet, evidence-led (mode: dark)",
+        took: "Returned a Photographic pick and three dark exemplars. None were marine, so the useful output was compositional rather than thematic: how a dark page holds one lit object beside a restrained column.",
+      },
+    ],
+    palette: [
+      {
+        token: "--abyss",
+        hex: "#050f16",
+        from: "The page ground: dark with a blue-green cast, so it reads as water rather than as generic dark mode.",
+      },
+      {
+        token: "--kelp",
+        hex: "#5fbf9c",
+        from: "Kelp green on the primary button, the figures and the recovering sites in the evidence table. The colour of the thing being restored.",
+      },
+      {
+        token: "--amber",
+        hex: "#e8a44c",
+        from: "The single warm note, on the mark and on the two sites that are not recovering. Warmth used as a warning rather than as decoration.",
+      },
+      {
+        token: "--foam",
+        hex: "#e8f1f0",
+        from: "Cool off-white for the serif display and body copy.",
+      },
+      {
+        token: "--muted",
+        hex: "#7fa0a8",
+        from: "Muted blue-grey for labels, captions and table values.",
+      },
+      {
+        token: "--panel",
+        hex: "#0e2330",
+        from: "Raised fill for cards and the giving breakdown, one step up from the abyss.",
+      },
+    ],
+    highlight: "The hero is a hand-drawn SVG cross-section of a restored kelp forest - light shafts, five fronds with blades, three fish, holdfasts anchored into the seabed - and the evidence table below it lists two sites that are failing, in amber, with a note explaining they sit downstream of salmon farms. The page makes its credibility argument by publishing its own bad results.",
+  },
+  {
+    slug: "rill-radio",
+    brand: "Rill",
+    tagline: "Community radio from a shed in Peckham: forty-one shows a week, none of them paid.",
+    prompt: "A community radio station: warm, playful, schedule-led, human.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.5,
+    references: [
+      {
+        slug: "doodles-app",
+        took: "Lead exemplar. Its dreamy pastel-on-dark treatment is where the peach, lilac and mint trio came from, and it showed that a dark page can be warm rather than severe.",
+      },
+      {
+        slug: "laugh-mind-co-jp",
+        took: "Violet-and-teal whimsy on a dark canvas. Reinforced the multi-hue accent approach, which is unusual on dark and is exactly right for a station with forty-one different shows.",
+      },
+      {
+        slug: "francouvertes-com",
+        took: "A music-festival page with high-energy type on a layered canvas. Informed the schedule's density and the coloured chips that mark each show's kind.",
+      },
+      {
+        slug: "generalcondition-com",
+        took: "Returned in the same pass. Contributed the retro-playful register and the confidence to let the now-playing panel be the loudest object in the fold.",
+      },
+      {
+        slug: "clayboan-com",
+        took: "The restrained counterweight; kept the display type from tipping into novelty.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a community radio station: warm, playful, schedule-led, human (mode: dark)",
+        took: "Returned a Marquee Hero pick and the playful-dark cohort. The canonical marquee component's rule - one thought set big - shaped a headline that states the whole premise in eight words.",
+      },
+    ],
+    palette: [
+      {
+        token: "--night",
+        hex: "#151119",
+        from: "A dark ground with a purple cast rather than a neutral charcoal, so the three accents feel like they belong to it.",
+      },
+      {
+        token: "--peach",
+        hex: "#f2915e",
+        from: "The live colour: the on-air dot, the primary button, the currently-broadcasting row in the schedule.",
+      },
+      {
+        token: "--lilac",
+        hex: "#a98cf0",
+        from: "The second accent, on talk shows and half the equaliser bars.",
+      },
+      {
+        token: "--mint",
+        hex: "#63d0a8",
+        from: "The third, on repeats and the members figure. Three accents is unusual restraint-breaking, and it is the point: this station is many different people.",
+      },
+      {
+        token: "--cream",
+        hex: "#f6efe6",
+        from: "Warm off-white for headlines and show titles.",
+      },
+      {
+        token: "--muted",
+        hex: "#9b8ea3",
+        from: "Muted mauve for hosts, times and secondary copy.",
+      },
+    ],
+    highlight: "The now-playing panel is a working radio widget: a gradient cover card, an eighteen-bar equaliser animating on staggered delays, and three rows naming the host, the record currently playing and what follows at six. Below it the schedule is a real day of programming, including a 22:00 slot marked 'unhosted — assembled by whoever locks up'.",
+  },
+  {
+    slug: "long-table-essay",
+    brand: "The Long Table",
+    tagline: "A reader-funded magazine: one long reported piece a fortnight, dataset included.",
+    prompt: "A long-form reported essay on food systems: editorial, data-led, reader-funded magazine.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.7,
+    references: [
+      {
+        slug: "dazeddigital-com",
+        took: "Lead exemplar. A real magazine's fold: masthead, kicker, an enormous headline and almost nothing else. Confirmed that an essay opening should look nothing like a product hero.",
+      },
+      {
+        slug: "on-com",
+        took: "The Swiss-precision counterweight in the returned set. Contributed the restraint of the supporting layer - small, quiet labels around a large calm object - which is how the figure and its caption are set.",
+      },
+      {
+        slug: "dezeen-com",
+        took: "Recovered from the editorial work on a sibling build. Informed the kicker-plus-read-time convention and the three-up further-reading row at the foot.",
+      },
+      {
+        slug: "quantamagazine-org",
+        took: "Science-editorial reference. Its spacious, contemplative measure is the model for the single 64-character column the essay body runs in.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a long-form reported essay on food systems: editorial, data-led, reader-funded magazine",
+        took: "Returned a Photographic pick with Dazed at the top - a real magazine, which settled the fold as masthead plus kicker plus one very large headline, rather than a headline plus a call to action.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f6f3ec",
+        from: "Warm newsprint. The piece is long, and a cold white ground makes a long read feel longer.",
+      },
+      {
+        token: "--ink",
+        hex: "#1f1c17",
+        from: "Warm near-black for the serif display and the body column.",
+      },
+      {
+        token: "--ochre",
+        hex: "#a06a24",
+        from: "The single accent: the kicker, the drop cap, the pull-quote rule and the shortest bar in the chart. It marks the argument, not the decoration.",
+      },
+      {
+        token: "--muted",
+        hex: "#77705f",
+        from: "Warm grey for bylines, captions, the methodology note and the chart's axis labels.",
+      },
+      {
+        token: "--paper-2",
+        hex: "#ece7dc",
+        from: "A half-step deeper paper for the figure well and the data band.",
+      },
+      {
+        token: "--rule",
+        hex: "#ddd6c6",
+        from: "Hairlines throughout, including the four-cell fact strip which is drawn entirely with borders.",
+      },
+    ],
+    highlight: "The fold gives half its width to a chart, and the chart is the argument: five bars showing where a city's vegetables actually come from, with the shortest one - 3.1% grown within fifty kilometres - in the accent colour. A note in the corner admits that 27.2% could not be classified at all, and the essay's second half is about exactly that missing quarter.",
+  },
 ];
 
 export function getExample(slug: string): Example | undefined {

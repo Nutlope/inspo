@@ -1,0 +1,262 @@
+<meta charset="utf-8">
+<title>Fieldnote - An embedded time-series database</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fcfcfa;
+    --panel:#f4f4f0;
+    --code:#1a1c1a;
+    --ink:#161815;
+    --muted:#6d716b;
+    --moss:#3f6b4a;
+    --rust:#a8552c;
+    --rule:#e2e2dc;
+
+    --t-display:clamp(2.4rem,4.2vw,3.5rem);
+    --t-head:clamp(1.5rem,2.5vw,2.1rem);
+    --t-sub:1.1875rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 30px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  h1{font-size:var(--t-display);line-height:1.08;letter-spacing:-.03em;font-weight:600}
+  h2{font-size:var(--t-head);line-height:1.18;letter-spacing:-.024em;font-weight:600}
+  h3{font-size:var(--t-sub);line-height:1.34;letter-spacing:-.012em;font-weight:600}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .brand{display:flex;align-items:center;gap:9px;font-size:var(--t-sub);font-weight:600;letter-spacing:-.02em}
+  .ver{font-family:"JetBrains Mono",monospace;font-size:var(--t-meta);color:var(--muted);
+       border:1px solid var(--rule);border-radius:4px;padding:2px 7px;margin-left:4px}
+  .nl{display:flex;gap:24px}
+  .nl a{color:var(--muted);text-decoration:none;font-size:var(--t-meta);transition:color .16s}
+  .nl a:hover{color:var(--ink)}
+  .gh{display:flex;align-items:center;gap:7px;color:var(--ink);text-decoration:none;font-size:var(--t-meta);
+      border:1px solid var(--rule);border-radius:5px;padding:7px 13px}
+
+  .hero{flex:1;display:grid;grid-template-columns:1fr 1.04fr;align-items:center;gap:46px;padding:24px 0 30px}
+  .lede{margin-top:16px;max-width:44ch;color:#4f544d;font-size:var(--t-sub);line-height:1.6}
+  .install{margin-top:24px;background:var(--code);border-radius:7px;padding:14px 16px;display:flex;
+           justify-content:space-between;align-items:center;gap:14px}
+  .install code{font-family:"JetBrains Mono",monospace;font-size:var(--t-meta);color:#c9e6cf}
+  .install button{background:none;border:1px solid rgba(255,255,255,.16);color:#9aa39a;border-radius:4px;
+                  font-size:var(--t-meta);padding:4px 10px;cursor:pointer;font-family:inherit}
+  .cta{display:flex;gap:11px;margin-top:18px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-block;text-decoration:none;border-radius:5px;font-weight:600;font-size:var(--t-meta);padding:11px 20px}
+  .btn-1{background:var(--moss);color:#fff}
+  .btn-2{border:1px solid var(--rule);color:var(--ink)}
+  .figs{display:flex;gap:30px;margin-top:26px;padding-top:18px;border-top:1px solid var(--rule);flex-wrap:wrap}
+  .figs .n{font-size:1.5rem;font-weight:600;letter-spacing:-.03em;line-height:1}
+  .figs p:last-child{font-size:var(--t-meta);color:var(--muted);margin-top:4px}
+
+  /* code window */
+  .win{background:var(--code);border-radius:9px;overflow:hidden;border:1px solid #262a26}
+  .wbar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid #262a26}
+  .wbar i{width:9px;height:9px;border-radius:50%;background:#3a403a;display:block}
+  .wbar p{margin-left:6px;font-family:"JetBrains Mono",monospace;font-size:var(--t-meta);color:#7f877f}
+  .win pre{margin:0;padding:18px 16px;overflow-x:auto;font-family:"JetBrains Mono",monospace;
+           font-size:var(--t-meta);line-height:1.85;color:#dcE4dc}
+  .c-key{color:#9d8cf0}.c-fn{color:#7fd0a0}.c-str{color:#e0a878}.c-num{color:#e0a878}
+  .c-com{color:#5f675f}.c-typ{color:#78b8e0}
+
+  section{padding:76px 0}
+  .band{background:var(--panel);border-block:1px solid var(--rule)}
+  .sh{max-width:42ch;margin-bottom:32px}
+  .sh p{margin-top:9px;color:var(--muted)}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--paper);border:1px solid var(--rule);border-radius:9px;padding:24px}
+  .card p{margin-top:8px;color:var(--muted);font-size:var(--t-meta);line-height:1.68}
+
+  /* reference index */
+  .idx{display:grid;grid-template-columns:repeat(2,1fr);gap:0 44px}
+  .fn{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline;
+      padding:14px 0;border-bottom:1px solid var(--rule)}
+  .fn code{font-family:"JetBrains Mono",monospace;font-size:var(--t-meta);color:var(--moss)}
+  .fn p{color:var(--muted);font-size:var(--t-meta);margin-top:3px}
+  .fn .since{color:var(--muted);font-size:var(--t-meta);white-space:nowrap}
+
+  table{width:100%;border-collapse:collapse;font-size:var(--t-meta)}
+  th,td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--rule)}
+  thead th{color:var(--muted);font-weight:500}
+  tbody th{font-weight:500;font-size:var(--t-body)}
+  tbody td{color:var(--muted);font-family:"JetBrains Mono",monospace}
+  td.best{color:var(--moss)}
+  tbody tr:hover{background:rgba(22,24,21,.02)}
+
+  .closer{padding:70px 0;text-align:center}
+  .closer h2{max-width:24ch;margin:0 auto 12px}
+  .closer p{color:var(--muted);max-width:50ch;margin:0 auto 20px}
+  footer{border-top:1px solid var(--rule);padding:26px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero{grid-template-columns:1fr;gap:30px;padding:32px 0 50px}
+    .three,.idx{grid-template-columns:1fr}
+    .nl{display:none}
+    th,td{padding:10px 8px}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="4" y="4" width="16" height="16" rx="3" stroke="#3f6b4a" stroke-width="1.9"/>
+        <path d="M8 15l3-4 2.5 3L16 9" stroke="#a8552c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Fieldnote<span class="ver">v2.4.1</span>
+    </div>
+    <div class="nl">
+      <a href="#why">Why</a>
+      <a href="#reference">Reference</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="#">Guides</a>
+      <a href="#">Changelog</a>
+    </div>
+    <a class="gh" href="#">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      4.1k
+    </a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="meta">Embedded · Rust core · Apache 2.0</p>
+      <h1 style="margin-top:12px">A time-series database that lives inside your process.</h1>
+      <p class="lede">Fieldnote is a single dependency and a single file on
+        disk. No server to run, no port to open, no cluster to reason
+        about. It handles a few billion points on one machine and gets out
+        of the way.</p>
+      <div class="install">
+        <code>cargo add fieldnote</code>
+        <button type="button">Copy</button>
+      </div>
+      <div class="cta">
+        <a class="btn btn-1" href="#reference">Read the reference</a>
+        <a class="btn btn-2" href="#why">Why embedded</a>
+      </div>
+      <div class="figs">
+        <div><p class="n">1.4 M</p><p>Points ingested per second</p></div>
+        <div><p class="n">11 MB</p><p>Compiled, no dependencies</p></div>
+        <div><p class="n">0</p><p>Processes to supervise</p></div>
+      </div>
+    </div>
+
+    <div class="win">
+      <div class="wbar"><i></i><i></i><i></i><p>main.rs</p></div>
+<pre><span class="c-key">use</span> fieldnote::{<span class="c-typ">Db</span>, <span class="c-typ">Point</span>, <span class="c-typ">Window</span>};
+
+<span class="c-com">// one file, no server, no config</span>
+<span class="c-key">let</span> db = <span class="c-typ">Db</span>::<span class="c-fn">open</span>(<span class="c-str">"sensors.fn"</span>)?;
+
+db.<span class="c-fn">write</span>(<span class="c-str">"greenhouse.temp"</span>, <span class="c-typ">Point</span> {
+    at:    now(),
+    value: <span class="c-num">21.4</span>,
+    tags:  &amp;[(<span class="c-str">"bed"</span>, <span class="c-str">"north"</span>)],
+})?;
+
+<span class="c-com">// downsample four million rows</span>
+<span class="c-key">let</span> hourly = db
+    .<span class="c-fn">series</span>(<span class="c-str">"greenhouse.temp"</span>)
+    .<span class="c-fn">between</span>(week_ago(), now())
+    .<span class="c-fn">window</span>(<span class="c-typ">Window</span>::<span class="c-fn">Hours</span>(<span class="c-num">1</span>))
+    .<span class="c-fn">mean</span>()?;
+
+<span class="c-fn">assert_eq!</span>(hourly.<span class="c-fn">len</span>(), <span class="c-num">168</span>);</pre>
+    </div>
+  </div>
+</div>
+
+<div class="band">
+  <section id="why" class="wrap">
+    <div class="sh">
+      <h2>Three reasons it is a library and not a server.</h2>
+      <p>Most time-series workloads are a single machine writing to a
+        single disk. Fieldnote is built for that case and declines the
+        rest.</p>
+    </div>
+    <div class="three">
+      <article class="card">
+        <h3>Nothing to operate</h3>
+        <p>No daemon, no config file, no health check, no upgrade window. The database is a struct in your binary, and it goes away when your process does.</p>
+      </article>
+      <article class="card">
+        <h3>Queries are functions</h3>
+        <p>There is no query language to learn or to escape. Windows, aggregates and joins are ordinary methods, checked by the compiler like the rest of your code.</p>
+      </article>
+      <article class="card">
+        <h3>One file, portable</h3>
+        <p>The on-disk format is documented in nine pages and stable since v2.0. Copy the file to another machine and it opens, on any platform Rust targets.</p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<section id="reference" class="wrap">
+  <div class="sh">
+    <h2>Reference</h2>
+    <p>The whole public surface is thirty-one functions. This is most of
+      them.</p>
+  </div>
+  <div class="idx">
+    <div class="fn"><div><code>Db::open(path)</code><p>Open or create a database file</p></div><span class="since">v1.0</span></div>
+    <div class="fn"><div><code>Db::write(series, point)</code><p>Append one point, fsync optional</p></div><span class="since">v1.0</span></div>
+    <div class="fn"><div><code>Db::write_batch(series, &amp;[point])</code><p>Append many, one syscall</p></div><span class="since">v1.4</span></div>
+    <div class="fn"><div><code>Db::series(name)</code><p>Begin a query on one series</p></div><span class="since">v1.0</span></div>
+    <div class="fn"><div><code>Query::between(from, to)</code><p>Bound the range, inclusive</p></div><span class="since">v1.0</span></div>
+    <div class="fn"><div><code>Query::window(unit)</code><p>Bucket into fixed intervals</p></div><span class="since">v1.2</span></div>
+    <div class="fn"><div><code>Query::mean() / max() / p99()</code><p>Reduce each bucket</p></div><span class="since">v1.2</span></div>
+    <div class="fn"><div><code>Query::tagged(key, value)</code><p>Filter by tag, index-backed</p></div><span class="since">v2.0</span></div>
+    <div class="fn"><div><code>Db::compact()</code><p>Rewrite and reclaim, online</p></div><span class="since">v2.1</span></div>
+    <div class="fn"><div><code>Db::snapshot(path)</code><p>Consistent copy without stopping writes</p></div><span class="since">v2.4</span></div>
+  </div>
+</section>
+
+<div class="band">
+  <section id="benchmarks" class="wrap">
+    <div class="sh">
+      <h2>Benchmarks, with the losses included.</h2>
+      <p>Single machine, 8 cores, NVMe. Fieldnote loses on distributed
+        fan-out because it does not do distributed fan-out.</p>
+    </div>
+    <table>
+      <thead><tr><th>Workload</th><th>Fieldnote</th><th>Server A</th><th>Server B</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Ingest, 1 series</th><td class="best">1.42 M/s</td><td>0.61 M/s</td><td>0.88 M/s</td></tr>
+        <tr><th scope="row">Ingest, 10k series</th><td class="best">0.94 M/s</td><td>0.55 M/s</td><td>0.71 M/s</td></tr>
+        <tr><th scope="row">Range scan, 30 days</th><td class="best">42 ms</td><td>118 ms</td><td>96 ms</td></tr>
+        <tr><th scope="row">Hourly downsample, 1 yr</th><td class="best">210 ms</td><td>640 ms</td><td>480 ms</td></tr>
+        <tr><th scope="row">Fan-out across 6 nodes</th><td>not supported</td><td>1.9 s</td><td>1.1 s</td></tr>
+        <tr><th scope="row">Cold start</th><td class="best">3 ms</td><td>2.4 s</td><td>1.8 s</td></tr>
+      </tbody>
+    </table>
+    <p class="meta" style="margin-top:16px">Reproduce with <code class="mono">cargo bench --bench compare</code>. The harness and the
+      competitor configs are in the repository; corrections are welcome as issues.</p>
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="closer">
+    <h2>If you need a cluster, use a cluster.</h2>
+    <p>Fieldnote is for the very common case where you do not. It is
+      Apache 2.0, has no corporate owner, and the maintainers answer
+      issues on weekdays.</p>
+    <a class="btn btn-1" href="#reference">Read the reference</a>
+  </div>
+  <footer>
+    <p class="meta">Fieldnote · Apache 2.0 · Maintained by four people and a continuous integration bill</p>
+    <p class="meta">Made with Inspo</p>
+  </footer>
+</div>

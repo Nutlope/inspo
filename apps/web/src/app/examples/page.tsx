@@ -24,12 +24,17 @@ export const metadata: Metadata = {
  *  order, so the page stays correct as the set grows. */
 const ORDER = [
   "nocturne-festival",
+  "alder-money",
   "wavecast",
+  "long-table-essay",
+  "rill-radio",
   "aureole-parfum",
   "driftmail",
   "sable-patisserie",
-  "studio-volta",
+  "tidepool-trust",
   "meridian-review",
+  "studio-volta",
+  "fieldnote-db",
   "halcyon-optics",
   "ember-and-ash",
   "vaultline-pricing",
