@@ -41,8 +41,19 @@ type Row = {
   mode?: string;
   thumbUrl?: string;
   thumbVariants?: { webp?: { w: number; url: string }[] };
+  heroVariants?: { webp?: { w: number; url: string }[] };
+  fullVariants?: { webp?: { w: number; url: string }[] };
+  fullPageUrl?: string;
+  imageUrl?: string;
   tags?: { style?: string[] };
 };
+
+/** Widest webp variant, falling back to the original PNG. */
+function widest(v: { webp?: { w: number; url: string }[] } | undefined, fallback = ""): string {
+  const webp = v?.webp;
+  if (!webp?.length) return fallback;
+  return webp.reduce((a, b) => (b.w > a.w ? b : a)).url;
+}
 
 type Site = {
   slug: string;
@@ -52,6 +63,8 @@ type Site = {
   mode: string;
   status: string;
   thumb: string;
+  hero: string;
+  full: string;
   pages: number;
   styles: string[];
 };
@@ -94,6 +107,8 @@ function loadSites(): Site[] {
       mode: r.mode ?? "",
       status: status.get(r.siteSlug) ?? "unchecked",
       thumb: webp ?? r.thumbUrl ?? "",
+      hero: widest(r.heroVariants, r.imageUrl ?? ""),
+      full: widest(r.fullVariants, r.fullPageUrl ?? ""),
       pages: pageCount.get(r.siteSlug) ?? 1,
       styles: (r.tags?.style ?? []).slice(0, 2),
     });
@@ -183,6 +198,33 @@ button.ghost{font:inherit;font-size:13px;padding:8px 14px;border-radius:7px;curs
   border:1px solid var(--edge);background:transparent;color:var(--muted)}
 .saved{font-size:13px;color:var(--live);font-weight:600}
 .empty{padding:70px 0;text-align:center;color:var(--muted)}
+/* Card actions: viewing and opening must not toggle the mark, so they are
+   real buttons that stop the click from reaching the card. */
+.acts{position:absolute;top:7px;left:7px;display:flex;gap:5px;opacity:0;transition:opacity .12s}
+.card:hover .acts,.card:focus-within .acts{opacity:1}
+.acts a,.acts button{font:inherit;font-size:10.5px;font-weight:600;line-height:1;padding:5px 9px;border-radius:999px;
+  cursor:pointer;text-decoration:none;border:1px solid var(--edge);
+  background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(6px);color:var(--ink)}
+.acts a:hover,.acts button:hover{border-color:var(--ink)}
+/* Viewer */
+.view{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(12px);display:none;flex-direction:column}
+.view.on{display:flex}
+.vbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid var(--edge);
+  background:var(--surface)}
+.vtitle{font-size:14px;font-weight:650;margin:0}
+.vurl{font-size:12px;color:var(--muted);text-decoration:none}
+.vurl:hover{color:var(--ink);text-decoration:underline}
+.vspacer{margin-left:auto;display:flex;gap:8px;align-items:center}
+.vbtn{font:inherit;font-size:12.5px;padding:6px 12px;border-radius:7px;cursor:pointer;text-decoration:none;
+  border:1px solid var(--edge);background:var(--surface);color:var(--ink)}
+.vbtn[aria-pressed=true]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.vbtn.danger{border-color:var(--cut);color:var(--cut)}
+.vbtn.danger[aria-pressed=true]{background:var(--cut);color:#fff}
+.vscroll{flex:1;overflow:auto;padding:20px;display:flex;justify-content:center;align-items:flex-start}
+.vscroll img{max-width:1100px;width:100%;height:auto;display:block;border:1px solid var(--edge);border-radius:8px;
+  background:var(--surface)}
+.vhint{font-size:11.5px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <div class="bar"><div class="wrap barin">
@@ -202,6 +244,19 @@ button.ghost{font:inherit;font-size:13px;padding:8px 14px;border-radius:7px;curs
   <button class="act" id="save">Save list</button>
   <button class="ghost" id="clear">Clear all</button>
 </div></div>
+<div class="view" id="view" role="dialog" aria-modal="true" aria-label="Site preview"><div class="vbar">
+  <button class="vbtn" id="vprev" title="Previous (left arrow)">&larr;</button>
+  <button class="vbtn" id="vnext" title="Next (right arrow)">&rarr;</button>
+  <div><h2 class="vtitle" id="vtitle"></h2><a class="vurl" id="vurl" target="_blank" rel="noreferrer noopener"></a></div>
+  <div class="vspacer">
+    <span class="vhint">Esc closes &middot; X marks</span>
+    <button class="vbtn" id="vhero" aria-pressed="true">Hero</button>
+    <button class="vbtn" id="vfull" aria-pressed="false">Full page</button>
+    <a class="vbtn" id="vopen" target="_blank" rel="noreferrer noopener">Open live site &#8599;</a>
+    <button class="vbtn danger" id="vcut" aria-pressed="false">Mark for removal</button>
+    <button class="vbtn" id="vclose">Close</button>
+  </div>
+</div><div class="vscroll" id="vscroll"><img id="vimg" alt=""></div></div>
 <script>
 const SITES = ${JSON.stringify(sites)};
 const cut = new Set(JSON.parse(localStorage.getItem("inspo.cut") || "null") || ${JSON.stringify(preMarked)});
@@ -209,6 +264,47 @@ let filter = "all", q = "";
 const $ = (id) => document.getElementById(id);
 const dom = (u) => u.replace(/^https?:\\/\\//, "").replace(/^www\\./, "").replace(/\\/$/, "");
 const BAD = (s) => s !== "ok" && s !== "unchecked";
+
+// Thumbnails load through our own queue rather than loading="lazy" or an
+// IntersectionObserver: with 870 images both of those can silently never
+// fire (neither one runs while a tab is hidden), which left every card
+// blank. Measuring rects on demand always works, and the in-flight cap
+// keeps a full-catalogue scroll from opening 870 sockets at once.
+const pending = [];
+let inflight = 0;
+const MAX_INFLIGHT = 20;
+function pump(){
+  if (!pending.length) return;
+  // innerHeight can report 0 before the pane has a size; falling back keeps
+  // the window from collapsing to nothing and stalling the queue.
+  const vh = innerHeight || document.documentElement.clientHeight || 900;
+  const top = -900, bottom = vh + 900;
+  for (let i = 0; i < pending.length && inflight < MAX_INFLIGHT; ){
+    const img = pending[i];
+    const card = img.closest(".card");
+    if (card.hidden){ i++; continue; }
+    const r = img.getBoundingClientRect();
+    if (r.bottom < top || r.top > bottom){ i++; continue; }
+    pending.splice(i, 1);
+    inflight++;
+    const done = () => { inflight--; pump(); };
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+    img.src = img.dataset.src; delete img.dataset.src;
+  }
+}
+// Throttled, and called directly rather than through requestAnimationFrame,
+// which is paused while the tab is in the background. A slow timer keeps the
+// queue moving even if a scroll event is missed.
+let last = 0;
+function schedule(){
+  const now = performance.now();
+  if (now - last < 120) return;
+  last = now; pump();
+}
+addEventListener("scroll", schedule, { passive: true });
+addEventListener("resize", schedule);
+setInterval(pump, 1200);
 
 function build(){
   const frag = document.createDocumentFragment();
@@ -221,20 +317,82 @@ function build(){
     const cls = BAD(s.status) ? "p-bad" : s.status === "ok" ? "p-ok" : "p-un";
     const label = s.status === "ok" ? "Live" : s.status === "unchecked" ? "Unchecked" : s.status[0].toUpperCase()+s.status.slice(1);
     el.innerHTML =
-      '<div class="shot">' + (s.thumb ? '<img loading="lazy" src="'+s.thumb+'" alt="">' : '') + '</div>' +
+      '<div class="shot">' + (s.thumb ? '<img data-src="'+s.thumb+'" alt="">' : '') + '</div>' +
       '<div class="body"><h3 class="name"></h3><p class="dom"></p>' +
       '<div class="foot"><span class="pill '+cls+'">'+label+'</span>' +
       '<span class="sub mono">'+s.captured.slice(5)+' · '+s.pages+' pg</span></div></div>' +
+      '<div class="acts"><button type="button" class="v">View</button>' +
+      '<a class="o" target="_blank" rel="noreferrer noopener">Open &#8599;</a></div>' +
       '<span class="mark">Remove</span>';
     el.querySelector(".name").textContent = s.title;
     el.querySelector(".dom").textContent = dom(s.url);
+    el.querySelector(".o").href = s.url;
+    el.querySelector(".o").title = "Open " + dom(s.url) + " in a new tab";
+    const img = el.querySelector("img");
+    if (img) pending.push(img);
     const toggle = () => { cut.has(s.slug) ? cut.delete(s.slug) : cut.add(s.slug); persist(); render(); };
     el.addEventListener("click", toggle);
-    el.addEventListener("keydown", (e) => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggle(); }});
+    el.addEventListener("keydown", (e) => {
+      if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggle(); }
+      if(e.key==="v"||e.key==="V"){ e.preventDefault(); open(s.slug); }
+    });
+    // Both actions sit on top of a card whose whole surface toggles the mark.
+    for (const a of el.querySelectorAll(".acts a, .acts button"))
+      a.addEventListener("click", (e) => e.stopPropagation());
+    el.querySelector(".v").addEventListener("click", () => open(s.slug));
     frag.appendChild(el);
   }
   $("grid").appendChild(frag);
 }
+
+/* ---- viewer ---------------------------------------------------------- */
+let viewing = -1, shot = "hero";
+const visible = () => [...$("grid").children].filter((el) => !el.hidden).map((el) => el.dataset.slug);
+function paint(){
+  const s = SITES[viewing]; if(!s) return;
+  $("vtitle").textContent = s.title;
+  $("vurl").textContent = dom(s.url); $("vurl").href = s.url;
+  $("vopen").href = s.url;
+  const full = shot === "full" && s.full;
+  $("vimg").src = full ? s.full : (s.hero || s.thumb);
+  $("vhero").setAttribute("aria-pressed", String(!full));
+  $("vfull").setAttribute("aria-pressed", String(!!full));
+  $("vfull").disabled = !s.full;
+  $("vfull").title = s.full ? "Whole page, top to bottom" : "No full-page capture for this site";
+  $("vcut").setAttribute("aria-pressed", String(cut.has(s.slug)));
+  $("vcut").textContent = cut.has(s.slug) ? "Marked for removal" : "Mark for removal";
+  $("vscroll").scrollTop = 0;
+}
+function open(slug){
+  viewing = SITES.findIndex((s) => s.slug === slug); if(viewing < 0) return;
+  shot = "hero"; $("view").classList.add("on"); paint(); $("vclose").focus();
+}
+function close(){ $("view").classList.remove("on"); viewing = -1; }
+/* Step through what the current filter and search actually show. */
+function step(dir){
+  const order = visible(); if(!order.length) return;
+  const here = order.indexOf(SITES[viewing]?.slug);
+  const next = order[(here + dir + order.length) % order.length];
+  if(next){ viewing = SITES.findIndex((s) => s.slug === next); shot = "hero"; paint(); }
+}
+$("vclose").addEventListener("click", close);
+$("view").addEventListener("click", (e) => { if(e.target === $("view")) close(); });
+$("vprev").addEventListener("click", () => step(-1));
+$("vnext").addEventListener("click", () => step(1));
+$("vhero").addEventListener("click", () => { shot = "hero"; paint(); });
+$("vfull").addEventListener("click", () => { shot = "full"; paint(); });
+$("vcut").addEventListener("click", () => {
+  const s = SITES[viewing]; if(!s) return;
+  cut.has(s.slug) ? cut.delete(s.slug) : cut.add(s.slug); persist(); render(); paint();
+});
+document.addEventListener("keydown", (e) => {
+  if(viewing < 0) return;
+  if(e.key === "Escape") close();
+  else if(e.key === "ArrowRight") step(1);
+  else if(e.key === "ArrowLeft") step(-1);
+  else if(e.key === "x" || e.key === "X") $("vcut").click();
+  else if(e.key === "f" || e.key === "F") $("vfull").click();
+});
 function persist(){ localStorage.setItem("inspo.cut", JSON.stringify([...cut])); $("ok").hidden = true; }
 function render(){
   let shown = 0;
@@ -252,6 +410,7 @@ function render(){
   $("fc").textContent = list.length; $("dc").textContent = list.length;
   $("ds").textContent = list.join(", ");
   $("dock").classList.toggle("on", list.length > 0);
+  pump(); // filtering reflows the grid, so a new set of cards is now on screen
 }
 for (const b of document.querySelectorAll(".fbtn"))
   b.addEventListener("click", () => { filter = b.dataset.f;
