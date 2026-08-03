@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driftmail - Email automation for indie developers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1210;
+    --bg-raise:#101a17;
+    --bg-card:#0e1714;
+    --line:#1e2c27;
+    --fg:#e9f2ee;
+    --muted:#8fa39b;
+    --accent:#3ee08a;
+    --accent-dim:#1c5e3d;
+    --amber:#e0a03e;
+    --radius:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+  }
+  .mono{font-family:"JetBrains Mono",monospace}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(11,18,16,.82);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{display:flex;align-items:center;gap:32px;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.02em}
+  .logo svg{display:block}
+  .nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--fg)}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:14px}
+  .gh{display:flex;align-items:center;gap:7px;color:var(--muted)}
+  .gh:hover{color:var(--fg)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    border-radius:999px;padding:9px 20px;
+    font-size:14px;font-weight:600;letter-spacing:.01em;
+    transition:transform .15s ease, background .15s ease;
+    cursor:pointer;border:none;
+  }
+  .btn-primary{background:var(--accent);color:#06130c}
+  .btn-primary:hover{transform:translateY(-1px);background:#5aeea0}
+  .btn-ghost{border:1px solid var(--line);color:var(--fg);background:transparent}
+  .btn-ghost:hover{border-color:var(--muted)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:56px 0 64px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--accent-dim);
+    border-radius:999px;padding:5px 14px;margin-bottom:22px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{
+    font-size:clamp(40px,4.6vw,58px);
+    line-height:1.06;letter-spacing:-.03em;font-weight:700;
+    max-width:19ch;
+  }
+  h1 .code{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:500;font-size:.86em;
+    color:var(--accent);
+    background:var(--bg-raise);
+    border:1px solid var(--line);
+    border-radius:10px;padding:.04em .28em;
+    white-space:nowrap;
+  }
+  .hero-sub{margin:20px 0 30px;font-size:18px;color:var(--muted);max-width:52ch}
+  .hero-ctas{display:flex;align-items:center;gap:14px}
+  .hero-note{margin-top:16px;font-size:13px;color:var(--muted)}
+  .hero-note .mono{color:var(--accent);font-size:12.5px}
+
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+
+  /* code -> email visual */
+  .demo{position:relative}
+  .panel{
+    background:var(--bg-card);border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.45);
+  }
+  .panel-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;border-bottom:1px solid var(--line);
+    font-size:11.5px;color:var(--muted);
+  }
+  .lights{display:flex;gap:6px}
+  .lights i{width:9px;height:9px;border-radius:50%;background:#26362f;display:block}
+  pre{font-family:"JetBrains Mono",monospace;font-size:12.8px;line-height:1.75;padding:16px 18px;overflow-x:auto;color:#c6d6ce}
+  .k{color:#7fb4ff}.s{color:var(--accent)}.f{color:#e0a03e}.c{color:#5c7168;font-style:italic}.p{color:#c792ea}
+  .email-card{
+    position:absolute;right:-14px;bottom:-38px;width:64%;
+    background:#f5f2ea;color:#22291f;border-radius:10px;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
+    padding:16px 18px;font-size:12px;line-height:1.5;
+    transform:rotate(1.5deg);
+  }
+  .email-card .eh{display:flex;justify-content:space-between;font-size:10.5px;color:#7d8478;margin-bottom:8px}
+  .email-card strong{font-size:13px}
+  .email-card .tag{display:inline-block;margin-top:10px;font-size:10px;background:#dfe8dc;border-radius:4px;padding:2px 8px;color:#3c5a44}
+
+  /* ---------- logo strip ---------- */
+  .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;margin-top:80px}
+  .strip-in{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .strip span{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+  .strip .nm{color:#5f7269;font-weight:600;font-size:15px;font-family:"Inter Tight",sans-serif;letter-spacing:-.01em}
+
+  /* ---------- sections ---------- */
+  section{padding:88px 0}
+  .sec-head{margin-bottom:44px;max-width:60ch}
+  .kicker{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+  h2{font-size:clamp(28px,3vw,38px);letter-spacing:-.025em;line-height:1.12;margin-top:12px;font-weight:700}
+  .sec-head p{margin-top:14px;color:var(--muted);font-size:16.5px}
+
+  /* bento */
+  .bento{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:auto;gap:16px}
+  .tile{
+    background:var(--bg-card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:26px;
+    display:flex;flex-direction:column;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .tile:hover{border-color:#2c443a;transform:translateY(-2px)}
+  .tile-lead{grid-column:span 2;grid-row:span 2}
+  .tile-wide{grid-column:span 2;flex-direction:row;align-items:baseline;justify-content:space-between;gap:24px}
+  .t-meta{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .tile h3{font-size:19px;letter-spacing:-.01em;margin-top:12px;font-weight:600}
+  .tile .big{font-size:clamp(26px,2.6vw,34px);line-height:1.12;letter-spacing:-.02em;font-weight:700;margin-top:14px;max-width:22ch}
+  .tile .big em{font-style:normal;color:var(--accent)}
+  .tile p.body{margin-top:12px;color:var(--muted);font-size:14.5px;max-width:48ch}
+  .tile .push{margin-top:auto;padding-top:20px}
+  .seq{margin-top:22px;display:flex;flex-direction:column;gap:0}
+  .seq-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-top:1px dashed var(--line);font-size:13px}
+  .seq-row:first-child{border-top:none}
+  .seq-row .step{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);min-width:64px}
+  .seq-row .when{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+  .stat-num{font-size:42px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:14px}
+  .stat-num sub{font-size:14px;color:var(--muted);font-weight:400;vertical-align:baseline;margin-left:4px}
+  .arrow-link{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);white-space:nowrap}
+  .arrow-link:hover{color:var(--accent)}
+
+  /* how it works */
+  .how{background:var(--bg-raise);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:step}
+  .step-card{border:1px solid var(--line);border-radius:var(--radius);padding:26px;background:var(--bg-card)}
+  .step-card::before{
+    counter-increment:step;content:"0" counter(step);
+    font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);
+    display:block;margin-bottom:14px;
+  }
+  .step-card h3{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .step-card p{margin-top:10px;color:var(--muted);font-size:14.5px}
+  .step-card code{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--accent);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+
+  /* pricing bento */
+  .p-grid{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto auto;gap:16px}
+  .p-lead{grid-row:span 2;border-top:2px solid var(--accent)}
+  .price{display:flex;align-items:baseline;gap:10px;margin-top:16px}
+  .price .n{font-size:clamp(44px,5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1}
+  .price .per{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted)}
+  .p-list{margin-top:22px;list-style:none;font-size:14.5px;display:flex;flex-direction:column;gap:10px}
+  .p-list li{display:flex;gap:11px;align-items:baseline}
+  .p-list li::before{content:"·";color:var(--accent);font-weight:700}
+  .p-small .n{font-size:30px}
+
+  /* testimonial */
+  .quote{max-width:760px}
+  blockquote{font-size:clamp(22px,2.4vw,29px);line-height:1.35;letter-spacing:-.015em;font-weight:500}
+  blockquote .hl{color:var(--accent)}
+  .attr{margin-top:22px;display:flex;align-items:center;gap:14px;font-size:14px}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3ee08a,#1c5e3d);display:flex;align-items:center;justify-content:center;font-weight:700;color:#06130c;font-size:14px}
+  .attr .who b{display:block;font-weight:600}
+  .attr .who span{color:var(--muted);font-size:13px}
+
+  /* CTA */
+  .cta-band{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--bg-raise),var(--bg-card));padding:60px 48px;text-align:center}
+  .cta-band h2{margin:14px auto 0;max-width:22ch}
+  .cta-band p{margin:16px auto 28px;color:var(--muted);max-width:46ch}
+  .cta-band .mono-hint{display:inline-block;margin-top:22px;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 16px}
+  .cta-band .mono-hint b{color:var(--accent);font-weight:500}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:44px 0 56px;font-size:13.5px;color:var(--muted)}
+  .foot-in{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .foot-links{display:flex;gap:24px}
+  .foot-links a:hover{color:var(--fg)}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:72px}
+    .email-card{right:0}
+    .bento,.steps{grid-template-columns:1fr 1fr}
+    .tile-lead,.tile-wide{grid-column:span 2}
+    .p-grid{grid-template-columns:1fr}
+    .p-lead{grid-row:auto}
+    .nav-links{display:none}
+  }
+  @media (max-width:600px){
+    .bento,.steps{grid-template-columns:1fr}
+    .tile-lead,.tile-wide{grid-column:auto}
+    .tile-wide{flex-direction:column}
+    .wrap{padding:0 20px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="1" y="4" width="20" height="14" rx="3" stroke="#3ee08a" stroke-width="1.6"/>
+        <path d="M2.5 6.5 L11 12.5 L19.5 6.5" stroke="#3ee08a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M14 15 H20" stroke="#e0a03e" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      Driftmail
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Docs</a>
+    </div>
+    <div class="nav-right">
+      <a class="gh" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        4.2k
+      </a>
+      <a href="#">Sign in</a>
+      <a class="btn btn-primary" href="#pricing">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Open source, MIT</span>
+      <h1>Email automation is just <span class="code">drift.send()</span> away</h1>
+      <p class="hero-sub">Driftmail turns onboarding sequences, digests, and lifecycle email into a few lines of TypeScript. No drag-and-drop builders, no marketing suite; just code that ships with your app.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#pricing">Start sending free</a>
+        <a class="btn btn-ghost" href="#how">Read the docs</a>
+      </div>
+      <p class="hero-note">Free up to 5,000 emails / month · <span class="mono">npm i driftmail</span></p>
+    </div>
+    <div class="demo">
+      <div class="panel">
+        <div class="panel-bar">
+          <span class="lights"><i></i><i></i><i></i></span>
+          <span class="mono">onboarding.ts</span>
+        </div>
+<pre><span class="k">import</span> { drift } <span class="k">from</span> <span class="s">"driftmail"</span>
+
+<span class="c">// runs when a user signs up</span>
+drift.<span class="f">sequence</span>(<span class="s">"onboarding"</span>, {
+  <span class="p">trigger</span>: <span class="s">"user.created"</span>,
+  <span class="p">steps</span>: [
+    { <span class="p">wait</span>: <span class="s">"5m"</span>,  <span class="p">send</span>: <span class="s">"welcome"</span> },
+    { <span class="p">wait</span>: <span class="s">"2d"</span>,  <span class="p">send</span>: <span class="s">"setup-tips"</span>,
+      <span class="p">skipIf</span>: (u) => u.<span class="f">hasDeployed</span>() },
+    { <span class="p">wait</span>: <span class="s">"7d"</span>,  <span class="p">send</span>: <span class="s">"upgrade-nudge"</span> },
+  ],
+})</pre>
+      </div>
+      <div class="email-card">
+        <div class="eh"><span>from: you@yourapp.dev</span><span>09:41</span></div>
+        <strong>Welcome aboard, Sam</strong>
+        <p>Your workspace is live. Here are the three things most builders do first...</p>
+        <span class="tag">delivered · step 1 of 3</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="wrap strip-in">
+      <span>// trusted by solo builders shipping real products</span>
+      <span class="nm">shipfast.dev</span><span class="nm">Loglens</span><span class="nm">Fernpage</span><span class="nm">tinyapi</span><span class="nm">Cove Analytics</span>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">// features</span>
+      <h2>Everything a one-person team needs. Nothing a marketing department wants.</h2>
+    </div>
+    <div class="bento">
+      <article class="tile tile-lead">
+        <span class="t-meta">Sequences</span>
+        <p class="big">Write flows in <em>code</em>, version them in git, deploy them with your app.</p>
+        <p class="body">Sequences live next to your business logic. Branch on real user state, not a webhook guess: skip the nudge if they already upgraded, pause the digest while they are on a trial call.</p>
+        <div class="seq">
+          <div class="seq-row"><span class="step">step 1</span> welcome <span class="when">+5m</span></div>
+          <div class="seq-row"><span class="step">step 2</span> setup-tips <span class="when">+2d · skipIf deployed</span></div>
+          <div class="seq-row"><span class="step">step 3</span> upgrade-nudge <span class="when">+7d</span></div>
+        </div>
+      </article>
+
+      <article class="tile">
+        <span class="t-meta">Deliverability</span>
+        <p class="stat-num">99.4<sub>% inbox rate</sub></p>
+        <p class="body">Managed SPF, DKIM, and DMARC. Warmup handled for you on shared or dedicated IPs.</p>
+      </article>
+
+      <article class="tile">
+        <span class="t-meta">Templates</span>
+        <h3>React Email, MJML, or plain HTML</h3>
+        <p class="body">Preview locally with <span class="mono" style="font-size:12px;color:var(--accent)">drift dev</span>, hot reload included.</p>
+      </article>
+
+      <article class="tile tile-wide">
+        <div>
+          <span class="t-meta">Events API</span>
+          <h3>One POST to trigger anything. Idempotent by default, retries built in.</h3>
+        </div>
+        <a class="arrow-link" href="#">API reference &rarr;</a>
+      </article>
+
+      <article class="tile">
+        <span class="t-meta">Analytics</span>
+        <h3>Opens, clicks, unsubscribes</h3>
+        <p class="body">Piped to your own Postgres if you want the raw rows. No lock-in dashboards.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">// how it works</span>
+      <h2>From npm install to first sequence in under ten minutes</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <h3>Install and authenticate</h3>
+        <p><code>npm i driftmail</code> then <code>drift login</code>. Your domain verifies with two DNS records; we generate them for you.</p>
+      </div>
+      <div class="step-card">
+        <h3>Define a sequence</h3>
+        <p>Declare triggers, waits, and skip conditions in TypeScript. Run <code>drift dev</code> to preview every email locally.</p>
+      </div>
+      <div class="step-card">
+        <h3>Deploy with your app</h3>
+        <p><code>drift push</code> ships the flow. Emit events from your backend and Driftmail handles scheduling, retries, and sending.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap quote">
+    <span class="kicker">// from a user</span>
+    <blockquote style="margin-top:18px">&ldquo;I replaced a $300/month marketing suite with <span class="hl">forty lines of TypeScript</span>. My onboarding emails finally live in the same PR as the feature they announce.&rdquo;</blockquote>
+    <div class="attr">
+      <div class="avatar">MK</div>
+      <div class="who"><b>Mira Kovacs</b><span>solo founder, Loglens</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">// pricing</span>
+      <h2>Priced for a side project. Ready for the day it is not one.</h2>
+    </div>
+    <div class="p-grid">
+      <article class="tile p-lead">
+        <span class="t-meta">Builder</span>
+        <div class="price"><span class="n">$9</span><span class="per">/ month</span></div>
+        <p class="body">The plan almost everyone picks. Enough headroom for a launch that goes well.</p>
+        <ul class="p-list">
+          <li>50,000 emails / month</li>
+          <li>Unlimited sequences and events</li>
+          <li>Custom domain, managed warmup</li>
+          <li>Analytics export to your database</li>
+          <li>Email support from the maintainers</li>
+        </ul>
+        <div class="push"><a class="btn btn-primary" href="#">Start 14-day trial</a></div>
+      </article>
+      <article class="tile p-small">
+        <span class="t-meta">Hobby</span>
+        <div class="price"><span class="n">$0</span><span class="per">forever</span></div>
+        <p class="body">5,000 emails / month, one domain, full API. No card required.</p>
+      </article>
+      <article class="tile p-small">
+        <span class="t-meta">Scale</span>
+        <div class="price"><span class="n">$49</span><span class="per">/ month</span></div>
+        <p class="body">500,000 emails, dedicated IP, priority deliverability review.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band">
+      <span class="kicker">// get started</span>
+      <h2>Your users are waiting on that welcome email</h2>
+      <p>Sign up, verify a domain, ship a sequence tonight. The free tier is real and the code is on GitHub.</p>
+      <a class="btn btn-primary" href="#">Start sending free</a>
+      <br>
+      <span class="mono-hint">$ <b>npx driftmail init</b></span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>&copy; 2026 Driftmail. Email automation for people who ship.</span>
+    <div class="foot-links">
+      <a href="#">Docs</a><a href="#">GitHub</a><a href="#">Changelog</a><a href="#">Status</a><a href="#">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

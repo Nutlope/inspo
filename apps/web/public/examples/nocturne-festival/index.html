@@ -1,0 +1,195 @@
+<meta charset="utf-8">
+<title>Nocturne - Independent Film Festival, 12th Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a;
+    --raise:#131313;
+    --white:#faf7ef;
+    --red:#ff2d16;
+    --grey:#7d7d76;
+    --rule:rgba(250,247,239,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--black);color:var(--white);
+    font-family:"Inter Tight",system-ui,sans-serif;font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1340px;margin:0 auto;padding:0 30px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .anton{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:-.012em;line-height:.82}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+
+  /* ── nav ─────────────────────────────────────────── */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .brand{font-family:Anton,sans-serif;font-size:21px;text-transform:uppercase;letter-spacing:.02em}
+  .brand i{color:var(--red);font-style:normal}
+  .nl{display:flex;gap:26px}
+  .nl a{color:var(--grey);text-decoration:none;font-size:13px;font-weight:500;transition:color .16s}
+  .nl a:hover{color:var(--white)}
+  .pass{background:var(--red);color:var(--white);text-decoration:none;padding:9px 18px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+  /* ── hero: type is the poster ────────────────────── */
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding:24px 0 22px;overflow:hidden}
+  .stripes{position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(90deg,transparent 0 78px,rgba(250,247,239,.055) 78px 79px)}
+  .htop{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;position:relative}
+  .title{font-size:clamp(4.4rem,15.5vw,14rem);margin:14px 0 0;position:relative}
+  .title span{color:var(--red)}
+  .hbot{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;margin-top:26px;position:relative}
+  .blurb{max-width:40ch;color:#b9b9b2;font-size:16px}
+  .dates{display:flex;gap:28px;flex-wrap:wrap;align-items:baseline;justify-content:flex-end}
+  .dates .d{font-family:Anton,sans-serif;font-size:clamp(1.7rem,3.4vw,2.9rem);text-transform:uppercase;line-height:1}
+  .dates .d small{display:block;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;color:var(--grey);margin-top:8px}
+  .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;position:relative}
+  .b1{background:var(--white);color:var(--black);text-decoration:none;padding:13px 24px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;transition:background .16s}
+  .b1:hover{background:var(--red);color:var(--white)}
+  .b2{border:1px solid var(--rule);color:var(--white);text-decoration:none;padding:13px 24px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+  /* ── marquee ─────────────────────────────────────── */
+  .strip{border-bottom:1px solid var(--rule);background:var(--red);overflow:hidden;white-space:nowrap}
+  .strip div{display:inline-block;padding:10px 0;animation:run 30s linear infinite}
+  .strip span{padding:0 22px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  @keyframes run{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ── programme ───────────────────────────────────── */
+  section{padding:76px 0}
+  .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:1px solid var(--rule);padding-bottom:20px;margin-bottom:0}
+  h2{font-family:Anton,sans-serif;font-size:clamp(2rem,4vw,3.4rem);text-transform:uppercase;line-height:.9;letter-spacing:-.01em}
+  .film{display:grid;grid-template-columns:56px 1.6fr 1fr .8fr 78px;gap:20px;align-items:center;
+        padding:19px 0;border-bottom:1px solid var(--rule);transition:background .16s}
+  .film:hover{background:var(--raise)}
+  .film .idx{color:var(--red);font-family:"JetBrains Mono",monospace;font-size:12px}
+  .film h3{font-size:19px;font-weight:600;line-height:1.25}
+  .film .dir{font-size:13px;color:var(--grey);margin-top:3px}
+  .film .slot{font-family:"JetBrains Mono",monospace;font-size:12px;color:#b9b9b2}
+  .film .ven{font-size:13px;color:var(--grey)}
+  .tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+       border:1px solid var(--rule);padding:4px 8px;text-align:center;color:var(--grey)}
+  .tag.prem{border-color:var(--red);color:var(--red)}
+
+  /* ── strands ─────────────────────────────────────── */
+  .band{background:var(--raise);border-block:1px solid var(--rule)}
+  .strands{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .strand{background:var(--black);padding:30px 26px}
+  .strand .n{font-family:Anton,sans-serif;font-size:42px;color:var(--red);line-height:1}
+  .strand h4{margin:14px 0 9px;font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+  .strand p{font-size:13.5px;color:var(--grey);line-height:1.6}
+
+  /* ── venues + footer ─────────────────────────────── */
+  .vrow{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--rule);font-size:14px}
+  .vrow span:last-child{color:var(--grey);font-family:"JetBrains Mono",monospace;font-size:12px}
+  footer{padding:56px 0 44px}
+  .fbig{font-family:Anton,sans-serif;font-size:clamp(2.8rem,10vw,8rem);text-transform:uppercase;line-height:.82;letter-spacing:-.02em;color:var(--raise)}
+  .frow{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-top:24px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero{padding:44px 0}
+    .hbot{grid-template-columns:1fr;gap:22px}
+    .dates{justify-content:flex-start}
+    .film{grid-template-columns:34px 1fr;gap:10px}
+    .film .slot,.film .ven,.film .tag{grid-column:2}
+    .strands{grid-template-columns:1fr}
+    .nl{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <p class="brand">Nocturne<i>.</i></p>
+    <div class="nl">
+      <a href="#prog">Programme</a>
+      <a href="#strands">Strands</a>
+      <a href="#venues">Venues</a>
+      <a href="#">Submit</a>
+      <a href="#">Archive</a>
+    </div>
+    <a class="pass" href="#">Festival pass £48</a>
+  </nav>
+
+  <div class="hero">
+    <div class="stripes"></div>
+    <div class="htop">
+      <p class="mono" style="color:var(--red)">12th Edition · Glasgow</p>
+      <p class="mono" style="color:var(--grey);text-align:right">64 films<br>19 countries</p>
+    </div>
+    <h1 class="title anton">Noc<span>tur</span>ne</h1>
+    <div class="hbot">
+      <p class="blurb">Eleven nights of film that did not ask permission.
+        Features, shorts, and things that refuse the category, screened
+        on real projectors in four rooms across the city.</p>
+      <div class="dates">
+        <p class="d">06 Nov<small>Opening night</small></p>
+        <p class="d" style="color:var(--red)">16 Nov<small style="color:var(--red)">Closing gala</small></p>
+      </div>
+    </div>
+    <div class="cta">
+      <a class="b1" href="#prog">Browse the programme</a>
+      <a class="b2" href="#">Buy a pass</a>
+    </div>
+  </div>
+</div>
+
+<div class="strip">
+  <div>
+    <span>Tickets on sale now</span><span>◼</span><span>Late shows every Friday</span><span>◼</span><span>Shorts programme free to under-25s</span><span>◼</span><span>Four venues, one pass</span><span>◼</span>
+    <span>Tickets on sale now</span><span>◼</span><span>Late shows every Friday</span><span>◼</span><span>Shorts programme free to under-25s</span><span>◼</span><span>Four venues, one pass</span><span>◼</span>
+  </div>
+</div>
+
+<section id="prog" class="wrap">
+  <div class="sh">
+    <div>
+      <p class="mono" style="color:var(--red)">01 / Programme</p>
+      <h2 style="margin-top:12px">Opening weekend</h2>
+    </div>
+    <p class="mono" style="color:var(--grey)">Fri 06 – Sun 08 Nov</p>
+  </div>
+
+  <div class="film"><span class="idx">001</span><div><h3>The Salt Road</h3><p class="dir">Amara Oyelaran · Nigeria/UK · 118 min</p></div><span class="slot">Fri 06 · 19:30</span><span class="ven">Cottiers Theatre</span><span class="tag prem">Premiere</span></div>
+  <div class="film"><span class="idx">002</span><div><h3>Everything Here Is Borrowed</h3><p class="dir">Petra Halász · Hungary · 94 min</p></div><span class="slot">Fri 06 · 22:00</span><span class="ven">The Grosvenor</span><span class="tag">Late</span></div>
+  <div class="film"><span class="idx">003</span><div><h3>Nine Ways to Leave a Room</h3><p class="dir">Collective / no director credited · 61 min</p></div><span class="slot">Sat 07 · 13:00</span><span class="ven">Civic House</span><span class="tag">Shorts</span></div>
+  <div class="film"><span class="idx">004</span><div><h3>Hard Water</h3><p class="dir">Tomás Ferreiro · Chile · 132 min</p></div><span class="slot">Sat 07 · 16:15</span><span class="ven">Cottiers Theatre</span><span class="tag">Feature</span></div>
+  <div class="film"><span class="idx">005</span><div><h3>A Report on the Weather</h3><p class="dir">Ines Kowalczyk · Poland · 77 min</p></div><span class="slot">Sat 07 · 20:00</span><span class="ven">The Grosvenor</span><span class="tag prem">Premiere</span></div>
+  <div class="film"><span class="idx">006</span><div><h3>Doubles</h3><p class="dir">Rae Lindqvist · Sweden · 88 min</p></div><span class="slot">Sun 08 · 15:30</span><span class="ven">Glue Factory</span><span class="tag">Feature</span></div>
+  <div class="film"><span class="idx">007</span><div><h3>The Projectionist's Daughter</h3><p class="dir">Yusuf Demir · Türkiye · 103 min</p></div><span class="slot">Sun 08 · 19:00</span><span class="ven">Cottiers Theatre</span><span class="tag">Feature</span></div>
+</section>
+
+<div class="band">
+  <section id="strands" class="wrap">
+    <div class="sh" style="border:none;padding-bottom:0;margin-bottom:32px">
+      <div><p class="mono" style="color:var(--red)">02 / Strands</p><h2 style="margin-top:12px">Three ways in</h2></div>
+    </div>
+    <div class="strands">
+      <div class="strand"><p class="n">01</p><h4>First Features</h4><p>Twenty-two debuts, all of them made for less than the catering budget of a studio picture. Every director is in the room for the Q&amp;A.</p></div>
+      <div class="strand"><p class="n">02</p><h4>The Late Shift</h4><p>Horror, transgression, and whatever arrived in the submission pile that we could not classify. Doors at 22:00, no admittance after the titles.</p></div>
+      <div class="strand"><p class="n">03</p><h4>Salvage</h4><p>Restorations and orphan prints, projected on 16mm where a print survives. Six programmes, none of them streaming anywhere.</p></div>
+    </div>
+  </section>
+</div>
+
+<section id="venues" class="wrap">
+  <div class="sh" style="border:none;padding-bottom:0;margin-bottom:22px">
+    <div><p class="mono" style="color:var(--red)">03 / Venues</p><h2 style="margin-top:12px">Four rooms</h2></div>
+    <p class="mono" style="color:var(--grey)">All within a mile</p>
+  </div>
+  <div class="vrow"><span>Cottiers Theatre — 93 Hyndland St</span><span>420 seats · 35mm + DCP</span></div>
+  <div class="vrow"><span>The Grosvenor — 24 Ashton Ln</span><span>180 seats · DCP</span></div>
+  <div class="vrow"><span>Civic House — 26 Civic St</span><span>90 seats · 16mm</span></div>
+  <div class="vrow"><span>Glue Factory — 100 Burns St</span><span>140 seats · projection + live score</span></div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <p class="fbig">Nocturne</p>
+    <div class="frow">
+      <p class="mono" style="color:var(--grey)">06 – 16 November · Glasgow · 12th Edition</p>
+      <p class="mono" style="color:var(--grey)">Made with Inspo</p>
+    </div>
+  </footer>
+</div>

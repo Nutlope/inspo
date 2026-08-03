@@ -1,0 +1,244 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Volta - Motion Design, Berlin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0b0a;
+    --bg-2:#12100e;
+    --ink:#d8d2c8;
+    --ink-dim:#8d867a;
+    --accent:#e8420a;
+    --accent-soft:#fc9b7d;
+    --rule:rgba(216,210,200,.14);
+    --sans:"Archivo",Helvetica,Arial,sans-serif;
+    --serif:"Instrument Serif",Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--accent);color:#fff}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 48px}
+  .meta{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+  em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;inset:0 0 auto 0;z-index:50;background:linear-gradient(var(--bg) 55%,transparent);}
+  .nav-in{display:flex;justify-content:space-between;align-items:baseline;padding:26px 48px 34px}
+  .logo{font-weight:700;letter-spacing:.02em;font-size:15px}
+  .logo .bolt{color:var(--accent)}
+  .nav-links{display:flex;gap:34px}
+  .nav-links a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+
+  /* ---------- hero ---------- */
+  header{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .hero-marks{position:absolute;inset:0;pointer-events:none}
+  /* halftone wordmark field, FURO-style but built from repeating radial dots */
+  .halftone{
+    position:absolute;top:10svh;left:0;right:0;height:34svh;
+    -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 260'><text x='600' y='210' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='250' letter-spacing='30'>VOLTA</text></svg>") center/contain no-repeat;
+            mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 260'><text x='600' y='210' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='250' letter-spacing='30'>VOLTA</text></svg>") center/contain no-repeat;
+    background:radial-gradient(circle 2.6px at center,#8d867a 92%,transparent 100%) 0 0/11px 11px;
+    animation:flicker 7s steps(2) infinite;
+  }
+  @keyframes flicker{0%,92%{opacity:.85}94%{opacity:.45}96%{opacity:.85}98%{opacity:.6}100%{opacity:.85}}
+  .hero-body{margin-top:auto;padding-bottom:96px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end}
+  h1{font-weight:600;font-size:clamp(44px,5.4vw,72px);line-height:1.04;letter-spacing:-.02em;max-width:16ch}
+  h1 em{font-size:1.06em}
+  .hero-copy{justify-self:end;text-align:right;max-width:34ch;color:var(--ink-dim);font-size:15px}
+  .hero-copy .cta{display:inline-block;margin-top:22px;color:var(--ink);font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--accent);padding-bottom:6px;transition:color .2s}
+  .hero-copy .cta:hover{color:var(--accent)}
+  .hero-foot{display:flex;justify-content:space-between;align-items:center;margin-top:72px}
+  .hero-foot .tick{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-right:10px;animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.25}}
+
+  /* ---------- section shells ---------- */
+  section{border-top:1px solid var(--rule);padding:110px 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:64px}
+  h2{font-weight:600;font-size:clamp(28px,3vw,40px);letter-spacing:-.015em}
+
+  /* ---------- work ---------- */
+  .work-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .work{display:block;border:1px solid var(--rule);background:var(--bg-2);transition:border-color .25s}
+  .work:hover{border-color:rgba(232,66,10,.6)}
+  .work .frame{aspect-ratio:16/10;overflow:hidden;position:relative}
+  .work .frame>div{position:absolute;inset:0}
+  .work-info{display:flex;justify-content:space-between;align-items:baseline;padding:18px 22px;border-top:1px solid var(--rule)}
+  .work-info strong{font-weight:600;font-size:15px}
+  .wide{grid-column:1/-1}
+  .wide .frame{aspect-ratio:21/8}
+
+  /* composed visuals (pure CSS, motion-flavored) */
+  .v-orbit{background:radial-gradient(90% 120% at 20% 10%,#1d1712,#0c0b0a)}
+  .v-orbit i{position:absolute;left:50%;top:50%;border:1px solid rgba(232,66,10,.5);border-radius:50%;translate:-50% -50%;animation:spin 14s linear infinite}
+  .v-orbit i:nth-child(1){width:46%;aspect-ratio:1}
+  .v-orbit i:nth-child(2){width:30%;aspect-ratio:1;animation-duration:9s;animation-direction:reverse;border-color:rgba(216,210,200,.35)}
+  .v-orbit i::after{content:"";position:absolute;top:-5px;left:50%;width:9px;height:9px;background:var(--accent);border-radius:50%}
+  @keyframes spin{to{rotate:360deg}}
+  .v-bars{background:linear-gradient(#151210,#0c0b0a);display:flex;align-items:flex-end;gap:6%;padding:12% 14%}
+  .v-bars i{flex:1;background:var(--ink-dim);animation:eq 1.8s ease-in-out infinite alternate;min-height:12%}
+  .v-bars i:nth-child(2){animation-delay:.25s;background:var(--accent)}
+  .v-bars i:nth-child(3){animation-delay:.5s}
+  .v-bars i:nth-child(4){animation-delay:.15s;background:var(--accent-soft)}
+  .v-bars i:nth-child(5){animation-delay:.4s}
+  @keyframes eq{from{height:16%}to{height:88%}}
+  .v-wave{background:#0e0d0b}
+  .v-wave svg{position:absolute;inset:0;width:100%;height:100%}
+  .v-wave .dash{stroke-dasharray:12 10;animation:dash 3s linear infinite}
+  @keyframes dash{to{stroke-dashoffset:-88}}
+  .v-type{background:linear-gradient(120deg,#171310,#0c0b0a);display:flex;align-items:center;overflow:hidden}
+  .v-type span{white-space:nowrap;font-family:var(--serif);font-style:italic;font-size:clamp(60px,9vw,130px);color:transparent;-webkit-text-stroke:1px var(--ink-dim);animation:slide 16s linear infinite;padding-right:60px}
+  .v-type span b{color:var(--accent);-webkit-text-stroke:0;font-weight:400}
+  @keyframes slide{to{translate:-50% 0}}
+
+  /* ---------- services ---------- */
+  .svc{display:grid;grid-template-columns:90px 1fr 1fr;gap:32px;padding:34px 0;border-top:1px solid var(--rule);align-items:baseline}
+  .svc:last-child{border-bottom:1px solid var(--rule)}
+  .svc h3{font-weight:600;font-size:22px;letter-spacing:-.01em}
+  .svc p{color:var(--ink-dim);font-size:15px;max-width:52ch}
+  .svc .num{font-family:var(--serif);font-style:italic;color:var(--accent);font-size:20px}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:64px;align-items:start}
+  .about-grid p.big{font-size:clamp(22px,2.2vw,30px);line-height:1.4;font-weight:400;letter-spacing:-.01em}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .stat{background:var(--bg);padding:28px}
+  .stat b{display:block;font-family:var(--serif);font-weight:400;font-size:44px;line-height:1;color:var(--ink)}
+  .stat b i{font-style:italic;color:var(--accent)}
+  .stat span{display:block;margin-top:10px}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--rule);padding:110px 0 40px}
+  .foot-cta{font-weight:600;font-size:clamp(40px,5vw,70px);letter-spacing:-.02em;line-height:1.05;max-width:18ch}
+  .foot-cta a{border-bottom:2px solid var(--accent);transition:color .2s}
+  .foot-cta a:hover{color:var(--accent)}
+  .foot-cols{display:flex;justify-content:space-between;align-items:flex-end;margin-top:90px;gap:40px;flex-wrap:wrap}
+  .foot-cols .links{display:flex;gap:28px}
+  .foot-cols .links a{color:var(--ink-dim);font-size:11px;letter-spacing:.14em;text-transform:uppercase;transition:color .2s}
+  .foot-cols .links a:hover{color:var(--ink)}
+
+  @media(max-width:900px){
+    .wrap{padding:0 24px}
+    .nav-in{padding:20px 24px 28px}
+    .hero-grid,.about-grid{grid-template-columns:1fr}
+    .hero-copy{justify-self:start;text-align:left}
+    .work-grid{grid-template-columns:1fr}
+    .svc{grid-template-columns:48px 1fr}
+    .svc p{grid-column:2}
+  }
+</style>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#top">STUDIO<span class="bolt">&nbsp;VOLTA</span></a>
+    <div class="nav-links">
+      <a href="#work">Work</a><a href="#services">Services</a><a href="#studio">Studio</a><a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="hero-marks"><div class="halftone" aria-hidden="true"></div></div>
+  <div class="wrap hero-body">
+    <div class="hero-grid">
+      <h1>Motion that makes brands <em>impossible</em> to ignore.</h1>
+      <div class="hero-copy">
+        <p>Studio Volta is a motion design practice in Berlin. Title sequences, brand films, and kinetic identities: frame by deliberate frame.</p>
+        <a class="cta" href="#work">See the work &darr;</a>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <span class="meta"><span class="tick"></span>Berlin, <span id="clock">00:00</span> CET</span>
+      <span class="meta">Est. 2017 &middot; Kreuzberg</span>
+    </div>
+  </div>
+</header>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Selected <em>work</em></h2>
+      <span class="meta">2019 - 2026</span>
+    </div>
+    <div class="work-grid">
+      <a class="work wide" href="#contact">
+        <div class="frame v-type"><span>Kinetic identity &mdash; <b>Fluxhaus</b> &middot; Kinetic identity &mdash; <b>Fluxhaus</b> &middot;&nbsp;</span></div>
+        <div class="work-info"><strong>Fluxhaus &mdash; Brand system in motion</strong><span class="meta">Identity &middot; 2026</span></div>
+      </a>
+      <a class="work" href="#contact">
+        <div class="frame v-orbit"><div><i></i><i></i></div></div>
+        <div class="work-info"><strong>Orbitale Festival</strong><span class="meta">Titles &middot; 2025</span></div>
+      </a>
+      <a class="work" href="#contact">
+        <div class="frame v-bars"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="work-info"><strong>Klang Records</strong><span class="meta">Visualizers &middot; 2025</span></div>
+      </a>
+      <a class="work wide" href="#contact">
+        <div class="frame v-wave">
+          <svg viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 150 C150 40 300 260 500 150 S850 40 1000 150" fill="none" stroke="#8d867a" stroke-width="1.5"/>
+            <path class="dash" d="M0 180 C150 70 300 290 500 180 S850 70 1000 180" fill="none" stroke="#e8420a" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="work-info"><strong>U-Bahn 100 &mdash; Centenary film for BVG</strong><span class="meta">Brand film &middot; 2024</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What we <em>move</em></h2>
+      <span class="meta">Capabilities</span>
+    </div>
+    <div class="svc"><span class="num">01</span><h3>Kinetic identity</h3><p>Logo behavior, type in motion, and rule systems that keep a brand recognizable at 24 frames per second.</p></div>
+    <div class="svc"><span class="num">02</span><h3>Title sequences</h3><p>Openers for film, television, and festivals. We treat the first thirty seconds as the whole argument.</p></div>
+    <div class="svc"><span class="num">03</span><h3>Brand films</h3><p>Direction, animation, and edit under one roof, from board to final grade.</p></div>
+    <div class="svc"><span class="num">04</span><h3>Product motion</h3><p>Interface animation and launch films for software teams who care how it feels, not just how it looks.</p></div>
+  </div>
+</section>
+
+<section id="studio">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>The <em>studio</em></h2>
+      <span class="meta">Kreuzberg, Berlin</span>
+    </div>
+    <div class="about-grid">
+      <p class="big">We are nine animators, designers, and directors working from a former transformer station on Paul-Lincke-Ufer. The name stays on the door: Volta, where the current starts.</p>
+      <div class="stats">
+        <div class="stat"><b>9<i>+</i></b><span class="meta">People, one room</span></div>
+        <div class="stat"><b>140<i>+</i></b><span class="meta">Projects shipped</span></div>
+        <div class="stat"><b>23</b><span class="meta">Awards, incl. ADC + D&amp;AD</span></div>
+        <div class="stat"><b>24<i>fps</i></b><span class="meta">Native habitat</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <p class="meta" style="margin-bottom:28px">New business</p>
+    <p class="foot-cta">Have something that should <em>move</em>? <a href="mailto:hallo@studiovolta.de">hallo@studiovolta.de</a></p>
+    <div class="foot-cols">
+      <span class="meta">&copy; 2026 Studio Volta GmbH &middot; Paul-Lincke-Ufer 44, 10999 Berlin</span>
+      <div class="links">
+        <a href="#top">Instagram</a><a href="#top">Vimeo</a><a href="#top">Are.na</a><a href="#top">Imprint</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function tick(){
+    const t=new Intl.DateTimeFormat("de-DE",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Berlin"}).format(new Date());
+    document.getElementById("clock").textContent=t;
+  }
+  tick();setInterval(tick,30000);
+</script>

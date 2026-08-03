@@ -1,0 +1,256 @@
+<meta charset="utf-8">
+<title>Halcyon Optics - Apochromatic refractors for amateur astronomers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a12;
+    --raise:#0d1220;
+    --card:#111828;
+    --ink:#e9edf7;
+    --muted:#79839c;
+    --amber:#f2a53c;
+    --amber-dim:#a86f22;
+    --rule:rgba(233,237,247,.11);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+  .fold{min-height:100svh;display:flex;flex-direction:column;position:relative}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase}
+
+  /* star field, drawn not fetched */
+  .sky{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .sky::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse 60% 50% at 78% 34%,rgba(242,165,60,.09),transparent 68%)}
+
+  /* ── nav ─────────────────────────────────────────── */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--rule);position:relative}
+  .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .nl{display:flex;gap:28px}
+  .nl a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .16s}
+  .nl a:hover{color:var(--ink)}
+  .buy{border:1px solid var(--amber);color:var(--amber);text-decoration:none;padding:9px 18px;border-radius:3px;font-size:13px;font-weight:600}
+
+  /* ── hero ────────────────────────────────────────── */
+  .hero{flex:1;display:grid;grid-template-columns:1fr 1.06fr;align-items:center;gap:48px;padding:26px 0 30px;position:relative}
+  .eyebrow{color:var(--amber);display:inline-flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}
+  h1{font-size:clamp(2.5rem,4.4vw,4rem);line-height:1.04;letter-spacing:-.028em;font-weight:600;margin-top:16px;max-width:15ch}
+  h1 em{font-style:normal;color:var(--amber)}
+  .lede{margin-top:18px;max-width:46ch;color:#9aa3ba;font-size:16.5px}
+  .cta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .b1{background:var(--amber);color:#140c02;text-decoration:none;padding:13px 24px;border-radius:3px;font-weight:600;font-size:14.5px;transition:transform .16s}
+  .b1:hover{transform:translateY(-2px)}
+  .b2{border:1px solid var(--rule);color:var(--ink);text-decoration:none;padding:13px 24px;border-radius:3px;font-weight:500;font-size:14.5px}
+  .specrow{display:flex;gap:30px;margin-top:28px;flex-wrap:wrap;border-top:1px solid var(--rule);padding-top:20px}
+  .specrow div p:first-child{font-size:21px;font-weight:600;letter-spacing:-.01em}
+  .specrow div p:last-child{color:var(--muted);font-size:12px;margin-top:2px}
+
+  /* ── optical diagram ─────────────────────────────── */
+  .diagram{position:relative;background:var(--raise);border:1px solid var(--rule);border-radius:8px;padding:22px}
+  .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;margin-right:7px;
+       animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .scope{width:100%;display:block}
+
+  /* ── sections ────────────────────────────────────── */
+  section{padding:80px 0}
+  .band{background:var(--raise);border-block:1px solid var(--rule)}
+  .sh{display:grid;grid-template-columns:200px 1fr;gap:34px;align-items:baseline;margin-bottom:36px}
+  h2{font-size:clamp(1.8rem,3.2vw,2.7rem);letter-spacing:-.024em;font-weight:600;line-height:1.12;max-width:18ch}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:26px;transition:border-color .18s}
+  .card:hover{border-color:rgba(242,165,60,.4)}
+  .card h3{font-size:17px;font-weight:600;margin:16px 0 8px}
+  .card p{font-size:14px;color:var(--muted);line-height:1.62}
+  .ic{width:34px;height:34px;color:var(--amber)}
+
+  /* spec table */
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:15px 18px;border-bottom:1px solid var(--rule)}
+  thead th{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:400}
+  tbody th{font-weight:500}
+  tbody td{color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:13px}
+  tbody tr:hover{background:rgba(233,237,247,.03)}
+  td.hi{color:var(--amber)}
+
+  .cta-band{text-align:center;padding:76px 0}
+  .cta-band h2{margin:0 auto 16px;max-width:20ch}
+  .cta-band p{color:var(--muted);max-width:52ch;margin:0 auto 26px}
+  footer{border-top:1px solid var(--rule);padding:34px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero{grid-template-columns:1fr;padding:40px 0 56px;gap:32px}
+    .grid3{grid-template-columns:1fr}
+    .sh{grid-template-columns:1fr;gap:10px}
+    .nl{display:none}
+    table{font-size:13px}
+    th,td{padding:11px 10px}
+  }
+</style>
+
+<div class="wrap fold">
+  <div class="sky"></div>
+  <nav>
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="#f2a53c" stroke-width="1.6"/>
+        <circle cx="12" cy="12" r="3.4" fill="#f2a53c"/>
+        <path d="M12 1v3M12 20v3M1 12h3M20 12h3" stroke="#f2a53c" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      Halcyon Optics
+    </div>
+    <div class="nl">
+      <a href="#instruments">Instruments</a>
+      <a href="#optics">The Optics</a>
+      <a href="#specs">Specifications</a>
+      <a href="#">Support</a>
+    </div>
+    <a class="buy" href="#specs">Configure a scope</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="mono eyebrow">Hand-figured in Flagstaff, Arizona</p>
+      <h1>Optics that hold the <em>star test</em> at 400×.</h1>
+      <p class="lede">Triplet apochromats with FPL-53 centre elements, figured
+        and tested one at a time against an artificial star. Every instrument
+        ships with its own interferogram. Not a batch number: yours.</p>
+      <div class="cta">
+        <a class="b1" href="#instruments">See the instruments</a>
+        <a class="b2" href="#optics">How they're made</a>
+      </div>
+      <div class="specrow">
+        <div><p>λ/8.2</p><p>Median wavefront error</p></div>
+        <div><p>0.31″</p><p>Measured spot, on-axis</p></div>
+        <div><p>18</p><p>Built per month, maximum</p></div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="dhead">
+        <p class="mono" style="color:var(--muted)"><span class="dot"></span>Optical path · HX-102 triplet</p>
+        <p class="mono" style="color:var(--amber)">f/7.0</p>
+      </div>
+      <svg class="scope" viewBox="0 0 620 300" aria-label="Cutaway diagram of a triplet apochromatic refractor showing the optical path">
+        <defs>
+          <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#28324a"/><stop offset=".45" stop-color="#1b2336"/><stop offset="1" stop-color="#101725"/>
+          </linearGradient>
+          <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="rgba(242,165,60,.42)"/><stop offset="1" stop-color="rgba(242,165,60,.06)"/>
+          </linearGradient>
+        </defs>
+        <!-- incoming wavefronts -->
+        <g stroke="rgba(233,237,247,.22)" stroke-width="1.4">
+          <path d="M22 74v152M50 82v136M78 90v120"/>
+        </g>
+        <text x="22" y="60" class="lbl" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" fill="#79839c">PLANE WAVEFRONT</text>
+        <!-- tube -->
+        <rect x="108" y="86" width="380" height="128" rx="6" fill="url(#tube)" stroke="rgba(233,237,247,.14)"/>
+        <!-- objective triplet -->
+        <g>
+          <ellipse cx="118" cy="150" rx="9" ry="62" fill="rgba(242,165,60,.28)" stroke="#f2a53c" stroke-width="1.4"/>
+          <ellipse cx="134" cy="150" rx="7" ry="60" fill="rgba(120,180,240,.18)" stroke="rgba(150,200,255,.6)" stroke-width="1.2"/>
+          <ellipse cx="148" cy="150" rx="8" ry="58" fill="rgba(242,165,60,.2)" stroke="#f2a53c" stroke-width="1.3"/>
+        </g>
+        <!-- converging beam -->
+        <path d="M156 94 L470 146 L470 154 L156 206 Z" fill="url(#beam)"/>
+        <!-- focuser -->
+        <rect x="488" y="120" width="74" height="60" rx="4" fill="#1b2336" stroke="rgba(233,237,247,.18)"/>
+        <rect x="558" y="132" width="30" height="36" rx="3" fill="#28324a" stroke="rgba(233,237,247,.18)"/>
+        <circle cx="470" cy="150" r="3.4" fill="#f2a53c"/>
+        <!-- callouts: leaders leave the tube before any label sets, so
+             nothing lands on top of the drawing or on another label -->
+        <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" fill="#79839c">
+          <path d="M133 86 v-28 h34" stroke="rgba(233,237,247,.2)" fill="none"/>
+          <text x="173" y="54">FPL-53 TRIPLET, OIL-SPACED</text>
+          <path d="M525 118 v-42 h-18" stroke="rgba(233,237,247,.2)" fill="none"/>
+          <text x="500" y="72" text-anchor="end">2.5&quot; RACK-AND-PINION</text>
+          <path d="M470 156 v82 h-30" stroke="rgba(242,165,60,.34)" fill="none"/>
+          <text x="432" y="242" text-anchor="end" fill="#f2a53c">FOCAL PLANE · 714 MM</text>
+        </g>
+        <g stroke="rgba(233,237,247,.16)" stroke-dasharray="3 4"><path d="M156 150h330"/></g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="band">
+  <section id="instruments" class="wrap">
+    <div class="sh">
+      <p class="mono" style="color:var(--amber)">01 / Instruments</p>
+      <h2>Three apertures. One standard of figure.</h2>
+    </div>
+    <div class="grid3">
+      <article class="card">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg>
+        <h3>HX-80 · 80 mm f/6</h3>
+        <p>The travel instrument. Fits a carry-on with the diagonal attached, resolves the Trapezium's E and F stars on a still night. 3.4 kg.</p>
+      </article>
+      <article class="card">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3.4" fill="currentColor"/></svg>
+        <h3>HX-102 · 102 mm f/7</h3>
+        <p>The one most people keep. Enough aperture for planetary detail, short enough to stay on a modest mount. Our best-selling figure.</p>
+      </article>
+      <article class="card">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.2" fill="currentColor"/></svg>
+        <h3>HX-130 · 130 mm f/7</h3>
+        <p>Built to order, eight per quarter. Cassini division at 200× on an average night, and a wavefront figure we will put in writing.</p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<section id="optics" class="wrap">
+  <div class="sh">
+    <p class="mono" style="color:var(--amber)">02 / The Optics</p>
+    <h2>Every element is tested before it earns a serial number.</h2>
+  </div>
+  <div class="grid3">
+    <article class="card"><h3>Figured, not moulded</h3><p>Each surface is polished against a test plate and corrected by hand. A moulded element is fast and repeatable; it is also within a wave of correct, which is not the same as correct.</p></article>
+    <article class="card"><h3>Tested on a real star</h3><p>Interferometry says what the glass is. An artificial star at 400× says what you will see. We do both, and ship the plots for both.</p></article>
+    <article class="card"><h3>Rejected if it fails</h3><p>Roughly one element in nine does not make it out of the shop. That is the whole reason we can only build eighteen instruments a month.</p></article>
+  </div>
+</section>
+
+<div class="band">
+  <section id="specs" class="wrap">
+    <div class="sh">
+      <p class="mono" style="color:var(--amber)">03 / Specifications</p>
+      <h2>The numbers, without the marketing.</h2>
+    </div>
+    <table>
+      <thead><tr><th>Model</th><th>Aperture</th><th>Focal length</th><th>Wavefront</th><th>Weight</th><th>Price</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">HX-80</th><td>80 mm</td><td>480 mm · f/6.0</td><td class="hi">λ/8.4</td><td>3.4 kg</td><td>$2,180</td></tr>
+        <tr><th scope="row">HX-102</th><td>102 mm</td><td>714 mm · f/7.0</td><td class="hi">λ/8.2</td><td>5.1 kg</td><td>$3,460</td></tr>
+        <tr><th scope="row">HX-130</th><td>130 mm</td><td>910 mm · f/7.0</td><td class="hi">λ/9.1</td><td>8.6 kg</td><td>$6,900</td></tr>
+        <tr><th scope="row">HX-130 FL</th><td>130 mm</td><td>910 mm · f/7.0</td><td class="hi">λ/10.2</td><td>8.4 kg</td><td>$9,400</td></tr>
+      </tbody>
+    </table>
+    <p class="mono" style="color:var(--muted);margin-top:20px">Wavefront figures are median measured values across the last 40 units, not a specification ceiling.</p>
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="cta-band">
+    <h2>Clear skies are rare enough.</h2>
+    <p>Your optics should not be the thing standing between you and the seeing.
+      Configure an instrument, or write to us and describe what you observe.</p>
+    <a class="b1" href="#">Configure a scope</a>
+  </div>
+  <footer>
+    <p class="mono" style="color:var(--muted)">Halcyon Optics · Flagstaff, Arizona · Est. 2011</p>
+    <p class="mono" style="color:var(--muted)">Made with Inspo</p>
+  </footer>
+</div>

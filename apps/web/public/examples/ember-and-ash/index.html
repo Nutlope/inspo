@@ -1,0 +1,255 @@
+<meta charset="utf-8">
+<title>Ember &amp; Ash - Small-batch hot sauce</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --chili:#d92b16;
+    --chili-deep:#9c1a0a;
+    --cream:#fdf3e3;
+    --acid:#c8f24a;
+    --char:#16100d;
+    --smoke:rgba(253,243,227,.62);
+    --rule:rgba(253,243,227,.22);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--chili);
+    color:var(--cream);
+    font-family:Archivo,system-ui,sans-serif;
+    font-size:16px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1360px;margin:0 auto;padding:0 32px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .display{font-family:"Archivo Black",Archivo,sans-serif;font-weight:400;letter-spacing:-.03em;line-height:.88;text-transform:uppercase}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+
+  /* ── nav ─────────────────────────────────────────── */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--rule)}
+  .mark{display:flex;align-items:center;gap:10px;font-family:"Archivo Black";font-size:19px;letter-spacing:-.02em;text-transform:uppercase}
+  .flame{width:22px;height:22px;flex:none}
+  .links{display:flex;gap:30px}
+  .links a{color:var(--smoke);text-decoration:none;font-size:14px;font-weight:500;transition:color .18s}
+  .links a:hover{color:var(--cream)}
+  .cart{border:1.5px solid var(--cream);border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;color:var(--cream);text-decoration:none}
+
+  /* ── hero: everything inside the first screen ────── */
+  .hero{
+    flex:1;
+    display:grid;grid-template-columns:1.05fr .95fr;
+    align-items:center;gap:48px;
+    padding:8px 0 24px;
+  }
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--acid)}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--acid)}
+  h1{font-size:clamp(3.1rem,6.2vw,5.6rem);margin:14px 0 0;max-width:11ch}
+  h1 .out{-webkit-text-stroke:2px var(--cream);color:transparent}
+  .sub{margin-top:18px;max-width:44ch;font-size:17px;line-height:1.55;color:var(--smoke)}
+  .cta{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .16s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-1{background:var(--acid);color:var(--char)}
+  .btn-2{border:1.5px solid var(--rule);color:var(--cream)}
+  .heat{display:flex;align-items:center;gap:12px;margin-top:24px}
+  .heat-bar{display:flex;gap:3px}
+  .heat-bar i{width:26px;height:7px;background:rgba(253,243,227,.2);border-radius:2px}
+  .heat-bar i.on{background:var(--acid)}
+
+  /* ── the bottle: pure CSS + SVG ──────────────────── */
+  .stage{position:relative;display:flex;align-items:center;justify-content:center;height:100%}
+  .glow{position:absolute;width:min(30vw,420px);aspect-ratio:1;border-radius:50%;
+        background:radial-gradient(circle,rgba(200,242,74,.20),transparent 62%)}
+  .bottle{position:relative;width:min(19vw,238px);animation:bob 6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(-6px) rotate(-1.5deg)}50%{transform:translateY(6px) rotate(1.5deg)}}
+  .spec{position:absolute;color:var(--smoke);white-space:nowrap}
+  .spec.s2::before{top:11px}
+  .spec::before{content:"";position:absolute;top:50%;width:34px;height:1px;background:var(--rule)}
+  .s1{top:24%;right:calc(50% + 132px);text-align:right}
+  .s1::before{right:-42px}
+  .s2{bottom:26%;left:calc(50% + 128px);max-width:120px;white-space:normal;line-height:1.5}
+  .s2::before{left:-42px}
+
+  /* ── ticker ──────────────────────────────────────── */
+  .ticker{border-block:1px solid var(--rule);background:var(--chili-deep);overflow:hidden;white-space:nowrap}
+  .ticker div{display:inline-block;padding:13px 0;animation:slide 26s linear infinite}
+  .ticker span{padding:0 26px;color:var(--cream)}
+  .ticker em{color:var(--acid);font-style:normal}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ── range ───────────────────────────────────────── */
+  section{padding:88px 0}
+  .head{display:grid;grid-template-columns:200px 1fr;gap:36px;align-items:baseline;margin-bottom:44px}
+  h2{font-size:clamp(2rem,3.6vw,3.1rem);max-width:16ch}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{background:var(--cream);color:var(--char);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:16px;transition:transform .2s}
+  .card:hover{transform:translateY(-5px)}
+  .card .no{color:var(--chili)}
+  .card h3{font-family:"Archivo Black";font-size:25px;letter-spacing:-.02em;text-transform:uppercase;line-height:1}
+  .card p{font-size:14px;line-height:1.55;color:rgba(22,16,13,.68)}
+  .swatch{height:132px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .price{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(22,16,13,.14);padding-top:14px;margin-top:auto;font-weight:700;font-size:15px}
+  .scov{font-size:11px;font-family:"JetBrains Mono";letter-spacing:.1em;color:rgba(22,16,13,.5)}
+
+  /* ── process ─────────────────────────────────────── */
+  .dark{background:var(--char)}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(253,243,227,.14);border:1px solid rgba(253,243,227,.14)}
+  .step{background:var(--char);padding:30px 24px}
+  .step .n{font-family:"Archivo Black";font-size:38px;color:var(--chili);line-height:1}
+  .step h4{margin:14px 0 8px;font-size:16px;font-weight:700}
+  .step p{font-size:13.5px;line-height:1.6;color:var(--smoke)}
+
+  /* ── footer ──────────────────────────────────────── */
+  footer{background:var(--char);border-top:1px solid rgba(253,243,227,.14);padding:52px 0 40px}
+  .fgrid{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap}
+  .fbig{font-family:"Archivo Black";font-size:clamp(2.6rem,7vw,5.6rem);line-height:.85;letter-spacing:-.035em;text-transform:uppercase;color:var(--chili)}
+  .fmeta{color:var(--smoke);font-size:13px;text-align:right}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero{grid-template-columns:1fr;padding:44px 0 60px;gap:34px}
+    .stage{height:300px}
+    .grid,.steps{grid-template-columns:1fr}
+    .head{grid-template-columns:1fr;gap:12px}
+    .spec{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <div class="mark">
+      <svg class="flame" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1.4-.6-2.2-.6-3.4 2 1.4 3.6 3.6 3.6 6.4a6 6 0 1 1-12 0C6 9 12 8 12 2Z" fill="#c8f24a"/>
+      </svg>
+      Ember &amp; Ash
+    </div>
+    <div class="links">
+      <a href="#range">The Range</a>
+      <a href="#how">How It's Made</a>
+      <a href="#">Stockists</a>
+      <a href="#">Journal</a>
+    </div>
+    <a class="cart" href="#">Cart · 0</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="mono eyebrow">Batch 41 · Bottled in Oakland</p>
+      <h1 class="display">Heat with <span class="out">something</span> to say.</h1>
+      <p class="sub">Six chilies, fermented ninety days in oak, blended in
+        batches of four hundred. No gums, no dyes, no extract. Just fruit,
+        salt, time, and a fire that finishes clean.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#range">Shop the range</a>
+        <a class="btn btn-2" href="#how">How it's made</a>
+      </div>
+      <div class="heat">
+        <span class="mono" style="color:var(--smoke)">House heat</span>
+        <span class="heat-bar"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+        <span class="mono" style="color:var(--acid)">Medium-hot · 8,400 SHU</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="glow"></div>
+      <svg class="bottle" viewBox="0 0 160 300" fill="none" aria-label="Ember and Ash hot sauce bottle">
+        <defs>
+          <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#7d1508"/><stop offset=".34" stop-color="#e33d22"/>
+            <stop offset=".62" stop-color="#b42410"/><stop offset="1" stop-color="#6d1206"/>
+          </linearGradient>
+          <linearGradient id="cap" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8f9c34"/><stop offset=".4" stop-color="#c8f24a"/><stop offset="1" stop-color="#7d8a2c"/>
+          </linearGradient>
+        </defs>
+        <rect x="58" y="6" width="44" height="26" rx="5" fill="url(#cap)"/>
+        <rect x="63" y="30" width="34" height="16" fill="#9c1a0a"/>
+        <path d="M63 44c0 16-31 24-31 52v176a14 14 0 0 0 14 14h68a14 14 0 0 0 14-14V96c0-28-31-36-31-52Z" fill="url(#glass)"/>
+        <path d="M70 52c0 14-26 22-26 46v168" stroke="rgba(253,243,227,.34)" stroke-width="3" stroke-linecap="round"/>
+        <rect x="42" y="132" width="76" height="96" rx="4" fill="#fdf3e3"/>
+        <text x="80" y="158" text-anchor="middle" font-family="Archivo Black, sans-serif" font-size="15" fill="#16100d">EMBER</text>
+        <text x="80" y="174" text-anchor="middle" font-family="Archivo Black, sans-serif" font-size="15" fill="#16100d">&amp; ASH</text>
+        <line x1="54" y1="184" x2="106" y2="184" stroke="#d92b16" stroke-width="2"/>
+        <text x="80" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.4" letter-spacing=".5" fill="#9c1a0a">SMOKED HABANERO</text>
+        <text x="80" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" letter-spacing=".5" fill="rgba(22,16,13,.55)">150 ML · BATCH 41</text>
+      </svg>
+      <p class="mono spec s1">90-day ferment</p>
+      <p class="mono spec s2">Oak barrel, not steel</p>
+    </div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="mono">
+    <span>Six chilies</span><em>◆</em><span>Ninety days in oak</span><em>◆</em><span>No gums, no dyes</span><em>◆</em><span>Batches of four hundred</span><em>◆</em><span>Bottled in Oakland</span><em>◆</em>
+    <span>Six chilies</span><em>◆</em><span>Ninety days in oak</span><em>◆</em><span>No gums, no dyes</span><em>◆</em><span>Batches of four hundred</span><em>◆</em><span>Bottled in Oakland</span><em>◆</em>
+  </div>
+</div>
+
+<section id="range" class="wrap">
+  <div class="head">
+    <p class="mono" style="color:var(--acid)">01 / The Range</p>
+    <h2 class="display">Three sauces. One idea.</h2>
+  </div>
+  <div class="grid">
+    <article class="card">
+      <div class="swatch" style="background:linear-gradient(150deg,#f0a020,#d92b16)">
+        <svg width="46" height="88" viewBox="0 0 160 300" aria-hidden="true"><rect x="58" y="6" width="44" height="26" rx="5" fill="#c8f24a"/><path d="M63 44c0 16-31 24-31 52v176a14 14 0 0 0 14 14h68a14 14 0 0 0 14-14V96c0-28-31-36-31-52Z" fill="rgba(22,16,13,.36)"/></svg>
+      </div>
+      <p class="mono no">Nº 01</p>
+      <h3>Golden Hour</h3>
+      <p>Fermented mango and aji amarillo. Bright, sweet on the front, a slow warm finish. The one for eggs.</p>
+      <div class="price"><span>$14</span><span class="scov">2,100 SHU</span></div>
+    </article>
+    <article class="card">
+      <div class="swatch" style="background:linear-gradient(150deg,#e33d22,#7d1508)">
+        <svg width="46" height="88" viewBox="0 0 160 300" aria-hidden="true"><rect x="58" y="6" width="44" height="26" rx="5" fill="#c8f24a"/><path d="M63 44c0 16-31 24-31 52v176a14 14 0 0 0 14 14h68a14 14 0 0 0 14-14V96c0-28-31-36-31-52Z" fill="rgba(253,243,227,.3)"/></svg>
+      </div>
+      <p class="mono no">Nº 02</p>
+      <h3>Smoked Habanero</h3>
+      <p>The house sauce. Habanero smoked over almond wood, ninety days in oak, finished with charred lime.</p>
+      <div class="price"><span>$14</span><span class="scov">8,400 SHU</span></div>
+    </article>
+    <article class="card">
+      <div class="swatch" style="background:linear-gradient(150deg,#4a1c10,#16100d)">
+        <svg width="46" height="88" viewBox="0 0 160 300" aria-hidden="true"><rect x="58" y="6" width="44" height="26" rx="5" fill="#c8f24a"/><path d="M63 44c0 16-31 24-31 52v176a14 14 0 0 0 14 14h68a14 14 0 0 0 14-14V96c0-28-31-36-31-52Z" fill="rgba(253,243,227,.22)"/></svg>
+      </div>
+      <p class="mono no">Nº 03</p>
+      <h3>Ash Reserve</h3>
+      <p>Scorpion and guajillo, black garlic, a whisper of cocoa. Limited to 200 bottles a season. Handle it with respect.</p>
+      <div class="price"><span>$22</span><span class="scov">61,000 SHU</span></div>
+    </article>
+  </div>
+</section>
+
+<div class="dark">
+  <section id="how" class="wrap">
+    <div class="head">
+      <p class="mono" style="color:var(--acid)">02 / How It's Made</p>
+      <h2 class="display">Ninety days is the recipe.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><p class="n">01</p><h4>Grown, not sourced</h4><p>Every chili comes from four farms inside a ninety-mile radius. We know the rows.</p></div>
+      <div class="step"><p class="n">02</p><h4>Smoked over almond</h4><p>Six hours of cool smoke. Almond wood burns sweeter than hickory and never turns acrid.</p></div>
+      <div class="step"><p class="n">03</p><h4>Wild ferment</h4><p>Salt, mash, patience. No starter culture. Ninety days in a barrel that used to hold zinfandel.</p></div>
+      <div class="step"><p class="n">04</p><h4>Bottled by hand</h4><p>Four hundred at a time, labelled and dated in the room where it was made.</p></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap fgrid">
+    <div>
+      <p class="fbig">Ember<br>&amp; Ash</p>
+      <p class="mono" style="color:var(--smoke);margin-top:18px">Oakland, California · Est. 2019</p>
+    </div>
+    <div class="fmeta">
+      <p>Stockists · Wholesale · Journal</p>
+      <p style="margin-top:8px">hello@emberandash.example</p>
+      <p class="mono" style="margin-top:16px">Made with Inspo</p>
+    </div>
+  </div>
+</footer>

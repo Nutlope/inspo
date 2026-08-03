@@ -23,26 +23,16 @@ export const metadata: Metadata = {
 /** Curated display order. Examples not listed are appended in source
  *  order, so the page stays correct as the set grows. */
 const ORDER = [
-  "switchboard",
-  "vestige",
-  "axiom-labs",
-  "fernroot",
-  "tracewell",
-  "chalkline",
-  "hewn-type",
-  "steeproom",
-  "vaultline",
-  "crate-and-cut",
-  "subtone-records",
-  "meridian-bank",
-  "field-day-studio",
-  "still-app",
-  "tally-finance",
-  "osteria-nera",
-  "slowboat-coffee",
-  "vox-runtime",
-  "conduit",
-  "kiln-and-bough",
+  "nocturne-festival",
+  "wavecast",
+  "aureole-parfum",
+  "driftmail",
+  "sable-patisserie",
+  "studio-volta",
+  "meridian-review",
+  "halcyon-optics",
+  "ember-and-ash",
+  "vaultline-pricing",
 ];
 
 function ordered(): Example[] {
