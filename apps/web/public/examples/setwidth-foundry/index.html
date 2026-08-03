@@ -1,0 +1,243 @@
+<meta charset="utf-8">
+<title>Setwidth - Marlin Grotesk, a variable workhorse</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300..900&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f3f0;
+    --paper-2:#eae8e3;
+    --ink:#111110;
+    --muted:#78766f;
+    --acid:#e4e400;
+    --rule:#d8d5cd;
+
+    --t-display:clamp(2.6rem,4.8vw,4rem);
+    --t-head:clamp(1.5rem,2.5vw,2.1rem);
+    --t-sub:1.1875rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:0 30px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  .grot{font-family:Archivo,system-ui,sans-serif}
+  h1{font-family:Archivo,sans-serif;font-weight:700;font-size:var(--t-display);line-height:1.02;letter-spacing:-.035em}
+  h2{font-family:Archivo,sans-serif;font-weight:600;font-size:var(--t-head);line-height:1.14;letter-spacing:-.026em}
+  h3{font-family:Archivo,sans-serif;font-weight:600;font-size:var(--t-sub);line-height:1.3;letter-spacing:-.014em}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1.5px solid var(--ink)}
+  .brand{font-family:Archivo,sans-serif;font-weight:700;font-size:var(--t-sub);letter-spacing:-.03em}
+  .nl{display:flex;gap:26px}
+  .nl a{color:var(--ink);text-decoration:none;font-size:var(--t-meta);transition:background .15s}
+  .nl a:hover{background:var(--acid)}
+  .btn{display:inline-block;text-decoration:none;font-weight:600;font-size:var(--t-meta);padding:11px 20px;transition:transform .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-1{background:var(--ink);color:var(--paper)}
+  .btn-2{border:1.5px solid var(--ink);color:var(--ink)}
+
+  /* fold: the glyph is the argument */
+  .hero{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;padding:22px 0 28px}
+  .lede{margin-top:16px;max-width:38ch;color:#4f4d47;font-size:var(--t-sub);line-height:1.55}
+  .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
+  .axis{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
+  .arow{display:grid;grid-template-columns:70px 1fr 54px;gap:14px;align-items:center;padding:7px 0}
+  .track{height:6px;background:var(--paper-2);position:relative}
+  .track i{position:absolute;inset:0 auto 0 0;background:var(--acid)}
+  .track b{position:absolute;top:-4px;width:4px;height:14px;background:var(--ink)}
+
+  .glyphbox{border:1.5px solid var(--ink);background:#fff;position:relative;overflow:hidden}
+  .glyphbox svg{width:100%;display:block}
+  .gcap{display:flex;justify-content:space-between;border-top:1px solid var(--ink);padding:11px 14px}
+
+  section{padding:74px 0}
+  .band{background:var(--paper-2);border-block:1px solid var(--rule)}
+  .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;
+      border-bottom:1.5px solid var(--ink);padding-bottom:16px;margin-bottom:0}
+
+  /* weight ramp */
+  .ramp{border-bottom:1px solid var(--rule);padding:20px 0;display:grid;grid-template-columns:110px 1fr;gap:20px;align-items:baseline}
+  .ramp .w{font-size:var(--t-meta);color:var(--muted)}
+  .ramp .s{font-family:Archivo,sans-serif;font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.06;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* character set */
+  .chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .ch{background:var(--paper);aspect-ratio:1;display:grid;place-items:center;font-family:Archivo,sans-serif;
+      font-size:1.35rem;transition:background .12s}
+  .ch:hover{background:var(--acid)}
+
+  /* licence table */
+  table{width:100%;border-collapse:collapse;font-size:var(--t-meta)}
+  th,td{text-align:left;padding:14px 15px;border-bottom:1px solid var(--rule)}
+  thead th{color:var(--muted);font-weight:500}
+  tbody th{font-weight:600;font-size:var(--t-body);font-family:Archivo,sans-serif;letter-spacing:-.01em}
+  tbody td{color:var(--muted)}
+  tbody tr:hover{background:#fff}
+  td.pr{color:var(--ink);font-weight:600}
+
+  .closer{padding:70px 0;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+  .closer p{color:var(--muted);margin-top:12px;max-width:42ch}
+  .specs{border-top:1.5px solid var(--ink)}
+  .srow{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--rule);font-size:var(--t-meta)}
+  .srow span:last-child{color:var(--muted)}
+  footer{border-top:1.5px solid var(--ink);padding:24px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero,.closer{grid-template-columns:1fr;gap:30px;padding:30px 0 50px}
+    .ramp{grid-template-columns:1fr;gap:6px}
+    .nl{display:none}
+    th,td{padding:10px 8px}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <p class="brand">Setwidth</p>
+    <div class="nl">
+      <a href="#specimen">Specimen</a>
+      <a href="#chars">Character set</a>
+      <a href="#licence">Licence</a>
+      <a href="#">Trials</a>
+    </div>
+    <a class="btn btn-1" href="#licence">Buy Marlin</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="meta">Release 09 · Marlin Grotesk · one variable axis</p>
+      <h1 style="margin-top:12px">A workhorse that stops apologising at 900.</h1>
+      <p class="lede">Marlin is a grotesk drawn for interfaces first and
+        posters second. Nine weights on a single axis, real italics at
+        every stop, and a lowercase g that does not collapse at 12 px.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#specimen">See the specimen</a>
+        <a class="btn btn-2" href="#">Download a trial</a>
+      </div>
+      <div class="axis">
+        <div class="arow">
+          <span class="meta">Weight</span>
+          <span class="track"><i style="width:62%"></i><b style="left:62%"></b></span>
+          <span class="meta" style="text-align:right">620</span>
+        </div>
+        <div class="arow">
+          <span class="meta">Optical</span>
+          <span class="track"><i style="width:34%"></i><b style="left:34%"></b></span>
+          <span class="meta" style="text-align:right">18 pt</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glyphbox">
+      <svg viewBox="0 0 460 340" aria-label="The lowercase g of Marlin Grotesk shown large with its metric lines">
+        <!-- metric lines -->
+        <g stroke="#d8d5cd" stroke-width="1">
+          <path d="M0 64h460M0 118h460M0 238h460M0 292h460"/>
+        </g>
+        <g stroke="#e4e400" stroke-width="10" opacity=".55"><path d="M0 238h460"/></g>
+        <g font-family="Inter Tight, sans-serif" font-size="9.5" fill="#78766f">
+          <text x="10" y="60">ascender</text>
+          <text x="10" y="114">cap height</text>
+          <text x="10" y="234">baseline</text>
+          <text x="10" y="288">descender</text>
+        </g>
+        <!-- the glyph -->
+        <text x="230" y="238" text-anchor="middle" font-family="Archivo, sans-serif"
+              font-weight="620" font-size="250" fill="#111110">g</text>
+        <!-- side bearings -->
+        <g stroke="#111110" stroke-width="1" stroke-dasharray="4 4">
+          <path d="M146 40v264M314 40v264"/>
+        </g>
+      </svg>
+      <div class="gcap">
+        <p class="meta">Marlin Grotesk · weight 620 · 18 pt optical</p>
+        <p class="meta">Sidebearings 46 / 46</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="specimen" class="wrap">
+  <div class="sh">
+    <h2>Nine weights, one axis.</h2>
+    <p class="meta">Interpolated, not hand-drawn at each stop</p>
+  </div>
+  <div class="ramp"><span class="w">100 Thin</span><span class="s" style="font-weight:100">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">200 Extralight</span><span class="s" style="font-weight:200">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">300 Light</span><span class="s" style="font-weight:300">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">400 Regular</span><span class="s" style="font-weight:400">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">500 Medium</span><span class="s" style="font-weight:500">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">600 Semibold</span><span class="s" style="font-weight:600">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">700 Bold</span><span class="s" style="font-weight:700">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">800 Extrabold</span><span class="s" style="font-weight:800">Handgloves for the winter ferry</span></div>
+  <div class="ramp"><span class="w">900 Black</span><span class="s" style="font-weight:900">Handgloves for the winter ferry</span></div>
+</section>
+
+<div class="band">
+  <section id="chars" class="wrap">
+    <div class="sh" style="border-color:var(--ink)">
+      <h2>Character set</h2>
+      <p class="meta">862 glyphs · Latin Extended, Greek, Cyrillic</p>
+    </div>
+    <div class="chars" style="margin-top:28px">
+      <span class="ch">A</span><span class="ch">B</span><span class="ch">C</span><span class="ch">D</span><span class="ch">E</span><span class="ch">F</span><span class="ch">G</span><span class="ch">H</span><span class="ch">I</span><span class="ch">J</span><span class="ch">K</span><span class="ch">L</span><span class="ch">M</span><span class="ch">N</span><span class="ch">O</span><span class="ch">P</span><span class="ch">Q</span><span class="ch">R</span>
+      <span class="ch">a</span><span class="ch">b</span><span class="ch">c</span><span class="ch">d</span><span class="ch">e</span><span class="ch">f</span><span class="ch">g</span><span class="ch">h</span><span class="ch">i</span><span class="ch">j</span><span class="ch">k</span><span class="ch">l</span><span class="ch">m</span><span class="ch">n</span><span class="ch">o</span><span class="ch">p</span><span class="ch">q</span><span class="ch">r</span>
+      <span class="ch">0</span><span class="ch">1</span><span class="ch">2</span><span class="ch">3</span><span class="ch">4</span><span class="ch">5</span><span class="ch">6</span><span class="ch">7</span><span class="ch">8</span><span class="ch">9</span><span class="ch">&amp;</span><span class="ch">@</span><span class="ch">#</span><span class="ch">%</span><span class="ch">?</span><span class="ch">!</span><span class="ch">ß</span><span class="ch">æ</span>
+      <span class="ch">á</span><span class="ch">č</span><span class="ch">ę</span><span class="ch">ğ</span><span class="ch">ł</span><span class="ch">ñ</span><span class="ch">ő</span><span class="ch">ř</span><span class="ch">ş</span><span class="ch">ū</span><span class="ch">ż</span><span class="ch">θ</span><span class="ch">λ</span><span class="ch">π</span><span class="ch">ж</span><span class="ch">ф</span><span class="ch">щ</span><span class="ch">я</span>
+    </div>
+  </section>
+</div>
+
+<section id="licence" class="wrap">
+  <div class="sh">
+    <h2>Licence, priced by what you actually do.</h2>
+    <p class="meta">One purchase, no renewal</p>
+  </div>
+  <table style="margin-top:26px">
+    <thead><tr><th>Licence</th><th>Covers</th><th>Limit</th><th>Price</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Desktop</th><td>Print, artwork, logotypes</td><td>5 workstations</td><td class="pr">90 €</td></tr>
+      <tr><th scope="row">Web</th><td>Self-hosted woff2, one domain</td><td>250k monthly views</td><td class="pr">90 €</td></tr>
+      <tr><th scope="row">App</th><td>One iOS or Android title</td><td>Unlimited installs</td><td class="pr">180 €</td></tr>
+      <tr><th scope="row">Complete</th><td>All of the above, all weights</td><td>No view cap</td><td class="pr">320 €</td></tr>
+      <tr><th scope="row">Student</th><td>Everything, for coursework</td><td>Ask, and it is yours</td><td class="pr">Free</td></tr>
+    </tbody>
+  </table>
+  <p class="meta" style="margin-top:16px">Trials are the full family with a limited character set. No tracking
+    pixel in the woff2, no phone-home, no subscription that stops working when we do.</p>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <div class="closer">
+      <div>
+        <h2>Drawn over four years by one person.</h2>
+        <p>Marlin started as a signage commission for a ferry terminal
+          and kept going. The italics are drawn, not sloped, and the
+          numerals come in four sets because tables and headlines want
+          different things.</p>
+        <a class="btn btn-1" href="#licence" style="margin-top:20px">Buy Marlin, 320 €</a>
+      </div>
+      <div class="specs">
+        <div class="srow"><span>Glyphs</span><span>862 per weight</span></div>
+        <div class="srow"><span>Weights</span><span>9, variable 100 to 900</span></div>
+        <div class="srow"><span>Italics</span><span>Drawn, not sloped</span></div>
+        <div class="srow"><span>Numerals</span><span>Lining, oldstyle, tabular, small</span></div>
+        <div class="srow"><span>Formats</span><span>woff2, otf, variable ttf</span></div>
+        <div class="srow"><span>Drawn</span><span>2021 to 2026, Gothenburg</span></div>
+      </div>
+    </div>
+    <footer>
+      <p class="meta">Setwidth · A one-person foundry in Gothenburg · Nine releases since 2019</p>
+      <p class="meta">Made with Inspo</p>
+    </footer>
+  </div>
+</div>

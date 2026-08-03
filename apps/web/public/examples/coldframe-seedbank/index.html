@@ -1,0 +1,254 @@
+<meta charset="utf-8">
+<title>Coldframe - A seed bank for the crops nobody patented</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f4ef;
+    --paper-2:#e9eae1;
+    --ink:#1b1f1a;
+    --muted:#767b6e;
+    --moss:#41603a;
+    --ochre:#a8863c;
+    --rule:#d9dbcf;
+
+    --t-display:clamp(2.5rem,4.6vw,3.9rem);
+    --t-head:clamp(1.5rem,2.5vw,2.1rem);
+    --t-sub:1.1875rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  .serif{font-family:Newsreader,Georgia,serif;font-weight:300}
+  h1{font-family:Newsreader,Georgia,serif;font-weight:300;font-size:var(--t-display);line-height:1.08;letter-spacing:-.012em}
+  h1 em{font-style:italic;color:var(--moss)}
+  h2{font-family:Newsreader,Georgia,serif;font-weight:300;font-size:var(--t-head);line-height:1.18}
+  h3{font-size:var(--t-sub);font-weight:600;line-height:1.32;letter-spacing:-.012em}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid var(--ink)}
+  .brand{display:flex;align-items:center;gap:10px;font-family:Newsreader,serif;font-weight:400;font-size:var(--t-sub)}
+  .nl{display:flex;gap:26px}
+  .nl a{color:var(--ink);text-decoration:none;font-size:var(--t-meta);transition:color .18s}
+  .nl a:hover{color:var(--moss)}
+  .btn{display:inline-block;text-decoration:none;font-weight:600;font-size:var(--t-meta);padding:11px 22px;border-radius:2px;transition:transform .16s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-1{background:var(--moss);color:#f2f5f0}
+  .btn-2{border:1px solid var(--ink);color:var(--ink)}
+
+  .hero{flex:1;display:grid;grid-template-columns:1.04fr .96fr;gap:46px;align-items:center;padding:30px 0 34px}
+  .lede{margin-top:16px;max-width:42ch;color:#535a4e;font-size:var(--t-sub);line-height:1.6}
+  .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+  .figs{display:flex;gap:30px;margin-top:26px;padding-top:20px;border-top:1px solid var(--rule);flex-wrap:wrap}
+  .figs .n{font-family:Newsreader,serif;font-weight:300;font-size:1.8rem;line-height:1;color:var(--moss)}
+  .figs p:last-child{color:var(--muted);font-size:var(--t-meta);margin-top:5px}
+
+  /* the herbarium sheet */
+  .sheet{border:1px solid var(--ink);background:#fbfbf7;padding:18px 18px 0;position:relative}
+  .sheet svg{width:100%;display:block}
+  .label{border-top:1px solid var(--ink);margin:0 -18px;padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:6px 20px}
+  .label p{font-size:var(--t-meta)}
+  .label .k{color:var(--muted)}
+
+  section{padding:76px 0}
+  .band{background:var(--paper-2);border-block:1px solid var(--rule)}
+  .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;
+      border-bottom:1px solid var(--ink);padding-bottom:16px;margin-bottom:0}
+
+  /* accession register */
+  .acc{display:grid;grid-template-columns:96px 1.4fr 1fr .8fr .9fr;gap:18px;align-items:baseline;
+       padding:15px 0;border-bottom:1px solid var(--rule);transition:background .14s}
+  .acc:hover{background:#fbfbf7}
+  .acc .id{font-size:var(--t-meta);color:var(--ochre)}
+  .acc .sp{font-family:Newsreader,serif;font-style:italic;font-size:var(--t-body)}
+  .acc .cm{font-size:var(--t-meta);color:var(--muted)}
+  .acc .yr,.acc .vi{font-size:var(--t-meta);color:var(--muted)}
+  .acc .vi.low{color:#a8563c}
+
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:#fbfbf7;border:1px solid var(--rule);border-radius:2px;padding:24px}
+  .card p{margin-top:8px;color:var(--muted);font-size:var(--t-meta);line-height:1.68}
+  .card .lbl{color:var(--ochre);font-size:var(--t-meta)}
+
+  .closer{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;padding:74px 0}
+  .closer p{color:var(--muted);margin-top:12px;max-width:44ch}
+  .facts{border-top:1px solid var(--ink)}
+  .frow{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--rule);font-size:var(--t-meta)}
+  .frow span:last-child{color:var(--muted)}
+  footer{border-top:1px solid var(--ink);padding:26px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero,.closer{grid-template-columns:1fr;gap:32px;padding:30px 0 50px}
+    .three{grid-template-columns:1fr}
+    .acc{grid-template-columns:84px 1fr}
+    .acc .cm,.acc .yr{display:none}
+    .label{grid-template-columns:1fr}
+    .nl{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 21V9" stroke="#41603a" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M12 12c-5 0-7-3-7-7 5 0 7 3 7 7Z" fill="#41603a"/>
+        <path d="M12 15c4 0 6-2.4 6-6-4 0-6 2.4-6 6Z" fill="#a8863c"/>
+      </svg>
+      Coldframe
+    </div>
+    <div class="nl">
+      <a href="#register">The register</a>
+      <a href="#how">How it works</a>
+      <a href="#request">Request seed</a>
+      <a href="#">Deposit</a>
+    </div>
+    <a class="btn btn-1" href="#request">Request seed</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="meta">Accession season 2026 · 4,180 lines in cold store</p>
+      <h1 style="margin-top:12px">The crops nobody patented, <em>kept at minus twenty.</em></h1>
+      <p class="lede">A working seed bank for landrace vegetables and
+        cereals. Everything here is open-pollinated, freely available to
+        any grower who asks, and grown out on a rotation so the stock
+        stays alive rather than merely stored.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#request">Request seed</a>
+        <a class="btn btn-2" href="#register">Browse the register</a>
+      </div>
+      <div class="figs">
+        <div><p class="n">4,180</p><p>Accessions in store</p></div>
+        <div><p class="n">612</p><p>Grown out this season</p></div>
+        <div><p class="n">0</p><p>Patents, ever</p></div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <svg viewBox="0 0 420 300" aria-label="A pressed herbarium specimen of a landrace rye, drawn as botanical line art">
+        <g stroke="#41603a" fill="none" stroke-linecap="round">
+          <!-- main culm -->
+          <path d="M210 284V96" stroke-width="2.4"/>
+          <!-- leaves -->
+          <path d="M210 232c-34 4-56-14-64-38 30-6 54 10 64 38Z" stroke-width="1.8"/>
+          <path d="M210 200c32 2 52-16 58-40-28-4-50 12-58 40Z" stroke-width="1.8"/>
+          <path d="M210 262c-26 2-42-10-48-28 22-4 40 8 48 28Z" stroke-width="1.8"/>
+          <!-- awns -->
+          <g stroke-width="1.2" opacity=".85">
+            <path d="M204 96 190 40M210 92 210 32M216 96 230 40M198 106 176 58M222 106 244 58"/>
+          </g>
+        </g>
+        <!-- spikelets -->
+        <g fill="#a8863c">
+          <ellipse cx="202" cy="112" rx="7" ry="11" transform="rotate(-14 202 112)"/>
+          <ellipse cx="219" cy="112" rx="7" ry="11" transform="rotate(14 219 112)"/>
+          <ellipse cx="201" cy="132" rx="7.5" ry="11.5" transform="rotate(-14 201 132)"/>
+          <ellipse cx="220" cy="132" rx="7.5" ry="11.5" transform="rotate(14 220 132)"/>
+          <ellipse cx="200" cy="152" rx="8" ry="12" transform="rotate(-14 200 152)"/>
+          <ellipse cx="221" cy="152" rx="8" ry="12" transform="rotate(14 221 152)"/>
+          <ellipse cx="201" cy="172" rx="7.5" ry="11.5" transform="rotate(-14 201 172)"/>
+          <ellipse cx="220" cy="172" rx="7.5" ry="11.5" transform="rotate(14 220 172)"/>
+        </g>
+        <!-- loose grains, drawn as a detail study -->
+        <g fill="#8a6f30">
+          <ellipse cx="336" cy="238" rx="12" ry="6" transform="rotate(-18 336 238)"/>
+          <ellipse cx="362" cy="252" rx="12" ry="6" transform="rotate(12 362 252)"/>
+          <ellipse cx="344" cy="266" rx="12" ry="6" transform="rotate(-6 344 266)"/>
+        </g>
+        <g stroke="#767b6e" stroke-width=".9" fill="none">
+          <path d="M318 226h68M318 226v-8M386 226v-8"/>
+        </g>
+        <text x="352" y="216" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="9" fill="#767b6e">10 mm</text>
+        <!-- mounting tape -->
+        <g fill="#e9eae1" stroke="#d9dbcf" stroke-width=".8">
+          <rect x="192" y="204" width="36" height="11" rx="2"/>
+          <rect x="192" y="252" width="36" height="11" rx="2"/>
+        </g>
+      </svg>
+      <div class="label">
+        <p><span class="k">Accession</span> CF-0221</p>
+        <p><span class="k">Collected</span> Skåne, 1974</p>
+        <p><span class="k">Species</span> <em class="serif" style="font-style:italic">Secale cereale</em></p>
+        <p><span class="k">Last grown out</span> 2024</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="register" class="wrap">
+  <div class="sh">
+    <h2>The register</h2>
+    <p class="meta">Viability retested every five years, published either way</p>
+  </div>
+  <div style="margin-top:8px">
+    <div class="acc"><span class="id">CF-0221</span><span class="sp">Secale cereale</span><span class="cm">Öland landrace rye</span><span class="yr">Collected 1974</span><span class="vi">94% viable</span></div>
+    <div class="acc"><span class="id">CF-0408</span><span class="sp">Phaseolus vulgaris</span><span class="cm">Ryder's greasy bean</span><span class="yr">Collected 1961</span><span class="vi">88% viable</span></div>
+    <div class="acc"><span class="id">CF-0517</span><span class="sp">Brassica oleracea</span><span class="cm">Nine-star perennial broccoli</span><span class="yr">Collected 1948</span><span class="vi">71% viable</span></div>
+    <div class="acc"><span class="id">CF-0663</span><span class="sp">Triticum turgidum</span><span class="cm">Rivet wheat, Devon</span><span class="yr">Collected 1955</span><span class="vi">90% viable</span></div>
+    <div class="acc"><span class="id">CF-0729</span><span class="sp">Allium cepa</span><span class="cm">Up-to-date onion</span><span class="yr">Collected 1982</span><span class="vi low">38% viable, regrowing 2026</span></div>
+    <div class="acc"><span class="id">CF-0844</span><span class="sp">Pisum sativum</span><span class="cm">Carlin pea</span><span class="yr">Collected 1969</span><span class="vi">96% viable</span></div>
+    <div class="acc"><span class="id">CF-0901</span><span class="sp">Solanum tuberosum</span><span class="cm">Lumper potato, true seed</span><span class="yr">Collected 1993</span><span class="vi low">22% viable, priority</span></div>
+  </div>
+  <p class="meta" style="margin-top:18px">Seven of 4,180 shown. Two lines here are below our 50% threshold and go
+    into next season's grow-out ahead of everything else.</p>
+</section>
+
+<div class="band">
+  <section id="how" class="wrap">
+    <div class="sh" style="border:none;padding-bottom:0;margin-bottom:30px">
+      <h2>A seed bank is a farm, not a freezer.</h2>
+    </div>
+    <div class="three">
+      <article class="card">
+        <p class="lbl">Store</p>
+        <h3 style="margin-top:8px">Dried to 6%, then frozen</h3>
+        <p>Seed goes into laminate foil at minus twenty. At that moisture and temperature most cereals stay viable for a century, and most brassicas do not, which is why the next two steps exist.</p>
+      </article>
+      <article class="card">
+        <p class="lbl">Grow</p>
+        <h3 style="margin-top:8px">Six hundred lines a year, in soil</h3>
+        <p>Every accession is grown out and re-harvested on a rotation. Isolation cages for the outbreeders, and a volunteer network of 140 growers doing the rest on allotments.</p>
+      </article>
+      <article class="card">
+        <p class="lbl">Give</p>
+        <h3 style="margin-top:8px">Free, and yours to keep</h3>
+        <p>Any grower can request up to five lines a season at no charge. There is no material transfer agreement, no royalty, and no clause about what you may breed from it.</p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="closer" id="request">
+    <div>
+      <h2>Requests open in January and close when the packets run out.</h2>
+      <p>Tell us what you grow and roughly where. We prioritise growers
+        within the climate a line came from, then anyone willing to send
+        harvest notes back at the end of the season.</p>
+      <a class="btn btn-1" href="#" style="margin-top:20px">Request seed for 2027</a>
+    </div>
+    <div class="facts">
+      <div class="frow"><span>Lines per grower</span><span>Five a season</span></div>
+      <div class="frow"><span>Cost</span><span>None, including postage</span></div>
+      <div class="frow"><span>Asked in return</span><span>Harvest notes, if you can</span></div>
+      <div class="frow"><span>Restrictions on breeding</span><span>None</span></div>
+      <div class="frow"><span>Duplicate store</span><span>Svalbard, since 2011</span></div>
+    </div>
+  </div>
+  <footer>
+    <p class="meta">Coldframe · A charitable seed bank · Register published under CC0</p>
+    <p class="meta">Made with Inspo</p>
+  </footer>
+</div>

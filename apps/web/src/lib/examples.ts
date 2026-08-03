@@ -1484,6 +1484,314 @@ export const EXAMPLES: Example[] = [
     ],
     highlight: "The whole page sits behind a CRT scanline overlay, and the hero cabinet is drawn in crisp-edged pixel rectangles: amber marquee, a screen of phosphor sprites mid-game, joystick, two buttons and a coin door with two working-looking slots. The display face is Pixelify Sans - a pixel font with a true lowercase, so the retro voice keeps the site's no-all-caps rule - and the floor table labels one Asteroids unit 'parts machine, says so on the label.'",
   },
+  {
+    slug: "setwidth-foundry",
+    brand: "Setwidth",
+    tagline: "A one-person type foundry in Gothenburg releasing Marlin Grotesk.",
+    prompt: "An independent type foundry releasing a variable grotesk: specimen-led, austere, one accent.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.7,
+    references: [
+      {
+        slug: "klim-co-nz",
+        took: "The deepest study of the three. A real foundry running near-monochrome geometry in boundless negative space with a single hot accent doing all the branding. Setwidth's restraint, its hairline-ruled weight ramp and its refusal to decorate the fold all come from here.",
+      },
+      {
+        slug: "camelot-typefaces-com",
+        took: "Where the acid yellow came from. Camelot uses #faf20a as a flood fill rather than as text colour, which is exactly how this page uses it: behind the baseline in the glyph study, inside the axis sliders, and on nav hover. Never on type, because it would fail contrast.",
+      },
+      {
+        slug: "fontshare-com--changelog",
+        took: "A real font-catalogue index. Contributed the weight-ramp convention: one specimen line per weight, the weight name held small at the left margin, and a hairline between each row instead of a card.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "an independent type foundry releasing a variable grotesk: specimen-led, austere, one accent (macrostructure: type-specimen)",
+        took: "Passed the macrostructure explicitly rather than letting it be inferred, which skipped the pick step and returned three genuine foundries: Klim, Camelot and Fontshare. Between them they settled the palette, the ramp and the level of restraint before a line was written.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f4f3f0",
+        from: "Warm near-white. A specimen page is read for a long time at large sizes, so the ground stays quiet and slightly off-white.",
+      },
+      {
+        token: "--ink",
+        hex: "#111110",
+        from: "Near-black for the grotesk itself. The whole page is one typeface at nine weights; the colour has to stay out of the way.",
+      },
+      {
+        token: "--acid",
+        hex: "#e4e400",
+        from: "Acid yellow, used only as a fill: the baseline band behind the glyph, the axis slider tracks, and nav hover. Lifted from Camelot, which uses its yellow the same way and never as text.",
+      },
+      {
+        token: "--muted",
+        hex: "#78766f",
+        from: "Warm grey for metric labels, weight names and the licence table's second column.",
+      },
+      {
+        token: "--paper-2",
+        hex: "#eae8e3",
+        from: "A half-step deeper paper for the character-set band and the slider troughs.",
+      },
+      {
+        token: "--rule",
+        hex: "#d8d5cd",
+        from: "Hairlines between ramp rows and table rows. The heavier structural borders are drawn in ink at 1.5px.",
+      },
+    ],
+    highlight: "The fold gives half its width to a single lowercase g at 250px, sitting on real metric lines with the baseline flooded acid yellow and dashed sidebearings either side, captioned with its weight and optical size. Underneath, two live axis sliders read 620 and 18 pt, so the hero is a working specimen rather than a picture of one. The licence table prices a student licence at free and says to just ask.",
+  },
+  {
+    slug: "northline-transit",
+    brand: "Northline",
+    tagline: "A city transit authority: four lines, sixty-one stations, one flat fare.",
+    prompt: "A city transit authority: network map, wayfinding, live service status.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.6,
+    references: [
+      {
+        slug: "matveyan-com",
+        took: "The more useful of the two returned exemplars: a designer's own dark page built around coolly precise data visualisation. Its discipline of letting one diagram carry the fold, on a neutral charcoal so the data colours read cleanly, is the composition this page uses.",
+      },
+      {
+        slug: "campaignmonitor-com",
+        took: "The other returned exemplar. A cool geometric dark SaaS page; contributed the raised-panel treatment for the map frame and the live-status row rhythm, but nothing about transit.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a city transit authority: network map, wayfinding, live service status (mode: dark)",
+        took: "Returned a Bento Grid pick and two SaaS exemplars. Recorded honestly: the archive has no transit authority in it, so the useful output was compositional (one diagram carrying a dark fold, raised panels, status rows) and the map convention itself came from the domain rather than from a reference.",
+      },
+    ],
+    palette: [
+      {
+        token: "--slate",
+        hex: "#14161a",
+        from: "Neutral charcoal, chosen deliberately over the navy and green darks elsewhere in this gallery: four line colours have to read as data, and a tinted ground would bias them.",
+      },
+      {
+        token: "--red",
+        hex: "#e4483d",
+        from: "The spine line, and the bar through the roundel.",
+      },
+      {
+        token: "--blue",
+        hex: "#3a86d6",
+        from: "The north-south line through Cathedral and Old Foundry.",
+      },
+      {
+        token: "--green",
+        hex: "#3fae6e",
+        from: "The second vertical, and the live-status pulse dot.",
+      },
+      {
+        token: "--yellow",
+        hex: "#e8b93c",
+        from: "The southern link, and the one colour also used for a warning: minor delays on that line show in the same yellow.",
+      },
+      {
+        token: "--chalk",
+        hex: "#eef1f5",
+        from: "Off-white for station ticks, interchange rings and headline type.",
+      },
+    ],
+    highlight: "The map obeys one rule that most generated diagrams break: lines only ever meet at a marked interchange, so no colour is drawn on top of another. Two horizontals, two verticals and a single dogleg produce four ringed interchanges, eight named termini with proper cap bars, and tick marks for intermediate stops. The fares section says zones were removed in 2023, that it cost revenue, and that it paid for itself in eleven months.",
+  },
+  {
+    slug: "coire-dubh",
+    brand: "Coire Dubh",
+    tagline: "A single malt distillery on the Sound of Sleat, distilling since 1884.",
+    prompt: "A single malt whisky distillery: heritage, oak and copper, cask register.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.5,
+    references: [
+      {
+        slug: "puzzle-io",
+        took: "The only exemplar the brief returned, and a fintech one. What carried over was structural rather than thematic: a dark page whose credibility rests on a data table sitting below a calm fold, which is exactly the shape a cask register needs.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a single malt whisky distillery: heritage, oak and copper, cask register (mode: dark)",
+        took: "Returned a Feature Stack pick and, more usefully, the canonical comparison-table component whose note reads 'thin rules, no zebra striping, hover lift to track across rows'. The cask register follows that specification exactly. The archive holds no distillery, and the manifest says so rather than inventing a lineage.",
+      },
+    ],
+    palette: [
+      {
+        token: "--oak",
+        hex: "#14100c",
+        from: "Warm near-black, the inside of a dunnage warehouse. Deliberately browner than the navy sleeper page elsewhere in this gallery so the two heritage darks do not read as the same page twice.",
+      },
+      {
+        token: "--copper",
+        hex: "#b87333",
+        from: "Literal copper, on the still, the primary button and the section labels. The material the product is made in.",
+      },
+      {
+        token: "--amber",
+        hex: "#dda94e",
+        from: "Cask-strength amber for the italic headline phrase, the figures and the sight glass in the still.",
+      },
+      {
+        token: "--cream",
+        hex: "#efe6d6",
+        from: "Warm off-white for the Playfair display and body copy.",
+      },
+      {
+        token: "--muted",
+        hex: "#9a8d7c",
+        from: "Warm grey for cask notes, table values and the tour details.",
+      },
+      {
+        token: "--panel",
+        hex: "#241d16",
+        from: "Raised oak-brown for the process cards and the visit box.",
+      },
+    ],
+    highlight: "The hero still is drawn in section with a five-stop copper gradient across its belly, a swan neck, a lyne arm running to a ribbed condenser, hoop bands and a lit sight glass. The cask register below lists six casks with their wood and strength, including cask 087 which fell below 46% and by the distillery's own rule will not be bottled, and cask 155 which split a stave in the 2019 gales and is recorded anyway.",
+  },
+  {
+    slug: "coldframe-seedbank",
+    brand: "Coldframe",
+    tagline: "A charitable seed bank for landrace crops, free to any grower who asks.",
+    prompt: "A seed bank for open-pollinated landrace crops: herbarium register, botanical, evidence-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.7,
+    references: [
+      {
+        slug: "cornellbotanicgardens-org",
+        took: "A real botanic institution, and the closest peer returned. Its earthy ochre against muted sage is the exact two-accent split this page uses: moss green for the living material, ochre for the archival metadata.",
+      },
+      {
+        slug: "archigreendesigns-com",
+        took: "Contributed the calm, spacious environmental register and the practice of giving one large framed image the right half of the fold while the text column stays narrow and quiet.",
+      },
+      {
+        slug: "greenhouse-io",
+        took: "Returned in the same search. Its serif-with-italic-emphasis headline over a soft ground informed the Newsreader display with the italic clause in moss.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "search_screens",
+        args: "botanical garden herbarium plants seeds catalogue green",
+        took: "Went straight to search rather than recommend, because the register shape was already known and what was needed was palette evidence. Cornell Botanic Gardens came back first and settled the ochre-and-sage split; the other two shaped the fold composition and the type.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f4f4ef",
+        from: "Herbarium-sheet off-white, cooler and greyer than the warm papers elsewhere in this gallery.",
+      },
+      {
+        token: "--moss",
+        hex: "#41603a",
+        from: "Living material: the botanical line drawing, the italic headline clause, the request button and the viability figures.",
+      },
+      {
+        token: "--ochre",
+        hex: "#a8863c",
+        from: "Archival metadata: accession numbers, the grain detail study, and the section labels. Two accents that divide the page by what is alive and what is a record.",
+      },
+      {
+        token: "--ink",
+        hex: "#1b1f1a",
+        from: "Near-black with a green cast for the Newsreader display and the register's species names.",
+      },
+      {
+        token: "--muted",
+        hex: "#767b6e",
+        from: "Sage grey for common names, collection dates and the specimen label keys.",
+      },
+      {
+        token: "--paper-2",
+        hex: "#e9eae1",
+        from: "A half-step deeper sheet for the how-it-works band and the mounting tape in the drawing.",
+      },
+    ],
+    highlight: "The fold's right half is a pressed herbarium sheet: a rye specimen in botanical line art with awns, spikelets and leaves, two strips of mounting tape holding it down, a loose-grain detail study with a 10 mm scale bar, and a real determination label underneath giving accession, species, provenance and last grow-out. The register lists two lines below the 50% viability threshold and states they go into next season's grow-out ahead of everything else.",
+  },
+  {
+    slug: "saltgate-lido",
+    brand: "Saltgate Lido",
+    tagline: "An unheated 1936 lido kept open all year by a trust and four hundred members.",
+    prompt: "A municipal outdoor swimming pool: civic, tiled blue, timetable-led, open all year.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.6,
+    references: [
+      {
+        slug: "bluebottlecoffee-com",
+        took: "The palette anchor: soft muted teal against warm beige, with generous spacing. That pairing is exactly a tiled pool against a sun deck, and it is where the tile blue and sand tones came from.",
+      },
+      {
+        slug: "centrepompidou-fr",
+        took: "A real civic cultural institution. Contributed the quietly authoritative grid and the practice of putting a live practical fact (opening hours, today's status) above the headline rather than in a footer.",
+      },
+      {
+        slug: "maggieappleton-com",
+        took: "Returned in the same search. Its calm sage-and-teal register with a friendly display face informed the decision to use a soft grotesque rather than an institutional sans, so the page reads as a community pool and not a council leaflet.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "search_screens",
+        args: "swimming pool leisure centre municipal civic timetable blue",
+        took: "No lido exists in the archive, so the search was run for palette and civic register rather than for a peer. Blue Bottle supplied the teal-and-sand pairing, Pompidou the civic grid, and Maggie Appleton the warmth; the pool diagram and timetable came from the domain.",
+      },
+    ],
+    palette: [
+      {
+        token: "--sky",
+        hex: "#eef5f7",
+        from: "Pale chlorine-blue ground, the colour of the changing-room tile above the water line.",
+      },
+      {
+        token: "--tile",
+        hex: "#2b7fa8",
+        from: "Pool blue: the water, the primary button, the temperature figure and the highlighted headline clause.",
+      },
+      {
+        token: "--sand",
+        hex: "#e6d9c2",
+        from: "The sun deck. Everything outside the pool rectangle in the drawing is this warm stone, which is what stops a blue page going cold.",
+      },
+      {
+        token: "--ink",
+        hex: "#12222a",
+        from: "Deep blue-black for the Bricolage display and body copy.",
+      },
+      {
+        token: "--muted",
+        hex: "#6d8290",
+        from: "Slate blue for session details, lane allocations and the price small print.",
+      },
+      {
+        token: "--tile-deep",
+        hex: "#175d80",
+        from: "The deep end. Used as the lower stop of the water gradient and for text on pale chips.",
+      },
+    ],
+    highlight: "The hero is the pool seen from above: eight lanes on a sand-coloured deck, seven lane ropes drawn float by float with the fast lanes roped in red and yellow, lane numbers stencilled on the deck, a diving board, sun loungers and a lifebuoy. The prices section admits the trust runs a deficit on entry and covers it with membership, and the third price tier is zero, for a hardship pass that is not means-tested and that the person on the desk will not make into a conversation.",
+  },
 ];
 
 export function getExample(slug: string): Example | undefined {
