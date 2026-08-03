@@ -80,7 +80,7 @@ export function PaletteTable({
                 />
                 <div className="flex items-baseline gap-3 lg:gap-0 lg:flex-col lg:items-start">
                   <span className="lg:hidden text-meta">Hex</span>
-                  <span className="font-mono text-sm uppercase">{hex}</span>
+                  <span className="font-mono text-sm">{hex}</span>
                 </div>
                 <div className="flex items-baseline gap-3 lg:gap-0 lg:flex-col lg:items-start">
                   <span className="lg:hidden text-meta">OKLCH</span>
@@ -104,7 +104,7 @@ export function PaletteTable({
                     return norm ? (
                       <Link
                         href={`/screens?hex=${encodeURIComponent(norm)}`}
-                        className="font-mono text-[10px] uppercase tracking-wider text-[var(--color-fg-muted)] hover:text-[var(--color-link)]"
+                        className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)] hover:text-[var(--color-link)]"
                         aria-label={`Find sites with colour ${hex}`}
                       >
                         find sites →

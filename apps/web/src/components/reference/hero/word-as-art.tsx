@@ -17,10 +17,7 @@ export function HeroWordAsArt() {
       <p className="text-meta px-2 sm:px-8">A specimen</p>
 
       <p
-        className="
-          font-display mt-6 leading-[0.85] tracking-tight
-          flex justify-center
-        "
+        className="font-display mt-6 leading-[0.85] tracking-tight flex justify-center"
         style={{
           fontSize: "clamp(5rem, 26vw, 22rem)",
           fontStretch: "100%",

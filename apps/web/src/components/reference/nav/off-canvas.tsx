@@ -93,10 +93,7 @@ export function NavOffCanvas() {
               <li key={l}>
                 <a
                   href="#"
-                  className="
-                    font-display block text-3xl leading-tight tracking-tight
-                    transition-colors hover:text-[var(--color-link)]
-                  "
+                  className="font-display block text-3xl leading-tight tracking-tight transition-colors hover:text-[var(--color-link)]"
                 >
                   {l}
                 </a>

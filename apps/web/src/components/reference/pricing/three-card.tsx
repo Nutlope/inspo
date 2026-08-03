@@ -99,7 +99,7 @@ export function PricingThreeCard() {
               href={t.href}
               className={`
                 m-6 mt-auto inline-flex items-center justify-between
-                border rule px-4 py-3 font-mono text-xs uppercase tracking-[0.12em]
+                border rule px-4 py-3 font-mono text-xs tracking-normal
                 transition-colors
                 hover:border-[var(--color-link)] hover:text-[var(--color-link)]
               `}

@@ -19,7 +19,7 @@ export function TypeRamp({ ramp }: { ramp: TypeRampEntry[] }) {
         <tbody>
           {ramp.map((r) => (
             <tr key={r.role} className="border-b rule align-baseline">
-              <td className="py-3 pr-4 text-xs uppercase tracking-wide text-[var(--color-fg-muted)] whitespace-nowrap">
+              <td className="py-3 pr-4 text-xs tracking-normal text-[var(--color-fg-muted)] whitespace-nowrap">
                 {r.role}
               </td>
               <td className="py-3 pr-4 text-xs whitespace-nowrap">{r.family}</td>

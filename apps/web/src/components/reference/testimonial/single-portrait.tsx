@@ -18,11 +18,7 @@ export function TestimonialSinglePortrait() {
             of [Name]" caption. Pure typography, no rasterised AI face. */}
         <div className="lg:col-span-4">
           <div
-            className="
-              relative aspect-square w-full border-2 rule
-              flex items-center justify-center
-              bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))]
-            "
+            className="relative aspect-square w-full border-2 rule flex items-center justify-center bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))]"
           >
             <p className="text-meta text-center text-[var(--color-fg-muted)] px-6">
               Portrait of [Name]
@@ -35,7 +31,7 @@ export function TestimonialSinglePortrait() {
         </div>
 
         <figure className="lg:col-span-8">
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+          <p className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
             [Year]
           </p>
           <blockquote

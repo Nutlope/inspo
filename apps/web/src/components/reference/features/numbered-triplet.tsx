@@ -44,7 +44,7 @@ export function FeaturesNumberedTriplet() {
               style={{
                 fontSize: "0.7rem",
                 letterSpacing: "0.12em",
-                textTransform: "uppercase",
+                textTransform: "",
               }}
             >
               Step {s.n}

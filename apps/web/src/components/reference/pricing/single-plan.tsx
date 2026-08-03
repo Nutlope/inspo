@@ -50,11 +50,7 @@ export function PricingSinglePlan() {
 
         <a
           href="#"
-          className="
-            mt-12 inline-flex h-12 items-center gap-3 bg-[var(--color-fg)] px-7
-            font-mono text-sm uppercase tracking-[0.12em] text-[var(--color-bg)]
-            transition-opacity hover:opacity-90
-          "
+          className="mt-12 inline-flex h-12 items-center gap-3 bg-[var(--color-fg)] px-7 font-mono text-sm tracking-normal text-[var(--color-bg)] transition-opacity hover:opacity-90"
         >
           npx inspo init
           <span aria-hidden>→</span>

@@ -13,14 +13,10 @@
 export function TestimonialCinematic() {
   return (
     <section
-      className="
-        relative overflow-hidden border rule
-        bg-[var(--color-ink)] text-[var(--color-paper)]
-        px-8 py-24 sm:px-14 sm:py-28
-      "
+      className="relative overflow-hidden border rule bg-[var(--color-ink)] text-[var(--color-paper)] px-8 py-24 sm:px-14 sm:py-28"
     >
       <figure className="mx-auto max-w-4xl">
-        <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-paper)]/60">
+        <p className="font-mono text-xs tracking-normal text-[var(--color-paper)]/60">
           On the record
         </p>
 
@@ -33,7 +29,7 @@ export function TestimonialCinematic() {
           black do the heavy work.]
         </blockquote>
 
-        <figcaption className="mt-16 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[var(--color-paper)]/20 pt-6 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-paper)]/70">
+        <figcaption className="mt-16 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[var(--color-paper)]/20 pt-6 font-mono text-xs tracking-normal text-[var(--color-paper)]/70">
           <span className="text-[var(--color-paper)]">[Name]</span>
           <span aria-hidden>·</span>
           <span>[Role at Studio]</span>

@@ -104,7 +104,7 @@ export default async function ComponentTypePage({
                   </p>
                 </div>
                 <div className="lg:col-span-10">
-                  <p className="text-meta normal-case tracking-normal text-[var(--color-fg)]">
+                  <p className="text-meta tracking-normal text-[var(--color-fg)]">
                     {ref.macro}
                   </p>
                   <p className="mt-2 max-w-[60ch] text-[var(--color-fg-muted)]">
@@ -135,7 +135,7 @@ export default async function ComponentTypePage({
             <div className="lg:col-span-2">
               <p className="text-meta">From the archive</p>
             </div>
-            <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)] lg:col-span-10">
+            <p className="text-meta tracking-normal text-[var(--color-fg-muted)] lg:col-span-10">
               The same pattern, cropped from real production sites.
             </p>
           </div>

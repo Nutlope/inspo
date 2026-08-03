@@ -226,7 +226,7 @@ export default async function MCPPage() {
           <Dateline label="For agents" />
         </div>
         <div className="lg:col-span-10">
-          <h1 className="font-display max-w-[18ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-[6.5rem]">
+          <h1 className="font-display max-w-[18ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl lg:text-6xl">
             Your agent doesn&rsquo;t have taste.{" "}
             <em className="not-italic text-[var(--color-link)]">Lend it some.</em>
           </h1>

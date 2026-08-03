@@ -34,11 +34,7 @@ export function NavInline() {
             <button
               type="button"
               aria-label="Open command palette"
-              className="
-                inline-flex h-7 items-center justify-center gap-0.5 border rule px-2
-                font-mono text-[0.7rem] leading-none tracking-wider text-[var(--color-fg-muted)]
-                transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]
-              "
+              className="inline-flex h-7 items-center justify-center gap-0.5 border rule px-2 font-mono text-xs leading-none tracking-normal text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
             >
               ⌘K
             </button>

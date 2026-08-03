@@ -69,7 +69,7 @@ export default function ExamplesPage() {
           </p>
         </div>
         <div className="lg:col-span-9">
-          <h1 className="font-display max-w-[20ch] text-balance text-[clamp(2.5rem,5.5vw,5rem)] leading-[0.95] tracking-tight">
+          <h1 className="font-display max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
             Made with <em className="not-italic text-[var(--color-link)]">Inspo</em>.
           </h1>
           <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
@@ -107,7 +107,7 @@ export default function ExamplesPage() {
                       <p className="max-w-[42ch] text-sm leading-snug text-white">
                         “{ex.prompt}”
                       </p>
-                      <p className="mt-2 font-mono text-[11px] uppercase tracking-wide text-white/65">
+                      <p className="mt-2 font-mono text-xs tracking-normal text-white/65">
                         {ex.references.length} refs · {ex.mcpCalls.length}+ calls
                         · {ex.scoreSelf.toFixed(1)}/10
                       </p>

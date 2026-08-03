@@ -147,13 +147,7 @@ export function CompareDock() {
       </ul>
       <Link
         href={href}
-        className="
-          block w-full text-center
-          font-mono text-[10px] uppercase tracking-wider
-          bg-[var(--color-fg)] !text-white
-          dark:!text-[var(--color-bg)]
-          px-5 py-3 transition-opacity hover:opacity-90
-        "
+        className="block w-full text-center font-mono text-xs tracking-normal bg-[var(--color-fg)] !text-white dark:!text-[var(--color-bg)] px-5 py-3 transition-opacity hover:opacity-90"
       >
         Compare {items.length === 1 ? "this site" : `these ${items.length} sites`} →
       </Link>

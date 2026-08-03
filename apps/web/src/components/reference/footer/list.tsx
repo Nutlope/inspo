@@ -30,11 +30,7 @@ export function FooterList() {
           <li key={s.num}>
             <Link
               href={s.href}
-              className="
-                group grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-6
-                border-b rule py-3
-                transition-colors
-              "
+              className="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-6 border-b rule py-3 transition-colors"
             >
               <span className="font-mono text-meta text-[var(--color-fg-muted)]">
                 {s.num}

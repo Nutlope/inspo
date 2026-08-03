@@ -17,10 +17,7 @@ export function PricingTierBento() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-[auto_auto]">
         {/* Featured tier - spans 2x2 */}
         <article
-          className="
-            md:col-span-2 md:row-span-2 flex flex-col gap-6 border rule p-8
-            transition-transform duration-300 ease-out hover:-translate-y-1
-          "
+          className="md:col-span-2 md:row-span-2 flex flex-col gap-6 border rule p-8 transition-transform duration-300 ease-out hover:-translate-y-1"
           style={{ borderTopWidth: "2px", borderTopColor: "var(--color-link)" }}
         >
           <p className="text-meta">Together</p>

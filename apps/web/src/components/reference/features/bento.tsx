@@ -61,10 +61,7 @@ export function FeaturesBento() {
           </div>
           <a
             href="/mcp"
-            className="
-              font-mono text-xs uppercase tracking-[0.12em] whitespace-nowrap
-              text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]
-            "
+            className="font-mono text-xs tracking-normal whitespace-nowrap text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
           >
             Read the API →
           </a>

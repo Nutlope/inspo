@@ -31,7 +31,7 @@ export function TestimonialConversation() {
         <ol className="lg:col-span-8 space-y-6">
           {LINES.map((l, i) => (
             <li key={i} className="grid grid-cols-[8rem_1fr] items-baseline gap-x-6">
-              <span className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+              <span className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
                 {l.who}
               </span>
               <p className="font-display text-lg leading-snug text-[var(--color-fg)]">

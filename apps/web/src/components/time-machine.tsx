@@ -120,7 +120,7 @@ export function TimeMachine({
             onClick={() => step(-1)}
             disabled={i === 0}
             aria-label="Previous revision"
-            className="font-mono text-[10px] uppercase tracking-wider border rule px-3 py-1.5 hover:text-[var(--color-link)] disabled:opacity-30 disabled:cursor-not-allowed"
+            className="font-mono text-xs tracking-normal border rule px-3 py-1.5 hover:text-[var(--color-link)] disabled:opacity-30 disabled:cursor-not-allowed"
           >
             ← Prev
           </button>
@@ -148,16 +148,7 @@ export function TimeMachine({
               value={i}
               onChange={(e) => setI(Number(e.target.value))}
               aria-label="Capture revision"
-              className="relative w-full appearance-none bg-transparent cursor-pointer
-                         [&::-webkit-slider-thumb]:appearance-none
-                         [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5
-                         [&::-webkit-slider-thumb]:bg-[var(--color-link)]
-                         [&::-webkit-slider-thumb]:rounded-full
-                         [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-[var(--color-link)]
-                         [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5
-                         [&::-moz-range-thumb]:bg-[var(--color-link)]
-                         [&::-moz-range-thumb]:rounded-full
-                         [&::-moz-range-thumb]:border-0"
+              className="relative w-full appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:bg-[var(--color-link)] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-[var(--color-link)] [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:bg-[var(--color-link)] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0"
             />
           </div>
 
@@ -166,7 +157,7 @@ export function TimeMachine({
             onClick={() => step(1)}
             disabled={i === last}
             aria-label="Next revision"
-            className="font-mono text-[10px] uppercase tracking-wider border rule px-3 py-1.5 hover:text-[var(--color-link)] disabled:opacity-30 disabled:cursor-not-allowed"
+            className="font-mono text-xs tracking-normal border rule px-3 py-1.5 hover:text-[var(--color-link)] disabled:opacity-30 disabled:cursor-not-allowed"
           >
             Next →
           </button>

@@ -47,7 +47,7 @@ export function NavLink({
       aria-current={isActive ? "page" : undefined}
       className={`
         group relative inline-flex h-7 items-center
-        text-[0.8125rem] tracking-[0.01em] transition-colors duration-200
+        text-sm tracking-[0.01em] transition-colors duration-200
         ${
           isActive
             ? "text-[var(--color-link)]"

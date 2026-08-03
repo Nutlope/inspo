@@ -31,12 +31,9 @@ export function NavMarginal() {
             <a
               key={s.n}
               href="#"
-              className="
-                group flex items-baseline gap-3 py-1.5
-                transition-colors hover:text-[var(--color-link)]
-              "
+              className="group flex items-baseline gap-3 py-1.5 transition-colors hover:text-[var(--color-link)]"
             >
-              <span className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+              <span className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
                 {s.n}
               </span>
               <span className="text-sm transition-transform duration-200 group-hover:translate-x-1">

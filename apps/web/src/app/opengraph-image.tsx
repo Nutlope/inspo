@@ -22,7 +22,7 @@ export default async function OpengraphImage() {
           fontFamily: "Georgia, serif",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#6b6862", letterSpacing: 1, textTransform: "uppercase" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#6b6862", letterSpacing: 1, textTransform: "" }}>
           <span>Inspo</span>
           <span>Open source · Together AI</span>
         </div>

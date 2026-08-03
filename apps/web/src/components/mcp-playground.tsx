@@ -104,7 +104,7 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={
-        "font-mono text-[10px] uppercase tracking-wider px-3 py-1 transition-colors " +
+        "font-mono text-xs tracking-normal px-3 py-1 transition-colors " +
         (active
           ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
           : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]")
@@ -177,7 +177,7 @@ function SearchTab() {
         <code className="font-mono text-xs text-[var(--color-fg-muted)]">)</code>
         <button
           type="submit"
-          className="font-mono text-[10px] uppercase tracking-wider bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
+          className="font-mono text-xs tracking-normal bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
           disabled={state.kind === "loading"}
         >
           {state.kind === "loading" ? "Running…" : "Run"}
@@ -337,7 +337,7 @@ function StudyTab() {
         <code className="font-mono text-xs text-[var(--color-fg-muted)]">)</code>
         <button
           type="submit"
-          className="font-mono text-[10px] uppercase tracking-wider bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
+          className="font-mono text-xs tracking-normal bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
           disabled={state.kind === "loading"}
         >
           {state.kind === "loading" ? "Fetching…" : "Run"}
@@ -413,7 +413,7 @@ function StudyResultCard({ data }: { data: StudyResult }) {
                   className="block h-4 w-4 border rule"
                   style={{ background: hex }}
                 />
-                <span className="font-mono text-xs uppercase">{hex}</span>
+                <span className="font-mono text-xs">{hex}</span>
               </div>
             ))}
           </div>

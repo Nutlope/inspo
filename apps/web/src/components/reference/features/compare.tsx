@@ -55,10 +55,7 @@ export function FeaturesCompare() {
         {ROWS.map((r) => (
           <div
             key={r.capability}
-            className="
-              grid grid-cols-[1fr_1fr_1fr] items-baseline gap-x-6 border-b rule py-5
-              transition-colors hover:bg-[color-mix(in_oklab,var(--color-fg)_3%,transparent)]
-            "
+            className="grid grid-cols-[1fr_1fr_1fr] items-baseline gap-x-6 border-b rule py-5 transition-colors hover:bg-[color-mix(in_oklab,var(--color-fg)_3%,transparent)]"
           >
             <p className="text-sm font-medium text-[var(--color-fg)]">{r.capability}</p>
             <p className="text-sm text-[var(--color-fg-muted)]">{r.before}</p>

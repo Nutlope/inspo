@@ -43,7 +43,7 @@ export function PricingToggle() {
       <div
         role="radiogroup"
         aria-label="Billing cadence"
-        className="mx-auto mb-12 inline-flex w-full max-w-xs items-center justify-center border rule p-1 font-mono text-xs uppercase tracking-[0.12em]"
+        className="mx-auto mb-12 inline-flex w-full max-w-xs items-center justify-center border rule p-1 font-mono text-xs tracking-normal"
       >
         {[
           { label: "Monthly", value: false },
@@ -104,7 +104,7 @@ export function PricingToggle() {
             <button
               type="button"
               className={`
-                mt-8 border rule px-4 py-3 font-mono text-xs uppercase tracking-[0.12em]
+                mt-8 border rule px-4 py-3 font-mono text-xs tracking-normal
                 transition-colors
                 ${
                   p.accent

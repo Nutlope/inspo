@@ -14,15 +14,11 @@
 export function CtaBanded() {
   return (
     <section
-      className="
-        relative overflow-hidden border-y rule
-        bg-[var(--color-link)] text-[var(--color-paper)]
-        px-8 py-20 sm:px-14 sm:py-24
-      "
+      className="relative overflow-hidden border-y rule bg-[var(--color-link)] text-[var(--color-paper)] px-8 py-20 sm:px-14 sm:py-24"
     >
       <div className="grid grid-cols-1 items-center gap-x-10 gap-y-8 lg:grid-cols-12">
         <div className="lg:col-span-8">
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-paper)]/70">
+          <p className="font-mono text-xs tracking-normal text-[var(--color-paper)]/70">
             Install once. Free forever.
           </p>
           <p
@@ -39,12 +35,7 @@ export function CtaBanded() {
               the band even after the eye adjusts to the red. */}
           <a
             href="#"
-            className="
-              group/btn relative inline-flex h-12 items-center gap-3
-              overflow-hidden border-2
-              px-7 font-mono text-sm uppercase tracking-[0.12em]
-              transition-colors duration-300 ease-out
-            "
+            className="group/btn relative inline-flex h-12 items-center gap-3 overflow-hidden border-2 px-7 font-mono text-sm tracking-normal transition-colors duration-300 ease-out"
             style={{
               borderColor: "var(--color-paper)",
               color: "var(--color-link)",
@@ -53,11 +44,7 @@ export function CtaBanded() {
           >
             <span
               aria-hidden
-              className="
-                absolute inset-0 origin-left scale-x-0
-                transition-transform duration-300 ease-out
-                group-hover/btn:scale-x-100
-              "
+              className="absolute inset-0 origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/btn:scale-x-100"
               style={{ backgroundColor: "var(--color-ink)" }}
             />
             <span className="relative z-10 transition-colors duration-300 group-hover/btn:text-[var(--color-paper)]">

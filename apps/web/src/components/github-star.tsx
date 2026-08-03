@@ -47,11 +47,7 @@ export async function GithubStar() {
           ? `Star Inspo on GitHub - ${stars.toLocaleString()} stars`
           : "Star Inspo on GitHub"
       }
-      className="
-        util-seg flex shrink-0 items-center gap-2 px-3
-        font-mono text-[0.72rem] leading-none tracking-wide
-        text-[var(--color-fg-muted)]
-      "
+      className="util-seg flex shrink-0 items-center gap-2 px-3 font-mono text-xs leading-none tracking-normal text-[var(--color-fg-muted)]"
     >
       <svg
         viewBox="0 0 16 16"

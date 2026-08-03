@@ -58,6 +58,51 @@
   /* Meta labels are natural case (not all-caps). Keep tracking near
      normal - the wide caps-tracking reads as spaced-out in sentence case. */
   --text-meta-letter-spacing: 0.01em;
+
+  /* ── One scale, seven steps ──────────────────────────────
+     The site had twenty distinct font sizes in use against five
+     declared tokens, because components reach for Tailwind's default
+     scale and for arbitrary values instead of the tokens. Rather than
+     rename ~107 files, re-point Tailwind's own size utilities onto the
+     scale - the same aliasing trick --font-mono uses above. Every
+     existing text-sm / text-2xl / text-5xl now lands on one of these
+     seven values:
+
+       0.75    meta      labels, captions, chips
+       0.875   small     secondary copy, dense UI
+       1.0625  body      default running text
+       1.1875  sub       card titles, lead-ins
+       1.5     h2-fixed  section headings in cards
+       2.25    h1-fixed  page headings
+       3.25    hero      display type
+
+     Sizes are deliberately collapsed in pairs (lg/xl, 2xl/3xl,
+     4xl/5xl, 6xl/7xl) so reaching for the next class up is a no-op
+     rather than a new size. The fluid --text-display / --text-h1 /
+     --text-h2 above stay as the semantic headline family and span the
+     same values. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.45;
+  --text-xl: 1.1875rem;
+  --text-xl--line-height: 1.45;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 1.5rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 2.25rem;
+  --text-5xl--line-height: 1.1;
+  --text-6xl: 3.25rem;
+  --text-6xl--line-height: 1.02;
+  --text-7xl: 3.25rem;
+  --text-7xl--line-height: 1.02;
 }
 
 @variant dark (&:where(.dark, .dark *));

@@ -40,12 +40,7 @@ export function FooterNewsletter() {
           ) : (
             <form
               onSubmit={onSubmit}
-              className="
-                group mt-8 flex max-w-[32rem] items-center gap-3 px-4 py-3
-                border-b border-[var(--color-border)]/60
-                transition-colors hover:border-[var(--color-fg)]/40
-                focus-within:border-[var(--color-link)]
-              "
+              className="group mt-8 flex max-w-[32rem] items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
             >
               <input
                 type="email"
@@ -55,10 +50,7 @@ export function FooterNewsletter() {
               />
               <button
                 type="submit"
-                className="
-                  font-mono text-xs uppercase tracking-[0.12em]
-                  text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]
-                "
+                className="font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
               >
                 Subscribe ↵
               </button>

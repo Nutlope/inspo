@@ -13,15 +13,7 @@ export function CtaStickyCompact() {
   return (
     <section className="px-8 py-16 sm:px-14 sm:py-20">
       <div
-        className="
-          mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4
-          border rule bg-[var(--color-bg)] px-6 py-4
-          shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)]
-          /* On a real page:
-           * position: fixed; bottom: 1rem; left: 1rem; right: 1rem;
-           * z-index: 50;
-           */
-        "
+        className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4 border rule bg-[var(--color-bg)] px-6 py-4 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)] /* On a real page: * position: fixed; bottom: 1rem; left: 1rem; right: 1rem; * z-index: 50; */"
       >
         <div>
           <p className="text-meta">Live now</p>
@@ -31,11 +23,7 @@ export function CtaStickyCompact() {
         </div>
         <a
           href="#"
-          className="
-            inline-flex h-10 items-center gap-2 border rule px-5
-            font-mono text-xs uppercase tracking-[0.12em] text-[var(--color-fg)]
-            transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]
-          "
+          className="inline-flex h-10 items-center gap-2 border rule px-5 font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
         >
           npx inspo init
           <span aria-hidden>→</span>

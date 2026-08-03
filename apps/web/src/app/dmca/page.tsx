@@ -49,7 +49,7 @@ export default function DmcaPage() {
             <ol className="prose-style max-w-[64ch] list-none space-y-4 pl-0 text-[var(--color-fg)]">
               {STEPS.map((step, i) => (
                 <li key={i}>
-                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <span className="font-mono text-meta tracking-normal text-[var(--color-fg-muted)]">
                     {String(i + 1).padStart(2, "0")} ·
                   </span>{" "}
                   {step}

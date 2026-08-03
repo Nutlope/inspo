@@ -129,7 +129,7 @@ export function SiteViewer({
               <div className="flex items-baseline justify-between gap-4 mb-3">
                 <figcaption className="text-meta">
                   {PAGE_TYPE_LABELS[p.pageType]}
-                  <span className="ml-3 normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <span className="ml-3 tracking-normal text-[var(--color-fg-muted)]">
                     {p.title || "untitled"}
                   </span>
                 </figcaption>

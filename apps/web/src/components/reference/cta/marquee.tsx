@@ -24,12 +24,7 @@ export function CtaMarquee() {
       href="#"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="
-        group block overflow-hidden border-y rule bg-[var(--color-link)]
-        py-8 text-[var(--color-paper)]
-        transition-colors duration-300
-        hover:bg-[var(--color-fg)]
-      "
+      className="group block overflow-hidden border-y rule bg-[var(--color-link)] py-8 text-[var(--color-paper)] transition-colors duration-300 hover:bg-[var(--color-fg)]"
       style={{
         maskImage:
           "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",

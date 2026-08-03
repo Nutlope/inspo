@@ -23,7 +23,7 @@ export function PaletteStrip({
             aria-hidden
           />
           {showHex && (
-            <span className="text-meta uppercase tracking-wider">{hex.replace("#", "")}</span>
+            <span className="text-meta tracking-normal">{hex.replace("#", "")}</span>
           )}
         </span>
       ))}

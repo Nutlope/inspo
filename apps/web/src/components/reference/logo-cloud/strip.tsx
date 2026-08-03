@@ -11,9 +11,9 @@
 
 const MARKS = [
   { label: "Studio 01", weight: "font-display" },
-  { label: "STUDIO 02", weight: "font-mono uppercase tracking-[0.18em] text-sm" },
+  { label: "STUDIO 02", weight: "font-mono tracking-normal text-sm" },
   { label: "Studio 03", weight: "font-display italic" },
-  { label: "S-04", weight: "font-mono uppercase tracking-[0.12em] text-base" },
+  { label: "S-04", weight: "font-mono tracking-normal text-base" },
   { label: "Studio 05", weight: "font-display tracking-tight" },
 ];
 

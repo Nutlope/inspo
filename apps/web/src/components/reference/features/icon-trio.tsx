@@ -43,12 +43,7 @@ export function FeaturesIconTrio() {
         {ITEMS.map((i) => (
           <li key={i.mark} className="group">
             <div
-              className="
-                inline-flex h-14 w-14 items-center justify-center border-2 rule
-                font-display text-3xl
-                transition-colors
-                group-hover:border-[var(--color-link)] group-hover:text-[var(--color-link)]
-              "
+              className="inline-flex h-14 w-14 items-center justify-center border-2 rule font-display text-3xl transition-colors group-hover:border-[var(--color-link)] group-hover:text-[var(--color-link)]"
             >
               {i.mark}
             </div>

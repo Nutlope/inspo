@@ -48,21 +48,11 @@ export function CtaFormLed() {
         ) : (
           <form
             onSubmit={onSubmit}
-            className="
-              group mt-10 flex items-center gap-3 px-4 py-3
-              border-b border-[var(--color-border)]/60
-              transition-colors duration-200
-              hover:border-[var(--color-fg)]/40
-              focus-within:border-[var(--color-link)]
-            "
+            className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
           >
             <span
               aria-hidden
-              className="
-                shrink-0 inline-flex text-[var(--color-fg-muted)]
-                transition-colors duration-200
-                group-focus-within:text-[var(--color-link)]
-              "
+              className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors duration-200 group-focus-within:text-[var(--color-link)]"
             >
               <svg
                 width="20"
@@ -85,22 +75,12 @@ export function CtaFormLed() {
               placeholder="you@studio.com"
               autoComplete="email"
               disabled={state === "submitting"}
-              className="
-                flex-1 min-w-0 bg-transparent outline-none
-                font-mono text-base placeholder:text-[var(--color-fg-muted)]
-                disabled:opacity-50
-              "
+              className="flex-1 min-w-0 bg-transparent outline-none font-mono text-base placeholder:text-[var(--color-fg-muted)] disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={state === "submitting"}
-              className="
-                shrink-0 font-mono text-sm uppercase tracking-[0.12em]
-                text-[var(--color-fg)]
-                transition-colors duration-200
-                hover:text-[var(--color-link)]
-                disabled:opacity-50
-              "
+              className="shrink-0 font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors duration-200 hover:text-[var(--color-link)] disabled:opacity-50"
             >
               {state === "submitting" ? "…" : "Subscribe ↵"}
             </button>

@@ -29,12 +29,7 @@ export function CtaQuiet() {
         </p>
         <a
           href="#"
-          className="
-            font-mono mt-12 inline-flex items-baseline gap-2
-            text-sm uppercase tracking-[0.12em]
-            text-[var(--color-fg)]
-            transition-colors hover:text-[var(--color-link)]
-          "
+          className="font-mono mt-12 inline-flex items-baseline gap-2 text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
         >
           Enter the archive
           <span aria-hidden>→</span>

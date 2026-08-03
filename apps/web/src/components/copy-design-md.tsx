@@ -35,14 +35,7 @@ export function CopyDesignMd({ slug }: { slug: string }) {
         type="button"
         onClick={copy}
         disabled={state === "copying"}
-        className="
-          font-mono inline-flex items-center gap-2
-          bg-[var(--color-fg)] !text-white
-          px-5 py-3 text-sm font-medium tracking-wide uppercase
-          transition-opacity hover:opacity-90
-          disabled:opacity-50
-          dark:!text-[var(--color-bg)]
-        "
+        className="font-mono inline-flex items-center gap-2 bg-[var(--color-fg)] !text-white px-5 py-3 text-sm font-medium tracking-normal transition-opacity hover:opacity-90 disabled:opacity-50 dark:!text-[var(--color-bg)]"
       >
         {state === "ok" ? <span aria-hidden>✓</span> : null}
         <span>{label}</span>

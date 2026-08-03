@@ -22,12 +22,7 @@ export function NavSearchFirst() {
 
         <form
           role="search"
-          className="
-            group flex flex-1 items-center gap-3 px-4 py-2.5
-            border-b border-[var(--color-border)]/60
-            transition-colors hover:border-[var(--color-fg)]/40
-            focus-within:border-[var(--color-link)]
-          "
+          className="group flex flex-1 items-center gap-3 px-4 py-2.5 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
         >
           <span
             aria-hidden

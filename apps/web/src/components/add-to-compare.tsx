@@ -47,7 +47,7 @@ export function AddToCompare({ slug, title }: { slug: string; title: string }) {
       aria-pressed={isIn}
       className={
         `inline-flex items-center gap-2 border rule px-3 py-1.5 ` +
-        `font-mono text-[10px] uppercase tracking-wider transition-colors ` +
+        `font-mono text-xs tracking-normal transition-colors ` +
         (isIn
           ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
           : "hover:text-[var(--color-link)]") +

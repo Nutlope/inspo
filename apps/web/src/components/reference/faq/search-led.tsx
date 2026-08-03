@@ -46,12 +46,7 @@ export function FaqSearchLed() {
 
       <form
         role="search"
-        className="
-          group mt-10 flex items-center gap-3 px-4 py-3
-          border-b border-[var(--color-border)]/60
-          transition-colors hover:border-[var(--color-fg)]/40
-          focus-within:border-[var(--color-link)]
-        "
+        className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
       >
         <span
           aria-hidden

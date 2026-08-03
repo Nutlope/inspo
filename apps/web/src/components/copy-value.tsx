@@ -42,7 +42,7 @@ export function CopyValue({
       onClick={copy}
       aria-label={label ?? "Copy"}
       className={
-        `inline-flex items-center justify-center font-mono text-[10px] uppercase tracking-wider ` +
+        `inline-flex items-center justify-center font-mono text-xs tracking-normal ` +
         `text-[var(--color-fg-muted)] hover:text-[var(--color-link)] ` +
         `transition-colors ${className}`
       }

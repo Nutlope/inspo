@@ -49,10 +49,7 @@ export function FaqWithCta() {
         </p>
         <a
           href="mailto:speedyoussef@gmail.com"
-          className="
-            font-mono text-sm uppercase tracking-[0.12em]
-            text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]
-          "
+          className="font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
         >
           speedyoussef@gmail.com ↗
         </a>

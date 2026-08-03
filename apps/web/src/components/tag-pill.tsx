@@ -16,7 +16,7 @@ export function TagPill({
 
   const inner = (
     <span
-      className={`inline-block whitespace-nowrap border ${cls} px-2 py-1 text-[0.6875rem] capitalize leading-none tracking-[0.01em] transition-colors hover:text-[var(--color-fg)]`}
+      className={`inline-block whitespace-nowrap border ${cls} px-2 py-1 text-xs capitalize leading-none tracking-[0.01em] transition-colors hover:text-[var(--color-fg)]`}
     >
       {label}
     </span>

@@ -34,7 +34,7 @@ export function LogoCloudSectioned() {
                   className={`
                     text-xl text-[var(--color-fg)] opacity-70
                     transition-opacity hover:opacity-100
-                    ${i % 2 === 0 ? "font-display" : "font-mono uppercase tracking-[0.12em] text-base"}
+                    ${i % 2 === 0 ? "font-display" : "font-mono tracking-normal text-base"}
                   `}
                 >
                   {m}

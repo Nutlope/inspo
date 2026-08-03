@@ -121,7 +121,7 @@ export default async function MapPage() {
             Map · {points.length.toLocaleString()} sites · UMAP of 1024-dim
             embeddings · built {sidecar.generatedAt.slice(0, 10)}
           </p>
-          <h1 className="font-display mt-1.5 text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.02] tracking-tight">
+          <h1 className="font-display mt-1.5 text-[length:var(--text-h2)] leading-[1.02] tracking-tight">
             The catalogue&rsquo;s <em className="not-italic text-[var(--color-link)]">visual neighbourhood.</em>
           </h1>
         </div>

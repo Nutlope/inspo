@@ -33,10 +33,7 @@ export function LogoCloudCredits() {
           {CREDITS.map((c) => (
             <li
               key={c.partner}
-              className="
-                grid grid-cols-[1fr_auto] items-baseline gap-x-6
-                border-b rule py-3 transition-colors hover:text-[var(--color-link)]
-              "
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 border-b rule py-3 transition-colors hover:text-[var(--color-link)]"
             >
               <p className="font-display text-lg leading-tight">{c.partner}</p>
               <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">

@@ -31,12 +31,7 @@ export function LogoCloudPillChips() {
         {CHIPS.map((c) => (
           <li
             key={c}
-            className="
-              rounded-full border rule px-4 py-1.5
-              font-mono text-xs tracking-wide text-[var(--color-fg)]
-              transition-colors
-              hover:border-[var(--color-link)] hover:text-[var(--color-link)]
-            "
+            className="rounded-full border rule px-4 py-1.5 font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
           >
             {c}
           </li>

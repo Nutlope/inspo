@@ -44,11 +44,7 @@ export function TestimonialMosaic() {
         {QUOTES.map((q, i) => (
           <li
             key={i}
-            className="
-              flex flex-col border rule p-8
-              transition-transform duration-300 ease-out
-              hover:-translate-y-1
-            "
+            className="flex flex-col border rule p-8 transition-transform duration-300 ease-out hover:-translate-y-1"
           >
             <p className="font-display flex-1 text-lg leading-relaxed">
               &ldquo;{q.text}&rdquo;

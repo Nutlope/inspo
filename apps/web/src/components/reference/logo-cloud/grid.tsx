@@ -13,15 +13,15 @@
  */
 const MARKS = [
   { mark: "Together AI", style: "font-display" },
-  { mark: "STUDIO / 01", style: "font-mono uppercase tracking-[0.18em] text-sm" },
+  { mark: "STUDIO / 01", style: "font-mono tracking-normal text-sm" },
   { mark: "S-02", style: "font-display italic" },
   { mark: "Atelier 03", style: "font-display" },
-  { mark: "MARK 04", style: "font-mono uppercase tracking-[0.12em] text-sm" },
+  { mark: "MARK 04", style: "font-mono tracking-normal text-sm" },
   { mark: "Studio · 05", style: "font-display" },
   { mark: "S 06 / Co", style: "font-mono text-base" },
   { mark: "Studio 07", style: "font-display italic" },
   { mark: "M 08", style: "font-display tracking-tight" },
-  { mark: "STUDIO 09", style: "font-mono uppercase tracking-[0.12em] text-sm" },
+  { mark: "STUDIO 09", style: "font-mono tracking-normal text-sm" },
   { mark: "Atelier 10", style: "font-display" },
   { mark: "S-11", style: "font-display" },
 ];

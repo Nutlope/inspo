@@ -105,14 +105,13 @@ export default async function ComponentsIndex() {
                           {t.refCount} reference{t.refCount === 1 ? "" : "s"}
                         </p>
                         <p
-                          className="font-display leading-[0.95] tracking-tight text-balance"
-                          style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)" }}
+                          className="font-display text-4xl leading-[0.95] tracking-tight text-balance"
                         >
                           {t.label}
                           <span aria-hidden className="text-[var(--color-link)]">.</span>
                         </p>
                         {t.firstRef ? (
-                          <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                          <p className="text-meta tracking-normal text-[var(--color-fg-muted)]">
                             {t.firstRef.macro}
                           </p>
                         ) : (
@@ -150,7 +149,7 @@ export default async function ComponentsIndex() {
                         : "-"}
                     </p>
                   </div>
-                  <p className="text-meta mt-1 normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <p className="text-meta mt-1 tracking-normal text-[var(--color-fg-muted)]">
                     {t.hint}
                   </p>
                 </Link>

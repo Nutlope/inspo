@@ -69,7 +69,7 @@ export default async function ExtractPage({
               </p>
               <Link
                 href="/screens"
-                className="font-mono inline-block bg-[var(--color-fg)] !text-white px-5 py-3 text-sm font-medium uppercase tracking-wide transition-opacity hover:opacity-90 dark:!text-[var(--color-bg)]"
+                className="font-mono inline-block bg-[var(--color-fg)] !text-white px-5 py-3 text-sm font-medium tracking-normal transition-opacity hover:opacity-90 dark:!text-[var(--color-bg)]"
               >
                 Browse the archive →
               </Link>

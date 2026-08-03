@@ -62,12 +62,7 @@ export function FaqAccordion() {
           <li key={q}>
             <details onToggle={onToggle} className="group border-b rule">
               <summary
-                className="
-                  flex cursor-pointer items-baseline justify-between gap-6
-                  py-5 transition-colors
-                  hover:text-[var(--color-link)]
-                  focus-visible:outline-none focus-visible:text-[var(--color-link)]
-                "
+                className="flex cursor-pointer items-baseline justify-between gap-6 py-5 transition-colors hover:text-[var(--color-link)] focus-visible:outline-none focus-visible:text-[var(--color-link)]"
               >
                 <p className="font-display text-xl leading-tight sm:text-2xl">
                   {q}

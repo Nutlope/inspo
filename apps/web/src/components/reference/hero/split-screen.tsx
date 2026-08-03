@@ -42,7 +42,7 @@ export function HeroSplitScreen() {
           }}
         >
           <div className="absolute inset-0 flex flex-col justify-end p-8 sm:p-14">
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+            <p className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
               Panel - accent tint, no imagery
             </p>
           </div>

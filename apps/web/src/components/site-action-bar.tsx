@@ -138,21 +138,10 @@ export function SiteActionBar({
     <div
       role="region"
       aria-label="Quick actions"
-      className="
-        fixed inset-x-0 bottom-4 z-40 flex justify-center px-4
-        pointer-events-none
-      "
+      className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 pointer-events-none"
     >
       <div
-        className="
-          pointer-events-auto
-          flex items-stretch divide-x divide-[var(--color-border)]
-          border rule
-          bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)]
-          backdrop-blur-md
-          shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)]
-          font-mono text-[0.7rem] uppercase tracking-[0.12em]
-        "
+        className="pointer-events-auto flex items-stretch divide-x divide-[var(--color-border)] border rule bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)] backdrop-blur-md shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)] font-mono text-xs tracking-normal"
       >
         {/* Primary CTA - filled so the most-wanted action reads at a
             glance. Ink-on-paper in light mode, paper-on-ink in dark.
@@ -161,12 +150,7 @@ export function SiteActionBar({
           type="button"
           onClick={onCopyDesign}
           disabled={copyDesign === "copying"}
-          className="
-            relative inline-flex items-center gap-2 px-4 sm:px-5 py-3
-            bg-[var(--color-fg)] !text-white dark:!text-[var(--color-bg)]
-            transition-opacity hover:opacity-90
-            disabled:opacity-60
-          "
+          className="relative inline-flex items-center gap-2 px-4 sm:px-5 py-3 bg-[var(--color-fg)] !text-white dark:!text-[var(--color-bg)] transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {copyDesign === "ok" ? (
             <Check size={15} strokeWidth={2} aria-hidden />
@@ -223,10 +207,7 @@ export function SiteActionBar({
           href={sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="
-            inline-flex items-center gap-2 px-4 py-3
-            text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-link)]
-          "
+          className="inline-flex items-center gap-2 px-4 py-3 text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-link)]"
         >
           <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden />
           <span className="hidden md:inline">Visit live</span>
@@ -237,10 +218,7 @@ export function SiteActionBar({
           type="button"
           onClick={dismiss}
           aria-label="Dismiss action bar"
-          className="
-            inline-flex items-center px-3 py-3
-            text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]
-          "
+          className="inline-flex items-center px-3 py-3 text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
         >
           <X size={15} strokeWidth={1.75} aria-hidden />
         </button>

@@ -41,11 +41,7 @@ export function PricingPerUse() {
           {LINES.map((l) => (
             <li
               key={l.label}
-              className="
-                grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1
-                border-b rule py-5
-                transition-colors hover:text-[var(--color-link)]
-              "
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 border-b rule py-5 transition-colors hover:text-[var(--color-link)]"
             >
               <div>
                 <p className="font-display text-xl leading-tight">{l.label}</p>

@@ -68,7 +68,7 @@ export default async function ExampleDetailPage({
         <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-8">
             <p className="text-meta">Prompt</p>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.02] tracking-tight">
+            <h1 className="mt-2 font-display text-[length:var(--text-h1)] leading-[1.02] tracking-tight">
               “{ex.prompt}”
             </h1>
             <p className="mt-5 max-w-[58ch] text-lg text-[var(--color-fg-muted)]">
@@ -117,7 +117,7 @@ export default async function ExampleDetailPage({
       <div className="mx-auto mt-16 max-w-[120rem] px-6 sm:px-10">
         <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-12 lg:gap-x-10">
           <p className="text-meta lg:col-span-2">The move</p>
-          <p className="lg:col-span-10 font-display text-2xl leading-snug lg:text-[1.75rem]">
+          <p className="lg:col-span-10 font-display text-2xl leading-snug lg:text-2xl">
             {ex.highlight}
           </p>
         </div>
@@ -206,7 +206,7 @@ export default async function ExampleDetailPage({
                   style={{ background: p.hex }}
                 />
                 <code className="font-mono text-sm">{p.token}</code>
-                <code className="font-mono text-sm uppercase text-[var(--color-fg-muted)]">
+                <code className="font-mono text-sm text-[var(--color-fg-muted)]">
                   {p.hex}
                 </code>
                 <span className="text-sm text-[var(--color-fg-muted)]">

@@ -24,7 +24,7 @@ export function FooterStatement() {
           </em>
         </p>
 
-        <div className="mt-16 flex flex-wrap items-baseline justify-between gap-y-4 border-t rule pt-6 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+        <div className="mt-16 flex flex-wrap items-baseline justify-between gap-y-4 border-t rule pt-6 font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
           <span>Together AI · MIT · {new Date().getFullYear()}</span>
           <a
             href="#"

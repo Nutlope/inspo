@@ -53,14 +53,14 @@ export default async function CollectionPage({
               ← All issues
             </Link>
           </p>
-          <p className="mt-8 font-display text-7xl leading-none tracking-tight sm:text-8xl lg:text-[8rem]">
+          <p className="mt-8 font-display text-7xl leading-none tracking-tight sm:text-8xl lg:text-6xl">
             Nº{collection.number}
           </p>
           <p className="text-meta mt-4">{collection.date}</p>
         </div>
 
         <div className="lg:col-span-9">
-          <h1 className="font-display max-w-[18ch] text-balance text-6xl leading-[0.95] tracking-tight sm:text-7xl lg:text-[8rem]">
+          <h1 className="font-display max-w-[18ch] text-balance text-6xl leading-[0.95] tracking-tight sm:text-7xl lg:text-6xl">
             <em className="not-italic">{collection.title}</em>
           </h1>
           <p className="mt-10 max-w-[62ch] text-xl leading-relaxed text-[var(--color-fg-muted)]">

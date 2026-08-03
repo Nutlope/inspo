@@ -24,12 +24,7 @@ export function CommandHint() {
       type="button"
       onClick={open}
       aria-label="Open command palette"
-      className="
-        util-seg hidden shrink-0 items-center justify-center px-3
-        font-mono text-[0.72rem] leading-none
-        text-[var(--color-fg-muted)]
-        sm:flex
-      "
+      className="util-seg hidden shrink-0 items-center justify-center px-3 font-mono text-xs leading-none text-[var(--color-fg-muted)] sm:flex"
     >
       <span aria-hidden>⌘K</span>
     </button>

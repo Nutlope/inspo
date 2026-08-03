@@ -69,10 +69,7 @@ export function ThemeToggle() {
           ? `Switch to ${theme === "dark" ? "light" : "dark"} mode`
           : "Theme"
       }
-      className="
-        util-seg relative flex shrink-0 items-center justify-center px-2.5
-        text-[var(--color-fg-muted)]
-      "
+      className="util-seg relative flex shrink-0 items-center justify-center px-2.5 text-[var(--color-fg-muted)]"
     >
       <span
         aria-hidden

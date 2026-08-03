@@ -28,12 +28,7 @@ export function CtaTwoButton() {
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           <a
             href="#"
-            className="
-              group/btn relative inline-flex h-12 items-center gap-3
-              overflow-hidden bg-[var(--color-fg)] px-7
-              font-mono text-sm uppercase tracking-[0.12em] text-[var(--color-bg)]
-              transition-opacity hover:opacity-90
-            "
+            className="group/btn relative inline-flex h-12 items-center gap-3 overflow-hidden bg-[var(--color-fg)] px-7 font-mono text-sm tracking-normal text-[var(--color-bg)] transition-opacity hover:opacity-90"
           >
             <span>npx inspo init</span>
             <span aria-hidden className="transition-transform duration-300 group-hover/btn:translate-x-0.5">
@@ -42,11 +37,7 @@ export function CtaTwoButton() {
           </a>
           <a
             href="#"
-            className="
-              inline-flex h-12 items-center px-7 border rule
-              font-mono text-sm uppercase tracking-[0.12em] text-[var(--color-fg)]
-              transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]
-            "
+            className="inline-flex h-12 items-center px-7 border rule font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
           >
             Read the docs
           </a>

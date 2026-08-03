@@ -160,22 +160,11 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
       method="GET"
       action="/screens"
       role="search"
-      className="
-        group flex items-center gap-3 px-4 py-3
-        border-b border-[var(--color-border)]/60
-        transition-colors duration-200
-        hover:border-[var(--color-fg)]/40
-        focus-within:border-[var(--color-link)]
-      "
+      className="group flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
     >
       <span
         aria-hidden
-        className="
-          shrink-0 inline-flex
-          text-[var(--color-fg-muted)]
-          transition-colors duration-200
-          group-focus-within:text-[var(--color-link)]
-        "
+        className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors duration-200 group-focus-within:text-[var(--color-link)]"
       >
         <svg
           width="20"

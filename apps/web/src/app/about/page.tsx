@@ -63,7 +63,7 @@ export default async function AboutPage() {
               </p>
               <ol className="list-none space-y-4 pl-0">
                 <li>
-                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <span className="font-mono text-meta tracking-normal text-[var(--color-fg-muted)]">
                     01 ·
                   </span>{" "}
                   <strong className="text-[var(--color-fg)]">
@@ -75,7 +75,7 @@ export default async function AboutPage() {
                   designs to study, not generative slop to remix.
                 </li>
                 <li>
-                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <span className="font-mono text-meta tracking-normal text-[var(--color-fg-muted)]">
                     02 ·
                   </span>{" "}
                   <strong className="text-[var(--color-fg)]">
@@ -93,7 +93,7 @@ export default async function AboutPage() {
                   .
                 </li>
                 <li>
-                  <span className="font-mono text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">
+                  <span className="font-mono text-meta tracking-normal text-[var(--color-fg-muted)]">
                     03 ·
                   </span>{" "}
                   <strong className="text-[var(--color-fg)]">

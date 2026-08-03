@@ -25,7 +25,7 @@ export function HeroDocumentary() {
           </h1>
         </div>
         <aside className="lg:col-span-3 lg:border-l rule lg:pl-6">
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-fg-muted)]">
+          <p className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
             Caption
           </p>
           <p className="mt-3 text-sm leading-relaxed text-[var(--color-fg)]">

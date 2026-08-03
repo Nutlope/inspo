@@ -305,7 +305,7 @@ export function ScreensGrid({
               />
               <p className="text-meta">
                 Filtering by colour family ·{" "}
-                <span className="font-mono uppercase">{active.hex}</span>
+                <span className="font-mono">{active.hex}</span>
                 <span className="ml-2 text-[var(--color-fg-muted)]">
                   ({filteredCount.toLocaleString()} match
                   {filteredCount === 1 ? "" : "es"})
@@ -315,7 +315,7 @@ export function ScreensGrid({
             <button
               type="button"
               onClick={() => setFilter("hex", undefined)}
-              className="font-mono text-[10px] uppercase tracking-wider hover:text-[var(--color-link)]"
+              className="font-mono text-xs tracking-normal hover:text-[var(--color-link)]"
             >
               clear ×
             </button>

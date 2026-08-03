@@ -94,7 +94,7 @@ export function ExportBlock({
               aria-selected={tab === id}
               onClick={() => selectTab(id)}
               className={
-                `font-mono text-[10px] uppercase tracking-wider px-3 py-1 transition-colors ` +
+                `font-mono text-xs tracking-normal px-3 py-1 transition-colors ` +
                 (tab === id
                   ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
                   : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]")
@@ -107,7 +107,7 @@ export function ExportBlock({
         <CopyValue
           value={content}
           label={`Copy ${tab.toUpperCase()}`}
-          className="font-mono text-[10px] uppercase tracking-wider"
+          className="font-mono text-xs tracking-normal"
         />
       </div>
       <pre className="max-h-96 overflow-auto p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap">

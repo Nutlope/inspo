@@ -27,12 +27,7 @@ export function NavFloatingPill() {
             <a
               key={l}
               href="#"
-              className="
-                rounded-full px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-[0.12em]
-                text-[var(--color-fg-muted)] transition-colors
-                hover:bg-[color-mix(in_oklab,var(--color-fg)_5%,transparent)]
-                hover:text-[var(--color-fg)]
-              "
+              className="rounded-full px-3 py-1.5 font-mono text-xs tracking-normal text-[var(--color-fg-muted)] transition-colors hover:bg-[color-mix(in_oklab,var(--color-fg)_5%,transparent)] hover:text-[var(--color-fg)]"
             >
               {l}
             </a>
