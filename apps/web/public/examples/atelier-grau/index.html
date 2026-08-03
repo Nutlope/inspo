@@ -1,0 +1,215 @@
+<meta charset="utf-8">
+<title>Atelier Grau - Architecture, Basel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#fbfbfa;
+    --grey:#f1f1ee;
+    --ink:#151514;
+    --muted:#7c7c76;
+    --red:#d63a26;
+    --rule:#e3e3de;
+
+    --t-display:clamp(2.4rem,4.4vw,3.8rem);
+    --t-head:clamp(1.5rem,2.5vw,2.1rem);
+    --t-sub:1.1875rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--white);color:var(--ink);
+    font-family:"Inter Tight",system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .meta{font-size:var(--t-meta);color:var(--muted)}
+  h1{font-size:var(--t-display);line-height:1.08;letter-spacing:-.028em;font-weight:500}
+  h1 span{color:var(--red)}
+  h2{font-size:var(--t-head);line-height:1.16;letter-spacing:-.022em;font-weight:500}
+  h3{font-size:var(--t-sub);line-height:1.32;letter-spacing:-.012em;font-weight:500}
+
+  nav{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:baseline;padding:24px 0;border-bottom:1px solid var(--ink)}
+  .brand{font-weight:600;font-size:var(--t-sub);letter-spacing:-.02em}
+  .nl{display:flex;gap:24px;justify-content:center}
+  .nl a{color:var(--ink);text-decoration:none;font-size:var(--t-meta);transition:color .16s}
+  .nl a:hover{color:var(--red)}
+  nav .meta{text-align:right}
+
+  .hero{flex:1;display:grid;grid-template-columns:5fr 7fr;gap:44px;align-items:end;padding:36px 0 36px}
+  .lede{margin-top:18px;max-width:36ch;color:#54544e;font-size:var(--t-sub);line-height:1.55}
+  .hmeta{display:flex;gap:30px;margin-top:26px;padding-top:18px;border-top:1px solid var(--rule);flex-wrap:wrap}
+  .hmeta div p:first-child{font-weight:600;font-size:var(--t-body)}
+  .hmeta div p:last-child{color:var(--muted);font-size:var(--t-meta);margin-top:2px}
+
+  /* elevation drawing */
+  .draw{border:1px solid var(--ink);background:#fff;position:relative}
+  .draw svg{width:100%;display:block}
+  .dcap{display:flex;justify-content:space-between;border-top:1px solid var(--ink);padding:12px 16px}
+
+  section{padding:74px 0}
+  .band{background:var(--grey);border-block:1px solid var(--rule)}
+  .sh{display:grid;grid-template-columns:5fr 7fr;gap:44px;margin-bottom:34px}
+  .sh p{color:var(--muted);max-width:44ch}
+
+  /* the index: the whole practice in one table */
+  .idx{border-top:1px solid var(--ink)}
+  .row{display:grid;grid-template-columns:64px 1.5fr 1fr .9fr .7fr;gap:18px;align-items:baseline;
+       padding:15px 0;border-bottom:1px solid var(--rule);transition:background .14s;text-decoration:none;color:var(--ink)}
+  .row:hover{background:var(--grey)}
+  .row .yr{font-size:var(--t-meta);color:var(--muted)}
+  .row h3{font-weight:500}
+  .row .loc,.row .typ{font-size:var(--t-meta);color:var(--muted)}
+  .row .st{font-size:var(--t-meta);text-align:right}
+  .st.built{color:var(--ink)}
+  .st.site{color:var(--red)}
+  .st.unbuilt{color:var(--muted)}
+
+  .two{display:grid;grid-template-columns:5fr 7fr;gap:44px}
+  .two .facts{border-top:1px solid var(--ink)}
+  .frow{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--rule);font-size:var(--t-meta)}
+  .frow span:last-child{color:var(--muted)}
+  .pull{font-size:var(--t-head);line-height:1.3;letter-spacing:-.02em;font-weight:500;max-width:24ch}
+
+  footer{border-top:1px solid var(--ink);padding:26px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    nav{grid-template-columns:1fr auto}
+    .nl{display:none}
+    .hero,.sh,.two{grid-template-columns:1fr;gap:28px;padding-top:30px;padding-bottom:48px}
+    .row{grid-template-columns:52px 1fr auto}
+    .row .loc,.row .typ{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <p class="brand">Atelier Grau</p>
+    <div class="nl">
+      <a href="#work">Work</a>
+      <a href="#practice">Practice</a>
+      <a href="#">Text</a>
+      <a href="#">Contact</a>
+    </div>
+    <p class="meta">Basel · est. 2011</p>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="meta">Architecture and conversion</p>
+      <h1 style="margin-top:12px">Buildings that expect to be altered<span>.</span></h1>
+      <p class="lede">We design housing, schools and quiet public rooms,
+        mostly in existing structures. The plan is generous, the section
+        does the work, and the budget is part of the brief, not the
+        excuse.</p>
+      <div class="hmeta">
+        <div><p>34</p><p>Projects since 2011</p></div>
+        <div><p>19</p><p>Built or on site</p></div>
+        <div><p>7</p><p>People, one office</p></div>
+      </div>
+    </div>
+
+    <div class="draw">
+      <svg viewBox="0 0 640 330" aria-label="North elevation of Hallenhaus Dreispitz: a converted storage hall with a new timber upper storey">
+        <!-- ground line -->
+        <line x1="24" y1="286" x2="616" y2="286" stroke="#151514" stroke-width="2"/>
+        <!-- existing hall -->
+        <rect x="60" y="150" width="420" height="136" fill="none" stroke="#151514" stroke-width="1.6"/>
+        <!-- new storey -->
+        <rect x="60" y="86" width="420" height="64" fill="none" stroke="#d63a26" stroke-width="1.8"/>
+        <g stroke="#d63a26" stroke-width="1"><path d="M60 86 88 150M102 86 130 150M144 86 172 150M186 86 214 150M228 86 256 150M270 86 298 150M312 86 340 150M354 86 382 150M396 86 424 150M438 86 466 150"/></g>
+        <!-- roof -->
+        <path d="M52 86h436" stroke="#151514" stroke-width="2.4"/>
+        <!-- hall openings -->
+        <g fill="none" stroke="#151514" stroke-width="1.2">
+          <rect x="84" y="182" width="56" height="104"/>
+          <rect x="164" y="182" width="56" height="104"/>
+          <rect x="244" y="182" width="56" height="104"/>
+          <rect x="324" y="182" width="56" height="104"/>
+          <rect x="404" y="182" width="52" height="70"/>
+        </g>
+        <path d="M84 234h56M164 234h56M244 234h56M324 234h56" stroke="#151514" stroke-width="1"/>
+        <!-- crane track relic -->
+        <line x1="60" y1="166" x2="480" y2="166" stroke="#7c7c76" stroke-width="1" stroke-dasharray="5 4"/>
+        <!-- trees -->
+        <g stroke="#7c7c76" stroke-width="1.2" fill="none">
+          <path d="M540 286v-44M540 242c-12 2-18-8-12-16 4-8 18-8 24 0 6 8 0 18-12 16Z"/>
+          <path d="M584 286v-58M584 228c-14 2-22-10-14-20 5-9 22-9 28 0 8 10-1 22-14 20Z"/>
+        </g>
+        <!-- figures for scale -->
+        <g stroke="#151514" stroke-width="1.3" fill="none">
+          <circle cx="508" cy="266" r="4"/><path d="M508 270v10m0-6-5 8m5-8 5 8m-5-14-6 4m6-4 6 4"/>
+        </g>
+        <!-- dims -->
+        <g stroke="#7c7c76" stroke-width=".8">
+          <path d="M60 306v6M480 306v6M60 309h420"/>
+          <path d="M496 86h6M496 286h6M499 86v200"/>
+        </g>
+        <g font-family="Inter Tight, sans-serif" font-size="10" fill="#7c7c76">
+          <text x="262" y="322" text-anchor="middle">42.0 m</text>
+          <text x="506" y="190" transform="rotate(90 506 190)">15.4 m</text>
+        </g>
+      </svg>
+      <div class="dcap">
+        <p class="meta">04 · Hallenhaus Dreispitz, north elevation 1:200</p>
+        <p class="meta" style="color:var(--red)">On site, handover spring 2027</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="work" class="wrap">
+  <div class="sh">
+    <div>
+      <p class="meta">01 · Index</p>
+      <h2 style="margin-top:10px">All of it, including what lost.</h2>
+    </div>
+    <p>The list is the portfolio. Competitions we did not win and projects
+      that stayed on paper are part of the record; a practice that only
+      shows its victories is editing, not building.</p>
+  </div>
+  <div class="idx">
+    <a class="row" href="#"><span class="yr">2026</span><h3>Hallenhaus Dreispitz</h3><span class="loc">Basel</span><span class="typ">Housing in a storage hall</span><span class="st site">On site</span></a>
+    <a class="row" href="#"><span class="yr">2026</span><h3>Schulhaus Rüti extension</h3><span class="loc">Rüti ZH</span><span class="typ">School</span><span class="st unbuilt">Competition, 2nd prize</span></a>
+    <a class="row" href="#"><span class="yr">2025</span><h3>Haus am Wehr</h3><span class="loc">Rheinfelden</span><span class="typ">Single house, conversion</span><span class="st built">Built</span></a>
+    <a class="row" href="#"><span class="yr">2024</span><h3>Genossenschaft Feldbergstrasse</h3><span class="loc">Basel</span><span class="typ">Cooperative housing, 44 units</span><span class="st built">Built</span></a>
+    <a class="row" href="#"><span class="yr">2024</span><h3>Kapelle im Obstgarten</h3><span class="loc">Fricktal</span><span class="typ">Chapel</span><span class="st unbuilt">Unbuilt, client withdrew</span></a>
+    <a class="row" href="#"><span class="yr">2023</span><h3>Bibliothek Kleinhüningen</h3><span class="loc">Basel</span><span class="typ">Library in a tram depot</span><span class="st built">Built</span></a>
+    <a class="row" href="#"><span class="yr">2022</span><h3>Turnhalle St. Johann</h3><span class="loc">Basel</span><span class="typ">Gymnasium roof and retrofit</span><span class="st built">Built</span></a>
+    <a class="row" href="#"><span class="yr">2021</span><h3>Wohnregal Erlenmatt</h3><span class="loc">Basel</span><span class="typ">Housing, timber frame</span><span class="st built">Built</span></a>
+  </div>
+  <p class="meta" style="margin-top:18px">Full index of 34 projects on request, drawings included.</p>
+</section>
+
+<div class="band">
+  <section id="practice" class="wrap">
+    <div class="two">
+      <div>
+        <p class="meta">02 · Practice</p>
+        <p class="pull" style="margin-top:14px">The cheapest structure is
+          the one already standing. Most of our work begins by refusing
+          to demolish it.</p>
+      </div>
+      <div class="facts">
+        <div class="frow"><span>Founded</span><span>2011, by two, now seven</span></div>
+        <div class="frow"><span>Work in existing buildings</span><span>26 of 34 projects</span></div>
+        <div class="frow"><span>Competitions entered / won</span><span>21 / 6</span></div>
+        <div class="frow"><span>Average construction cost</span><span>2,340 CHF per m², published per project</span></div>
+        <div class="frow"><span>Office</span><span>A former print shop on Feldbergstrasse</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap">
+  <footer>
+    <p class="meta">Atelier Grau · Feldbergstrasse 92, Basel · Fees on the SIA scale, stated up front</p>
+    <p class="meta">Made with Inspo</p>
+  </footer>
+</div>

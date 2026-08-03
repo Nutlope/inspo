@@ -1,0 +1,293 @@
+<meta charset="utf-8">
+<title>Spark Hall - The science museum where you touch everything</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --milk:#fffdf6;
+    --ink:#1d1a2e;
+    --muted:#6f6a85;
+    --sun:#ffc93d;
+    --coral:#ff6b4a;
+    --teal:#0fa3a0;
+    --violet:#7a63e8;
+    --sun-soft:#fff3d1;
+    --coral-soft:#ffe3db;
+    --teal-soft:#d9f2f1;
+    --violet-soft:#e8e3fc;
+    --rule:#eae5d8;
+
+    --t-display:clamp(2.7rem,5.2vw,4.5rem);
+    --t-head:clamp(1.6rem,2.8vw,2.4rem);
+    --t-sub:1.25rem;
+    --t-body:1.0625rem;
+    --t-meta:0.8125rem;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--milk);color:var(--ink);
+    font-family:Manrope,system-ui,sans-serif;
+    font-size:var(--t-body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:0 30px}
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .meta{font-size:var(--t-meta);color:var(--muted);font-weight:500}
+  h1{font-family:Archivo,sans-serif;font-weight:900;font-size:var(--t-display);line-height:1.02;letter-spacing:-.025em}
+  h2{font-family:Archivo,sans-serif;font-weight:800;font-size:var(--t-head);line-height:1.12;letter-spacing:-.02em}
+  h3{font-family:Archivo,sans-serif;font-weight:600;font-size:var(--t-sub);line-height:1.3;letter-spacing:-.01em}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-family:Archivo,sans-serif;font-weight:800;font-size:var(--t-sub);letter-spacing:-.02em}
+  .bolt{width:26px;height:26px;border-radius:8px;background:var(--sun);display:grid;place-items:center}
+  .nl{display:flex;gap:26px}
+  .nl a{color:var(--muted);text-decoration:none;font-size:var(--t-meta);font-weight:600;transition:color .16s}
+  .nl a:hover{color:var(--ink)}
+  .btn{display:inline-block;text-decoration:none;border-radius:999px;font-weight:700;font-size:var(--t-meta);padding:12px 24px;transition:transform .16s}
+  .btn:hover{transform:translateY(-2px) rotate(-.5deg)}
+  .btn-1{background:var(--ink);color:var(--milk)}
+  .btn-2{background:var(--sun);color:var(--ink)}
+
+  .hero{flex:1;display:grid;grid-template-columns:1.04fr .96fr;align-items:center;gap:44px;padding:14px 0 30px}
+  .today{display:inline-flex;align-items:center;gap:8px;background:var(--teal-soft);color:var(--teal);
+         border-radius:999px;padding:7px 14px;font-size:var(--t-meta);font-weight:700}
+  .lede{margin-top:16px;max-width:40ch;font-size:var(--t-sub);line-height:1.55;color:#524d6b}
+  .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
+  .hours{display:flex;gap:26px;margin-top:26px;padding-top:20px;border-top:2px solid var(--rule);flex-wrap:wrap}
+  .hours p:first-child{font-family:Archivo,sans-serif;font-weight:800;font-size:var(--t-sub)}
+  .hours p:last-child{color:var(--muted);font-size:var(--t-meta);margin-top:3px;font-weight:500}
+
+  /* the contraption */
+  .stage{position:relative;display:flex;align-items:center;justify-content:center}
+  .machine{width:100%;max-width:520px}
+  .cog{transform-box:fill-box;transform-origin:center;animation:spin 14s linear infinite}
+  .cog2{transform-box:fill-box;transform-origin:center;animation:spin 9s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .bub{transform-box:fill-box;animation:rise 5s ease-in-out infinite}
+  .bub2{transform-box:fill-box;animation:rise 6.5s ease-in-out infinite .8s}
+  @keyframes rise{0%,100%{transform:translateY(4px);opacity:.7}50%{transform:translateY(-7px);opacity:1}}
+
+  section{padding:76px 0}
+  .band{background:var(--sun-soft);border-block:2px solid var(--rule)}
+  .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:32px;flex-wrap:wrap}
+  .sh p{margin-top:8px;color:var(--muted);max-width:46ch}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .ex{border-radius:22px;padding:26px;display:flex;flex-direction:column;min-height:230px;
+      border:2px solid var(--rule);background:#fff;transition:transform .18s}
+  .ex:hover{transform:translateY(-5px) rotate(.4deg)}
+  .ex .tag{align-self:flex-start;border-radius:999px;padding:5px 12px;font-size:var(--t-meta);font-weight:700}
+  .ex h3{margin-top:14px}
+  .ex p{margin-top:8px;color:var(--muted);font-size:var(--t-meta);line-height:1.6;font-weight:500}
+  .ex .age{margin-top:auto;padding-top:14px;font-size:var(--t-meta);font-weight:700}
+
+  .tick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .tk{background:#fff;border:2px solid var(--rule);border-radius:22px;padding:26px;text-align:center}
+  .tk .amt{font-family:Archivo,sans-serif;font-weight:900;font-size:2.4rem;line-height:1;letter-spacing:-.03em}
+  .tk p{color:var(--muted);font-size:var(--t-meta);font-weight:500;margin-top:8px}
+  .tk .who{font-family:Archivo,sans-serif;font-weight:800;font-size:var(--t-sub);margin-bottom:10px}
+
+  .plan{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .plan .facts{border-top:2px solid var(--rule)}
+  .frow{display:flex;justify-content:space-between;padding:13px 0;border-bottom:2px solid var(--rule);font-size:var(--t-meta);font-weight:600}
+  .frow span:last-child{color:var(--muted);font-weight:500}
+
+  .closer{text-align:center;padding:74px 0}
+  .closer h2{max-width:22ch;margin:0 auto 12px}
+  .closer p{color:var(--muted);max-width:46ch;margin:0 auto 22px}
+  footer{border-top:2px solid var(--rule);padding:26px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media(max-width:900px){
+    .fold{min-height:0}
+    .hero,.plan{grid-template-columns:1fr;gap:32px;padding:30px 0 50px}
+    .grid,.tick-row{grid-template-columns:1fr}
+    .nl{display:none}
+  }
+</style>
+
+<div class="wrap fold">
+  <nav>
+    <div class="brand">
+      <span class="bolt">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M13 2 5 14h6l-1 8 8-12h-6l1-8Z" fill="#1d1a2e"/>
+        </svg>
+      </span>
+      Spark Hall
+    </div>
+    <div class="nl">
+      <a href="#exhibits">Exhibits</a>
+      <a href="#tickets">Tickets</a>
+      <a href="#visit">Plan a visit</a>
+      <a href="#">Schools</a>
+    </div>
+    <a class="btn btn-2" href="#tickets">Get tickets</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <p class="today">Open today until 17:00 · Lightning show at 14:30</p>
+      <h1 style="margin-top:16px">Please touch everything.</h1>
+      <p class="lede">Three floors of levers to pull, storms to start, and
+        one very patient robot. Built for ages 4 to 12 and secretly for
+        whoever brought them.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#tickets">Get tickets</a>
+        <a class="btn btn-2" href="#exhibits">What's inside</a>
+      </div>
+      <div class="hours">
+        <div><p>10:00 - 17:00</p><p>Tuesday to Sunday</p></div>
+        <div><p>214</p><p>Things with buttons</p></div>
+        <div><p>0</p><p>Glass cases</p></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <svg class="machine" viewBox="0 0 520 420" aria-label="A friendly contraption of gears, a bubbling flask and a comet, drawn in the museum's colours">
+        <rect x="30" y="46" width="460" height="330" rx="26" fill="#fff" stroke="#eae5d8" stroke-width="3"/>
+        <g class="cog">
+          <circle cx="150" cy="150" r="52" fill="#ffc93d"/>
+          <g fill="#ffc93d">
+            <rect x="142" y="82" width="16" height="26" rx="5"/><rect x="142" y="192" width="16" height="26" rx="5"/>
+            <rect x="82" y="142" width="26" height="16" rx="5"/><rect x="192" y="142" width="26" height="16" rx="5"/>
+            <rect x="99" y="99" width="20" height="20" rx="6" transform="rotate(45 109 109)"/>
+            <rect x="181" y="99" width="20" height="20" rx="6" transform="rotate(45 191 109)"/>
+            <rect x="99" y="181" width="20" height="20" rx="6" transform="rotate(45 109 191)"/>
+            <rect x="181" y="181" width="20" height="20" rx="6" transform="rotate(45 191 191)"/>
+          </g>
+          <circle cx="150" cy="150" r="20" fill="#fffdf6" stroke="#1d1a2e" stroke-width="3"/>
+        </g>
+        <g class="cog2">
+          <circle cx="248" cy="220" r="34" fill="#7a63e8"/>
+          <g fill="#7a63e8">
+            <rect x="242" y="176" width="12" height="18" rx="4"/><rect x="242" y="246" width="12" height="18" rx="4"/>
+            <rect x="204" y="214" width="18" height="12" rx="4"/><rect x="274" y="214" width="18" height="12" rx="4"/>
+            <rect x="215" y="181" width="14" height="14" rx="4" transform="rotate(45 222 188)"/>
+            <rect x="267" y="181" width="14" height="14" rx="4" transform="rotate(45 274 188)"/>
+            <rect x="215" y="245" width="14" height="14" rx="4" transform="rotate(45 222 252)"/>
+            <rect x="267" y="245" width="14" height="14" rx="4" transform="rotate(45 274 252)"/>
+          </g>
+          <circle cx="248" cy="220" r="12" fill="#fffdf6" stroke="#1d1a2e" stroke-width="3"/>
+        </g>
+        <!-- flask -->
+        <path d="M368 120h44v52l30 74a16 16 0 0 1-15 22h-74a16 16 0 0 1-15-22l30-74v-52Z" fill="#d9f2f1" stroke="#0fa3a0" stroke-width="3.5"/>
+        <path d="M352 214h76l14 34a10 10 0 0 1-9 14h-86a10 10 0 0 1-9-14l14-34Z" fill="#0fa3a0" opacity=".85"/>
+        <rect x="360" y="108" width="60" height="14" rx="7" fill="#0fa3a0"/>
+        <circle class="bub" cx="378" cy="200" r="7" fill="#0fa3a0" opacity=".7"/>
+        <circle class="bub2" cx="404" cy="186" r="5" fill="#0fa3a0" opacity=".6"/>
+        <!-- comet -->
+        <circle cx="330" cy="88" r="13" fill="#ff6b4a"/>
+        <path d="M320 97 284 122M324 83 280 94" stroke="#ff6b4a" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+        <!-- track + ball run -->
+        <path d="M64 300c60 34 140 44 210 30s118-8 182 14" stroke="#1d1a2e" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="120" cy="316" r="9" fill="#ff6b4a"/>
+        <circle cx="300" cy="330" r="9" fill="#ffc93d"/>
+        <circle cx="420" cy="344" r="9" fill="#7a63e8"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<section id="exhibits" class="wrap">
+  <div class="sh">
+    <div>
+      <h2>Inside, currently.</h2>
+      <p>Six halls, rotated twice a year. Everything is at kid height,
+        which is why the grown-ups end up kneeling.</p>
+    </div>
+    <p class="meta">Floor plan at the desk</p>
+  </div>
+  <div class="grid">
+    <article class="ex" style="background:var(--sun-soft)">
+      <span class="tag" style="background:var(--sun);color:var(--ink)">Hall 1</span>
+      <h3>The Storm Room</h3>
+      <p>Make real lightning behind very thick glass, then find out why your hair has opinions about it.</p>
+      <p class="age" style="color:#a8821f">Ages 6 and up</p>
+    </article>
+    <article class="ex" style="background:var(--teal-soft)">
+      <span class="tag" style="background:var(--teal);color:#fff">Hall 2</span>
+      <h3>Water Works</h3>
+      <p>Dams, locks, whirlpools and an Archimedes screw the size of a slide. Ponchos provided, dignity not.</p>
+      <p class="age" style="color:var(--teal)">All ages · You will get wet</p>
+    </article>
+    <article class="ex" style="background:var(--violet-soft)">
+      <span class="tag" style="background:var(--violet);color:#fff">Hall 3</span>
+      <h3>Small Universe</h3>
+      <p>A planetarium for short attention spans: eleven minutes, one comet, and the loudest sun we could legally build.</p>
+      <p class="age" style="color:var(--violet)">Shows on the hour</p>
+    </article>
+    <article class="ex" style="background:var(--coral-soft)">
+      <span class="tag" style="background:var(--coral);color:#fff">Hall 4</span>
+      <h3>Take It Apart</h3>
+      <p>Real appliances, real screwdrivers, zero instructions. The one room where breaking it is the assignment.</p>
+      <p class="age" style="color:#c2452c">Ages 8 and up</p>
+    </article>
+    <article class="ex" style="background:var(--sun-soft)">
+      <span class="tag" style="background:var(--sun);color:var(--ink)">Hall 5</span>
+      <h3>The Ball Run</h3>
+      <p>Forty metres of track, six gates, and a queue of adults pretending they are here to supervise.</p>
+      <p class="age" style="color:#a8821f">All ages</p>
+    </article>
+    <article class="ex" style="background:var(--teal-soft)">
+      <span class="tag" style="background:var(--teal);color:#fff">Hall 6</span>
+      <h3>Meet Rivet</h3>
+      <p>Our robot. Rivet sorts blocks, loses at noughts and crosses on purpose, and waves back every single time.</p>
+      <p class="age" style="color:var(--teal)">Sessions at 11:00 and 15:00</p>
+    </article>
+  </div>
+</section>
+
+<div class="band">
+  <section id="tickets" class="wrap">
+    <div class="sh">
+      <div>
+        <h2>Tickets, kept simple.</h2>
+        <p>Book online and skip the queue, or just turn up; we hold back
+          a hundred walk-in places every day.</p>
+      </div>
+    </div>
+    <div class="tick-row">
+      <div class="tk"><p class="who">Kids 4 to 12</p><p class="amt">9 €</p><p>Under 4s free, always</p></div>
+      <div class="tk" style="border-color:var(--sun);background:#fffaf0"><p class="who">Family of four</p><p class="amt">28 €</p><p>Two grown-ups, two kids, one flat price</p></div>
+      <div class="tk"><p class="who">Grown-ups</p><p class="amt">12 €</p><p>Admitted only with a child. House rule.</p></div>
+    </div>
+  </section>
+</div>
+
+<section id="visit" class="wrap">
+  <div class="plan">
+    <div>
+      <h2>Plan the visit.</h2>
+      <p style="margin-top:12px;color:var(--muted);max-width:44ch">Two hours
+        is a good first visit; four is a crusade. The café does small
+        portions and enormous ones, and the lockers take pound coins we
+        will happily lend you.</p>
+      <a class="btn btn-1" href="#" style="margin-top:22px">Get directions</a>
+    </div>
+    <div class="facts">
+      <div class="frow"><span>Tuesday to Sunday</span><span>10:00 - 17:00</span></div>
+      <div class="frow"><span>Lightning show</span><span>Daily, 14:30, Hall 1</span></div>
+      <div class="frow"><span>Quiet hours</span><span>Sundays 10:00 - 12:00, lights low</span></div>
+      <div class="frow"><span>Pushchair parking</span><span>Yes, supervised</span></div>
+      <div class="frow"><span>Nearest stop</span><span>Corn Exchange, buses 4, 7, 18</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap closer">
+    <h2>Some museums say do not touch. We never learned to.</h2>
+    <p>Spark Hall is an independent charity. Every ticket keeps the
+      screwdrivers sharp and Rivet waving.</p>
+    <a class="btn btn-1" href="#tickets">Get tickets</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <footer>
+    <p class="meta">Spark Hall · 4 Foundry Lane · An independent charity, est. 2009</p>
+    <p class="meta">Made with Inspo</p>
+  </footer>
+</div>

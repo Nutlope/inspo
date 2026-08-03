@@ -1176,6 +1176,314 @@ export const EXAMPLES: Example[] = [
     ],
     highlight: "The fold gives half its width to a chart, and the chart is the argument: five bars showing where a city's vegetables actually come from, with the shortest one - 3.1% grown within fifty kilometres - in the accent colour. A note in the corner admits that 27.2% could not be classified at all, and the essay's second half is about exactly that missing quarter.",
   },
+  {
+    slug: "nightjar-sleeper",
+    brand: "Nightjar",
+    tagline: "The night train from Paris to Venice: fall asleep at Gare de Lyon, wake up on the lagoon.",
+    prompt: "An overnight sleeper train service: romantic, art deco, navy and gold, route-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.8,
+    references: [
+      {
+        slug: "getty-edu",
+        took: "The decisive reference in the returned pair: warm antique serif floating on a dark, hushed ground. Its register - elegant, institutional, unhurried - became the DM Serif Display on deep navy, with gold doing the work its ochre does.",
+      },
+      {
+        slug: "brandappart-com",
+        took: "The other returned exemplar. Its stark restraint on an near-empty field argued against decorating the fold; the page keeps one headline, one route board, and air.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "an overnight sleeper train service: romantic, art deco, navy and gold, route-led",
+        took: "Returned a Specimen pick with two exemplars bracketing the register: Getty's warm serif-on-dark and Brand Appart's restraint. The route board as the hero's single specimen object follows directly from that pick.",
+      },
+    ],
+    palette: [
+      {
+        token: "--navy",
+        hex: "#0b1626",
+        from: "Night-sky navy ground; dark with blue depth rather than neutral black, so the gold reads as lamplight.",
+      },
+      {
+        token: "--gold",
+        hex: "#c9a35c",
+        from: "Brass gold on the CTA, the route line and the deco double border around the departure board. The one metallic note, used the way Getty uses ochre.",
+      },
+      {
+        token: "--gold-2",
+        hex: "#e3c98f",
+        from: "Lit gold for the italic headline phrase, times on the board and hover states; the same metal catching light.",
+      },
+      {
+        token: "--cream",
+        hex: "#f0e9db",
+        from: "Warm cream for the serif display and body, never pure white against the navy.",
+      },
+      {
+        token: "--muted",
+        hex: "#8fa0b8",
+        from: "Blue-grey for stop notes, captions and the punctuality table's second column.",
+      },
+      {
+        token: "--panel",
+        hex: "#152741",
+        from: "Raised navy for the cabin cards, one step off the ground.",
+      },
+    ],
+    highlight: "The hero's right half is a working departure board framed in a thin gold deco border: six stops from Paris to Venezia Santa Lucia with real times down a gold route line, and notes that admit what a timetable never would ('04:47 Brig - you will be asleep'). Below, the punctuality section publishes the worst night of the season, storm at Brig included.",
+  },
+  {
+    slug: "spark-hall",
+    brand: "Spark Hall",
+    tagline: "A children's science museum with 214 things that have buttons and zero glass cases.",
+    prompt: "A children's science museum: playful, bright, hands-on, exhibits-led, for families.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.6,
+    references: [
+      {
+        slug: "museumofmoney-com",
+        took: "The anchor, and a real interactive museum: bright citrus on a clean open canvas with Archivo Black display over Manrope body. Spark Hall adopts that exact type recipe and the approachable-bold register wholesale.",
+      },
+      {
+        slug: "bauhausclock-com",
+        took: "The counterweight in the returned set: precise geometry on stark white. It kept the playfulness disciplined - big rounded shapes, but on a strict grid with consistent 2px rules.",
+      },
+      {
+        slug: "headroom-com",
+        took: "Returned in the same Marquee Hero cohort; its airy single-accent fold argued for one enormous statement headline over a busy collage, which became 'Please touch everything.'",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "a children's science museum: playful, bright, hands-on, exhibits-led, for families",
+        took: "Inferred light mode from the brief, picked Marquee Hero, and surfaced a real interactive museum (Museum of Money) whose Archivo Black + Manrope pairing and citrus-on-clean palette the page is built on.",
+      },
+    ],
+    palette: [
+      {
+        token: "--milk",
+        hex: "#fffdf6",
+        from: "Warm near-white ground, so the bright shapes pop without the page reading as a toy box.",
+      },
+      {
+        token: "--sun",
+        hex: "#ffc93d",
+        from: "Sunshine yellow: the brand bolt, the big gear, the ticket highlight and Hall 1. The lead colour of four.",
+      },
+      {
+        token: "--coral",
+        hex: "#ff6b4a",
+        from: "Coral for the comet, Take It Apart hall and the warm half of the shape system.",
+      },
+      {
+        token: "--teal",
+        hex: "#0fa3a0",
+        from: "Teal for the flask, Water Works and the open-today pill.",
+      },
+      {
+        token: "--violet",
+        hex: "#7a63e8",
+        from: "Violet for the small gear and the planetarium hall; four accents because a museum floor is many rooms, each colour-coded like its wayfinding.",
+      },
+      {
+        token: "--ink",
+        hex: "#1d1a2e",
+        from: "Ink with a violet cast for the Archivo Black display, softer than pure black next to the brights.",
+      },
+    ],
+    highlight: "The hero's contraption is an animated SVG machine: two gears meshing at different speeds (spinning on their own centres via transform-box), a bubbling flask, a comet and a ball run, drawn entirely in the museum's four wayfinding colours. The pricing says the quiet part out loud: grown-ups 12 euros, 'admitted only with a child - house rule.'",
+  },
+  {
+    slug: "loom-audio",
+    brand: "Loom Audio",
+    tagline: "The Loom One: an eight-voice analog synthesizer with one knob per job.",
+    prompt: "An analog synthesizer maker: warm retro-tech, tactile, cream and orange, panel-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.7,
+    references: [
+      {
+        slug: "teenageengineering-com",
+        took: "The obvious anchor and the top hit: hardware presented as a specimen on a calm field, mono micro-labels, and a single orange accent doing all the branding. The Loom One's panel staging, jack-label typography and orange-on-cream palette descend directly from it.",
+      },
+      {
+        slug: "hardwareoperations-com",
+        took: "Product-visualisation studio in the same result set. Its GT Pressura + Geist Mono pairing informed the Space Grotesk + JetBrains Mono system, and its warm-grey staging shaped the drop-shadowed instrument render.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "search_screens",
+        args: "synthesizer hardware audio equipment retro tactile knobs",
+        took: "Went straight to search because the reference obviously existed: Teenage Engineering came back first, with Hardware Operations beside it. Between them they settled the entire visual system before a line was written.",
+      },
+    ],
+    palette: [
+      {
+        token: "--shell",
+        hex: "#efe9dc",
+        from: "Warm cream ground, the colour of a seventies instrument case rather than a white web page.",
+      },
+      {
+        token: "--orange",
+        hex: "#e0742c",
+        from: "Signal orange on the cutoff and drive knobs, the order button and the filter block in the signal path. The Teenage Engineering move: one hot accent on calm hardware.",
+      },
+      {
+        token: "--ink",
+        hex: "#26221b",
+        from: "Warm near-black for type, the dark knobs and the keybed.",
+      },
+      {
+        token: "--panel",
+        hex: "#f7f3ea",
+        from: "The instrument's faceplate tone, one step lighter than the page so the render reads as an object on a desk.",
+      },
+      {
+        token: "--muted",
+        hex: "#82796a",
+        from: "Warm grey for the mono panel labels (cutoff, resonance, drift, drive) and spec-table values.",
+      },
+      {
+        token: "--olive",
+        hex: "#6d6f4e",
+        from: "Reserved tone that ended up used only in the patch display's phosphor text; restraint left it almost unspent.",
+      },
+    ],
+    highlight: "The hero is a full SVG render of the instrument: walnut cheeks, a cream steel panel, four large and four small knobs each with its own indicator angle, three sliders, six CV jacks, a green patch display and a 37-key keybed - every label set in the mono style Teenage Engineering uses. The spec table quotes tuning drift as plus or minus four cents an hour and calls it a feature, and the order box admits batch five sold out in nine days.",
+  },
+  {
+    slug: "atelier-grau",
+    brand: "Atelier Grau",
+    tagline: "A Basel architecture practice that lists its lost competitions in the portfolio.",
+    prompt: "An architecture practice: swiss grid, austere, restrained, project-index led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 8.5,
+    references: [
+      {
+        slug: "atlassian-design",
+        took: "Returned as an Ecosystem Index exemplar. A platform rather than a practice, so the useful signal was structural: an index page organised by a strict grid with one accent colour, which maps onto the swiss register the brief named.",
+      },
+      {
+        slug: "behance-net",
+        took: "The other returned exemplar, likewise a platform. Confirmed the crisp white gallery ground and the discipline of letting the work list carry the page; the practice-specific conventions (elevations, competition results, cost per square metre) came from the domain, not the references.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "an architecture practice: swiss grid, austere, restrained, project-index led",
+        took: "Picked Ecosystem Index, which settled the page shape: the index is the portfolio. The returned exemplars were platforms rather than practices - recorded here honestly - so the macrostructure pick was the valuable output and the register came from the brief.",
+      },
+    ],
+    palette: [
+      {
+        token: "--white",
+        hex: "#fbfbfa",
+        from: "Near-white ground; swiss austerity starts with refusing a tint.",
+      },
+      {
+        token: "--ink",
+        hex: "#151514",
+        from: "Near-black for type and the elevation drawing's existing structure. The nav and index borders use it at full strength - 1px of ink, not grey.",
+      },
+      {
+        token: "--red",
+        hex: "#d63a26",
+        from: "The single swiss red: the headline full stop, the new timber storey in the elevation, and on-site status in the index. It marks what is new or alive, nothing else.",
+      },
+      {
+        token: "--grey",
+        hex: "#f1f1ee",
+        from: "A half-step grey for the practice band and row hovers.",
+      },
+      {
+        token: "--muted",
+        hex: "#7c7c76",
+        from: "Mid grey for years, locations, dimension strings and the crane-track relic in the drawing.",
+      },
+      {
+        token: "--rule",
+        hex: "#e3e3de",
+        from: "Hairlines inside the index; the heavier structural lines are drawn in ink.",
+      },
+    ],
+    highlight: "The hero's drawing is a 1:200 north elevation in real architectural convention: the existing hall in ink, the proposed timber storey hatched in red, a dashed crane-track relic, scale figures, trees, and dimension lines reading 42.0 by 15.4 metres. The project index below lists the second-prize competition and the chapel whose client withdrew, because a practice that only shows victories is editing, not building.",
+  },
+  {
+    slug: "attract-mode",
+    brand: "Attract Mode",
+    tagline: "A volunteer workshop that restores dying arcade cabinets and puts them back on free play.",
+    prompt: "An arcade game preservation workshop: retro CRT, pixel, catalogue-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 8.6,
+    references: [
+      {
+        slug: "emigre-com",
+        took: "The structurally useful hit: a dense Catalogue macrostructure where every entry is a specimen in its own style. That is exactly what an arcade floor is, and it shaped the honestly-labelled inventory table that anchors the page.",
+      },
+      {
+        slug: "daptonerecords-com",
+        took: "A real preservation-minded label with vintage warmth. Its refusal to modernise its own aesthetic validated leading with period texture (scanlines, phosphor, a pixel display face) rather than a contemporary gloss over old subject matter.",
+      },
+      {
+        slug: "epicgames-com",
+        took: "The counterexample in the set: modern games commerce, glossy and dense. Read as what this page must not be, which pushed it toward workshop honesty - statuses, repair logs, a parts machine labelled as such.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "search_screens",
+        args: "retro arcade pixel game vintage crt archive",
+        took: "Surfaced Emigre's catalogue structure, Daptone's vintage conviction and Epic's modern counterexample - between them, the shape (a specimen table), the texture (committed retro) and the tone (not a store) were all settled.",
+      },
+    ],
+    palette: [
+      {
+        token: "--crt",
+        hex: "#0a0d0b",
+        from: "Near-black with a green cast: the tube when the game is between lives. A fixed scanline overlay sits on the whole page at 3px pitch.",
+      },
+      {
+        token: "--phosphor",
+        hex: "#52e07a",
+        from: "P1 phosphor green: the pixel headline's hot words, playable statuses, the screen sprites and the free-play button.",
+      },
+      {
+        token: "--amber",
+        hex: "#f5b83d",
+        from: "Marquee amber for the insert-coin line, the cabinet's marquee and bench statuses. The two-phosphor palette is the whole grammar of the era.",
+      },
+      {
+        token: "--paper",
+        hex: "#e9efe4",
+        from: "Off-white with a green tint for body copy, so even the reading text sits inside the tube.",
+      },
+      {
+        token: "--muted",
+        hex: "#7d8a78",
+        from: "Sage grey for table values, the parts machine and supporting copy.",
+      },
+      {
+        token: "--panel",
+        hex: "#141b12",
+        from: "Raised panel for the restoration cards and the band sections.",
+      },
+    ],
+    highlight: "The whole page sits behind a CRT scanline overlay, and the hero cabinet is drawn in crisp-edged pixel rectangles: amber marquee, a screen of phosphor sprites mid-game, joystick, two buttons and a coin door with two working-looking slots. The display face is Pixelify Sans - a pixel font with a true lowercase, so the retro voice keeps the site's no-all-caps rule - and the floor table labels one Asteroids unit 'parts machine, says so on the label.'",
+  },
 ];
 
 export function getExample(slug: string): Example | undefined {

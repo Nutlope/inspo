@@ -24,20 +24,25 @@ export const metadata: Metadata = {
  *  order, so the page stays correct as the set grows. */
 const ORDER = [
   "nocturne-festival",
-  "alder-money",
+  "spark-hall",
   "wavecast",
   "long-table-essay",
-  "rill-radio",
-  "aureole-parfum",
-  "driftmail",
+  "nightjar-sleeper",
+  "alder-money",
+  "attract-mode",
   "sable-patisserie",
+  "driftmail",
+  "loom-audio",
   "tidepool-trust",
   "meridian-review",
   "studio-volta",
-  "fieldnote-db",
+  "atelier-grau",
   "halcyon-optics",
-  "ember-and-ash",
+  "aureole-parfum",
+  "rill-radio",
+  "fieldnote-db",
   "vaultline-pricing",
+  "ember-and-ash",
 ];
 
 function ordered(): Example[] {
