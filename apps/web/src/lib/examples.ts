@@ -970,7 +970,7 @@ export const EXAMPLES: Example[] = [
         from: "Hairlines. The whole page is organised by rules; there is not a single drop shadow.",
       },
     ],
-    highlight: "The benchmark table includes the row where Fieldnote loses, and says why: 'fan-out across 6 nodes — not supported', because it is a library and not a cluster. The closing line is 'if you need a cluster, use a cluster'. It is the rare generated page that argues its scope honestly instead of claiming to win everywhere.",
+    highlight: "The benchmark table includes the row where Fieldnote loses, and says why: 'fan-out across 6 nodes - not supported', because it is a library and not a cluster. The closing line is 'if you need a cluster, use a cluster'. It is the rare generated page that argues its scope honestly instead of claiming to win everywhere.",
   },
   {
     slug: "tidepool-trust",
@@ -1106,7 +1106,7 @@ export const EXAMPLES: Example[] = [
         from: "Muted mauve for hosts, times and secondary copy.",
       },
     ],
-    highlight: "The now-playing panel is a working radio widget: a gradient cover card, an eighteen-bar equaliser animating on staggered delays, and three rows naming the host, the record currently playing and what follows at six. Below it the schedule is a real day of programming, including a 22:00 slot marked 'unhosted — assembled by whoever locks up'.",
+    highlight: "The now-playing panel is a working radio widget: a gradient cover card, an eighteen-bar equaliser animating on staggered delays, and three rows naming the host, the record currently playing and what follows at six. Below it the schedule is a real day of programming, including a 22:00 slot marked 'unhosted - assembled by whoever locks up'.",
   },
   {
     slug: "long-table-essay",
