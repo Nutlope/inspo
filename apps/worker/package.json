@@ -27,7 +27,9 @@
     "dev:server": "tsx src/server.ts",
     "start:server": "tsx src/server.ts",
     "test:capture": "tsx src/cli.ts capture https://linear.app",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "curate": "tsx src/curate.ts",
+    "curate:apply": "tsx src/delete-sites.ts --from-file=captures/_reports/removals.txt --apply"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
