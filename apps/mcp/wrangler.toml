@@ -29,13 +29,13 @@ simple = { limit = 120, period = 60 }
 #   SELECT blob1 AS tool, count() AS calls, avg(double1) AS avg_ms
 #   FROM inspo_mcp_tools GROUP BY tool ORDER BY calls DESC
 #
-# DISABLED until Analytics Engine is enabled on the account (one click:
-# https://dash.cloudflare.com/2d054aa587099f897cdff0c46ba9d97f/workers/analytics-engine
-# ). Then uncomment and `wrangler deploy` - worker.ts already writes the
-# datapoints whenever the binding exists.
-# [[analytics_engine_datasets]]
-# binding = "MCP_ANALYTICS"
-# dataset = "inspo_mcp_tools"
+# Enabled on the account 2026-08-03. worker.ts writes a datapoint per
+# tool call whenever this binding exists, and silently does nothing when
+# it does not, so removing the binding is a safe way to switch metrics
+# off without touching code.
+[[analytics_engine_datasets]]
+binding = "MCP_ANALYTICS"
+dataset = "inspo_mcp_tools"
 
 [vars]
 ENFORCE_AUTH = "0"
