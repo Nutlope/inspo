@@ -3,7 +3,7 @@
  *
  * Every entry is a REAL page built using only the Inspo MCP - no design
  * skill, no template, no component library. The HTML is copied verbatim
- * into public/examples/<slug>/index.html and iframed.
+ * into public/examples/<slug>/page.html and iframed.
  *
  * Two provenances, both recorded honestly:
  *   - Five come from the standing A/B benchmark (apps/mcp/bench), the

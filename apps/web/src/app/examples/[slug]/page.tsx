@@ -53,7 +53,7 @@ export default async function ExampleDetailPage({
     })),
   );
 
-  const src = `/examples/${ex.slug}/index.html`;
+  const src = `/examples/${ex.slug}/page.html`;
 
   return (
     <div className="pb-24">

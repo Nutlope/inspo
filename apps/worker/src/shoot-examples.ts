@@ -4,7 +4,7 @@
  * <img>, composites everywhere, no 10×-animating-iframe jank); the live
  * iframe stays only on the detail page.
  *
- * Loads each public/examples/<slug>/index.html over file:// (the pages
+ * Loads each public/examples/<slug>/page.html over file:// (the pages
  * are self-contained — inline CSS/JS, Google Fonts over the network),
  * waits for fonts + a beat for hero animations to populate, then clips
  * the top 1280×800.
@@ -37,7 +37,7 @@ async function main() {
 
   let ok = 0;
   for (const slug of slugs) {
-    const idx = join(EXAMPLES_DIR, slug, "index.html");
+    const idx = join(EXAMPLES_DIR, slug, "page.html");
     if (!existsSync(idx)) continue;
     const page = await ctx.newPage();
     try {
