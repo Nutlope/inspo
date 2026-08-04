@@ -66,8 +66,19 @@ function rowText(r: Row): string {
   ]
     .filter(Boolean)
     .join(" - ")
-    .slice(0, 8000);
+    // e5-large hard-stops at 512 tokens and the API rejects the whole
+    // batch, not the row. Autopsies run long, so cut on a word boundary
+    // well inside the limit: the identifying signal is all up front.
+    .slice(0, MAX_CHARS)
+    .replace(/\s+\S*$/, "");
 }
+
+/**
+ * Design vocabulary tokenizes densely (measured ~3.3 chars/token on this
+ * corpus, not the usual 4), so 1,700 chars still overran at 514. This
+ * leaves headroom under the 512 ceiling.
+ */
+const MAX_CHARS = 1_500;
 
 async function main() {
   const argv = process.argv.slice(2);

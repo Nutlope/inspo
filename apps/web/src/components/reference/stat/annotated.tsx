@@ -11,7 +11,7 @@
 
 const STATS = [
   {
-    value: "870",
+    value: "784",
     label: "Sites filed",
     foot: "¹ Published rows in screens where status = 'published'",
   },

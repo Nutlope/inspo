@@ -457,12 +457,6 @@ export const collections: Collection[] = [
           "Ultra-condensed caps over an archival photograph; credential tags as marginalia.",
         span: 3,
       },
-      {
-        slug: "magazine-b-com",
-        editorNote:
-          "One book, one dot-ring, one sentence of type. The product is the layout.",
-        span: 2,
-      },
       { slug: "herzogdemeuron-com", span: 1 },
       {
         slug: "rijksmuseum-nl",
@@ -520,7 +514,6 @@ export const collections: Collection[] = [
       },
       { slug: "thrilljockey-com", span: 1 },
       { slug: "bellroy-com--products-bio-phone-case", span: 2 },
-      { slug: "magazine-b-com", span: 1 },
     ],
   },
 ];

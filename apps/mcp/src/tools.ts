@@ -1469,4 +1469,13 @@ export const SERVER_INSTRUCTIONS = [
   "include <meta charset=\"utf-8\"> in <head>. Inspo's exemplars lean on",
   "typographic glyphs (middle dots, arrows, true quotes); without the",
   "charset declaration they render as mojibake.",
+  "",
+  "Spacing hygiene: keep the vertical rhythm and the horizontal gutter",
+  "in separate declarations. A container class with a padding shorthand",
+  "(.wrap{padding:0 32px}) outranks a bare element rule",
+  "(section{padding:76px 0}) on every element carrying that class, so",
+  "the section padding silently becomes zero and the sections collide.",
+  "Give the container `padding-inline` only, and put block padding on a",
+  "class of its own. After writing, verify a real computed value:",
+  "getComputedStyle(section).paddingTop must not be 0px.",
 ].join(" ");

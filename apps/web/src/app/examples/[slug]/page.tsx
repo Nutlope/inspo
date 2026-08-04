@@ -142,12 +142,19 @@ export default async function ExampleDetailPage({
                   <div className="aspect-[16/10] border rule bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))]" />
                 )}
                 <p className="mt-3 text-sm text-[var(--color-fg-muted)]">
-                  <Link
-                    href={`/screens/${ref.slug}`}
-                    className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
-                  >
-                    {screen?.title ?? ref.slug}
-                  </Link>{" "}
+                  {/* A reference can outlive its capture: sites get pruned from
+                      the archive, but what they contributed is still true. Name
+                      it without linking rather than pointing at a dead page. */}
+                  {screen ? (
+                    <Link
+                      href={`/screens/${ref.slug}`}
+                      className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
+                    >
+                      {screen.title}
+                    </Link>
+                  ) : (
+                    <span className="text-[var(--color-fg)]">{ref.slug}</span>
+                  )}{" "}
                   - {ref.took}
                 </p>
               </li>
