@@ -4,8 +4,8 @@
  * Sticky bottom action bar - appears on /sites/[slug] and /screens/[slug]
  * detail pages. Centred pill at the foot of the viewport with the
  * actions readers most often want once they've reached the bottom of
- * a long screenshot: copy the design system, copy the page URL, save
- * to ⌘K, or visit the live site.
+ * a long screenshot: copy the design system, copy the page URL, or
+ * visit the live site.
  *
  * Editorial chrome - paper background, hairline border, subtle
  * shadow. Pill stays at the centre on every breakpoint; on mobile
@@ -17,29 +17,11 @@
  */
 
 import { useEffect, useState } from "react";
-import {
-  ArrowUpRight,
-  Check,
-  ClipboardCopy,
-  Link2,
-  Star,
-  X,
-} from "lucide-react";
+import { ArrowUpRight, Check, ClipboardCopy, Link2, X } from "lucide-react";
 
-const SAVED_KEY = "inspo:cmdk:saved";
 const DISMISS_KEY = "inspo:action-bar:dismissed";
 
 type CopyState = "idle" | "copying" | "ok" | "err";
-
-function readSavedList(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const v = JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]");
-    return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
-  } catch {
-    return [];
-  }
-}
 
 export function SiteActionBar({
   slug,
@@ -52,7 +34,6 @@ export function SiteActionBar({
   const [dismissed, setDismissed] = useState(true);
   const [copyDesign, setCopyDesign] = useState<CopyState>("idle");
   const [copyUrl, setCopyUrl] = useState<CopyState>("idle");
-  const [saved, setSaved] = useState(false);
 
   // Hydrate dismiss state + saved-flag after mount so we don't flash.
   useEffect(() => {
@@ -62,7 +43,6 @@ export function SiteActionBar({
     } catch {
       /* ignore */
     }
-    setSaved(readSavedList().includes(slug));
   }, [slug]);
 
   function dismiss() {
@@ -101,19 +81,6 @@ export function SiteActionBar({
     }
   }
 
-  function onToggleSave() {
-    const current = readSavedList();
-    const next = current.includes(slug)
-      ? current.filter((s) => s !== slug)
-      : [slug, ...current];
-    try {
-      localStorage.setItem(SAVED_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
-    setSaved(next.includes(slug));
-  }
-
   if (!mounted || dismissed) return null;
 
   const designLabel =
@@ -141,7 +108,7 @@ export function SiteActionBar({
       className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 pointer-events-none"
     >
       <div
-        className="pointer-events-auto flex items-stretch divide-x divide-[var(--color-border)] border rule bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)] backdrop-blur-md shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)] font-mono text-xs tracking-normal"
+        className="pointer-events-auto flex items-stretch divide-x divide-[var(--color-border)] overflow-hidden rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)] backdrop-blur-md shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)] font-mono text-xs tracking-normal"
       >
         {/* Primary CTA - filled so the most-wanted action reads at a
             glance. Ink-on-paper in light mode, paper-on-ink in dark.
@@ -157,7 +124,7 @@ export function SiteActionBar({
           ) : (
             <ClipboardCopy size={15} strokeWidth={2} aria-hidden />
           )}
-          <span>{designLabel}</span>
+          <span className="leading-none">{designLabel}</span>
         </button>
 
         <button
@@ -180,27 +147,8 @@ export function SiteActionBar({
           ) : (
             <Link2 size={15} strokeWidth={1.75} aria-hidden />
           )}
-          <span className="hidden sm:inline">{urlLabel}</span>
+          <span className="hidden leading-none sm:inline">{urlLabel}</span>
           <span className="sr-only sm:hidden">{urlLabel}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onToggleSave}
-          aria-pressed={saved}
-          className={`
-            inline-flex items-center gap-2 px-4 py-3
-            transition-colors
-            ${saved ? "text-[var(--color-link)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"}
-          `}
-        >
-          <Star
-            size={15}
-            strokeWidth={1.75}
-            fill={saved ? "currentColor" : "none"}
-            aria-hidden
-          />
-          <span className="hidden md:inline">{saved ? "Saved" : "Save"}</span>
         </button>
 
         <a
@@ -210,7 +158,7 @@ export function SiteActionBar({
           className="inline-flex items-center gap-2 px-4 py-3 text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-link)]"
         >
           <ArrowUpRight size={15} strokeWidth={1.75} aria-hidden />
-          <span className="hidden md:inline">Visit live</span>
+          <span className="hidden leading-none md:inline">Visit live</span>
           <span className="sr-only md:hidden">Visit live site</span>
         </a>
 

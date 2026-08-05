@@ -50,7 +50,7 @@ export function PaletteTable({
         </p>
       )}
 
-      <div className="border rule overflow-hidden">
+      <div className="rounded-card border rule overflow-hidden">
         {/* Header - visible on lg, hidden on small (the rows label
             themselves with inline meta). */}
         <div
@@ -74,7 +74,7 @@ export function PaletteTable({
                 className={`group flex flex-col gap-3 px-4 py-4 lg:grid lg:grid-cols-[5.5rem_minmax(7rem,1fr)_minmax(11rem,1.4fr)_minmax(6rem,0.8fr)_auto] lg:items-center lg:gap-x-6 ${isLast ? "" : "border-b rule"}`}
               >
                 <div
-                  className="h-14 w-full lg:w-20 border rule"
+                  className="h-14 w-full rounded-tile lg:w-20 border rule"
                   style={{ background: hex }}
                   aria-hidden
                 />
@@ -93,11 +93,14 @@ export function PaletteTable({
                   <span className="text-sm">{role}</span>
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity">
-                  <CopyValue value={hex} label={`Copy hex ${hex}`} />
-                  {oklch && <CopyValue value={oklch} label={`Copy OKLCH for ${hex}`} />}
+                  <CopyValue value={hex} label={`Copy hex ${hex}`} caption="hex" />
+                  {oklch && (
+                    <CopyValue value={oklch} label={`Copy OKLCH for ${hex}`} caption="oklch" />
+                  )}
                   <CopyValue
                     value={tokenize(hex, role)}
                     label={`Copy CSS variable for ${hex}`}
+                    caption="var"
                   />
                   {(() => {
                     const norm = normalizeHex(hex);

@@ -77,7 +77,7 @@ export function ExportBlock({
     tab === "css" ? cssContent : tab === "tailwind" ? twContent : md ?? "Loading…";
 
   return (
-    <div className="border rule">
+    <div className="rounded-card border rule overflow-hidden">
       <div className="flex items-center justify-between border-b rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))] px-4 py-2">
         <div role="tablist" className="flex gap-1">
           {(
@@ -94,7 +94,7 @@ export function ExportBlock({
               aria-selected={tab === id}
               onClick={() => selectTab(id)}
               className={
-                `font-mono text-xs tracking-normal px-3 py-1 transition-colors ` +
+                `rounded-full font-mono text-xs tracking-normal px-3 py-1 transition-colors ` +
                 (tab === id
                   ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
                   : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]")

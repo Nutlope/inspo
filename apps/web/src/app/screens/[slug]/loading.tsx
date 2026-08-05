@@ -29,7 +29,7 @@ export default function ScreenLoading() {
       </div>
 
       <div className="mx-auto mt-12 max-w-[120rem] px-6 sm:mt-16 sm:px-10">
-        <div className="relative aspect-[16/10] w-full overflow-hidden border rule bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))]">
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))]">
           <span className="screens-skeleton-shimmer" />
         </div>
       </div>

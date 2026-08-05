@@ -11,15 +11,21 @@
  */
 
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 
 export function CopyValue({
   value,
   label,
+  caption,
   className = "",
 }: {
   value: string;
   /** Accessible label, e.g. "Copy hex". Falls back to "Copy". */
   label?: string;
+  /** Optional short word rendered after the icon ("hex", "oklch").
+   *  For spots where several copy buttons sit side by side and bare
+   *  icons would be indistinguishable. */
+  caption?: string;
   className?: string;
 }) {
   const [done, setDone] = useState(false);
@@ -41,13 +47,25 @@ export function CopyValue({
       type="button"
       onClick={copy}
       aria-label={label ?? "Copy"}
+      title={label ?? "Copy"}
       className={
-        `inline-flex items-center justify-center font-mono text-xs tracking-normal ` +
+        `inline-flex items-center justify-center rounded-full p-1 ` +
         `text-[var(--color-fg-muted)] hover:text-[var(--color-link)] ` +
         `transition-colors ${className}`
       }
     >
-      {done ? "✓ copied" : "copy"}
+      {/* Icon-only: the word "copy" next to every value read as
+          clutter. The check confirms; colour does the celebrating. */}
+      {done ? (
+        <Check size={14} strokeWidth={2} aria-hidden className="text-[var(--color-link)]" />
+      ) : (
+        <Copy size={14} strokeWidth={1.75} aria-hidden />
+      )}
+      {caption && (
+        <span className="ml-1.5 font-mono text-xs tracking-normal">
+          {caption}
+        </span>
+      )}
     </button>
   );
 }

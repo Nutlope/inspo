@@ -29,8 +29,8 @@ export default async function AboutPage() {
 
           <div className="prose-style max-w-[64ch] space-y-6 text-lg leading-relaxed text-[var(--color-fg)]">
             <p>
-              {stats.sites.toLocaleString()} real production sites, filed by
-              hand, queryable by your coding agent over MCP. Agents have
+              {stats.sites.toLocaleString()} real production sites, queryable by
+              your coding agent over MCP. Agents have
               tools but not taste - and the open web already holds every
               reference one could need. We just had to assemble, tag, and
               address it.

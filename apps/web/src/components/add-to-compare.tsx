@@ -46,7 +46,7 @@ export function AddToCompare({ slug, title }: { slug: string; title: string }) {
       onClick={click}
       aria-pressed={isIn}
       className={
-        `inline-flex items-center gap-2 border rule px-3 py-1.5 ` +
+        `inline-flex items-center gap-2 rounded-full border rule px-3 py-1.5 ` +
         `font-mono text-xs tracking-normal transition-colors ` +
         (isIn
           ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
@@ -63,7 +63,7 @@ function Skeleton() {
   return (
     <span
       aria-hidden
-      className="inline-block h-7 w-32 border rule"
+      className="inline-block h-7 w-32 rounded-full border rule"
     />
   );
 }

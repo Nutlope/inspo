@@ -162,7 +162,7 @@ export default async function ScreenDetailPage({
               : ""
           }
         >
-          <div className="overflow-hidden border rule">
+          <div className="overflow-hidden rounded-card border rule">
             <TileImage
               variants={screen.heroVariants}
               fallbackSrc={screen.imageUrl}
@@ -174,7 +174,7 @@ export default async function ScreenDetailPage({
           </div>
           {screen.mobileImageUrl && (
             <figure className="mx-auto w-full max-w-[15rem]">
-              <div className="overflow-hidden border rule">
+              <div className="overflow-hidden rounded-tile border rule">
                 <TileImage
                   variants={screen.mobileVariants}
                   fallbackSrc={screen.mobileImageUrl}
@@ -282,7 +282,7 @@ export default async function ScreenDetailPage({
                   : ""
               }
             >
-              <div className="max-h-[80vh] overflow-y-auto border rule">
+              <div className="max-h-[80vh] overflow-y-auto rounded-card border rule">
                 <TileImage
                   variants={screen.fullVariants}
                   fallbackSrc={screen.fullPageUrl}
@@ -292,7 +292,7 @@ export default async function ScreenDetailPage({
                 />
               </div>
               {screen.mobileFullUrl && (
-                <div className="hidden max-h-[80vh] w-[190px] overflow-y-auto border rule sm:block">
+                <div className="hidden max-h-[80vh] w-[190px] overflow-y-auto rounded-tile border rule sm:block">
                   <TileImage
                     variants={screen.mobileFullVariants}
                     fallbackSrc={screen.mobileFullUrl}

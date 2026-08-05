@@ -140,7 +140,7 @@ export default async function HistoryPage({
 
 function EmptyState({ slug }: { slug: string }) {
   return (
-    <div className="border rule p-8 sm:p-12">
+    <div className="rounded-card border rule p-8 sm:p-12">
       <p className="text-meta">No revisions found on disk</p>
       <p className="mt-3 max-w-prose text-[var(--color-fg-muted)]">
         The time machine reads from the worker&rsquo;s captures
@@ -158,7 +158,7 @@ function SingleRev({ slug, rev }: { slug: string; rev: Revision }) {
   return (
     <div className="space-y-4">
       <p className="text-meta">Only one revision on disk</p>
-      <div className="overflow-hidden border rule">
+      <div className="overflow-hidden rounded-tile border rule">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/api/captures/${slug}/${rev.file}`}

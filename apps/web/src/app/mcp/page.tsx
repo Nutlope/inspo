@@ -241,7 +241,7 @@ export default async function MCPPage() {
       </section>
 
       {/* Playground ───────────────────────────────────────── */}
-      <section className="border-t rule pt-12 pb-20">
+      <section className="border-t rule py-16">
         <div className="mx-auto max-w-[68rem]">
           <div className="mb-8 text-center">
             <h2 className="font-display text-3xl leading-tight tracking-tight sm:text-4xl">
@@ -256,7 +256,7 @@ export default async function MCPPage() {
       </section>
 
       {/* Macrostructures ─────────────────────────────────── */}
-      <section className="border-t rule pt-12 pb-20">
+      <section className="border-t rule py-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h2 className="font-display mx-auto max-w-[24ch] text-balance text-3xl leading-tight tracking-tight sm:text-4xl">
             Name the macrostructure.{" "}
@@ -292,7 +292,7 @@ export default async function MCPPage() {
       {/* Tool reference ─ tucked away. The agent is the caller, not
           the reader, so the full catalogue folds into one compact
           disclosure instead of a long scroll. ────────────────── */}
-      <section className="border-t rule pt-12 pb-20">
+      <section className="border-t rule py-16">
         <div className="mx-auto max-w-[68rem]">
           <details className="group rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] open:bg-[var(--color-bg)]">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 sm:px-8 [&::-webkit-details-marker]:hidden">
@@ -372,12 +372,11 @@ export default async function MCPPage() {
         </div>
       </section>
 
-      {/* Posture. The closing band, so its own bottom padding is zero:
-          the Colophon already carries mt-12, and adding pb-12 on top of
-          that made the gap under the button (96px) twice the gap above
-          the heading (48px). Zero here lets the footer's margin be the
-          whole bottom gap, which matches the top exactly. */}
-      <section className="border-t rule pt-12 pb-0">
+      {/* Posture. The closing band. Its bottom padding accounts for the
+          Colophon's own mt-12 (48px): pb-4 (16px) + 48px = 64px below
+          the button, matching the pt-16 above the heading and the
+          py-16 rhythm every other section on this page runs on. */}
+      <section className="border-t rule pt-16 pb-4">
         <div className="mx-auto max-w-[62rem] text-center">
           <p className="font-display mx-auto max-w-[40ch] text-2xl leading-snug sm:text-3xl">
             Open source, MIT, owned and operated by{" "}

@@ -88,7 +88,7 @@ export function TimeMachine({
   return (
     <div>
       {/* Viewer */}
-      <div className="overflow-hidden border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))]">
+      <div className="overflow-hidden rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={cur.file}
@@ -173,7 +173,7 @@ export function TimeMachine({
       {/* All revisions table */}
       <div className="mt-12">
         <p className="text-meta mb-4">All captures on disk</p>
-        <ul className="divide-y rule border rule">
+        <ul className="divide-y rule rounded-card border rule overflow-hidden">
           {revisions.map((r, idx) => (
             <li
               key={r.file}

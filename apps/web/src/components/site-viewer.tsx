@@ -142,7 +142,7 @@ export function SiteViewer({
               </div>
               <Link
                 href={`/screens/${p.slug}`}
-                className="block overflow-hidden border rule focus:outline-none"
+                className="block overflow-hidden rounded-tile border rule focus:outline-none"
                 style={{
                   background: `linear-gradient(135deg, ${p.palette[0] ?? "#eee"}, ${p.palette[2] ?? p.palette[1] ?? "#ddd"})`,
                 }}

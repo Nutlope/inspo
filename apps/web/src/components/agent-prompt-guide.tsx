@@ -41,7 +41,7 @@ export function AgentPromptGuide({
   const prompt = promptLines.join("\n");
 
   return (
-    <section className="border rule p-6 lg:p-8 bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))]">
+    <section className="rounded-card border rule p-6 lg:p-8 bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))]">
       <div className="flex flex-wrap items-baseline justify-between gap-4">
         <div>
           <p className="text-meta">For your coding agent</p>
@@ -58,7 +58,7 @@ export function AgentPromptGuide({
         Pairs the captured tokens with a short brief so the model has
         both the style and the goal in one block.
       </p>
-      <pre className="mt-5 border rule p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap bg-[var(--color-bg)]">
+      <pre className="mt-5 rounded-tile border rule p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap bg-[var(--color-bg)]">
         <code>{prompt}</code>
       </pre>
     </section>
