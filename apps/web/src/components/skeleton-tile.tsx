@@ -17,7 +17,7 @@ const ASPECT: Record<Variant, string> = {
 
 export function SkeletonTile({
   variant = "hero",
-  showCaption = true,
+  showCaption = false,
 }: {
   variant?: Variant;
   showCaption?: boolean;
@@ -25,23 +25,23 @@ export function SkeletonTile({
   return (
     <div className="screens-skeleton-item" aria-hidden>
       <div
-        className={`relative w-full overflow-hidden border rule bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))] ${ASPECT[variant]}`}
+        className={`relative w-full overflow-hidden rounded-tile border rule bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))] ${ASPECT[variant]}`}
       >
         <span className="screens-skeleton-shimmer" />
       </div>
       {showCaption && (
         <div className="mt-3 flex items-baseline justify-between gap-3">
-          <span className="block h-[18px] w-[55%] bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
-          <span className="block h-[10px] w-14 bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
+          <span className="block h-[18px] w-[55%] rounded-full bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
+          <span className="block h-[10px] w-14 rounded-full bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
         </div>
       )}
     </div>
   );
 }
 
-export function SkeletonGrid({ count = 12 }: { count?: number }) {
+export function SkeletonGrid({ count = 15 }: { count?: number }) {
   return (
-    <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]">
       {Array.from({ length: count }, (_, i) => (
         <li
           key={i}

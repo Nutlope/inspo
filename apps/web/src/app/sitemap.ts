@@ -42,7 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/screens",
     "/collections",
     "/components",
-    "/map",
     "/examples",
     "/mcp",
     "/mcp/use-cases",

@@ -59,6 +59,18 @@
      normal - the wide caps-tracking reads as spaced-out in sentence case. */
   --text-meta-letter-spacing: 0.01em;
 
+  /* ── Radius scale ─────────────────────────────────────────
+     The 2026-08 softening pass: nothing on the site renders as a
+     hard block any more. Three stops only, so the rounding reads
+     as one voice:
+       tile  - screenshots and thumbnails
+       card  - panels, code blocks, popovers
+       pill  - every button, chip, input, tab
+     (--radius-pill exists for raw CSS; utilities use rounded-full.) */
+  --radius-tile: 1rem;
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+
   /* ── One scale, seven steps ──────────────────────────────
      The site had twenty distinct font sizes in use against five
      declared tokens, because components reach for Tailwind's default
@@ -142,11 +154,11 @@ body {
 }
 
 /* Focus - global ring for links/buttons; inputs handle their own
-   focus state (the home search uses an animated underline). */
+   focus state. The outline hugs each element's own border-radius
+   (modern browsers trace it), so pills get pill-shaped rings. */
 :focus-visible {
   outline: 2px solid var(--color-link);
   outline-offset: 3px;
-  border-radius: 1px;
 }
 input:focus,
 input:focus-visible,
@@ -259,30 +271,25 @@ h2,
   border-color: var(--color-border);
 }
 
-/* ─── Masthead utility cluster · segmented controls ────────
-   The GitHub-star / ⌘K / theme controls live inside one hairline
-   enclosure (border rule on the wrapper) and read as a single
-   filed unit rather than three jostling boxes. Each control is a
-   .util-seg: a hairline divider to its left (every segment after
-   the first) and a hover that lifts only that segment with a faint
-   ink wash plus accent type. The enclosing border never changes,
-   so the cluster stays calm; the hover echoes the nav links (a
-   colour shift), just carried on a surface instead of an underline.
+/* ─── Masthead utility cluster · pill segments ─────────────
+   The GitHub-star / ⌘K / theme controls live inside one rounded
+   enclosure and read as a single filed unit. Each control is a
+   .util-seg pill: quiet at rest, lifted with a faint ink wash plus
+   accent type on hover. The enclosing capsule never changes, so
+   the cluster stays calm.
 */
 .util-seg {
+  border-radius: var(--radius-pill);
   transition:
     background-color 200ms ease,
     color 200ms ease;
 }
-.util-seg + .util-seg {
-  border-left: 1px solid var(--color-border);
-}
 .util-seg:hover {
-  background-color: color-mix(in oklab, var(--color-fg) 6%, transparent);
+  background-color: color-mix(in oklab, var(--color-fg) 7%, transparent);
   color: var(--color-link);
 }
 .util-seg:active {
-  background-color: color-mix(in oklab, var(--color-fg) 11%, transparent);
+  background-color: color-mix(in oklab, var(--color-fg) 12%, transparent);
 }
 
 /* ─── Grid stagger fade-in ──────────────────────────────────

@@ -112,32 +112,29 @@ export default async function ArchivePage({
   }));
 
   return (
-    <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
+    <>
       {/* Header - search-only, airy ──────────────────────────── */}
-      <section className="pt-10 pb-8 sm:pt-14">
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <div className="lg:col-span-12 space-y-4">
-            <div className="max-w-[48rem]">
-              <SearchBox defaultValue={params.q ?? ""} />
-            </div>
-            {noUrlMatch && (
-              <p className="max-w-[52ch] border-l-2 border-[var(--color-link)] pl-3 text-sm text-[var(--color-fg-muted)]">
-                We don&rsquo;t have{" "}
-                <span className="text-[var(--color-fg)]">{params.q}</span> yet. Want us to grab it?{" "}
-                <Link
-                  href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
-                  className="text-[var(--color-link)] underline-offset-4 hover:underline"
-                >
-                  Extract it →
-                </Link>
-              </p>
-            )}
-          </div>
+      <section className="px-4 pt-8 pb-6 sm:pt-10">
+        <div className="mx-auto max-w-[48rem] space-y-4">
+          <SearchBox defaultValue={params.q ?? ""} />
+          {noUrlMatch && (
+            <p className="mx-auto max-w-[52ch] rounded-card border rule px-4 py-3 text-sm text-[var(--color-fg-muted)]">
+              We don&rsquo;t have{" "}
+              <span className="text-[var(--color-fg)]">{params.q}</span> yet. Want us to grab it?{" "}
+              <Link
+                href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
+                className="text-[var(--color-link)] underline-offset-4 hover:underline"
+              >
+                Extract it →
+              </Link>
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Body - client filter + grid (instant filter, paginated render) ─── */}
-      <section className="border-t rule pt-10 pb-24">
+      {/* Body - client filter + grid, full-bleed so the screenshots
+          own the page edge to edge ───────────────────────────── */}
+      <section className="px-2 pb-24 sm:px-3">
         <ScreensGrid
           screens={compact}
           initialFilters={{
@@ -148,7 +145,7 @@ export default async function ArchivePage({
           }}
         />
       </section>
-    </div>
+    </>
   );
 }
 
@@ -160,7 +157,7 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
       method="GET"
       action="/screens"
       role="search"
-      className="group flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+      className="group flex items-center gap-3 rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] px-5 py-3 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
     >
       <span
         aria-hidden

@@ -106,7 +106,7 @@ export function CompareDock() {
   const href = `/compare?slugs=${items.map((i) => encodeURIComponent(i.slug)).join(",")}`;
   return (
     <div
-      className="fixed bottom-6 right-6 z-40 max-w-[min(36rem,92vw)] border rule bg-[var(--color-bg)] shadow-[0_8px_36px_rgba(0,0,0,0.12)]"
+      className="fixed bottom-6 right-6 z-40 max-w-[min(36rem,92vw)] rounded-card border rule bg-[var(--color-bg)] shadow-[0_8px_36px_rgba(0,0,0,0.12)]"
       role="region"
       aria-label="Compare set"
     >

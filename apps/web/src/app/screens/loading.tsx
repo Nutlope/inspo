@@ -1,59 +1,35 @@
 /**
- * Loading state for /screens. Shows the editorial header shell + a
- * 12-tile skeleton grid while the SSR HTML hydrates. gallery-style:
- * something is always on screen, never an empty page.
+ * Loading state for /screens. Mirrors the shipped layout: a search
+ * capsule up top, a pill filter bar, then the full-bleed skeleton
+ * grid. gallery-style: something is always on screen, never an empty
+ * page.
  */
 
-import { Dateline } from "@/components/dateline";
 import { SkeletonGrid } from "@/components/skeleton-tile";
 
 export default function ScreensLoading() {
   return (
-    <div className="mx-auto max-w-[120rem] px-6 sm:px-10">
-      <section className="pt-10 pb-8 sm:pt-14">
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-12 lg:gap-x-10">
-          <div className="lg:col-span-2">
-            <Dateline label="The archive" />
-          </div>
-          <div className="lg:col-span-10 space-y-4">
-            <p className="text-meta">Loading the archive…</p>
-            <div className="max-w-[40rem]">
-              <div className="h-[60px] border-b border-[var(--color-border)]/60" />
-            </div>
-          </div>
+    <>
+      <section className="px-4 pt-8 pb-6 sm:pt-10">
+        <div className="mx-auto max-w-[48rem]">
+          <div className="h-[54px] rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))]" />
         </div>
       </section>
 
-      <section className="border-t rule pt-10 pb-24">
-        <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-10">
-          {/* Filter rail skeleton */}
-          <aside className="lg:col-span-2">
-            <div className="space-y-10">
-              {[1, 2, 3, 4, 5, 6].map((g) => (
-                <div key={g} className="space-y-3">
-                  <span className="block h-[10px] w-16 bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <span
-                      key={i}
-                      className="block h-[12px] bg-[color-mix(in_oklab,var(--color-fg)_5%,var(--color-bg))]"
-                      style={{ width: `${50 + ((i * 17) % 35)}%` }}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </aside>
-
-          {/* Grid skeleton */}
-          <div className="lg:col-span-10">
-            <div className="mb-6 flex items-baseline justify-between border-b rule pb-4">
-              <span className="block h-[10px] w-24 bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
-              <span className="block h-[10px] w-16 bg-[color-mix(in_oklab,var(--color-fg)_8%,var(--color-bg))]" />
-            </div>
-            <SkeletonGrid count={12} />
-          </div>
+      <section className="px-2 pb-24 sm:px-3">
+        {/* Filter pill bar skeleton */}
+        <div className="mb-5 flex flex-wrap items-center gap-2">
+          {[16, 12, 14, 13, 20, 12].map((w, i) => (
+            <span
+              key={i}
+              className="block h-9 rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_4%,var(--color-bg))]"
+              style={{ width: `${w * 0.25}rem` }}
+            />
+          ))}
         </div>
+
+        <SkeletonGrid count={15} />
       </section>
-    </div>
+    </>
   );
 }

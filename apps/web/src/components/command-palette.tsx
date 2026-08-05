@@ -208,7 +208,7 @@ export function CommandPalette() {
     >
       <Command
         loop
-        className="font-mono w-full max-w-xl border rule bg-[var(--color-bg)] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.2)]"
+        className="font-mono w-full max-w-xl overflow-hidden rounded-card border rule bg-[var(--color-bg)] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.2)]"
         label="Command palette"
       >
         <div className="relative flex items-center border-b rule">
@@ -285,7 +285,7 @@ export function CommandPalette() {
                 key={n.href}
                 value={`${n.label} ${n.hint}`}
                 onSelect={() => go(n.href)}
-                className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-sm px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
+                className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-xl px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
               >
                 <span className="font-display text-base">{n.label}</span>
                 <span className="text-meta text-[var(--color-fg-muted)]">
@@ -302,7 +302,7 @@ export function CommandPalette() {
                 key={a.action}
                 value={`${a.label} ${a.hint}`}
                 onSelect={() => onAction(a.action)}
-                className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-sm px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
+                className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-xl px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
               >
                 <span className="font-display text-base">{a.label}</span>
                 <span className="text-meta text-[var(--color-fg-muted)]">
@@ -377,12 +377,12 @@ function SiteRow({
           onToggleSave();
         }
       }}
-      className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-sm px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
+      className="group flex cursor-pointer items-baseline justify-between gap-4 rounded-xl px-4 py-3 text-sm aria-selected:bg-[var(--color-fg)]/4 aria-selected:text-[var(--color-link)]"
     >
       <span className="flex items-baseline gap-3 truncate">
         <span
           aria-hidden
-          className="h-2.5 w-2.5 shrink-0 self-center border rule"
+          className="h-2.5 w-2.5 shrink-0 self-center rounded-full border rule"
           style={{ background: entry.accent }}
         />
         <span className="font-display truncate text-base">{entry.title}</span>

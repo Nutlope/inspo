@@ -63,6 +63,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // Next 16 asks for this hint when CSS sets scroll-behavior:
+      // smooth - it lets the router disable smooth scrolling during
+      // route transitions instead of animating scroll restoration.
+      data-scroll-behavior="smooth"
       className={`${fraunces.variable} ${interTight.variable}`}
     >
       <body className="flex min-h-screen flex-col">

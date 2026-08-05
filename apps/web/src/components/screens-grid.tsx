@@ -1,6 +1,12 @@
 "use client";
 
-import { useMemo, useTransition, useEffect, useState } from "react";
+import {
+  useMemo,
+  useTransition,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { ScreenSummary } from "@inspo/shared";
@@ -9,8 +15,8 @@ import type { ScreenSummary } from "@inspo/shared";
  * How many tiles to render per page. The /screens archive holds ~1,000
  * sites; rendering them all at once was the page's worst perf bug
  * (~47 MB of PNG thumbs, ~1,000 DOM nodes, ~1,000 client-component
- * hydrations). 60 fills a 3-column grid for 20 rows - enough to scroll
- * through before hitting the pagination control.
+ * hydrations). 60 fills the auto-fill grid for plenty of rows before
+ * hitting the pagination control.
  */
 const PAGE_SIZE = 60;
 import {
@@ -21,7 +27,6 @@ import {
   MACROSTRUCTURE_LABELS,
   MODES,
   VIBES,
-  CAPTURE_DEVICES,
   isStyle,
   isIndustry,
   isMacrostructure,
@@ -65,10 +70,14 @@ type Filters = {
 
 /**
  * Client-side filter + paginated render for /screens. Receives the
- * full list once from the server, filters in-memory on every chip
+ * full list once from the server, filters in-memory on every pill
  * click (no round-trip), but only renders the active page's slice.
  * URL stays in sync via router.replace so the back button and shared
  * links land on the right page.
+ *
+ * Filters live in a horizontal pill bar above the grid (each group is
+ * a capsule that opens a rounded popover of option pills) so the full
+ * page width belongs to the screenshots.
  *
  * Uses the View Transitions API where available for a browser-native
  * crossfade on filter swaps. Falls back to instant repaint on Safari
@@ -175,7 +184,7 @@ export function ScreensGrid({
     return list;
   }, [screens, active]);
 
-  /* ─────── filter chip click - wrap in View Transition ─────── */
+  /* ─────── filter pill click - wrap in View Transition ─────── */
   function setFilter(param: keyof Filters, value: string | undefined) {
     const next = new URLSearchParams(searchParams.toString());
     if (value) next.set(param, String(value));
@@ -220,182 +229,369 @@ export function ScreensGrid({
     return next.toString() ? `/screens?${next.toString()}` : "/screens";
   }
 
+  const groups: FilterMenuSpec[] = [
+    {
+      label: "Industry",
+      param: "industry",
+      options: INDUSTRIES,
+      count: (v) =>
+        screens.filter((x) => x.tags.industry.includes(v as Industry)).length,
+    },
+    {
+      label: "Style",
+      param: "style",
+      options: STYLES,
+      count: (v) =>
+        screens.filter((x) => x.tags.style.includes(v as Style)).length,
+    },
+    {
+      label: "Mood",
+      param: "mood",
+      options: VIBES,
+      count: (v) =>
+        screens.filter((x) => x.tags.vibe.includes(v as Vibe)).length,
+    },
+    {
+      label: "Color",
+      param: "color",
+      options: COLOR_WORDS,
+      count: (v) =>
+        screens.filter((x) =>
+          (x.designSystem.colorWords ?? []).includes(v as ColorWord),
+        ).length,
+    },
+    {
+      label: "Structure",
+      param: "macro",
+      options: MACROSTRUCTURES,
+      count: (v) =>
+        screens.filter((x) => x.tags.macrostructure === v).length,
+      formatLabel: (v) => MACROSTRUCTURE_LABELS[v as Macrostructure] ?? v,
+    },
+    {
+      label: "Mode",
+      param: "mode",
+      options: MODES,
+      count: (v) => screens.filter((x) => x.mode === v).length,
+    },
+  ];
+
+  const mobileCount = screens.filter((x) => Boolean(x.mobileImageUrl)).length;
+
   return (
-    <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-10">
-      {/* Filter rail ──────────────────────────────────────────── */}
-      <aside className="lg:col-span-2">
-        <div className="space-y-10 lg:sticky lg:top-8">
-          <FilterGroup
-            label="Industry"
-            options={INDUSTRIES}
-            param="industry"
-            current={active.industry}
-            onSelect={setFilter}
-            count={(v) => screens.filter((x) => x.tags.industry.includes(v as Industry)).length}
+    <div>
+      {/* Filter bar ───────────────────────────────────────────── */}
+      <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <FilterBar
+          groups={groups}
+          active={active}
+          onSelect={setFilter}
+          mobileCount={mobileCount}
+        />
+
+        <p className="text-meta ml-auto whitespace-nowrap">
+          {filteredCount === totalCount
+            ? `${totalCount.toLocaleString()} sites`
+            : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
+          {pageCount > 1 && (
+            <span className="ml-2 text-[var(--color-fg-muted)]">
+              · page {currentPage} of {pageCount}
+            </span>
+          )}
+        </p>
+      </div>
+
+      {active.hex && (
+        <div className="mb-5 inline-flex flex-wrap items-center gap-3 rounded-full border rule py-2 pl-3 pr-4">
+          <span
+            aria-hidden
+            className="block h-6 w-6 rounded-full border rule"
+            style={{ background: active.hex }}
           />
-          <FilterGroup
-            label="Style"
-            options={STYLES}
-            param="style"
-            current={active.style}
-            onSelect={setFilter}
-            count={(v) => screens.filter((x) => x.tags.style.includes(v as Style)).length}
-          />
-          <FilterGroup
-            label="Mood"
-            options={VIBES}
-            param="mood"
-            current={active.mood}
-            onSelect={setFilter}
-            count={(v) => screens.filter((x) => x.tags.vibe.includes(v as Vibe)).length}
-          />
-          <FilterGroup
-            label="Color"
-            options={COLOR_WORDS}
-            param="color"
-            current={active.color}
-            onSelect={setFilter}
-            count={(v) =>
-              screens.filter((x) =>
-                (x.designSystem.colorWords ?? []).includes(v as ColorWord),
-              ).length
-            }
-          />
-          <FilterGroup
-            label="Macrostructure"
-            options={MACROSTRUCTURES}
-            param="macro"
-            current={active.macro}
-            onSelect={setFilter}
-            count={(v) => screens.filter((x) => x.tags.macrostructure === v).length}
-            formatLabel={(v) => MACROSTRUCTURE_LABELS[v as Macrostructure] ?? v}
-          />
-          <FilterGroup
-            label="Mode"
-            options={MODES}
-            param="mode"
-            current={active.mode}
-            onSelect={setFilter}
-            count={(v) => screens.filter((x) => x.mode === v).length}
-          />
-          <FilterGroup
-            label="Device"
-            options={CAPTURE_DEVICES}
-            param="device"
-            current={active.device}
-            onSelect={setFilter}
-            count={(v) =>
-              v === "mobile"
-                ? screens.filter((x) => Boolean(x.mobileImageUrl)).length
-                : screens.length
-            }
-          />
+          <p className="text-meta">
+            Colour family · <span className="font-mono">{active.hex}</span>
+            <span className="ml-2 text-[var(--color-fg-muted)]">
+              ({filteredCount.toLocaleString()} match
+              {filteredCount === 1 ? "" : "es"})
+            </span>
+          </p>
+          <button
+            type="button"
+            onClick={() => setFilter("hex", undefined)}
+            className="font-mono text-xs tracking-normal hover:text-[var(--color-link)]"
+          >
+            clear ×
+          </button>
         </div>
-      </aside>
+      )}
 
       {/* Grid ─────────────────────────────────────────────────── */}
-      <div className="lg:col-span-10">
-        {active.hex && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y rule px-4 py-3">
-            <div className="flex items-center gap-3">
-              <span
-                aria-hidden
-                className="block h-7 w-7 border rule"
-                style={{ background: active.hex }}
-              />
-              <p className="text-meta">
-                Filtering by colour family ·{" "}
-                <span className="font-mono">{active.hex}</span>
-                <span className="ml-2 text-[var(--color-fg-muted)]">
-                  ({filteredCount.toLocaleString()} match
-                  {filteredCount === 1 ? "" : "es"})
-                </span>
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setFilter("hex", undefined)}
-              className="font-mono text-xs tracking-normal hover:text-[var(--color-link)]"
+      {filtered.length === 0 ? (
+        <div className="rounded-card border rule px-8 py-20 text-center">
+          <p className="font-display text-2xl">Nothing matches that.</p>
+          <p className="text-meta mt-3">
+            Loosen a filter, or scroll{" "}
+            <Link
+              href="/screens"
+              className="text-[var(--color-link)] underline-offset-4 hover:underline"
             >
-              clear ×
-            </button>
-          </div>
-        )}
-        <div className="mb-6 flex items-baseline justify-between border-b rule pb-4">
-          <p className="text-meta">
-            {filteredCount === totalCount
-              ? `${totalCount.toLocaleString()} sites`
-              : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
-            {pageCount > 1 && (
-              <span className="ml-2 text-[var(--color-fg-muted)]">
-                · page {currentPage} of {pageCount}
-              </span>
-            )}
-          </p>
-          <p className="text-meta hidden sm:block">
-            Sort: <span className="text-[var(--color-fg)]">Latest</span>
+              the whole archive
+            </Link>
+            .
           </p>
         </div>
-
-        {filtered.length === 0 ? (
-          <div className="border rule px-8 py-20 text-center">
-            <p className="font-display text-2xl">Nothing matches that.</p>
-            <p className="text-meta mt-3">
-              Loosen a filter, or scroll{" "}
-              <Link
-                href="/screens"
-                className="text-[var(--color-link)] underline-offset-4 hover:underline"
+      ) : (
+        <>
+          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] sm:gap-3">
+            {pageItems.map((screen, i) => (
+              <li
+                key={screen.slug}
+                className="screens-grid-item"
+                style={{ ["--idx" as string]: Math.min(i, 23) }}
               >
-                the whole archive
-              </Link>
-              .
-            </p>
-          </div>
-        ) : (
-          <>
-            <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
-              {pageItems.map((screen, i) => (
-                <li
-                  key={screen.slug}
-                  className="screens-grid-item"
-                  style={{ ["--idx" as string]: Math.min(i, 23) }}
-                >
-                  <ScreenTile
-                    screen={screen}
-                    index={startIdx + i + 1}
-                    variant="hero"
-                    // Only the first row of the FIRST page gets the
-                    // priority hint - beyond that, we lazy-load.
-                    priority={currentPage === 1 && i < 6}
-                    pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
-                    hoverScroll
-                  />
-                </li>
-              ))}
-            </ul>
+                <ScreenTile
+                  screen={screen}
+                  index={startIdx + i + 1}
+                  variant="hero"
+                  // Only the first rows of the FIRST page get the
+                  // priority hint - beyond that, we lazy-load.
+                  priority={currentPage === 1 && i < 8}
+                  pageCount={(screen as ScreenSummary & { pageCount?: number }).pageCount}
+                  showCaption={false}
+                  hoverScroll
+                />
+              </li>
+            ))}
+          </ul>
 
-            {pageCount > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                pageCount={pageCount}
-                hrefForPage={hrefForPage}
-              />
-            )}
-          </>
-        )}
-      </div>
+          {pageCount > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              pageCount={pageCount}
+              hrefForPage={hrefForPage}
+            />
+          )}
+        </>
+      )}
     </div>
+  );
+}
+
+/* ─────────────────── filter pill bar ───────────────────
+ *
+ * Each big taxonomy group is a capsule button that opens a rounded
+ * popover of option pills; Mode rides along the same way, and the
+ * mobile-pair filter is a single direct toggle pill. One popover open
+ * at a time; outside click and Escape both close.
+ */
+
+type FilterMenuSpec = {
+  label: string;
+  param: keyof Filters;
+  options: readonly string[];
+  /** Rows matching this option in the full dataset. Options with 0
+   *  matches are hidden; groups where everything is 0 show all (the
+   *  production static seed ships without per-row tags). */
+  count?: (v: string) => number;
+  formatLabel?: (v: string) => string;
+};
+
+function FilterBar({
+  groups,
+  active,
+  onSelect,
+  mobileCount,
+}: {
+  groups: FilterMenuSpec[];
+  active: Filters;
+  onSelect: (param: keyof Filters, value: string | undefined) => void;
+  mobileCount: number;
+}) {
+  const [open, setOpen] = useState<string | null>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (!barRef.current?.contains(e.target as Node)) setOpen(null);
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(null);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={barRef} className="flex flex-wrap items-center gap-2">
+      {groups.map((g) => {
+        const current = active[g.param] as string | undefined;
+        const hasAnyMatches = g.count
+          ? g.options.some((o) => g.count!(o) > 0)
+          : true;
+        const live =
+          g.count && hasAnyMatches
+            ? g.options.filter((o) => g.count!(o) > 0)
+            : [...g.options];
+        if (live.length === 0) return null;
+
+        const pretty = (v: string) =>
+          g.formatLabel ? g.formatLabel(v) : v.replace(/-/g, " ");
+        const isOpen = open === g.label;
+
+        return (
+          <div key={g.label} className="relative">
+            <button
+              type="button"
+              aria-expanded={isOpen}
+              aria-haspopup="menu"
+              onClick={() => setOpen(isOpen ? null : g.label)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm capitalize transition-colors ${
+                current
+                  ? "border-[var(--color-link)] bg-[color-mix(in_oklab,var(--color-link)_10%,transparent)] text-[var(--color-link)]"
+                  : "rule text-[var(--color-fg)] hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]"
+              }`}
+            >
+              {current ? pretty(current) : g.label}
+              <svg
+                aria-hidden
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+              >
+                <path d="m2 3.5 3 3 3-3" />
+              </svg>
+            </button>
+
+            {isOpen && (
+              <div
+                role="menu"
+                className="absolute left-0 top-[calc(100%+0.5rem)] z-30 max-h-[19rem] w-max max-w-[min(24rem,80vw)] overflow-y-auto rounded-card border rule bg-[var(--color-bg)] p-3 shadow-[0_18px_44px_-20px_rgba(0,0,0,0.4)]"
+              >
+                <div className="flex flex-wrap gap-1.5">
+                  <OptionPill
+                    active={!current}
+                    onClick={() => {
+                      onSelect(g.param, undefined);
+                      setOpen(null);
+                    }}
+                  >
+                    All
+                  </OptionPill>
+                  {live.map((opt) => (
+                    <OptionPill
+                      key={opt}
+                      active={current === opt}
+                      onClick={() => {
+                        onSelect(g.param, current === opt ? undefined : opt);
+                        setOpen(null);
+                      }}
+                    >
+                      {pretty(opt)}
+                    </OptionPill>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {mobileCount > 0 && (
+        <button
+          type="button"
+          aria-pressed={active.device === "mobile"}
+          onClick={() =>
+            onSelect(
+              "device",
+              active.device === "mobile" ? undefined : "mobile",
+            )
+          }
+          className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition-colors ${
+            active.device === "mobile"
+              ? "border-[var(--color-link)] bg-[color-mix(in_oklab,var(--color-link)_10%,transparent)] text-[var(--color-link)]"
+              : "rule text-[var(--color-fg)] hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]"
+          }`}
+        >
+          Mobile pairs
+        </button>
+      )}
+
+      {(active.style ||
+        active.industry ||
+        active.mood ||
+        active.color ||
+        active.macro ||
+        active.mode ||
+        active.device) && (
+        <button
+          type="button"
+          onClick={() => {
+            // Clear every taxonomy filter in one go; setFilter only
+            // mutates one param per call, so walk them.
+            for (const p of [
+              "style",
+              "industry",
+              "mood",
+              "color",
+              "macro",
+              "mode",
+              "device",
+            ] as (keyof Filters)[]) {
+              if (active[p]) onSelect(p, undefined);
+            }
+          }}
+          className="rounded-full px-3 py-2 text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-link)]"
+        >
+          Clear ×
+        </button>
+      )}
+    </div>
+  );
+}
+
+function OptionPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="menuitemradio"
+      aria-checked={active}
+      onClick={onClick}
+      className={`rounded-full border px-3 py-1.5 text-sm capitalize transition-colors ${
+        active
+          ? "border-[var(--color-link)] bg-[var(--color-link)] text-[var(--color-bg)]"
+          : "rule text-[var(--color-fg)] hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
 /* ─────────────────── Pagination control ───────────────────
  *
- * Editorial-minimal: prev / 1 2 … 7 8 9 … 18 / next. Always shows the
- * first + last page plus a window of 3 around the current. Uses native
- * <a> via next/link - bookmarkable, back-button respects history, no
- * JS needed for the click itself. Filter state survives because
- * setFilter is the only path that mutates filter params; pagination
- * mutates only `?page=`. */
+ * Editorial-minimal: prev / 1 2 … 7 8 9 … 18 / next, every stop a
+ * pill. Uses native <a> via next/link - bookmarkable, back-button
+ * respects history, no JS needed for the click itself. Filter state
+ * survives because setFilter is the only path that mutates filter
+ * params; pagination mutates only `?page=`. */
 
 function Pagination({
   currentPage,
@@ -415,16 +611,16 @@ function Pagination({
   }
 
   const linkClasses =
-    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border rule transition-colors hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]";
+    "inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-meta border rule transition-colors hover:border-[var(--color-fg)]/40 hover:text-[var(--color-link)]";
   const activeClasses =
-    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border border-[var(--color-link)] text-[var(--color-link)]";
+    "inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-meta border border-[var(--color-link)] bg-[color-mix(in_oklab,var(--color-link)_10%,transparent)] text-[var(--color-link)]";
   const disabledClasses =
-    "inline-flex h-9 min-w-[2.25rem] items-center justify-center px-2 text-meta border rule text-[var(--color-fg-muted)]/40 cursor-not-allowed";
+    "inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-meta border rule text-[var(--color-fg-muted)]/40 cursor-not-allowed";
 
   return (
     <nav
       aria-label="Archive pagination"
-      className="mt-16 flex flex-wrap items-center justify-center gap-2 border-t rule pt-8"
+      className="mt-12 flex flex-wrap items-center justify-center gap-2"
     >
       {currentPage > 1 ? (
         <Link href={hrefForPage(currentPage - 1)} className={linkClasses} scroll>
@@ -436,7 +632,7 @@ function Pagination({
         </span>
       )}
 
-      <ul className="flex flex-wrap items-center gap-1">
+      <ul className="flex flex-wrap items-center gap-1.5">
         {items.map((it, i) =>
           it === "ellipsis" ? (
             <li
@@ -472,109 +668,5 @@ function Pagination({
         </span>
       )}
     </nav>
-  );
-}
-
-/* ─────────────────── filter chip group ─────────────────── */
-
-function FilterGroup({
-  label,
-  options,
-  param,
-  current,
-  onSelect,
-  count,
-  formatLabel,
-}: {
-  label: string;
-  options: readonly string[];
-  param: keyof Filters;
-  current?: string;
-  onSelect: (param: keyof Filters, value: string | undefined) => void;
-  /** Returns the number of rows that match this option in the current dataset.
-   *  Chips with 0 matches are hidden; groups with no matching chips collapse. */
-  count?: (v: string) => number;
-  formatLabel?: (v: string) => string;
-}) {
-  // A unique view-transition name per group so the active marker
-  // smoothly slides between buttons when the user switches filters.
-  // Names must be unique on the page - scoping by param key gives us
-  // one marker per filter group, which is exactly what we want.
-  const vtName = `filter-marker-${String(param)}`;
-  // Hide-zero-match optimisation only kicks in when the dataset has
-  // tag data to filter by. If every chip in this group reports 0
-  // (which happens in production where the static seed ships without
-  // per-row tags), show all options instead of collapsing the whole
-  // group - the filter still works, it just doesn't pre-narrow.
-  const hasAnyMatches = count ? options.some((o) => count(o) > 0) : true;
-  const live =
-    count && hasAnyMatches
-      ? options.filter((o) => count(o) > 0)
-      : [...options];
-  if (live.length === 0) return null;
-  return (
-    <div className="space-y-3">
-      <p className="text-meta">{label}</p>
-      <ul className="flex flex-col gap-1.5">
-        <li>
-          <FilterButton
-            active={!current}
-            onClick={() => onSelect(param, undefined)}
-            vtName={vtName}
-          >
-            All
-          </FilterButton>
-        </li>
-        {live.map((opt) => (
-          <li key={opt}>
-            <FilterButton
-              active={current === opt}
-              onClick={() => onSelect(param, opt)}
-              vtName={vtName}
-            >
-              {formatLabel ? formatLabel(opt) : opt.replace(/-/g, " ")}
-            </FilterButton>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function FilterButton({
-  active,
-  onClick,
-  children,
-  vtName,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  /** When set + active, the indicator dot carries this
-   *  view-transition-name. Browser morphs the dot between positions
-   *  during the View Transition kicked off by setFilter(). */
-  vtName?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`block text-left text-sm capitalize transition-colors ${
-        active
-          ? "text-[var(--color-link)]"
-          : "text-[var(--color-fg)] hover:text-[var(--color-link)]"
-      }`}
-    >
-      {active && (
-        <span
-          aria-hidden
-          className="mr-1.5"
-          style={vtName ? { viewTransitionName: vtName } : undefined}
-        >
-          ·
-        </span>
-      )}
-      {children}
-    </button>
   );
 }

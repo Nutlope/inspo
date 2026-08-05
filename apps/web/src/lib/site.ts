@@ -17,7 +17,6 @@ export const site = {
   nav: [
     { label: "Archive", href: "/screens" },
     { label: "Examples", href: "/examples" },
-    { label: "Map", href: "/map" },
     { label: "MCP", href: "/mcp" },
     { label: "About", href: "/about" },
   ],

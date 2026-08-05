@@ -45,7 +45,7 @@ const ASPECT: Record<Variant, string> = {
  * widest variant every time.
  */
 const TILE_SIZES =
-  "(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw";
+  "(min-width: 1920px) 18vw, (min-width: 1280px) 24vw, (min-width: 1024px) 32vw, (min-width: 640px) 48vw, 95vw";
 
 export function ScreenTile({
   screen,
@@ -115,9 +115,9 @@ export function ScreenTile({
 
   return (
     <article className={`group ${className}`} data-index={index ?? undefined}>
-      <Link href={href} className="block focus:outline-none">
+      <Link href={href} className="block rounded-tile focus:outline-none">
         <div
-          className={`relative w-full overflow-hidden border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
+          className={`relative w-full overflow-hidden rounded-tile border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
           style={bgStyle}
         >
           <TileImage
@@ -140,26 +140,35 @@ export function ScreenTile({
             />
           ) : null}
 
-          {/* Hover strip - palette swatches + macrostructure caption.
-              Opacity-fades in (no slide), calmer than translate. Reads
-              on focus too for keyboard users. */}
+          {/* Hover pills - the tile stays caption-free at rest (the
+              grid is the point); on hover two floating capsules fade
+              in INSIDE the image: title (+ page count) bottom-left,
+              palette dots bottom-right. Reads on focus too for
+              keyboard users. */}
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-[color-mix(in_oklab,var(--color-bg)_94%,transparent)] px-3 py-2 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100"
+            className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex items-center justify-between gap-2 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100"
             aria-hidden
           >
-            <div className="flex items-center gap-1">
-              {screen.palette.slice(0, 5).map((hex, i) => (
+            <span className="flex min-w-0 items-baseline gap-2 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-3.5 py-1.5 backdrop-blur-md">
+              <span className="truncate font-display text-sm leading-snug text-[var(--color-fg)]">
+                {screen.title}
+              </span>
+              <span className="text-meta hidden whitespace-nowrap sm:inline">
+                {isMultiPage
+                  ? `${pageCount} pages`
+                  : (macro ?? screen.tags.style[0] ?? "")}
+              </span>
+            </span>
+            <span className="hidden shrink-0 items-center gap-1 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-2.5 py-2 backdrop-blur-md sm:flex">
+              {screen.palette.slice(0, 4).map((hex, i) => (
                 <span
                   key={`${hex}-${i}`}
                   title={hex}
-                  className="block h-3 w-3 border rule"
+                  className="block h-2.5 w-2.5 rounded-full"
                   style={{ background: hex }}
                 />
               ))}
-            </div>
-            <p className="text-meta truncate text-[var(--color-fg)]">
-              {macro ?? screen.tags.style[0] ?? "-"}
-            </p>
+            </span>
           </div>
         </div>
 

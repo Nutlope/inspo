@@ -69,8 +69,8 @@ const STUDY_EXAMPLES = [
 export function McpPlayground() {
   const [tab, setTab] = useState<Tab>("search");
   return (
-    <div className="border rule">
-      <div className="flex items-center justify-between border-b rule px-4 py-3">
+    <div className="rounded-card border rule">
+      <div className="flex items-center justify-between border-b rule px-5 py-3">
         <div role="tablist" className="flex gap-2">
           <TabButton active={tab === "search"} onClick={() => setTab("search")}>
             search_screens
@@ -104,10 +104,10 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={
-        "font-mono text-xs tracking-normal px-3 py-1 transition-colors " +
+        "font-mono text-xs tracking-normal rounded-full px-3.5 py-1.5 transition-colors " +
         (active
           ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
-          : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]")
+          : "text-[var(--color-fg-muted)] hover:bg-[color-mix(in_oklab,var(--color-fg)_7%,transparent)] hover:text-[var(--color-fg)]")
       }
     >
       {children}
@@ -177,7 +177,7 @@ function SearchTab() {
         <code className="font-mono text-xs text-[var(--color-fg-muted)]">)</code>
         <button
           type="submit"
-          className="font-mono text-xs tracking-normal bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
+          className="font-mono text-xs tracking-normal rounded-full bg-[var(--color-fg)] text-[var(--color-bg)] px-5 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
           disabled={state.kind === "loading"}
         >
           {state.kind === "loading" ? "Running…" : "Run"}
@@ -235,7 +235,7 @@ function SearchResults({
       </p>
       <ul className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
         {data.results.map((r) => (
-          <li key={r.slug} className="border rule">
+          <li key={r.slug} className="overflow-hidden rounded-tile border rule">
             <Link
               href={`/screens/${r.slug}`}
               className="block focus:outline-none"
@@ -260,7 +260,7 @@ function SearchResults({
                     <span
                       key={`${hex}-${i}`}
                       title={hex}
-                      className="block h-3 w-3 border rule"
+                      className="block h-3 w-3 rounded-full border rule"
                       style={{ background: hex }}
                     />
                   ))}
@@ -337,7 +337,7 @@ function StudyTab() {
         <code className="font-mono text-xs text-[var(--color-fg-muted)]">)</code>
         <button
           type="submit"
-          className="font-mono text-xs tracking-normal bg-[var(--color-fg)] text-[var(--color-bg)] px-4 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
+          className="font-mono text-xs tracking-normal rounded-full bg-[var(--color-fg)] text-[var(--color-bg)] px-5 py-2 hover:opacity-90 transition-opacity disabled:opacity-40"
           disabled={state.kind === "loading"}
         >
           {state.kind === "loading" ? "Fetching…" : "Run"}
@@ -405,12 +405,12 @@ function StudyResultCard({ data }: { data: StudyResult }) {
             {data.palette.slice(0, 8).map((hex, i) => (
               <div
                 key={`${hex}-${i}`}
-                className="flex items-center gap-2 border rule px-2 py-1"
+                className="flex items-center gap-2 rounded-full border rule px-2.5 py-1"
                 title={hex}
               >
                 <span
                   aria-hidden
-                  className="block h-4 w-4 border rule"
+                  className="block h-4 w-4 rounded-full border rule"
                   style={{ background: hex }}
                 />
                 <span className="font-mono text-xs">{hex}</span>
@@ -479,7 +479,7 @@ function Box({
 function Loading() {
   return (
     <div className="flex items-center gap-3 text-meta text-[var(--color-fg-muted)]">
-      <span className="inline-block h-2 w-2 animate-pulse bg-[var(--color-link)]" />
+      <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-[var(--color-link)]" />
       Running tool…
     </div>
   );
@@ -487,7 +487,7 @@ function Loading() {
 
 function ErrorBox({ message }: { message: string }) {
   return (
-    <p className="text-meta border rule px-3 py-2 text-[var(--color-fg-muted)]">
+    <p className="text-meta rounded-full border rule px-4 py-2 text-[var(--color-fg-muted)]">
       Error: {message}
     </p>
   );

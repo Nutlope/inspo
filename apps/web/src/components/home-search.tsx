@@ -3,12 +3,11 @@
 import { useState } from "react";
 
 /**
- * The marquee search input on the home hero.
+ * The marquee search input on the home hero, as one big capsule.
  *
- * Single horizontal row - icon + input + submit hint share one focus
- * container so hover/focus state lights up everything together. No
- * internal vertical dividers; the focus indicator is an animated
- * underline that grows from the centre.
+ * Single horizontal row - icon + input + submit share one rounded
+ * focus container so hover/focus state lights up everything together.
+ * The capsule border warms on hover and takes the accent on focus.
  *
  * Submits a GET form to /screens, where URL-paste detection redirects
  * to the matching screen and lex search ranks the rest.
@@ -22,7 +21,7 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
       action="/screens"
       role="search"
       aria-label="Search the archive"
-      className="group relative w-full flex items-center gap-3 px-5 py-4 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+      className="group relative flex w-full items-center gap-3 rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] py-2.5 pl-6 pr-2.5 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
     >
       <span
         aria-hidden
@@ -86,11 +85,6 @@ export function HomeSearch({ defaultValue = "" }: { defaultValue?: string }) {
         </svg>
       </button>
 
-      {/* Animated underline - grows from centre on focus, retracts on blur. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-px h-px origin-center scale-x-0 bg-[var(--color-link)] transition-transform duration-300 ease-out group-focus-within:scale-x-100"
-      />
     </form>
   );
 }

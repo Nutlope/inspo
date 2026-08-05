@@ -4,21 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * Masthead nav link with two behaviours wired into one mark:
+ * Masthead nav link as a pill:
  *
- * - **Hover** - a hairline grows from the left under the label across
- *   220ms ease-out. The colour shifts to accent at the same time so
- *   the line and the type move together as one gesture.
+ * - **Hover** - a faint ink wash fills the capsule and the label
+ *   shifts to accent, one gesture.
  *
  * - **Active** - when the current path matches this link's href (or
  *   sits below it, e.g. `/screens/linear-app` while on the `Archive`
- *   link), the hairline is already drawn and the label is already
- *   coloured. Hover is a no-op in that state - there's nothing to
- *   reveal.
- *
- * The marker is a 1px line directly under the label, not a separate
- * pill or chip. Editorial restraint: the active state should feel
- * like the link is *settled*, not *highlighted*.
+ *   link), the pill is already filled with a slightly stronger wash
+ *   and the label holds the accent colour. Hover is a no-op there.
  *
  * `aria-current="page"` set on the active link so screen-readers
  * announce it.
@@ -46,29 +40,16 @@ export function NavLink({
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={`
-        group relative inline-flex h-7 items-center
+        inline-flex h-9 items-center rounded-full px-3 sm:px-3.5
         text-sm tracking-[0.01em] transition-colors duration-200
         ${
           isActive
-            ? "text-[var(--color-link)]"
-            : "text-[var(--color-fg-muted)] hover:text-[var(--color-link)]"
+            ? "bg-[color-mix(in_oklab,var(--color-link)_12%,transparent)] text-[var(--color-link)]"
+            : "text-[var(--color-fg-muted)] hover:bg-[color-mix(in_oklab,var(--color-fg)_6%,transparent)] hover:text-[var(--color-link)]"
         }
       `}
     >
-      <span>{label}</span>
-
-      {/* Underline marker - origin-left scale so the grow direction
-          reads as a left-to-right pen stroke. Persists at full width
-          when the link is current. */}
-      <span
-        aria-hidden
-        className={`
-          pointer-events-none absolute inset-x-0 bottom-0 h-px
-          origin-left bg-[var(--color-link)]
-          transition-transform duration-[220ms] ease-out
-          ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}
-        `}
-      />
+      {label}
     </Link>
   );
 }
