@@ -1,0 +1,24 @@
+[
+  {
+    "date": "2026-08-05",
+    "macrostructure": "a waymarked route (the page is the walk)",
+    "theme": "custom",
+    "direction": "the trail marker post",
+    "posture": "committed",
+    "seed": "tenor-walking-meditation·2026-08-05·r0",
+    "wildcard": false,
+    "theme_axes": "mid / slab-serif / chromatic-other (waymark green ~120)",
+    "vibe": "painted band, stencil figure, weathered enamel",
+    "inspo_consensus": "mid/grotesk-sans/cool (0.38 / 0.54 / 0.46; only display class clears the threshold)",
+    "inspo_opposition": "against: display class · paper band and accent hue: no consensus",
+    "inspo_slugs": ["hex-tech", "canvasapp-com", "mooala-com", "vimcal-com", "novu-co", "reflect-app"],
+    "hero": "Stage / full-height marker post at the right edge",
+    "fingerprint": "Left-biased|Asymmetric 5:7 and 4:8|Painted band|Hairline index rows|Numbered ol rail|Fade-up once",
+    "nav": "trailhead board, not sticky, painted half-band instead of a hairline",
+    "footer": "end post, one baseline of links over a colophon",
+    "enrichment": "hand-built SVG marker post",
+    "section-entry": "the painted band (change of paper), alternating with a real ol",
+    "waived": [],
+    "brief": "Tenor · walking meditation for people who cannot sit still"
+  }
+]

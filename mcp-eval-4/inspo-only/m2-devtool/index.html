@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sightline · Know why the build broke</title>
+<meta name="description" content="Sightline is observability for CI pipelines. It reads the run and tells you why the build broke, before you open the logs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Sightline
+   Register: light technical paper, grotesk display, mono evidence.
+   Colour rule: chroma is semantic. Red means a thing failed,
+   green means it passed, amber means it is suspect. Nothing is
+   coloured for decoration. The brand colour is the ink.
+   ───────────────────────────────────────────────────────────── */
+
+:root{
+  --paper:      #EFEFEA;
+  --paper-2:    #E7E7E1;
+  --card:       #FFFFFF;
+  --ink:        #15171B;
+  --ink-2:      #3B3F45;
+  --muted:      #6E736F;
+  --faint:      #9AA09B;
+  --rule:       #D7D7CE;
+  --rule-2:     #C4C4B9;
+
+  --fail:       #C4331A;
+  --fail-bg:    #FBEDEA;
+  --pass:       #2B7A52;
+  --pass-bg:    #EBF4EF;
+  --warn:       #A8730D;
+  --skip:       #A2A29A;
+
+  --slate:      #16181C;
+  --slate-2:    #1E2127;
+  --slate-rule: #2E323A;
+  --slate-fg:   #C8CDC9;
+  --slate-dim:  #6B7178;
+
+  --sans: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shell: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.55;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img,svg{ max-width:100%; display:block; }
+a{ color:inherit; }
+
+.shell{ max-width:var(--shell); margin:0 auto; padding-inline:var(--gutter); }
+
+/* ── typography primitives ───────────────────────────────── */
+.meta{
+  font-family:var(--mono);
+  font-size:11.5px;
+  font-weight:500;
+  letter-spacing:.06em;
+  color:var(--muted);
+  text-transform:none;
+}
+.meta-dot::before{
+  content:"";
+  display:inline-block;
+  width:5px; height:5px;
+  border-radius:50%;
+  background:var(--ink);
+  margin-right:8px;
+  vertical-align:middle;
+  position:relative; top:-1px;
+}
+h1,h2,h3,h4{ margin:0; font-weight:600; letter-spacing:-.022em; line-height:1.06; }
+p{ margin:0; }
+
+.h-display{ font-size:clamp(34px,3.85vw,49px); font-weight:600; letter-spacing:-.032em; line-height:1.04; }
+.h-section{ font-size:clamp(28px,3.4vw,42px); letter-spacing:-.028em; line-height:1.05; }
+.h-tile{ font-size:20px; letter-spacing:-.018em; line-height:1.18; }
+.lede{ font-size:clamp(16px,1.35vw,18.5px); line-height:1.5; color:var(--ink-2); }
+.small{ font-size:14px; line-height:1.55; color:var(--muted); }
+
+/* ── buttons ──────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--sans); font-size:14.5px; font-weight:500;
+  letter-spacing:-.006em;
+  padding:11px 19px;
+  border:1px solid var(--ink);
+  background:var(--ink); color:#F6F6F2;
+  text-decoration:none;
+  border-radius:2px;
+  transition:transform .18s ease, background .18s ease, color .18s ease;
+}
+.btn:hover{ transform:translateY(-1px); background:#000; }
+.btn-ghost{ background:transparent; color:var(--ink); border-color:var(--rule-2); }
+.btn-ghost:hover{ background:var(--card); border-color:var(--ink); }
+.btn .arw{ font-family:var(--mono); font-size:13px; opacity:.85; }
+
+/* ── nav ──────────────────────────────────────────────────── */
+.nav{
+  position:sticky; top:0; z-index:60;
+  background:rgba(239,239,234,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.nav-in{ display:flex; align-items:center; gap:28px; height:64px; }
+.brand{ display:flex; align-items:center; gap:9px; text-decoration:none; margin-right:6px; }
+.brand-mark{ width:19px; height:19px; flex:none; }
+.brand-name{ font-size:17px; font-weight:600; letter-spacing:-.03em; }
+.nav-links{ display:flex; gap:24px; margin-left:6px; }
+.nav-links a{
+  font-size:14px; color:var(--ink-2); text-decoration:none;
+  padding-bottom:2px; border-bottom:1px solid transparent;
+}
+.nav-links a:hover{ color:var(--ink); border-bottom-color:var(--ink); }
+.nav-end{ margin-left:auto; display:flex; align-items:center; gap:18px; }
+.nav-end .signin{ font-size:14px; text-decoration:none; color:var(--ink-2); }
+.nav-end .signin:hover{ color:var(--ink); }
+.nav-end .btn{ padding:8px 15px; font-size:13.5px; }
+
+/* ── hero ─────────────────────────────────────────────────── */
+.hero{ border-bottom:1px solid var(--rule); }
+.hero-grid{
+  display:grid;
+  grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
+  gap:clamp(28px,4vw,64px);
+  align-items:center;
+  padding:clamp(32px,4vh,48px) 0 clamp(36px,4.5vh,52px);
+  min-height:min(700px,calc(100svh - 64px));
+}
+.hero-copy{ max-width:40ch; }
+.hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.hero-eyebrow .meta{ line-height:1.3; }
+.hero-eyebrow .tag{
+  white-space:nowrap;
+  font-family:var(--mono); font-size:10.5px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--fail); background:var(--fail-bg);
+  border:1px solid #EEDAD5; border-radius:2px;
+  padding:3px 7px;
+}
+.hero h1{ margin-bottom:20px; }
+.hero h1 .dim{ color:var(--muted); }
+.hero-lede{ max-width:44ch; margin-bottom:28px; }
+.hero-cta{ display:flex; flex-wrap:wrap; gap:11px; margin-bottom:24px; }
+.hero-foot{
+  border-top:1px solid var(--rule);
+  padding-top:14px;
+  display:flex; flex-wrap:wrap; gap:6px 14px;
+  align-items:baseline;
+}
+.hero-foot .k{ font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.04em; }
+.hero-foot .v{ font-family:var(--mono); font-size:11.5px; color:var(--ink-2); }
+
+/* ── verdict card (hero visual) ───────────────────────────── */
+.verdict{
+  background:var(--card);
+  border:1px solid var(--rule-2);
+  border-radius:3px;
+  box-shadow:0 1px 0 rgba(21,23,27,.04), 0 18px 40px -28px rgba(21,23,27,.34);
+  overflow:hidden;
+}
+.v-bar{
+  display:flex; align-items:center; gap:12px;
+  padding:10px 14px;
+  border-bottom:1px solid var(--rule);
+  font-family:var(--mono); font-size:11.5px; color:var(--muted);
+  background:linear-gradient(var(--paper),var(--paper));
+}
+.v-bar .run{ color:var(--ink); font-weight:500; }
+.v-bar .sep{ color:var(--rule-2); }
+.v-bar .right{ margin-left:auto; display:flex; align-items:center; gap:7px; color:var(--fail); font-weight:500; }
+.dotfail{ width:6px; height:6px; border-radius:50%; background:var(--fail); display:inline-block; }
+
+.stages{ display:grid; grid-template-columns:repeat(5,1fr); border-bottom:1px solid var(--rule); }
+.stage{ padding:11px 12px 12px; border-right:1px solid var(--rule); position:relative; }
+.stage:last-child{ border-right:0; }
+.stage::before{ content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--pass); }
+.stage.f::before{ background:var(--fail); }
+.stage.s::before{ background:var(--skip); }
+.stage .nm{ font-family:var(--mono); font-size:11px; color:var(--ink); display:block; }
+.stage .tm{ font-family:var(--mono); font-size:10.5px; color:var(--faint); }
+.stage.f .nm{ color:var(--fail); font-weight:500; }
+.stage.s .nm{ color:var(--faint); }
+
+.v-body{ padding:18px 18px 16px; }
+.v-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:10px; }
+.v-head .lbl{
+  font-family:var(--mono); font-size:10.5px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+}
+.v-head .conf{ margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--muted); }
+.v-claim{ font-size:19px; line-height:1.28; letter-spacing:-.017em; font-weight:500; max-width:40ch; }
+.v-claim b{ font-weight:600; box-shadow:inset 0 -.42em 0 rgba(196,51,26,.13); }
+
+.v-term{
+  margin-top:15px;
+  background:var(--slate);
+  border-radius:2px;
+  padding:13px 14px;
+  font-family:var(--mono); font-size:11.5px; line-height:1.72;
+  color:var(--slate-fg);
+  overflow-x:auto;
+}
+.v-term .path{ color:#8FA6C4; }
+.v-term .err{ color:#E8705A; }
+.v-term .dim{ color:var(--slate-dim); }
+.v-term .add{ color:#6FBF8E; }
+.v-term .del{ color:#E8705A; }
+.v-term .rule{ display:block; height:1px; background:var(--slate-rule); margin:9px 0; }
+
+.v-foot{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px;
+  padding:11px 18px;
+  border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:11px; color:var(--muted);
+}
+.v-foot .owner{ color:var(--ink); }
+.v-foot a{ margin-left:auto; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--rule-2); }
+.v-foot a:hover{ border-bottom-color:var(--ink); }
+.sample-note{ margin-top:9px; font-family:var(--mono); font-size:10.5px; color:var(--faint); text-align:right; }
+
+/* ── provider rule ────────────────────────────────────────── */
+.providers{ border-bottom:1px solid var(--rule); background:var(--paper-2); }
+.providers-in{
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 26px;
+  padding:15px 0;
+}
+.providers .lead{ font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.04em; }
+.providers .p{ font-family:var(--mono); font-size:12px; color:var(--ink-2); }
+
+/* ── generic section ──────────────────────────────────────── */
+section{ border-bottom:1px solid var(--rule); }
+.sec-pad{ padding:clamp(56px,7vw,96px) 0; }
+.sec-head{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(24px,4vw,64px); align-items:end; margin-bottom:clamp(32px,4vw,52px); }
+.sec-head .k{ margin-bottom:16px; }
+.sec-head .note{ max-width:46ch; padding-bottom:4px; }
+
+/* ── narrative workflow ───────────────────────────────────── */
+.flow{ border-top:1px solid var(--rule-2); }
+.step{
+  display:grid;
+  grid-template-columns:56px minmax(0,0.72fr) minmax(0,1fr);
+  gap:clamp(20px,3vw,44px);
+  padding:clamp(26px,3.2vw,40px) 0;
+  border-bottom:1px solid var(--rule);
+  align-items:start;
+}
+.step:last-child{ border-bottom:0; }
+.step .num{ font-family:var(--mono); font-size:11.5px; color:var(--faint); padding-top:5px; letter-spacing:.06em; }
+.step h3{ font-size:24px; letter-spacing:-.022em; margin-bottom:11px; }
+.step p{ color:var(--ink-2); font-size:15.5px; max-width:42ch; }
+.step .then{ margin-top:12px; font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+.step .then b{ color:var(--ink); font-weight:500; }
+
+.artifact{
+  background:var(--card);
+  border:1px solid var(--rule-2);
+  border-radius:3px;
+  padding:14px 15px;
+  font-family:var(--mono); font-size:11.5px; line-height:1.7;
+}
+.artifact .cap{
+  display:flex; align-items:center; gap:8px;
+  font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--faint); margin-bottom:11px;
+}
+.artifact .cap::after{ content:""; flex:1; height:1px; background:var(--rule); }
+
+/* history strip */
+.runs{ display:flex; gap:3px; align-items:flex-end; height:38px; margin:4px 0 10px; }
+.runs i{ flex:1; background:var(--pass-bg); border-top:2px solid var(--pass); height:100%; border-radius:1px; }
+.runs i.f{ background:var(--fail-bg); border-top-color:var(--fail); }
+.runs i.f.now{ background:var(--fail); border-top-color:var(--fail); }
+.legend{ display:flex; gap:14px; font-size:10.5px; color:var(--muted); }
+.legend span{ display:flex; align-items:center; gap:5px; }
+.sw{ width:8px; height:8px; border-radius:1px; display:inline-block; }
+.sw.p{ background:var(--pass); }
+.sw.f{ background:var(--fail); }
+
+/* diff */
+.diff .ln{ display:grid; grid-template-columns:34px 12px 1fr; gap:6px; }
+.diff .no{ color:var(--faint); text-align:right; }
+.diff .g{ color:var(--faint); }
+.diff .del{ color:var(--fail); background:var(--fail-bg); }
+.diff .add{ color:var(--pass); background:var(--pass-bg); }
+
+/* route chips */
+.chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:4px; }
+.chip{
+  font-family:var(--mono); font-size:11px;
+  border:1px solid var(--rule-2); border-radius:2px;
+  padding:4px 8px; color:var(--ink-2); background:var(--paper);
+}
+.chip.on{ border-color:var(--ink); color:var(--ink); background:var(--card); }
+
+/* ── bento ────────────────────────────────────────────────── */
+.bento{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule-2); border:1px solid var(--rule-2); border-radius:3px; }
+.tile{ background:var(--card); padding:clamp(20px,2.2vw,28px); display:flex; flex-direction:column; }
+.tile .k{ margin-bottom:14px; }
+.tile p{ color:var(--muted); font-size:14.5px; margin-top:10px; max-width:40ch; }
+.tile.lead{ grid-column:span 2; grid-row:span 2; }
+.tile.lead .h-tile{ font-size:clamp(24px,2.6vw,33px); letter-spacing:-.026em; line-height:1.12; max-width:19ch; }
+.tile.lead p{ font-size:15.5px; margin-top:auto; padding-top:26px; }
+.tile.wide{ grid-column:span 2; }
+.tile-rule{ height:1px; background:var(--rule); margin:16px 0 0; }
+.tile .mini{ margin-top:16px; font-family:var(--mono); font-size:11px; color:var(--faint); line-height:1.7; }
+.tile .mini b{ color:var(--ink); font-weight:500; }
+
+/* ── dark comparison section ──────────────────────────────── */
+.dark{ background:var(--slate); color:var(--slate-fg); border-bottom:1px solid var(--slate); }
+.dark .h-section{ color:#F2F3F0; }
+.dark .meta{ color:var(--slate-dim); }
+.dark .meta-dot::before{ background:var(--slate-fg); }
+.dark .note{ color:#9BA2A6; }
+.compare{ display:grid; grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr); gap:0; align-items:stretch; }
+.pane{
+  border:1px solid var(--slate-rule);
+  border-radius:3px;
+  padding:16px 16px 18px;
+  background:var(--slate-2);
+  min-height:340px;
+}
+.pane.out{ background:#F6F6F2; border-color:#F6F6F2; color:var(--ink); }
+.pane .pk{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--slate-dim); margin-bottom:13px; display:block;
+}
+.pane.out .pk{ color:var(--faint); }
+.logline{ font-family:var(--mono); font-size:11px; line-height:1.85; color:var(--slate-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.logline.hot{ color:#E8705A; }
+.logline.mid{ color:#8A9198; }
+.mid-arrow{ display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:13px; color:var(--slate-dim); }
+.pane.out .verdict-lines{ font-size:16px; line-height:1.45; letter-spacing:-.012em; }
+.pane.out .verdict-lines .lbl{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--fail); display:block; margin-bottom:8px;
+}
+.pane.out ul{ margin:16px 0 0; padding:0; list-style:none; }
+.pane.out li{
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-2);
+  padding:8px 0; border-top:1px solid var(--rule);
+  display:flex; gap:12px;
+}
+.pane.out li .lk{ color:var(--faint); flex:none; width:78px; }
+.fixline{
+  margin-top:18px; padding:12px 13px 13px;
+  background:var(--paper); border:1px solid var(--rule);
+  border-radius:2px;
+  font-family:var(--mono); font-size:11.5px; line-height:1.75; color:var(--ink-2);
+}
+.fixline code{ font-family:inherit; font-size:inherit; }
+
+/* ── setup ────────────────────────────────────────────────── */
+.setup{ display:grid; grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr); gap:clamp(24px,4vw,56px); align-items:start; }
+.setup ol{ margin:0; padding:0; list-style:none; counter-reset:s; }
+.setup li{ counter-increment:s; padding:16px 0; border-top:1px solid var(--rule); display:grid; grid-template-columns:26px 1fr; gap:14px; }
+.setup li:first-child{ border-top:1px solid var(--rule-2); }
+.setup li::before{ content:counter(s,decimal-leading-zero); font-family:var(--mono); font-size:11px; color:var(--faint); padding-top:3px; }
+.setup li h4{ font-size:16px; letter-spacing:-.015em; margin-bottom:4px; }
+.setup li p{ font-size:14px; color:var(--muted); max-width:38ch; }
+.code{
+  background:var(--slate); border-radius:3px; padding:18px 18px 20px;
+  font-family:var(--mono); font-size:12.5px; line-height:1.85; color:var(--slate-fg);
+  overflow-x:auto;
+}
+.code .c{ color:var(--slate-dim); }
+.code .key{ color:#8FA6C4; }
+.code .str{ color:#93C9A6; }
+.code .cmd{ color:#F2F3F0; }
+.code .pr{ color:var(--slate-dim); }
+.code .hr{ display:block; height:1px; background:var(--slate-rule); margin:12px 0; }
+
+/* ── faq ──────────────────────────────────────────────────── */
+.faq{ border-top:1px solid var(--rule-2); }
+.qa{ display:grid; grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr); gap:clamp(20px,4vw,56px); padding:24px 0; border-bottom:1px solid var(--rule); }
+.qa:last-child{ border-bottom:0; }
+.qa h4{ font-size:19px; letter-spacing:-.02em; line-height:1.25; max-width:24ch; }
+.qa p{ color:var(--ink-2); font-size:15.5px; max-width:56ch; }
+
+/* ── cta ──────────────────────────────────────────────────── */
+.cta{ background:var(--paper-2); }
+.cta-in{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:end; padding:clamp(48px,6vw,80px) 0; }
+.cta h2{ max-width:17ch; }
+.cta .lede{ margin-top:16px; max-width:44ch; }
+.cta-btns{ display:flex; gap:11px; flex-wrap:wrap; }
+
+/* ── footer ───────────────────────────────────────────────── */
+footer{ background:var(--paper); }
+.foot-in{ display:grid; grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr)); gap:32px; padding:clamp(40px,5vw,64px) 0 28px; }
+.foot-in h5{ font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:500; margin:0 0 14px; }
+.foot-in ul{ list-style:none; margin:0; padding:0; display:grid; gap:9px; }
+.foot-in a{ font-size:14px; color:var(--ink-2); text-decoration:none; }
+.foot-in a:hover{ color:var(--ink); text-decoration:underline; text-underline-offset:3px; }
+.foot-brand p{ color:var(--muted); font-size:14px; max-width:32ch; margin-top:14px; }
+.foot-legal{
+  display:flex; flex-wrap:wrap; gap:8px 20px; align-items:center;
+  border-top:1px solid var(--rule); padding:18px 0 34px;
+  font-family:var(--mono); font-size:11px; color:var(--faint);
+}
+.foot-legal .right{ margin-left:auto; display:flex; gap:16px; }
+
+/* ── motion ───────────────────────────────────────────────── */
+.rv{ opacity:0; transform:translateY(10px); }
+.rv.in{ opacity:1; transform:none; transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.3,1); }
+@media (prefers-reduced-motion:reduce){
+  .rv,.rv.in{ opacity:1; transform:none; transition:none; }
+  .btn:hover{ transform:none; }
+}
+
+/* ── responsive ───────────────────────────────────────────── */
+@media (max-width:1080px){
+  .hero-grid{ grid-template-columns:1fr; min-height:0; padding-top:38px; }
+  .hero-copy{ max-width:none; }
+  .compare{ grid-template-columns:1fr; gap:14px; }
+  .mid-arrow{ height:26px; transform:rotate(90deg); }
+  .setup,.qa,.sec-head{ grid-template-columns:1fr; }
+  .cta-in{ grid-template-columns:1fr; }
+  .foot-in{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width:860px){
+  .nav-links{ display:none; }
+  .bento{ grid-template-columns:1fr 1fr; }
+  .tile.lead{ grid-column:span 2; grid-row:span 1; }
+  .step{ grid-template-columns:1fr; gap:16px; }
+  .step .num{ padding-top:0; }
+  .stages{ grid-template-columns:repeat(3,1fr); }
+  .stage:nth-child(3){ border-right:0; }
+}
+@media (max-width:560px){
+  .bento,.foot-in{ grid-template-columns:1fr; }
+  .tile.lead,.tile.wide{ grid-column:span 1; }
+  .stages{ grid-template-columns:repeat(2,1fr); }
+  .stage{ border-bottom:1px solid var(--rule); }
+  .hero-foot{ flex-direction:column; gap:4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ═══════════════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="shell nav-in">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="19" height="19" rx="2.5" fill="#15171B"/>
+        <path d="M4 13.2 L7.4 9.1 L10.2 11.4 L13 5.6" stroke="#EFEFEA" stroke-width="1.5" stroke-linecap="square"/>
+        <circle cx="13" cy="5.6" r="2.1" fill="#C4331A"/>
+      </svg>
+      <span class="brand-name">Sightline</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#watches">What it watches</a>
+      <a href="#read">Log reading</a>
+      <a href="#setup">Setup</a>
+      <a href="#questions">Questions</a>
+    </div>
+    <div class="nav-end">
+      <a class="signin" href="#start">Sign in</a>
+      <a class="btn" href="#start">Start free <span class="arw">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<header class="hero" id="top">
+  <div class="shell hero-grid">
+
+    <div class="hero-copy">
+      <div class="hero-eyebrow">
+        <span class="tag">build failed</span>
+        <span class="meta">observability for CI pipelines</span>
+      </div>
+
+      <h1 class="h-display">Why the build broke.<br><span class="dim">Before you open<br>the logs.</span></h1>
+
+      <p class="lede hero-lede">Sightline watches every run in your pipeline, reads the output your CI throws away, and posts a verdict on the failure: what broke, which change caused it, and who owns it.</p>
+
+      <div class="hero-cta">
+        <a class="btn" href="#start">Connect a pipeline <span class="arw">→</span></a>
+        <a class="btn btn-ghost" href="#read">See how it reads a log</a>
+      </div>
+
+      <div class="hero-foot">
+        <span class="k">reads</span>
+        <span class="v">GitHub Actions · Buildkite · CircleCI · GitLab CI</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="verdict">
+        <div class="v-bar">
+          <span class="run">pipeline #4821</span>
+          <span class="sep">/</span>
+          <span>main</span>
+          <span class="sep">/</span>
+          <span>a3f19c2</span>
+          <span class="right"><span class="dotfail"></span> failed in 3m 12s</span>
+        </div>
+
+        <div class="stages">
+          <div class="stage"><span class="nm">lint</span><span class="tm">11s</span></div>
+          <div class="stage"><span class="nm">build</span><span class="tm">48s</span></div>
+          <div class="stage"><span class="nm">test:unit</span><span class="tm">1m 04s</span></div>
+          <div class="stage f"><span class="nm">test:e2e</span><span class="tm">1m 09s</span></div>
+          <div class="stage s"><span class="nm">deploy</span><span class="tm">skipped</span></div>
+        </div>
+
+        <div class="v-body">
+          <div class="v-head">
+            <span class="lbl">Verdict</span>
+            <span class="conf">one likely cause</span>
+          </div>
+          <p class="v-claim">A selector the checkout test depends on was <b>renamed in this commit</b>. The test is right; the assumption is stale.</p>
+
+          <div class="v-term">
+            <span class="path">e2e/checkout.spec.ts:41</span><br>
+            <span class="dim">  await page.click(</span><span class="err">'#pay-button'</span><span class="dim">)</span><br>
+            <span class="err">  TimeoutError: selector never appeared (5000ms)</span>
+            <span class="rule"></span>
+            <span class="dim">src/checkout/PayPanel.tsx</span><br>
+            <span class="del">  - &lt;button id="pay-button"</span><br>
+            <span class="add">  + &lt;button id="pay-submit"</span><br>
+            <span class="dim">  changed 14 minutes ago in this commit</span>
+          </div>
+        </div>
+
+        <div class="v-foot">
+          <span>owner</span>
+          <span class="owner">@web-platform</span>
+          <span class="sep">·</span>
+          <span>not a flake: first failure in this spec</span>
+          <a href="#read">open full log -&gt;</a>
+        </div>
+      </div>
+      <p class="sample-note">Sample verdict. Illustrative data.</p>
+    </div>
+
+  </div>
+</header>
+
+<!-- ══ PROVIDERS ═════════════════════════════════════════════ -->
+<section class="providers">
+  <div class="shell providers-in">
+    <span class="lead">Sightline sits beside the CI you already run</span>
+    <span class="p">GitHub Actions</span>
+    <span class="p">Buildkite</span>
+    <span class="p">CircleCI</span>
+    <span class="p">GitLab CI</span>
+    <span class="p">Jenkins</span>
+    <span class="p">Argo Workflows</span>
+  </div>
+</section>
+
+<!-- ══ NARRATIVE WORKFLOW ════════════════════════════════════ -->
+<section id="how">
+  <div class="shell sec-pad">
+    <div class="sec-head rv">
+      <div>
+        <p class="meta meta-dot k">The four minutes after a red build</p>
+        <h2 class="h-section">You already know the shape of this. Open the run, expand the failed job, scroll past nine hundred lines of setup.</h2>
+      </div>
+      <p class="lede note">Sightline does that scroll for you and gets to the same place you would have, except it starts the moment the job exits rather than the moment you notice.</p>
+    </div>
+
+    <div class="flow">
+
+      <article class="step rv">
+        <div class="num">01</div>
+        <div>
+          <h3>It reads the run, not the summary</h3>
+          <p>The exit code tells you a job failed. The output tells you why. Sightline ingests the full stream from every job, including the parts your CI truncates in the browser, and keeps it addressable.</p>
+          <p class="then">Ranked by <b>likelihood</b>, not by line number.</p>
+        </div>
+        <div class="artifact">
+          <span class="cap">candidate causes</span>
+          <div class="ln" style="display:grid;grid-template-columns:1fr auto;gap:6px 12px;">
+            <span>selector renamed in this diff</span><span style="color:var(--fail)">likely</span>
+            <span style="color:var(--muted)">e2e runner out of memory</span><span style="color:var(--faint)">ruled out</span>
+            <span style="color:var(--muted)">flaky wait on network idle</span><span style="color:var(--faint)">ruled out</span>
+            <span style="color:var(--muted)">upstream API 503</span><span style="color:var(--faint)">ruled out</span>
+          </div>
+          <div class="tile-rule"></div>
+          <p class="mini" style="margin-top:12px;">Each candidate is ruled out against something observable in the run, and the reasoning stays attached to the verdict.</p>
+        </div>
+      </article>
+
+      <article class="step rv">
+        <div class="num">02</div>
+        <div>
+          <h3>It knows whether this test has failed before</h3>
+          <p>The single most expensive question on a platform team is whether a red build is real. Sightline keeps the history of every spec across every branch, so a first-time failure and a spec that has been coin-flipping for weeks do not look alike.</p>
+          <p class="then">Flakes get <b>quarantined and reported</b>. Real breaks get you.</p>
+        </div>
+        <div class="artifact">
+          <span class="cap">checkout.spec.ts · recent runs</span>
+          <div class="runs" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="f now"></i>
+          </div>
+          <div class="legend">
+            <span><i class="sw p"></i> passed</span>
+            <span><i class="sw f"></i> failed</span>
+            <span style="margin-left:auto;color:var(--faint)">oldest at left</span>
+          </div>
+          <div class="tile-rule"></div>
+          <p class="mini" style="margin-top:12px;"><b>Reading:</b> clean history, one new failure. Sightline calls this a real break and does not offer a retry.</p>
+        </div>
+      </article>
+
+      <article class="step rv">
+        <div class="num">03</div>
+        <div>
+          <h3>It puts the verdict where the failure already interrupted someone</h3>
+          <p>The pull request, the deploy channel, the incident thread. Sightline routes by the code that changed rather than by whoever is on rotation, so the person who can fix it in one line is the person who hears about it.</p>
+          <p class="then">One message per failure. <b>No digest, no noise.</b></p>
+        </div>
+        <div class="artifact">
+          <span class="cap">routing</span>
+          <div class="diff" style="line-height:1.9;">
+            <div style="color:var(--muted)">changed path <span style="color:var(--ink)">src/checkout/**</span></div>
+            <div style="color:var(--muted)">codeowner <span style="color:var(--ink)">@web-platform</span></div>
+            <div style="color:var(--muted)">last green <span style="color:var(--ink)">#4820, 22 minutes ago</span></div>
+          </div>
+          <div class="chips">
+            <span class="chip on">PR #1182 comment</span>
+            <span class="chip on">#ci-alerts</span>
+            <span class="chip">pager</span>
+            <span class="chip">email digest</span>
+          </div>
+          <div class="tile-rule"></div>
+          <p class="mini" style="margin-top:12px;">Sample routing. Destinations off by default until you turn them on.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ BENTO ═════════════════════════════════════════════════ -->
+<section id="watches">
+  <div class="shell sec-pad">
+    <div class="sec-head rv">
+      <div>
+        <p class="meta meta-dot k">What it watches</p>
+        <h2 class="h-section">Five things that are boring to track and expensive to miss.</h2>
+      </div>
+      <p class="lede note">None of this requires changing how your pipeline is written. Sightline reads what the run already emits.</p>
+    </div>
+
+    <div class="bento rv">
+      <article class="tile lead">
+        <p class="meta k">Root cause</p>
+        <h3 class="h-tile">A build failure has one cause and about forty symptoms. Sightline is only interested in the cause.</h3>
+        <p>It correlates the failing assertion against the diff in the run, the state of the runner, the dependency lockfile, and the last known green build, then names the one that explains the others. When it cannot pick a single cause it says so and shows you the shortlist instead of guessing.</p>
+      </article>
+
+      <article class="tile">
+        <p class="meta k">Flake detection</p>
+        <h3 class="h-tile">Per-spec history, every branch</h3>
+        <p>Failure rate by test, not by job. Quarantine on your rule, not ours.</p>
+      </article>
+
+      <article class="tile">
+        <p class="meta k">Dependency drift</p>
+        <h3 class="h-tile">The build that broke without a commit</h3>
+        <p>Lockfile changes, base image digests, and registry versions are diffed between runs.</p>
+      </article>
+
+      <article class="tile wide">
+        <p class="meta k">Runner conditions</p>
+        <h3 class="h-tile">Out of memory, out of disk, out of time</h3>
+        <p>Infrastructure failures get their own verdict class, because telling an engineer to debug their test when the runner ran out of disk is how a team learns to ignore your tool.</p>
+        <div class="tile-rule"></div>
+        <p class="mini"><b>Verdict classes:</b> code · test · dependency · infrastructure · unknown</p>
+      </article>
+
+      <article class="tile">
+        <p class="meta k">Duration</p>
+        <h3 class="h-tile">Where the minutes went</h3>
+        <p>Per-step timings across runs, so a slow pipeline has a suspect rather than a feeling.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DARK: LOG READING ═════════════════════════════════════ -->
+<section class="dark" id="read">
+  <div class="shell sec-pad">
+    <div class="sec-head rv">
+      <div>
+        <p class="meta meta-dot k">Log reading</p>
+        <h2 class="h-section">It does not summarise your logs. It finds the four lines that matter and shows its work.</h2>
+      </div>
+      <p class="lede note">A summary is a smaller version of a thing you did not want to read. A verdict is a claim you can check. Sightline links every claim back to the exact line and step it came from, so disagreeing with it takes one click, not a rerun.</p>
+    </div>
+
+    <div class="compare rv">
+      <div class="pane">
+        <span class="pk">What the job emitted · 2,411 lines</span>
+        <div class="logline">##[group]Run actions/checkout@v4</div>
+        <div class="logline">Syncing repository: acme/storefront</div>
+        <div class="logline">Deleting the contents of '/home/runner/work'</div>
+        <div class="logline">Determining the checkout info</div>
+        <div class="logline">##[group]Run pnpm install --frozen-lockfile</div>
+        <div class="logline">Lockfile is up to date, resolution step is skipped</div>
+        <div class="logline">Progress: resolved 1842, reused 1840, downloaded 2</div>
+        <div class="logline">##[group]Run pnpm test:e2e</div>
+        <div class="logline mid">Running 128 tests using 4 workers</div>
+        <div class="logline mid">  ok 1 - cart adds item (1.2s)</div>
+        <div class="logline mid">  ok 2 - cart removes item (0.9s)</div>
+        <div class="logline mid">  ok 3 - promo code applies (1.4s)</div>
+        <div class="logline hot">  not ok 4 - checkout completes payment</div>
+        <div class="logline hot">    TimeoutError: page.click: Timeout 5000ms</div>
+        <div class="logline hot">    waiting for locator('#pay-button')</div>
+        <div class="logline mid">    at e2e/checkout.spec.ts:41:18</div>
+        <div class="logline">  ok 5 - order confirmation renders (1.1s)</div>
+        <div class="logline">##[error]Process completed with exit code 1</div>
+        <div class="logline">Cleaning up orphan processes</div>
+        <p class="small" style="margin-top:14px;font-family:var(--mono);font-size:10.5px;color:var(--slate-dim)">Sample log. Illustrative data.</p>
+      </div>
+
+      <div class="mid-arrow">-&gt;</div>
+
+      <div class="pane out">
+        <span class="pk">What Sightline posts · 1 verdict</span>
+        <div class="verdict-lines">
+          <span class="lbl">Real break · code</span>
+          The checkout test is waiting for a button that this commit renamed. Change the selector in the spec, or restore the id.
+        </div>
+        <ul>
+          <li><span class="lk">evidence</span><span>line 1,904 of job <b>test:e2e</b></span></li>
+          <li><span class="lk">diff</span><span>PayPanel.tsx: id "pay-button" -&gt; "pay-submit"</span></li>
+          <li><span class="lk">history</span><span>spec green for its whole recorded history</span></li>
+          <li><span class="lk">ruled out</span><span>flake, runner memory, upstream 503</span></li>
+          <li><span class="lk">owner</span><span>@web-platform via CODEOWNERS</span></li>
+        </ul>
+        <div class="fixline">
+          <span class="pk" style="margin-bottom:8px;">Suggested edit</span>
+          <code>e2e/checkout.spec.ts:41</code><br>
+          <code><span style="color:var(--fail)">- page.click('#pay-button')</span></code><br>
+          <code><span style="color:var(--pass)">+ page.click('#pay-submit')</span></code>
+        </div>
+        <p class="small" style="margin-top:14px;font-family:var(--mono);font-size:10.5px;color:var(--faint)">Sample output. Illustrative data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SETUP ═════════════════════════════════════════════════ -->
+<section id="setup">
+  <div class="shell sec-pad">
+    <div class="sec-head rv">
+      <div>
+        <p class="meta meta-dot k">Setup</p>
+        <h2 class="h-section">One step at the end of the job you already have.</h2>
+      </div>
+      <p class="lede note">Sightline is read-only against your pipeline. It cannot cancel a run, rerun a job, or block a merge, and nothing about your build changes if you turn it off.</p>
+    </div>
+
+    <div class="setup rv">
+      <ol>
+        <li>
+          <div>
+            <h4>Install the app</h4>
+            <p>Grant read access to the repositories whose pipelines you want watched.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Add the reporting step</h4>
+            <p>It runs on failure and on success, because a verdict needs to know what green looks like here.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Choose where verdicts land</h4>
+            <p>Pull request comments are on by default. Everything else is opt-in.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Break something on purpose</h4>
+            <p>The fastest way to trust a diagnosis tool is to hand it a failure you already understand.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="code">
+        <span class="c"># .github/workflows/ci.yml</span><br>
+        <span class="key">    - name:</span> <span class="str">Report to Sightline</span><br>
+        <span class="key">      uses:</span> <span class="str">sightline/report@v1</span><br>
+        <span class="key">      if:</span> <span class="str">always()</span><br>
+        <span class="key">      with:</span><br>
+        <span class="key">        token:</span> <span class="str">${{ secrets.SIGHTLINE_TOKEN }}</span>
+        <span class="hr"></span>
+        <span class="c"># or, from any CI that can run a binary</span><br>
+        <span class="pr">$</span> <span class="cmd">sightline report --job "$JOB_NAME" --exit $?</span><br>
+        <span class="c">  reading 2,411 lines from stdout</span><br>
+        <span class="c">  verdict posted to PR #1182</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ═══════════════════════════════════════════════════ -->
+<section id="questions">
+  <div class="shell sec-pad">
+    <div class="sec-head rv">
+      <div>
+        <p class="meta meta-dot k">Reasonable objections</p>
+        <h2 class="h-section">The questions a platform engineer asks in the first five minutes.</h2>
+      </div>
+      <p class="lede note">Asked in roughly this order, every time.</p>
+    </div>
+
+    <div class="faq rv">
+      <div class="qa">
+        <h4>What happens when it is confidently wrong?</h4>
+        <p>It marks the verdict disputed and stops offering that explanation for this failure class until it has seen a resolution. Every verdict shows the evidence it used, so a wrong call is visible as a wrong call rather than as a vague suggestion you cannot argue with. A tool that cannot be corrected gets ignored within a fortnight.</p>
+      </div>
+      <div class="qa">
+        <h4>Does my source code leave my infrastructure?</h4>
+        <p>Log output and diff hunks for the failing paths do. Full source does not. There is a self-hosted deployment for teams whose answer to that first sentence is still no, and a redaction pass that strips values matching your secret patterns before anything is stored.</p>
+      </div>
+      <div class="qa">
+        <h4>We already have dashboards for this.</h4>
+        <p>Dashboards tell you the failure rate is up. They do not tell you the checkout spec is waiting on a button that got renamed. Sightline is not trying to be the place you look; it is trying to be the thing that arrives before you go looking.</p>
+      </div>
+      <div class="qa">
+        <h4>Our pipeline is unusual.</h4>
+        <p>Most of them are. The reporting step is a binary that takes a stream and an exit code, so anything that can run a shell command can report. Custom verdict classes are configuration, not a support ticket.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ═══════════════════════════════════════════════════ -->
+<section class="cta" id="start">
+  <div class="shell cta-in">
+    <div class="rv">
+      <p class="meta meta-dot" style="margin-bottom:16px;">Start</p>
+      <h2 class="h-section">Connect one pipeline. Break it on purpose. Read the verdict.</h2>
+      <p class="lede">That is the whole evaluation. If the verdict is not better than your own first guess, you will know within an afternoon.</p>
+    </div>
+    <div class="cta-btns rv">
+      <a class="btn" href="#start">Connect a pipeline <span class="arw">→</span></a>
+      <a class="btn btn-ghost" href="#start">Talk to an engineer</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+  <div class="shell">
+    <div class="foot-in">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <svg class="brand-mark" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="0.5" y="0.5" width="19" height="19" rx="2.5" fill="#15171B"/>
+            <path d="M4 13.2 L7.4 9.1 L10.2 11.4 L13 5.6" stroke="#EFEFEA" stroke-width="1.5" stroke-linecap="square"/>
+            <circle cx="13" cy="5.6" r="2.1" fill="#C4331A"/>
+          </svg>
+          <span class="brand-name">Sightline</span>
+        </a>
+        <p>Observability for CI pipelines. It reads the run so the first thing you see is the reason, not the log.</p>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#watches">What it watches</a></li>
+          <li><a href="#read">Log reading</a></li>
+          <li><a href="#setup">Setup</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Developers</h5>
+        <ul>
+          <li><a href="#setup">Documentation</a></li>
+          <li><a href="#setup">CLI reference</a></li>
+          <li><a href="#setup">Verdict API</a></li>
+          <li><a href="#questions">Self-hosting</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#start">Contact</a></li>
+          <li><a href="#questions">Security</a></li>
+          <li><a href="#questions">Changelog</a></li>
+          <li><a href="#start">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Sightline</span>
+      <span>Status: all systems normal</span>
+      <div class="right">
+        <span>Privacy</span>
+        <span>Terms</span>
+        <span>Data processing</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els = document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(e){ e.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+/* Tenor · custom system · direction "the trail marker post"
+ * axes: mid / slab-serif / chromatic-other (waymark green ~120) · posture: committed
+ * These are the same tokens the self-contained index.html inlines at :root.
+ */
+:root {
+  /* colour */
+  --color-paper:      oklch(84% 0.013 118);
+  --color-paper-2:    oklch(89% 0.010 118);
+  --color-field:      oklch(44% 0.090 128);
+  --color-field-ink:  oklch(96% 0.012 120);
+  --color-field-rule: oklch(56% 0.080 128);
+  --color-ink:        oklch(22% 0.018 122);
+  --color-ink-2:      oklch(34% 0.016 122);
+  --color-muted:      oklch(44% 0.014 118);
+  --color-rule:       oklch(58% 0.012 118);
+  --color-rule-2:     oklch(72% 0.011 118);
+  --color-accent:     oklch(74% 0.170 120);
+  --color-accent-ink: oklch(22% 0.018 122);
+  --color-focus:      oklch(56% 0.200 122);
+
+  /* type */
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.55rem, 3.9vw + 1rem, 4.2rem);
+  --text-display-s: clamp(2.05rem, 3.1vw + 0.8rem, 3.35rem);
+
+  /* space · 4pt scale */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  /* rule and radius */
+  --rule-hair: 1px;
+  --rule-band: 6px;
+  --radius-none: 0px;
+  --radius-sm: 2px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  /* depth */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 200;
+}

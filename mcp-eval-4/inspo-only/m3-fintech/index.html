@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Even: the tax money is already gone</title>
+<meta name="description" content="Even is a savings app for freelancers with irregular income. It sets aside tax money automatically, as each invoice lands.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------
+   Even, tokens
+   Register taken from the fintech-landing evidence: light paper (50%
+   of the genre), but warmed off the cold white that Coinbase/Stash
+   default to. Display goes AGAINST the 79% grotesk gravity, a light
+   roman serif, the Public.com move, because the audience is people
+   who set type for a living. Grotesk keeps the working text.
+   Radii near-zero, 4px base step: ledger, not app-store.
+------------------------------------------------------------------ */
+:root{
+  --paper:#F7F4EE;
+  --paper-2:#FDFCFA;
+  --card:#FFFFFF;
+  --ink:#15120E;
+  --ink-2:#3A342C;
+  --muted:#6E6659;
+  --rule:#DFD8CB;
+  --rule-soft:#EAE4D9;
+  --accent:#B8452A;      /* marks, links, "yours"  */
+  --accent-soft:#F2E2DB;
+  --held:#3E5C48;        /* money set aside        */
+  --held-soft:#DDE5DD;
+
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-text:"Inter Tight","Helvetica Neue",Arial,sans-serif;
+
+  --step:4px;
+  --maxw:1200px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-text);
+  font-size:17px;
+  line-height:1.55;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0;font-family:var(--f-display);font-weight:300;letter-spacing:-.012em}
+h1{font-size:clamp(38px,4.35vw,55px);line-height:1.1}
+h2{font-size:clamp(30px,3.5vw,46px);line-height:1.1}
+h3{font-size:22px;line-height:1.25}
+p{margin:0}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+::selection{background:var(--accent-soft)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px}
+.label{
+  font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+.lede{font-size:19px;color:var(--ink-2);line-height:1.5}
+.small{font-size:14px;color:var(--muted);line-height:1.5}
+.serif-it{font-family:var(--f-display);font-style:italic;font-weight:300}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:saturate(140%) blur(8px);
+  border-bottom:1px solid var(--rule-soft);
+}
+.nav-in{display:flex;align-items:center;gap:32px;height:66px}
+.mark{display:flex;align-items:center;gap:9px;text-decoration:none;font-weight:600;letter-spacing:-.01em;font-size:18px}
+.mark .glyph{
+  width:22px;height:22px;border:1px solid var(--ink);position:relative;flex:0 0 auto;
+}
+.mark .glyph::after{
+  content:"";position:absolute;left:-1px;right:-1px;top:50%;height:1px;background:var(--ink);
+}
+.mark .glyph::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:50%;background:var(--held);
+}
+.nav-links{display:flex;gap:26px;margin-left:8px}
+.nav-links a{
+  text-decoration:none;font-size:15px;color:var(--ink-2);padding:4px 0;
+  border-bottom:1px solid transparent;transition:border-color .18s,color .18s;
+}
+.nav-links a:hover{color:var(--ink);border-bottom-color:var(--accent)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:20px}
+
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-text);font-size:15px;font-weight:500;
+  padding:11px 20px;border:1px solid var(--ink);border-radius:2px;
+  background:var(--ink);color:var(--paper);text-decoration:none;cursor:pointer;
+  white-space:nowrap;
+  transition:background .18s,color .18s,transform .18s;
+}
+.btn:hover{background:#2c261e;transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.btn.lg{font-size:16px;padding:14px 26px}
+.btn .arw{transition:transform .18s}
+.btn:hover .arw{transform:translateX(3px)}
+.textlink{
+  text-decoration:none;font-size:15px;color:var(--ink-2);
+  border-bottom:1px solid var(--rule);padding-bottom:2px;transition:border-color .18s,color .18s;
+}
+.textlink:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:60px;align-items:center}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.eyebrow .dot{width:6px;height:6px;background:var(--held);border-radius:50%}
+h1 .em{font-style:italic;color:var(--accent)}
+.hero p.lede{margin-top:22px;max-width:44ch}
+.hero-cta{display:flex;align-items:center;gap:22px;margin-top:30px;flex-wrap:wrap}
+.hero-fine{margin-top:22px;display:flex;gap:22px;flex-wrap:wrap}
+.hero-fine span{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.hero-fine span::before{content:"";width:5px;height:5px;border:1px solid var(--muted);transform:rotate(45deg)}
+
+/* ---------- the ledger widget ---------- */
+.ledger{
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;
+  box-shadow:0 1px 0 var(--rule-soft),0 18px 40px -30px rgba(21,18,14,.45);
+  overflow:hidden;
+}
+.ledger-top{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--rule-soft);background:var(--paper-2);
+}
+.ledger-body{padding:20px}
+.invoice{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:13px 0;border-bottom:1px dotted var(--rule);
+}
+.invoice:last-of-type{border-bottom:0}
+.invoice .who{font-size:15px}
+.invoice .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.invoice .amt{font-family:var(--f-display);font-size:22px;font-weight:400;white-space:nowrap}
+.invoice.new{animation:landed 1.1s ease both}
+@keyframes landed{from{background:var(--accent-soft);opacity:.4}to{background:transparent;opacity:1}}
+
+.rate-row{display:flex;align-items:center;gap:10px;margin:18px 0 14px}
+.rate-row .label{margin-right:auto}
+.seg{display:flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.seg button{
+  font:inherit;font-size:13px;font-weight:500;padding:5px 11px;border:0;
+  background:transparent;color:var(--muted);cursor:pointer;border-left:1px solid var(--rule);
+  transition:background .15s,color .15s;
+}
+.seg button:first-child{border-left:0}
+.seg button:hover{background:var(--paper)}
+.seg button[aria-pressed="true"]{background:var(--held);color:#fff}
+
+.split{display:flex;height:34px;border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:10px}
+.split .held{background:var(--held);transition:flex-basis .5s cubic-bezier(.4,0,.2,1)}
+.split .yours{background:var(--accent-soft);border-left:1px solid var(--rule);transition:flex-basis .5s cubic-bezier(.4,0,.2,1)}
+.split-key{display:flex;gap:20px;font-size:12.5px;color:var(--muted)}
+.split-key i{width:9px;height:9px;display:inline-block;margin-right:7px;vertical-align:0}
+.split-key .k-held i{background:var(--held)}
+.split-key .k-yours i{background:var(--accent-soft);border:1px solid var(--accent)}
+.split-key b{font-weight:500;color:var(--ink)}
+
+.totals{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);margin-top:18px}
+.totals div{padding:16px 0 4px}
+.totals div+div{padding-left:22px;border-left:1px solid var(--rule-soft)}
+.totals .n{font-family:var(--f-display);font-size:32px;font-weight:300;line-height:1.05;margin-top:6px}
+.totals .n.held{color:var(--held)}
+.ledger-foot{
+  padding:11px 20px;border-top:1px solid var(--rule-soft);background:var(--paper-2);
+  font-size:12px;color:var(--muted);
+}
+
+/* ---------- rules & sections ---------- */
+.band{border-top:1px solid var(--rule)}
+.section{padding:96px 0}
+.section-head{display:grid;grid-template-columns:1fr 1.3fr;gap:64px;align-items:end;margin-bottom:56px}
+.section-head p{max-width:52ch}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink)}
+.step{padding:30px 32px 34px 0;border-right:1px solid var(--rule);display:flex;flex-direction:column}
+.step:last-child{border-right:0;padding-right:0}
+.step:not(:first-child){padding-left:32px}
+.step .num{font-family:var(--f-display);font-size:15px;color:var(--accent);margin-bottom:18px}
+.step h3{margin-bottom:10px}
+.step p{color:var(--muted);font-size:15.5px;margin-bottom:auto}
+.step .fig{margin:34px 0 0;align-self:stretch}
+
+/* alternating feature stack */
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:72px 0;border-top:1px solid var(--rule-soft)}
+.feature:first-of-type{border-top:0}
+.feature .txt h3{font-size:28px;margin-bottom:14px}
+.feature .txt p{color:var(--muted);margin-bottom:14px}
+.feature.flip .txt{order:2}
+.panel{
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:22px;
+  box-shadow:0 14px 34px -30px rgba(21,18,14,.5);
+}
+.rowline{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dotted var(--rule);font-size:15px}
+.rowline:last-child{border-bottom:0}
+.rowline .t{color:var(--muted);font-size:13.5px}
+.pill{font-size:12px;padding:3px 9px;border:1px solid var(--held);color:var(--held);border-radius:100px}
+.pill.warn{border-color:var(--accent);color:var(--accent)}
+
+/* chart */
+.chart-note{font-size:12.5px;color:var(--muted);margin-top:14px}
+
+/* quote / manifesto strip */
+.strip{background:var(--ink);color:var(--paper);padding:84px 0}
+.strip .wrap{max-width:900px}
+.strip p{font-family:var(--f-display);font-weight:300;font-size:clamp(26px,3.2vw,40px);line-height:1.25}
+.strip p .em{font-style:italic;color:#E7A48C}
+.strip p.small{font-family:var(--f-text);font-size:15.5px;line-height:1.6;color:#A79E90;margin-top:28px;max-width:62ch}
+
+/* faq */
+.faq{border-top:1px solid var(--ink)}
+details{border-bottom:1px solid var(--rule);padding:0}
+summary{
+  list-style:none;cursor:pointer;padding:22px 0;display:flex;gap:24px;align-items:baseline;
+  font-size:19px;font-family:var(--f-display);font-weight:400;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;color:var(--accent);font-family:var(--f-text);font-size:20px;line-height:1}
+details[open] summary::after{content:"-"}
+details p{padding:0 0 24px 0;max-width:66ch;color:var(--muted);font-size:15.5px}
+details p+p{padding-top:0;margin-top:-8px}
+details .q-n{font-size:13px;color:var(--muted);font-family:var(--f-text);flex:0 0 auto;width:26px}
+
+/* closing cta */
+.close{padding:110px 0;text-align:center}
+.close h2{max-width:16ch;margin:0 auto 20px}
+.close .lede{max-width:46ch;margin:0 auto}
+.close .btns{display:flex;gap:18px;justify-content:center;align-items:center;margin-top:34px;flex-wrap:wrap}
+
+/* footer */
+footer{border-top:1px solid var(--rule);padding:56px 0 40px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
+.foot-grid h4{font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.foot-grid a{text-decoration:none;font-size:15px;color:var(--ink-2)}
+.foot-grid a:hover{color:var(--accent)}
+.foot-bottom{display:flex;justify-content:space-between;gap:24px;margin-top:56px;padding-top:22px;border-top:1px solid var(--rule-soft);flex-wrap:wrap}
+.foot-bottom p{font-size:12.5px;color:var(--muted);max-width:66ch}
+
+@media (max-width:1080px){
+  .hero-grid{gap:44px}
+  .section-head{grid-template-columns:1fr;gap:20px;align-items:start}
+  .feature{gap:44px}
+}
+@media (max-width:860px){
+  .wrap{padding:0 24px}
+  .nav-links{display:none}
+  .hero{padding:40px 0 48px}
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .section{padding:64px 0}
+  .steps{grid-template-columns:1fr;border-top:1px solid var(--ink)}
+  .step{border-right:0;border-bottom:1px solid var(--rule);padding:26px 0 30px}
+  .step:not(:first-child){padding-left:0}
+  .step:last-child{border-bottom:0}
+  .feature,.feature.flip{grid-template-columns:1fr;gap:28px;padding:48px 0}
+  .feature.flip .txt{order:0}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:32px}
+}
+@media (max-width:620px){
+  .nav-right .textlink{display:none}
+  .nav-in .btn{font-size:14px;padding:9px 15px}
+  .totals{grid-template-columns:1fr}
+  .totals div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule-soft)}
+  .hero-fine{gap:8px 20px}
+  summary{font-size:17px;gap:14px}
+  .foot-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="mark" href="#top"><span class="glyph" aria-hidden="true"></span> Even</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#what">What you get</a>
+      <a href="#year">Across a year</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <div class="nav-right">
+      <a class="textlink" href="#top">Sign in</a>
+      <a class="btn" href="#open">Open an account <span class="arw" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+
+      <div>
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span><span class="label">Tax savings for irregular income</span></div>
+        <h1>Every invoice arrives<br>already <span class="em">short</span>.<br>Even makes it true.</h1>
+        <p class="lede">You are self-employed, so part of every payment was never yours. Even moves that part into a separate account the moment an invoice clears, and leaves the rest alone.</p>
+        <div class="hero-cta">
+          <a class="btn lg" href="#open">Open an account <span class="arw" aria-hidden="true">→</span></a>
+          <a class="textlink" href="#how">See how the split works</a>
+        </div>
+        <div class="hero-fine">
+          <span>No monthly fee</span>
+          <span>Connects to your invoicing tool</span>
+          <span>Withdraw any time</span>
+        </div>
+      </div>
+
+      <!-- functional hero: the split, not a phone mockup -->
+      <div class="ledger" id="ledger">
+        <div class="ledger-top">
+          <span class="label">Invoices, this month</span>
+          <span class="small">Example figures</span>
+        </div>
+        <div class="ledger-body">
+
+          <div class="invoice">
+            <div>
+              <div class="who">Northbank Studio</div>
+              <div class="meta">Brand system, phase two · paid Tue</div>
+            </div>
+            <div class="amt" data-inv="4200">$4,200</div>
+          </div>
+          <div class="invoice">
+            <div>
+              <div class="who">Verso Press</div>
+              <div class="meta">Two features, 3,000 words · paid Fri</div>
+            </div>
+            <div class="amt" data-inv="1450">$1,450</div>
+          </div>
+          <div class="invoice new">
+            <div>
+              <div class="who">Halden &amp; Co.</div>
+              <div class="meta">Retainer, June · cleared 4 minutes ago</div>
+            </div>
+            <div class="amt" data-inv="900">$900</div>
+          </div>
+
+          <div class="rate-row">
+            <span class="label">Set-aside rate</span>
+            <div class="seg" role="group" aria-label="Set-aside rate">
+              <button type="button" data-rate="0.25" aria-pressed="false">25%</button>
+              <button type="button" data-rate="0.30" aria-pressed="true">30%</button>
+              <button type="button" data-rate="0.35" aria-pressed="false">35%</button>
+            </div>
+          </div>
+
+          <div class="split" role="img" aria-label="Proportion of income held for tax versus left available">
+            <span class="held" id="bar-held" style="flex:0 0 30%"></span>
+            <span class="yours" id="bar-yours" style="flex:0 0 70%"></span>
+          </div>
+          <div class="split-key">
+            <span class="k-held"><i aria-hidden="true"></i>Held for tax <b id="pct-held">30%</b></span>
+            <span class="k-yours"><i aria-hidden="true"></i>Yours to spend <b id="pct-yours">70%</b></span>
+          </div>
+
+          <div class="totals">
+            <div>
+              <span class="label">Moved to tax</span>
+              <div class="n held" id="t-held">$1,965</div>
+            </div>
+            <div>
+              <span class="label">Left in your account</span>
+              <div class="n" id="t-yours">$4,585</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="ledger-foot">Change the rate at any time. Past set-asides are not recalculated.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ HOW ============ -->
+  <section class="section band" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Three things happen. You do none of them.</h2>
+        <p class="lede">Even sits behind your invoicing, not in front of it. You keep sending invoices the way you already do; the only difference is what your balance says afterwards.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="num">01</div>
+          <h3>An invoice clears</h3>
+          <p>Connect the tool you already invoice with, or forward the receipt. Even watches for money actually landing, not for invoices being sent, because those are different days and you know it.</p>
+          <svg class="fig" viewBox="0 0 240 74" width="100%" height="74" aria-hidden="true">
+            <rect x="1" y="9" width="120" height="56" fill="none" stroke="#DFD8CB"/>
+            <line x1="13" y1="26" x2="80" y2="26" stroke="#DFD8CB" stroke-width="2"/>
+            <line x1="13" y1="37" x2="98" y2="37" stroke="#DFD8CB" stroke-width="2"/>
+            <line x1="13" y1="48" x2="62" y2="48" stroke="#15120E" stroke-width="2"/>
+            <path d="M133 37h84" stroke="#B8452A" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <path d="M211 31l8 6-8 6" fill="none" stroke="#B8452A" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="step">
+          <div class="num">02</div>
+          <h3>The slice moves out</h3>
+          <p>Your rate is applied to that payment alone and the amount is transferred to a separate, interest-bearing account in your name. It happens same-day, before the money starts looking spendable.</p>
+          <svg class="fig" viewBox="0 0 240 74" width="100%" height="74" aria-hidden="true">
+            <rect x="1" y="21" width="238" height="32" fill="none" stroke="#DFD8CB"/>
+            <rect x="1" y="21" width="72" height="32" fill="#3E5C48"/>
+            <path d="M37 21V6" stroke="#3E5C48" stroke-width="1.5"/>
+            <path d="M31 12l6-6 6 6" fill="none" stroke="#3E5C48" stroke-width="1.5"/>
+            <text x="86" y="41" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659">stays where it is</text>
+          </svg>
+        </div>
+        <div class="step">
+          <div class="num">03</div>
+          <h3>The bill is already paid for</h3>
+          <p>When the quarter or the year ends, the number you owe is sitting in an account you have not touched. Even tells you the date, the figure, and where to send it. Nothing to scramble for.</p>
+          <svg class="fig" viewBox="0 0 240 74" width="100%" height="74" aria-hidden="true">
+            <rect x="1" y="9" width="238" height="56" fill="none" stroke="#DFD8CB"/>
+            <line x1="1" y1="27" x2="239" y2="27" stroke="#DFD8CB"/>
+            <text x="14" y="21" font-family="Inter Tight,sans-serif" font-size="10" letter-spacing="1.4" fill="#6E6659">DUE</text>
+            <text x="14" y="52" font-family="Newsreader,serif" font-size="22" fill="#15120E">Set aside</text>
+            <path d="M186 46l7 7 14-16" fill="none" stroke="#3E5C48" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT YOU GET ============ -->
+  <section class="section band" id="what">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built for income that arrives in lumps</h2>
+        <p class="lede">Most savings tools assume a salary on the 25th. Freelance money comes in a shape, not a rhythm, and every feature here follows from that.</p>
+      </div>
+
+      <div class="feature">
+        <div class="txt">
+          <h3>A balance that tells the truth</h3>
+          <p>The number most freelancers panic about is the one in their current account, which is always wrong, because it contains someone else's tax. Even splits the two permanently, so the figure you look at is the figure you can actually spend.</p>
+          <p class="small">Available across web and phone, with the same two numbers on both.</p>
+        </div>
+        <div class="panel" aria-label="Two balances, illustrative">
+          <div class="rowline"><span>Spendable<span class="t"> · your money</span></span><span class="serif-it" style="font-size:24px">$4,585</span></div>
+          <div class="rowline"><span>Held for tax<span class="t"> · not your money</span></span><span class="serif-it" style="font-size:24px;color:var(--held)">$1,965</span></div>
+          <div class="rowline"><span class="t">Illustrative figures from the example above.</span></div>
+        </div>
+      </div>
+
+      <div class="feature flip">
+        <div class="txt">
+          <h3>A rate you set, and can argue with</h3>
+          <p>Pick a percentage, change it whenever your situation does, and Even applies it going forward. If your accountant gives you a better number, use theirs. Even has no opinion about your affairs and does not file anything on your behalf.</p>
+          <p class="small">Even is a savings product, not a tax adviser.</p>
+        </div>
+        <div class="panel">
+          <div class="rowline"><span>Current rate</span><span class="pill">30% of each payment</span></div>
+          <div class="rowline"><span>Applied from</span><span class="t">The next invoice that clears</span></div>
+          <div class="rowline"><span>Past set-asides</span><span class="t">Left exactly as they were</span></div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="txt">
+          <h3>The lean months stay yours</h3>
+          <p>Nothing is set aside when nothing arrives. There is no monthly direct debit to fail, no minimum, and no penalty for a quiet March. The account only ever moves in proportion to work you have actually been paid for.</p>
+          <p class="small">Withdraw from the tax account at any time; it is your money and your decision.</p>
+        </div>
+        <div class="panel">
+          <div class="rowline"><span>March</span><span class="pill warn">No payments · nothing moved</span></div>
+          <div class="rowline"><span>April</span><span class="pill">Two payments · set aside</span></div>
+          <div class="rowline"><span>May</span><span class="pill">One payment · set aside</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE YEAR ============ -->
+  <section class="section band" id="year">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>A freelance year, drawn honestly</h2>
+        <p class="lede">Twelve months of the same income, split as it lands. The dark part of each column was never available to spend; by the end of the year it adds up to the bill, without a single deliberate act of saving.</p>
+      </div>
+
+      <svg viewBox="0 0 1120 300" width="100%" height="auto" role="img" aria-label="Illustration: twelve months of uneven freelance income, each month split into a held-for-tax portion and a spendable portion.">
+        <line x1="0" y1="256" x2="1120" y2="256" stroke="#15120E" stroke-width="1"/>
+        <g>
+          <rect x="10"  y="150" width="60" height="76"  fill="#EFE7DA"/><rect x="10"  y="226" width="60" height="30" fill="#3E5C48"/><text x="40"  y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Jan</text>
+          <rect x="102" y="196" width="60" height="43"  fill="#EFE7DA"/><rect x="102" y="239" width="60" height="17" fill="#3E5C48"/><text x="132" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Feb</text>
+          <rect x="194" y="238" width="60" height="13"  fill="#EFE7DA"/><rect x="194" y="251" width="60" height="5"  fill="#3E5C48"/><text x="224" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Mar</text>
+          <rect x="286" y="96"  width="60" height="112" fill="#EFE7DA"/><rect x="286" y="208" width="60" height="48" fill="#3E5C48"/><text x="316" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Apr</text>
+          <rect x="378" y="170" width="60" height="60"  fill="#EFE7DA"/><rect x="378" y="230" width="60" height="26" fill="#3E5C48"/><text x="408" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">May</text>
+          <rect x="470" y="40"  width="60" height="151" fill="#EFE7DA"/><rect x="470" y="191" width="60" height="65" fill="#3E5C48"/><text x="500" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Jun</text>
+          <rect x="562" y="212" width="60" height="31"  fill="#EFE7DA"/><rect x="562" y="243" width="60" height="13" fill="#3E5C48"/><text x="592" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Jul</text>
+          <rect x="654" y="248" width="60" height="6"   fill="#EFE7DA"/><rect x="654" y="254" width="60" height="2"  fill="#3E5C48"/><text x="684" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Aug</text>
+          <rect x="746" y="128" width="60" height="90"  fill="#EFE7DA"/><rect x="746" y="218" width="60" height="38" fill="#3E5C48"/><text x="776" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Sep</text>
+          <rect x="838" y="112" width="60" height="101" fill="#EFE7DA"/><rect x="838" y="213" width="60" height="43" fill="#3E5C48"/><text x="868" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Oct</text>
+          <rect x="930" y="182" width="60" height="52"  fill="#EFE7DA"/><rect x="930" y="234" width="60" height="22" fill="#3E5C48"/><text x="960" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Nov</text>
+          <rect x="1022" y="66" width="60" height="133" fill="#EFE7DA"/><rect x="1022" y="199" width="60" height="57" fill="#3E5C48"/><text x="1052" y="274" font-family="Inter Tight,sans-serif" font-size="11" fill="#6E6659" text-anchor="middle">Dec</text>
+        </g>
+        <line x1="0" y1="30" x2="1120" y2="30" stroke="#DFD8CB" stroke-dasharray="3 5"/>
+        <text x="0" y="22" font-family="Inter Tight,sans-serif" font-size="10.5" letter-spacing="1.4" fill="#6E6659">A GOOD MONTH</text>
+        <text x="654" y="240" font-family="Inter Tight,sans-serif" font-size="10.5" letter-spacing="1.4" fill="#6E6659" text-anchor="middle">AUGUST</text>
+      </svg>
+      <p class="chart-note">Illustration of the mechanic, drawn with invented example amounts. Not customer data, and not a projection of your income.</p>
+    </div>
+  </section>
+
+  <!-- ============ STRIP ============ -->
+  <section class="strip">
+    <div class="wrap">
+      <p>Discipline is a bad plan when your income has no shape. <span class="em">Subtraction at the door</span> is a better one.</p>
+      <p class="small">Even holds the money in a separate account in your name. You can move it back out whenever you want to; the point is that you have to decide to.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="questions">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The questions people actually ask</h2>
+        <p class="lede">Mostly asked by designers, writers and contractors who have been burned once and would like not to be again.</p>
+      </div>
+
+      <div class="faq">
+        <details open>
+          <summary><span class="q-n">01</span> What percentage should I use?</summary>
+          <p>Even cannot tell you: it depends on your country, your allowances, your deductible costs and whether you also have salaried income. Most people start from what their last return worked out to, then adjust once they have a better figure. If you have an accountant, ask them for the number and put that in.</p>
+        </details>
+        <details>
+          <summary><span class="q-n">02</span> What if I set aside too much?</summary>
+          <p>Then you have savings. The money in the tax account is yours: withdraw it, lower the rate, or leave it to cover the next quarter. Even does not lock, freeze or forward anything to a tax authority.</p>
+        </details>
+        <details>
+          <summary><span class="q-n">03</span> Does it file my taxes?</summary>
+          <p>No. Even is a savings account with an automation attached. It does not prepare returns, calculate liability, or give tax advice. It makes sure the money is there when someone who does those things tells you the figure.</p>
+        </details>
+        <details>
+          <summary><span class="q-n">04</span> What happens when a client pays late, or not at all?</summary>
+          <p>Nothing moves. Even acts on cleared payments only, so an unpaid invoice never causes a set-aside. If a payment is later refunded or reversed, the matching set-aside is reversed with it.</p>
+        </details>
+        <details>
+          <summary><span class="q-n">05</span> Which invoicing tools does it connect to?</summary>
+          <p>Even reads cleared payments from your connected account, so it works regardless of what you invoice with. Direct connections to specific invoicing tools are listed during setup, and forwarding a payment receipt works as a fallback.</p>
+        </details>
+        <details>
+          <summary><span class="q-n">06</span> What does it cost?</summary>
+          <p>No monthly fee for the account. Full pricing, including anything charged on transfers, is shown before you open an account. Nothing is buried in a signup flow.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section class="close band" id="open">
+    <div class="wrap">
+      <span class="label">Open an account</span>
+      <h2 style="margin-top:18px">Let the next invoice arrive already short.</h2>
+      <p class="lede">Takes about ten minutes. Connect the account your clients pay into, choose a rate, and then never think about it again until someone asks you for a number.</p>
+      <div class="btns">
+        <a class="btn lg" href="#open">Open an account <span class="arw" aria-hidden="true">→</span></a>
+        <a class="btn lg ghost" href="#how">Read how it works</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="mark" href="#top"><span class="glyph" aria-hidden="true"></span> Even</a>
+        <p class="small" style="margin-top:14px;max-width:32ch">A savings account for people whose income arrives in lumps and whose tax bill does not.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#what">What you get</a></li>
+          <li><a href="#year">Across a year</a></li>
+          <li><a href="#open">Open an account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#questions">Questions</a></li>
+          <li><a href="#top">Contact</a></li>
+          <li><a href="#top">Status</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#top">About</a></li>
+          <li><a href="#top">Terms</a></li>
+          <li><a href="#top">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>Even is a savings product. It is not a tax adviser, does not prepare or file returns, and does not remit money to any tax authority on your behalf. Figures shown on this page are illustrative examples.</p>
+      <p>© Even</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var invoices = [].slice.call(document.querySelectorAll('[data-inv]'))
+    .map(function(el){ return parseFloat(el.getAttribute('data-inv')); });
+  var total = invoices.reduce(function(a,b){ return a+b; }, 0);
+  var btns  = [].slice.call(document.querySelectorAll('.seg button'));
+  var fmt   = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  function apply(rate){
+    var held = total * rate;
+    document.getElementById('bar-held').style.flexBasis  = (rate*100) + '%';
+    document.getElementById('bar-yours').style.flexBasis = ((1-rate)*100) + '%';
+    document.getElementById('pct-held').textContent  = Math.round(rate*100) + '%';
+    document.getElementById('pct-yours').textContent = Math.round((1-rate)*100) + '%';
+    document.getElementById('t-held').textContent  = fmt(held);
+    document.getElementById('t-yours').textContent = fmt(total - held);
+  }
+
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      btns.forEach(function(o){ o.setAttribute('aria-pressed', String(o === b)); });
+      apply(parseFloat(b.getAttribute('data-rate')));
+    });
+  });
+
+  apply(0.30);
+})();
+</script>
+
+</body>
+</html>

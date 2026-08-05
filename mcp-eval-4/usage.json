@@ -1,0 +1,102 @@
+{
+  "both/m1-meditation": {
+    "tokens": 206734,
+    "toolUses": 62,
+    "durationMs": 743888
+  },
+  "both/m2-devtool": {
+    "tokens": 219664,
+    "toolUses": 66,
+    "durationMs": 736812
+  },
+  "both/m3-fintech": {
+    "tokens": 179027,
+    "toolUses": 45,
+    "durationMs": 599894
+  },
+  "both/m4-ceramics": {
+    "tokens": 205413,
+    "toolUses": 58,
+    "durationMs": 714260
+  },
+  "both/m5-producttour": {
+    "tokens": 203808,
+    "toolUses": 66,
+    "durationMs": 822556
+  },
+  "hallmark-only/m1-meditation": {
+    "tokens": 168550,
+    "toolUses": 34,
+    "durationMs": 448360
+  },
+  "hallmark-only/m2-devtool": {
+    "tokens": 153154,
+    "toolUses": 46,
+    "durationMs": 513603
+  },
+  "hallmark-only/m3-fintech": {
+    "tokens": 169474,
+    "toolUses": 48,
+    "durationMs": 554892
+  },
+  "hallmark-only/m4-ceramics": {
+    "tokens": 150876,
+    "toolUses": 41,
+    "durationMs": 554133
+  },
+  "hallmark-only/m5-producttour": {
+    "tokens": 195299,
+    "toolUses": 58,
+    "durationMs": 696910
+  },
+  "inspo-only/m1-meditation": {
+    "tokens": 162700,
+    "toolUses": 62,
+    "durationMs": 741783
+  },
+  "inspo-only/m2-devtool": {
+    "tokens": 127719,
+    "toolUses": 50,
+    "durationMs": 683269
+  },
+  "inspo-only/m3-fintech": {
+    "tokens": 113388,
+    "toolUses": 44,
+    "durationMs": 538475
+  },
+  "inspo-only/m4-ceramics": {
+    "tokens": 108838,
+    "toolUses": 45,
+    "durationMs": 556963
+  },
+  "inspo-only/m5-producttour": {
+    "tokens": 151355,
+    "toolUses": 87,
+    "durationMs": 1135321
+  },
+  "nothing/m1-meditation": {
+    "tokens": 89744,
+    "toolUses": 41,
+    "durationMs": 547058
+  },
+  "nothing/m2-devtool": {
+    "tokens": 79319,
+    "toolUses": 36,
+    "durationMs": 463753
+  },
+  "nothing/m3-fintech": {
+    "tokens": 143958,
+    "toolUses": 65,
+    "durationMs": 802850
+  },
+  "nothing/m4-ceramics": {
+    "tokens": 100969,
+    "toolUses": 40,
+    "durationMs": 516573
+  },
+  "nothing/m5-producttour": {
+    "tokens": 110705,
+    "toolUses": 56,
+    "durationMs": 790374
+  }
+}

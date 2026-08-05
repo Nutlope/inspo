@@ -1,0 +1,65 @@
+/* Sightline · Hallmark custom theme "the incident report"
+ * axes: light / slab-serif / warm (~28) · posture: restrained
+ * Imported by index.html (inlined there for single-file delivery).
+ */
+:root {
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-xs: 0.8rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.1875rem;
+  --text-3xl: 2.75rem;
+  --text-display: clamp(2.4rem, 3.6vw + 0.9rem, 4rem);
+  --text-display-s: clamp(1.9rem, 2.6vw + 0.8rem, 3rem);
+
+  --color-paper: oklch(94.5% 0.013 50);
+  --color-paper-2: oklch(91.5% 0.016 50);
+  --color-paper-3: oklch(97.5% 0.008 50);
+  --color-band: oklch(24% 0.014 45);
+  --color-ink: oklch(21% 0.012 45);
+  --color-ink-2: oklch(29% 0.011 45);
+  --color-muted: oklch(46% 0.010 45);
+  --color-neutral: oklch(56% 0.009 45);
+  --color-rule: oklch(78% 0.012 50);
+  --color-rule-2: oklch(85% 0.011 50);
+  --color-accent: oklch(48% 0.17 28);
+  --color-accent-ink: oklch(96.5% 0.010 50);
+  --color-focus: oklch(52% 0.20 28);
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --rule-hair: 1px;
+  --rule-heavy: 2px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+}

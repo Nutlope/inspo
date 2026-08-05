@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reelframe — the tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..112,400..800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------------------------------------------------------------
+   Reelframe — guided tour
+   tokens
+--------------------------------------------------------------- */
+:root{
+  --ink:#08080A;
+  --ink-2:#0E0E11;
+  --panel:#141419;
+  --panel-2:#1B1B21;
+  --line:rgba(255,255,255,.09);
+  --line-2:rgba(255,255,255,.16);
+  --fg:#EDEDEA;
+  --fg-dim:#9A9AA2;
+  --fg-faint:#63636C;
+  --acc:#D8FF4A;      /* signal — actions, playhead, selection */
+  --acc-ink:#101204;
+  --cool:#5B8CFF;     /* secondary — audio, links in chrome */
+  --warm:#FF7A59;     /* tertiary — warnings, markers */
+
+  --r-lg:14px;
+  --r-md:9px;
+  --r-sm:5px;
+
+  --max:1240px;
+  --gut:clamp(20px,4vw,56px);
+
+  --f-disp:"Archivo",system-ui,sans-serif;
+  --f-body:"Inter",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--fg);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%;}
+a{color:inherit;}
+
+h1,h2,h3,h4{
+  font-family:var(--f-disp);
+  font-variation-settings:"wdth" 92;
+  font-weight:700;
+  letter-spacing:-.022em;
+  line-height:1.02;
+  margin:0;
+}
+
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gut);}
+
+.mono{
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--fg-faint);
+}
+
+/* ---------------------------------------------------------------
+   nav
+--------------------------------------------------------------- */
+.nav{
+  position:absolute;inset:0 0 auto 0;z-index:40;
+  height:68px;display:flex;align-items:center;
+}
+.nav-in{
+  display:flex;align-items:center;gap:28px;width:100%;
+}
+.mark{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--f-disp);font-weight:800;font-size:17px;
+  font-variation-settings:"wdth" 84;
+  letter-spacing:-.03em;text-decoration:none;
+}
+.mark .glyph{
+  width:20px;height:20px;border-radius:5px;
+  background:var(--acc);
+  position:relative;flex:none;
+}
+.mark .glyph::after{
+  content:"";position:absolute;inset:0;margin:auto;
+  width:0;height:0;
+  border-left:6px solid var(--acc-ink);
+  border-top:4px solid transparent;
+  border-bottom:4px solid transparent;
+  transform:translateX(1px);
+}
+.nav-links{
+  display:flex;gap:22px;margin-left:auto;
+  font-size:13.5px;color:var(--fg-dim);
+}
+.nav-links a{text-decoration:none;transition:color .18s;}
+.nav-links a:hover{color:var(--fg);}
+.nav-links a[aria-current]{color:var(--fg);}
+.nav-cta{
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.02em;
+  text-decoration:none;padding:8px 14px;border-radius:99px;
+  border:1px solid var(--line-2);color:var(--fg);
+  transition:background .18s,border-color .18s;
+}
+.nav-cta:hover{background:rgba(255,255,255,.06);border-color:var(--fg-faint);}
+
+/* ---------------------------------------------------------------
+   hero — must resolve inside 1280x800
+--------------------------------------------------------------- */
+.hero{
+  min-height:100svh;
+  display:flex;align-items:center;
+  padding:88px 0 40px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;z-index:0;
+  width:900px;height:900px;left:-260px;top:-380px;
+  background:radial-gradient(circle at center,rgba(216,255,74,.10),transparent 62%);
+  pointer-events:none;
+}
+.hero-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+  gap:clamp(28px,4vw,64px);align-items:center;width:100%;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--fg-dim);
+  border:1px solid var(--line);border-radius:99px;
+  padding:6px 12px 6px 9px;margin-bottom:22px;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--acc);flex:none;}
+h1{
+  font-size:clamp(38px,4.35vw,60px);
+  font-variation-settings:"wdth" 88;
+  letter-spacing:-.032em;
+  max-width:12ch;
+}
+h1 em{
+  font-style:normal;color:var(--acc);
+}
+.hero p.lede{
+  margin:20px 0 0;font-size:16.5px;line-height:1.6;
+  color:var(--fg-dim);max-width:44ch;
+}
+.hero-cta{display:flex;align-items:center;gap:14px;margin-top:28px;flex-wrap:wrap;}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  text-decoration:none;font-weight:500;font-size:14.5px;
+  padding:12px 20px;border-radius:8px;
+  background:var(--acc);color:var(--acc-ink);
+  border:1px solid var(--acc);
+  transition:transform .16s,filter .16s;
+}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px);}
+.btn-ghost{
+  background:transparent;color:var(--fg);border-color:var(--line-2);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.05);}
+.hero-foot{
+  margin-top:22px;display:flex;gap:18px;flex-wrap:wrap;
+}
+.hero-foot span{font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);}
+
+/* ---------------------------------------------------------------
+   app window chrome — shared by every mock
+--------------------------------------------------------------- */
+.app,.app *{min-width:0;}
+.app{
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  background:linear-gradient(180deg,var(--panel) 0%,var(--ink-2) 100%);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.02) inset;
+  overflow:hidden;
+}
+.app-bar{
+  height:34px;display:flex;align-items:center;gap:10px;
+  padding:0 12px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+}
+.tl-dots{display:flex;gap:6px;}
+.tl-dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14);display:block;}
+.app-title{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--fg-faint);margin-inline:auto;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.app-bar .tc{
+  font-family:var(--f-mono);font-size:10.5px;color:var(--fg-dim);
+}
+
+/* hero mock: viewer + rail + strip */
+.mock-edit{display:grid;grid-template-columns:44px 1fr;}
+.rail{
+  border-right:1px solid var(--line);
+  padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:14px;
+  background:rgba(0,0,0,.18);
+}
+.rail i{
+  width:18px;height:18px;border-radius:4px;
+  border:1.5px solid var(--fg-faint);display:block;opacity:.75;
+}
+.rail i.on{border-color:var(--acc);background:rgba(216,255,74,.14);opacity:1;}
+.rail i.r2{border-radius:50%;}
+.rail i.r3{border-radius:4px;border-style:dashed;}
+.rail i.r4{clip-path:polygon(0 0,100% 50%,0 100%);border:none;background:var(--fg-faint);}
+
+.viewer{
+  aspect-ratio:16/9;position:relative;overflow:hidden;background:#0A0D14;
+}
+.scene{
+  position:absolute;inset:0;overflow:hidden;
+  background:
+    linear-gradient(180deg,#1B1C34 0%,#3A2B45 34%,#8A5A4A 56%,#E3934F 64%,#2C2434 66%,#141A28 100%);
+}
+.viewer::after{ /* scanline texture + vignette, pure CSS */
+  content:"";position:absolute;inset:0;
+  background-image:
+    radial-gradient(120% 100% at 50% 50%,transparent 40%,rgba(0,0,0,.5) 100%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.030) 0 1px,transparent 1px 3px);
+}
+.scene .subject{ /* low sun */
+  position:absolute;left:37%;top:60%;transform:translate(-50%,-50%);
+  width:12%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 42% 38%,#FFF6E0 0%,#FFD79A 30%,#FFC46A 60%,#F08A3C 100%);
+  box-shadow:0 0 60px 24px rgba(255,168,84,.45);
+}
+.scene .horizon{
+  position:absolute;left:0;right:0;top:66%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,220,180,.55),rgba(255,220,180,.2),transparent);
+}
+.scene .glint{ /* sun reflection on water */
+  position:absolute;left:37%;top:66%;width:9%;height:26%;
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,rgba(255,180,100,.55),rgba(255,180,100,0));
+  filter:blur(3px);
+}
+.scene .sky-svg{position:absolute;left:0;right:0;bottom:34%;width:100%;height:26%;}
+.scene .fg-svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:22%;opacity:.95;}
+.safe{
+  position:absolute;inset:9% 7%;z-index:2;
+  border:1px dashed rgba(255,255,255,.16);border-radius:2px;
+}
+.viewer-hud,.viewer-tc{z-index:3;}
+.viewer-hud{
+  position:absolute;left:12px;top:11px;display:flex;gap:8px;align-items:center;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:rgba(255,255,255,.72);
+}
+.rec{width:7px;height:7px;border-radius:50%;background:var(--warm);}
+.viewer-tc{
+  position:absolute;right:12px;top:11px;
+  font-family:var(--f-mono);font-size:10px;color:rgba(255,255,255,.72);
+  background:rgba(0,0,0,.35);padding:3px 7px;border-radius:4px;
+  backdrop-filter:blur(4px);
+}
+.transport{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.015);
+}
+.tbtn{width:16px;height:16px;flex:none;opacity:.6;}
+.tbtn.play{opacity:1;
+  width:0;height:0;border-left:11px solid var(--acc);
+  border-top:7px solid transparent;border-bottom:7px solid transparent;}
+.tbtn.sq{border:1.5px solid var(--fg-faint);border-radius:2px;}
+.tbtn.bar{width:3px;height:14px;background:var(--fg-faint);box-shadow:5px 0 0 var(--fg-faint);}
+.scrub{
+  flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.12);position:relative;
+}
+.scrub::before{content:"";position:absolute;inset:0 62% 0 0;background:var(--fg-dim);border-radius:2px;}
+.scrub::after{content:"";position:absolute;left:38%;top:-3.5px;width:10px;height:10px;border-radius:50%;background:var(--fg);}
+.transport .tc{font-family:var(--f-mono);font-size:10.5px;color:var(--fg-dim);}
+
+/* timeline strip */
+.strip{padding:11px 12px 14px;display:grid;gap:6px;position:relative;}
+.ruler{
+  height:14px;display:flex;align-items:flex-end;gap:0;
+  border-bottom:1px solid var(--line);margin-bottom:4px;
+}
+.ruler span{
+  flex:1;border-left:1px solid rgba(255,255,255,.10);height:6px;
+  position:relative;
+}
+.ruler span:nth-child(4n+1){height:11px;}
+.trk{height:26px;border-radius:var(--r-sm);display:flex;gap:3px;}
+.clip{
+  border-radius:var(--r-sm);position:relative;overflow:hidden;min-width:0;
+  border:1px solid rgba(255,255,255,.10);
+  font-family:var(--f-mono);font-size:9px;color:rgba(0,0,0,.55);
+  display:flex;align-items:center;padding-inline:6px;
+  letter-spacing:.04em;white-space:nowrap;
+}
+.clip.v{background:linear-gradient(180deg,#8E9AE8,#6B77C9);}
+.clip.v2{background:linear-gradient(180deg,#B98FD8,#8E6BB8);}
+.clip.v3{background:linear-gradient(180deg,#7FC7B0,#579A85);}
+.clip.sel{outline:1.5px solid var(--acc);outline-offset:-1.5px;color:rgba(0,0,0,.7);}
+.clip.aud{
+  background:linear-gradient(180deg,#3B4A7A,#2C3760);
+  color:rgba(255,255,255,.55);align-items:stretch;padding:0;
+}
+.wave{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1.5px;width:100%;height:100%;padding-inline:5px;
+}
+.wave i{
+  flex:1 1 0;max-width:2.5px;min-width:1px;
+  background:rgba(150,180,255,.72);border-radius:1px;display:block;
+}
+.playhead{
+  position:absolute;top:11px;bottom:14px;left:41%;width:1.5px;background:var(--acc);
+  box-shadow:0 0 8px rgba(216,255,74,.6);
+}
+.playhead::before{
+  content:"";position:absolute;top:-1px;left:-4px;width:9.5px;height:8px;
+  background:var(--acc);border-radius:2px 2px 1px 1px;
+}
+
+/* ---------------------------------------------------------------
+   ticker / seam
+--------------------------------------------------------------- */
+.seam{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--ink-2);
+}
+.seam-in{
+  display:flex;flex-wrap:wrap;gap:10px 34px;align-items:center;
+  padding:14px 0;
+}
+.seam-in span{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--fg-faint);
+  display:flex;align-items:center;gap:9px;
+}
+.seam-in span::before{content:"";width:4px;height:4px;background:var(--fg-faint);border-radius:50%;}
+.seam-in span:first-child{color:var(--fg);}
+.seam-in span:first-child::before{background:var(--acc);}
+
+/* ---------------------------------------------------------------
+   steps
+--------------------------------------------------------------- */
+.tour{padding:clamp(64px,9vw,120px) 0 0;}
+.tour-head{max-width:52ch;margin-bottom:clamp(46px,6vw,78px);}
+.tour-head h2{font-size:clamp(28px,3.4vw,42px);letter-spacing:-.028em;}
+.tour-head p{color:var(--fg-dim);margin:16px 0 0;font-size:16px;max-width:46ch;}
+
+.step{
+  display:grid;
+  grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
+  gap:clamp(26px,4vw,64px);
+  align-items:start;
+  padding:clamp(38px,5vw,62px) 0;
+  border-top:1px solid var(--line);
+}
+.step:nth-of-type(even){grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr);}
+.step:nth-of-type(even) .step-copy{order:2;}
+.step:nth-of-type(even) .step-vis{order:1;}
+.step-copy{position:sticky;top:64px;}
+@media (max-width:900px){.step-copy{position:static;}}
+.step-n{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;
+  color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.step-n::after{content:"";height:1px;flex:1;background:var(--line);}
+.step h3{font-size:clamp(24px,2.5vw,32px);letter-spacing:-.028em;max-width:16ch;}
+.step p{color:var(--fg-dim);margin:14px 0 0;font-size:15.5px;max-width:42ch;}
+.step p + p{margin-top:12px;}
+.keys{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;align-items:center;}
+.key{
+  font-family:var(--f-mono);font-size:11px;color:var(--fg-dim);
+  border:1px solid var(--line-2);border-bottom-width:2px;
+  border-radius:5px;padding:4px 8px;background:rgba(255,255,255,.03);
+}
+.keys .lbl{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);}
+.caption{
+  margin-top:12px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.05em;
+  color:var(--fg-faint);display:flex;gap:8px;align-items:baseline;
+}
+.caption b{color:var(--fg-dim);font-weight:500;}
+
+/* --- mock: media bin ------------------------------------------ */
+.bin{display:grid;grid-template-columns:150px 1fr;min-height:300px;}
+.bin-side{border-right:1px solid var(--line);padding:12px 10px;background:rgba(0,0,0,.16);}
+.bin-side .grp{margin-bottom:16px;}
+.bin-side h5{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-faint);margin:0 0 8px;font-weight:400;
+}
+.bin-side a{
+  display:flex;align-items:center;gap:8px;font-size:12px;color:var(--fg-dim);
+  padding:5px 7px;border-radius:5px;text-decoration:none;
+}
+.bin-side a.on{background:rgba(255,255,255,.06);color:var(--fg);}
+.bin-side a::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--fg-faint);flex:none;}
+.bin-side a.on::before{background:var(--acc);}
+.bin-main{padding:12px;}
+.bin-tools{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.search{
+  flex:1;height:26px;border-radius:6px;border:1px solid var(--line);
+  background:rgba(0,0,0,.25);display:flex;align-items:center;padding-inline:9px;
+  font-family:var(--f-mono);font-size:10.5px;color:var(--fg-faint);
+}
+.chip{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;
+  border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--fg-dim);
+}
+.chip.on{border-color:var(--acc);color:var(--acc);background:rgba(216,255,74,.08);}
+.bin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.asset{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);}
+.asset .th{aspect-ratio:16/10;position:relative;}
+.asset .th .badge{
+  position:absolute;right:5px;bottom:5px;background:rgba(0,0,0,.6);
+  font-family:var(--f-mono);font-size:9px;color:#fff;padding:2px 5px;border-radius:3px;
+}
+.asset .meta{padding:6px 7px;background:rgba(255,255,255,.02);}
+.asset .meta b{display:block;font-size:10.5px;font-weight:500;color:var(--fg-dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.asset .meta span{font-family:var(--f-mono);font-size:9px;color:var(--fg-faint);}
+.asset.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);}
+.t1{background:linear-gradient(150deg,#F0A868,#8E3B4E 60%,#2B1B33);}
+.t2{background:linear-gradient(150deg,#7FD3C8,#2E6E8E 60%,#132A3A);}
+.t3{background:linear-gradient(150deg,#C9B7F5,#5B4A9E 60%,#1E1B33);}
+.t4{background:linear-gradient(150deg,#FFD59E,#C4693C 55%,#3A2018);}
+.t5{background:linear-gradient(150deg,#9FE58C,#2F7A55 60%,#122A22);}
+.t6{background:linear-gradient(150deg,#FF9DA8,#8E2F52 60%,#2A1220);}
+.t7{background:linear-gradient(150deg,#A8C4FF,#3E4E9E 60%,#161B33);}
+.t8{background:linear-gradient(150deg,#E8E1D0,#8A7F66 60%,#2E2A22);}
+.dropzone{
+  margin-top:11px;border:1px dashed var(--line-2);border-radius:var(--r-md);
+  padding:14px;text-align:center;
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:var(--fg-faint);
+  background:rgba(216,255,74,.03);
+}
+
+/* --- mock: transcript ----------------------------------------- */
+.tx{display:grid;grid-template-columns:1fr 300px;min-height:320px;}
+@media (max-width:1080px){.tx{grid-template-columns:1fr;}}
+.tx-doc{padding:16px 18px;font-size:14px;line-height:2.05;}
+.tx-doc .spk{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg-faint);display:block;line-height:1.4;margin:14px 0 4px;
+}
+.tx-doc .spk:first-child{margin-top:0;}
+.tx-doc p{margin:0;color:var(--fg-dim);}
+.tx-doc .cut{
+  color:var(--fg-faint);text-decoration:line-through;
+  text-decoration-color:var(--warm);text-decoration-thickness:1.5px;
+  background:rgba(255,122,89,.08);border-radius:3px;padding:1px 2px;
+}
+.tx-doc .hl{
+  background:rgba(216,255,74,.16);color:var(--fg);border-radius:3px;padding:1px 3px;
+  box-shadow:0 0 0 1px rgba(216,255,74,.28) inset;
+}
+.tx-doc .caret{
+  display:inline-block;width:1.5px;height:1.05em;background:var(--acc);
+  vertical-align:-.18em;margin-inline:1px;
+}
+.tx-side{border-left:1px solid var(--line);padding:14px;background:rgba(0,0,0,.16);}
+.tx-side h5{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-faint);margin:0 0 10px;font-weight:400;
+}
+.filler{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 10px;border:1px solid var(--line);border-radius:7px;margin-bottom:7px;
+  font-size:12.5px;color:var(--fg-dim);background:rgba(255,255,255,.02);
+}
+.filler .n{font-family:var(--f-mono);font-size:10px;color:var(--fg-faint);}
+.toggle{
+  width:26px;height:15px;border-radius:99px;background:rgba(255,255,255,.14);
+  position:relative;flex:none;
+}
+.toggle.on{background:var(--acc);}
+.toggle::after{
+  content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;
+  background:#0B0B0C;
+}
+.toggle.on::after{left:auto;right:2px;}
+.tx-side .apply{
+  margin-top:12px;width:100%;text-align:center;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;
+  background:var(--acc);color:var(--acc-ink);border-radius:7px;padding:9px;
+}
+
+/* --- mock: layered timeline ----------------------------------- */
+.tlx{padding:14px 14px 18px;position:relative;}
+.tlx .lanes{display:grid;gap:7px;margin-top:6px;}
+.lane{display:grid;grid-template-columns:58px 1fr;gap:9px;align-items:center;}
+.lane .lbl{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;color:var(--fg-faint);
+  display:flex;align-items:center;gap:5px;
+}
+.lane .lbl i{width:6px;height:6px;border-radius:2px;background:var(--fg-faint);flex:none;}
+.lane .lbl i.v{background:#8E9AE8;}
+.lane .lbl i.a{background:#5B8CFF;}
+.lane .lbl i.t{background:var(--acc);}
+.row{display:flex;gap:3px;height:30px;}
+.row.small{height:22px;}
+.gap{flex:none;}
+.clip.txt{
+  background:repeating-linear-gradient(135deg,rgba(216,255,74,.22) 0 6px,rgba(216,255,74,.10) 6px 12px);
+  border-color:rgba(216,255,74,.4);color:var(--acc);
+}
+.clip .fade{
+  position:absolute;inset:0 auto 0 0;width:22px;
+  background:linear-gradient(90deg,rgba(0,0,0,.5),transparent);
+}
+.clip .fade.r{inset:0 0 0 auto;background:linear-gradient(270deg,rgba(0,0,0,.5),transparent);}
+.marker{
+  position:absolute;top:26px;width:8px;height:8px;background:var(--warm);
+  border-radius:2px;transform:rotate(45deg);
+}
+.tlx .playhead{top:14px;bottom:18px;}
+.tlx-foot{
+  display:flex;gap:14px;align-items:center;margin-top:14px;
+  border-top:1px solid var(--line);padding-top:11px;
+}
+.tlx-foot .mono{font-size:10px;}
+.zoom{width:110px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;position:relative;margin-left:auto;}
+.zoom::after{content:"";position:absolute;left:56%;top:-3.5px;width:10px;height:10px;border-radius:50%;background:var(--fg-dim);}
+
+/* --- mock: color ---------------------------------------------- */
+.col{display:grid;grid-template-columns:1fr 246px;min-height:330px;}
+@media (max-width:1080px){.col{grid-template-columns:1fr;}}
+.col-view{position:relative;overflow:hidden;}
+.split{position:absolute;inset:0;background:#0A0D14;}
+.split .a,.split .b{position:absolute;inset:0;}
+.split .a{
+  clip-path:polygon(0 0,47% 0,47% 100%,0 100%);
+  filter:saturate(.34) contrast(.74) brightness(1.16);
+}
+.split .b{
+  clip-path:polygon(47% 0,100% 0,100% 100%,47% 100%);
+  filter:saturate(1.14) contrast(1.1);
+}
+.col-view::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 100% at 50% 50%,transparent 42%,rgba(0,0,0,.45) 100%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);
+}
+.split .handle{
+  position:absolute;left:47%;top:0;bottom:0;width:1.5px;background:rgba(255,255,255,.8);z-index:3;
+}
+.ab-tag{z-index:3;}
+.split .handle::after{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);
+  background:rgba(0,0,0,.35);backdrop-filter:blur(3px);
+}
+.ab-tag{
+  position:absolute;top:10px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;
+  color:rgba(255,255,255,.8);background:rgba(0,0,0,.4);padding:3px 7px;border-radius:4px;
+}
+.ab-tag.l{left:10px;}
+.ab-tag.r{right:10px;background:rgba(216,255,74,.9);color:var(--acc-ink);}
+.col-side{border-left:1px solid var(--line);padding:14px;background:rgba(0,0,0,.18);display:grid;gap:14px;align-content:start;}
+.wheels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.wheel{text-align:center;}
+.wheel .disc{
+  aspect-ratio:1;border-radius:50%;position:relative;
+  background:conic-gradient(#FF5A5A,#FFD24A,#7CFF6B,#4AE8FF,#5A7CFF,#D45AFF,#FF5A5A);
+  filter:saturate(.85);
+}
+.wheel .disc::after{
+  content:"";position:absolute;inset:22%;border-radius:50%;
+  background:radial-gradient(circle,#1A1A1F,#0E0E12);
+}
+.wheel .disc .pt{
+  position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;
+  border:1px solid rgba(0,0,0,.5);z-index:2;
+}
+.wheel small{
+  display:block;margin-top:6px;font-family:var(--f-mono);font-size:9px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--fg-faint);
+}
+.slider{display:grid;gap:5px;}
+.slider .top{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:9.5px;color:var(--fg-faint);}
+.slider .top b{color:var(--fg-dim);font-weight:400;}
+.track{height:3px;border-radius:2px;background:rgba(255,255,255,.12);position:relative;}
+.track i{position:absolute;top:-3.5px;width:10px;height:10px;border-radius:50%;background:var(--fg);}
+.scope{
+  border:1px solid var(--line);border-radius:7px;height:74px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.25));
+}
+.scope .bars{position:absolute;inset:8px;display:flex;align-items:flex-end;gap:1px;}
+.scope .bars i{flex:1;background:linear-gradient(180deg,rgba(216,255,74,.85),rgba(216,255,74,.15));border-radius:1px 1px 0 0;}
+.scope .lbl{
+  position:absolute;left:7px;top:5px;font-family:var(--f-mono);font-size:9px;
+  letter-spacing:.09em;color:var(--fg-faint);
+}
+.presets{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* --- mock: export --------------------------------------------- */
+.exp{padding:16px 18px 18px;display:grid;gap:14px;}
+.exp-head{display:flex;align-items:baseline;gap:10px;}
+.exp-head h5{font-family:var(--f-disp);font-size:15px;margin:0;font-variation-settings:"wdth" 92;}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.preset{
+  border:1px solid var(--line);border-radius:var(--r-md);padding:11px;
+  background:rgba(255,255,255,.02);display:grid;gap:5px;
+}
+.preset.on{border-color:var(--acc);background:rgba(216,255,74,.06);}
+.preset b{font-size:12.5px;font-weight:500;color:var(--fg);}
+.preset span{font-family:var(--f-mono);font-size:9.5px;color:var(--fg-faint);letter-spacing:.04em;}
+.preset .ratio{
+  height:26px;border-radius:4px;border:1px solid var(--line-2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:3px;
+}
+.preset .ratio i{background:rgba(255,255,255,.16);border-radius:2px;display:block;}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.field{
+  border:1px solid var(--line);border-radius:7px;padding:8px 10px;background:rgba(0,0,0,.22);
+  display:grid;gap:2px;
+}
+.field span{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-faint);}
+.field b{font-size:12.5px;font-weight:400;color:var(--fg-dim);}
+.bar{
+  height:5px;border-radius:3px;background:rgba(255,255,255,.10);overflow:hidden;position:relative;
+}
+.bar i{position:absolute;inset:0 34% 0 0;background:var(--acc);border-radius:3px;}
+.exp-foot{display:flex;align-items:center;gap:12px;}
+.exp-foot .go{
+  margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;
+  background:var(--acc);color:var(--acc-ink);border-radius:7px;padding:8px 16px;
+}
+
+/* ---------------------------------------------------------------
+   honest section + spec
+--------------------------------------------------------------- */
+.two{
+  display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
+  gap:clamp(26px,4vw,64px);
+  padding:clamp(56px,7vw,96px) 0;border-top:1px solid var(--line);
+}
+.two h2{font-size:clamp(26px,3vw,36px);letter-spacing:-.028em;max-width:14ch;}
+.plain{display:grid;gap:0;}
+.plain > div{
+  display:grid;grid-template-columns:26px 1fr;gap:14px;
+  padding:16px 0;border-bottom:1px solid var(--line);
+}
+.plain > div:first-child{border-top:1px solid var(--line);}
+.plain .k{font-family:var(--f-mono);font-size:10.5px;color:var(--fg-faint);padding-top:3px;}
+.plain b{font-weight:500;font-size:15.5px;display:block;color:var(--fg);}
+.plain p{margin:5px 0 0;color:var(--fg-dim);font-size:14.5px;max-width:56ch;}
+
+.spec{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);}
+@media (max-width:900px){.spec{grid-template-columns:repeat(2,1fr);}}
+.spec div{padding:22px 20px 24px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
+.spec div:nth-child(4n){border-right:none;}
+.spec dt{font-family:var(--f-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:9px;}
+.spec dd{margin:0;font-size:14.5px;color:var(--fg-dim);line-height:1.45;}
+.spec dd .ph{
+  color:var(--fg-faint);border:1px dashed var(--line-2);border-radius:4px;
+  padding:1px 6px;font-family:var(--f-mono);font-size:11px;
+}
+
+/* ---------------------------------------------------------------
+   end cta + footer
+--------------------------------------------------------------- */
+.end{
+  padding:clamp(72px,10vw,132px) 0;text-align:center;position:relative;overflow:hidden;
+  border-top:1px solid var(--line);
+}
+.end::before{
+  content:"";position:absolute;left:50%;top:-40%;translate:-50% 0;
+  width:820px;height:820px;border-radius:50%;
+  background:radial-gradient(circle,rgba(216,255,74,.10),transparent 62%);
+}
+.end > *{position:relative;}
+.end h2{font-size:clamp(32px,4.6vw,60px);letter-spacing:-.034em;margin-inline:auto;max-width:15ch;font-variation-settings:"wdth" 88;}
+.end p{color:var(--fg-dim);margin:18px auto 0;max-width:44ch;font-size:16px;}
+.end .hero-cta{justify-content:center;}
+
+footer{border-top:1px solid var(--line);padding:40px 0 44px;background:var(--ink-2);}
+.f-grid{display:flex;flex-wrap:wrap;gap:34px 60px;align-items:flex-start;}
+.f-col{display:grid;gap:9px;align-content:start;}
+.f-col h6{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fg-faint);margin:0 0 3px;font-weight:400;
+}
+.f-col a{font-size:13.5px;color:var(--fg-dim);text-decoration:none;}
+.f-col a:hover{color:var(--fg);}
+.f-brand{margin-right:auto;max-width:28ch;}
+.f-brand p{margin:12px 0 0;font-size:13px;color:var(--fg-faint);line-height:1.6;}
+.f-base{
+  display:flex;flex-wrap:wrap;gap:12px 26px;align-items:center;
+  margin-top:38px;padding-top:20px;border-top:1px solid var(--line);
+}
+.f-base span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:var(--fg-faint);}
+
+/* ---------------------------------------------------------------
+   motion
+--------------------------------------------------------------- */
+@media (prefers-reduced-motion:no-preference){
+  .playhead{animation:sweep 9s ease-in-out infinite alternate;}
+  @keyframes sweep{
+    from{left:16%;}
+    to{left:74%;}
+  }
+}
+
+/* ---------------------------------------------------------------
+   responsive
+--------------------------------------------------------------- */
+@media (max-width:1000px){
+  .hero{min-height:0;padding:104px 0 64px;}
+  .hero-grid{grid-template-columns:1fr;}
+  .step,.step:nth-of-type(even){grid-template-columns:1fr;}
+  .step:nth-of-type(even) .step-copy{order:0;}
+  .step:nth-of-type(even) .step-vis{order:0;}
+  .two{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .bin{grid-template-columns:1fr;}
+  .bin-side{display:none;}
+  .exp-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:640px){
+  .bin-grid{grid-template-columns:repeat(2,1fr);}
+  .spec{grid-template-columns:1fr;}
+  .spec div{border-right:none;}
+  h1{font-size:34px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="mark" href="#top"><span class="glyph"></span>Reelframe</a>
+    <nav class="nav-links">
+      <a href="#tour" aria-current="page">The tour</a>
+      <a href="#limits">What it isn't</a>
+      <a href="#spec">Specs</a>
+      <a href="#get">Download</a>
+    </nav>
+    <a class="nav-cta" href="#get">Open Reelframe</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span>A tour, not a pitch</span>
+      <h1>Watch an edit <em>get made</em>.</h1>
+      <p class="lede">Reelframe is a video editor built around the thing you
+        actually do all day: finding the good take and getting rid of everything
+        around it. Five screens below, in the order you'd hit them.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#tour">Start the tour
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1v12M7 13l-4.5-4.5M7 13l4.5-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a class="btn btn-ghost" href="#get">Download for desktop</a>
+      </div>
+      <div class="hero-foot">
+        <span>macOS &amp; Windows</span>
+        <span>Projects stay local</span>
+        <span>Import from camera or phone</span>
+      </div>
+    </div>
+
+    <!-- hero visual: the editor itself -->
+    <div class="hero-vis">
+      <div class="app" role="img" aria-label="The Reelframe editor: a viewer showing a sunset frame, transport controls, and a multitrack timeline with the playhead mid-clip.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">harbour_cut_v4.reel — Edit</span>
+          <span class="tc">00:02:14:06</span>
+        </div>
+        <div class="mock-edit">
+          <div class="rail">
+            <i class="on"></i><i class="r4"></i><i class="r2"></i><i class="r3"></i><i></i>
+          </div>
+          <div>
+            <div class="viewer">
+              <span class="scene">
+              <span class="subject"></span>
+              <svg class="sky-svg" viewBox="0 0 320 80" preserveAspectRatio="none" aria-hidden="true">
+                <g fill="#241C2E" opacity=".9">
+                  <path d="M0 80V64h14v-8h9v8h12V48h10v32z"/>
+                  <path d="M52 80V58h18v-6h7v6h13v22z"/>
+                  <path d="M186 80V44h6v-9h3v9h7v36z"/>
+                  <path d="M206 80V60h26v-7h9v27z"/>
+                  <path d="M252 80V52h12v-5h5v5h16v28z"/>
+                  <path d="M292 80V62h28v18z"/>
+                </g>
+                <g stroke="#1D1726" stroke-width="2" fill="none" opacity=".95">
+                  <path d="M100 80V30h1M100 32h26l-4 10"/>
+                  <path d="M146 80V38M146 40h22l-3 8"/>
+                </g>
+              </svg>
+              <span class="horizon"></span>
+              <span class="glint"></span>
+              <svg class="fg-svg" viewBox="0 0 320 44" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0 44V22c26 0 34 6 58 6s34-8 62-8 40 9 66 9 40-9 68-9 40 6 66 6v18z" fill="#0C1220"/>
+                <g fill="#0A0E1A">
+                  <path d="M18 26h34l-6 8H24z"/>
+                  <path d="M226 24h40l-7 9h-26z"/>
+                </g>
+              </svg>
+              </span>
+              <span class="safe"></span>
+              <span class="viewer-hud"><span class="rec"></span>A-CAM · 4K · 24p</span>
+              <span class="viewer-tc">00:02:14:06</span>
+            </div>
+            <div class="transport">
+              <span class="tbtn bar"></span>
+              <span class="tbtn play"></span>
+              <span class="tbtn sq"></span>
+              <span class="scrub"></span>
+              <span class="tc">04:38:11</span>
+            </div>
+            <div class="strip">
+              <div class="ruler">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="trk">
+                <span class="clip v" style="flex:2.6">harbour_a.mov</span>
+                <span class="clip v2 sel" style="flex:1.7">bridge_02</span>
+                <span class="clip v3" style="flex:2.1">rooftop_wide</span>
+                <span class="clip v" style="flex:1.2">insert</span>
+              </div>
+              <div class="trk" style="height:22px">
+                <span class="clip aud" style="flex:4.3">
+                  <span class="wave">
+                    <i style="height:24%"></i><i style="height:48%"></i><i style="height:76%"></i>
+                    <i style="height:38%"></i><i style="height:62%"></i><i style="height:88%"></i>
+                    <i style="height:44%"></i><i style="height:70%"></i><i style="height:30%"></i>
+                    <i style="height:56%"></i><i style="height:82%"></i><i style="height:40%"></i>
+                    <i style="height:66%"></i><i style="height:28%"></i><i style="height:52%"></i>
+                    <i style="height:74%"></i><i style="height:36%"></i><i style="height:60%"></i>
+                  </span>
+                </span>
+                <span class="clip aud" style="flex:3.3">
+                  <span class="wave">
+                    <i style="height:40%"></i><i style="height:64%"></i><i style="height:32%"></i>
+                    <i style="height:78%"></i><i style="height:46%"></i><i style="height:58%"></i>
+                    <i style="height:86%"></i><i style="height:34%"></i><i style="height:68%"></i>
+                    <i style="height:50%"></i><i style="height:72%"></i><i style="height:26%"></i>
+                    <i style="height:60%"></i><i style="height:44%"></i>
+                  </span>
+                </span>
+              </div>
+              <span class="playhead"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= SEAM ================= -->
+<div class="seam">
+  <div class="wrap seam-in">
+    <span>The tour</span>
+    <span>01 Bring the footage in</span>
+    <span>02 Cut on the words</span>
+    <span>03 Build the stack</span>
+    <span>04 Make it match</span>
+    <span>05 Send it out</span>
+  </div>
+</div>
+
+<!-- ================= TOUR ================= -->
+<main class="tour wrap" id="tour">
+
+  <div class="tour-head">
+    <h2>Five screens, in the order you'd hit them.</h2>
+    <p>Each step is the actual interface, not a diagram of it. Read the copy
+      if you like, but the screens are the argument.</p>
+  </div>
+
+  <!-- ---------- 01 ---------- -->
+  <section class="step">
+    <div class="step-copy">
+      <div class="step-n">Step 01</div>
+      <h3>Point it at a card and walk away.</h3>
+      <p>Drop a folder, a memory card, or a phone into the bin. Reelframe reads
+        every clip's timecode, camera, frame rate and audio channels while it
+        copies, so by the time the transfer finishes the shoot is already sorted
+        by day, camera and take.</p>
+      <p>Nothing is transcoded behind your back. If a clip needs a proxy to play
+        smoothly, you're asked, and the original stays where you put it.</p>
+      <div class="keys">
+        <span class="lbl">Import</span>
+        <span class="key">⌘ I</span>
+        <span class="key">drag to bin</span>
+      </div>
+      <div class="caption"><b>Above:</b> the media bin mid-ingest — camera cards on the left, a filtered shoot on the right.</div>
+    </div>
+
+    <div class="step-vis">
+      <div class="app" role="img" aria-label="The media bin: a sidebar of camera cards and shoot days, a filter row, and a grid of eight clip thumbnails with durations, one selected.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">harbour_cut_v4.reel — Media</span>
+          <span class="tc">copying 3 of 8</span>
+        </div>
+        <div class="bin">
+          <aside class="bin-side">
+            <div class="grp">
+              <h5>Cards</h5>
+              <a href="#" class="on">A-CAM / day 1</a>
+              <a href="#">B-CAM / day 1</a>
+              <a href="#">A-CAM / day 2</a>
+            </div>
+            <div class="grp">
+              <h5>Bins</h5>
+              <a href="#">Selects</a>
+              <a href="#">Interviews</a>
+              <a href="#">B-roll</a>
+              <a href="#">Room tone</a>
+            </div>
+            <div class="grp">
+              <h5>Sync</h5>
+              <a href="#">By timecode</a>
+              <a href="#">By waveform</a>
+            </div>
+          </aside>
+
+          <div class="bin-main">
+            <div class="bin-tools">
+              <span class="search">search clips, notes, spoken words…</span>
+              <span class="chip on">4K</span>
+              <span class="chip">24p</span>
+              <span class="chip">flagged</span>
+            </div>
+            <div class="bin-grid">
+              <figure class="asset sel" style="margin:0"><div class="th t1"><span class="badge">00:41</span></div><div class="meta"><b>harbour_a</b><span>A-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t2"><span class="badge">01:12</span></div><div class="meta"><b>bridge_02</b><span>A-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t3"><span class="badge">00:28</span></div><div class="meta"><b>rooftop_wide</b><span>B-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t4"><span class="badge">02:05</span></div><div class="meta"><b>interview_01</b><span>A-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t5"><span class="badge">00:19</span></div><div class="meta"><b>market_hands</b><span>B-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t6"><span class="badge">00:53</span></div><div class="meta"><b>dusk_street</b><span>A-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t7"><span class="badge">01:44</span></div><div class="meta"><b>ferry_dock</b><span>B-CAM · 4K</span></div></figure>
+              <figure class="asset" style="margin:0"><div class="th t8"><span class="badge">00:07</span></div><div class="meta"><b>room_tone</b><span>audio only</span></div></figure>
+            </div>
+            <div class="dropzone">drop footage here · originals are copied, never moved</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- 02 ---------- -->
+  <section class="step">
+    <div class="step-copy">
+      <div class="step-n">Step 02</div>
+      <h3>Delete a sentence, lose the frames.</h3>
+      <p>Every clip with speech gets a transcript. Select words the way you'd
+        select text in a document and press delete — the timeline cuts with it,
+        audio and video together, ripple already handled.</p>
+      <p>The panel on the right collects the ums, the false starts and the long
+        breaths. Toggle a group on and Reelframe shows you exactly what it plans
+        to remove before it removes anything.</p>
+      <div class="keys">
+        <span class="lbl">Transcript</span>
+        <span class="key">⌘ ⇧ T</span>
+        <span class="key">⌫ ripple delete</span>
+        <span class="key">⌘ Z undoes the cut</span>
+      </div>
+      <div class="caption"><b>Above:</b> struck-through words are staged cuts — nothing is committed until you apply.</div>
+    </div>
+
+    <div class="step-vis">
+      <div class="app" role="img" aria-label="The transcript editor: an interview transcript where filler words are struck through in orange, a phrase is highlighted, and a sidebar lists filler categories with toggles.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">interview_01 — Transcript</span>
+          <span class="tc">staged edits</span>
+        </div>
+        <div class="tx">
+          <div class="tx-doc">
+            <span class="spk">Speaker 1 · 00:00:04</span>
+            <p><span class="cut">So, um,</span> we started the studio in a room above a
+              bakery, which meant everything smelled like bread <span class="cut">you know,</span>
+              for about two years.</p>
+
+            <span class="spk">Speaker 2 · 00:00:19</span>
+            <p><span class="cut">Yeah, yeah.</span> And you were <span class="cut">sort of</span>
+              making everything by hand at that point<span class="caret"></span></p>
+
+            <span class="spk">Speaker 1 · 00:00:26</span>
+            <p>By hand, badly, and mostly at night. <span class="hl">The first hundred pieces
+              were all wrong in the same way</span>, which turned out to be the useful part
+              <span class="cut">I mean,</span> you learn faster from one repeated mistake.</p>
+          </div>
+
+          <aside class="tx-side">
+            <h5>Clean up</h5>
+            <div class="filler"><span>Filler words</span><span style="display:flex;align-items:center;gap:9px"><span class="n">um, uh</span><span class="toggle on"></span></span></div>
+            <div class="filler"><span>False starts</span><span style="display:flex;align-items:center;gap:9px"><span class="n">partial</span><span class="toggle on"></span></span></div>
+            <div class="filler"><span>Repeated words</span><span style="display:flex;align-items:center;gap:9px"><span class="n">yeah, yeah</span><span class="toggle on"></span></span></div>
+            <div class="filler"><span>Long pauses</span><span style="display:flex;align-items:center;gap:9px"><span class="n">&gt; 1.0s</span><span class="toggle"></span></span></div>
+            <div class="filler"><span>Cross-talk</span><span style="display:flex;align-items:center;gap:9px"><span class="n">overlap</span><span class="toggle"></span></span></div>
+            <div class="apply">Apply staged cuts</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- 03 ---------- -->
+  <section class="step">
+    <div class="step-copy">
+      <div class="step-n">Step 03</div>
+      <h3>The timeline is where you argue with yourself.</h3>
+      <p>Once the shape is roughed in, everything else stacks on top of it:
+        b-roll over the interview, a music bed under both, titles on their own
+        lane. Tracks snap to the beat markers you drop while listening, so cuts
+        land on the music instead of near it.</p>
+      <p>Trim with the keyboard the whole time. J, K and L still do what they've
+        done for thirty years, and every edit is a ripple or a roll depending on
+        which side of the cut you grabbed.</p>
+      <div class="keys">
+        <span class="lbl">Trim</span>
+        <span class="key">J K L</span>
+        <span class="key">I / O</span>
+        <span class="key">M mark beat</span>
+      </div>
+      <div class="caption"><b>Above:</b> four lanes, one selected clip, beat markers in orange on the ruler.</div>
+    </div>
+
+    <div class="step-vis">
+      <div class="app" role="img" aria-label="A four-lane timeline: titles, two video lanes with a selected clip, and an audio lane showing a waveform, with a playhead and orange beat markers.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">harbour_cut_v4.reel — Timeline</span>
+          <span class="tc">seq 04 · 24 fps</span>
+        </div>
+        <div class="tlx">
+          <div class="ruler">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span>
+          </div>
+          <span class="marker" style="left:29%"></span>
+          <span class="marker" style="left:52%"></span>
+          <span class="marker" style="left:71%"></span>
+
+          <div class="lanes">
+            <div class="lane">
+              <span class="lbl"><i class="t"></i>T1</span>
+              <div class="row small">
+                <span class="gap" style="flex:1.4"></span>
+                <span class="clip txt" style="flex:1.8">LOWER THIRD</span>
+                <span class="gap" style="flex:3.4"></span>
+                <span class="clip txt" style="flex:1.4">CHAPTER 02</span>
+                <span class="gap" style="flex:2.2"></span>
+              </div>
+            </div>
+
+            <div class="lane">
+              <span class="lbl"><i class="v"></i>V2</span>
+              <div class="row">
+                <span class="gap" style="flex:.9"></span>
+                <span class="clip v3" style="flex:2.2">market_hands<span class="fade"></span></span>
+                <span class="gap" style="flex:1.1"></span>
+                <span class="clip v3" style="flex:2.6">ferry_dock<span class="fade r"></span></span>
+                <span class="gap" style="flex:3.4"></span>
+              </div>
+            </div>
+
+            <div class="lane">
+              <span class="lbl"><i class="v"></i>V1</span>
+              <div class="row">
+                <span class="clip v" style="flex:2.4">interview_01<span class="fade"></span></span>
+                <span class="clip v2 sel" style="flex:1.9">bridge_02</span>
+                <span class="clip v" style="flex:2.8">interview_01 (b)</span>
+                <span class="clip v3" style="flex:1.6">dusk_street<span class="fade r"></span></span>
+              </div>
+            </div>
+
+            <div class="lane">
+              <span class="lbl"><i class="a"></i>A1</span>
+              <div class="row small">
+                <span class="clip aud" style="flex:5.1">
+                  <span class="wave">
+                    <i style="height:34%"></i><i style="height:58%"></i><i style="height:80%"></i><i style="height:42%"></i>
+                    <i style="height:66%"></i><i style="height:90%"></i><i style="height:48%"></i><i style="height:72%"></i>
+                    <i style="height:30%"></i><i style="height:54%"></i><i style="height:84%"></i><i style="height:38%"></i>
+                    <i style="height:62%"></i><i style="height:26%"></i><i style="height:50%"></i><i style="height:76%"></i>
+                    <i style="height:44%"></i><i style="height:68%"></i><i style="height:32%"></i><i style="height:56%"></i>
+                    <i style="height:88%"></i><i style="height:40%"></i>
+                  </span>
+                </span>
+                <span class="clip aud" style="flex:3.6">
+                  <span class="wave">
+                    <i style="height:46%"></i><i style="height:70%"></i><i style="height:28%"></i><i style="height:60%"></i>
+                    <i style="height:86%"></i><i style="height:36%"></i><i style="height:64%"></i><i style="height:50%"></i>
+                    <i style="height:78%"></i><i style="height:32%"></i><i style="height:58%"></i><i style="height:42%"></i>
+                    <i style="height:74%"></i><i style="height:52%"></i>
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div class="lane">
+              <span class="lbl"><i class="a"></i>A2</span>
+              <div class="row small">
+                <span class="gap" style="flex:.6"></span>
+                <span class="clip aud" data-quiet style="flex:8;opacity:.72">
+                  <span class="wave">
+                    <i style="height:22%"></i><i style="height:30%"></i><i style="height:26%"></i><i style="height:34%"></i>
+                    <i style="height:28%"></i><i style="height:38%"></i><i style="height:24%"></i><i style="height:32%"></i>
+                    <i style="height:36%"></i><i style="height:26%"></i><i style="height:30%"></i><i style="height:40%"></i>
+                    <i style="height:24%"></i><i style="height:34%"></i><i style="height:28%"></i><i style="height:36%"></i>
+                    <i style="height:22%"></i><i style="height:32%"></i><i style="height:38%"></i><i style="height:26%"></i>
+                  </span>
+                </span>
+                <span class="gap" style="flex:.4"></span>
+              </div>
+            </div>
+          </div>
+
+          <span class="playhead"></span>
+
+          <div class="tlx-foot">
+            <span class="mono">selected · bridge_02 · 00:00:07:11</span>
+            <span class="mono">snap: beat markers</span>
+            <span class="mono" style="margin-left:auto">zoom</span>
+            <span class="zoom"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- 04 ---------- -->
+  <section class="step">
+    <div class="step-copy">
+      <div class="step-n">Step 04</div>
+      <h3>Match the shots before you grade them.</h3>
+      <p>Two cameras never agree. Pick one shot you like, then paste its balance
+        onto the rest of the scene — Reelframe matches white point and exposure
+        first, so your creative pass starts from footage that already cuts
+        together.</p>
+      <p>Wheels, curves and a scope that tells you when you've crushed the
+        blacks. Drag the divider in the viewer to see before and after on the
+        same frame.</p>
+      <div class="keys">
+        <span class="lbl">Colour</span>
+        <span class="key">⌘ ⌥ C copy grade</span>
+        <span class="key">\ before/after</span>
+      </div>
+      <div class="caption"><b>Above:</b> ungraded on the left of the divider, graded on the right, same frame.</div>
+    </div>
+
+    <div class="step-vis">
+      <div class="app" role="img" aria-label="The colour room: a viewer split by a draggable divider showing an ungraded frame beside a graded one, with three colour wheels, sliders and a histogram scope.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">bridge_02 — Colour</span>
+          <span class="tc">node 2 of 3</span>
+        </div>
+        <div class="col">
+          <div class="col-view">
+            <div class="split">
+              <span class="a">
+                <span class="scene">
+                  <span class="subject"></span>
+                  <svg class="sky-svg" viewBox="0 0 320 80" preserveAspectRatio="none" aria-hidden="true">
+                    <g fill="#241C2E" opacity=".9">
+                      <path d="M0 80V64h14v-8h9v8h12V48h10v32z"/>
+                      <path d="M52 80V58h18v-6h7v6h13v22z"/>
+                      <path d="M186 80V44h6v-9h3v9h7v36z"/>
+                      <path d="M206 80V60h26v-7h9v27z"/>
+                      <path d="M252 80V52h12v-5h5v5h16v28z"/>
+                      <path d="M292 80V62h28v18z"/>
+                    </g>
+                    <g stroke="#1D1726" stroke-width="2" fill="none">
+                      <path d="M100 80V30h1M100 32h26l-4 10"/>
+                      <path d="M146 80V38M146 40h22l-3 8"/>
+                    </g>
+                  </svg>
+                  <span class="horizon"></span>
+                  <span class="glint"></span>
+                  <svg class="fg-svg" viewBox="0 0 320 44" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M0 44V22c26 0 34 6 58 6s34-8 62-8 40 9 66 9 40-9 68-9 40 6 66 6v18z" fill="#0C1220"/>
+                  </svg>
+                </span>
+              </span>
+              <span class="b">
+                <span class="scene">
+                  <span class="subject"></span>
+                  <svg class="sky-svg" viewBox="0 0 320 80" preserveAspectRatio="none" aria-hidden="true">
+                    <g fill="#241C2E" opacity=".9">
+                      <path d="M0 80V64h14v-8h9v8h12V48h10v32z"/>
+                      <path d="M52 80V58h18v-6h7v6h13v22z"/>
+                      <path d="M186 80V44h6v-9h3v9h7v36z"/>
+                      <path d="M206 80V60h26v-7h9v27z"/>
+                      <path d="M252 80V52h12v-5h5v5h16v28z"/>
+                      <path d="M292 80V62h28v18z"/>
+                    </g>
+                    <g stroke="#1D1726" stroke-width="2" fill="none">
+                      <path d="M100 80V30h1M100 32h26l-4 10"/>
+                      <path d="M146 80V38M146 40h22l-3 8"/>
+                    </g>
+                  </svg>
+                  <span class="horizon"></span>
+                  <span class="glint"></span>
+                  <svg class="fg-svg" viewBox="0 0 320 44" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M0 44V22c26 0 34 6 58 6s34-8 62-8 40 9 66 9 40-9 68-9 40 6 66 6v18z" fill="#0C1220"/>
+                  </svg>
+                </span>
+              </span>
+              <span class="handle"></span>
+            </div>
+            <span class="ab-tag l">SOURCE</span>
+            <span class="ab-tag r">GRADED</span>
+          </div>
+
+          <aside class="col-side">
+            <div class="wheels">
+              <div class="wheel"><div class="disc"><span class="pt" style="left:52%;top:44%"></span></div><small>Lift</small></div>
+              <div class="wheel"><div class="disc"><span class="pt" style="left:38%;top:58%"></span></div><small>Gamma</small></div>
+              <div class="wheel"><div class="disc"><span class="pt" style="left:62%;top:36%"></span></div><small>Gain</small></div>
+            </div>
+
+            <div class="slider">
+              <div class="top"><span>Exposure</span><b>+0.4</b></div>
+              <div class="track"><i style="left:58%"></i></div>
+            </div>
+            <div class="slider">
+              <div class="top"><span>Temperature</span><b>+180K</b></div>
+              <div class="track"><i style="left:64%"></i></div>
+            </div>
+            <div class="slider">
+              <div class="top"><span>Saturation</span><b>+6</b></div>
+              <div class="track"><i style="left:54%"></i></div>
+            </div>
+
+            <div class="scope">
+              <span class="lbl">RGB PARADE</span>
+              <div class="bars">
+                <i style="height:22%"></i><i style="height:34%"></i><i style="height:48%"></i><i style="height:62%"></i>
+                <i style="height:74%"></i><i style="height:88%"></i><i style="height:80%"></i><i style="height:66%"></i>
+                <i style="height:54%"></i><i style="height:70%"></i><i style="height:84%"></i><i style="height:60%"></i>
+                <i style="height:44%"></i><i style="height:58%"></i><i style="height:72%"></i><i style="height:50%"></i>
+                <i style="height:36%"></i><i style="height:26%"></i><i style="height:40%"></i><i style="height:30%"></i>
+                <i style="height:20%"></i><i style="height:14%"></i>
+              </div>
+            </div>
+
+            <div class="presets">
+              <span class="chip on">Match to A-CAM</span>
+              <span class="chip">Reset node</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- 05 ---------- -->
+  <section class="step">
+    <div class="step-copy">
+      <div class="step-n">Step 05</div>
+      <h3>One timeline, every shape it needs to be.</h3>
+      <p>Choose the destinations and Reelframe reframes for each one, keeping
+        the subject in frame instead of cropping the centre and hoping. Review
+        the reframe on any shot it wasn't sure about before the render starts.</p>
+      <p>Renders run in the background. Keep editing while the queue works, or
+        hand the project file to someone else — it references your originals and
+        carries every edit decision with it.</p>
+      <div class="keys">
+        <span class="lbl">Export</span>
+        <span class="key">⌘ E</span>
+        <span class="key">⌘ ⇧ E queue</span>
+      </div>
+      <div class="caption"><b>Above:</b> three destinations selected; the progress bar is a render in flight.</div>
+    </div>
+
+    <div class="step-vis">
+      <div class="app" role="img" aria-label="The export panel: three aspect-ratio presets with one selected, format and codec fields, and a render progress bar.">
+        <div class="app-bar">
+          <span class="tl-dots"><i></i><i></i><i></i></span>
+          <span class="app-title">harbour_cut_v4.reel — Export</span>
+          <span class="tc">queue · 1 running</span>
+        </div>
+        <div class="exp">
+          <div class="exp-head">
+            <h5>Destinations</h5>
+            <span class="mono">reframe subject automatically</span>
+          </div>
+
+          <div class="exp-grid">
+            <div class="preset on">
+              <div class="ratio"><i style="width:44px;height:25px"></i></div>
+              <b>Landscape</b><span>16:9 · master</span>
+            </div>
+            <div class="preset on">
+              <div class="ratio"><i style="width:14px;height:25px"></i></div>
+              <b>Vertical</b><span>9:16 · social</span>
+            </div>
+            <div class="preset on">
+              <div class="ratio"><i style="width:25px;height:25px"></i></div>
+              <b>Square</b><span>1:1 · feed</span>
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="field"><span>Format</span><b>H.264 · MP4</b></div>
+            <div class="field"><span>Resolution</span><b>3840 × 2160</b></div>
+            <div class="field"><span>Audio</span><b>Stereo · 48 kHz</b></div>
+            <div class="field"><span>Destination</span><b>~/Projects/harbour</b></div>
+          </div>
+
+          <div class="bar"><i></i></div>
+          <div class="exp-foot">
+            <span class="mono">rendering landscape master — you can keep editing</span>
+            <span class="go">Add to queue</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= LIMITS ================= -->
+<section class="two wrap" id="limits">
+  <div>
+    <h2>What the tour left out.</h2>
+    <p style="color:var(--fg-dim);margin-top:16px;font-size:15.5px;max-width:38ch">
+      A tour that only shows the good parts isn't a tour. Here's where Reelframe
+      is deliberately thin.</p>
+  </div>
+  <div class="plain">
+    <div><span class="k">01</span><div>
+      <b>It is not a compositor.</b>
+      <p>Keying, tracking and 3D live somewhere else. Reelframe round-trips to
+        them and takes the result back onto the timeline, but it won't pretend to
+        replace them.</p>
+    </div></div>
+    <div><span class="k">02</span><div>
+      <b>Collaboration is file-based, not live.</b>
+      <p>Two people can't drag clips in the same sequence at the same time. You
+        hand over a project file, or you work on separate sequences and merge.</p>
+    </div></div>
+    <div><span class="k">03</span><div>
+      <b>Transcripts are good, not perfect.</b>
+      <p>Accents, cross-talk and jargon still need a human pass. That's why cuts
+        stage before they commit rather than applying the moment they're found.</p>
+    </div></div>
+    <div><span class="k">04</span><div>
+      <b>There is no mobile editor.</b>
+      <p>You can shoot on a phone and import over the network. The editing
+        happens on a desktop, with a keyboard, because that's where trimming
+        actually gets fast.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ================= SPEC ================= -->
+<section class="wrap" id="spec" style="padding-bottom:clamp(56px,7vw,96px)">
+  <div class="tour-head" style="margin-bottom:28px">
+    <h2 style="font-size:clamp(22px,2.4vw,28px)">The unglamorous details</h2>
+  </div>
+  <dl class="spec">
+    <div><dt>Platforms</dt><dd>macOS and Windows desktop. No mobile editor.</dd></div>
+    <div><dt>Media</dt><dd>Common camera and phone formats; originals copied, never moved.</dd></div>
+    <div><dt>Timeline</dt><dd>Multitrack video, audio and titles. Ripple, roll, slip, slide.</dd></div>
+    <div><dt>Colour</dt><dd>Wheels, curves, scopes, shot matching, node-based grades.</dd></div>
+    <div><dt>Transcripts</dt><dd>Generated locally per clip; text edits drive timeline cuts.</dd></div>
+    <div><dt>Export</dt><dd>Background render queue with per-destination reframing.</dd></div>
+    <div><dt>Project files</dt><dd>Single portable file referencing your originals.</dd></div>
+    <div><dt>Pricing</dt><dd><span class="ph">plan &amp; price TBC</span></dd></div>
+  </dl>
+</section>
+
+<!-- ================= END CTA ================= -->
+<section class="end" id="get">
+  <div class="wrap">
+    <h2>The rest of it makes more sense with footage in it.</h2>
+    <p>Install it, drop in yesterday's shoot, and see how far you get before you
+      need to read anything.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#get">Download for desktop</a>
+      <a class="btn btn-ghost" href="#tour">Replay the tour</a>
+    </div>
+    <div class="hero-foot" style="justify-content:center">
+      <span>macOS &amp; Windows</span>
+      <span>Projects stay on your machine</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-col f-brand">
+        <a class="mark" href="#top"><span class="glyph"></span>Reelframe</a>
+        <p>A video editor for people who spend most of their day trimming, not
+          decorating.</p>
+      </div>
+      <div class="f-col">
+        <h6>The tour</h6>
+        <a href="#tour">Import</a>
+        <a href="#tour">Transcript editing</a>
+        <a href="#tour">Timeline</a>
+        <a href="#tour">Colour</a>
+        <a href="#tour">Export</a>
+      </div>
+      <div class="f-col">
+        <h6>Product</h6>
+        <a href="#spec">Specifications</a>
+        <a href="#limits">What it isn't</a>
+        <a href="#get">Download</a>
+        <a href="#">Release notes</a>
+      </div>
+      <div class="f-col">
+        <h6>Help</h6>
+        <a href="#">Keyboard shortcuts</a>
+        <a href="#">Supported formats</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="f-base">
+      <span>© Reelframe</span>
+      <span>Privacy</span>
+      <span>Terms</span>
+      <span style="margin-left:auto">Made with a keyboard</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Fills every waveform with bars at the right density for its width.
+   Purely decorative: the hand-written bars above are the fallback. */
+(function () {
+  var seed = 20240607;
+  function rnd() { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; }
+  document.querySelectorAll('.wave').forEach(function (w, wi) {
+    var width = w.getBoundingClientRect().width;
+    if (!width) return;
+    var n = Math.max(8, Math.floor(width / 4));
+    var quiet = w.closest('[data-quiet]') !== null;
+    var html = '';
+    for (var i = 0; i < n; i++) {
+      var env = 0.55 + 0.45 * Math.sin((i / n) * Math.PI * (2 + wi % 3));
+      var h = (18 + rnd() * 72) * env;
+      if (quiet) h *= 0.45;
+      html += '<i style="height:' + h.toFixed(0) + '%"></i>';
+    }
+    w.innerHTML = html;
+  });
+})();
+</script>
+</body>
+</html>

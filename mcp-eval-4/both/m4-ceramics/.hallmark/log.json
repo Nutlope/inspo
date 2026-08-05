@@ -1,0 +1,25 @@
+[
+  {
+    "date": "2026-08-05",
+    "macrostructure": "Catalogue",
+    "theme": "custom",
+    "direction": "the enamel timetable board",
+    "posture": "drenched",
+    "seed": "kiln-and-co-ceramics-lisbon·2026-08-05·r0",
+    "wildcard": false,
+    "theme_axes": "dark / display-condensed-bold / chromatic-other (glaze-turquoise ~195)",
+    "vibe": "fired glaze, municipal, Lisbon, plain",
+    "inspo_consensus": "mid/grotesk-sans/chromatic-other (0.50 / 0.71 / 0.42; accent axis flat, no consensus)",
+    "inspo_opposition": "against: paper band · against: display class · accent: no consensus to oppose",
+    "inspo_slugs": ["geex-arts-com", "furoweb-eu", "14islands-com", "parachutehome-com", "portalone-studio", "emigre-com"],
+    "hero": "Stage/H7",
+    "nav": "board masthead, two-tier, no nav CTA, non-sticky",
+    "footer": "maker's plate + one justified colophon line",
+    "enrichment": "hand-built SVG (vessel section profiles)",
+    "section-entry": "a change of paper, repeated; hairline rules inside sections",
+    "axes": "dark/display-condensed-bold/chromatic-other",
+    "fingerprint": "Left-flush display|Two-column asymmetric|Change of paper|Field-tile, no border|Drawn section plate|Single hero settle",
+    "waived": [],
+    "brief": "Kiln & Co · independent ceramics studio, Lisbon"
+  }
+]

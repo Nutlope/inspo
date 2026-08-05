@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tenor: ten-minute meditations you do walking</title>
+<meta name="description" content="Tenor is a meditation app for people who cannot sit still. Ten-minute guided sessions designed to be done on your feet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   Tenor: tokens
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#F1EDE5;
+  --paper-2:#E8E3D8;
+  --card:#FBF9F5;
+  --ink:#191B19;
+  --ink-2:#4A4F4A;
+  --ink-3:#7C827B;
+  --rule:#D6D0C3;
+  --clay:#BE4A24;
+  --moss:#465743;
+  --night:#171A18;
+
+  --serif:"Instrument Serif",Georgia,serif;
+  --sans:"Inter Tight",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --pad:clamp(20px,4vw,56px);
+  --maxw:1220px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+section{scroll-margin-top:86px}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.6;
+  font-weight:400;
+  letter-spacing:-0.005em;
+  -webkit-font-smoothing:antialiased;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.035'/></svg>");
+}
+img,svg{max-width:100%}
+a{color:inherit}
+h1,h2,h3{margin:0;font-weight:400;letter-spacing:-0.02em}
+p{margin:0}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+
+/* micro labels */
+.tag{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ink-3);
+  font-weight:500;
+}
+
+/* ── buttons ───────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:.6em;
+  font-family:var(--sans);font-size:15px;font-weight:500;
+  padding:.78em 1.35em;border-radius:100px;
+  text-decoration:none;border:1px solid transparent;
+  transition:transform .15s ease,background .2s ease,color .2s ease,border-color .2s ease;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--clay);color:#FCF7F2}
+.btn-primary:hover{background:#A63C19;transform:translateY(-1px)}
+.btn-ghost{border-color:var(--rule);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-1px)}
+.btn .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+
+/* ── header ────────────────────────────────── */
+header{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid transparent;
+}
+header.stuck{border-bottom-color:var(--rule)}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;height:70px;
+}
+.brand{display:flex;align-items:baseline;gap:.5em;text-decoration:none}
+.brand b{font-family:var(--serif);font-size:27px;font-weight:400;letter-spacing:-0.01em}
+.brand span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{
+  text-decoration:none;font-size:15px;color:var(--ink-2);
+  padding-bottom:2px;border-bottom:1px solid transparent;
+}
+.nav-links a:hover{color:var(--ink);border-bottom-color:var(--clay)}
+@media(max-width:820px){.nav-links{display:none}}
+
+/* ── hero ──────────────────────────────────── */
+.hero{
+  min-height:calc(100svh - 70px);
+  display:grid;align-content:center;
+  padding-top:24px;padding-bottom:40px;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1.02fr .98fr;
+  gap:clamp(28px,5vw,72px);align-items:center;
+}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.eyebrow .bar{width:34px;height:1px;background:var(--clay)}
+h1{
+  font-family:var(--serif);
+  font-size:clamp(42px,5.4vw,70px);
+  line-height:1.02;
+  letter-spacing:-0.025em;
+  max-width:13.5ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--clay)}
+.lede{
+  margin-top:22px;max-width:44ch;
+  font-size:clamp(16.5px,1.35vw,18.5px);
+  color:var(--ink-2);line-height:1.58;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;align-items:center}
+.fineprint{
+  margin-top:18px;font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);letter-spacing:.01em;
+}
+
+/* route card */
+.route-card{
+  position:relative;background:var(--card);
+  border:1px solid var(--rule);border-radius:6px;
+  padding:20px 20px 16px;
+  box-shadow:0 1px 0 rgba(25,27,25,.04),0 18px 44px -30px rgba(25,27,25,.35);
+}
+.route-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding-bottom:14px;border-bottom:1px solid var(--rule);
+}
+.route-head .t{font-family:var(--serif);font-size:20px}
+.route-svg{display:block;width:100%;height:auto;margin:6px 0 4px}
+.route-ghost{fill:none;stroke:var(--paper-2);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.route-line{
+  fill:none;stroke:var(--clay);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:100;stroke-dashoffset:100;
+  animation:draw 4.2s cubic-bezier(.5,.1,.2,1) .4s forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pin{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.pin-now{fill:var(--clay);stroke:none;animation:pulse 2.6s ease-in-out infinite}
+.halo{fill:var(--clay);opacity:.16;animation:halo 2.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.72}}
+@keyframes halo{0%,100%{opacity:.16;r:11}50%{opacity:.05;r:16}}
+.route-meta{display:flex;gap:26px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--rule)}
+.route-meta div{display:flex;flex-direction:column;gap:3px}
+.route-meta .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.route-meta .v{font-size:14.5px;color:var(--ink)}
+.route-meta .v.time{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+@media(max-width:900px){
+  .hero{min-height:0;padding-top:44px;padding-bottom:56px}
+  .hero-grid{grid-template-columns:1fr;gap:38px}
+  h1{max-width:16ch}
+}
+
+/* ── section scaffolding ───────────────────── */
+section{padding:clamp(64px,8vw,110px) 0}
+.sec-head{display:flex;gap:18px;align-items:baseline;margin-bottom:44px;flex-wrap:wrap}
+.sec-head h2{
+  font-family:var(--serif);font-size:clamp(28px,3.4vw,44px);
+  line-height:1.08;max-width:20ch;
+}
+.rule{height:1px;background:var(--rule);border:0;margin:0}
+
+/* ── objections ────────────────────────────── */
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border-block:1px solid var(--rule)}
+.cols3 .cell{background:var(--paper);padding:34px 30px 38px}
+.cols3 h3{font-family:var(--serif);font-size:24px;line-height:1.15;margin-bottom:12px}
+.cols3 p{color:var(--ink-2);font-size:16px}
+.cols3 .n{font-family:var(--mono);font-size:11px;color:var(--clay);letter-spacing:.14em;display:block;margin-bottom:18px}
+@media(max-width:860px){.cols3{grid-template-columns:1fr}}
+
+/* ── steps ─────────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,52px)}
+.step{position:relative;padding-top:30px}
+.step::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--rule);
+}
+.step .marker{
+  position:absolute;top:-5px;left:0;width:10px;height:10px;
+  border-radius:50%;background:var(--paper);border:1.5px solid var(--clay);
+}
+.step .num{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-3)}
+.step h3{font-family:var(--serif);font-size:26px;margin:14px 0 10px;line-height:1.12}
+.step p{color:var(--ink-2);font-size:16px}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* ── cadence band ──────────────────────────── */
+.band{background:var(--night);color:#EDEAE3}
+.band-inner{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,70px);align-items:center}
+.band h2{font-family:var(--serif);font-size:clamp(28px,3.4vw,44px);line-height:1.1;max-width:16ch}
+.band h2 em{font-style:italic;color:#E08A63}
+.band p{color:#A9AEA5;margin-top:20px;max-width:46ch;font-size:16.5px}
+.band .tag{color:#7E857C}
+.meter{display:flex;align-items:flex-end;gap:7px;height:150px;margin-top:6px}
+.meter i{
+  display:block;flex:1;background:#2C312D;border-radius:2px;
+  transform-origin:bottom;animation:tick 2.4s ease-in-out infinite;
+}
+.meter i:nth-child(3n+1){background:#3A4139}
+.meter i:nth-child(7n){background:var(--clay)}
+@keyframes tick{0%,100%{height:16%}50%{height:100%}}
+.meter i:nth-child(1){animation-delay:0s}   .meter i:nth-child(2){animation-delay:.09s}
+.meter i:nth-child(3){animation-delay:.18s} .meter i:nth-child(4){animation-delay:.27s}
+.meter i:nth-child(5){animation-delay:.36s} .meter i:nth-child(6){animation-delay:.45s}
+.meter i:nth-child(7){animation-delay:.54s} .meter i:nth-child(8){animation-delay:.63s}
+.meter i:nth-child(9){animation-delay:.72s} .meter i:nth-child(10){animation-delay:.81s}
+.meter i:nth-child(11){animation-delay:.9s} .meter i:nth-child(12){animation-delay:.99s}
+.meter i:nth-child(13){animation-delay:1.08s} .meter i:nth-child(14){animation-delay:1.17s}
+.meter i:nth-child(15){animation-delay:1.26s} .meter i:nth-child(16){animation-delay:1.35s}
+.meter i:nth-child(17){animation-delay:1.44s} .meter i:nth-child(18){animation-delay:1.53s}
+@media(max-width:860px){.band-inner{grid-template-columns:1fr}}
+
+/* ── sessions table ────────────────────────── */
+.sessions{border-top:1px solid var(--rule)}
+.srow{
+  display:grid;grid-template-columns:1.1fr 2fr .7fr .5fr;
+  gap:24px;align-items:baseline;
+  padding:26px 4px;border-bottom:1px solid var(--rule);
+  transition:background .2s ease,padding-left .2s ease;
+}
+.srow:hover{background:var(--card);padding-left:14px}
+.srow .name{font-family:var(--serif);font-size:26px;line-height:1.1}
+.srow .desc{color:var(--ink-2);font-size:15.5px}
+.srow .when{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.srow .len{
+  font-family:var(--mono);font-size:15px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--ink);
+}
+@media(max-width:860px){
+  .srow{grid-template-columns:1fr auto;gap:6px 18px}
+  .srow .desc{grid-column:1/-1}
+  .srow .when{grid-column:1}
+  .srow .len{text-align:left}
+}
+
+/* ── questions ─────────────────────────────── */
+.qa{display:grid;grid-template-columns:1fr;border-top:1px solid var(--rule);max-width:900px}
+details{border-bottom:1px solid var(--rule);padding:22px 2px}
+summary{
+  cursor:pointer;list-style:none;display:flex;justify-content:space-between;
+  gap:20px;align-items:baseline;font-size:19px;letter-spacing:-0.01em;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);color:var(--clay);font-size:18px;line-height:1}
+details[open] summary::after{content:"-"}
+details p{margin-top:14px;color:var(--ink-2);max-width:62ch;font-size:16px}
+
+/* ── final cta ─────────────────────────────── */
+.finale{text-align:center;padding-block:clamp(80px,10vw,140px)}
+.finale h2{
+  font-family:var(--serif);font-size:clamp(34px,5vw,62px);
+  line-height:1.04;letter-spacing:-0.025em;margin:18px auto 0;max-width:16ch;
+}
+.finale h2 em{font-style:italic;color:var(--clay)}
+.finale p{margin:20px auto 0;max-width:46ch;color:var(--ink-2)}
+.finale .hero-cta{justify-content:center}
+
+/* ── footer ────────────────────────────────── */
+footer{border-top:1px solid var(--rule);padding:52px 0 40px}
+.foot{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
+.foot h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin:0 0 14px}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.foot a{text-decoration:none;color:var(--ink-2);font-size:15px}
+.foot a:hover{color:var(--clay)}
+.foot .blurb{color:var(--ink-3);font-size:14.5px;max-width:32ch;margin-top:12px}
+.foot-base{
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  margin-top:46px;padding-top:20px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.05em;
+}
+@media(max-width:860px){.foot{grid-template-columns:1fr 1fr}.foot>div:first-child{grid-column:1/-1}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .route-line{stroke-dashoffset:0}
+  .meter i{height:62%}
+}
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="#top"><b>Tenor</b><span>walking meditation</span></a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#cadence">Cadence</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="btn btn-primary" href="#get">Get Tenor</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow"><span class="bar"></span><span class="tag">Ten minutes · on your feet</span></div>
+        <h1>Stillness is the hard part. <em>Skip it.</em></h1>
+        <p class="lede">Tenor is a meditation app for people who fidget. Every session runs ten minutes and is built to be done walking: out the door, around the block, back before the coffee goes cold.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#get"><span class="dot"></span>Start a session</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <p class="fineprint">iPhone &amp; Android · works offline · one ear in is enough</p>
+      </div>
+
+      <figure class="route-card" style="margin:0">
+        <div class="route-head">
+          <span class="t">Out and Back</span>
+          <span class="tag">Session 01</span>
+        </div>
+        <svg class="route-svg" viewBox="0 0 520 300" role="img" aria-label="An illustrated walking route looping out from a doorway and back again.">
+          <defs>
+            <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
+              <path d="M26 0H0V26" fill="none" stroke="#E4DFD3" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="520" height="300" fill="url(#grid)" opacity=".7"/>
+          <path class="route-ghost" d="M52 252 C 96 216, 78 176, 138 162 S 234 178, 250 128 S 208 66, 276 46 S 402 68, 438 34"/>
+          <path class="route-line" pathLength="100" d="M52 252 C 96 216, 78 176, 138 162 S 234 178, 250 128 S 208 66, 276 46 S 402 68, 438 34"/>
+          <g>
+            <circle class="halo" cx="250" cy="128" r="11"/>
+            <circle class="pin-now" cx="250" cy="128" r="5.5"/>
+          </g>
+          <circle class="pin" cx="52" cy="252" r="5"/>
+          <circle class="pin" cx="438" cy="34" r="5"/>
+          <text x="52" y="278" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C827B" letter-spacing="1.4">DOORSTEP</text>
+          <text x="392" y="22" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C827B" letter-spacing="1.4">TURNAROUND</text>
+        </svg>
+        <figcaption class="route-meta">
+          <div><span class="k">Length</span><span class="v time">10:00</span></div>
+          <div><span class="k">Shape</span><span class="v">Out, then back</span></div>
+          <div><span class="k">Voice</span><span class="v">Follows your pace</span></div>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- OBJECTIONS -->
+  <section id="why" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">If you bounced off the others</span>
+        <h2>Three rules the other apps have. Tenor doesn&rsquo;t.</h2>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="cols3">
+        <div class="cell">
+          <span class="n">NOT THIS</span>
+          <h3>Sit down and don&rsquo;t move</h3>
+          <p>No cushion, no cross-legged posture, no ten minutes of staring at a patch of wall while your calf goes numb. The session moves because you do. Restlessness stops being the thing you have to defeat first.</p>
+        </div>
+        <div class="cell">
+          <span class="n">NOR THIS</span>
+          <h3>Empty your mind</h3>
+          <p>Attention needs somewhere to go. Tenor puts it on things that are already there: the weight shifting foot to foot, the temperature on your hands, the sound two streets over. The rest is allowed to keep running.</p>
+        </div>
+        <div class="cell">
+          <span class="n">NOR THIS</span>
+          <h3>Find the time first</h3>
+          <p>Ten minutes, doorstep to doorstep. It fits inside a walk you were taking anyway: the coffee run, the station, the loop you do when a meeting ends badly. Nothing new goes in the calendar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">How a session runs</span>
+        <h2>Press play in the doorway. It takes it from there.</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="marker"></span>
+          <span class="num">01 / STEP OUT</span>
+          <h3>It waits until you&rsquo;re moving</h3>
+          <p>Nothing is said while you&rsquo;re still finding your keys. The first cue lands once you have a rhythm going, so the session starts where you actually are rather than where an app assumed you&rsquo;d be.</p>
+        </div>
+        <div class="step">
+          <span class="marker"></span>
+          <span class="num">02 / FIND THE TEMPO</span>
+          <h3>The voice settles into your stride</h3>
+          <p>Guidance arrives on your beat, not a studio metronome&rsquo;s. Walk faster and it spaces out. Slow down and it comes closer. When you clearly don&rsquo;t need anything, it says nothing at all.</p>
+        </div>
+        <div class="step">
+          <span class="marker"></span>
+          <span class="num">03 / COME BACK</span>
+          <h3>The last stretch brings you up</h3>
+          <p>Ending mid-drift on a pavement is no good to anybody. The closing minutes hand you back the traffic, the door, the afternoon, so you arrive as a person who can answer an email.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CADENCE BAND -->
+  <section id="cadence" class="band">
+    <div class="wrap band-inner">
+      <div>
+        <span class="tag">The idea</span>
+        <h2 style="margin-top:14px">It listens for your steps, <em>not your breath.</em></h2>
+        <p>Breath-led meditation asks you to slow down before you&rsquo;ve settled, which is precisely the instruction a restless person cannot follow. Walking hands you a rhythm you didn&rsquo;t have to manufacture. Tenor takes that rhythm as the starting point and builds the session on top of it, so the first minute is already working instead of being spent negotiating with your own body.</p>
+      </div>
+      <div>
+        <div class="meter" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <p style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7E857C;margin-top:16px">Your cadence, drawn live during a session</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section id="sessions">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">The library</span>
+        <h2>Every session is ten minutes. The difference is where you are.</h2>
+      </div>
+      <div class="sessions">
+        <div class="srow">
+          <span class="name">Out and Back</span>
+          <span class="desc">For the walk that starts before you&rsquo;ve decided anything. Turn around when it tells you to.</span>
+          <span class="when">First thing</span>
+          <span class="len">10:00</span>
+        </div>
+        <div class="srow">
+          <span class="name">The Commute</span>
+          <span class="desc">Built for pavement with other people on it. Noise stays in; you stop treating it as an interruption.</span>
+          <span class="when">Morning</span>
+          <span class="len">10:00</span>
+        </div>
+        <div class="srow">
+          <span class="name">Between Two Meetings</span>
+          <span class="desc">A lap of the block with one job: put down whatever you were carrying out of the last room.</span>
+          <span class="when">Midday</span>
+          <span class="len">10:00</span>
+        </div>
+        <div class="srow">
+          <span class="name">The Long Way Home</span>
+          <span class="desc">The deliberately inefficient route. Slower guidance, longer gaps, no arrival time to hit.</span>
+          <span class="when">Evening</span>
+          <span class="len">10:00</span>
+        </div>
+        <div class="srow">
+          <span class="name">Corridor</span>
+          <span class="desc">Indoors, bad weather, a hotel hallway, a hundred small laps. Works with almost no distance.</span>
+          <span class="when">Anywhere</span>
+          <span class="len">10:00</span>
+        </div>
+        <div class="srow">
+          <span class="name">Standing Still</span>
+          <span class="desc">For the days you actually can sit. It happens more often than you&rsquo;d expect, once walking has done the groundwork.</span>
+          <span class="when">Rare</span>
+          <span class="len">10:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTIONS -->
+  <section id="questions">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">Questions</span>
+        <h2>The ones we get from people who quit an app like this before.</h2>
+      </div>
+      <div class="qa">
+        <details open>
+          <summary>I&rsquo;ve tried Headspace and Calm. Why would this stick?</summary>
+          <p>Because the failure point in those apps is usually the first ninety seconds, when you&rsquo;re asked to be still and instead you&rsquo;re cataloguing your inbox. Tenor removes that step entirely. There is no stillness to fail at, and no streak to break: you either went for the walk or you didn&rsquo;t.</p>
+        </details>
+        <details>
+          <summary>Do I need headphones?</summary>
+          <p>One earbud is plenty, and it&rsquo;s the arrangement we&rsquo;d recommend on a street. The audio is mixed to sit under ambient sound rather than replace it, so you keep the traffic, the wind and the person about to pass you on the left.</p>
+        </details>
+        <details>
+          <summary>What if I can only walk indoors, or barely at all?</summary>
+          <p>Corridor is built for a few metres of floor and a lot of turns. Standing Still asks for no distance whatsoever. The point is a rhythm to hang attention on, and shifting weight in one spot counts.</p>
+        </details>
+        <details>
+          <summary>Is it tracking my location?</summary>
+          <p>Sessions run on step rhythm from the device&rsquo;s motion sensor. Location is off unless you turn it on to map a route, and everything works offline with the sessions downloaded.</p>
+        </details>
+        <details>
+          <summary>Can I try it before paying?</summary>
+          <p>Yes. A set of the sessions above is open with no account and no card, including Out and Back. If ten minutes on your feet turns out not to be your thing, you&rsquo;ll know by the end of the week.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINALE -->
+  <section id="get" class="finale">
+    <div class="wrap">
+      <span class="tag">Ten minutes, starting at the door</span>
+      <h2>Put your shoes on. That&rsquo;s the <em>whole</em> preparation.</h2>
+      <p>Download Tenor, pick a session, walk. The instructions do not get longer than that.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#get"><span class="dot"></span>Get Tenor</a>
+        <a class="btn btn-ghost" href="#sessions">Browse the sessions</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top"><b>Tenor</b><span>walking meditation</span></a>
+        <p class="blurb">Ten-minute guided sessions for people who think better with their feet moving.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#sessions">Sessions</a></li>
+          <li><a href="#cadence">Cadence</a></li>
+          <li><a href="#get">Download</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>More</h4>
+        <ul>
+          <li><a href="#questions">Questions</a></li>
+          <li><a href="#why">Why walking</a></li>
+          <li><a href="#top">Practitioners</a></li>
+          <li><a href="#top">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#top">Privacy</a></li>
+          <li><a href="#top">Terms</a></li>
+          <li><a href="#top">Accessibility</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© Tenor</span>
+      <span>Made for people who cannot sit still</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var hdr=document.getElementById('hdr');
+  var onScroll=function(){hdr.classList.toggle('stuck',window.scrollY>8)};
+  onScroll();addEventListener('scroll',onScroll,{passive:true});
+</script>
+</body>
+</html>

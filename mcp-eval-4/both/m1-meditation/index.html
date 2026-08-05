@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tenor · Ten minutes, on foot, eyes open</title>
+<meta name="description" content="Tenor is a meditation app for people who cannot sit still. Every session is ten minutes long and you do it walking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Zilla+Slab:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: a waymarked route (the page is the walk) · tone: editorial · anchor hue: 120 · hero: Stage/full-height marker post · nav: trailhead board, not sticky, painted band instead of a hairline · footer: end post, one baseline of links over a colophon · contrast: pass (ink 22 on paper 84; field-ink 96 on field 58) · mobile: 320/375/414/768 verified in code
+ * Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V5 · weakest: H - the objection band and the route both wanted to be the page's loudest moment; fixed by demoting the objection to a two-column aside at --text-2xl and letting the numbered route own the only display-scale type below the fold
+ * theme: custom · direction: "the trail marker post" · vibe: "painted band, stencil figure, weathered enamel"
+ * paper: oklch(84% 0.013 118) · field: oklch(44% 0.090 128) · accent: oklch(74% 0.17 120) · display: Zilla Slab · body: IBM Plex Sans
+ * axes: mid / slab-serif / chromatic-other (waymark green ~120) · posture: committed
+ * inspo: 24 exemplars · consensus mid/grotesk-sans/cool (0.38 / 0.54 / 0.46)
+ *   against: display class (slab-serif vs grotesk-sans, the only axis clearing consensus) · paper band and accent hue: no consensus, neither kept nor opposed
+ * seed: tenor-walking-meditation·2026-08-05·r0 · contract: kept (5/5) · studied: no · v1.2.0
+ */
+
+/* direction contract · seed tenor-walking-meditation·2026-08-05·r0
+ * THESIS: the practice does not need you to sit down; it needs ten minutes you were already spending.
+ * OWN-WORLD: a painted trail marker post, stencil figures and enamel bands, standing on a pavement-grey page.
+ * STORY: a product manager at 8:12 on a Tuesday, three blocks out, phone in a coat pocket, screen off, grey overcast light.
+ * FIRST-VIEWPORT: trailhead board, the headline in three beats, two lines of lede, a filled Start a walk, and the marker post standing full height at the right with the minutes painted on it.
+ * FORM: a waymarked route down the page; the signature move is the painted band, which is both the section break and the post's paint.
+ */
+
+:root {
+  /* colour · committed posture: the painted band carries the surface, the accent stays a signal */
+  --color-paper:      oklch(84% 0.013 118);
+  --color-paper-2:    oklch(89% 0.010 118);
+  --color-field:      oklch(44% 0.090 128);
+  --color-field-ink:  oklch(96% 0.012 120);
+  --color-field-rule: oklch(56% 0.080 128);
+  --color-ink:        oklch(22% 0.018 122);
+  --color-ink-2:      oklch(34% 0.016 122);
+  --color-muted:      oklch(44% 0.014 118);
+  --color-rule:       oklch(58% 0.012 118);
+  --color-rule-2:     oklch(72% 0.011 118);
+  --color-accent:     oklch(74% 0.170 120);
+  --color-accent-ink: oklch(22% 0.018 122);
+  --color-focus:      oklch(56% 0.200 122);
+
+  /* type */
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.55rem, 3.9vw + 1rem, 4.2rem);
+  --text-display-s: clamp(2.05rem, 3.1vw + 0.8rem, 3.35rem);
+
+  /* space · 4pt scale */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  /* rule, radius, motion */
+  --rule-hair: 1px;
+  --rule-band: 6px;
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 200;
+
+  --measure: 66ch;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0;
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-wrap: balance;
+}
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+img, svg { max-width: 100%; }
+
+:where(a, button, summary):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+  transition: none;
+}
+
+.shell {
+  width: 100%;
+  max-width: 84rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-xs);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: var(--space-xs) var(--space-md);
+  z-index: var(--z-sticky);
+  font-size: var(--text-sm);
+}
+.skip:focus { left: var(--space-md); }
+
+/* ---- trailhead board (nav) ------------------------------------ */
+.trailhead {
+  padding-block: var(--space-lg) 0;
+}
+.trailhead__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md) var(--space-lg);
+  padding-block-end: var(--space-sm);
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wordmark span { color: var(--color-muted); font-weight: 400; }
+.trailhead__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs) var(--space-lg);
+  font-size: var(--text-base);
+}
+.trailhead__link {
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-ink-2);
+  padding-block: var(--space-2xs);
+  border-block-end: var(--rule-hair) solid transparent;
+  transition: color var(--dur-micro) var(--ease-out),
+              border-color var(--dur-micro) var(--ease-out);
+}
+.trailhead__link:hover { color: var(--color-ink); border-block-end-color: var(--color-accent); }
+.trailhead__band {
+  height: var(--rule-band);
+  background: var(--color-accent);
+  width: 100%;
+}
+.trailhead__band--half {
+  background: linear-gradient(to right, var(--color-accent) 0 38%, var(--color-ink) 38% 100%);
+}
+
+/* ---- hero (Stage) --------------------------------------------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+  align-items: stretch;
+  padding-block: var(--space-xl) var(--space-3xl);
+}
+.hero__text {
+  align-self: center;
+  max-width: 40rem;
+}
+.hero h1 {
+  font-size: var(--text-display);
+  max-width: 20ch;
+  margin-block-end: var(--space-lg);
+}
+.hero__lede {
+  font-size: var(--text-md);
+  color: var(--color-ink-2);
+  max-width: 44ch;
+  line-height: 1.5;
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md) var(--space-xl);
+  margin-block-start: var(--space-xl);
+}
+.hero__aside {
+  margin-block-start: var(--space-lg);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-base);
+  line-height: 1;
+  padding: var(--space-md) var(--space-xl);
+  min-height: 48px;
+  border: var(--rule-hair) solid var(--color-ink);
+  border-radius: var(--radius-none);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-out),
+              background-color var(--dur-short) var(--ease-out),
+              color var(--dur-short) var(--ease-out);
+}
+.btn:hover { background: var(--color-field); border-color: var(--color-field); color: var(--color-field-ink); }
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+.link-quiet {
+  white-space: nowrap;
+  font-weight: 500;
+  text-decoration: none;
+  border-block-end: 2px solid var(--color-accent);
+  padding-block-end: var(--space-3xs);
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+.link-quiet:hover { border-block-end-color: var(--color-ink); }
+
+/* the marker post */
+.post {
+  margin: 0;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-sm);
+}
+.post__svg { display: block; height: 16rem; width: auto; }
+.post figcaption {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  max-width: 26ch;
+}
+.post__body { fill: var(--color-paper-2); stroke: var(--color-rule); stroke-width: 1; }
+.post__paint { fill: var(--color-field); }
+.post__cap { fill: var(--color-accent); }
+.post__tick { stroke: var(--color-rule); stroke-width: 1; }
+.post__num {
+  fill: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.post__unit {
+  fill: var(--color-muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+}
+.post__stencil {
+  fill: var(--color-accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ---- band sections (the painted band = the section break) ----- */
+.band {
+  background: var(--color-field);
+  color: var(--color-field-ink);
+  border-block: var(--rule-band) solid var(--color-accent);
+}
+.band a { color: var(--color-field-ink); }
+.band--argument { padding-block: var(--space-3xl); }
+.argument {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+}
+.argument h2 {
+  font-size: var(--text-2xl);
+  max-width: 16ch;
+  line-height: 1.08;
+}
+.argument__body {
+  display: grid;
+  gap: var(--space-lg);
+  max-width: 54ch;
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+/* ---- the route (a real ol) ------------------------------------ */
+.route { padding-block: var(--space-3xl) var(--space-4xl); }
+.route__head {
+  max-width: 30ch;
+  margin-block-end: var(--space-2xl);
+}
+.route__head h2 {
+  font-size: var(--text-display-s);
+  max-width: 24ch;
+}
+.route__head p {
+  margin-block-start: var(--space-md);
+  color: var(--color-muted);
+  max-width: 46ch;
+}
+.stages {
+  counter-reset: stage;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-inline-start: 2px solid var(--color-rule-2);
+}
+.stage {
+  counter-increment: stage;
+  position: relative;
+  padding-inline-start: clamp(3rem, 7vw, 6rem);
+  padding-block: var(--space-xl);
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: minmax(0, 1fr);
+}
+.stage + .stage { border-block-start: var(--rule-hair) solid var(--color-rule-2); }
+.stage::before {
+  content: counter(stage);
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: var(--space-xl);
+  transform: translateX(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.stage h3 {
+  font-size: var(--text-lg);
+  line-height: 1.12;
+  max-width: 24ch;
+}
+.stage p {
+  max-width: 60ch;
+  color: var(--color-ink-2);
+}
+.stage__clock {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+}
+
+/* ---- what it needs -------------------------------------------- */
+.needs {
+  padding-block: var(--space-3xl);
+  background: var(--color-paper-2);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+}
+.needs__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xl);
+}
+.needs h2 {
+  font-size: var(--text-xl);
+  max-width: 14ch;
+}
+.needs dl {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+.needs__item {
+  display: grid;
+  gap: var(--space-2xs);
+  padding-block: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+}
+.needs__item:first-child { border-block-start: 0; }
+.needs dt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  line-height: 1.15;
+}
+.needs dd {
+  margin: 0;
+  color: var(--color-ink-2);
+  max-width: 56ch;
+}
+
+/* ---- sessions index ------------------------------------------- */
+.sessions { padding-block: var(--space-3xl) var(--space-4xl); }
+.sessions__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-block-end: var(--space-xl);
+}
+.sessions h2 { font-size: var(--text-xl); }
+.sessions__note { color: var(--color-muted); font-size: var(--text-sm); }
+.index { list-style: none; margin: 0; padding: 0; }
+.index li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+}
+.index li:last-child { border-block-end: var(--rule-hair) solid var(--color-rule); }
+.index__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+}
+.index__what { color: var(--color-ink-2); display: block; font-family: var(--font-body); font-weight: 400; font-size: var(--text-base); max-width: 58ch; }
+.index__len {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+/* ---- close ----------------------------------------------------- */
+.close { padding-block: var(--space-3xl); }
+.close__inner {
+  display: grid;
+  gap: var(--space-lg);
+  max-width: 46rem;
+}
+.close h2 { font-size: var(--text-display-s); max-width: 18ch; }
+.close p { font-size: var(--text-md); color: var(--color-field-ink); max-width: 50ch; }
+.close .link-quiet {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  justify-self: start;
+  border-block-end-width: 3px;
+}
+.close .link-quiet:hover { border-block-end-color: var(--color-field-ink); }
+
+/* ---- end post (footer) ----------------------------------------- */
+.endpost { padding-block: var(--space-2xl) var(--space-3xl); }
+.endpost__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md) var(--space-xl);
+  padding-block-end: var(--space-lg);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+}
+.endpost__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  font-size: var(--text-base);
+}
+.endpost__links a {
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-ink-2);
+  border-block-end: var(--rule-hair) solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+.endpost__links a:hover { border-block-end-color: var(--color-accent); }
+.colophon {
+  margin-block-start: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  max-width: var(--measure);
+}
+
+/* ---- one orchestrated reveal ----------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes reveal { to { opacity: 1; transform: none; } }
+
+/* ---- breakpoints ----------------------------------------------- */
+@media (min-width: 40rem) {
+  .argument { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-2xl); }
+  .stage { grid-template-columns: 7rem minmax(0, 1fr); align-items: baseline; }
+  .stage h3 { grid-column: 2; }
+  .stage p { grid-column: 2; }
+  .needs__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+}
+@media (min-width: 60rem) {
+  .trailhead__link, .endpost__links a, .btn, .link-quiet { font-size: var(--text-sm); }
+  .btn { font-size: var(--text-base); }
+  .hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    gap: var(--space-3xl);
+    min-height: min(74dvh, 34rem);
+    padding-block: var(--space-2xl) var(--space-4xl);
+  }
+  .post {
+    align-self: stretch;
+    justify-items: end;
+    align-content: end;
+  }
+  .post__svg { height: 100%; max-height: 30rem; }
+  .post figcaption { text-align: end; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+  .reveal { animation: reveal-reduced 150ms linear forwards; animation-delay: 0ms; }
+  @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#route">Skip to the ten minutes</a>
+
+<header class="trailhead">
+  <div class="shell">
+    <div class="trailhead__row">
+      <a class="wordmark" href="#top">Tenor <span>· walking practice</span></a>
+      <nav class="trailhead__links" aria-label="Primary">
+        <a class="trailhead__link" href="#route">The ten minutes</a>
+        <a class="trailhead__link" href="#sessions">Sessions</a>
+        <a class="trailhead__link" href="#needs">What you need</a>
+      </nav>
+    </div>
+  </div>
+  <div class="trailhead__band trailhead__band--half" aria-hidden="true"></div>
+</header>
+
+<main id="top">
+  <section class="shell hero">
+    <div class="hero__text">
+      <h1 class="reveal" style="--i:0">Ten minutes, on foot, eyes open.</h1>
+      <p class="hero__lede reveal" style="--i:1">Tenor is a meditation app for people who cannot sit still. Every session runs ten minutes and you walk through all of it: to the station, around the block, down to the corner and back.</p>
+      <div class="hero__actions reveal" style="--i:2">
+        <a class="btn" href="#route">Start a walk</a>
+        <a class="link-quiet" href="#route">See what the ten minutes hold</a>
+      </div>
+      <p class="hero__aside reveal" style="--i:3">No cushion. No streak counter. No lying down at the end.</p>
+    </div>
+
+    <figure class="post reveal" style="--i:4">
+      <svg class="post__svg" viewBox="0 0 200 560" role="img" aria-labelledby="post-title" preserveAspectRatio="xMaxYMax meet">
+        <title id="post-title">A trail marker post with the ten minutes painted on it in two-minute bands.</title>
+        <rect class="post__body" x="116" y="8" width="66" height="544" />
+        <rect class="post__cap" x="116" y="8" width="66" height="26" />
+        <rect class="post__paint" x="116" y="86" width="66" height="20" />
+        <rect class="post__paint" x="116" y="182" width="66" height="20" />
+        <rect class="post__paint" x="116" y="278" width="66" height="20" />
+        <rect class="post__paint" x="116" y="374" width="66" height="20" />
+        <rect class="post__paint" x="116" y="470" width="66" height="20" />
+        <text class="post__stencil" x="149" y="28" text-anchor="middle">10</text>
+        <line class="post__tick" x1="96" y1="96" x2="116" y2="96" />
+        <line class="post__tick" x1="96" y1="192" x2="116" y2="192" />
+        <line class="post__tick" x1="96" y1="288" x2="116" y2="288" />
+        <line class="post__tick" x1="96" y1="384" x2="116" y2="384" />
+        <line class="post__tick" x1="96" y1="480" x2="116" y2="480" />
+        <text class="post__num" x="88" y="102" text-anchor="end">8</text>
+        <text class="post__num" x="88" y="198" text-anchor="end">6</text>
+        <text class="post__num" x="88" y="294" text-anchor="end">4</text>
+        <text class="post__num" x="88" y="390" text-anchor="end">2</text>
+        <text class="post__num" x="88" y="486" text-anchor="end">0</text>
+        <text class="post__unit" x="88" y="506" text-anchor="end">minutes walked</text>
+      </svg>
+      <figcaption>Ten minutes, marked in twos. You walk up the post.</figcaption>
+    </figure>
+  </section>
+
+  <section class="band band--argument" aria-labelledby="argument-title">
+    <div class="shell argument">
+      <h2 id="argument-title">You have already tried sitting still.</h2>
+      <div class="argument__body">
+        <p>Two apps, a cushion bought in January, a fortnight of good intentions, and then a red badge you swipe away every morning. That is not a failure of discipline. Sitting is a posture, and it happens to be the posture you are worst at.</p>
+        <p>Tenor moves the practice into something you were doing anyway. The attention work is the same work. The sitting is simply gone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell route" id="route" aria-labelledby="route-title">
+    <div class="route__head">
+      <h2 id="route-title">What the ten minutes hold</h2>
+      <p>Five stages, in order, every session. The voice is in your ear for about three of the ten.</p>
+    </div>
+    <ol class="stages">
+      <li class="stage">
+        <span class="stage__clock">before 0:00</span>
+        <h3>Stand still, briefly</h3>
+        <p>Twenty seconds on the spot, before a single step. Not to centre yourself: to find the weight sitting in your heels, which is where the rest of the session lives.</p>
+      </li>
+      <li class="stage">
+        <span class="stage__clock">0:00 to 2:00</span>
+        <h3>Set off at your own pace</h3>
+        <p>Walk exactly as fast as you were going to walk. Nothing corrects the pace, nothing counts the steps yet, and no one asks you to breathe differently on a public street.</p>
+      </li>
+      <li class="stage">
+        <span class="stage__clock">2:00 to 6:00</span>
+        <h3>The ground</h3>
+        <p>Attention goes down to the soles of the feet, one contact at a time. When it wanders off, and it will, the next kerb brings it back for free.</p>
+      </li>
+      <li class="stage">
+        <span class="stage__clock">6:00 to 9:00</span>
+        <h3>The count</h3>
+        <p>Steps counted in fours, silently. This is the part built for a restless mind: it gives the busy half of your head a job small enough to hold and dull enough to drop.</p>
+      </li>
+      <li class="stage">
+        <span class="stage__clock">9:00 to 10:00</span>
+        <h3>Arrive before you stop</h3>
+        <p>The session ends while you are still moving. The voice goes, you keep walking, and the last minute belongs to the street rather than to the app.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="needs" id="needs" aria-labelledby="needs-title">
+    <div class="shell needs__grid">
+      <h2 id="needs-title">What it needs from you</h2>
+      <dl>
+        <div class="needs__item">
+          <dt>A phone in a pocket</dt>
+          <dd>Screen off, face in, coat or bag. Tenor is audio the whole way through, so there is nothing to look at and no reason to take it out.</dd>
+        </div>
+        <div class="needs__item">
+          <dt>One earbud, or none at all</dt>
+          <dd>Traffic is part of the session, not an interruption of it. Keep an ear on the road; the audio is mixed to sit under it.</dd>
+        </div>
+        <div class="needs__item">
+          <dt>A route you already walk</dt>
+          <dd>The station, the school run, the long way round to the kitchen at work. Familiar is better: a route you know needs none of your attention.</dd>
+        </div>
+        <div class="needs__item">
+          <dt>Ten minutes you were spending anyway</dt>
+          <dd>This is the only claim Tenor makes on the day. Nothing is added to the calendar.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="shell sessions" id="sessions" aria-labelledby="sessions-title">
+    <div class="sessions__head">
+      <h2 id="sessions-title">Sessions, by the walk you were taking</h2>
+      <p class="sessions__note">Every one of them runs ten minutes.</p>
+    </div>
+    <ul class="index">
+      <li>
+        <span class="index__name">The commute leg<span class="index__what">From the front door to the platform. Ends before the train does.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+      <li>
+        <span class="index__name">Between two meetings<span class="index__what">For a gap that is not long enough to sit down in, and corridors that are not long enough to think in.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+      <li>
+        <span class="index__name">After the call went badly<span class="index__what">Walk it down before you answer the next one. Slower count, fewer words.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+      <li>
+        <span class="index__name">The block around the building<span class="index__what">One loop, no destination, nothing to plan on the way.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+      <li>
+        <span class="index__name">Terminal to gate<span class="index__what">Rolling luggage, moving walkways, and no stillness available anywhere in the building.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+      <li>
+        <span class="index__name">Last thing at night<span class="index__what">Streetlights, cold air, and the count taken down to a walking pulse.</span></span>
+        <span class="index__len">10 min</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="band close" aria-labelledby="close-title">
+    <div class="shell close__inner">
+      <h2 id="close-title">The next ten minutes will happen either way.</h2>
+      <p>Put one earbud in on the way out and let the first session run. If it does not hold you by the fourth minute, walk on without it.</p>
+      <a class="link-quiet" href="#route">Start a walk</a>
+    </div>
+  </section>
+</main>
+
+<footer class="shell endpost">
+  <div class="endpost__row">
+    <a class="wordmark" href="#top">Tenor <span>· walking practice</span></a>
+    <nav class="endpost__links" aria-label="Footer">
+      <a href="#route">The ten minutes</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#needs">What you need</a>
+      <a href="#top">Privacy</a>
+    </nav>
+  </div>
+  <p class="colophon">Made for people who think better with the ground moving under them. Tenor is audio only: nothing is tracked, scored, or turned into a streak.</p>
+</footer>
+</body>
+</html>

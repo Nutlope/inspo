@@ -1,0 +1,24 @@
+[
+  {
+    "date": "2026-08-05",
+    "macrostructure": "Narrative Workflow",
+    "theme": "custom",
+    "direction": "the incident report",
+    "posture": "restrained",
+    "seed": "sightline-ci-observability·2026-08-05·r0",
+    "wildcard": false,
+    "theme_axes": "light / slab-serif / warm (~28)",
+    "vibe": "factual, printed, probable-cause",
+    "inspo_consensus": "mid(0.38, flat) / grotesk-sans(0.79) / chromatic-other(0.46, flat)",
+    "inspo_opposition": "against: display class · with: nothing binding (other two axes flat)",
+    "inspo_slugs": ["mintlify-com", "novu-co", "milanote-com", "canvasapp-com", "sardine-ai", "reflect-app"],
+    "hero": "Stage/H2",
+    "nav": "document masthead, two-row, not sticky",
+    "footer": "report distribution block",
+    "enrichment": "none (typography only)",
+    "section-entry": "two-weight rule (heavy ink + hairline) with the stage numeral set inside the heading by counter()",
+    "fingerprint": "Left-biased|Numbered stages|Two-weight rule|Tinted well|Sticky stage title|Fade-rise once",
+    "waived": [],
+    "brief": "Sightline · observability for CI pipelines"
+  }
+]

@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tenor — ten-minute meditation you do on foot</title>
+<meta name="description" content="Tenor is a meditation app for people who cannot sit still. Ten-minute sessions you do while walking: eyes open, feet down, no cushion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tenor — design tokens
+   paper: warm mid band (archive consensus for this register)
+   display: roman serif, deliberately against the grotesk gravity
+   accent: signal terracotta — pavement, not pastel
+   ───────────────────────────────────────────────────────────── */
+:root{
+  --paper:#E8E1D3;
+  --paper-2:#F2EDE3;
+  --paper-3:#DDD5C4;
+  --ink:#1B1913;
+  --ink-2:#5C5645;
+  --ink-3:#8A8371;
+  --rule:rgba(27,25,19,.17);
+  --rule-soft:rgba(27,25,19,.09);
+  --accent:#B33F19;
+  --accent-lift:#E0763F;
+  --sage:#6F7B5B;
+
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Inter Tight",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --gut:clamp(20px,4.4vw,72px);
+  --maxw:1240px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.55;
+  font-feature-settings:"kern","liga","calt";
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
+
+/* ── type primitives ────────────────────────────────────────── */
+.meta{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.13em;
+  color:var(--ink-3);
+  line-height:1.4;
+}
+.meta--ink{color:var(--ink-2)}
+.serif{font-family:var(--display);font-weight:400;letter-spacing:-.005em}
+em.hl{font-style:italic;color:var(--accent)}
+
+.h1{
+  font-family:var(--display);
+  font-size:clamp(46px,5.6vw,80px);
+  line-height:.98;
+  letter-spacing:-.018em;
+  text-wrap:balance;
+}
+.h2{
+  font-family:var(--display);
+  font-size:clamp(32px,3.9vw,54px);
+  line-height:1.04;
+  letter-spacing:-.014em;
+  text-wrap:balance;
+}
+.h3{
+  font-family:var(--display);
+  font-size:clamp(22px,2.1vw,29px);
+  line-height:1.14;
+  letter-spacing:-.01em;
+}
+.lede{
+  font-size:clamp(16.5px,1.32vw,19px);
+  line-height:1.58;
+  color:var(--ink-2);
+  max-width:46ch;
+}
+.body-s{font-size:15px;line-height:1.62;color:var(--ink-2)}
+
+/* ── buttons ────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:.6em;
+  font-family:var(--sans);font-size:15px;font-weight:500;
+  letter-spacing:-.005em;
+  padding:13px 22px 14px;
+  border:1px solid transparent;
+  border-radius:2px;
+  transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+  cursor:pointer;
+}
+.btn--solid{background:var(--accent);color:#FDF8F1;border-color:var(--accent)}
+.btn--solid:hover{background:#8F3113;border-color:#8F3113}
+.btn--ghost{border-color:var(--rule);color:var(--ink)}
+.btn--ghost:hover{border-color:var(--ink);background:rgba(27,25,19,.04)}
+.btn--onink{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.btn--onink:hover{background:#fff;border-color:#fff}
+.btn .arw{transition:transform .18s ease}
+.btn:hover .arw{transform:translateX(3px)}
+
+.txtlink{
+  display:inline-flex;align-items:baseline;gap:.45em;
+  font-size:15px;font-weight:500;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:2px;
+  transition:border-color .18s ease,color .18s ease;
+}
+.txtlink:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── nav ────────────────────────────────────────────────────── */
+.nav{
+  position:relative;z-index:5;
+  border-bottom:1px solid var(--rule-soft);
+}
+.nav__in{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;height:70px;
+}
+.mark{display:flex;align-items:baseline;gap:9px}
+.mark__name{font-family:var(--display);font-size:27px;letter-spacing:-.015em;line-height:1}
+.mark__dot{width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-2px)}
+.nav__links{display:flex;align-items:center;gap:30px}
+.nav__links a{font-size:14.5px;color:var(--ink-2);transition:color .16s ease}
+.nav__links a:hover{color:var(--ink)}
+.nav__cta{
+  font-size:14px;font-weight:500;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:8px 15px;
+  transition:border-color .16s ease,background .16s ease;
+}
+.nav__cta:hover{border-color:var(--ink);background:rgba(27,25,19,.04)}
+
+/* ── hero ───────────────────────────────────────────────────── */
+.hero{position:relative}
+.hero__in{
+  display:grid;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);
+  gap:clamp(32px,5vw,76px);
+  align-items:center;
+  padding-block:clamp(34px,4.6vh,54px) clamp(40px,5vh,58px);
+  min-height:calc(100svh - 70px);
+}
+.hero__copy{max-width:34em}
+.hero__eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.hero__eyebrow .bar{width:26px;height:1px;background:var(--accent);flex:none}
+.hero__h1{margin-bottom:22px}
+.hero__lede{margin-bottom:30px}
+.hero__actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-bottom:20px}
+.hero__fine{color:var(--ink-3);font-size:13px;letter-spacing:.005em}
+
+/* ── the score card (hero visual) ───────────────────────────── */
+.score{
+  background:var(--paper-2);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  padding:18px 18px 16px;
+  box-shadow:0 1px 0 rgba(27,25,19,.05),0 18px 44px -30px rgba(27,25,19,.5);
+}
+.score__head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);
+}
+.score__live{display:flex;align-items:center;gap:7px}
+.score__pulse{
+  width:7px;height:7px;border-radius:50%;background:var(--accent);
+  animation:pulse 2.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
+.score__svg{margin-top:6px}
+.score__foot{
+  display:flex;justify-content:space-between;gap:16px;
+  padding-top:12px;margin-top:6px;border-top:1px solid var(--rule-soft);
+}
+
+/* svg internals */
+.s-grid{stroke:rgba(27,25,19,.13);stroke-width:1}
+.s-grid-soft{stroke:rgba(27,25,19,.07);stroke-width:1}
+.s-curve{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
+.s-curve-ghost{fill:none;stroke:rgba(179,63,25,.22);stroke-width:2;stroke-linecap:round;stroke-dasharray:3 5}
+.s-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;fill:var(--ink-3)}
+.s-label-b{font-family:var(--mono);font-size:10px;letter-spacing:.06em;fill:var(--ink-2)}
+.s-phase{font-family:var(--mono);font-size:10px;letter-spacing:.08em;fill:var(--ink-2)}
+.s-band{fill:rgba(111,123,91,.16)}
+.s-band-2{fill:rgba(111,123,91,.09)}
+.s-step{fill:rgba(27,25,19,.42)}
+
+/* ── ink band ───────────────────────────────────────────────── */
+.ink{
+  background:var(--ink);
+  color:var(--paper);
+  position:relative;
+  background-image:repeating-linear-gradient(to bottom,rgba(255,255,255,.028) 0 1px,transparent 1px 34px);
+}
+.ink .meta{color:rgba(232,225,211,.52)}
+.ink__in{padding-block:clamp(64px,8vw,104px)}
+.ink__lead{
+  font-family:var(--display);
+  font-size:clamp(30px,4.1vw,58px);
+  line-height:1.06;letter-spacing:-.015em;
+  max-width:19ch;
+  margin:22px 0 0;
+}
+.ink__lead em{font-style:italic;color:var(--accent-lift)}
+.ink__top{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);
+  gap:clamp(28px,5vw,72px);align-items:end;
+}
+.ink__aside{
+  font-size:15px;line-height:1.62;
+  color:rgba(232,225,211,.62);
+  max-width:34ch;
+  padding-left:20px;
+  border-left:1px solid rgba(224,118,63,.55);
+  margin-bottom:6px;
+}
+.ink__cols{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(24px,3.4vw,56px);
+  margin-top:clamp(46px,6vw,72px);
+  padding-top:30px;
+  border-top:1px solid rgba(232,225,211,.18);
+}
+.ink__col h4{font-family:var(--display);font-size:23px;font-weight:400;line-height:1.2;margin:12px 0 10px}
+.ink__col p{font-size:15px;line-height:1.6;color:rgba(232,225,211,.72)}
+.ink__num{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--accent-lift)}
+
+/* ── section shell ──────────────────────────────────────────── */
+.sec{padding-block:clamp(66px,8.4vw,116px);border-bottom:1px solid var(--rule-soft)}
+.sec__head{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,64px);align-items:end;
+  margin-bottom:clamp(40px,5vw,64px);
+}
+.sec__head .meta{margin-bottom:16px}
+.sec__note{max-width:42ch;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+
+/* ── anatomy: four phases ───────────────────────────────────── */
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--rule)}
+.phase{
+  padding:26px 24px 30px;
+  border-right:1px solid var(--rule-soft);
+  position:relative;
+  transition:background .2s ease;
+}
+.phase:last-child{border-right:0}
+.phase:hover{background:rgba(255,255,255,.4)}
+.phase__t{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-bottom:20px;
+}
+.phase__min{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent)}
+.phase__idx{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.phase h3{font-family:var(--display);font-size:clamp(26px,2.5vw,34px);font-weight:400;line-height:1.05;letter-spacing:-.012em;margin-bottom:12px}
+.phase p{font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.phase__bar{display:flex;gap:3px;margin-bottom:18px;height:20px;align-items:flex-end}
+.phase__bar i{display:block;width:2px;background:rgba(27,25,19,.28);border-radius:1px}
+
+/* ── session index ──────────────────────────────────────────── */
+.index{border-top:1px solid var(--rule)}
+.row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1.15fr) minmax(0,1.5fr) 92px 118px;
+  gap:20px;align-items:baseline;
+  padding:19px 4px 20px;
+  border-bottom:1px solid var(--rule-soft);
+  transition:background .18s ease,padding-left .18s ease;
+}
+.row:hover{background:rgba(255,255,255,.45);padding-left:12px}
+.row__n{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.row__name{font-family:var(--display);font-size:24px;line-height:1.15;letter-spacing:-.01em}
+.row__where{font-size:14.5px;color:var(--ink-2)}
+.row__len{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.row__eyes{font-family:var(--mono);font-size:11px;letter-spacing:.09em;color:var(--ink-3)}
+.row--head{padding-block:10px 12px;border-bottom:1px solid var(--rule)}
+.row--head span{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ink-3)}
+
+/* ── method: editorial two-column ───────────────────────────── */
+.method{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1fr);gap:clamp(28px,5vw,80px)}
+.method__aside{position:relative}
+.method__aside .meta{margin-bottom:14px}
+.aside-note{
+  border-left:2px solid var(--accent);
+  padding:4px 0 4px 18px;
+  margin-top:26px;
+  font-size:14.5px;line-height:1.6;color:var(--ink-2);
+  max-width:34ch;
+}
+.method__body p{font-size:clamp(16.5px,1.28vw,18.5px);line-height:1.68;color:var(--ink-2);margin-bottom:1.15em;max-width:56ch}
+.method__body p:last-child{margin-bottom:0}
+.method__body p strong{color:var(--ink);font-weight:500}
+.dropcap::first-letter{
+  font-family:var(--display);
+  float:left;font-size:62px;line-height:.78;
+  padding:6px 12px 0 0;color:var(--ink);
+}
+
+/* ── objections ─────────────────────────────────────────────── */
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(28px,5vw,72px);border-top:1px solid var(--rule)}
+.q{padding:28px 0 30px;border-bottom:1px solid var(--rule-soft)}
+.q h4{font-family:var(--display);font-size:clamp(21px,1.9vw,26px);font-weight:400;line-height:1.14;letter-spacing:-.01em;margin-bottom:12px}
+.q p{font-size:15px;line-height:1.62;color:var(--ink-2);max-width:46ch}
+.q .meta{margin-bottom:14px}
+
+/* ── closing cta ────────────────────────────────────────────── */
+.close{background:var(--paper-3);border-bottom:1px solid var(--rule-soft)}
+.close__in{
+  padding-block:clamp(70px,9vw,120px);
+  display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  gap:clamp(30px,5vw,72px);align-items:center;
+}
+.close h2{margin-bottom:20px}
+.close__panel{border:1px solid var(--rule);border-radius:3px;padding:26px 26px 28px;background:var(--paper-2)}
+.close__panel .meta{margin-bottom:16px}
+.field{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.field input{
+  flex:1 1 190px;min-width:0;
+  font-family:var(--sans);font-size:15px;color:var(--ink);
+  background:transparent;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:12px 14px;
+}
+.field input::placeholder{color:var(--ink-3)}
+.field input:focus{outline:none;border-color:var(--ink)}
+.stores{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--rule-soft)}
+.store{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--rule);border-radius:2px;
+  padding:9px 14px;font-size:13.5px;color:var(--ink-2);
+  transition:border-color .16s ease,color .16s ease;
+}
+.store:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ── footer ─────────────────────────────────────────────────── */
+.foot{padding-block:clamp(48px,6vw,72px) 34px}
+.foot__top{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,.7fr));gap:clamp(24px,4vw,56px)}
+.foot__blurb{font-size:14.5px;line-height:1.6;color:var(--ink-2);max-width:32ch;margin-top:14px}
+.foot h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--ink-3);font-weight:400;margin-bottom:14px}
+.foot ul{list-style:none;display:grid;gap:9px}
+.foot ul a{font-size:14.5px;color:var(--ink-2);transition:color .16s ease}
+.foot ul a:hover{color:var(--accent)}
+.foot__bar{
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  margin-top:clamp(44px,5vw,68px);padding-top:20px;border-top:1px solid var(--rule-soft);
+}
+
+/* ── responsive ─────────────────────────────────────────────── */
+@media (max-width:1080px){
+  .hero__in{grid-template-columns:1fr;min-height:0;padding-block:44px 56px;gap:40px}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase{border-bottom:1px solid var(--rule-soft)}
+  .phase:nth-child(2n){border-right:0}
+  .close__in{grid-template-columns:1fr}
+  .method{grid-template-columns:1fr}
+  .foot__top{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  .nav__links{display:none}
+  .row{grid-template-columns:26px minmax(0,1fr) 84px;row-gap:6px}
+  .row__where{grid-column:2/4;font-size:14px}
+  .row__eyes{display:none}
+  .sec__head{grid-template-columns:1fr}
+  .qs{grid-template-columns:1fr}
+  .ink__top{grid-template-columns:1fr;align-items:start;gap:26px}
+  .ink__aside{margin-bottom:0}
+}
+@media (max-width:620px){
+  .phases{grid-template-columns:1fr}
+  .phase{border-right:0}
+  .foot__top{grid-template-columns:1fr}
+  .ink__cols{grid-template-columns:1fr;gap:30px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════ -->
+<header class="nav">
+  <div class="wrap nav__in">
+    <a class="mark" href="#" aria-label="Tenor, home">
+      <span class="mark__name">Tenor</span>
+      <span class="mark__dot" aria-hidden="true"></span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#anatomy">The ten minutes</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#method">Method</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="nav__cta" href="#get">Get the app</a>
+  </div>
+</header>
+
+<!-- ══ HERO ═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="wrap hero__in">
+
+    <div class="hero__copy">
+      <div class="hero__eyebrow">
+        <span class="bar" aria-hidden="true"></span>
+        <span class="meta">ten minutes &middot; on foot &middot; eyes open</span>
+      </div>
+
+      <h1 class="h1 hero__h1">
+        Meditation for<br>people who<br><em class="hl">keep moving.</em>
+      </h1>
+
+      <p class="lede hero__lede">
+        Ten-minute sessions that run over the walk you were already
+        taking &mdash; to the station, down the stairwell, around the
+        block at 3pm. No cushion, no lotus, no soft voice asking you to
+        soften. Your feet keep the time so your attention needn&rsquo;t.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--solid" href="#get">Start a walk <span class="arw" aria-hidden="true">&rarr;</span></a>
+        <a class="txtlink" href="#anatomy">See what ten minutes looks like <span aria-hidden="true">&darr;</span></a>
+      </div>
+
+      <p class="hero__fine">iOS and Android &middot; works offline &middot; no streaks, no badges, no daily nag</p>
+    </div>
+
+    <!-- the score: a walking session drawn as a tempo card -->
+    <figure class="score" role="img"
+      aria-label="A session card showing a ten-minute walk: a pace line that starts quick and settles even, four phases labelled settle, sync, widen and return, and a strip of alternating footfall marks along the baseline.">
+      <figcaption class="score__head">
+        <span class="score__live">
+          <span class="score__pulse" aria-hidden="true"></span>
+          <span class="meta meta--ink">session 04 &middot; sidewalk</span>
+        </span>
+        <span class="meta">10:00 total</span>
+      </figcaption>
+
+      <svg class="score__svg" viewBox="0 0 560 372" width="560" height="372" aria-hidden="true" focusable="false">
+        <defs>
+          <pattern id="steps" x="0" y="0" width="18" height="16" patternUnits="userSpaceOnUse">
+            <rect class="s-step" x="0" y="0" width="1.6" height="6"/>
+            <rect class="s-step" x="9" y="10" width="1.6" height="6"/>
+          </pattern>
+          <linearGradient id="fadeR" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- y guides -->
+        <line class="s-grid-soft" x1="44" y1="34"  x2="530" y2="34"/>
+        <line class="s-grid-soft" x1="44" y1="96"  x2="530" y2="96"/>
+        <line class="s-grid-soft" x1="44" y1="158" x2="530" y2="158"/>
+        <text class="s-label" x="0" y="38">quick</text>
+        <text class="s-label" x="0" y="162">even</text>
+
+        <!-- minute gridlines 0..10 -->
+        <g class="s-grid-soft">
+          <line x1="44"  y1="28" x2="44"  y2="204"/>
+          <line x1="92.6" y1="28" x2="92.6" y2="204"/>
+          <line x1="141.2" y1="28" x2="141.2" y2="204"/>
+          <line x1="189.8" y1="28" x2="189.8" y2="204"/>
+          <line x1="238.4" y1="28" x2="238.4" y2="204"/>
+          <line x1="287" y1="28" x2="287" y2="204"/>
+          <line x1="335.6" y1="28" x2="335.6" y2="204"/>
+          <line x1="384.2" y1="28" x2="384.2" y2="204"/>
+          <line x1="432.8" y1="28" x2="432.8" y2="204"/>
+          <line x1="481.4" y1="28" x2="481.4" y2="204"/>
+          <line x1="530" y1="28" x2="530" y2="204"/>
+        </g>
+
+        <!-- pace line: starts quick, settles, one small flare, returns -->
+        <path class="s-curve-ghost" d="M44 60 C 92 44, 141 78, 190 66 C 238 54, 287 92, 336 84"/>
+        <path class="s-curve"
+              d="M44 52
+                 C 80 40, 110 74, 141 78
+                 C 172 82, 190 108, 214 116
+                 C 238 124, 262 118, 287 126
+                 C 312 134, 322 128, 336 132
+                 C 360 138, 372 106, 396 112
+                 C 420 118, 432 140, 457 144
+                 C 481 148, 506 142, 530 150"/>
+
+        <!-- now marker -->
+        <circle cx="336" cy="132" r="4.5" fill="#B33F19"/>
+        <circle cx="336" cy="132" r="9" fill="none" stroke="#B33F19" stroke-opacity=".28"/>
+        <line class="s-grid" x1="336" y1="141" x2="336" y2="204" stroke-dasharray="2 4"/>
+        <text class="s-label-b" x="345" y="168">6:04 &middot; widen</text>
+
+        <!-- baseline + footfall pattern -->
+        <line class="s-grid" x1="44" y1="222" x2="530" y2="222"/>
+        <rect x="44" y="214" width="486" height="16" fill="url(#steps)"/>
+
+        <!-- minute numerals -->
+        <g class="s-label">
+          <text x="40" y="250">0</text>
+          <text x="137" y="250">2</text>
+          <text x="234" y="250">4</text>
+          <text x="331" y="250">6</text>
+          <text x="428" y="250">8</text>
+          <text x="521" y="250">10</text>
+        </g>
+        <text class="s-label" x="44" y="268">minutes walked</text>
+
+        <!-- phase bands -->
+        <rect class="s-band"   x="44"    y="292" width="93.2"  height="30" rx="2"/>
+        <rect class="s-band-2" x="141.2" y="292" width="141.8" height="30" rx="2"/>
+        <rect class="s-band"   x="287"   y="292" width="141.8" height="30" rx="2"/>
+        <rect class="s-band-2" x="432.8" y="292" width="97.2"  height="30" rx="2"/>
+        <g class="s-phase">
+          <text x="54"    y="312">settle</text>
+          <text x="151.2" y="312">sync</text>
+          <text x="297"   y="312">widen</text>
+          <text x="442.8" y="312">return</text>
+        </g>
+
+        <line class="s-grid-soft" x1="44" y1="344" x2="530" y2="344"/>
+        <text class="s-label" x="44" y="364">pace &mdash; your own, unmeasured. tenor only listens for the rhythm.</text>
+      </svg>
+
+      <div class="score__foot">
+        <span class="meta">guided &middot; one voice &middot; no music bed</span>
+        <span class="meta">surface: pavement</span>
+      </div>
+    </figure>
+
+  </div>
+</section>
+
+<!-- ══ POSITION / INK BAND ══════════════════════════════════ -->
+<section class="ink">
+  <div class="wrap ink__in">
+    <p class="meta">the premise</p>
+    <div class="ink__top">
+      <p class="ink__lead">
+        You didn&rsquo;t fail at meditation.<br>
+        You failed at <em>sitting.</em>
+      </p>
+      <p class="ink__aside">
+        Cross-legged. Twenty minutes. Eyes shut. Every mainstream app
+        assumes all three, and every one of them is a separate reason
+        this did not stick for you.
+      </p>
+    </div>
+
+    <div class="ink__cols">
+      <div class="ink__col">
+        <span class="ink__num">01</span>
+        <h4>Stillness is the method, not the point</h4>
+        <p>
+          Sitting cross-legged is one delivery mechanism for attention.
+          It happens to be the one that asks the most of a body that has
+          been in meetings since eight. Walking asks less and gives the
+          same thing back.
+        </p>
+      </div>
+      <div class="ink__col">
+        <span class="ink__num">02</span>
+        <h4>A restless body is not a broken one</h4>
+        <p>
+          The fidget is information. Tenor uses it: the session is built
+          around footfall, so the part of you that wants to move has a
+          job instead of an apology.
+        </p>
+      </div>
+      <div class="ink__col">
+        <span class="ink__num">03</span>
+        <h4>Ten minutes you already have</h4>
+        <p>
+          Nothing new goes in the calendar. The session rides the walk
+          to the platform, the loop around the building, the trip to
+          collect the coffee you were going to get anyway.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ANATOMY OF TEN MINUTES ═══════════════════════════════ -->
+<section class="sec" id="anatomy">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <p class="meta">the shape of a session</p>
+        <h2 class="h2">Ten minutes,<br>in four movements.</h2>
+      </div>
+      <p class="sec__note">
+        Every Tenor session runs the same arc, so you stop deciding and
+        start walking. The voice appears four times and is quiet in
+        between. Nothing counts you down.
+      </p>
+    </div>
+
+    <div class="phases">
+      <article class="phase">
+        <div class="phase__t"><span class="phase__min">0:00 &ndash; 2:00</span><span class="phase__idx">i</span></div>
+        <div class="phase__bar" aria-hidden="true">
+          <i style="height:18px"></i><i style="height:13px"></i><i style="height:17px"></i><i style="height:11px"></i>
+          <i style="height:15px"></i><i style="height:9px"></i><i style="height:12px"></i><i style="height:8px"></i>
+        </div>
+        <h3>Settle</h3>
+        <p>
+          You start walking at whatever speed you left the door at. One
+          instruction: notice the pace you chose. That&rsquo;s all the
+          first two minutes ask for.
+        </p>
+      </article>
+
+      <article class="phase">
+        <div class="phase__t"><span class="phase__min">2:00 &ndash; 5:00</span><span class="phase__idx">ii</span></div>
+        <div class="phase__bar" aria-hidden="true">
+          <i style="height:10px"></i><i style="height:10px"></i><i style="height:11px"></i><i style="height:10px"></i>
+          <i style="height:11px"></i><i style="height:10px"></i><i style="height:11px"></i><i style="height:10px"></i>
+        </div>
+        <h3>Sync</h3>
+        <p>
+          Breath finds the footfall &mdash; in for a few steps, out for a
+          few more. No count to hold. The pavement is doing the counting
+          and it does not lose its place.
+        </p>
+      </article>
+
+      <article class="phase">
+        <div class="phase__t"><span class="phase__min">5:00 &ndash; 8:00</span><span class="phase__idx">iii</span></div>
+        <div class="phase__bar" aria-hidden="true">
+          <i style="height:9px"></i><i style="height:12px"></i><i style="height:15px"></i><i style="height:17px"></i>
+          <i style="height:19px"></i><i style="height:17px"></i><i style="height:19px"></i><i style="height:20px"></i>
+        </div>
+        <h3>Widen</h3>
+        <p>
+          Attention goes outward, not inward: traffic, brick, weather on
+          your face, the sound of your own shoes. Eyes stay open, because
+          you are on a street.
+        </p>
+      </article>
+
+      <article class="phase">
+        <div class="phase__t"><span class="phase__min">8:00 &ndash; 10:00</span><span class="phase__idx">iv</span></div>
+        <div class="phase__bar" aria-hidden="true">
+          <i style="height:16px"></i><i style="height:14px"></i><i style="height:12px"></i><i style="height:10px"></i>
+          <i style="height:9px"></i><i style="height:7px"></i><i style="height:6px"></i><i style="height:5px"></i>
+        </div>
+        <h3>Return</h3>
+        <p>
+          One question, asked once, and then silence to the end. You
+          arrive somewhere. The session closes itself without a chime,
+          a score, or a request to rate it.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SESSION INDEX ════════════════════════════════════════ -->
+<section class="sec" id="sessions">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <p class="meta">the library</p>
+        <h2 class="h2">Filed by where<br>you actually are.</h2>
+      </div>
+      <p class="sec__note">
+        Not by mood. You already know your mood; what you don&rsquo;t know is
+        which nine minutes of your afternoon can hold a session. Pick the
+        walk, and Tenor picks the rest.
+      </p>
+    </div>
+
+    <div class="index">
+      <div class="row row--head" aria-hidden="true">
+        <span>no.</span><span>session</span><span>where it fits</span><span>length</span><span>surface</span>
+      </div>
+
+      <a class="row" href="#get">
+        <span class="row__n">01</span>
+        <span class="row__name">The Platform</span>
+        <span class="row__where">Door to turnstile, with the part where you wait built in.</span>
+        <span class="row__len">10 min</span>
+        <span class="row__eyes">pavement</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">02</span>
+        <span class="row__name">Block, Repeating</span>
+        <span class="row__where">Any square-ish loop with four corners to turn.</span>
+        <span class="row__len">10 min</span>
+        <span class="row__eyes">pavement</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">03</span>
+        <span class="row__name">Between Two</span>
+        <span class="row__where">The gap between a meeting that ran over and the next one.</span>
+        <span class="row__len">6 min</span>
+        <span class="row__eyes">carpet</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">04</span>
+        <span class="row__name">Stairwell</span>
+        <span class="row__where">Vertical, indoors, when the weather has an opinion.</span>
+        <span class="row__len">8 min</span>
+        <span class="row__eyes">stairs</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">05</span>
+        <span class="row__name">The Long Corridor</span>
+        <span class="row__where">Airports, hospitals, conference centres, car parks.</span>
+        <span class="row__len">14 min</span>
+        <span class="row__eyes">terminal</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">06</span>
+        <span class="row__name">Last Light</span>
+        <span class="row__where">The walk after work, when the day is still talking.</span>
+        <span class="row__len">10 min</span>
+        <span class="row__eyes">park path</span>
+      </a>
+      <a class="row" href="#get">
+        <span class="row__n">07</span>
+        <span class="row__name">Standing Still</span>
+        <span class="row__where">For the queue, the platform, the lift. Feet planted, same arc.</span>
+        <span class="row__len">4 min</span>
+        <span class="row__eyes">floor</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ METHOD ═══════════════════════════════════════════════ -->
+<section class="sec" id="method">
+  <div class="wrap method">
+    <aside class="method__aside">
+      <p class="meta">why walking</p>
+      <h2 class="h2">Old idea.<br>Bad app.</h2>
+      <p class="aside-note">
+        Walking meditation is not a hack we invented for a launch. It is
+        one of the oldest formal practices there is. It has simply never
+        had software that respected it.
+      </p>
+    </aside>
+
+    <div class="method__body">
+      <p class="dropcap">
+        Most meditation apps are built around a person who has already
+        agreed to stop. They open with a gradient, a bell and a request
+        to find a comfortable seated position, and if you cannot find one
+        &mdash; if the seated position is exactly the thing your body has
+        been refusing all day &mdash; the app has no second idea. You are
+        left to conclude that the failure is yours.
+      </p>
+      <p>
+        <strong>Tenor starts from the opposite assumption:</strong> that
+        motion is the resource, not the obstacle. A walking pace is
+        already a metronome. It is steady, it is yours, and it runs
+        whether or not you are paying attention to it, which makes it a
+        far more forgiving object of attention than the breath &mdash;
+        the breath notices when you watch it and changes. Your left foot
+        does not.
+      </p>
+      <p>
+        So the guidance is written for a body in traffic. Instructions
+        are short enough to survive a crossing. The voice does not ask
+        you to close your eyes, lie down, scan your body from the toes
+        up, or picture a beach. It asks you to notice the pavement, the
+        rhythm you set, and the moment you sped up without deciding to.
+      </p>
+      <p>
+        <strong>What is deliberately missing:</strong> streak counters,
+        weekly minute totals, mood questionnaires, a leaderboard, a
+        notification at 9pm reminding you that you have been away.
+        Nothing here is trying to become a habit you feel guilty about.
+        It is ten minutes, taken while going somewhere, and then it is
+        over.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ OBJECTIONS ═══════════════════════════════════════════ -->
+<section class="sec" id="questions">
+  <div class="wrap">
+    <div class="sec__head">
+      <div>
+        <p class="meta">the fair objections</p>
+        <h2 class="h2">Asked by people<br>who quit the others.</h2>
+      </div>
+      <p class="sec__note">
+        If you have deleted a meditation app before, you probably deleted
+        it for one of these reasons. Here is where Tenor stands on each.
+      </p>
+    </div>
+
+    <div class="qs">
+      <article class="q">
+        <p class="meta">on legitimacy</p>
+        <h4>Isn&rsquo;t this just&hellip; walking?</h4>
+        <p>
+          Walking with an instruction is a practice; walking while
+          rehearsing an argument with your manager is not. The difference
+          is entirely in what you are asked to attend to, which is the
+          only thing Tenor supplies.
+        </p>
+      </article>
+
+      <article class="q">
+        <p class="meta">on safety</p>
+        <h4>I have to look where I&rsquo;m going.</h4>
+        <p>
+          Yes. Every session is written for open eyes on a real street.
+          The guidance points outward at the world in front of you rather
+          than inward at a body you are supposed to be scanning.
+        </p>
+      </article>
+
+      <article class="q">
+        <p class="meta">on the voice</p>
+        <h4>The soothing voice makes me tense.</h4>
+        <p>
+          One narrator, speaking at a normal register, at a normal speed,
+          in complete sentences. No whisper, no ambient pad, no rain
+          loop, no sustained synth chord underneath.
+        </p>
+      </article>
+
+      <article class="q">
+        <p class="meta">on commitment</p>
+        <h4>I&rsquo;ll break the streak by day four.</h4>
+        <p>
+          There is no streak to break. Tenor does not track consecutive
+          days, does not send a recovery notification, and does not show
+          you a calendar of the mornings you missed.
+        </p>
+      </article>
+
+      <article class="q">
+        <p class="meta">on the treadmill</p>
+        <h4>Can I do it on a run, or a treadmill?</h4>
+        <p>
+          A treadmill works: the cadence is there and the arc is the
+          same. A hard run does not &mdash; at that effort the breath
+          belongs to the legs and there is nothing left to lend.
+        </p>
+      </article>
+
+      <article class="q">
+        <p class="meta">on beginners</p>
+        <h4>I&rsquo;ve never done this before.</h4>
+        <p>
+          Then start at session one and walk. There is no primer to read,
+          no posture to learn, no vocabulary. If you can get to the
+          corner, you have the prerequisite.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CLOSING CTA ══════════════════════════════════════════ -->
+<section class="close" id="get">
+  <div class="wrap close__in">
+    <div>
+      <p class="meta">start</p>
+      <h2 class="h2" style="margin-top:16px">
+        The next walk you take<br>is already ten minutes long.
+      </h2>
+      <p class="lede">
+        Put the phone in your pocket, put one headphone in, and go where
+        you were going. Tenor does the rest and then gets out of the way.
+      </p>
+    </div>
+
+    <div class="close__panel">
+      <p class="meta">get the first session</p>
+      <p class="body-s" style="margin-bottom:16px">
+        We&rsquo;ll send a link to session one. No newsletter attached.
+      </p>
+      <form class="field" onsubmit="return false">
+        <label for="em" class="meta" style="position:absolute;left:-9999px">Email address</label>
+        <input id="em" type="email" placeholder="you@work.com" autocomplete="email">
+        <button class="btn btn--solid" type="submit">Send it <span class="arw" aria-hidden="true">&rarr;</span></button>
+      </form>
+      <div class="stores">
+        <a class="store" href="#">
+          <svg width="13" height="15" viewBox="0 0 13 15" fill="currentColor" aria-hidden="true"><path d="M10.6 7.9c0-1.7 1.4-2.5 1.4-2.6-.8-1.1-2-1.3-2.4-1.3-1-.1-2 .6-2.5.6s-1.3-.6-2.2-.6C3.8 4 2.7 4.7 2.1 5.8c-1.2 2.1-.3 5.3.9 7 .6.9 1.3 1.8 2.2 1.8.9 0 1.2-.6 2.3-.6s1.4.6 2.3.5c.9 0 1.5-.9 2.1-1.7.7-1 .9-1.9.9-2-.1 0-1.8-.7-1.8-2.7zM9 2.9c.5-.6.8-1.4.7-2.2-.7 0-1.6.5-2.1 1.1-.4.5-.8 1.3-.7 2.1.8 0 1.6-.4 2.1-1z"/></svg>
+          App Store
+        </a>
+        <a class="store" href="#">
+          <svg width="13" height="15" viewBox="0 0 13 15" fill="currentColor" aria-hidden="true"><path d="M.9.6C.6.9.5 1.3.5 1.9v11.2c0 .6.1 1 .4 1.3l.1.1 6.3-6.3v-.2L.9.6zM9.4 6.3 7.3 4.2 7.4 4.1l2.5-1.4c.7-.4 1.3-.4 1.7 0l1.5.9c.9.5.9 1.3 0 1.8l-1.5.9-2.2 1zM8.6 7.1 2.3 13.4c.3.3.7.3 1.3 0l7-4-2-2.3zM8.6 6.9 2.3 .6c-.3-.3-.7-.3-1.3 0l7 4 .6 2.3z"/></svg>
+          Google Play
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <div>
+        <a class="mark" href="#">
+          <span class="mark__name">Tenor</span>
+          <span class="mark__dot" aria-hidden="true"></span>
+        </a>
+        <p class="foot__blurb">
+          Ten-minute guided sessions for people who think better on their
+          feet. Made by four people who all quit sitting.
+        </p>
+      </div>
+
+      <div>
+        <h5>practice</h5>
+        <ul>
+          <li><a href="#anatomy">The ten minutes</a></li>
+          <li><a href="#sessions">Session library</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#questions">Questions</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5>company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">The narrator</a></li>
+          <li><a href="#">Writing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5>fine print</h5>
+        <ul>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Accessibility</a></li>
+          <li><a href="#">Cancel anytime</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot__bar">
+      <p class="meta">&copy; 2026 Tenor &middot; walk safely, look up</p>
+      <p class="meta">Tenor is a practice app, not treatment or therapy.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

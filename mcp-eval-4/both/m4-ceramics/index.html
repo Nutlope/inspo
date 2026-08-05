@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiln &amp; Co · a ceramics studio in Alcântara, Lisbon</title>
+<meta name="description" content="Kiln &amp; Co is a two-room ceramics studio in Alcântara, Lisbon. Small-batch tableware, and the wheels open at weekends.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: Catalogue · tone: austere-editorial · anchor hue: 195 (glaze turquoise) · hero: Stage/H7
+ * nav: board masthead, two-tier, no nav CTA, non-sticky (decided, not defaulted) · footer: maker's plate + one justified colophon line
+ * contrast: pass (40-41) · mobile: 320/375/414/768 checked · enrichment: hand-built SVG (vessel section profiles)
+ * theme: custom · direction: "the enamel timetable board" · vibe: "fired glaze, municipal, Lisbon, plain"
+ * paper: oklch(21% 0.042 248) · accent: oklch(76% 0.135 195) · display: Big Shoulders Display · body: Spectral
+ * axes: dark / display-condensed-bold / chromatic-other (glaze-turquoise ~195) · posture: drenched
+ * inspo: 24 exemplars · consensus mid/grotesk-sans/chromatic-other (0.50 / 0.71 / 0.42 - accent axis flat, no consensus)
+ *   against: paper band (dark vs mid) · against: display class (condensed vs grotesk-sans) · accent axis: no consensus to oppose
+ * seed: kiln-and-co-ceramics-lisbon·2026-08-05·r0 · draw 6/7 · wildcards declined · contract: kept (5/5) · studied: no · v1.2.0
+ */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V5 · weakest: H - the catalogue grid treats every piece as equal by design, so hierarchy inside the batch rests on glaze field alone; fixed by giving the batch a ruled spec line per cell and letting the section head carry the weight the cells give up */
+
+/* direction contract · seed kiln-and-co-ceramics-lisbon·2026-08-05·r0
+ * THESIS: a pot and an enamel sign are the same trick, colour fired onto a body until it stops being a coating.
+ * OWN-WORLD: a Lisbon municipal enamel board, glaze bands instead of paint, read as a timetable and an inventory at once.
+ * STORY: a Saturday in Alcântara, ten past nine, the studio door open onto the street and the night's firing still warm to the back of the hand.
+ * FIRST-VIEWPORT: board masthead, the headline set as destination lettering, one line about the studio, two CTAs, and a drawn section profile of three vessels on the right plate.
+ * FORM: Catalogue; the signature move is that every band of the page is its own fired glaze and every piece in the batch sits in its own glaze field with no card and no border.
+ */
+
+/* tokens.css ships alongside this file as the portable token export; the page keeps
+   the same block inline because the deliverable must be self-contained (no local assets). */
+
+:root {
+  /* surface, drenched: the board is one fired field, bands step it */
+  --color-paper:        oklch(21%   0.042 248);
+  --color-paper-2:      oklch(25.5% 0.046 248);
+  --color-paper-3:      oklch(16.5% 0.038 250);
+  --color-ink:          oklch(93%   0.012 250);
+  --color-ink-2:        oklch(80%   0.016 250);
+  --color-muted:        oklch(68%   0.020 250);
+  --color-neutral:      oklch(56%   0.022 250);
+  --color-rule:         oklch(36%   0.030 250);
+  --color-rule-2:       oklch(44%   0.032 250);
+  --color-accent:       oklch(76%   0.135 195);
+  --color-accent-ink:   oklch(19%   0.040 248);
+  --color-focus:        oklch(79%   0.190 195);
+
+  /* the glaze bench: surface roles under the drenched posture, never accent */
+  --color-glaze-tin:    oklch(28%   0.030 252);
+  --color-glaze-ash:    oklch(24%   0.036 205);
+  --color-glaze-celadon:oklch(27%   0.042 165);
+  --color-glaze-copper: oklch(26%   0.050 200);
+  --color-glaze-iron:   oklch(25%   0.048  42);
+  --color-glaze-slip:   oklch(30%   0.026 260);
+
+  --font-display: "Big Shoulders Display", ui-sans-serif, sans-serif;
+  --font-body:    "Spectral", ui-serif, Georgia, serif;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.6rem, 4.6vw + 0.8rem, 4.4rem);
+  --text-display-s: clamp(2.1rem, 3.6vw + 0.6rem, 3.5rem);
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --rule-hair: 1px;
+  --rule-bold: 2px;
+  --radius-none: 0;
+  --radius-sm: 2px;
+
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.6;
+  font-variant-numeric: oldstyle-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.04;
+  letter-spacing: 0.006em;
+  overflow-wrap: break-word;
+  min-width: 0;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; }
+ol, ul { margin: 0; padding: 0; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+
+:focus-visible {
+  outline: var(--rule-bold) solid var(--color-focus);
+  outline-offset: 3px;
+  transition: none;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-xs);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  padding: var(--space-xs) var(--space-md);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  z-index: var(--z-sticky);
+}
+.skip:focus { left: var(--space-md); }
+
+.wrap {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* label voice: the board's small lettering. One role, one face. */
+.label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---- masthead: two-tier board header, links below the mark, no CTA, not sticky ---- */
+.masthead { border-block-end: var(--rule-hair) solid var(--color-rule); }
+.masthead__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-md) var(--space-lg);
+  padding-block: var(--space-md) var(--space-sm);
+}
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4ch;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-xl);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wordmark__dot {
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: var(--color-accent);
+  align-self: center;
+}
+.masthead__place { margin-inline-start: auto; }
+.masthead__nav {
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block: var(--space-sm);
+}
+.masthead__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  list-style: none;
+}
+.masthead__nav a {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  color: var(--color-ink-2);
+  transition: color var(--dur-micro) var(--ease-out);
+}
+.masthead__nav a:hover { color: var(--color-accent); }
+
+/* ---- hero: Stage, text column plus a full-height drawn plate ---- */
+.hero {
+  border-block-end: var(--rule-bold) solid var(--color-rule-2);
+}
+.hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: var(--space-2xl);
+  align-items: center;
+  padding-block: var(--space-xl) calc(var(--space-xl) * 1.5);
+  min-height: clamp(24rem, 62dvh, 34rem);
+}
+.hero__display {
+  font-size: var(--text-display);
+  max-width: 17ch;
+  margin-block-end: var(--space-lg);
+}
+.hero__display .thin { font-weight: 400; color: var(--color-ink-2); }
+.hero__lede {
+  max-width: 46ch;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+  font-weight: 300;
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+  align-items: center;
+  margin-block-start: var(--space-xl);
+}
+.hero__meta { margin-block-start: var(--space-lg); }
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: var(--space-sm) var(--space-lg);
+  border: var(--rule-hair) solid transparent;
+  border-radius: var(--radius-none);
+  transition: transform var(--dur-micro) var(--ease-out),
+              background-color var(--dur-micro) var(--ease-out),
+              color var(--dur-micro) var(--ease-out);
+}
+.btn--fill { background: var(--color-accent); color: var(--color-accent-ink); }
+.btn--fill:hover { background: var(--color-ink); }
+.btn--fill:active { transform: translateY(1px); }
+.btn--line {
+  border-color: var(--color-rule-2);
+  color: var(--color-ink);
+}
+.btn--line:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.btn--line:active { transform: translateY(1px); }
+.btn[aria-disabled="true"] { color: var(--color-neutral); border-color: var(--color-rule); pointer-events: none; }
+
+.plate {
+  border-inline-start: var(--rule-hair) solid var(--color-rule);
+  padding-inline-start: var(--space-xl);
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-md);
+}
+.plate svg { width: 100%; height: auto; display: block; }
+.plate__caption { color: var(--color-muted); font-size: var(--text-sm); font-style: italic; }
+
+/* ---- the batch: catalogue grid, each piece its own glaze field ---- */
+.batch { background: var(--color-paper-2); padding-block: var(--space-3xl) var(--space-2xl); }
+.batch__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: var(--space-xl);
+  align-items: end;
+  margin-block-end: var(--space-xl);
+}
+.batch__head h2 { font-size: var(--text-2xl); max-width: 18ch; }
+.batch__note { color: var(--color-muted); font-size: var(--text-base); }
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--rule-hair);
+  background: var(--color-rule);
+  border: var(--rule-hair) solid var(--color-rule);
+}
+.piece {
+  background: var(--field, var(--color-paper));
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+.piece:nth-child(1) { --field: var(--color-glaze-tin); }
+.piece:nth-child(2) { --field: var(--color-glaze-ash); }
+.piece:nth-child(3) { --field: var(--color-glaze-celadon); }
+.piece:nth-child(4) { --field: var(--color-glaze-iron); }
+.piece:nth-child(5) { --field: var(--color-glaze-copper); }
+.piece:nth-child(6) { --field: var(--color-glaze-slip); }
+.piece h3 { font-size: var(--text-lg); }
+.piece__body { color: var(--color-ink-2); font-size: var(--text-base); font-weight: 300; }
+.piece dl {
+  margin: auto 0 0;
+  padding-block-start: var(--space-md);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: var(--space-3xs) var(--space-md);
+  font-size: var(--text-sm);
+}
+.piece dt {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+}
+.piece dd { margin: 0; font-variant-numeric: tabular-nums lining-nums; }
+.piece dd.tbd { color: var(--color-muted); font-style: italic; }
+
+/* ---- two firings: a real ordered list, counters drawn at scale ---- */
+.firings { padding-block: var(--space-3xl); }
+.firings__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: var(--space-2xl);
+}
+.firings h2 { font-size: var(--text-2xl); max-width: 14ch; }
+.firings__aside { color: var(--color-muted); margin-block-start: var(--space-md); max-width: 34ch; }
+.steps { list-style: none; counter-reset: step; }
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: minmax(0, 4.5rem) minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding-block: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+}
+.steps li:first-child { border-block-start: 0; padding-block-start: 0; }
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-3xl);
+  line-height: 0.9;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.steps h3 { font-size: var(--text-md); margin-block-end: var(--space-2xs); }
+.steps p { color: var(--color-ink-2); font-weight: 300; max-width: var(--measure); }
+
+/* ---- the board proper: weekend timetable ---- */
+.workshops { background: var(--color-paper-3); padding-block: var(--space-3xl) var(--space-2xl); }
+.workshops h2 { font-size: var(--text-2xl); max-width: 16ch; }
+.workshops__lede {
+  max-width: 52ch;
+  margin-block-start: var(--space-md);
+  color: var(--color-ink-2);
+  font-weight: 300;
+}
+.timetable { width: 100%; border-collapse: collapse; margin-block-start: var(--space-xl); }
+.timetable caption {
+  text-align: start;
+  padding-block-end: var(--space-sm);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+.timetable th, .timetable td {
+  text-align: start;
+  padding: var(--space-md) var(--space-md) var(--space-md) 0;
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  vertical-align: baseline;
+}
+.timetable thead th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  border-block-end-color: var(--color-rule-2);
+}
+.timetable tbody th {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.timetable td { color: var(--color-ink-2); font-weight: 300; }
+.timetable .when { color: var(--color-accent); font-family: var(--font-display); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.workshops__after {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  align-items: center;
+  margin-block-start: var(--space-xl);
+}
+
+/* ---- the studio: a short close, wide left margin ---- */
+.studio { padding-block: var(--space-3xl) var(--space-2xl); }
+.studio__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+  gap: var(--space-2xl);
+}
+.studio h2 { font-size: var(--text-xl); max-width: 12ch; }
+.studio__prose { max-width: var(--measure); }
+.studio__prose p + p { margin-block-start: var(--space-md); }
+.studio__prose em { font-style: italic; }
+
+/* ---- colophon ---- */
+.colophon {
+  background: var(--color-paper-3);
+  border-block-start: var(--rule-bold) solid var(--color-rule-2);
+  padding-block: var(--space-xl);
+}
+.plate-mark {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-2xl);
+  align-items: baseline;
+  padding-block-end: var(--space-lg);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+}
+.plate-mark address { font-style: normal; color: var(--color-ink-2); font-weight: 300; }
+.colophon__line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+  padding-block-start: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+.colophon__line a { color: var(--color-muted); }
+.colophon__line a:hover { color: var(--color-accent); }
+
+/* ---- one orchestrated reveal, hero only ---- */
+.settle {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: settle var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes settle { to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+  .settle { animation: settle-reduced 150ms linear forwards; }
+  @keyframes settle-reduced { to { opacity: 1; transform: none; } }
+}
+
+/* the batch fills complete rows: two by three above the fold-out width */
+@media (min-width: 40rem) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ---- responsive ---- */
+@media (max-width: 60rem) {
+  .hero__inner { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); min-height: 0; }
+  .plate { border-inline-start: 0; border-block-start: var(--rule-hair) solid var(--color-rule); padding-inline-start: 0; padding-block-start: var(--space-lg); }
+  .plate svg { max-width: 26rem; }
+  .batch__head { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .firings__inner, .studio__inner { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+}
+@media (max-width: 40rem) {
+  .masthead__place { margin-inline-start: 0; }
+  .hero__inner { padding-block: var(--space-lg) var(--space-2xl); }
+  .steps li { grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); }
+  .steps li::before { font-size: var(--text-2xl); }
+  .timetable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .timetable tbody th, .timetable td { display: block; padding-inline-end: 0; border-block-end: 0; }
+  .timetable tbody tr { display: block; padding-block: var(--space-md); border-block-end: var(--rule-hair) solid var(--color-rule); }
+  .timetable tbody th { padding-block-end: var(--space-2xs); }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the board</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead__top">
+      <a class="wordmark" href="#main">Kiln<span class="wordmark__dot" aria-hidden="true"></span>Co</a>
+      <span class="label masthead__place">Rua da Cozinha Económica · Alcântara · Lisboa</span>
+    </div>
+  </div>
+  <div class="masthead__nav">
+    <div class="wrap">
+      <ul>
+        <li><a href="#batch">The batch</a></li>
+        <li><a href="#firings">Two firings</a></li>
+        <li><a href="#workshops">Weekends</a></li>
+        <li><a href="#studio">The studio</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero__inner">
+      <div>
+        <h1 class="hero__display settle" style="--i:0" id="hero-title">Thrown small,<br>fired hot,<br><span class="thin">kept for good.</span></h1>
+        <p class="hero__lede settle" style="--i:1">A two-room studio in Alcântara. We make tableware in small batches, glaze it by hand, and open the wheels at weekends.</p>
+        <div class="hero__actions settle" style="--i:2">
+          <a class="btn btn--fill" href="#batch">See the batch</a>
+          <a class="btn btn--line" href="#workshops">Book a weekend</a>
+        </div>
+        <p class="label hero__meta settle" style="--i:3">Stoneware &amp; porcelain · thrown on the wheel · fired twice</p>
+      </div>
+
+      <figure class="plate settle" style="--i:2">
+        <svg viewBox="0 0 320 260" role="img" aria-labelledby="plate-title plate-desc">
+          <title id="plate-title">Section drawings of three thrown vessels</title>
+          <desc id="plate-desc">A bowl, a cup and a plate drawn as half sections against a shared centre axis, in the manner of a potter’s profile template.</desc>
+          <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+            <!-- shared centre axis -->
+            <path d="M160 12 V248" stroke="var(--color-rule-2)" stroke-dasharray="3 6"/>
+            <!-- bowl -->
+            <path d="M160 30 H74 c-4 0-6 3-5 7 l14 44 c3 9 12 15 22 15 h55"/>
+            <path d="M160 30 H246 c4 0 6 3 5 7 l-14 44 c-3 9-12 15-22 15 h-55"/>
+            <path d="M105 96 h110" stroke="var(--color-accent)" stroke-width="2"/>
+            <!-- cup -->
+            <path d="M160 122 H112 c-3 0-5 2-5 5 l6 46 c1 6 6 10 12 10 h35"/>
+            <path d="M160 122 H208 c3 0 5 2 5 5 l-6 46 c-1 6-6 10-12 10 h-35"/>
+            <path d="M213 132 c16 2 20 26 4 30" stroke="var(--color-accent)"/>
+            <!-- plate -->
+            <path d="M160 208 H60 c-5 0-8 4-7 9 l3 12 c1 5 6 9 11 9 h93"/>
+            <path d="M160 208 H260 c5 0 8 4 7 9 l-3 12 c-1 5-6 9-11 9 h-93"/>
+            <path d="M92 229 h136" stroke="var(--color-accent)" stroke-width="2"/>
+          </g>
+        </svg>
+        <figcaption class="plate__caption">Profiles kept on the wall by the wheel: bowl, cup, plate.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="batch" id="batch" aria-labelledby="batch-title">
+    <div class="wrap">
+      <div class="batch__head">
+        <h2 id="batch-title">What came out of the kiln this month</h2>
+        <p class="batch__note">Sizes and prices are set once a batch is out and measured, so the two lines under each piece stay open until then.</p>
+      </div>
+
+      <div class="grid">
+        <article class="piece">
+          <h3>Alcântara bowl</h3>
+          <p class="piece__body">Deep enough for soup, shallow enough for a salad. Thrown in one pull, foot turned the next morning.</p>
+          <dl>
+            <dt>Body</dt><dd>Stoneware, tin glaze</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+
+        <article class="piece">
+          <h3>Tejo plate</h3>
+          <p class="piece__body">A dinner plate with a low rim, so a sauce stays where it was put. Ash glaze pools grey at the edge.</p>
+          <dl>
+            <dt>Body</dt><dd>Stoneware, ash glaze</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+
+        <article class="piece">
+          <h3>Graça cup</h3>
+          <p class="piece__body">Porcelain, thin at the lip, no handle. Made for the coffee you drink standing at the counter.</p>
+          <dl>
+            <dt>Body</dt><dd>Porcelain, celadon</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+
+        <article class="piece">
+          <h3>Cais serving dish</h3>
+          <p class="piece__body">Hand-built rather than thrown, so no two are the same length. Iron slip brushed on, wiped back at the rim.</p>
+          <dl>
+            <dt>Body</dt><dd>Stoneware, iron slip</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+
+        <article class="piece">
+          <h3>Madrugada jug</h3>
+          <p class="piece__body">A pouring lip pulled with a wet thumb. Copper in the glaze goes turquoise where the flame reduced it.</p>
+          <dl>
+            <dt>Body</dt><dd>Stoneware, copper glaze</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+
+        <article class="piece">
+          <h3>Mercado tumbler</h3>
+          <p class="piece__body">Glazed inside, bare clay outside, so it keeps the grip of the raw body in a wet hand.</p>
+          <dl>
+            <dt>Body</dt><dd>Stoneware, unglazed foot</dd>
+            <dt>Size</dt><dd class="tbd">to confirm</dd>
+            <dt>Price</dt><dd class="tbd">to confirm</dd>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="firings" id="firings" aria-labelledby="firings-title">
+    <div class="wrap firings__inner">
+      <div>
+        <h2 id="firings-title">Everything here is fired twice</h2>
+        <p class="firings__aside">The first firing makes the clay permanent. The second one makes the glaze glass. Neither can be hurried, which is most of why a batch is small.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <div>
+            <h3>Thrown, then left alone</h3>
+            <p>A piece comes off the wheel too soft to touch. It dries slowly under plastic, then the foot is turned on the wheel once the clay has gone leather hard.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>The first firing</h3>
+            <p>Dry clay goes into the kiln and comes out porous and hard. From here nothing can be reclaimed, so this is where a piece either continues or goes in the bucket.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Glaze, poured and wiped</h3>
+            <p>Glaze is mixed in the studio from dry materials and poured over the piece. The foot is wiped clean by hand so it will not weld itself to the kiln shelf.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>The second firing</h3>
+            <p>The kiln climbs overnight and cools for a day. Copper goes turquoise, iron goes rust, and the studio finds out what it made when the door opens.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="workshops" id="workshops" aria-labelledby="workshops-title">
+    <div class="wrap">
+      <h2 id="workshops-title">The wheels are free at weekends</h2>
+      <p class="workshops__lede">Sessions run in the front room, four wheels and one long table. You leave the piece with us; it is fired twice over the following weeks and you come back for it.</p>
+
+      <table class="timetable">
+        <caption>Weekend board. Places are confirmed by mail when you write.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Session</th>
+            <th scope="col">When</th>
+            <th scope="col">Length</th>
+            <th scope="col">What you make</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">First time at the wheel</th>
+            <td class="when">Saturday morning</td>
+            <td>Half a day</td>
+            <td>One cup, centred and pulled with a hand on yours until it is not.</td>
+          </tr>
+          <tr>
+            <th scope="row">Throwing, second visit</th>
+            <td class="when">Saturday afternoon</td>
+            <td>Half a day</td>
+            <td>A pair of bowls, thrown to the same weight of clay so you can see the difference.</td>
+          </tr>
+          <tr>
+            <th scope="row">Glaze and load</th>
+            <td class="when">Sunday morning</td>
+            <td>Half a day</td>
+            <td>Your own fired pieces glazed, wiped and set on the shelf for the second firing.</td>
+          </tr>
+          <tr>
+            <th scope="row">Open studio</th>
+            <td class="when">Sunday afternoon</td>
+            <td>As long as it takes</td>
+            <td>A wheel and a bag of clay, for people who have been before.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="workshops__after">
+        <a class="btn btn--fill" href="mailto:oficina@kilnandco.pt">Write about a weekend</a>
+        <span class="label">oficina@kilnandco.pt</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="studio" id="studio" aria-labelledby="studio-title">
+    <div class="wrap studio__inner">
+      <h2 id="studio-title">The studio</h2>
+      <div class="studio__prose">
+        <p>Kiln &amp; Co is two rooms off a street in Alcântara: the front room with the wheels and the long table, the back room with the kiln, the glaze buckets and the shelves where work waits to be dry enough to fire.</p>
+        <p>We make in batches because that is what a kiln is. It holds what it holds, it takes a day to climb and a day to cool, and it does not care that a shop would rather have a hundred of the same plate. What comes out is a run of objects that are alike but not identical, and that is the whole argument for buying one of them instead of ten of something else.</p>
+        <p>The door is open when the light is on. If you want a piece held back, or a set made to a size, <a href="mailto:oficina@kilnandco.pt">write to the studio</a> and we will tell you which firing it can go in.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="colophon">
+  <div class="wrap">
+    <div class="plate-mark">
+      <span class="wordmark">Kiln<span class="wordmark__dot" aria-hidden="true"></span>Co</span>
+      <address>Rua da Cozinha Económica, Alcântara, 1300 Lisboa<br>Open when the light is on</address>
+      <span class="label">Stoneware · porcelain · fired twice</span>
+    </div>
+    <div class="colophon__line">
+      <span>Kiln &amp; Co, Lisboa. Every piece thrown and glazed on this street.</span>
+      <span><a href="mailto:oficina@kilnandco.pt">oficina@kilnandco.pt</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
