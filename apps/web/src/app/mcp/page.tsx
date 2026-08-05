@@ -372,8 +372,12 @@ export default async function MCPPage() {
         </div>
       </section>
 
-      {/* Posture */}
-      <section className="border-t rule pt-12 pb-12">
+      {/* Posture. The closing band, so its own bottom padding is zero:
+          the Colophon already carries mt-12, and adding pb-12 on top of
+          that made the gap under the button (96px) twice the gap above
+          the heading (48px). Zero here lets the footer's margin be the
+          whole bottom gap, which matches the top exactly. */}
+      <section className="border-t rule pt-12 pb-0">
         <div className="mx-auto max-w-[62rem] text-center">
           <p className="font-display mx-auto max-w-[40ch] text-2xl leading-snug sm:text-3xl">
             Open source, MIT, owned and operated by{" "}

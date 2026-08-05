@@ -26,13 +26,22 @@ export function TransitionLink({
   prefetch,
   scroll,
   onClick,
+  ...rest
 }: {
   href: string;
-  children: React.ReactNode;
+  /** Optional: a link can be a bare overlay covering a media box, in
+   *  which case its accessible name comes from aria-label rather than
+   *  from any content. */
+  children?: React.ReactNode;
   className?: string;
   prefetch?: boolean;
   scroll?: boolean;
   onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
+  "aria-label"?: string;
+  "aria-hidden"?: boolean;
+  /** -1 keeps a duplicate link (e.g. a caption pointing at the same
+   *  href as its tile) out of the tab order. */
+  tabIndex?: number;
 }) {
   const router = useRouter();
   function handle(e: MouseEvent<HTMLAnchorElement>) {
@@ -61,6 +70,7 @@ export function TransitionLink({
       scroll={scroll}
       className={className}
       onClick={handle}
+      {...rest}
     >
       {children}
     </Link>

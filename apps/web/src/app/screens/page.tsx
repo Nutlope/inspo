@@ -81,7 +81,10 @@ export default async function ArchivePage({
     designerCredit: undefined,
     capturedAt: s.capturedAt,
     imageUrl: s.imageUrl,
-    fullPageUrl: s.imageUrl, // alias so ScreenSummary stays shaped
+    // The real full-page capture, not an alias of the hero. Aliasing it
+    // meant the hover-scroll had nothing taller than the fold to scroll
+    // through, so hovering just swapped one 16:10 frame for another.
+    fullPageUrl: s.fullPageUrl,
     thumbUrl: s.thumbUrl,
     description: "",
     palette: s.palette,
@@ -105,10 +108,17 @@ export default async function ArchivePage({
     mobileImageUrl: s.mobileImageUrl,
     // The tile's <picture> needs these or every cell falls back to the
     // PNG. Two 384-wide URLs per row costs ~240 chars of payload and
-    // saves ~117 KB per visible tile (12 KB WebP vs 129 KB PNG), so it
-    // pays for itself on the first screenful. heroVariants stays out:
-    // the tile only ever renders the thumb-sized set.
-    thumbVariants: s.thumbVariants,
+    // saves ~117 KB per visible tile, so it pays for itself on the
+    // first screenful.
+    //
+    // heroVariants, NOT thumbVariants. The tiles here render at 16:10
+    // and the hero capture is 1440x900, so it fits the box exactly; the
+    // thumb is a 768x1024 portrait tablet shot that `object-cover` was
+    // cropping to a magnified middle band. hero.384 is also the smaller
+    // file of the two (5 KB against 12 KB) because it is 240px tall
+    // rather than 512, so the correct image is also the cheaper one.
+    heroVariants: s.heroVariants,
+    fullVariants: s.fullVariants,
   }));
 
   return (

@@ -41,7 +41,10 @@ export function SkeletonTile({
 
 export function SkeletonGrid({ count = 15 }: { count?: number }) {
   return (
-    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]">
+    // Gap tracks the real grid in screens-grid.tsx: 2.5 at mobile,
+    // 3 from sm up. A mismatched gap reflows every tile the moment the
+    // real grid mounts.
+    <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] sm:gap-3">
       {Array.from({ length: count }, (_, i) => (
         <li
           key={i}

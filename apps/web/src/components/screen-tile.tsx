@@ -1,8 +1,7 @@
 import type { ScreenSummary } from "@inspo/shared";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 import { TransitionLink as Link } from "@/components/transition-link";
-import { HoverScrollOverlay } from "@/components/hover-scroll-overlay";
-import { TileImage } from "@/components/tile-image";
+import { TileMedia } from "@/components/tile-media";
 
 /**
  * Server-rendered tile. No `"use client"`, no `useState`. The previous
@@ -82,14 +81,18 @@ export function ScreenTile({
   const macroKey = screen.tags.macrostructure;
   const macro = macroKey ? MACROSTRUCTURE_LABELS[macroKey] : null;
 
-  // Pick the variant set: tile-sized for "thumb" (smaller srcset, no
-  // wasted bytes on a 1440 download for a 300-wide cell), hero-sized
-  // for "hero"/"feature" (used on the home page where tiles are
-  // larger). Falls back to whichever set is populated.
+  // The 4:3 and 16:9 boxes take the thumb capture; the 16:10 box takes
+  // the hero, which IS 16:10 (1440x900) and therefore fills it without
+  // any crop.
+  //
+  // Never silently fall back from hero to thumb here. The thumb is a
+  // 768x1024 PORTRAIT tablet shot, and letting it stand in for the hero
+  // is what made every archive tile render as a magnified middle slice
+  // of the page. If a row has no heroVariants the plain <img> src is
+  // still the right capture; a missing srcset costs bytes, a wrong
+  // srcset costs the whole framing.
   const variants =
-    variant === "thumb"
-      ? screen.thumbVariants ?? screen.heroVariants
-      : screen.heroVariants ?? screen.thumbVariants;
+    variant === "thumb" ? screen.thumbVariants : screen.heroVariants;
 
   const fallbackSrc =
     variant === "thumb" ? screen.thumbUrl : screen.imageUrl;
@@ -114,77 +117,94 @@ export function ScreenTile({
       };
 
   return (
-    <article className={`group ${className}`} data-index={index ?? undefined}>
-      <Link href={href} className="block rounded-tile focus:outline-none">
-        <div
-          className={`relative w-full overflow-hidden rounded-tile border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
-          style={bgStyle}
+    <article
+      className={`group relative ${className}`}
+      data-index={index ?? undefined}
+    >
+      {/* The media box is no longer wrapped in the link. The pager puts
+          real <button>s over the screenshot, and a button inside an
+          anchor is invalid HTML with genuinely unpredictable hit-
+          testing. Instead the link is an overlay that covers the box,
+          and the arrows sit one layer above it. */}
+      <div
+        className={`relative w-full overflow-hidden rounded-tile border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
+        style={bgStyle}
+      >
+        <TileMedia
+          siteSlug={screen.siteSlug}
+          imageUrl={fallbackSrc}
+          heroVariants={variants}
+          fullPageUrl={hoverScroll ? screen.fullPageUrl : undefined}
+          fullVariants={screen.fullVariants}
+          alt={
+            screen.description
+              ? `${screen.title} - ${screen.description}`
+              : screen.title
+          }
+          title={screen.title}
+          sizes={TILE_SIZES}
+          priority={priority}
+          hoverScroll={hoverScroll}
+          pageCount={pageCount ?? 1}
         >
-          <TileImage
-            variants={variants}
-            fallbackSrc={fallbackSrc}
-            alt={`${screen.title} - ${screen.description}`}
-            sizes={TILE_SIZES}
-            priority={priority}
+          <Link
+            href={href}
+            aria-label={screen.title}
+            className="absolute inset-0 z-10 rounded-tile focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-link)]"
           />
+        </TileMedia>
 
-          {/* Hover-scroll overlay - full page screenshot, lazy. Renders
-              nothing on first paint; fetches the 1440-wide AVIF only on
-              first pointerenter. The overlay sits above the hero image
-              and below the caption strip (caption uses pointer-events:
-              none so hover still bubbles to the parent group). */}
-          {hoverScroll && screen.fullPageUrl ? (
-            <HoverScrollOverlay
-              fullUrl={screen.fullPageUrl}
-              fullVariants={screen.fullVariants}
-            />
-          ) : null}
-
-          {/* Hover pills - the tile stays caption-free at rest (the
-              grid is the point); on hover two floating capsules fade
-              in INSIDE the image: title (+ page count) bottom-left,
-              palette dots bottom-right. Reads on focus too for
-              keyboard users. */}
-          <div
-            className="pointer-events-none absolute inset-x-2.5 bottom-2.5 flex items-center justify-between gap-2 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100"
-            aria-hidden
-          >
-            <span className="flex min-w-0 items-baseline gap-2 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-3.5 py-1.5 backdrop-blur-md">
-              <span className="truncate font-display text-sm leading-snug text-[var(--color-fg)]">
-                {screen.title}
-              </span>
-              <span className="text-meta hidden whitespace-nowrap sm:inline">
-                {isMultiPage
-                  ? `${pageCount} pages`
-                  : (macro ?? screen.tags.style[0] ?? "")}
-              </span>
+        {/* Hover pills - the tile stays caption-free at rest (the
+            grid is the point); on hover two floating capsules fade
+            in INSIDE the image: title (+ page count) bottom-left,
+            palette dots bottom-right. Reads on focus too for
+            keyboard users. */}
+        <div
+          className="pointer-events-none absolute inset-x-2.5 bottom-2.5 z-20 flex items-center justify-between gap-2 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100"
+          aria-hidden
+        >
+          <span className="flex min-w-0 items-baseline gap-2 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-3.5 py-1.5 backdrop-blur-md">
+            <span className="truncate font-display text-sm leading-snug text-[var(--color-fg)]">
+              {screen.title}
             </span>
-            <span className="hidden shrink-0 items-center gap-1 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-2.5 py-2 backdrop-blur-md sm:flex">
-              {screen.palette.slice(0, 4).map((hex, i) => (
-                <span
-                  key={`${hex}-${i}`}
-                  title={hex}
-                  className="block h-2.5 w-2.5 rounded-full"
-                  style={{ background: hex }}
-                />
-              ))}
+            <span className="text-meta hidden whitespace-nowrap sm:inline">
+              {isMultiPage
+                ? `${pageCount} pages`
+                : (macro ?? screen.tags.style[0] ?? "")}
             </span>
-          </div>
+          </span>
+          <span className="hidden shrink-0 items-center gap-1 rounded-full border rule bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)] px-2.5 py-2 backdrop-blur-md sm:flex">
+            {screen.palette.slice(0, 4).map((hex, i) => (
+              <span
+                key={`${hex}-${i}`}
+                title={hex}
+                className="block h-2.5 w-2.5 rounded-full"
+                style={{ background: hex }}
+              />
+            ))}
+          </span>
         </div>
+      </div>
 
-        {showCaption && (
-          <div className="mt-3 flex items-baseline justify-between gap-3">
-            <p className="font-display text-lg leading-tight">
-              <span className="transition-colors group-hover:text-[var(--color-link)]">
-                {screen.title}
-              </span>
-            </p>
-            <p className="text-meta whitespace-nowrap">
-              {isMultiPage ? `${pageCount} pages` : (macro ?? screen.tags.style[0] ?? "-")}
-            </p>
-          </div>
-        )}
-      </Link>
+      {showCaption && (
+        // Second link to the same target. Kept out of the tab order so
+        // the tile is one stop, not two.
+        <Link
+          href={href}
+          tabIndex={-1}
+          aria-hidden
+          className="mt-3 flex items-baseline justify-between gap-3"
+        >
+          <p className="font-display text-lg leading-tight">
+            <span className="transition-colors group-hover:text-[var(--color-link)]">
+              {screen.title}
+            </span>
+          </p>
+          <p className="text-meta whitespace-nowrap">
+            {isMultiPage ? `${pageCount} pages` : (macro ?? screen.tags.style[0] ?? "-")}
+          </p>
+        </Link>
+      )}
     </article>
   );
 }
