@@ -121,17 +121,15 @@ export function ScreenTile({
       className={`group relative ${className}`}
       data-index={index ?? undefined}
     >
-      {/* The media box is no longer wrapped in the link. The pager puts
-          real <button>s over the screenshot, and a button inside an
-          anchor is invalid HTML with genuinely unpredictable hit-
-          testing. Instead the link is an overlay that covers the box,
-          and the arrows sit one layer above it. */}
+      {/* The link is an overlay inside TileMedia rather than a wrapper
+          around it. TileMedia needs to own the hover region - an
+          element covered by a sibling overlay never receives
+          `pointerenter`, so the hover-scroll would never activate. */}
       <div
         className={`relative w-full overflow-hidden rounded-tile border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012] ${ASPECT[variant]}`}
         style={bgStyle}
       >
         <TileMedia
-          siteSlug={screen.siteSlug}
           imageUrl={fallbackSrc}
           heroVariants={variants}
           fullPageUrl={hoverScroll ? screen.fullPageUrl : undefined}
@@ -141,11 +139,9 @@ export function ScreenTile({
               ? `${screen.title} - ${screen.description}`
               : screen.title
           }
-          title={screen.title}
           sizes={TILE_SIZES}
           priority={priority}
           hoverScroll={hoverScroll}
-          pageCount={pageCount ?? 1}
         >
           <Link
             href={href}
