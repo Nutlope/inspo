@@ -46,3 +46,6 @@ packages/db/src/*.pre-*.json
 packages/db/src/*.pre-*.bin
 packages/db/src/_deleted-sites-*.json
 
+
+# Backfill safety copies. The seed is in git; these never need to be.
+*.bak

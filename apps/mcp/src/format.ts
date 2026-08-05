@@ -5,6 +5,7 @@
  */
 
 import type { ScreenSummary, Collection } from "@inspo/shared";
+import { axesKey } from "@inspo/shared";
 import type { CaptureDevice } from "@inspo/taxonomy";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
 import { absolute } from "./url";
@@ -93,7 +94,19 @@ export function formatScreen(s: ScreenSummary, why?: string) {
           label: MACROSTRUCTURE_LABELS[s.tags.macrostructure],
         }
       : null,
-    theme: s.tags.hallmarkTheme ?? null,
+    // The three diversification axes, measured from the capture and
+    // the palette. Replaces the old `theme` field, which named a theme
+    // from one version of one design skill and went stale.
+    axes: s.tags.axes
+      ? {
+          paperBand: s.tags.axes.paperBand,
+          displayClass: s.tags.axes.displayClass,
+          accentHue: s.tags.axes.accentHue,
+          paperL: s.tags.axes.paperL,
+          accentDeg: s.tags.axes.accentDeg,
+          displayFace: s.tags.axes.displayFace,
+        }
+      : null,
     ...(why ? { whyThisMatches: why } : {}),
   };
 }
@@ -123,6 +136,12 @@ export function formatScreenConcise(s: ScreenSummary, why?: string) {
     palette: s.palette,
     fonts: s.fonts,
     mode: s.mode,
+    // Compact form ("dark / grotesk-sans / cool"): one short string
+    // instead of the six-field object, because this shape exists to
+    // keep multi-result searches cheap. `paperBand` here is measured
+    // from the capture and is the reliable one when it disagrees with
+    // `mode`, which it does on ~15% of rows.
+    ...(s.tags.axes ? { axes: axesKey(s.tags.axes) } : {}),
     macrostructure: s.tags.macrostructure
       ? {
           slug: s.tags.macrostructure,

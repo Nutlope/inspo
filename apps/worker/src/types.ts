@@ -1,4 +1,4 @@
-import type { Style, Industry, Component, Vibe, ColorWord, Macrostructure, Mode, HallmarkTheme } from "@inspo/taxonomy";
+import type { Style, Industry, Component, Vibe, ColorWord, Macrostructure, Mode } from "@inspo/taxonomy";
 import type { TypeRampEntry } from "@inspo/shared";
 import type { ComponentRegion } from "@inspo/db/schema";
 
@@ -48,7 +48,6 @@ export type AITags = {
   vibe: Vibe[];
   colorWords: ColorWord[];
   macrostructure?: Macrostructure;
-  hallmarkTheme?: HallmarkTheme;
   description: string;
   altText: string;
   searchKeywords: string[];

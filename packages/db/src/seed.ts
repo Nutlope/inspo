@@ -52,7 +52,7 @@ async function main() {
       tech: s.tech,
       mode: s.mode,
       macrostructure: s.tags.macrostructure ?? null,
-      hallmarkTheme: s.tags.hallmarkTheme ?? null,
+      axes: s.tags.axes ?? null,
       heroImageKey: null,
       fullImageKey: null,
       thumbImageKey: null,

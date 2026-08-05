@@ -5,9 +5,10 @@
  * and the MCP server. Hard allow-lists prevent taxonomy drift across
  * thousands of captures.
  *
- * STYLES, MACROSTRUCTURES, and HALLMARK_THEMES are Inspo's canonical
- * design vocabulary, so a screenshot tagged here can be referenced
- * directly by an agent picking a named whole-page shape or theme.
+ * STYLES, MACROSTRUCTURES, and the three AXES vocabularies are Inspo's
+ * canonical design vocabulary, so a screenshot tagged here can be
+ * referenced directly by an agent picking a named whole-page shape or
+ * constructing a design system from measured evidence.
  */
 
 export const STYLES = [
@@ -143,22 +144,48 @@ export const MACROSTRUCTURES = [
 ] as const;
 
 /**
- * Named themes - 12 themes across 4 categories.
- * Stored as `category:theme` for easy filtering on either axis.
+ * The three diversification axes.
+ *
+ * Replaces the old 12-name `HALLMARK_THEMES` enum, which named themes
+ * from one specific version of one design skill and went stale the
+ * moment that skill's catalogue changed. The axes are orthogonal,
+ * derivable from data every row already carries (palette + fonts), and
+ * version-independent: they describe the design, not somebody's name
+ * for it.
+ *
+ * A design skill constructing a system from Inspo's evidence reads the
+ * distribution of these three across the matched exemplars, then takes
+ * a deliberate position with or against it. See `deriveAxes` in
+ * @inspo/shared for how each is measured.
  */
-export const HALLMARK_THEMES = [
-  "editorial:specimen",
-  "editorial:newsprint",
-  "editorial:atelier",
-  "soft:garden",
-  "soft:salon",
-  "soft:linen",
-  "technical:midnight",
-  "technical:terminal",
-  "technical:almanac",
-  "bold:brutal",
-  "bold:manifesto",
-  "bold:sport",
+
+/** Surface lightness band, from the OKLCH L of the dominant colour. */
+export const PAPER_BANDS = ["dark", "mid", "light"] as const;
+
+/** The display face's construction. Ordered loosest to most specific;
+ *  `grotesk-sans` is the fallback because most web faces are neo-
+ *  grotesques and a wrong-but-common guess beats a null. */
+export const DISPLAY_CLASSES = [
+  "grotesk-sans",
+  "geometric-sans",
+  "roman-serif",
+  "italic-serif",
+  "slab-serif",
+  "mono",
+  "display-condensed-bold",
+  "display-heavy",
+  "system-native",
+  "handwritten",
+] as const;
+
+/** Accent temperature, from the highest-chroma palette entry. Anything
+ *  chromatic outside the warm/cool arcs is `chromatic-other`; the exact
+ *  hue angle rides alongside in `Axes.accentDeg`. */
+export const ACCENT_HUE_BANDS = [
+  "warm",
+  "cool",
+  "neutral",
+  "chromatic-other",
 ] as const;
 
 export type Style = (typeof STYLES)[number];
@@ -170,7 +197,9 @@ export type Mode = (typeof MODES)[number];
 export type Viewport = (typeof VIEWPORTS)[number];
 export type CaptureDevice = (typeof CAPTURE_DEVICES)[number];
 export type Macrostructure = (typeof MACROSTRUCTURES)[number];
-export type HallmarkTheme = (typeof HALLMARK_THEMES)[number];
+export type PaperBand = (typeof PAPER_BANDS)[number];
+export type DisplayClass = (typeof DISPLAY_CLASSES)[number];
+export type AccentHueBand = (typeof ACCENT_HUE_BANDS)[number];
 export type TypeRole = (typeof TYPE_ROLES)[number];
 
 /** Allow-list validators - used to reject LLM tag output that drifts. */
@@ -184,8 +213,12 @@ export const isVibe = (v: string): v is Vibe =>
   (VIBES as readonly string[]).includes(v);
 export const isMacrostructure = (v: string): v is Macrostructure =>
   (MACROSTRUCTURES as readonly string[]).includes(v);
-export const isHallmarkTheme = (v: string): v is HallmarkTheme =>
-  (HALLMARK_THEMES as readonly string[]).includes(v);
+export const isPaperBand = (v: string): v is PaperBand =>
+  (PAPER_BANDS as readonly string[]).includes(v);
+export const isDisplayClass = (v: string): v is DisplayClass =>
+  (DISPLAY_CLASSES as readonly string[]).includes(v);
+export const isAccentHueBand = (v: string): v is AccentHueBand =>
+  (ACCENT_HUE_BANDS as readonly string[]).includes(v);
 
 /** Human-readable labels for filter rails. */
 export const MACROSTRUCTURE_LABELS: Record<Macrostructure, string> = {

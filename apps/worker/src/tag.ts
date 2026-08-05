@@ -20,13 +20,11 @@ import {
   VIBES,
   COLOR_WORDS,
   MACROSTRUCTURES,
-  HALLMARK_THEMES,
   isStyle,
   isIndustry,
   isComponent,
   isVibe,
   isMacrostructure,
-  isHallmarkTheme,
 } from "@inspo/taxonomy";
 import type { ColorWord } from "@inspo/taxonomy";
 import type { AITags } from "./types";
@@ -71,10 +69,10 @@ const MACROSTRUCTURE_DEFINITIONS: Record<(typeof MACROSTRUCTURES)[number], strin
   "component-playground": "Interactive code-and-preview blocks are the primary content. Each previews a thing and shows how to copy-paste it.",
 };
 
-/** Shuffle helper — Fisher-Yates. Used to pass the macrostructure /
- *  theme enums to the model in a fresh order each call so no single
- *  label sits at position 0 every time (small VLMs anchor on the
- *  first enum option). */
+/** Shuffle helper - Fisher-Yates. Used to pass the macrostructure
+ *  enum to the model in a fresh order each call so no single label
+ *  sits at position 0 every time (small VLMs anchor on the first enum
+ *  option). */
 function shuffled<T>(arr: readonly T[]): T[] {
   const a = arr.slice() as T[];
   for (let i = a.length - 1; i > 0; i--) {
@@ -84,9 +82,16 @@ function shuffled<T>(arr: readonly T[]): T[] {
   return a;
 }
 
-/** Build the tag schema with macrostructure + hallmarkTheme enums
- *  shuffled per call. All other enums stay in their declared order
- *  (they're multi-select, less sensitive to ordering). */
+/** Build the tag schema with the macrostructure enum shuffled per
+ *  call. All other enums stay in their declared order (they're
+ *  multi-select, less sensitive to ordering).
+ *
+ *  The theme tag used to live here too. It is gone: the three
+ *  diversification axes replaced it, and they are *measured* from the
+ *  palette, the fonts and the capture rather than guessed by a model.
+ *  That removed a stale enum, a source of drift, and a chunk of every
+ *  tagging call's output budget. See `deriveAxes` in @inspo/shared and
+ *  `backfill-axes.ts`. */
 function buildTagSchema() {
   return {
     type: "object",
@@ -98,7 +103,6 @@ function buildTagSchema() {
       vibe: { type: "array", items: { type: "string", enum: [...VIBES] } },
       colorWords: { type: "array", items: { type: "string", enum: [...COLOR_WORDS] } },
       macrostructure: { type: "string", enum: shuffled(MACROSTRUCTURES) },
-      hallmarkTheme: { type: "string", enum: shuffled(HALLMARK_THEMES) },
       description: { type: "string" },
       altText: { type: "string" },
       searchKeywords: { type: "array", items: { type: "string" } },
@@ -132,7 +136,6 @@ const SYSTEM = [
   "Macrostructure rubric:",
   MACRO_RUBRIC,
   "",
-  "Pick exactly one Hallmark theme (category:theme) that matches the visual register.",
   "description: 1–2 sentences in a designer's voice. Talk about the actual visual choices on this page (typography, colour, density, mood). No marketing fluff. Never describe yourself or the task.",
   "altText: ≤140 chars, screen-reader accurate, focuses on the visible content.",
   "searchKeywords: 5–10 short freeform keywords a designer would actually search for, e.g. 'editorial agency hero', 'dark saas bento'. Lowercase.",
@@ -218,10 +221,6 @@ export async function tagWithLLM(args: {
     macrostructure:
       typeof raw.macrostructure === "string" && isMacrostructure(raw.macrostructure)
         ? raw.macrostructure
-        : undefined,
-    hallmarkTheme:
-      typeof raw.hallmarkTheme === "string" && isHallmarkTheme(raw.hallmarkTheme)
-        ? raw.hallmarkTheme
         : undefined,
     description: typeof raw.description === "string" ? raw.description : "",
     altText: typeof raw.altText === "string" ? raw.altText.slice(0, 140) : "",

@@ -15,6 +15,7 @@
     "capture:encode-variants": "tsx src/encode-existing.ts",
     "enrich:archive": "tsx src/enrich-archive.ts",
     "build:static-seed": "tsx src/build-static-seed.ts",
+    "backfill:axes": "tsx src/backfill-axes.ts",
     "capture:site": "tsx src/capture-site.ts",
     "capture:sites": "tsx src/capture-sites.ts",
     "cleanup:titles": "tsx src/cleanup-titles.ts",

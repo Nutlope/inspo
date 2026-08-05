@@ -44,7 +44,6 @@ const _pending: RawPending[] = [
       components: ["sticky-nav", "hero-with-cta", "feature-trio"],
       vibe: ["technical", "loud"],
       macrostructure: "marquee-hero",
-      hallmarkTheme: "technical:midnight",
     },
   },
   {
@@ -69,7 +68,6 @@ const _pending: RawPending[] = [
       components: ["sticky-nav", "hero-with-cta", "logo-cloud"],
       vibe: ["technical", "serious"],
       macrostructure: "stat-led",
-      hallmarkTheme: "technical:midnight",
     },
   },
   {
@@ -94,7 +92,6 @@ const _pending: RawPending[] = [
       components: ["hero-with-cta", "blog-grid", "footer-compact"],
       vibe: ["calm", "soft"],
       macrostructure: "long-document",
-      hallmarkTheme: "editorial:newsprint",
     },
   },
 ];

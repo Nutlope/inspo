@@ -48,6 +48,9 @@ import {
   COLOR_WORDS,
   COMPONENTS,
   CAPTURE_DEVICES,
+  PAPER_BANDS,
+  DISPLAY_CLASSES,
+  ACCENT_HUE_BANDS,
   isMacrostructure,
   type Style,
   type Industry,
@@ -97,6 +100,11 @@ import {
   resolveBudget,
 } from "./budget";
 import { searchScreens } from "./search";
+import {
+  buildEvidence,
+  macrostructureCoverage,
+  macrostructureShortlist,
+} from "./evidence";
 // study() was moved to @inspo/shared so the web playground can call
 // it without depending on the MCP-SDK side of @inspo/mcp.
 
@@ -114,7 +122,52 @@ const RECOMMEND_INLINE_EXEMPLARS = 3;
  *  thumbnail) reads as cut-off and unfinished. Surfaced in the server
  *  instructions + recommend() so it reaches any agent building a page. */
 const HERO_GUIDANCE =
-  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, eyebrow, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold - nothing important cut off. Size display type to land in 2-3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
+  // Deliberately does NOT enumerate an eyebrow among the hero's parts.
+  // It used to, and several design skills ban eyebrows outright as a
+  // hallmark of machine-made pages - so naming one here put a
+  // contradiction in the agent's prompt on every session. This rule is
+  // about the fold, and it has no business taking a side on which
+  // elements a hero contains.
+  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold - nothing important cut off. Size display type to land in 2-3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
+
+/** Below this many distinct sites, a macrostructure's exemplar set is
+ *  too small to read a consensus off, and callers are told so.
+ *
+ *  Set against the real distribution rather than picked round: nine of
+ *  the twenty-one shapes have four sites or fewer (two have none), and
+ *  the gap between `letter` at 6 and `long-document` at 11 is where
+ *  "here are some examples" starts being defensible. */
+const THIN_COVERAGE = 8;
+
+/** Nearest covered shapes per macrostructure, for when coverage is
+ *  thin. Adjacency is by composition, not by name: Workbench and
+ *  Component Playground both put the product's own surface on the
+ *  page, so one teaches the other. Rotation constraints push callers
+ *  toward exactly the rare shapes, so this path is hit more than the
+ *  raw distribution suggests. */
+const MACRO_NEIGHBOURS: Record<string, Macrostructure[]> = {
+  "bento-grid": ["split-studio", "feature-stack"],
+  "long-document": ["letter", "specimen"],
+  "marquee-hero": ["manifesto", "photographic"],
+  "stat-led": ["marquee-hero", "split-studio"],
+  workbench: ["feature-stack", "component-playground"],
+  "conversational-faq": ["long-document", "index-first"],
+  manifesto: ["marquee-hero", "specimen"],
+  photographic: ["marquee-hero", "portfolio-grid"],
+  "quote-led": ["long-document", "letter"],
+  specimen: ["type-specimen", "long-document"],
+  catalogue: ["portfolio-grid", "type-specimen"],
+  letter: ["long-document", "manifesto"],
+  "index-first": ["ecosystem-index", "long-document"],
+  "narrative-workflow": ["feature-stack", "split-studio"],
+  "split-studio": ["feature-stack", "bento-grid"],
+  "feature-stack": ["split-studio", "workbench"],
+  "type-specimen": ["specimen", "catalogue"],
+  "portfolio-grid": ["catalogue", "photographic"],
+  "map-diagram": ["ecosystem-index", "feature-stack"],
+  "ecosystem-index": ["index-first", "portfolio-grid"],
+  "component-playground": ["workbench", "catalogue"],
+};
 
 /* ────────────── tolerant argument parsing ──────────────
  *
@@ -349,6 +402,21 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .describe(
             "Filter to a page kind: 'landing' (default homepages), 'pricing', 'features', 'auth', 'about', 'blog', 'changelog', 'docs', 'other'",
           ),
+        paperBand: flexEnum(PAPER_BANDS as unknown as [string, ...string[]])
+          .optional()
+          .describe(
+            "Surface lightness, measured from the capture: 'dark' (<30% L), 'mid' (30-85%), 'light' (>85%). More reliable than `mode`, which is tagged and disagrees with the measurement on ~15% of rows.",
+          ),
+        displayClass: flexEnum(DISPLAY_CLASSES as unknown as [string, ...string[]])
+          .optional()
+          .describe(
+            "Construction of the display face: 'grotesk-sans', 'geometric-sans', 'roman-serif', 'mono', 'display-condensed-bold', etc.",
+          ),
+        accentHue: flexEnum(ACCENT_HUE_BANDS as unknown as [string, ...string[]])
+          .optional()
+          .describe(
+            "Accent temperature: 'warm' (10-60°), 'cool' (200-300°), 'neutral' (unsaturated), 'chromatic-other' (greens, magentas, everything else).",
+          ),
         ...deviceArg(),
         limit: flexInt(1, 20).default(6),
         ...detailArg(),
@@ -366,6 +434,17 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 
       // Apply the new in-JS filters that the DB layer doesn't index.
       let filtered = screens;
+      if (args.paperBand) {
+        filtered = filtered.filter((s) => s.tags.axes?.paperBand === args.paperBand);
+      }
+      if (args.displayClass) {
+        filtered = filtered.filter(
+          (s) => s.tags.axes?.displayClass === args.displayClass,
+        );
+      }
+      if (args.accentHue) {
+        filtered = filtered.filter((s) => s.tags.axes?.accentHue === args.accentHue);
+      }
       if (args.vibe) {
         const v = args.vibe as Vibe;
         filtered = filtered.filter((s) => s.tags.vibe.includes(v));
@@ -774,19 +853,53 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         else if (existing.slug.includes("--archive") && !s.slug.includes("--archive"))
           bySite.set(s.siteSlug, s);
       }
+      const availableSites = bySite.size;
       const top = [...bySite.values()].slice(0, limit);
       const results = top.map((s) => fmt(detail, maxTokens)(s));
       const inline = ctx.inlineImages();
+
+      // Coverage is information, not an error. Some shapes are rare in
+      // the wild, and a caller whose rotation just landed on one needs
+      // to know whether it is looking at a thin sample or an empty
+      // one - silently returning four rows out of five reads as
+      // "well covered" when it is not.
+      const thin = availableSites < THIN_COVERAGE;
+      const neighbours = thin ? MACRO_NEIGHBOURS[slug] ?? [] : [];
+      const coverage = {
+        sites: availableSites,
+        thin,
+        ...(thin
+          ? {
+              nearest: neighbours.map((n) => ({
+                slug: n,
+                label: MACROSTRUCTURE_LABELS[n],
+              })),
+            }
+          : {}),
+      };
+
+      const coverageNote = thin
+        ? availableSites === 0
+          ? `The archive has NO sites tagged ${MACROSTRUCTURE_LABELS[slug]}. That is a fact about the archive, not about the shape: it is rare in the wild, not wrong. Build it from your own knowledge of the form${neighbours.length ? `, or study the nearest covered shapes (${neighbours.map((n) => MACROSTRUCTURE_LABELS[n]).join(", ")}) for how the composition is handled` : ""}.`
+          : `Thin coverage: only ${availableSites} site${availableSites === 1 ? "" : "s"} in the archive embody ${MACROSTRUCTURE_LABELS[slug]}. Enough to see the shape, not enough to read a genre consensus off${neighbours.length ? `; ${neighbours.map((n) => MACROSTRUCTURE_LABELS[n]).join(" and ")} are adjacent and better covered` : ""}.`
+        : null;
+
       return withImages(
         {
           macrostructure: { slug, label: MACROSTRUCTURE_LABELS[slug] },
           count: top.length,
+          coverage,
           tip:
             top.length > 0
-              ? (inline
-                  ? `Each result has an inline thumbnail (image block) below the JSON. Study them: they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
-                  : `These are real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}. Study each result's autopsy + palette + fonts; they carry the composition.`)
-              : `No screens tagged ${MACROSTRUCTURE_LABELS[slug]} yet. Try search_screens with a broader query.`,
+              ? [
+                  inline
+                    ? `Each result has an inline thumbnail (image block) below the JSON. Study them: they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
+                    : `These are real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}. Study each result's autopsy + palette + fonts; they carry the composition.`,
+                  coverageNote,
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+              : coverageNote,
           results,
         },
         top.map((s) =>
@@ -838,7 +951,14 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         device: CAPTURE_DEVICES,
         componentType: REFERENCE_TYPES,
         tagComponents: COMPONENTS,
-        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components. device: 'mobile' restricts to sites with a mobile capture pair and inlines mobile thumbnails.",
+        // The three diversification axes. Measured per row, not tagged,
+        // and filterable independently so a caller can pin one corner
+        // of the archive or deliberately avoid it.
+        paperBand: PAPER_BANDS,
+        displayClass: DISPLAY_CLASSES,
+        accentHue: ACCENT_HUE_BANDS,
+        macrostructureCoverage: macrostructureCoverage(await getAllScreens()),
+        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components. device: 'mobile' restricts to sites with a mobile capture pair and inlines mobile thumbnails. paperBand / displayClass / accentHue are the three measured axes - use them to find a register, or to avoid one. macrostructureCoverage is how many distinct sites embody each shape: check it before committing to a rare one.",
       }),
   );
 
@@ -1142,7 +1262,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       return asTextContent({
         count: list.length,
-        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source - read them; they explain when to reach for this archetype.",
+        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source - read them; they explain when to reach for this archetype. Each also carries `tokens`: the custom properties the source reads, and an alias block to paste if your system names its tokens for their roles (paper / ink / muted / rule / accent). Undefined custom properties fail silently, so skipping that block gets you a component that renders unstyled with no error.",
         components: list,
       });
     },
@@ -1203,7 +1323,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "recommend",
     {
       description:
-        "Orchestrator. One call returns: a macrostructure pick, 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, and a palette suggestion - everything an agent needs to start a page. Pass a macrostructure you've already picked, or let the tool pick one from the brief via hybrid search. No LLM call - composes search + find_examples + find_reference_components.",
+        "Orchestrator. One call returns: a macrostructure pick (plus a top-3 shortlist), 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, a palette suggestion, and an `evidence` packet measuring what this genre actually looks like along three axes (paper band / display class / accent hue). Everything needed to start a page. Pass a macrostructure you've already picked, or let the tool pick one. Pass `avoid` if you have a rotation constraint. No LLM call - composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -1214,6 +1334,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .optional()
           .describe(
             "Optional: a macrostructure already picked. Skips the pick step.",
+          ),
+        avoid: z
+          .array(flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]]))
+          .optional()
+          .describe(
+            "Optional: macrostructures you must not be given, e.g. the ones you used on your last few builds. They sink to the bottom of the shortlist but stay visible, so you still learn what the brief actually matched.",
           ),
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -1277,29 +1403,31 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       // Otherwise: take the most common macrostructure among the top
       // 6 ranked results (defends against one outlier dragging the
       // pick toward an unrelated macro).
+      const avoid = ((args.avoid ?? []) as Macrostructure[]).filter(Boolean);
+      const shortlist = macrostructureShortlist(ranked, avoid);
+
       let picked: Macrostructure | undefined;
       let rationale: string;
       if (args.macrostructure) {
         picked = args.macrostructure as Macrostructure;
         rationale = `Honouring the macrostructure passed in by the caller.`;
       } else {
-        const top = ranked.slice(0, 6);
-        const counts = new Map<Macrostructure, number>();
-        for (const s of top) {
-          const m = s.tags.macrostructure;
-          if (m) counts.set(m, (counts.get(m) ?? 0) + 1);
+        // The shortlist already sorts avoided shapes to the bottom, so
+        // the head of it is the best match the caller is allowed to
+        // take. Falling back to the ranked top only when the brief
+        // matched nothing with a macrostructure tag at all.
+        const head = shortlist.find((c) => !c.avoided) ?? shortlist[0];
+        picked = head?.slug ?? ranked[0]?.tags.macrostructure;
+        if (!picked) {
+          rationale =
+            "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
+        } else if (head?.avoided) {
+          rationale = `Every shape the brief matched is on your avoid list. Returning ${MACROSTRUCTURE_LABELS[picked]} (${head.hits} of the top hits) so you can decide: the brief genuinely wants this shape, and your rotation constraint is the thing that has to give, or bend the brief.`;
+        } else if (avoid.length > 0) {
+          rationale = `Picked ${MACROSTRUCTURE_LABELS[picked]} - strongest match among the shapes not on your avoid list (${head?.hits ?? 0} of the top hits, ${head?.exemplars ?? 0} exemplar sites).`;
+        } else {
+          rationale = `Picked ${MACROSTRUCTURE_LABELS[picked]} - most common macrostructure (${head?.hits ?? 0} of the top hits) among the hybrid-search results for the brief.`;
         }
-        let bestN = 0;
-        for (const [m, n] of counts) {
-          if (n > bestN) {
-            bestN = n;
-            picked = m;
-          }
-        }
-        if (!picked && top[0]) picked = top[0].tags.macrostructure;
-        rationale = picked
-          ? `Picked ${MACROSTRUCTURE_LABELS[picked]} - most common macrostructure (${bestN} of ${top.length}) among the top hybrid-search hits for the brief.`
-          : "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
       }
 
       // 5 exemplars OF the picked macro from the ranked pool. Fall
@@ -1385,6 +1513,11 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
                 rationale,
               }
             : { macrostructure: null, rationale },
+          shortlist,
+          // What this genre actually looks like, measured over the
+          // matched sites. Use it to place yourself deliberately - the
+          // consensus is the gravity, not the target.
+          evidence: buildEvidence(ranked, { concise: conciseEx }),
           exemplars: exemplarsFmt,
           referenceComponents: referencePicks,
           paletteSuggestion: palette,
@@ -1436,6 +1569,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         macro: r.macro,
         note: r.note,
         source: r.source,
+        tokens: r.tokens ?? null,
+        tip: r.tokens?.aliasBlock
+          ? "Paste `tokens.aliasBlock` into your :root if your tokens are role-named (paper / ink / muted / rule / accent). Without it this renders with unstyled links, invisible borders and a transparent background - silently, because an undefined custom property is not an error."
+          : "This component declares no colour tokens that need remapping.",
       });
     },
   );
@@ -1462,6 +1599,17 @@ export const SERVER_INSTRUCTIONS = [
   "'Bento Grid' or 'Specimen'. Use `get_filters` (zero input) to see",
   "every accepted filter value, and `get_site_pages` to study a real",
   "product's page sequence in reading order.",
+  "",
+  "Working alongside a design skill: if one is driving this session, it",
+  "owns the page's structure, the design system it constructs, and any",
+  "output rules it enforces. Inspo's job is evidence - real exemplars,",
+  "a measured register, and exact values. Pass its rotation constraint",
+  "to `recommend` as `avoid` so the pick respects it rather than",
+  "fighting it, and read the `evidence` packet as the category's",
+  "gravity to take a deliberate position on, not a template to match.",
+  "One thing to hold onto: these are real production sites, and plenty",
+  "of them do things a design skill forbids. Take their composition,",
+  "not their compliance.",
   "",
   "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
   "",

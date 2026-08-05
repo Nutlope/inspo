@@ -11,9 +11,12 @@ import type {
   ColorWord,
   Mode,
   Macrostructure,
-  HallmarkTheme,
+  PaperBand,
+  DisplayClass,
+  AccentHueBand,
   TypeRole,
 } from "@inspo/taxonomy";
+import type { Axes } from "./axes";
 
 /** Phase 2 - one row of a captured type ramp. */
 export type TypeRampEntry = {
@@ -141,7 +144,10 @@ export type ScreenSummary = {
     components: Component[];
     vibe: Vibe[];
     macrostructure?: Macrostructure;
-    hallmarkTheme?: HallmarkTheme;
+    /** The three diversification axes, measured from `palette` +
+     *  `fonts` rather than tagged. Absent only on rows that predate
+     *  the backfill. See `deriveAxes` in ./axes. */
+    axes?: Axes;
   };
   /** Phase 2 - present when extracted; empty defaults otherwise. */
   designSystem: DesignSystem;
@@ -173,7 +179,12 @@ export type SearchFilters = Partial<{
   mode: Mode;
   components: Component[];
   macrostructure: Macrostructure;
-  hallmarkTheme: HallmarkTheme;
+  /** Axis filters. Independent, so a caller can ask for "dark" alone,
+   *  or pin all three to find the exact corner of the archive it wants
+   *  to see (or deliberately avoid). */
+  paperBand: PaperBand;
+  displayClass: DisplayClass;
+  accentHue: AccentHueBand;
   vibe: Vibe;
   colorWord: ColorWord;
   query: string;
@@ -183,6 +194,7 @@ export type SearchFilters = Partial<{
 // packages/db/src/index.ts). Turbopack's resolver in Next 16 doesn't
 // fall back to .ts when a `.js` re-export specifier is unresolved.
 export * from "./color";
+export * from "./axes";
 export * from "./study";
 
 export type Collection = {
@@ -213,4 +225,11 @@ export type ReferenceComponent = {
   note: string;
   /** Full .tsx source as a string: the stamp + JSDoc + export. */
   source: string;
+  /** Custom properties the source reads, plus a paste-ready alias
+   *  block mapping this component's token names onto role-named ones
+   *  (paper / ink / muted / rule / accent). Undefined custom
+   *  properties fail silently, so a component dropped into a system
+   *  with different token names renders unstyled with no error at all;
+   *  the alias block is the fix. */
+  tokens?: { needs: string[]; aliasBlock: string | null };
 };

@@ -88,7 +88,6 @@ interface MetaSidecar {
     components?: string[];
     vibe?: string[];
     macrostructure?: string;
-    hallmarkTheme?: string;
   } | null;
   embeddings: { text: number[] } | null;
 }
@@ -213,7 +212,6 @@ function rowFromSidecar(slug: string, meta: MetaSidecar) {
       components: meta.tags?.components ?? [],
       vibe: meta.tags?.vibe ?? [],
       macrostructure: meta.tags?.macrostructure ?? null,
-      hallmarkTheme: meta.tags?.hallmarkTheme ?? null,
     },
     // designSystem from extract() includes type/spacing/radius/cssVars,
     // but NOT colorWords — those come from the tagger and may be

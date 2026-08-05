@@ -20,6 +20,7 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 import type { ColorWord, Mode, TypeRole } from "@inspo/taxonomy";
+import type { Axes } from "@inspo/shared";
 
 /** One row in the `type_ramp` jsonb column — one role × its computed type tokens. */
 export type TypeRampEntry = {
@@ -98,9 +99,13 @@ export const screens = pgTable(
     tech: jsonb("tech").$type<string[]>().notNull().default([]),
     mode: text("mode").$type<Mode>().notNull().default("light"),
 
-    // Named macrostructure + theme vocabulary (denormalized for filter speed)
+    // Named macrostructure (denormalized for filter speed)
     macrostructure: text("macrostructure"),
-    hallmarkTheme: text("hallmark_theme"),
+    // The three diversification axes, measured rather than tagged.
+    // Replaces the retired `hallmark_theme` column, whose 12-name enum
+    // named themes from one version of one design skill. Derived by
+    // `backfill-axes.ts`; see `deriveAxes` in @inspo/shared.
+    axes: jsonb("axes").$type<Axes>(),
 
     // Phase 2 — design-system extraction. All defaulted so existing rows
     // survive db:push without backfill; the worker fills them on next capture.
@@ -156,7 +161,7 @@ export const tags = pgTable("tags", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull().unique(),
   kind: text("kind")
-    .$type<"style" | "industry" | "component" | "vibe" | "color" | "macrostructure" | "hallmark-theme">()
+    .$type<"style" | "industry" | "component" | "vibe" | "color" | "macrostructure">()
     .notNull(),
 });
 

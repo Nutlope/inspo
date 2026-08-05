@@ -1,7 +1,7 @@
 /**
- * Build a static manifest of the Hallmark-stamped reference
- * components so the MCP can return canonical JSX without having to
- * load apps/web's React tree at request time.
+ * Build a static manifest of the canonical reference components so
+ * the MCP can return their JSX without having to load apps/web's React
+ * tree at request time.
  *
  *   pnpm --filter @inspo/web exec tsx scripts/build-reference-manifest.ts
  *
@@ -12,7 +12,7 @@
  * Writes:
  *   packages/db/src/reference-components.json
  *
- * Shape per row: { id, type, label, macro, note, source }.
+ * Shape per row: { id, type, label, macro, note, source, tokens }.
  *
  * The MCP's get_reference_jsx / find_reference_components tools read
  * this manifest. Self-hosters get it bundled in @inspo/db; no need
@@ -34,7 +34,48 @@ type ManifestEntry = {
   macro: string;
   note: string;
   source: string;
+  tokens: { needs: string[]; aliasBlock: string | null };
 };
+
+/**
+ * How this component's token names map onto the ones a design system
+ * built from scratch will have declared.
+ *
+ * The reference sources use apps/web's alias layer (`--color-bg`,
+ * `--color-fg`, `--color-link`, ...) because that layer is what flips
+ * under the gallery's dark mode; renaming them in the TSX would fix
+ * portability and break theming, which is a bad trade.
+ *
+ * So we publish the mapping instead. A consumer pasting this JSX into
+ * a page whose tokens are named for their *roles* (paper, ink, muted,
+ * rule, accent - the conventional vocabulary) gets a ready-made alias
+ * block and working styles. Without it the component renders with
+ * unstyled links, invisible borders and a transparent background,
+ * silently, because undefined custom properties do not error.
+ */
+const CANONICAL: Record<string, string> = {
+  "--color-bg": "--color-paper",
+  "--color-fg": "--color-ink",
+  "--color-fg-muted": "--color-muted",
+  "--color-border": "--color-rule",
+  "--color-link": "--color-accent",
+};
+
+function tokensFor(source: string): ManifestEntry["tokens"] {
+  const needs = [...new Set(source.match(/--[a-z0-9-]+/g) ?? [])].sort();
+  const mapped = needs.filter((t) => t in CANONICAL);
+  if (mapped.length === 0) return { needs, aliasBlock: null };
+  const lines = mapped.map((t) => `  ${t}: var(${CANONICAL[t]});`);
+  return {
+    needs,
+    aliasBlock: [
+      "/* Paste into :root if your tokens are named for their roles. */",
+      ":root {",
+      ...lines,
+      "}",
+    ].join("\n"),
+  };
+}
 
 function readSource(type: ComponentType, id: string): string {
   // Convention: apps/web/src/components/reference/<type>/<id>.tsx
@@ -64,6 +105,7 @@ function main() {
         macro: r.macro,
         note: r.note,
         source,
+        tokens: tokensFor(source),
       });
       totalSourceBytes += source.length;
       byType[type] = (byType[type] ?? 0) + 1;

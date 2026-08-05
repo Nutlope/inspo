@@ -77,7 +77,9 @@ export function lexicalSearch(
       s.tags.components.join(" "),
       s.tags.vibe.join(" "),
       s.tags.macrostructure ?? "",
-      s.tags.hallmarkTheme ?? "",
+      s.tags.axes
+        ? `${s.tags.axes.paperBand} ${s.tags.axes.displayClass} ${s.tags.axes.accentHue}`
+        : "",
       s.fonts.join(" "),
       s.tech.join(" "),
       s.palette.join(" "),
@@ -224,7 +226,9 @@ function lexicalScore(s: ScreenSummary, tokens: string[]): number {
     s.tags.components.join(" "),
     s.tags.vibe.join(" "),
     s.tags.macrostructure ?? "",
-    s.tags.hallmarkTheme ?? "",
+    s.tags.axes
+      ? `${s.tags.axes.paperBand} ${s.tags.axes.displayClass} ${s.tags.axes.accentHue}`
+      : "",
     s.fonts.join(" "),
     s.tech.join(" "),
     s.palette.join(" "),

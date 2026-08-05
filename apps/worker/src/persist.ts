@@ -58,7 +58,6 @@ export async function persistCapture(
     tech: result.meta.tech,
     mode: result.meta.mode,
     macrostructure: result.tags?.macrostructure ?? null,
-    hallmarkTheme: result.tags?.hallmarkTheme ?? null,
     heroImageKey: heroAsset?.url ?? null,
     fullImageKey: fullAsset?.url ?? null,
     thumbImageKey: thumbAsset?.url ?? null,

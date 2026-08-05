@@ -52,7 +52,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "hero-fullbleed", "case-study-card"],
       vibe: ["luxe", "calm"],
       macrostructure: "specimen",
-      hallmarkTheme: "editorial:atelier",
     },
   },
   {
@@ -77,7 +76,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "stat-strip", "feature-trio", "logo-cloud"],
       vibe: ["technical", "serious"],
       macrostructure: "stat-led",
-      hallmarkTheme: "technical:midnight",
     },
   },
   {
@@ -102,7 +100,6 @@ const _screens: RawFixture[] = [
       components: ["hero-with-cta", "feature-alternating", "testimonial-quote"],
       vibe: ["calm", "warm"],
       macrostructure: "long-document",
-      hallmarkTheme: "editorial:newsprint",
     },
   },
   {
@@ -127,7 +124,6 @@ const _screens: RawFixture[] = [
       components: ["bento-grid", "sticky-nav", "feature-trio"],
       vibe: ["loud", "technical"],
       macrostructure: "bento-grid",
-      hallmarkTheme: "technical:midnight",
     },
   },
   {
@@ -152,7 +148,6 @@ const _screens: RawFixture[] = [
       components: ["hero-fullbleed", "feature-alternating", "footer-compact"],
       vibe: ["luxe", "warm", "calm"],
       macrostructure: "photographic",
-      hallmarkTheme: "soft:salon",
     },
   },
   {
@@ -177,7 +172,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "hero-with-cta", "comparison-table"],
       vibe: ["technical", "raw"],
       macrostructure: "workbench",
-      hallmarkTheme: "technical:terminal",
     },
   },
   {
@@ -202,7 +196,6 @@ const _screens: RawFixture[] = [
       components: ["hero-with-cta", "feature-alternating", "newsletter-signup"],
       vibe: ["soft", "warm", "calm"],
       macrostructure: "feature-stack",
-      hallmarkTheme: "soft:garden",
     },
   },
   {
@@ -227,7 +220,6 @@ const _screens: RawFixture[] = [
       components: ["hero-fullbleed", "feature-alternating", "newsletter-signup"],
       vibe: ["loud", "serious"],
       macrostructure: "manifesto",
-      hallmarkTheme: "bold:manifesto",
     },
   },
   {
@@ -252,7 +244,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "stat-strip", "feature-trio", "blog-grid"],
       vibe: ["technical", "serious", "calm"],
       macrostructure: "index-first",
-      hallmarkTheme: "technical:almanac",
     },
   },
   {
@@ -277,7 +268,6 @@ const _screens: RawFixture[] = [
       components: ["hero-fullbleed", "stat-strip", "marquee-logos"],
       vibe: ["loud", "raw"],
       macrostructure: "marquee-hero",
-      hallmarkTheme: "bold:sport",
     },
   },
   {
@@ -302,7 +292,6 @@ const _screens: RawFixture[] = [
       components: ["hero-with-cta", "feature-alternating", "testimonial-quote"],
       vibe: ["soft", "luxe"],
       macrostructure: "letter",
-      hallmarkTheme: "soft:linen",
     },
   },
   {
@@ -327,7 +316,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "feature-trio", "comparison-table"],
       vibe: ["technical", "calm"],
       macrostructure: "component-playground",
-      hallmarkTheme: "technical:almanac",
     },
   },
   {
@@ -352,7 +340,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "blog-grid"],
       vibe: ["calm", "luxe"],
       macrostructure: "index-first",
-      hallmarkTheme: "editorial:specimen",
     },
   },
   {
@@ -377,7 +364,6 @@ const _screens: RawFixture[] = [
       components: ["hero-fullbleed", "feature-alternating", "footer-compact"],
       vibe: ["luxe", "warm"],
       macrostructure: "photographic",
-      hallmarkTheme: "bold:brutal",
     },
   },
   {
@@ -402,7 +388,6 @@ const _screens: RawFixture[] = [
       components: ["hero-with-cta", "feature-alternating", "faq-accordion"],
       vibe: ["warm", "calm"],
       macrostructure: "conversational-faq",
-      hallmarkTheme: "soft:linen",
     },
   },
   {
@@ -427,7 +412,6 @@ const _screens: RawFixture[] = [
       components: ["sticky-nav", "logo-cloud", "comparison-table", "footer-mega-menu"],
       vibe: ["technical", "loud"],
       macrostructure: "ecosystem-index",
-      hallmarkTheme: "technical:terminal",
     },
   },
 ];

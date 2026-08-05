@@ -47,7 +47,6 @@ type Row = {
     components?: string[];
     vibe?: string[];
     macrostructure?: string;
-    hallmarkTheme?: string;
   };
   designSystem?: { colorWords?: string[]; [k: string]: unknown };
   [k: string]: unknown;
@@ -274,7 +273,6 @@ async function main() {
           components: tags.components,
           vibe: tags.vibe,
           ...(tags.macrostructure ? { macrostructure: tags.macrostructure } : {}),
-          ...(tags.hallmarkTheme ? { hallmarkTheme: tags.hallmarkTheme } : {}),
         };
 
         // Propagate to every row in this site (landing + children).

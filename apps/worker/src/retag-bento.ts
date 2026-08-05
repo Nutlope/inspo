@@ -33,7 +33,6 @@ import {
   VIBES,
   COLOR_WORDS,
   MACROSTRUCTURES,
-  HALLMARK_THEMES,
   isMacrostructure,
 } from "@inspo/taxonomy";
 
@@ -84,11 +83,6 @@ function tagSchema() {
   for (let i = ms.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [ms[i], ms[j]] = [ms[j]!, ms[i]!];
-  }
-  const themes = [...HALLMARK_THEMES];
-  for (let i = themes.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [themes[i], themes[j]] = [themes[j]!, themes[i]!];
   }
   return {
     type: "object",

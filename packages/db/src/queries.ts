@@ -264,8 +264,7 @@ function rowToSummary(row: typeof screensT.$inferSelect, allTags: {
       components: allTags.components,
       vibe: allTags.vibes,
       macrostructure: (row.macrostructure as Macrostructure | null) ?? undefined,
-      hallmarkTheme:
-        (row.hallmarkTheme as ScreenSummary["tags"]["hallmarkTheme"]) ?? undefined,
+      axes: (row.axes as ScreenSummary["tags"]["axes"]) ?? undefined,
     },
     designSystem: {
       typeRamp: row.typeRamp ?? [],
@@ -355,7 +354,7 @@ export async function getAllScreens(
       tech: screensT.tech,
       mode: screensT.mode,
       macrostructure: screensT.macrostructure,
-      hallmarkTheme: screensT.hallmarkTheme,
+      axes: screensT.axes,
       typeRamp: screensT.typeRamp,
       spacingScale: screensT.spacingScale,
       radiusScale: screensT.radiusScale,

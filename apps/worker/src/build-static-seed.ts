@@ -12,6 +12,15 @@
  *   pnpm build:static-seed
  *
  * No Neon hits. No vision-LLM calls. Cheap and idempotent.
+ *
+ * Order matters downstream: `tags.axes` is measured off each row's
+ * LQIP, and the LQIP is attached later by
+ * `add-desktop-variants-to-seed`. So the full sequence is
+ *
+ *   build:static-seed  →  add-desktop-variants  →  backfill:axes
+ *
+ * and running the axes pass first silently falls back to the coarse
+ * paper band inferred from `mode`, which is wrong on ~15% of rows.
  */
 
 import "./env.js";
