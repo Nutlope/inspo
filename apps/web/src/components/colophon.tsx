@@ -41,15 +41,7 @@ export function Colophon() {
             </a>
           </p>
           <p className="pt-3 text-[var(--color-fg)]">
-            Powered by{" "}
-            <a
-              href="https://www.together.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[var(--color-link)]"
-            >
-              Together AI
-            </a>
+            Made by Youssef &amp; Hassan
           </p>
         </div>
       </div>
