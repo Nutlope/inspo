@@ -213,7 +213,7 @@ export default async function MCPPage() {
       <section className="pt-14 pb-16 sm:pt-20">
         <div className="mx-auto max-w-[62rem] text-center">
           <p className="text-meta">For coding agents · free, hosted, no auth</p>
-          <h1 className="font-display mx-auto mt-5 max-w-[20ch] text-balance text-5xl leading-[1] tracking-tight sm:text-6xl">
+          <h1 className="font-display mx-auto mt-5 max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
             Your agent doesn&rsquo;t have taste.{" "}
             <em className="not-italic text-[var(--color-link)]">Lend it some.</em>
           </h1>
@@ -373,7 +373,7 @@ export default async function MCPPage() {
       </section>
 
       {/* Posture */}
-      <section className="border-t rule pt-12 pb-24">
+      <section className="border-t rule pt-12 pb-12">
         <div className="mx-auto max-w-[62rem] text-center">
           <p className="font-display mx-auto max-w-[40ch] text-2xl leading-snug sm:text-3xl">
             Open source, MIT, owned and operated by{" "}

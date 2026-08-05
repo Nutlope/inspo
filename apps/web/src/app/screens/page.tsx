@@ -113,30 +113,24 @@ export default async function ArchivePage({
 
   return (
     <>
-      {/* Header - search-only, airy ──────────────────────────── */}
-      <section className="px-4 pt-8 pb-6 sm:pt-10">
-        <div className="mx-auto max-w-[48rem] space-y-4">
-          <SearchBox defaultValue={params.q ?? ""} />
-          {noUrlMatch && (
-            <p className="mx-auto max-w-[52ch] rounded-card border rule px-4 py-3 text-sm text-[var(--color-fg-muted)]">
-              We don&rsquo;t have{" "}
-              <span className="text-[var(--color-fg)]">{params.q}</span> yet. Want us to grab it?{" "}
-              <Link
-                href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
-                className="text-[var(--color-link)] underline-offset-4 hover:underline"
-              >
-                Extract it →
-              </Link>
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* Body - client filter + grid, full-bleed so the screenshots
-          own the page edge to edge ───────────────────────────── */}
-      <section className="px-2 pb-24 sm:px-3">
+      {/* Body - one row of search + filter pills, then the full-bleed
+          grid so the screenshots own the page edge to edge ────── */}
+      <section className="px-2 pt-6 pb-24 sm:px-3 sm:pt-8">
+        {noUrlMatch && (
+          <p className="mb-4 inline-flex max-w-[62ch] flex-wrap gap-x-1.5 rounded-full border rule px-5 py-2.5 text-sm text-[var(--color-fg-muted)]">
+            We don&rsquo;t have{" "}
+            <span className="text-[var(--color-fg)]">{params.q}</span> yet. Want us to grab it?{" "}
+            <Link
+              href={`/extract?url=${encodeURIComponent(params.q ?? "")}`}
+              className="text-[var(--color-link)] underline-offset-4 hover:underline"
+            >
+              Extract it →
+            </Link>
+          </p>
+        )}
         <ScreensGrid
           screens={compact}
+          searchSlot={<SearchBox defaultValue={params.q ?? ""} />}
           initialFilters={{
             ...params,
             // Parse server-side so the first paint already shows the
@@ -157,15 +151,15 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
       method="GET"
       action="/screens"
       role="search"
-      className="group flex items-center gap-3 rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] px-5 py-3 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+      className="group flex items-center gap-2.5 rounded-full border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] px-4 py-2 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
     >
       <span
         aria-hidden
         className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors duration-200 group-focus-within:text-[var(--color-link)]"
       >
         <svg
-          width="20"
-          height="20"
+          width="17"
+          height="17"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -184,7 +178,7 @@ function SearchBox({ defaultValue }: { defaultValue: string }) {
         defaultValue={defaultValue}
         placeholder="Search styles, brands, fonts - or paste a URL"
         autoComplete="off"
-        className="flex-1 min-w-0 bg-transparent outline-none text-base placeholder:text-[var(--color-fg-muted)]"
+        className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-[var(--color-fg-muted)]"
       />
     </form>
   );

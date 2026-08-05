@@ -86,9 +86,13 @@ type Filters = {
 export function ScreensGrid({
   screens,
   initialFilters,
+  searchSlot,
 }: {
   screens: ScreenSummary[];
   initialFilters: Filters;
+  /** Server-rendered search capsule, laid into the filter row
+   *  (search left, filter pills right). */
+  searchSlot?: React.ReactNode;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -280,25 +284,33 @@ export function ScreensGrid({
 
   return (
     <div>
-      {/* Filter bar ───────────────────────────────────────────── */}
+      {/* Search + filter row - search capsule left, pills right ── */}
       <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-3">
-        <FilterBar
-          groups={groups}
-          active={active}
-          onSelect={setFilter}
-          mobileCount={mobileCount}
-        />
+        {searchSlot && (
+          <div className="w-full min-w-[15rem] flex-1 sm:w-auto sm:max-w-[26rem]">
+            {searchSlot}
+          </div>
+        )}
 
-        <p className="text-meta ml-auto whitespace-nowrap">
-          {filteredCount === totalCount
-            ? `${totalCount.toLocaleString()} sites`
-            : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
-          {pageCount > 1 && (
-            <span className="ml-2 text-[var(--color-fg-muted)]">
-              · page {currentPage} of {pageCount}
-            </span>
-          )}
-        </p>
+        <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-3">
+          <FilterBar
+            groups={groups}
+            active={active}
+            onSelect={setFilter}
+            mobileCount={mobileCount}
+          />
+
+          <p className="text-meta whitespace-nowrap">
+            {filteredCount === totalCount
+              ? `${totalCount.toLocaleString()} sites`
+              : `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()}`}
+            {pageCount > 1 && (
+              <span className="ml-2 text-[var(--color-fg-muted)]">
+                · page {currentPage} of {pageCount}
+              </span>
+            )}
+          </p>
+        </div>
       </div>
 
       {active.hex && (
@@ -428,7 +440,7 @@ function FilterBar({
 
   return (
     <div ref={barRef} className="flex flex-wrap items-center gap-2">
-      {groups.map((g) => {
+      {groups.map((g, gi) => {
         const current = active[g.param] as string | undefined;
         const hasAnyMatches = g.count
           ? g.options.some((o) => g.count!(o) > 0)
@@ -475,7 +487,9 @@ function FilterBar({
             {isOpen && (
               <div
                 role="menu"
-                className="absolute left-0 top-[calc(100%+0.5rem)] z-30 max-h-[19rem] w-max max-w-[min(24rem,80vw)] overflow-y-auto rounded-card border rule bg-[var(--color-bg)] p-3 shadow-[0_18px_44px_-20px_rgba(0,0,0,0.4)]"
+                className={`absolute top-[calc(100%+0.5rem)] z-30 max-h-[19rem] w-max max-w-[min(24rem,80vw)] overflow-y-auto rounded-card border rule bg-[var(--color-bg)] p-3 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.25)] ${
+                  gi < groups.length / 2 ? "left-0" : "right-0"
+                }`}
               >
                 <div className="flex flex-wrap gap-1.5">
                   <OptionPill

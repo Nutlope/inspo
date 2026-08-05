@@ -24,7 +24,7 @@ export default async function HomePage() {
   return (
     <>
       {/* HERO ─ marquee-hero macrostructure ──────────────────── */}
-      <section className="px-6 pt-12 pb-10 sm:px-10 sm:pt-16 sm:pb-12">
+      <section className="px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
             The sites we&rsquo;d{" "}
@@ -77,7 +77,7 @@ export default async function HomePage() {
       <section className="px-2 pb-16 sm:px-3">
         <div className="mx-auto max-w-[110rem] rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] px-6 py-12 text-center sm:px-10 sm:py-16">
           <p className="text-meta">For coding agents</p>
-          <h2 className="font-display mx-auto mt-4 max-w-[24ch] text-balance text-4xl leading-tight tracking-tight sm:text-5xl">
+          <h2 className="font-display mx-auto mt-4 max-w-[24ch] text-balance text-3xl leading-tight tracking-tight sm:text-4xl">
             Your agent doesn&rsquo;t have taste.{" "}
             <em className="not-italic text-[var(--color-link)]">Lend it some.</em>
           </h2>

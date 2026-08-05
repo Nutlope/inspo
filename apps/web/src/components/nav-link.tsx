@@ -40,8 +40,8 @@ export function NavLink({
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={`
-        inline-flex h-9 items-center rounded-full px-3 sm:px-3.5
-        text-sm tracking-[0.01em] transition-colors duration-200
+        inline-flex h-8 items-center rounded-full px-1.5 sm:h-9 sm:px-3.5
+        text-xs sm:text-sm tracking-[0.01em] transition-colors duration-200
         ${
           isActive
             ? "bg-[color-mix(in_oklab,var(--color-link)_12%,transparent)] text-[var(--color-link)]"

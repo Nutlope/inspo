@@ -271,6 +271,51 @@ h2,
   border-color: var(--color-border);
 }
 
+/* Code strings breathe. --font-mono is aliased to Inter Tight, which
+   reads cramped at its default tracking when set as a command or
+   config snippet - open it up slightly everywhere code renders. */
+pre,
+code {
+  letter-spacing: 0.025em;
+}
+
+/* ─── Masthead capsule · scroll-linked shrink ──────────────
+   Where scroll-driven animations are supported (Chrome/Edge/Safari),
+   the capsule narrows continuously over the first 200px of scroll -
+   width, wash, and a feather shadow interpolate WITH the scroll
+   position, so the motion feels attached to the page rather than
+   toggled. The animated properties override the class-based
+   fallback below, which stays in place for Firefox (a 500ms
+   max-width transition flipped by a JS scroll listener). */
+@keyframes masthead-shrink {
+  from {
+    max-width: 110rem;
+    background-color: color-mix(in oklab, var(--color-bg) 70%, transparent);
+    box-shadow: 0 4px 18px -8px rgba(0, 0, 0, 0);
+  }
+  to {
+    max-width: 46rem;
+    background-color: color-mix(in oklab, var(--color-bg) 88%, transparent);
+    box-shadow: 0 4px 18px -8px rgba(0, 0, 0, 0.1);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .masthead-capsule {
+    animation: masthead-shrink linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 200px;
+  }
+}
+/* Scroll timelines ignore animation-duration, so the global
+   reduced-motion override doesn't catch this one - opt out
+   explicitly and let the class-based fallback (instant under
+   reduced motion) take over. */
+@media (prefers-reduced-motion: reduce) {
+  .masthead-capsule {
+    animation: none;
+  }
+}
+
 /* ─── Masthead utility cluster · pill segments ─────────────
    The GitHub-star / ⌘K / theme controls live inside one rounded
    enclosure and read as a single filed unit. Each control is a

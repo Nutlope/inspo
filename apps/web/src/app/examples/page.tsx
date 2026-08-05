@@ -69,39 +69,35 @@ export default function ExamplesPage() {
   const examples = ordered();
 
   return (
-    <div className="mx-auto max-w-[88rem] px-4 sm:px-6">
-      {/* Masthead ─────────────────────────────────────────── */}
-      <section className="grid grid-cols-1 gap-y-8 pt-16 pb-12 sm:pt-24 lg:grid-cols-12 lg:gap-x-10">
-        <div className="lg:col-span-3">
-          <p className="text-meta">Examples</p>
-          <p className="text-meta mt-2 max-w-[22ch] text-[var(--color-fg-muted)]">
+    <>
+      {/* Hero - compact and centered, same voice as the home page ── */}
+      <section className="px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16">
+        <div className="mx-auto max-w-[68rem] text-center">
+          <p className="text-meta">
             {EXAMPLES.length} pages · built with nothing but the Inspo MCP
           </p>
-        </div>
-        <div className="lg:col-span-9">
-          <h1 className="font-display max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
+          <h1 className="font-display mx-auto mt-5 max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
             Made with <em className="not-italic text-[var(--color-link)]">Inspo</em>.
           </h1>
-          <p className="mt-6 max-w-[64ch] text-[var(--color-fg-muted)]">
-            Each page below was built by a coding agent given one sentence
-            and nothing but the Inspo MCP - no design skill, no templates,
-            no component library. Hover any card for the prompt; open it
-            for the references it studied, every tool call it made, and the
-            palette it traced back to real sites.
+          <p className="mx-auto mt-6 max-w-[52ch] text-[var(--color-fg-muted)]">
+            One sentence, one agent, no templates. Hover any card for the
+            prompt; open it for the references, tool calls, and traced
+            palette.
           </p>
         </div>
       </section>
 
-      {/* Gallery ──────────────────────────────────────────── */}
-      <section className="border-t rule pt-10 pb-24">
-        <ul className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Gallery - full-bleed, screenshots only. Brand + prompt live
+          in the hover overlay, not under the tile. ─────────────── */}
+      <section className="px-2 pb-14 sm:px-3">
+        <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] sm:gap-3">
           {examples.map((ex) => (
             <li key={ex.slug}>
               <Link
                 href={`/examples/${ex.slug}`}
-                className="group block focus:outline-none"
+                className="group block rounded-tile focus:outline-none"
               >
-                <div className="relative overflow-hidden border rule transition-[transform,box-shadow] duration-300 ease-out group-hover:-translate-y-0.5 group-hover:shadow-[0_14px_44px_-16px_rgba(0,0,0,0.4)] group-focus-visible:-translate-y-0.5">
+                <div className="relative overflow-hidden rounded-tile border rule transition-transform duration-[280ms] ease-out group-hover:scale-[1.012]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/examples/${ex.slug}/thumb.jpg`}
@@ -111,36 +107,27 @@ export default function ExamplesPage() {
                     decoding="async"
                   />
 
-                  {/* Hover tooltip - prompt + build stats */}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                    <div className="bg-gradient-to-t from-black/85 via-black/55 to-transparent p-4 pt-10">
-                      <p className="max-w-[42ch] text-sm leading-snug text-white">
+                  {/* Hover overlay - brand, prompt, build stats */}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+                    <div className="rounded-b-tile bg-gradient-to-t from-black/85 via-black/55 to-transparent p-4 pt-12">
+                      <p className="font-display text-base leading-tight text-white">
+                        {ex.brand}
+                      </p>
+                      <p className="mt-1.5 max-w-[42ch] text-sm leading-snug text-white/90">
                         “{ex.prompt}”
                       </p>
                       <p className="mt-2 font-mono text-xs tracking-normal text-white/65">
                         {ex.references.length} refs · {ex.mcpCalls.length}+ calls
-                        · {ex.scoreSelf.toFixed(1)}/10
+                        · {ex.scoreSelf.toFixed(1)}/10 · {ex.stack.replace("-", " + ")}
                       </p>
                     </div>
                   </div>
-                </div>
-
-                {/* Caption */}
-                <div className="mt-3 flex items-baseline justify-between gap-3">
-                  <h2 className="font-display text-lg leading-tight">
-                    <span className="transition-colors group-hover:text-[var(--color-link)]">
-                      {ex.brand}
-                    </span>
-                  </h2>
-                  <span className="text-meta whitespace-nowrap text-[var(--color-fg-muted)]">
-                    {ex.stack.replace("-", " + ")} · {ex.mode}
-                  </span>
                 </div>
               </Link>
             </li>
           ))}
         </ul>
       </section>
-    </div>
+    </>
   );
 }
