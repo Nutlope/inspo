@@ -1,5 +1,5 @@
 /**
- * The derivation packet: what a genre actually looks like, measured.
+ * What a genre actually looks like, measured.
  *
  * An agent constructing a design system from scratch has one hard
  * problem, and it is not taste: it is that its own defaults are an
@@ -193,9 +193,9 @@ export function buildEvidence(
  * Distinct sites per macrostructure across the whole archive.
  *
  * Published in `get_filters` so a caller can see, before it commits,
- * that the shape its rotation just landed on has four exemplars and
- * not four hundred. Rotation constraints push callers toward the rare
- * shapes by construction, so this is not a footnote.
+ * that the shape it is about to build has four exemplars and not four
+ * hundred. Nine of the twenty-one shapes have four sites or fewer, so
+ * this is not a footnote.
  */
 export function macrostructureCoverage(
   rows: ScreenSummary[],
@@ -216,25 +216,22 @@ export function macrostructureCoverage(
 }
 
 /**
- * Rank macrostructures by how well the brief matched them, honouring a
- * caller's `avoid` list.
+ * Rank macrostructures by how well the brief matched them.
  *
- * The old behaviour returned one opinionated pick. That is the wrong
- * shape for a caller that has its own rotation constraint: it has to
- * either accept a shape it just used, or discard the recommendation
- * entirely and fly blind. A shortlist with counts lets it satisfy both
- * its constraint and the evidence.
+ * The old behaviour returned one opinionated pick and nothing else,
+ * which gave a caller no way to tell a landslide from a three-way tie.
+ * Returning the runners-up with their hit and exemplar counts makes the
+ * pick auditable: a shape that led by one hit over two others is a
+ * coin toss the caller should get to re-throw.
  */
 export function macrostructureShortlist(
   ranked: ScreenSummary[],
-  avoid: Macrostructure[] = [],
   topN = 3,
 ): {
   slug: Macrostructure;
   label: string;
   hits: number;
   exemplars: number;
-  avoided: boolean;
 }[] {
   const hits = new Map<Macrostructure, number>();
   for (const s of ranked.slice(0, 12)) {
@@ -246,18 +243,13 @@ export function macrostructureShortlist(
     const m = s.tags.macrostructure;
     if (m) exemplarCounts.set(m, (exemplarCounts.get(m) ?? 0) + 1);
   }
-  const avoidSet = new Set(avoid);
   return [...hits.entries()]
     .map(([slug, n]) => ({
       slug,
       label: MACROSTRUCTURE_LABELS[slug],
       hits: n,
       exemplars: exemplarCounts.get(slug) ?? 0,
-      avoided: avoidSet.has(slug),
     }))
-    // Avoided shapes sink but stay visible: a caller that asked to
-    // avoid Bento should still be told Bento was the strongest match,
-    // because that is information about the brief.
-    .sort((a, b) => Number(a.avoided) - Number(b.avoided) || b.hits - a.hits)
+    .sort((a, b) => b.hits - a.hits || b.exemplars - a.exemplars)
     .slice(0, topN);
 }

@@ -1323,7 +1323,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "recommend",
     {
       description:
-        "Orchestrator. One call returns: a macrostructure pick (plus a top-3 shortlist), 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, a palette suggestion, and an `evidence` packet measuring what this genre actually looks like along three axes (paper band / display class / accent hue). Everything needed to start a page. Pass a macrostructure you've already picked, or let the tool pick one. Pass `avoid` if you have a rotation constraint. No LLM call - composes search + find_examples + find_reference_components.",
+        "Orchestrator. One call returns: a macrostructure pick plus the top-3 shortlist it was chosen from, 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, a palette suggestion, and an `evidence` packet measuring what this genre actually looks like along three axes (paper band / display class / accent hue). Everything needed to start a page. Pass a macrostructure you've already picked to skip the pick step. No LLM call - composes search + find_examples + find_reference_components.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -1334,12 +1334,6 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           .optional()
           .describe(
             "Optional: a macrostructure already picked. Skips the pick step.",
-          ),
-        avoid: z
-          .array(flexEnum(MACROSTRUCTURES as unknown as [string, ...string[]]))
-          .optional()
-          .describe(
-            "Optional: macrostructures you must not be given, e.g. the ones you used on your last few builds. They sink to the bottom of the shortlist but stay visible, so you still learn what the brief actually matched.",
           ),
         pageType: flexEnum(PAGE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -1403,8 +1397,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       // Otherwise: take the most common macrostructure among the top
       // 6 ranked results (defends against one outlier dragging the
       // pick toward an unrelated macro).
-      const avoid = ((args.avoid ?? []) as Macrostructure[]).filter(Boolean);
-      const shortlist = macrostructureShortlist(ranked, avoid);
+      const shortlist = macrostructureShortlist(ranked);
 
       let picked: Macrostructure | undefined;
       let rationale: string;
@@ -1412,22 +1405,13 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         picked = args.macrostructure as Macrostructure;
         rationale = `Honouring the macrostructure passed in by the caller.`;
       } else {
-        // The shortlist already sorts avoided shapes to the bottom, so
-        // the head of it is the best match the caller is allowed to
-        // take. Falling back to the ranked top only when the brief
-        // matched nothing with a macrostructure tag at all.
-        const head = shortlist.find((c) => !c.avoided) ?? shortlist[0];
+        // Head of the shortlist, falling back to the ranked top only
+        // when nothing the brief matched carried a macrostructure tag.
+        const head = shortlist[0];
         picked = head?.slug ?? ranked[0]?.tags.macrostructure;
-        if (!picked) {
-          rationale =
-            "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
-        } else if (head?.avoided) {
-          rationale = `Every shape the brief matched is on your avoid list. Returning ${MACROSTRUCTURE_LABELS[picked]} (${head.hits} of the top hits) so you can decide: the brief genuinely wants this shape, and your rotation constraint is the thing that has to give, or bend the brief.`;
-        } else if (avoid.length > 0) {
-          rationale = `Picked ${MACROSTRUCTURE_LABELS[picked]} - strongest match among the shapes not on your avoid list (${head?.hits ?? 0} of the top hits, ${head?.exemplars ?? 0} exemplar sites).`;
-        } else {
-          rationale = `Picked ${MACROSTRUCTURE_LABELS[picked]} - most common macrostructure (${head?.hits ?? 0} of the top hits) among the hybrid-search results for the brief.`;
-        }
+        rationale = picked
+          ? `Picked ${MACROSTRUCTURE_LABELS[picked]} - most common macrostructure (${head?.hits ?? 0} of the top hits) among the hybrid-search results for the brief. The shortlist carries the runners-up with their exemplar counts; take one of those instead if it fits the brief better.`
+          : "No macrostructure could be inferred from the brief; consider passing one explicitly or refining the brief.";
       }
 
       // 5 exemplars OF the picked macro from the ranked pool. Fall
