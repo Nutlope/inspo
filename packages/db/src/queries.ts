@@ -88,60 +88,83 @@ export type ScreenFilter = {
 export type ScreenSort = "latest" | "varied" | "random" | "featured";
 
 /* ─── design-interest scoring (drives the "featured" sort) ───
- * Hand-tuned weights. The point isn't precision - it's pushing the
- * cooler, more distinctive designs to the front and the generic
- * minimal-SaaS long tail toward the back. Adjust freely.
+ *
+ * This used to rank on visual loudness - maximalism and brutalism at 8,
+ * marquee-hero and type-specimen at 9, vibe "loud" at 5 - which is why
+ * the landing grid filled up with anime keyart, full-bleed photography
+ * and one maximalist warning modal. Striking, but they are not the
+ * thing Inspo is for: an agent studying these learns nothing about how
+ * to build a page, because most of them barely are one.
+ *
+ * It now ranks on *page-ness*. Three signals do the work, checked
+ * against known-good references (Stripe, Linear, Ghost, Radix) and
+ * known art pages (ponpon-mania, gm-meme, doodles):
+ *
+ *   components  a real landing page carries nav / hero / features /
+ *               pricing / faq / cta / footer. Art pages carry 1-3.
+ *   description length is the strongest single separator measured:
+ *               ~190 chars on art pages, ~400 on professional ones.
+ *               The tagger simply has less to say about a poster.
+ *   macrostructure  feature-stack and ecosystem-index ARE landing-page
+ *               shapes; photographic and portfolio-grid are galleries.
+ *
+ * Loud work is not banned - Discord and Sentry still rank - it just no
+ * longer wins on loudness alone.
  */
 const MACRO_WEIGHT: Record<string, number> = {
-  "marquee-hero": 9,
-  "type-specimen": 9,
-  photographic: 8,
-  "bento-grid": 8,
+  // Shapes that only exist because a page has sections to organise.
+  "feature-stack": 9,
+  "ecosystem-index": 8,
+  "bento-grid": 7,
   "split-studio": 7,
-  manifesto: 7,
-  specimen: 7,
-  "portfolio-grid": 6,
-  catalogue: 6,
+  "stat-led": 7,
+  workbench: 7,
   "narrative-workflow": 6,
-  "map-diagram": 6,
-  "quote-led": 5,
-  "stat-led": 5,
-  workbench: 5,
-  "component-playground": 5,
-  "ecosystem-index": 5,
-  letter: 4,
+  "component-playground": 6,
+  "conversational-faq": 6,
+  "long-document": 5,
+  "marquee-hero": 5,
   "index-first": 4,
-  "conversational-faq": 3,
-  "feature-stack": 3,
-  "long-document": 2,
+  catalogue: 4,
+  "map-diagram": 4,
+  specimen: 3,
+  "quote-led": 3,
+  manifesto: 2,
+  letter: 2,
+  // Gallery shapes. Often beautiful, rarely instructive about layout.
+  "type-specimen": 1,
+  "portfolio-grid": 1,
+  photographic: 0,
 };
 const STYLE_WEIGHT: Record<string, number> = {
-  maximalism: 8,
-  brutalism: 8,
-  futurist: 7,
-  glassmorphism: 7,
-  claymorphism: 7,
-  editorial: 6,
-  playful: 6,
-  vintage: 6,
   swiss: 5,
-  bento: 5,
-  "dark-mode": 4,
-  neumorphism: 4,
+  minimalism: 4,
+  editorial: 4,
+  bento: 3,
   monochrome: 3,
-  minimalism: 2,
+  "dark-mode": 3,
+  futurist: 2,
+  vintage: 1,
+  neumorphism: 1,
+  glassmorphism: 1,
+  claymorphism: 0,
+  playful: 0,
+  brutalism: 0,
+  // Negative on purpose: this tag is what the anime keyart, the meme
+  // pages and the warning-modal site all share.
+  maximalism: -4,
 };
 const VIBE_WEIGHT: Record<string, number> = {
-  loud: 5,
-  luxe: 5,
-  playful: 4,
-  raw: 4,
-  warm: 3,
-  technical: 2,
-  soft: 2,
-  serious: 2,
-  calm: 1,
+  technical: 4,
+  serious: 3,
+  luxe: 3,
+  warm: 2,
+  calm: 2,
   cold: 1,
+  soft: 1,
+  raw: 0,
+  playful: 0,
+  loud: -3,
 };
 
 function maxWeight(keys: string[], table: Record<string, number>): number {
@@ -159,24 +182,86 @@ function slugJitter(slug: string): number {
 }
 
 export function featuredScore(s: ScreenSummary): number {
+  // A sub-page hero (pricing, docs, an article) is not what the landing
+  // grid is advertising, even when the site itself is excellent.
+  if (s.pageType && s.pageType !== "landing") return -50;
+
   const macro = s.tags.macrostructure ? (MACRO_WEIGHT[s.tags.macrostructure] ?? 2) : 2;
   const style = maxWeight(s.tags.style ?? [], STYLE_WEIGHT);
   const vibe = maxWeight(s.tags.vibe ?? [], VIBE_WEIGHT);
-  // Award bonus: rows captured during the 2026-05 gallery harvest came
-  // from awards / gallery / Lapa etc. - curated-for-cool by definition.
-  // (Safe to feature now that their tile images are uploaded to Blob;
-  // before upload this front-loaded broken thumbnails, so it was held.)
-  const award = s.capturedAt >= "2026-05-27" ? 2 : 0;
-  // Vision quality nudge: strong captures float, weak ones sink a bit.
+
+  // Section count. Caps at 6 so a sprawling ecosystem index cannot buy
+  // the whole front page on breadth alone.
+  const sections = Math.min((s.tags.components ?? []).length, 6) * 2.2;
+
+  // Editorial substance. Measured separator: art pages average ~190
+  // chars of description, professional landing pages ~400. Scaled so
+  // the useful band (150-500) spans about six points.
+  const substance = Math.max(0, Math.min(6, ((s.description ?? "").length - 150) / 58));
+
+  // Award bonus, kept but halved: the 2026-05 gallery harvest is
+  // curated for cool, which is exactly the bias being corrected here.
+  const award = s.capturedAt >= "2026-05-27" ? 1 : 0;
+
   const quality =
     typeof s.qualityScore === "number"
       ? Math.max(-2, Math.min(3, (s.qualityScore - 50) / 12))
       : 0;
-  return macro + style + vibe + award + quality + slugJitter(s.slug);
+
+  // A damaged capture should never front the site.
+  const damaged = (s.qualityFlags ?? []).length > 0 ? -8 : 0;
+
+  return (
+    macro + style + vibe + sections + substance +
+    award + quality + damaged + slugJitter(s.slug)
+  );
 }
 
+/**
+ * Score first, then break up the run.
+ *
+ * Ranking on page-ness alone returns a wall of the same page: 18 of the
+ * first 24 came back `feature-stack`, nearly all of them
+ * minimalism/swiss. Each is a good landing page and the grid was
+ * still boring, which undersells an archive whose whole pitch is
+ * range.
+ *
+ * So the score decides who is eligible and this decides the running
+ * order: walk the ranked list and defer a row whose macrostructure has
+ * already appeared twice in the last six. Deferred rows come back as
+ * soon as the window clears, so nothing is dropped and a strong row
+ * slips a few places at worst.
+ */
 function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
-  return [...list].sort((a, b) => featuredScore(b) - featuredScore(a));
+  const ranked = [...list].sort((a, b) => featuredScore(b) - featuredScore(a));
+
+  const WINDOW = 6;
+  const MAX_PER_WINDOW = 2;
+  const out: ScreenSummary[] = [];
+  const held: ScreenSummary[] = [];
+
+  const recent = () =>
+    out.slice(-WINDOW).map((r) => r.tags.macrostructure ?? "_other");
+
+  const fits = (r: ScreenSummary) => {
+    const m = r.tags.macrostructure ?? "_other";
+    return recent().filter((x) => x === m).length < MAX_PER_WINDOW;
+  };
+
+  for (const row of ranked) {
+    // A held row that now fits goes first: it outscored what follows.
+    for (let i = 0; i < held.length; i++) {
+      if (fits(held[i]!)) {
+        out.push(held.splice(i, 1)[0]!);
+        i--;
+      }
+    }
+    if (fits(row)) out.push(row);
+    else held.push(row);
+  }
+  // Anything still held (a macrostructure with very few peers) tails on
+  // in score order rather than being lost.
+  return [...out, ...held];
 }
 
 function variedOrder(list: ScreenSummary[]): ScreenSummary[] {
