@@ -78,14 +78,66 @@ function webpVariantFor(thumbUrl: string): string | null {
   return thumbUrl.replace(re, "/thumb.384.webp$1");
 }
 
+/**
+ * The edge cache, on the runtimes that have one.
+ *
+ * The LRU above only helps a process that has already served the same
+ * query. The hosted Worker is effectively cold per request, so in
+ * production it almost never hit - measured 728ms cold against 3ms
+ * warm for one `recommend`, a 240x gap that was pure network. This is
+ * how a cold isolate gets the warm number.
+ *
+ * Returns null in Node (stdio, npx), where `caches` does not exist and
+ * the LRU is already the right answer.
+ */
+type EdgeCache = {
+  match(req: Request): Promise<Response | undefined>;
+  put(req: Request, res: Response): Promise<void>;
+};
+function edgeCache(): EdgeCache | null {
+  const c = (globalThis as { caches?: { default?: EdgeCache } }).caches;
+  return c?.default ?? null;
+}
+
 async function fetchOne(url: string): Promise<InlineImage | null> {
   const cached = cacheGet(url);
   if (cached) return cached;
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { signal: ctrl.signal });
-    if (!res.ok) return null;
+    const edge = edgeCache();
+    // Blob URLs carry a `?v=<timestamp>`, so a given URL is immutable
+    // and a hit never needs revalidating.
+    const key = new Request(url, { method: "GET" });
+    let res = edge ? await edge.match(key) : undefined;
+
+    if (!res) {
+      const fresh = await fetch(url, { signal: ctrl.signal });
+      if (!fresh.ok) return null;
+      if (edge) {
+        // Store with an explicit long TTL rather than trusting the
+        // origin's headers: the URL is content-versioned, so the only
+        // way this entry goes stale is the file being replaced under a
+        // new `?v=`, which is a different key.
+        const headers = new Headers(fresh.headers);
+        headers.set("cache-control", "public, max-age=31536000, immutable");
+        try {
+          await edge.put(
+            key,
+            new Response(fresh.clone().body, {
+              status: fresh.status,
+              statusText: fresh.statusText,
+              headers,
+            }),
+          );
+        } catch {
+          /* cache.put rejects some responses (size, headers); the fetch
+             still succeeded, so carry on uncached. */
+        }
+      }
+      res = fresh;
+    }
+
     const len = Number(res.headers.get("content-length") ?? 0);
     if (len > MAX_IMAGE_BYTES) return null;
     const buf = new Uint8Array(await res.arrayBuffer());

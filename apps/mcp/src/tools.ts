@@ -110,10 +110,16 @@ import {
 
 /** How many of `recommend`'s exemplars come back with an inline
  *  thumbnail. All 5 stay in the JSON with their image URLs; only the
- *  top few are inlined, because images are ~85% of this response's
- *  token cost and an agent writing one page studies the first one or
- *  two. Measured: 5 thumbs put a hosted recommend at ~69 KB, 3 at
- *  ~44 KB, text alone at ~10 KB. */
+ *  top few are inlined, and an agent writing one page studies the
+ *  first one or two.
+ *
+ *  This used to say images were ~85% of the response's token cost.
+ *  They are not: a 384px thumb is ~123 tokens, so three of them are
+ *  3.9% of a recommend, against 441 tokens for a single exemplar's
+ *  autopsy. Bytes are not tokens, and the old number was reading the
+ *  KB column. What the cap actually buys is LATENCY - each thumb is a
+ *  network fetch, ~80ms cold - which is a real reason to keep it at 3,
+ *  just not the reason written here before. */
 const RECOMMEND_INLINE_EXEMPLARS = 3;
 
 /** Guidance every Inspo consumer should honour when composing a page's
