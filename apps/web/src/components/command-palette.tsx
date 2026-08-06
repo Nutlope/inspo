@@ -31,7 +31,11 @@ const STATIC_NAV = [
   { label: "Archive", href: "/screens", hint: "Browse every site" },
   { label: "Components", href: "/components", hint: "Heroes, pricing, footers, sliced" },
   { label: "MCP", href: "/mcp", hint: "Install for Claude Code, Cursor, …" },
-  { label: "MCP use cases", href: "/mcp/use-cases", hint: "What an agent does with Inspo" },
+  // /mcp/use-cases is dev-only - it 404s in a production build, so it is
+  // only offered here when one is running locally.
+  ...(process.env.NODE_ENV !== "production"
+    ? [{ label: "MCP use cases", href: "/mcp/use-cases", hint: "What an agent does with Inspo" }]
+    : []),
   { label: "About", href: "/about", hint: "Open source, Together AI" },
 ];
 

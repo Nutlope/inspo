@@ -1,14 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Dateline } from "@/components/dateline";
 import { findScreen } from "@inspo/db";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Dev-only page. The write-ups here are hand-authored illustrations rather
+ * than captured runs, so they go stale silently as the tool surface moves.
+ * Kept in the tree to read and edit locally; 404s everywhere else, and it is
+ * absent from the sitemap and the command palette in a production build.
+ */
+const LOCAL_ONLY = process.env.NODE_ENV !== "production";
+
 export const metadata: Metadata = {
   title: "Use cases · MCP",
   description:
     "Three concrete examples of how the Inspo MCP changes what your coding agent produces - including the design briefs and the screens it pulls.",
+  robots: { index: false, follow: false },
 };
 
 type UseCase = {
@@ -107,6 +117,8 @@ const USE_CASES: UseCase[] = [
 ];
 
 export default async function UseCasesPage() {
+  if (!LOCAL_ONLY) notFound();
+
   // Pull the referenced screens server-side so the use-cases page can
   // link to live detail pages and show real palettes.
   const enriched = await Promise.all(

@@ -1,6 +1,6 @@
 # Inspo MCP
 
-**A curated archive of 870 curated production sites (2,550 captured screens) - queryable over MCP - that gives coding agents visual taste before they write UI.**
+**A curated archive of 767 production sites (2,141 captured screens) - queryable over MCP - that gives coding agents visual taste before they write UI.**
 
 Every result is grounded in a real, shipped site: real fonts, frequency-ranked palettes traced to source, detected tech, named macrostructures, component crops, and - now - **desktop + mobile pairs** so an agent learns responsiveness, not just the desktop look.
 
