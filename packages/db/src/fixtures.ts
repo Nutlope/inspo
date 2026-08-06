@@ -442,11 +442,6 @@ export const collections: Collection[] = [
         span: 3,
       },
       { slug: "herzogdemeuron-com", span: 1 },
-      {
-        slug: "rijksmuseum-nl",
-        editorNote: "The museum name set as a scrim across the masterpiece itself.",
-        span: 2,
-      },
       { slug: "apartamentomagazine-com", span: 1 },
     ],
   },

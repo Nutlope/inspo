@@ -397,10 +397,6 @@ export const EXAMPLES: Example[] = [
         took: "Second pricing exemplar. Contributed the per-seat framing and the practice of putting the plan's one-line rationale directly under its name.",
       },
       {
-        slug: "everlaw-com--pricing",
-        took: "Enterprise-tier reference. Informed the 'Custom / annual' treatment and the compliance-flavoured feature language in the third column.",
-      },
-      {
         slug: "factory-ai--pricing",
         took: "Returned in the same pass; reinforced the 'everything in the previous tier, plus' convention that keeps a three-column table readable.",
       },

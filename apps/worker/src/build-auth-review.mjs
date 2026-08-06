@@ -8,8 +8,9 @@
  * wrong call is obvious at a glance rather than buried in a slug list.
  *
  * Ticking a card and hitting Copy produces the exact line format
- * `delete-sites.ts --from-file` already consumes, so the existing
- * removal path is unchanged.
+ * `delete-screens.ts --from-file` consumes. Note SCREENS, not SITES:
+ * these are page-level slugs, and delete-sites.ts matches on siteSlug,
+ * so feeding it this list would silently delete almost nothing.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -24,8 +25,18 @@ const seed = JSON.parse(
 const pagesPerSite = new Map();
 for (const r of seed) pagesPerSite.set(r.siteSlug, (pagesPerSite.get(r.siteSlug) ?? 0) + 1);
 
+/* The scan is a snapshot; the catalogue moves under it as rows get
+   pruned. Anything already removed is dropped from the page rather
+   than shown as a live candidate - a review list offering to delete
+   what is already gone is worse than useless. */
+const live = new Set(seed.map((r) => r.slug));
+const alreadyRemoved = scan.verdicts.filter(
+  (v) => (v.verdict === "locked" || v.verdict === "partial") && !live.has(v.slug),
+).length;
+
 const flagged = scan.verdicts
   .filter((v) => v.verdict === "locked" || v.verdict === "partial")
+  .filter((v) => live.has(v.slug))
   .map((v) => ({
     ...v,
     sitePages: pagesPerSite.get(v.siteSlug) ?? 1,
@@ -47,6 +58,7 @@ const byType = {};
 for (const f of flagged) byType[f.pageType] = (byType[f.pageType] ?? 0) + 1;
 
 const DATA = JSON.stringify({
+  alreadyRemoved,
   scanned: scan.verdicts.length,
   total: scan.total,
   model: scan.model,
@@ -128,7 +140,7 @@ const html = `<!doctype html>
 <main class="wrap"><div class="grid" id="grid"></div></main>
 
 <footer class="wrap">
- <p class="sub" style="margin-bottom:10px">Removal list — same format <code>delete-sites.ts --from-file</code> takes:</p>
+ <p class="sub" style="margin-bottom:10px">Removal list — feed to <code>delete-screens.ts --from-file</code> (page-level; <code>delete-sites.ts</code> matches whole sites and would ignore most of these):</p>
  <textarea id="out" readonly></textarea>
 </footer>
 
@@ -138,9 +150,10 @@ const marked = new Set(JSON.parse(localStorage.getItem("authwall-marked") || "[]
 let filter = "all";
 
 const st = document.getElementById("summary");
-st.innerHTML = "<tr><th>Scanned</th><th>Open</th><th>Partial</th><th>Locked</th><th>Flagged</th></tr>" +
+st.innerHTML = "<tr><th>Scanned</th><th>Open</th><th>Partial</th><th>Locked</th><th>Already removed</th><th>Still to review</th></tr>" +
  "<tr><td>" + D.scanned + " / " + D.total + "</td><td>" + (D.tally.open||0) + "</td><td>" +
- (D.tally.partial||0) + "</td><td>" + (D.tally.locked||0) + "</td><td><strong>" + D.flagged.length + "</strong></td></tr>";
+ (D.tally.partial||0) + "</td><td>" + (D.tally.locked||0) + "</td><td>" + D.alreadyRemoved +
+ "</td><td><strong>" + D.flagged.length + "</strong></td></tr>";
 
 function shown(){
   return D.flagged.filter(f =>
@@ -202,6 +215,6 @@ render();
 const OUT = resolve(ROOT, "mcp-eval-4/auth-review.html");
 writeFileSync(OUT, html);
 console.log(
-  `wrote ${OUT}\n  scanned ${scan.verdicts.length}/${scan.total} · flagged ${flagged.length}` +
-    ` (locked ${tally.locked ?? 0}, partial ${tally.partial ?? 0})`,
+  `wrote ${OUT}\n  scanned ${scan.verdicts.length}/${scan.total}` +
+    ` · already removed ${alreadyRemoved} · still to review ${flagged.length}`,
 );
