@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N4 Off-canvas · diversification: minimal top row, full
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N4 Off-canvas | diversification= minimal top row, full
  *   nav slides in from the side on demand
- * states: default · open · focus-visible · prefers-reduced-motion
- * contrast: pass (46-50)
+ * states= default · open · focus-visible · prefers-reduced-motion
+ * contrast= pass (46-50)
  */
 
 import { useEffect, useState } from "react";
@@ -39,14 +40,14 @@ export function NavOffCanvas() {
       <header className="border-y rule bg-[var(--color-bg)] px-8 py-5 sm:px-14">
         <div className="flex items-center justify-between">
           <a href="#" className="font-display text-2xl tracking-tight">
-            Inspo<span className="text-[var(--color-link)]">.</span>
+            Inspo<span className="text-[var(--color-accent)]">.</span>
           </a>
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-expanded={open}
             aria-controls="off-canvas-nav"
-            className="text-meta border rule px-3 py-1.5 transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+            className="text-meta border rule px-3 py-1.5 transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             Menu
           </button>
@@ -83,7 +84,7 @@ export function NavOffCanvas() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="text-meta hover:text-[var(--color-link)]"
+              className="text-meta hover:text-[var(--color-accent)]"
             >
               Close ✕
             </button>
@@ -93,7 +94,7 @@ export function NavOffCanvas() {
               <li key={l}>
                 <a
                   href="#"
-                  className="font-display block text-3xl leading-tight tracking-tight transition-colors hover:text-[var(--color-link)]"
+                  className="font-display block text-3xl leading-tight tracking-tight transition-colors hover:text-[var(--color-accent)]"
                 >
                   {l}
                 </a>

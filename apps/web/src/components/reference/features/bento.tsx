@@ -1,8 +1,9 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * macrostructure: Bento Grid · diversification: 6 irregular tiles -
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * macrostructure= Bento Grid | diversification= 6 irregular tiles -
  *   varied spans defeat the 3x2 sameness AI defaults to.
- * states: default · hover (subtle scale)
- * contrast: pass (46-50)
+ * states= default · hover (subtle scale)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -61,7 +62,7 @@ export function FeaturesBento() {
           </div>
           <a
             href="/mcp"
-            className="font-mono text-xs tracking-normal whitespace-nowrap text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+            className="font-mono text-xs tracking-normal whitespace-nowrap text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
           >
             Read the API →
           </a>

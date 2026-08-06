@@ -1,8 +1,9 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft1 Index · diversification: differs from Statement on
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft1 Index | diversification= differs from Statement on
  *   density (high vs airy) + structure (typographic list vs proclamation)
- * states: default + hover (every link gets accent shift)
- * contrast: pass (46-50)
+ * states= default + hover (every link gets accent shift)
+ * contrast= pass (46-50)
  */
 
 import Link from "next/link";
@@ -35,7 +36,7 @@ export function FooterList() {
               <span className="font-mono text-meta text-[var(--color-fg-muted)]">
                 {s.num}
               </span>
-              <span className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--color-link)] sm:text-3xl">
+              <span className="font-display text-2xl leading-tight transition-colors group-hover:text-[var(--color-accent)] sm:text-3xl">
                 {s.label}
               </span>
               <span className="text-meta hidden text-right text-[var(--color-fg-muted)] sm:inline">

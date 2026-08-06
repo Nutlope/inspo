@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Compact list · diversification: Q-only by default, click
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Compact list | diversification= Q-only by default, click
  *   to expand A inline - dense list scanning
- * states: default · hover · open · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover · open · focus-visible
+ * contrast= pass (46-50)
  */
 
 import { useState } from "react";
@@ -45,7 +46,7 @@ export function FaqCompact() {
                 className={`
                   flex w-full items-baseline justify-between gap-6 py-4 text-left
                   transition-colors
-                  ${open ? "text-[var(--color-link)]" : "hover:text-[var(--color-link)]"}
+                  ${open ? "text-[var(--color-accent)]" : "hover:text-[var(--color-accent)]"}
                 `}
               >
                 <p className="font-display text-lg leading-tight sm:text-xl">{row.q}</p>

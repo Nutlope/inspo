@@ -1,8 +1,9 @@
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N7 Marginal · diversification: differs from Inline + Pill
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N7 Marginal | diversification= differs from Inline + Pill
  *   on orientation (vertical left margin vs horizontal top)
- * states: default · hover (link slides right) · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover (link slides right) · focus-visible
+ * contrast= pass (46-50)
  */
 
 /**
@@ -24,14 +25,14 @@ export function NavMarginal() {
     <div className="grid grid-cols-1 gap-x-12 border rule bg-[var(--color-bg)] px-8 py-10 sm:px-14 lg:grid-cols-[14rem_1fr]">
       <aside className="lg:sticky lg:top-8 lg:h-fit">
         <p className="font-display text-2xl tracking-tight">
-          Inspo<span className="text-[var(--color-link)]">.</span>
+          Inspo<span className="text-[var(--color-accent)]">.</span>
         </p>
         <nav aria-label="Primary" className="mt-10 space-y-1">
           {SECTIONS.map((s) => (
             <a
               key={s.n}
               href="#"
-              className="group flex items-baseline gap-3 py-1.5 transition-colors hover:text-[var(--color-link)]"
+              className="group flex items-baseline gap-3 py-1.5 transition-colors hover:text-[var(--color-accent)]"
             >
               <span className="font-mono text-xs tracking-normal text-[var(--color-fg-muted)]">
                 {s.n}

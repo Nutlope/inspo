@@ -1,8 +1,9 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Long copy · diversification: closes the page with a small
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Long copy | diversification= closes the page with a small
  *   essay rather than a link map - manifesto in miniature
- * states: default + hover (single link)
- * contrast: pass (46-50)
+ * states= default + hover (single link)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -35,7 +36,7 @@ export function FooterLongCopy() {
           href="https://github.com/Luffixos/inspo"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[var(--color-fg)] hover:text-[var(--color-link)]"
+          className="text-[var(--color-fg)] hover:text-[var(--color-accent)]"
         >
           Read the source ↗
         </a>

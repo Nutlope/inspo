@@ -1,8 +1,9 @@
-/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: Infinite marquee · diversification: differs from Strip on
+/* inspo-reference-component
+ * type= logo-cloud | genre= editorial | theme= Inspo-paper
+ * archetype= Infinite marquee | diversification= differs from Strip on
  *   motion (auto-scroll vs static) + edge (mask-fade vs hard cut)
- * states: default · animation pauses on hover, on focus, on reduced-motion
- * contrast: pass (46-50)
+ * states= default · animation pauses on hover, on focus, on reduced-motion
+ * contrast= pass (46-50)
  */
 
 /**

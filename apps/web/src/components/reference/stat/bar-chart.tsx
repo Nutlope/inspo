@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: Horizontal bar chart · diversification: numbers shown as
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= Horizontal bar chart | diversification= numbers shown as
  *   relative magnitudes, not isolated figures
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

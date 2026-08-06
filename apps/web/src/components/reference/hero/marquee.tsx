@@ -1,7 +1,8 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * macrostructure: Marquee Hero · nav: N1 minimal · diversification: canonical
- * states: default (static · no interactive states)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * macrostructure= Marquee Hero | nav= N1 minimal | diversification= canonical
+ * states= default (static · no interactive states)
+ * contrast= pass (46-50)
  */
 
 /**

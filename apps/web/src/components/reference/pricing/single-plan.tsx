@@ -1,8 +1,9 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Single plan focus · diversification: one plan, no
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Single plan focus | diversification= one plan, no
  *   comparison - the page IS the plan
- * states: default · hover (button) · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover (button) · focus-visible
+ * contrast= pass (46-50)
  */
 
 /**
@@ -41,7 +42,7 @@ export function PricingSinglePlan() {
           <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {INCLUDED.map((line) => (
               <li key={line} className="flex items-baseline gap-3 text-sm">
-                <span aria-hidden className="text-[var(--color-link)]">·</span>
+                <span aria-hidden className="text-[var(--color-accent)]">·</span>
                 <span>{line}</span>
               </li>
             ))}

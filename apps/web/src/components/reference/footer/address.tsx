@@ -1,8 +1,9 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft8 Address card · diversification: real-world contact info,
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft8 Address card | diversification= real-world contact info,
  *   no link map, no social row
- * states: default + hover
- * contrast: pass (46-50)
+ * states= default + hover
+ * contrast= pass (46-50)
  */
 
 /**
@@ -28,7 +29,7 @@ export function FooterAddress() {
         <div>
           <p className="text-meta">Write</p>
           <p className="mt-4 text-sm leading-relaxed">
-            <a href="mailto:speedyoussef@gmail.com" className="text-[var(--color-fg)] hover:text-[var(--color-link)]">
+            <a href="mailto:speedyoussef@gmail.com" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
               speedyoussef@gmail.com
             </a>
             <br />
@@ -48,7 +49,7 @@ export function FooterAddress() {
         <div>
           <p className="text-meta">Calendar</p>
           <p className="mt-4 text-sm leading-relaxed">
-            <a href="#" className="text-[var(--color-fg)] hover:text-[var(--color-link)]">
+            <a href="#" className="text-[var(--color-fg)] hover:text-[var(--color-accent)]">
               Book 30 minutes ↗
             </a>
           </p>

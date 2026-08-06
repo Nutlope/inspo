@@ -1,8 +1,9 @@
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: FAQ + closing CTA · diversification: ends the FAQ with a
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= FAQ + closing CTA | diversification= ends the FAQ with a
  *   "still asking?" affordance so reads convert
- * states: default + hover
- * contrast: pass (46-50)
+ * states= default + hover
+ * contrast= pass (46-50)
  */
 
 /**
@@ -49,7 +50,7 @@ export function FaqWithCta() {
         </p>
         <a
           href="mailto:speedyoussef@gmail.com"
-          className="font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+          className="font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
         >
           speedyoussef@gmail.com ↗
         </a>

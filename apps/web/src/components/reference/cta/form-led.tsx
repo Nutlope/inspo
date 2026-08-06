@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Form-led · diversification: differs from Banded on
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Form-led | diversification= differs from Banded on
  *   action shape (input vs button) + paper band (paper vs accent)
- * states: default · hover · focus · success (after submit)
- * contrast: pass (46-50)
+ * states= default · hover · focus · success (after submit)
+ * contrast= pass (46-50)
  */
 
 import { useState, type FormEvent } from "react";
@@ -42,17 +43,17 @@ export function CtaFormLed() {
         </p>
 
         {state === "done" ? (
-          <p className="mt-10 border-l-2 border-[var(--color-link)] pl-4 font-mono text-sm">
+          <p className="mt-10 border-l-2 border-[var(--color-accent)] pl-4 font-mono text-sm">
             ✓ You&rsquo;re on the list. Look out for the next issue.
           </p>
         ) : (
           <form
             onSubmit={onSubmit}
-            className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+            className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors duration-200 hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-accent)]"
           >
             <span
               aria-hidden
-              className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors duration-200 group-focus-within:text-[var(--color-link)]"
+              className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors duration-200 group-focus-within:text-[var(--color-accent)]"
             >
               <svg
                 width="20"
@@ -80,7 +81,7 @@ export function CtaFormLed() {
             <button
               type="submit"
               disabled={state === "submitting"}
-              className="shrink-0 font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors duration-200 hover:text-[var(--color-link)] disabled:opacity-50"
+              className="shrink-0 font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors duration-200 hover:text-[var(--color-accent)] disabled:opacity-50"
             >
               {state === "submitting" ? "…" : "Subscribe ↵"}
             </button>

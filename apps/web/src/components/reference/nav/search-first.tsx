@@ -1,8 +1,9 @@
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N9 Search-first · diversification: the search input *is*
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N9 Search-first | diversification= the search input *is*
  *   the nav row - every action funnels through it
- * states: default · hover · focus-within
- * contrast: pass (46-50)
+ * states= default · hover · focus-within
+ * contrast= pass (46-50)
  */
 
 /**
@@ -17,16 +18,16 @@ export function NavSearchFirst() {
     <header className="border-y rule bg-[var(--color-bg)] px-8 py-4 sm:px-14">
       <div className="flex items-center gap-6">
         <a href="#" className="font-display text-2xl tracking-tight shrink-0">
-          Inspo<span className="text-[var(--color-link)]">.</span>
+          Inspo<span className="text-[var(--color-accent)]">.</span>
         </a>
 
         <form
           role="search"
-          className="group flex flex-1 items-center gap-3 px-4 py-2.5 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+          className="group flex flex-1 items-center gap-3 px-4 py-2.5 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-accent)]"
         >
           <span
             aria-hidden
-            className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors group-focus-within:text-[var(--color-link)]"
+            className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors group-focus-within:text-[var(--color-accent)]"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <circle cx="11" cy="11" r="7" />
@@ -42,8 +43,8 @@ export function NavSearchFirst() {
         </form>
 
         <nav className="hidden items-center gap-5 lg:flex">
-          <a href="#" className="text-meta hover:text-[var(--color-link)]">MCP</a>
-          <a href="#" className="text-meta hover:text-[var(--color-link)]">About</a>
+          <a href="#" className="text-meta hover:text-[var(--color-accent)]">MCP</a>
+          <a href="#" className="text-meta hover:text-[var(--color-accent)]">About</a>
         </nav>
       </div>
     </header>

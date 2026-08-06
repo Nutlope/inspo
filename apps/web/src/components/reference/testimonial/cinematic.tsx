@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Cinematic · diversification: differs from Pull-Quote + Mosaic
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Cinematic | diversification= differs from Pull-Quote + Mosaic
  *   on paper band (dark vs light) + attribution style (credit-roll)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

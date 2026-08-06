@@ -1,9 +1,10 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft3 Sitemap · diversification: 4-column link map - the
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft3 Sitemap | diversification= 4-column link map - the
  *   most-AI-recognised footer shape. Included as the canonical
  *   "this is what the field defaults to" reference.
- * states: default + hover
- * contrast: pass (46-50)
+ * states= default + hover
+ * contrast= pass (46-50)
  *
  * Note - Ft3 is the easiest footer to spot as templated. Use
  * only when the site genuinely needs a deep link map (docs root, hub
@@ -41,7 +42,7 @@ export function FooterSitemap() {
                 <li key={l}>
                   <a
                     href="#"
-                    className="text-sm text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+                    className="text-sm text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
                   >
                     {l}
                   </a>

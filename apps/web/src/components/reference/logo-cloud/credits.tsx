@@ -1,8 +1,9 @@
-/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: Credits list · diversification: vertical credit roll -
+/* inspo-reference-component
+ * type= logo-cloud | genre= editorial | theme= Inspo-paper
+ * archetype= Credits list | diversification= vertical credit roll -
  *   reads like a film end-credit, not a trust strip
- * states: default + hover
- * contrast: pass (46-50)
+ * states= default + hover
+ * contrast= pass (46-50)
  */
 
 /**
@@ -33,7 +34,7 @@ export function LogoCloudCredits() {
           {CREDITS.map((c) => (
             <li
               key={c.partner}
-              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 border-b rule py-3 transition-colors hover:text-[var(--color-link)]"
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 border-b rule py-3 transition-colors hover:text-[var(--color-accent)]"
             >
               <p className="font-display text-lg leading-tight">{c.partner}</p>
               <p className="text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">

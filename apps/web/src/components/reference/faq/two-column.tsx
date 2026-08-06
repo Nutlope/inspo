@@ -1,8 +1,9 @@
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Two-column open · diversification: differs from Accordion
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Two-column open | diversification= differs from Accordion
  *   on interaction (none - all open) + structure (Q-left, A-right)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

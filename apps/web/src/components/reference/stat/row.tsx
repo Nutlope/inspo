@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: 4-stat row · diversification: real numbers from the
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= 4-stat row | diversification= real numbers from the
  *   project - no invented metrics (anti-invented-metrics rule)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

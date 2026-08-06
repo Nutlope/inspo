@@ -1,7 +1,8 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: 3-card horizontal · diversification: canonical plan comparison
- * states: default · hover (cards) · focus-visible (buttons)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= 3-card horizontal | diversification= canonical plan comparison
+ * states= default · hover (cards) · focus-visible (buttons)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -71,7 +72,7 @@ export function PricingThreeCard() {
               hover:-translate-y-1
               ${t.accent ? "border-t-2" : ""}
             `}
-            style={t.accent ? { borderTopColor: "var(--color-link)" } : undefined}
+            style={t.accent ? { borderTopColor: "var(--color-accent)" } : undefined}
           >
             <div className="space-y-2 px-6 pt-8">
               <p className="text-meta">{t.name}</p>
@@ -88,7 +89,7 @@ export function PricingThreeCard() {
             <ul className="mt-8 space-y-3 border-t rule px-6 py-6 text-sm">
               {t.features.map((f) => (
                 <li key={f} className="flex items-baseline gap-3">
-                  <span aria-hidden className="text-[var(--color-link)]">
+                  <span aria-hidden className="text-[var(--color-accent)]">
                     ·
                   </span>
                   {f}
@@ -101,7 +102,7 @@ export function PricingThreeCard() {
                 m-6 mt-auto inline-flex items-center justify-between
                 border rule px-4 py-3 font-mono text-xs tracking-normal
                 transition-colors
-                hover:border-[var(--color-link)] hover:text-[var(--color-link)]
+                hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]
               `}
             >
               {t.cta}

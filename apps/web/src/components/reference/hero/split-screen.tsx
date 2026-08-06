@@ -1,8 +1,9 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * archetype: Split-screen · diversification: half typography, half
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * archetype= Split-screen | diversification= half typography, half
  *   atmospheric panel (accent-tinted)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -36,8 +37,8 @@ export function HeroSplitScreen() {
           className="relative min-h-[24rem] lg:min-h-0"
           style={{
             background: `
-              radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--color-link) 30%, var(--color-bg)), transparent 60%),
-              linear-gradient(180deg, color-mix(in oklab, var(--color-link) 8%, var(--color-bg)), var(--color-bg))
+              radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--color-accent) 30%, var(--color-bg)), transparent 60%),
+              linear-gradient(180deg, color-mix(in oklab, var(--color-accent) 8%, var(--color-bg)), var(--color-bg))
             `,
           }}
         >

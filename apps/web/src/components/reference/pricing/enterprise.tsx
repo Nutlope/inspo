@@ -1,8 +1,9 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Enterprise contact · diversification: no prices visible,
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Enterprise contact | diversification= no prices visible,
  *   contact is the action
- * states: default · hover (button) · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover (button) · focus-visible
+ * contrast= pass (46-50)
  */
 
 /**
@@ -37,7 +38,7 @@ export function PricingEnterprise() {
           </p>
           <a
             href="mailto:speedyoussef@gmail.com"
-            className="mt-10 inline-flex h-12 items-center gap-3 border-2 px-7 font-mono text-sm tracking-normal transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+            className="mt-10 inline-flex h-12 items-center gap-3 border-2 px-7 font-mono text-sm tracking-normal transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
             style={{ borderColor: "var(--color-fg)" }}
           >
             Book a 30-min call
@@ -51,7 +52,7 @@ export function PricingEnterprise() {
             <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {COVERED.map((l) => (
                 <li key={l} className="flex items-baseline gap-3 text-sm">
-                  <span aria-hidden className="text-[var(--color-link)]">·</span>
+                  <span aria-hidden className="text-[var(--color-accent)]">·</span>
                   {l}
                 </li>
               ))}

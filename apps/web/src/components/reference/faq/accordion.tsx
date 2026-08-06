@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Accordion · diversification: native <details>, single-open
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Accordion | diversification= native <details>, single-open
  *   behaviour, no JS-only library
- * states: default · hover · open · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover · open · focus-visible
+ * contrast= pass (46-50)
  */
 
 import { useRef } from "react";
@@ -62,7 +63,7 @@ export function FaqAccordion() {
           <li key={q}>
             <details onToggle={onToggle} className="group border-b rule">
               <summary
-                className="flex cursor-pointer items-baseline justify-between gap-6 py-5 transition-colors hover:text-[var(--color-link)] focus-visible:outline-none focus-visible:text-[var(--color-link)]"
+                className="flex cursor-pointer items-baseline justify-between gap-6 py-5 transition-colors hover:text-[var(--color-accent)] focus-visible:outline-none focus-visible:text-[var(--color-accent)]"
               >
                 <p className="font-display text-xl leading-tight sm:text-2xl">
                   {q}

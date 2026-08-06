@@ -1,8 +1,9 @@
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Inverted · diversification: ink ground, paper button -
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Inverted | diversification= ink ground, paper button -
  *   visually loud through contrast, not chrome
- * states: default · hover (button: paper-fill wipe) · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover (button: paper-fill wipe) · focus-visible
+ * contrast= pass (46-50)
  */
 
 /**
@@ -27,11 +28,11 @@ export function CtaInverted() {
 
         <a
           href="#"
-          className="group/btn relative mt-12 inline-flex h-14 items-center gap-3 overflow-hidden bg-[var(--color-paper)] px-8 font-mono text-sm tracking-normal text-[var(--color-ink)] transition-colors duration-300 ease-out hover:text-[var(--color-paper)]"
+          className="group/btn relative mt-12 inline-flex h-14 items-center gap-3 overflow-hidden bg-[var(--color-paper)] px-8 font-mono text-sm tracking-normal text-[var(--color-ink)] transition-colors duration-300 ease-out hover:text-[var(--color-accent-ink)]"
         >
           <span
             aria-hidden
-            className="absolute inset-0 origin-bottom scale-y-0 bg-[var(--color-link)] transition-transform duration-300 ease-out group-hover/btn:scale-y-100"
+            className="absolute inset-0 origin-bottom scale-y-0 bg-[var(--color-accent)] transition-transform duration-300 ease-out group-hover/btn:scale-y-100"
           />
           <span className="relative z-10">Open the archive</span>
           <span

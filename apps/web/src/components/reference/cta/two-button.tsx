@@ -1,8 +1,9 @@
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Two-button · diversification: primary + ghost secondary,
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Two-button | diversification= primary + ghost secondary,
  *   single typography block above
- * states: default · hover · focus-visible (both buttons)
- * contrast: pass (46-50)
+ * states= default · hover · focus-visible (both buttons)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -37,7 +38,7 @@ export function CtaTwoButton() {
           </a>
           <a
             href="#"
-            className="inline-flex h-12 items-center px-7 border rule font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+            className="inline-flex h-12 items-center px-7 border rule font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             Read the docs
           </a>

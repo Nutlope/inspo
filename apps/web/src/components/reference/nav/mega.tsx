@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N3 Mega menu · diversification: hover reveals a panel
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N3 Mega menu | diversification= hover reveals a panel
  *   instead of a flyout - index-page-style sub-nav
- * states: default · hover · focus-within (keyboard)
- * contrast: pass (46-50)
+ * states= default · hover · focus-within (keyboard)
+ * contrast= pass (46-50)
  */
 
 import { useState } from "react";
@@ -40,7 +41,7 @@ export function NavMega() {
     >
       <div className="flex items-center justify-between gap-8 px-8 py-5 sm:px-14">
         <a href="#" className="font-display text-2xl tracking-tight">
-          Inspo<span className="text-[var(--color-link)]">.</span>
+          Inspo<span className="text-[var(--color-accent)]">.</span>
         </a>
         <nav aria-label="Primary" className="flex items-center gap-7">
           {(Object.keys(PANEL) as Array<keyof typeof PANEL>).map((k) => (
@@ -52,16 +53,16 @@ export function NavMega() {
               aria-expanded={open === k}
               className={`
                 text-meta transition-colors
-                ${open === k ? "text-[var(--color-link)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-link)]"}
+                ${open === k ? "text-[var(--color-accent)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-accent)]"}
               `}
             >
               {k}
             </button>
           ))}
-          <a href="#" className="text-meta hover:text-[var(--color-link)]">
+          <a href="#" className="text-meta hover:text-[var(--color-accent)]">
             MCP
           </a>
-          <a href="#" className="text-meta hover:text-[var(--color-link)]">
+          <a href="#" className="text-meta hover:text-[var(--color-accent)]">
             About
           </a>
         </nav>
@@ -76,7 +77,7 @@ export function NavMega() {
               <li key={item.label}>
                 <a
                   href="#"
-                  className="block transition-colors hover:text-[var(--color-link)]"
+                  className="block transition-colors hover:text-[var(--color-accent)]"
                 >
                   <p className="font-display text-lg leading-tight">
                     {item.label}

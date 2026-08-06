@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Single portrait + quote · diversification: one face, one
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Single portrait + quote | diversification= one face, one
  *   voice - the most editorial, the most demanding to use honestly
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Honest copy - both portrait and quote are placeholder slots. The
  * portrait should be a real photograph or hand-drawn illustration

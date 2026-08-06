@@ -1,8 +1,9 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * macrostructure: Stat-Led · diversification: differs from Marquee on
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * macrostructure= Stat-Led | diversification= differs from Marquee on
  *   anchor (numeric vs typographic) + alignment (right-bias vs left-bias)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

@@ -1,8 +1,9 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * archetype: Word-as-art · diversification: single word stretched edge
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * archetype= Word-as-art | diversification= single word stretched edge
  *   to edge, the headline is reduced to its essence
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

@@ -1,8 +1,9 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Tiered bento · diversification: irregular pricing cards,
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Tiered bento | diversification= irregular pricing cards,
  *   different shapes carry different weights
- * states: default · hover (each card lifts)
- * contrast: pass (46-50)
+ * states= default · hover (each card lifts)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -18,7 +19,7 @@ export function PricingTierBento() {
         {/* Featured tier - spans 2x2 */}
         <article
           className="md:col-span-2 md:row-span-2 flex flex-col gap-6 border rule p-8 transition-transform duration-300 ease-out hover:-translate-y-1"
-          style={{ borderTopWidth: "2px", borderTopColor: "var(--color-link)" }}
+          style={{ borderTopWidth: "2px", borderTopColor: "var(--color-accent)" }}
         >
           <p className="text-meta">Together</p>
           <p
@@ -41,7 +42,7 @@ export function PricingTierBento() {
               "Future-proof - Together pays the bill",
             ].map((l) => (
               <li key={l} className="flex items-baseline gap-3">
-                <span aria-hidden className="text-[var(--color-link)]">·</span>
+                <span aria-hidden className="text-[var(--color-accent)]">·</span>
                 {l}
               </li>
             ))}

@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Marquee · diversification: motion-led - the action is the
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Marquee | diversification= motion-led - the action is the
  *   loop, not a button
- * states: default · hover (loop pauses) · prefers-reduced-motion
- * contrast: pass (46-50)
+ * states= default · hover (loop pauses) · prefers-reduced-motion
+ * contrast= pass (46-50)
  */
 
 import { useState } from "react";
@@ -24,7 +25,7 @@ export function CtaMarquee() {
       href="#"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="group block overflow-hidden border-y rule bg-[var(--color-link)] py-8 text-[var(--color-paper)] transition-colors duration-300 hover:bg-[var(--color-fg)]"
+      className="group block overflow-hidden border-y rule bg-[var(--color-accent)] py-8 text-[var(--color-accent-ink)] transition-colors duration-300 hover:bg-[var(--color-fg)]"
       style={{
         maskImage:
           "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",

@@ -1,10 +1,11 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Compare grid · diversification: feature comparison without
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Compare grid | diversification= feature comparison without
  *   naming competitors - categorical "before / with" framing
- * states: default · hover (cells)
- * contrast: pass (46-50)
+ * states= default · hover (cells)
+ * contrast= pass (46-50)
  *
- * Note: comparison tables that name competitors slip into
+ * Note= comparison tables that name competitors slip into
  * marketing slop fast. Frame the comparison categorically (before /
  * with) so the page is honest about *what changes*, not which
  * neighbour you're trying to beat.
@@ -50,7 +51,7 @@ export function FeaturesCompare() {
         <div className="grid grid-cols-[1fr_1fr_1fr] gap-x-6 border-b rule py-3 text-meta">
           <span>Capability</span>
           <span>Before</span>
-          <span className="text-[var(--color-link)]">With Inspo</span>
+          <span className="text-[var(--color-accent)]">With Inspo</span>
         </div>
         {ROWS.map((r) => (
           <div

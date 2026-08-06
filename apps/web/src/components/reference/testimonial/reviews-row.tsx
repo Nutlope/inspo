@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Reviews row · diversification: numeric proof + short
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Reviews row | diversification= numeric proof + short
  *   placeholder quotes - honest about being placeholders
- * states: default + hover
- * contrast: pass (46-50)
+ * states= default + hover
+ * contrast= pass (46-50)
  *
  * Honest copy - star totals and counts are placeholdered ([XX]).
  * Replace with real moderated review numbers before shipping;
@@ -17,7 +18,7 @@ const REVIEWS = [
 
 function Stars({ n }: { n: number }) {
   return (
-    <p className="flex gap-0.5 text-[var(--color-link)]" aria-label={`${n} of 5 stars`}>
+    <p className="flex gap-0.5 text-[var(--color-accent)]" aria-label={`${n} of 5 stars`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <span key={i} aria-hidden className={i < n ? "" : "opacity-25"}>
           ★

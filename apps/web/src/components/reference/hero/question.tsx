@@ -1,7 +1,8 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * archetype: Question · diversification: hero as inquiry, not assertion
- * states: default (static)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * archetype= Question | diversification= hero as inquiry, not assertion
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

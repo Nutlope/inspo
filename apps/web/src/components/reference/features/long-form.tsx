@@ -1,8 +1,9 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Long-form prose · diversification: features described as
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Long-form prose | diversification= features described as
  *   essay paragraphs, not bullet points
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

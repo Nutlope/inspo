@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Press + quote · diversification: a single quote with
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Press + quote | diversification= a single quote with
  *   credibility from a small press wordmark
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Honest copy - quote + outlet are placeholdered. Replace with real
  * verifiable press mentions before shipping; faked press credit is
@@ -27,9 +28,9 @@ export function TestimonialPress() {
           </p>
           <p className="font-display text-2xl">
             [Outlet]
-            <span aria-hidden className="text-[var(--color-link)]">.</span>
+            <span aria-hidden className="text-[var(--color-accent)]">.</span>
           </p>
-          <a href="#" className="text-meta hover:text-[var(--color-link)]">
+          <a href="#" className="text-meta hover:text-[var(--color-accent)]">
             Read the full piece ↗
           </a>
         </figcaption>

@@ -1,8 +1,9 @@
-/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: Single-row strip · diversification: typographic wordmarks,
+/* inspo-reference-component
+ * type= logo-cloud | genre= editorial | theme= Inspo-paper
+ * archetype= Single-row strip | diversification= typographic wordmarks,
  *   no rasterised real logos (no invented "trusted by")
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Note - wordmark placeholders. The text reads "Studio name" + a real
  * Inspo designer credit (drawn from credit field, not invented).

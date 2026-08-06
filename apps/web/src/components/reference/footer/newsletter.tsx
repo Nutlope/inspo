@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft6 Newsletter inline · diversification: subscription is
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft6 Newsletter inline | diversification= subscription is
  *   the primary action, link map collapses to a minimal index
- * states: default · hover · focus · success
- * contrast: pass (46-50)
+ * states= default · hover · focus · success
+ * contrast= pass (46-50)
  */
 
 import { useState, type FormEvent } from "react";
@@ -34,13 +35,13 @@ export function FooterNewsletter() {
           </p>
 
           {done ? (
-            <p className="mt-8 max-w-[40ch] border-l-2 border-[var(--color-link)] pl-4 font-mono text-sm">
+            <p className="mt-8 max-w-[40ch] border-l-2 border-[var(--color-accent)] pl-4 font-mono text-sm">
               ✓ You&rsquo;re on the list.
             </p>
           ) : (
             <form
               onSubmit={onSubmit}
-              className="group mt-8 flex max-w-[32rem] items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+              className="group mt-8 flex max-w-[32rem] items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-accent)]"
             >
               <input
                 type="email"
@@ -50,7 +51,7 @@ export function FooterNewsletter() {
               />
               <button
                 type="submit"
-                className="font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+                className="font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
               >
                 Subscribe ↵
               </button>
@@ -62,7 +63,7 @@ export function FooterNewsletter() {
             <li key={l}>
               <a
                 href="#"
-                className="text-sm text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+                className="text-sm text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
               >
                 {l} ↗
               </a>

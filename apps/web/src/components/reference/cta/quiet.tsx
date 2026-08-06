@@ -1,7 +1,8 @@
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Quiet text-link · diversification: anti-banner CTA
- * states: default + hover (single link)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Quiet text-link | diversification= anti-banner CTA
+ * states= default + hover (single link)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -19,7 +20,7 @@ export function CtaQuiet() {
           style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
         >
           You&rsquo;ve read enough.{" "}
-          <em className="italic text-[var(--color-link)]">
+          <em className="italic text-[var(--color-accent)]">
             Open the archive.
           </em>
         </p>
@@ -29,7 +30,7 @@ export function CtaQuiet() {
         </p>
         <a
           href="#"
-          className="font-mono mt-12 inline-flex items-baseline gap-2 text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+          className="font-mono mt-12 inline-flex items-baseline gap-2 text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
         >
           Enter the archive
           <span aria-hidden>→</span>

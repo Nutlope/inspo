@@ -21,7 +21,7 @@
   --color-ink: #1a1a1a;
   --color-ink-muted: #6b6862;
   --color-rule: #d8d3c8;
-  --color-accent: #c7402f;
+  --color-accent-light: #c7402f;
 
   /* Editorial palette (dark) */
   --color-paper-dark: #0e0e0c;
@@ -30,11 +30,23 @@
   --color-rule-dark: #2a2825;
   --color-accent-dark: #e36b58;
 
-  /* Active surface tokens - flipped by .dark */
+  /* Active surface tokens - flipped by .dark.
+     --color-accent is one of the three names an external design linter
+     keys on by name (with --color-accent-ink and --font-label);
+     everything else it reads off computed CSS. So the ACTIVE accent
+     carries that name and the per-mode literals are the ones that got
+     suffixed, rather than the other way round. --color-link stays as an
+     alias because ~40 call sites use it. */
   --color-bg: var(--color-paper);
   --color-fg: var(--color-ink);
   --color-fg-muted: var(--color-ink-muted);
   --color-border: var(--color-rule);
+  --color-accent: var(--color-accent-light);
+  /* Text sitting ON the accent, never beside it. Its own value rather
+     than an alias of paper: paper against the accent measures 4.44:1,
+     which is under the 4.5 the pairing is judged at. A hair lighter
+     clears it at 4.87:1, and it stays off pure white. */
+  --color-accent-ink: #fdfdfb;
   --color-link: var(--color-accent);
 
   /* Type scale */
@@ -124,7 +136,9 @@
   --color-fg: var(--color-ink-dark);
   --color-fg-muted: var(--color-ink-dark-muted);
   --color-border: var(--color-rule-dark);
-  --color-link: var(--color-accent-dark);
+  --color-accent: var(--color-accent-dark);
+  --color-accent-ink: var(--color-paper-dark);
+  --color-link: var(--color-accent);
 }
 
 /* Base */

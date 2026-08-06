@@ -1,8 +1,9 @@
-/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: 4×3 grid · diversification: fixed grid instead of marquee
+/* inspo-reference-component
+ * type= logo-cloud | genre= editorial | theme= Inspo-paper
+ * archetype= 4×3 grid | diversification= fixed grid instead of marquee
  *   or strip - reads as a contact sheet
- * states: default + hover (cell border accent)
- * contrast: pass (46-50)
+ * states= default + hover (cell border accent)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -37,8 +38,8 @@ export function LogoCloudGrid() {
             className={`
               flex aspect-[3/2] items-center justify-center border rule -ml-px -mt-px p-4
               ${m.style} text-base text-[var(--color-fg)] opacity-70
-              transition-all duration-200
-              hover:opacity-100 hover:border-[var(--color-link)] hover:text-[var(--color-link)]
+              transition-[opacity,border-color,color] duration-200
+              hover:opacity-100 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]
             `}
           >
             {m.mark}

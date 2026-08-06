@@ -1,8 +1,9 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Workbench · diversification: copy left, demo right -
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Workbench | diversification= copy left, demo right -
  *   feature explained alongside its working example
- * states: default · hover (terminal cursor blink kept on)
- * contrast: pass (46-50)
+ * states= default · hover (terminal cursor blink kept on)
+ * contrast= pass (46-50)
  */
 
 /**

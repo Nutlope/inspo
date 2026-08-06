@@ -1,8 +1,9 @@
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Sticky compact · diversification: floats at the foot, low
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Sticky compact | diversification= floats at the foot, low
  *   contrast, single short action
- * states: default · hover · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover · focus-visible
+ * contrast= pass (46-50)
  *
  * Note - this is rendered inline here for the gallery. On a real page
  * the parent would add `position: fixed; bottom: 1rem; inset-inline: 0`
@@ -23,7 +24,7 @@ export function CtaStickyCompact() {
         </div>
         <a
           href="#"
-          className="inline-flex h-10 items-center gap-2 border rule px-5 font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+          className="inline-flex h-10 items-center gap-2 border rule px-5 font-mono text-xs tracking-normal text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
         >
           npx inspo init
           <span aria-hidden>→</span>

@@ -1,8 +1,9 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Numbered triplet · diversification: differs from Bento on
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Numbered triplet | diversification= differs from Bento on
  *   structure (equal columns vs irregular spans) + voice (process vs catalog)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

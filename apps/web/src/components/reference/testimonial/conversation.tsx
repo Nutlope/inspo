@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Conversation snippet · diversification: chat-style exchange,
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Conversation snippet | diversification= chat-style exchange,
  *   not a single quote - invites the reader to overhear
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Honest copy - exchange is placeholdered ([speaker], [message]).
  * Replace with a real attributed conversation before shipping; faked

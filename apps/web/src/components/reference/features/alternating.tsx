@@ -1,8 +1,9 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Alternating rows · diversification: differs from Bento +
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Alternating rows | diversification= differs from Bento +
  *   triplet on structure (vertical scroll vs grid) + density (low vs high)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

@@ -1,8 +1,9 @@
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Numbered list · diversification: differs from Accordion +
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Numbered list | diversification= differs from Accordion +
  *   Two-column on hierarchy (ordered list vs paired columns)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

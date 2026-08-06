@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: Annotated stat · diversification: numbers with editorial
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= Annotated stat | diversification= numbers with editorial
  *   footnotes - invites the reader to ask "according to what?"
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Real numbers - every figure is a measured catalogue value; the
  * footnotes name the method. the anti-invented-metrics rule:
@@ -40,7 +41,7 @@ export function StatAnnotated() {
               style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
             >
               {s.value}
-              <sup className="font-mono text-base text-[var(--color-link)] align-super">
+              <sup className="font-mono text-base text-[var(--color-accent)] align-super">
                 {String.fromCharCode(0xb9 + i)}
               </sup>
             </p>

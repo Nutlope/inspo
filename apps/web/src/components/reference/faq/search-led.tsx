@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Search-led · diversification: filter input above an open
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Search-led | diversification= filter input above an open
  *   list - search beats accordion when the FAQ runs long
- * states: default · focus · filtered · empty
- * contrast: pass (46-50)
+ * states= default · focus · filtered · empty
+ * contrast= pass (46-50)
  */
 
 import { useMemo, useState } from "react";
@@ -46,11 +47,11 @@ export function FaqSearchLed() {
 
       <form
         role="search"
-        className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-link)]"
+        className="group mt-10 flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)]/60 transition-colors hover:border-[var(--color-fg)]/40 focus-within:border-[var(--color-accent)]"
       >
         <span
           aria-hidden
-          className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors group-focus-within:text-[var(--color-link)]"
+          className="shrink-0 inline-flex text-[var(--color-fg-muted)] transition-colors group-focus-within:text-[var(--color-accent)]"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <circle cx="11" cy="11" r="7" />

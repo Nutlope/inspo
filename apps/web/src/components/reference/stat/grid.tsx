@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: 6-stat grid · diversification: 3×2 grid of figures with
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= 6-stat grid | diversification= 3×2 grid of figures with
  *   editorial captions - denser than the 4-stat row
- * states: default + hover (cell highlight)
- * contrast: pass (46-50)
+ * states= default + hover (cell highlight)
+ * contrast= pass (46-50)
  */
 
 /**

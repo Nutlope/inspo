@@ -1,7 +1,8 @@
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N1 Inline minimal · diversification: canonical wordmark + links
- * states: default · hover (link colour) · focus-visible (outline)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N1 Inline minimal | diversification= canonical wordmark + links
+ * states= default · hover (link colour) · focus-visible (outline)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -17,7 +18,7 @@ export function NavInline() {
           href="#"
           className="font-display text-2xl tracking-tight transition-opacity hover:opacity-70"
         >
-          Inspo<span className="text-[var(--color-link)]">.</span>
+          Inspo<span className="text-[var(--color-accent)]">.</span>
         </a>
 
         <nav aria-label="Primary" className="flex items-center gap-5 sm:gap-7">
@@ -25,7 +26,7 @@ export function NavInline() {
             <a
               key={l}
               href="#"
-              className="text-meta transition-colors hover:text-[var(--color-link)]"
+              className="text-meta transition-colors hover:text-[var(--color-accent)]"
             >
               {l}
             </a>
@@ -34,7 +35,7 @@ export function NavInline() {
             <button
               type="button"
               aria-label="Open command palette"
-              className="inline-flex h-7 items-center justify-center gap-0.5 border rule px-2 font-mono text-xs leading-none tracking-normal text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+              className="inline-flex h-7 items-center justify-center gap-0.5 border rule px-2 font-mono text-xs leading-none tracking-normal text-[var(--color-fg-muted)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
             >
               ⌘K
             </button>

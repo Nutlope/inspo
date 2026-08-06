@@ -1,8 +1,9 @@
-/* Inspo · component: nav · genre: editorial · theme: Inspo-paper
- * archetype: N5 Floating pill · diversification: differs from N1 Inline
+/* inspo-reference-component
+ * type= nav | genre= editorial | theme= Inspo-paper
+ * archetype= N5 Floating pill | diversification= differs from N1 Inline
  *   on shape (centred pill vs full-width row) + edge (floating vs banded)
- * states: default · hover (link colour) · focus-visible (ring)
- * contrast: pass (46-50)
+ * states= default · hover (link colour) · focus-visible (ring)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -19,7 +20,7 @@ export function NavFloatingPill() {
           href="#"
           className="font-display rounded-full px-4 py-1.5 text-lg leading-none tracking-tight transition-opacity hover:opacity-70"
         >
-          Inspo<span className="text-[var(--color-link)]">.</span>
+          Inspo<span className="text-[var(--color-accent)]">.</span>
         </a>
         <span aria-hidden className="h-4 w-px bg-[var(--color-border)]" />
         <nav aria-label="Primary" className="flex items-center gap-1">

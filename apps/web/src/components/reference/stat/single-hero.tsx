@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: Single hero stat · diversification: differs from Row on
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= Single hero stat | diversification= differs from Row on
  *   count (1 vs 4) + framing (a single fact carried by typography)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

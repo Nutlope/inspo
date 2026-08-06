@@ -1,8 +1,9 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Tabular comparison · diversification: differs from 3-card +
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Tabular comparison | diversification= differs from 3-card +
  *   toggle on structure (table vs cards) + density (high vs medium)
- * states: default · hover (rows lift)
- * contrast: pass (46-50)
+ * states= default · hover (rows lift)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -53,7 +54,7 @@ export function PricingTable() {
                   <span
                     className={
                       i === 1
-                        ? "text-[var(--color-link)]"
+                        ? "text-[var(--color-accent)]"
                         : "text-[var(--color-fg)]"
                     }
                   >

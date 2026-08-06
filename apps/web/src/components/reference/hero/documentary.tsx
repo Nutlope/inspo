@@ -1,8 +1,9 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * archetype: Documentary · diversification: caption-led hero, credit
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * archetype= Documentary | diversification= caption-led hero, credit
  *   block as marginalia
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**

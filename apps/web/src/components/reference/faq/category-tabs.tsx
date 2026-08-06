@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: faq · genre: editorial · theme: Inspo-paper
- * archetype: Category tabs · diversification: questions sliced by
+/* inspo-reference-component
+ * type= faq | genre= editorial | theme= Inspo-paper
+ * archetype= Category tabs | diversification= questions sliced by
  *   audience or topic - useful when the FAQ serves multiple roles
- * states: default · hover · active (tab) · focus-visible
- * contrast: pass (46-50)
+ * states= default · hover · active (tab) · focus-visible
+ * contrast= pass (46-50)
  */
 
 import { useState } from "react";
@@ -55,14 +56,14 @@ export function FaqCategoryTabs() {
             className={`
               text-meta relative pb-2
               transition-colors
-              ${active === k ? "text-[var(--color-link)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"}
+              ${active === k ? "text-[var(--color-accent)]" : "text-[var(--color-fg-muted)] hover:text-[var(--color-fg)]"}
             `}
           >
             {k}
             <span
               aria-hidden
               className={`
-                pointer-events-none absolute inset-x-0 -bottom-px h-px bg-[var(--color-link)]
+                pointer-events-none absolute inset-x-0 -bottom-px h-px bg-[var(--color-accent)]
                 transition-transform duration-200 origin-left
                 ${active === k ? "scale-x-100" : "scale-x-0"}
               `}

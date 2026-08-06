@@ -1,10 +1,11 @@
-/* Inspo · component: features · genre: editorial · theme: Inspo-paper
- * archetype: Icon trio · diversification: three features each carrying
+/* inspo-reference-component
+ * type= features | genre= editorial | theme= Inspo-paper
+ * archetype= Icon trio | diversification= three features each carrying
  *   a typographic mark - no SVG iconography
- * states: default + hover (mark colour shift)
- * contrast: pass (46-50)
+ * states= default + hover (mark colour shift)
+ * contrast= pass (46-50)
  *
- * Note: rotational SVG iconography (rounded squares + line
+ * Note= rotational SVG iconography (rounded squares + line
  * icons) is one of the strongest AI fingerprints. The typographic
  * marks here (a single mono letter inside a hairline square) carry
  * the same hierarchy without the slop tell.
@@ -43,7 +44,7 @@ export function FeaturesIconTrio() {
         {ITEMS.map((i) => (
           <li key={i.mark} className="group">
             <div
-              className="inline-flex h-14 w-14 items-center justify-center border-2 rule font-display text-3xl transition-colors group-hover:border-[var(--color-link)] group-hover:text-[var(--color-link)]"
+              className="inline-flex h-14 w-14 items-center justify-center border-2 rule font-display text-3xl transition-colors group-hover:border-[var(--color-accent)] group-hover:text-[var(--color-accent)]"
             >
               {i.mark}
             </div>

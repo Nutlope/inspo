@@ -1,8 +1,9 @@
-/* Inspo · component: hero · genre: editorial · theme: Inspo-paper
- * macrostructure: Manifesto · diversification: differs from Stat-Led on
+/* inspo-reference-component
+ * type= hero | genre= editorial | theme= Inspo-paper
+ * macrostructure= Manifesto | diversification= differs from Stat-Led on
  *   paper band (dark vs light) + accent application (bleed vs corner)
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -27,7 +28,7 @@ export function HeroManifesto() {
         style={{ fontSize: "clamp(2.5rem, 7vw, 5.25rem)" }}
       >
         Your agent doesn&rsquo;t have taste.{" "}
-        <span className="text-[var(--color-link)]">
+        <span className="text-[var(--color-accent)]">
           We lend it some.
         </span>
       </p>

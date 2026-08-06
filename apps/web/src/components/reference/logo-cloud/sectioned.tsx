@@ -1,8 +1,9 @@
-/* Inspo · component: logo-cloud · genre: editorial · theme: Inspo-paper
- * archetype: Sectioned · diversification: logos grouped by relationship
+/* inspo-reference-component
+ * type= logo-cloud | genre= editorial | theme= Inspo-paper
+ * archetype= Sectioned | diversification= logos grouped by relationship
  *   instead of strewn in one row
- * states: default + hover (logo opacity ↑)
- * contrast: pass (46-50)
+ * states= default + hover (logo opacity ↑)
+ * contrast= pass (46-50)
  *
  * Honest framing - group labels are real-world ("Partners",
  * "Featured in") instead of invented credibility tiers. Logos are

@@ -1,8 +1,9 @@
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Per-use · diversification: line-item pricing instead of
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Per-use | diversification= line-item pricing instead of
  *   tiered plans - pay for what you use
- * states: default + hover (rows)
- * contrast: pass (46-50)
+ * states= default + hover (rows)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -41,7 +42,7 @@ export function PricingPerUse() {
           {LINES.map((l) => (
             <li
               key={l.label}
-              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 border-b rule py-5 transition-colors hover:text-[var(--color-link)]"
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 border-b rule py-5 transition-colors hover:text-[var(--color-accent)]"
             >
               <div>
                 <p className="font-display text-xl leading-tight">{l.label}</p>

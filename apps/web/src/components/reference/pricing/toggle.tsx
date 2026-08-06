@@ -1,10 +1,11 @@
 "use client";
 
-/* Inspo · component: pricing · genre: editorial · theme: Inspo-paper
- * archetype: Toggle + 2-plan · diversification: differs from 3-card on
+/* inspo-reference-component
+ * type= pricing | genre= editorial | theme= Inspo-paper
+ * archetype= Toggle + 2-plan | diversification= differs from 3-card on
  *   density (2 vs 3) + interaction (billing cadence toggle)
- * states: default · hover · focus-visible · checked (toggle)
- * contrast: pass (46-50)
+ * states= default · hover · focus-visible · checked (toggle)
+ * contrast= pass (46-50)
  */
 
 import { useState } from "react";
@@ -78,7 +79,7 @@ export function PricingToggle() {
               ${p.accent ? "border-t-2" : ""}
             `}
             style={
-              p.accent ? { borderTopColor: "var(--color-link)" } : undefined
+              p.accent ? { borderTopColor: "var(--color-accent)" } : undefined
             }
           >
             <p className="text-meta">{p.name}</p>
@@ -94,7 +95,7 @@ export function PricingToggle() {
             <ul className="mt-8 flex-1 space-y-3 border-t rule pt-6 text-sm">
               {p.bullets.map((b) => (
                 <li key={b} className="flex items-baseline gap-3">
-                  <span aria-hidden className="text-[var(--color-link)]">
+                  <span aria-hidden className="text-[var(--color-accent)]">
                     ·
                   </span>
                   {b}
@@ -108,8 +109,8 @@ export function PricingToggle() {
                 transition-colors
                 ${
                   p.accent
-                    ? "bg-[var(--color-fg)] text-[var(--color-bg)] hover:bg-[var(--color-link)]"
-                    : "hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+                    ? "bg-[var(--color-fg)] text-[var(--color-bg)] hover:bg-[var(--color-accent)] hover:text-[var(--color-accent-ink)]"
+                    : "hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
                 }
               `}
             >

@@ -1,8 +1,9 @@
-/* Inspo · component: cta · genre: editorial · theme: Inspo-paper
- * archetype: Banded · diversification: differs from Quiet on paper band
+/* inspo-reference-component
+ * type= cta | genre= editorial | theme= Inspo-paper
+ * archetype= Banded | diversification= differs from Quiet on paper band
  *   (accent-bleed vs paper) + voice (declarative vs invitational)
- * states: default + hover (button: ink wipe), focus-visible (ring)
- * contrast: pass (46-50)
+ * states= default + hover (button: ink wipe), focus-visible (ring)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -14,7 +15,7 @@
 export function CtaBanded() {
   return (
     <section
-      className="relative overflow-hidden border-y rule bg-[var(--color-link)] text-[var(--color-paper)] px-8 py-20 sm:px-14 sm:py-24"
+      className="relative overflow-hidden border-y rule bg-[var(--color-accent)] text-[var(--color-accent-ink)] px-8 py-20 sm:px-14 sm:py-24"
     >
       <div className="grid grid-cols-1 items-center gap-x-10 gap-y-8 lg:grid-cols-12">
         <div className="lg:col-span-8">
@@ -38,7 +39,7 @@ export function CtaBanded() {
             className="group/btn relative inline-flex h-12 items-center gap-3 overflow-hidden border-2 px-7 font-mono text-sm tracking-normal transition-colors duration-300 ease-out"
             style={{
               borderColor: "var(--color-paper)",
-              color: "var(--color-link)",
+              color: "var(--color-accent)",
               backgroundColor: "var(--color-paper)",
             }}
           >

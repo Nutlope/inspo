@@ -1,8 +1,9 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft5 Statement · diversification: differs from Colophon on
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft5 Statement | diversification= differs from Colophon on
  *   density (high-air vs three-column) + voice (proclamation vs metadata)
- * states: default + hover (single link)
- * contrast: pass (46-50)
+ * states= default + hover (single link)
+ * contrast= pass (46-50)
  */
 
 /**
@@ -19,7 +20,7 @@ export function FooterStatement() {
           style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
         >
           A reference library, not a template marketplace.{" "}
-          <em className="italic text-[var(--color-link)]">
+          <em className="italic text-[var(--color-accent)]">
             Study, don&rsquo;t copy.
           </em>
         </p>
@@ -28,7 +29,7 @@ export function FooterStatement() {
           <span>Together AI · MIT · {new Date().getFullYear()}</span>
           <a
             href="#"
-            className="text-[var(--color-fg)] transition-colors hover:text-[var(--color-link)]"
+            className="text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
           >
             Read the manifesto ↗
           </a>

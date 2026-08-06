@@ -1,7 +1,8 @@
-/* Inspo · component: footer · genre: editorial · theme: Inspo-paper
- * archetype: Ft7 Colophon · diversification: magazine-style credit block
- * states: default + hover (links)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= footer | genre= editorial | theme= Inspo-paper
+ * archetype= Ft7 Colophon | diversification= magazine-style credit block
+ * states= default + hover (links)
+ * contrast= pass (46-50)
  */
 
 /**

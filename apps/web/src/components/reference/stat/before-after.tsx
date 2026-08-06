@@ -1,8 +1,9 @@
-/* Inspo · component: stat · genre: editorial · theme: Inspo-paper
- * archetype: Before / after · diversification: two stats with an
+/* inspo-reference-component
+ * type= stat | genre= editorial | theme= Inspo-paper
+ * archetype= Before / after | diversification= two stats with an
  *   arrow between them - shows movement, not just magnitude
- * states: default (static)
- * contrast: pass (46-50)
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Real numbers - both figures reflect actual project state (rejection
  * rate before/after the banner-killer landed). No
@@ -36,7 +37,7 @@ export function StatBeforeAfter() {
 
         <span
           aria-hidden
-          className="font-display text-4xl text-[var(--color-link)] sm:text-6xl text-center"
+          className="font-display text-4xl text-[var(--color-accent)] sm:text-6xl text-center"
         >
           →
         </span>
@@ -44,7 +45,7 @@ export function StatBeforeAfter() {
         <div>
           <p className="text-meta">After · v2 dismiss</p>
           <p
-            className="font-display mt-3 leading-none tracking-tight tabular-nums text-[var(--color-link)]"
+            className="font-display mt-3 leading-none tracking-tight tabular-nums text-[var(--color-accent)]"
             style={{ fontSize: "clamp(4rem, 9vw, 7rem)" }}
           >
             &lt;2%

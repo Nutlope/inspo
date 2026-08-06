@@ -1,7 +1,8 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Pull quote · diversification: single voice, generous air
- * states: default (static)
- * contrast: pass (46-50)
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Pull quote | diversification= single voice, generous air
+ * states= default (static)
+ * contrast= pass (46-50)
  *
  * Note - placeholder voice, marked as such. No invented
  * customer metrics; the quote here is a generic about-craft placeholder
@@ -16,10 +17,10 @@ export function TestimonialPullQuote() {
           className="font-display leading-[1.05] text-balance"
           style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
         >
-          <span aria-hidden className="text-[var(--color-link)]">&ldquo;</span>
+          <span aria-hidden className="text-[var(--color-accent)]">&ldquo;</span>
           The reference layer I wish I&rsquo;d had when I was learning
           this craft.
-          <span aria-hidden className="text-[var(--color-link)]">&rdquo;</span>
+          <span aria-hidden className="text-[var(--color-accent)]">&rdquo;</span>
         </p>
 
         <figcaption className="mt-12 flex items-center justify-center gap-3 text-meta normal-case tracking-normal text-[var(--color-fg-muted)]">

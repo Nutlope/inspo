@@ -1,8 +1,9 @@
-/* Inspo · component: testimonial · genre: editorial · theme: Inspo-paper
- * archetype: Mosaic · diversification: differs from Pull-Quote on
+/* inspo-reference-component
+ * type= testimonial | genre= editorial | theme= Inspo-paper
+ * archetype= Mosaic | diversification= differs from Pull-Quote on
  *   density (4 voices vs 1) + composition (grid vs hero)
- * states: default · hover (subtle lift)
- * contrast: pass (46-50)
+ * states= default · hover (subtle lift)
+ * contrast= pass (46-50)
  *
  * Note - quotes are placeholder slots. Replace with real attributed
  * customer voices before shipping; No invented

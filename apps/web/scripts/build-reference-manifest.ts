@@ -41,24 +41,25 @@ type ManifestEntry = {
  * How this component's token names map onto the ones a design system
  * built from scratch will have declared.
  *
- * The reference sources use apps/web's alias layer (`--color-bg`,
- * `--color-fg`, `--color-link`, ...) because that layer is what flips
- * under the gallery's dark mode; renaming them in the TSX would fix
- * portability and break theming, which is a bad trade.
+ * `--color-accent` and `--color-accent-ink` are deliberately absent
+ * from this map: the components emit those two under their canonical
+ * names already, because they are the only colour tokens an external
+ * design linter resolves BY NAME (everything else it reads off
+ * computed CSS). Renaming the rest would buy nothing and would cost
+ * the gallery its dark mode, since `--color-bg`/`--color-fg` are the
+ * layer that flips.
  *
- * So we publish the mapping instead. A consumer pasting this JSX into
- * a page whose tokens are named for their *roles* (paper, ink, muted,
- * rule, accent - the conventional vocabulary) gets a ready-made alias
- * block and working styles. Without it the component renders with
- * unstyled links, invisible borders and a transparent background,
- * silently, because undefined custom properties do not error.
+ * The remaining four are published as a paste-ready alias block. A
+ * consumer dropping this JSX into a page with role-named tokens gets
+ * working styles; without it the component renders with invisible
+ * borders and a transparent background, silently, because an
+ * undefined custom property is not an error.
  */
 const CANONICAL: Record<string, string> = {
   "--color-bg": "--color-paper",
   "--color-fg": "--color-ink",
   "--color-fg-muted": "--color-muted",
   "--color-border": "--color-rule",
-  "--color-link": "--color-accent",
 };
 
 function tokensFor(source: string): ManifestEntry["tokens"] {
