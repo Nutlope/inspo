@@ -502,7 +502,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     async ({ slug }) => {
       const s = await findScreen(slug);
       if (!s) return asTextContent(await unknownSlug(slug));
-      const formatted = formatScreen(s);
+      // The drill-in: one row, asked for by slug, so it carries every
+      // asset role rather than the list shape's one-per-role.
+      const formatted = formatScreen(s, undefined, { allAssets: true });
       return withImages(
         formatted,
         [formatted.thumb],
@@ -1420,7 +1422,24 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         ? ranked.filter((s) => s.tags.macrostructure === picked).slice(0, 5)
         : ranked.slice(0, 5);
       if (exemplars.length === 0) exemplars = ranked.slice(0, 5);
-      const exemplarsFmt = exemplars.map((s) => fmt(args.detail, args.maxTokens)(s));
+
+      /* An autopsy is ~440 tokens and there are five exemplars, so the
+         fold-by-fold prose was a quarter of this whole response - while
+         an agent writing one page studies the top one or two and skims
+         the rest. (That is the same reasoning already used to cap
+         inline thumbnails, applied to the field that is 6x their cost.)
+         The top two keep theirs; the rest keep `northstar`, the
+         one-line soul of the design, and can be drilled into by slug. */
+      const AUTOPSY_DEPTH = 2;
+      const exemplarsFmt = exemplars.map((s, i) => {
+        const row = fmt(args.detail, args.maxTokens)(s) as Record<string, unknown>;
+        if (i >= AUTOPSY_DEPTH && "autopsy" in row) {
+          delete row.autopsy;
+          delete row.description;
+          row.detail = `northstar only - call get_screen({slug:"${s.slug}"}) for the fold-by-fold autopsy`;
+        }
+        return row;
+      });
 
       // Canonical reference component(s) that match the picked
       // macrostructure. Substring-match on the first word of the
@@ -1456,12 +1475,33 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         })
         .slice(0, 3);
 
+      /* Full JSX for the first match only. Three sources measured at
+         2,126 tokens - a quarter of the response - and the median
+         component is 579 tokens with the largest at 1,204. The head is
+         a hero when one matched, which is the piece that actually
+         defines page shape; the rest arrive as a name plus a note, and
+         `get_reference_jsx` fetches whichever the agent decides it
+         wants. Same scan-then-fetch shape `find_reference_components`
+         already uses when called without a type filter. */
+      const referenceComponents = referencePicks.map((r, i) =>
+        i === 0
+          ? r
+          : {
+              id: r.id,
+              type: r.type,
+              label: r.label,
+              macro: r.macro,
+              note: r.note,
+              source: `get_reference_jsx({type:"${r.type}",id:"${r.id}"})`,
+            },
+      );
+
       // Palette suggestion - top exemplar's palette is the safest
       // signal. If somehow empty, fall back to the second.
       const palette =
-        (exemplarsFmt[0]?.palette?.length ?? 0) > 0
-          ? exemplarsFmt[0]!.palette
-          : (exemplarsFmt[1]?.palette ?? []);
+        ((exemplarsFmt[0]?.palette as string[] | undefined)?.length ?? 0) > 0
+          ? (exemplarsFmt[0]!.palette as string[])
+          : ((exemplarsFmt[1]?.palette as string[] | undefined) ?? []);
 
       const inline = ctx.inlineImages();
       const conciseEx = args.detail ? args.detail === "concise" : ctx.concise();
@@ -1503,12 +1543,12 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           // consensus is the gravity, not the target.
           evidence: buildEvidence(ranked, { concise: conciseEx }),
           exemplars: exemplarsFmt,
-          referenceComponents: referencePicks,
+          referenceComponents,
           paletteSuggestion: palette,
           heroGuidance: HERO_GUIDANCE,
           tip:
             referencePicks.length > 0
-              ? `Read the referenceComponents source(s) for the canonical structure that embodies this macrostructure. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief. Then honour heroGuidance: compose the hero to fit the first viewport.`
+              ? `referenceComponents[0] carries full JSX for the canonical structure that embodies this macrostructure; the rest list a get_reference_jsx call to fetch on demand. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief - the first two carry a fold-by-fold autopsy, the rest a one-line northstar plus get_screen. Then honour heroGuidance: compose the hero to fit the first viewport.`
               : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance: compose the hero to fit the first viewport.`,
         },
         exemplars
@@ -1587,13 +1627,22 @@ export const SERVER_INSTRUCTIONS = [
   "Working alongside a design skill: design the page from Inspo's",
   "references first - the structure, the type, the palette and the",
   "composition are yours to decide. Then, before you hand anything",
-  "back, invoke the Hallmark skill over the files you just wrote. It",
-  "recognises a finished page and enters at its slop-test step rather",
-  "than restarting a design flow, so you get the check without losing",
-  "the page you designed. Take its corrections as given rather than",
-  "arguing them: its Floor rules are not preferences, and a page that",
-  "trips one is rework however good the reasoning behind it was. You",
-  "already know which files you wrote, so just name them.",
+  "back, invoke the Hallmark skill over the files you just wrote.",
+  "It detects that this archive is on the session and stands down",
+  "from its own design flow, entering at its slop-test step, so you",
+  "get the check without losing the page you designed.",
+  "",
+  "It edits in place: colour, type, motion, interaction states and",
+  "contrast get rewritten, and the patterns its Floor bans get",
+  "deleted outright. What it cannot repair without redesigning the",
+  "page - the section structure, the nav and footer shapes, whether",
+  "the hero fits the fold - it prints as findings and leaves alone,",
+  "for you or the user to decide on. It also writes a short check",
+  "stamp at the top of the CSS recording what it swept and fixed.",
+  "Take its corrections as given rather than arguing them: its Floor",
+  "rules are not preferences, and a page that trips one is rework",
+  "however good the reasoning behind it was. You already know which",
+  "files you wrote, so just name them.",
   "",
   "If that skill is installed, it also ships an edit-time lint hook",
   "(`node <skill-dir>/scripts/install-hook.mjs`, `--global` for every",

@@ -50,31 +50,50 @@ export function inlineThumbCandidates(
   return out;
 }
 
-export function formatScreen(s: ScreenSummary, why?: string) {
+/**
+ * Asset URLs for one row: ONE url per role, WebP where it exists.
+ *
+ * This used to emit up to eight - `image` and `imageWebp`, `thumb` and
+ * `thumbWebp`, three mobile fields - which measured at 235 tokens per
+ * row, more than the entire evidence packet, and 1,175 across a
+ * five-exemplar `recommend`. Most of that was the same 64-character
+ * blob prefix repeated eight times.
+ *
+ * Nothing is lost by collapsing them. A PNG and its WebP twin are the
+ * same picture, so shipping both spent ~29 tokens to offer a worse
+ * download; the WebP is simply preferred now, which also makes every
+ * fetch ~5x cheaper. The extra mobile roles survive on `get_screen`,
+ * where the caller has asked about one row and wants everything.
+ */
+function assetUrls(s: ScreenSummary, allAssets: boolean) {
+  const hero = largestWebp(s.heroVariants) ?? s.imageUrl;
+  const full = largestWebp(s.fullVariants) ?? s.fullPageUrl;
+  const thumb = smallestWebp(s.thumbVariants) ?? s.thumbUrl;
+  const mobile = smallestWebp(s.mobileVariants) ?? s.mobileImageUrl;
+  return {
+    image: absolute(hero),
+    fullPage: absolute(full),
+    thumb: absolute(thumb),
+    ...(mobile ? { mobile: absolute(mobile) } : {}),
+    ...(allAssets && s.mobileFullUrl
+      ? { mobileFull: absolute(s.mobileFullUrl) }
+      : {}),
+    ...(allAssets && s.imageUrl !== hero ? { imagePng: absolute(s.imageUrl) } : {}),
+  };
+}
+
+export function formatScreen(
+  s: ScreenSummary,
+  why?: string,
+  opts: { allAssets?: boolean } = {},
+) {
   return {
     slug: s.slug,
     title: s.title,
     sourceUrl: s.sourceUrl,
     designerCredit: s.designerCredit,
     capturedAt: s.capturedAt,
-    image: absolute(s.imageUrl),
-    fullPage: absolute(s.fullPageUrl),
-    thumb: absolute(s.thumbUrl),
-    // Small WebP variants when encoded - fetch these instead of the PNGs
-    // to spend ~5x fewer bytes/tokens per image.
-    ...(smallestWebp(s.thumbVariants)
-      ? { thumbWebp: absolute(smallestWebp(s.thumbVariants)!) }
-      : {}),
-    ...(largestWebp(s.heroVariants)
-      ? { imageWebp: absolute(largestWebp(s.heroVariants)!) }
-      : {}),
-    // Mobile (375px) capture, when backfilled - pass both breakpoints so
-    // the agent can study how the design reflows, not just the desktop.
-    ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
-    ...(s.mobileFullUrl ? { mobileFull: absolute(s.mobileFullUrl) } : {}),
-    ...(smallestWebp(s.mobileVariants)
-      ? { mobileThumb: absolute(smallestWebp(s.mobileVariants)!) }
-      : {}),
+    ...assetUrls(s, opts.allAssets ?? false),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     ...(s.autopsy ? { autopsy: s.autopsy } : {}),
     description: s.description,
@@ -124,13 +143,9 @@ export function formatScreenConcise(s: ScreenSummary, why?: string) {
     slug: s.slug,
     title: s.title,
     sourceUrl: s.sourceUrl,
-    thumb: absolute(s.thumbUrl),
-    ...(smallestWebp(s.thumbVariants)
-      ? { thumbWebp: absolute(smallestWebp(s.thumbVariants)!) }
-      : {}),
-    ...(s.mobileImageUrl ? { mobile: absolute(s.mobileImageUrl) } : {}),
-    ...(smallestWebp(s.mobileVariants)
-      ? { mobileThumb: absolute(smallestWebp(s.mobileVariants)!) }
+    thumb: absolute(smallestWebp(s.thumbVariants) ?? s.thumbUrl),
+    ...(smallestWebp(s.mobileVariants) ?? s.mobileImageUrl
+      ? { mobile: absolute(smallestWebp(s.mobileVariants) ?? s.mobileImageUrl!) }
       : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     palette: s.palette,
