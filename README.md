@@ -86,4 +86,18 @@ MIT. Owned and operated by [Together AI](https://www.together.ai). Free for ever
 
 ## Pairs with Hallmark
 
-[Hallmark](https://github.com/Luffixos/hallmark) gives the agent a process; Inspo gives it the reference. Hallmark forces the agent through a design-context gate and asks it to pick one of 21 named macrostructures before writing code. With Inspo installed, the same agent can call `find_examples_for_macrostructure("Bento Grid")` at that exact step and get real production sites that embody it, plus the canonical Hallmark-disciplined Bento reference rendered live at `/components/features#bento`.
+[Hallmark](https://github.com/Luffixos/hallmark) is an anti-slop design skill. With both installed, they split the work rather than negotiate over it: **Inspo designs, Hallmark checks.**
+
+The agent designs the page from Inspo's references - structure, type, palette, composition - and writes the files. Then it invokes Hallmark over what it just wrote. Hallmark recognises a finished page and enters at its slop-test step instead of restarting its own design flow, so the page survives and the check still happens. Its Floor rules are not negotiable, so its corrections get taken rather than argued.
+
+Two things make that check cheaper:
+
+**Install the edit-time lint hook.** Hallmark ships one, and on this path it is the most automatic version available - it lints each `.html` / `.css` file the moment it lands rather than waiting for a sweep at the end, so findings arrive while the file is still fresh.
+
+```bash
+node <hallmark-skill-dir>/scripts/install-hook.mjs --global
+```
+
+It is advisory, never blocks a write, is idempotent, and comes off with `--remove`. Claude Code only.
+
+**Inspo's output is already shaped for the gates it will meet.** The reference components emit `--color-accent` and `--color-accent-ink` under exactly those names, because they are the only colour tokens Hallmark's linter resolves by name; the accent/ink pairing clears its 4.5:1 contrast check in both light and dark. Component stamps use a `key= value` format that cannot be mistaken for a build stamp, so they never satisfy a gate on a page's behalf. And `HERO_GUIDANCE` names no eyebrow, since gate 54 is Floor and non-waivable - every eyebrow the guidance suggested would have been guaranteed rework.
