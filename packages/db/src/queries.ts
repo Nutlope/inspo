@@ -218,6 +218,31 @@ export function featuredScore(s: ScreenSummary): number {
 }
 
 /**
+ * Sites held back from the front page by hand.
+ *
+ * The score cannot see these. Every signal it reads - macrostructure,
+ * component count, description length, the vision quality score - rates
+ * them in the same band as Kagi and Radix (85-92 quality, 4-6 sections,
+ * ~400-char descriptions), because on paper they ARE well-built landing
+ * pages. What the numbers miss is how the capture reads at tile size:
+ * a dated feature grid, a wall of small type, a marketplace dense with
+ * promo banners, a page more than half covered by a video player and a
+ * logo wall. None of them is a page you would point at.
+ *
+ * They are demoted, not removed: they keep their place in search, in
+ * /screens, in similarity, and they tail the featured order rather than
+ * dropping out of it. Add a slug here only with a reason, and only when
+ * the tile itself is the problem - a capture that is simply broken
+ * belongs in quality flags instead.
+ */
+const FRONT_PAGE_DEMOTED = new Set<string>([
+  "electronjs-org", // dated six-cell feature grid, reads as a 2016 docs site
+  "expressjs-com",  // near-typeless: small grey type on white, no composition
+  "coursera-org",   // marketplace density - carousels, promo banners, ratings
+  "tabnine-com",    // promo bar + video player + logo wall fill the whole fold
+]);
+
+/**
  * Score first, then break up the run.
  *
  * Ranking on page-ness alone returns a wall of the same page: 18 of the
@@ -233,7 +258,9 @@ export function featuredScore(s: ScreenSummary): number {
  * slips a few places at worst.
  */
 function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
-  const ranked = [...list].sort((a, b) => featuredScore(b) - featuredScore(a));
+  const scored = [...list].sort((a, b) => featuredScore(b) - featuredScore(a));
+  const ranked = scored.filter((r) => !FRONT_PAGE_DEMOTED.has(r.siteSlug));
+  const demoted = scored.filter((r) => FRONT_PAGE_DEMOTED.has(r.siteSlug));
 
   const WINDOW = 6;
   const MAX_PER_WINDOW = 2;
@@ -260,8 +287,9 @@ function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
     else held.push(row);
   }
   // Anything still held (a macrostructure with very few peers) tails on
-  // in score order rather than being lost.
-  return [...out, ...held];
+  // in score order rather than being lost, and the hand-demoted rows
+  // tail that - present, just never on the front page.
+  return [...out, ...held, ...demoted];
 }
 
 function variedOrder(list: ScreenSummary[]): ScreenSummary[] {

@@ -5,9 +5,9 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { ScreenTile } from "@/components/screen-tile";
-import { HomeSearch } from "@/components/home-search";
+import { HomeCta } from "@/components/home-cta";
 import { CopyValue } from "@/components/copy-value";
-import { getAllSites } from "@inspo/db";
+import { getAllSites, getArchiveStats } from "@inspo/db";
 
 const GRID_LIMIT = 24;
 
@@ -17,27 +17,39 @@ export default async function HomePage() {
   // (award-winning captures + bold macrostructures/styles + vision
   // quality scores) - the landing grid is a highlight reel, not a
   // changelog.
-  const allSites = await getAllSites({}, "featured");
+  const [allSites, stats] = await Promise.all([
+    getAllSites({}, "featured"),
+    getArchiveStats(),
+  ]);
   const totalCount = allSites.length;
   const grid = allSites.slice(0, GRID_LIMIT);
 
   return (
     <>
-      {/* HERO ─ marquee-hero macrostructure ──────────────────── */}
+      {/* HERO ─ marquee-hero macrostructure ──────────────────────
+          The headline used to be "The sites we'd actually study",
+          which told a first-time visitor nothing about what this is
+          or what it gets them - the deck did all the explaining and
+          the search capsule underneath assumed you already knew what
+          you were looking for. Both are now doing the opposite job:
+          the headline states the mechanism, the deck states the
+          payoff, and the CTA points at getting started. ───────── */}
       <section className="px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
-          <h1 className="font-display mx-auto max-w-[18ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
-            The sites we&rsquo;d{" "}
-            <em className="not-italic text-[var(--color-link)]">actually study</em>.
+          <h1 className="font-display mx-auto max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
+            Real websites,{" "}
+            <em className="not-italic text-[var(--color-link)]">taken apart</em>{" "}
+            so your agent stops guessing.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-[44ch] text-[var(--color-fg-muted)]">
-            Search, scroll, or paste a URL. Your coding agent can do the same -
-            see <Link href="/mcp" className="underline-offset-4 hover:text-[var(--color-link)] hover:underline">the MCP</Link>.
+          <p className="mx-auto mt-6 max-w-[54ch] text-base text-[var(--color-fg-muted)] sm:text-lg">
+            {stats.sites.toLocaleString()} production sites, documented down to
+            the palette, type ramp and section structure. Browse them yourself,
+            or hand the whole archive to your coding agent over MCP.
           </p>
 
-          <div className="mx-auto mt-8 max-w-[42rem] sm:mt-10">
-            <HomeSearch />
+          <div className="mt-9 sm:mt-11">
+            <HomeCta screenCount={stats.screens} />
           </div>
         </div>
       </section>
