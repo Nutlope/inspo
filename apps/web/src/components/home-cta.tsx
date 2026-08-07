@@ -1,18 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 /**
- * The home hero's call to action, in place of the old search capsule.
+ * The home hero's call to action.
  *
- * The search bar answered a question nobody arriving cold was asking -
- * you have to already know what the archive holds before a search box is
- * useful. So the hero now points at the two things a first-time visitor
- * can actually do: wire the archive into their agent, or look at it.
- * Search is not lost, it moves to the quiet ⌘K line underneath (and the
- * palette is still on the shortcut everywhere else on the site).
+ * The primary CTA IS the install: a click-to-copy `npx -y inspo-mcp`
+ * capsule styled like the primary button it replaces. A "Get started"
+ * pill only added a hop to /mcp, where the first thing you'd do is
+ * copy this exact command - so the hero hands it over directly.
+ * Per-client setup stays one quiet link away, and search keeps its
+ * spot on the small line (the palette is on ⌘K site-wide anyway).
  */
 export function HomeCta({ screenCount }: { screenCount: number }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyInstall() {
+    try {
+      await navigator.clipboard.writeText("npx -y inspo-mcp");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      /* Clipboard can be blocked in embedded contexts - the command
+       * is visible, manual copy still works. */
+    }
+  }
+
   const openPalette = () => {
     const isMac =
       typeof navigator !== "undefined" &&
@@ -30,29 +44,28 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
   return (
     <div className="flex flex-col items-center gap-5">
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-        {/* Primary - ink fills to accent, arrow nudges on the same
-            easing so colour and motion read as one gesture. */}
-        <Link
-          href="/mcp"
-          className="group/cta inline-flex h-13 items-center justify-center gap-2.5 rounded-full bg-[var(--color-fg)] px-8 text-[var(--color-bg)] transition-[background-color,transform] duration-200 ease-out hover:scale-[1.03] hover:bg-[var(--color-link)]"
+        {/* Primary - the one-line install, copied on click. */}
+        <button
+          type="button"
+          onClick={copyInstall}
+          aria-label="Copy the MCP install command"
+          className="group/cta inline-flex h-13 items-center justify-center gap-3 rounded-full bg-[var(--color-fg)] pl-6 pr-2 text-[var(--color-bg)] transition-[background-color,transform] duration-200 ease-out hover:scale-[1.02] hover:bg-[var(--color-link)] hover:text-[var(--color-accent-ink)]"
         >
-          Get started
-          <svg
+          <span aria-hidden className="opacity-50">
+            $
+          </span>
+          <code className="font-mono tracking-wide">npx -y inspo-mcp</code>
+          <span
             aria-hidden
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="transition-transform duration-200 ease-out group-hover/cta:translate-x-0.5"
+            className={`inline-flex h-9 items-center rounded-full px-3.5 text-sm transition-colors duration-200 ${
+              copied
+                ? "bg-[var(--color-bg)] text-[var(--color-fg)]"
+                : "bg-[color-mix(in_oklab,var(--color-bg)_16%,transparent)] group-hover/cta:bg-[color-mix(in_oklab,var(--color-accent-ink)_18%,transparent)]"
+            }`}
           >
-            <path d="M5 12h14" />
-            <path d="m13 5 7 7-7 7" />
-          </svg>
-        </Link>
+            {copied ? "Copied ✓" : "Copy"}
+          </span>
+        </button>
 
         <Link
           href="/screens"
@@ -62,17 +75,25 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
         </Link>
       </div>
 
-      <button
-        type="button"
-        onClick={openPalette}
-        className="text-meta transition-colors hover:text-[var(--color-fg)]"
-      >
-        Free and open source. Or press{" "}
-        <kbd className="rounded-full border rule px-1.5 py-0.5 font-sans">
+      <p className="text-meta">
+        Works with any MCP client -{" "}
+        <Link
+          href="/mcp"
+          className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
+        >
+          see setup
+        </Link>
+        . Or press{" "}
+        <button
+          type="button"
+          onClick={openPalette}
+          aria-label="Open search"
+          className="rounded-full border rule px-1.5 py-0.5 font-sans transition-colors hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
+        >
           ⌘K
-        </kbd>{" "}
+        </button>{" "}
         to search {screenCount.toLocaleString()} screens.
-      </button>
+      </p>
     </div>
   );
 }

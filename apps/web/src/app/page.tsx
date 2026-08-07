@@ -37,15 +37,15 @@ export default async function HomePage() {
       <section className="px-6 pt-16 pb-12 sm:px-10 sm:pt-24 sm:pb-16">
         <div className="mx-auto max-w-[68rem] text-center">
           <h1 className="font-display mx-auto max-w-[20ch] text-balance text-[length:var(--text-h1)] leading-[0.95] tracking-tight">
-            Real websites,{" "}
-            <em className="not-italic text-[var(--color-link)]">taken apart</em>{" "}
-            so your agent stops guessing.
+            Real websites as{" "}
+            <em className="not-italic text-[var(--color-link)]">inspiration</em>{" "}
+            for your agent.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-[54ch] text-base text-[var(--color-fg-muted)] sm:text-lg">
-            {stats.sites.toLocaleString()} production sites, documented down to
-            the palette, type ramp and section structure. Browse them yourself,
-            or hand the whole archive to your coding agent over MCP.
+          <p className="mx-auto mt-6 max-w-[46ch] text-base text-[var(--color-fg-muted)] sm:text-lg">
+            A curated archive of {stats.sites.toLocaleString()} production
+            sites. Browse it yourself, or plug it straight into your coding
+            agent.
           </p>
 
           <div className="mt-9 sm:mt-11">

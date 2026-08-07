@@ -1,14 +1,18 @@
 "use client";
 
 /**
- * The MCP page's hero install module. Front and centre: pick your
- * client from a pill row, get the exact snippet, copy it in one
- * click. Pure UI state (which tab is active, copied flashes); all
- * snippet content ships from the server component that renders this.
+ * The MCP page's hero install module. Pick your client from a pill
+ * row, get the exact snippet on a dark plate, copy it in one click.
+ * Pure UI state (active tab, copied flash); all snippet content ships
+ * from the server component that renders this.
  *
- * Two install paths, both always visible:
- *  - the per-client snippet (hosted HTTP endpoint - zero setup)
- *  - a persistent "run it locally" npx row (same server over stdio)
+ * The plate keeps ink-on-dark literals (--color-ink / --color-ink-dark)
+ * in BOTH themes: a terminal is dark everywhere, and the fixed plate is
+ * what lets the command read as the loudest thing in the hero - light
+ * mode gets full contrast against the paper, dark mode a step of
+ * elevation off the page. The config-path note lives on the plate's
+ * header line, so the module is one surface, not a stack of rows.
+ * The old "prefer local?" footer is gone: local install is the npx tab.
  */
 
 import { useState } from "react";
@@ -16,7 +20,7 @@ import { useState } from "react";
 export type InstallTab = {
   id: string;
   label: string;
-  /** Short natural-case note under the snippet (config path etc). */
+  /** Short natural-case note shown on the plate header (config path etc). */
   note?: string;
   /** The copy-pasteable snippet. */
   snippet: string;
@@ -24,57 +28,38 @@ export type InstallTab = {
   deeplink?: { href: string; label: string };
 };
 
-const LOCAL_CMD = "npx -y inspo-mcp";
-
-function CopyPill({
-  value,
-  label,
-  className = "",
-}: {
-  value: string;
-  label: string;
-  className?: string;
-}) {
+export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
+  const [active, setActive] = useState(tabs[0]?.id ?? "");
   const [copied, setCopied] = useState(false);
+  const current = tabs.find((t) => t.id === active) ?? tabs[0];
+  if (!current) return null;
+
+  const multiline = current.snippet.includes("\n");
+  // Single-line snippets are shell commands; they get the $ prompt.
+  const shell = !multiline;
+
   async function copy() {
     try {
-      await navigator.clipboard.writeText(value);
+      await navigator.clipboard.writeText(current!.snippet);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1400);
+      setTimeout(() => setCopied(false), 1600);
     } catch {
       /* Clipboard can be blocked in embedded contexts - the snippet
        * is on screen, manual copy still works. */
     }
   }
-  return (
-    <button
-      type="button"
-      onClick={copy}
-      aria-label={label}
-      className={`inline-flex items-center justify-center rounded-full border px-3.5 py-1.5 text-xs leading-none transition-colors ${
-        copied
-          ? "border-[var(--color-link)] bg-[color-mix(in_oklab,var(--color-link)_10%,transparent)] text-[var(--color-link)]"
-          : "rule bg-[var(--color-bg)] text-[var(--color-fg-muted)] hover:border-[var(--color-link)] hover:text-[var(--color-link)]"
-      } ${className}`}
-    >
-      {copied ? "Copied ✓" : "Copy"}
-    </button>
-  );
-}
 
-export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
-  const [active, setActive] = useState(tabs[0]?.id ?? "");
-  const current = tabs.find((t) => t.id === active) ?? tabs[0];
-  if (!current) return null;
-
-  const multiline = current.snippet.includes("\n");
+  function select(id: string) {
+    setActive(id);
+    setCopied(false);
+  }
 
   return (
-    <div className="rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] p-3 sm:p-4">
+    <div className="rounded-card border rule bg-[color-mix(in_oklab,var(--color-fg)_3%,var(--color-bg))] p-2.5 sm:p-3">
       <div
         role="tablist"
         aria-label="Install instructions per client"
-        className="flex flex-wrap justify-center gap-1.5 p-1 sm:p-2"
+        className="flex flex-wrap justify-center gap-1.5 p-1.5 sm:p-2"
       >
         {tabs.map((t) => {
           const selected = t.id === current.id;
@@ -83,7 +68,7 @@ export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
               key={t.id}
               role="tab"
               aria-selected={selected}
-              onClick={() => setActive(t.id)}
+              onClick={() => select(t.id)}
               className={`rounded-full px-4 py-2 text-sm transition-colors ${
                 selected
                   ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
@@ -96,45 +81,62 @@ export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
         })}
       </div>
 
-      <div role="tabpanel" className="mt-2">
-        <div
-          className={`flex gap-3 rounded-[calc(var(--radius-card)-0.5rem)] border rule bg-[var(--color-bg)] py-4 pl-5 pr-3 sm:pl-6 ${
-            multiline ? "items-start" : "items-center"
-          }`}
-        >
-          <pre className="min-w-0 flex-1 overflow-x-auto py-0.5 text-left font-mono text-sm leading-relaxed">
-            <code>{current.snippet}</code>
-          </pre>
-          <CopyPill
-            value={current.snippet}
-            label={`Copy ${current.label} install snippet`}
-            className="shrink-0"
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-2 pt-3">
+      {/* The plate ─ fixed ink tones in both themes. */}
+      <div
+        role="tabpanel"
+        className="mt-1.5 rounded-[calc(var(--radius-card)-0.625rem)] bg-[var(--color-ink)] text-[var(--color-ink-dark)]"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-6 pt-4 sm:px-7">
           {current.note && (
-            <p className="text-sm text-[var(--color-fg-muted)]">
+            <p className="text-xs text-[color-mix(in_oklab,var(--color-ink-dark)_55%,transparent)]">
               {current.note}
             </p>
           )}
           {current.deeplink && (
             <a
               href={current.deeplink.href}
-              className="text-sm text-[var(--color-link)] underline-offset-4 hover:underline"
+              className="text-xs text-[var(--color-accent-dark)] underline-offset-4 hover:underline"
             >
               {current.deeplink.label}
             </a>
           )}
         </div>
 
-        {/* Local path - always visible, whatever the client. */}
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-card border rule bg-[var(--color-bg)] px-5 py-3 sm:rounded-full sm:py-2 sm:pl-5 sm:pr-2">
-          <p className="flex min-w-0 flex-wrap items-baseline gap-x-3 text-sm text-[var(--color-fg-muted)]">
-            <span>Prefer local? Same server, over stdio:</span>
-            <code className="font-mono text-[var(--color-fg)]">{LOCAL_CMD}</code>
-          </p>
-          <CopyPill value={LOCAL_CMD} label="Copy local npx command" />
+        <div
+          className={`flex gap-4 px-6 pt-2 pb-5 sm:px-7 ${
+            multiline ? "items-start" : "items-center"
+          }`}
+        >
+          <pre className="min-w-0 flex-1 overflow-x-auto py-1 text-left font-mono leading-relaxed">
+            <code
+              className={multiline ? "text-sm sm:text-base" : "text-base sm:text-lg"}
+            >
+              {shell && (
+                <span
+                  aria-hidden
+                  className="select-none text-[color-mix(in_oklab,var(--color-ink-dark)_45%,transparent)]"
+                >
+                  {"$ "}
+                </span>
+              )}
+              {current.snippet}
+            </code>
+          </pre>
+
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={`Copy ${current.label} install snippet`}
+            className={`inline-flex h-10 shrink-0 items-center rounded-full px-5 text-sm transition-colors duration-200 ${
+              copied
+                ? "bg-[var(--color-ink-dark)] text-[var(--color-ink)]"
+                : // Literal ink on the accent: the plate ignores the theme,
+                  // so its button does too (--color-accent-ink flips dark).
+                  "bg-[var(--color-accent-light)] text-[#fdfdfb] hover:bg-[#b23927]"
+            }`}
+          >
+            {copied ? "Copied ✓" : "Copy"}
+          </button>
         </div>
       </div>
     </div>

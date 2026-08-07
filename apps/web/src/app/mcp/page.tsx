@@ -191,6 +191,12 @@ const installTabs: InstallTab[] = [
     snippet: `{\n  "servers": {\n    "inspo": { "type": "http", "url": "${HOSTED_URL}" }\n  }\n}`,
   },
   {
+    id: "npx",
+    label: "npx",
+    note: "Any MCP client, run locally over stdio - no config file, no auth.",
+    snippet: "npx -y inspo-mcp",
+  },
+  {
     id: "json",
     label: "Raw JSON",
     note: "Hosted HTTP endpoint, or local stdio via npx - both free, no auth.",
