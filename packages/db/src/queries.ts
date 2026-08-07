@@ -240,6 +240,10 @@ const FRONT_PAGE_DEMOTED = new Set<string>([
   "expressjs-com",  // near-typeless: small grey type on white, no composition
   "coursera-org",   // marketplace density - carousels, promo banners, ratings
   "tabnine-com",    // promo bar + video player + logo wall fill the whole fold
+  // Interstitial furniture, not the page: the capture caught a
+  // Cloudflare "Verify you are human" widget sitting mid-hero, so the
+  // tile advertises a bot check rather than Kagi's actual landing page.
+  "kagi-com",
 ]);
 
 /**
