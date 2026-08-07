@@ -49,9 +49,12 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
           type="button"
           onClick={copyInstall}
           aria-label="Copy the MCP install command"
-          className="group/cta inline-flex h-13 items-center justify-center gap-3 rounded-full bg-[var(--color-fg)] pl-6 pr-2 text-[var(--color-bg)] transition-[background-color,transform] duration-200 ease-out hover:scale-[1.02] hover:bg-[var(--color-link)] hover:text-[var(--color-accent-ink)]"
+          className="group/cta inline-flex h-13 items-center justify-center gap-3 rounded-full bg-[var(--color-fg)] pl-6 pr-2 text-[var(--color-bg)] transition-colors duration-200 ease-out hover:bg-[color-mix(in_oklab,var(--color-fg)_92%,var(--color-bg))]"
         >
-          <span aria-hidden className="opacity-50">
+          <span
+            aria-hidden
+            className="opacity-50 transition-opacity duration-200 group-hover/cta:opacity-75"
+          >
             $
           </span>
           <code className="font-mono tracking-wide">npx -y inspo-mcp</code>
@@ -60,7 +63,7 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
             className={`inline-flex h-9 items-center rounded-full px-3.5 text-sm transition-colors duration-200 ${
               copied
                 ? "bg-[var(--color-bg)] text-[var(--color-fg)]"
-                : "bg-[color-mix(in_oklab,var(--color-bg)_16%,transparent)] group-hover/cta:bg-[color-mix(in_oklab,var(--color-accent-ink)_18%,transparent)]"
+                : "bg-[color-mix(in_oklab,var(--color-bg)_16%,transparent)] group-hover/cta:bg-[color-mix(in_oklab,var(--color-bg)_26%,transparent)]"
             }`}
           >
             {copied ? "Copied ✓" : "Copy"}
