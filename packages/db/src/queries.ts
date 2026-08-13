@@ -81,11 +81,18 @@ export type ScreenFilter = {
  *  latest   - most recently captured first (default)
  *  varied   - round-robin one screen per macrostructure, then refill from latest
  *  random   - shuffle on each query (DB: ORDER BY random; fixtures: in-place shuffle)
+ *  rotating - shuffled, but fixed for the clock hour, so a paginated
+ *             browse stays coherent. Drives the /screens archive.
  *  featured - design-interest score desc: front-loads the most visually
  *             striking work (bold macrostructures/styles + award-winning
  *             captures) so the landing grid reads as a highlight reel.
  */
-export type ScreenSort = "latest" | "varied" | "random" | "featured";
+export type ScreenSort =
+  | "latest"
+  | "varied"
+  | "random"
+  | "featured"
+  | "rotating";
 
 /* ─── design-interest scoring (drives the "featured" sort) ───
  *
@@ -324,6 +331,43 @@ function shuffle<T>(list: T[]): T[] {
   return copy;
 }
 
+/** mulberry32 - small, fast, seedable PRNG. Same seed, same stream. */
+function seededRandom(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * The archive's running order: shuffled, but stable for an hour.
+ *
+ * A plain shuffle() cannot drive /screens. That page paginates with
+ * real links, and the route is force-dynamic, so every "Next →" is a
+ * fresh server render - re-rolling per request would deal page 2 from
+ * a brand new deck, repeating sites the reader just saw and hiding
+ * others entirely. Seeding off the clock hour fixes the deck for the
+ * length of any real browsing session while still turning the archive
+ * over through the day, so the front of it is never the same handful
+ * of slugs twice.
+ *
+ * Not Math.random() and not the row order either: the seed file is
+ * alphabetical, which is why the archive used to open on a run of
+ * sites starting with "a".
+ */
+function rotatingOrder<T>(list: T[]): T[] {
+  const rand = seededRandom(Math.floor(Date.now() / 3_600_000));
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 /* ──────────────────── helpers ──────────────────── */
 
 function placeholderUrl(slug: string, variant: "hero" | "full" | "thumb") {
@@ -426,6 +470,7 @@ export async function getAllScreens(
     const filtered = applyFiltersFixture(catalogueRows(), filter);
     if (sort === "varied") return variedOrder(filtered);
     if (sort === "random") return shuffle(filtered);
+    if (sort === "rotating") return rotatingOrder(filtered);
     if (sort === "featured") return featuredOrder(filtered);
     return filtered;
   }
@@ -520,6 +565,9 @@ export async function getAllScreens(
   });
 
   if (sort === "varied") return variedOrder(filtered);
+  // Ordered in JS rather than SQL: an ORDER BY random() re-rolls per
+  // request, which is exactly what the hourly seed exists to avoid.
+  if (sort === "rotating") return rotatingOrder(filtered);
   if (sort === "featured") return featuredOrder(filtered);
   return filtered;
 }
@@ -671,6 +719,19 @@ export async function findSimilar(
  */
 export type SiteTile = ScreenSummary & { pageCount: number };
 
+/** Whether the capture is obscured by furniture that isn't the design:
+ *  a consent wall, a modal, an interstitial, a blank or errored load,
+ *  a truncated shot. Written by the vision pass, not guessed here. */
+function isObstructed(s: ScreenSummary): boolean {
+  return (s.qualityFlags ?? []).length > 0;
+}
+
+/** Tile preference, lower wins: a clean landing page, then any clean
+ *  page, then the landing page anyway, then whatever is left. */
+function tileRank(s: ScreenSummary): number {
+  return (isObstructed(s) ? 2 : 0) + (s.pageType === "landing" ? 0 : 1);
+}
+
 export async function getAllSites(
   filter: ScreenFilter = {},
   sort: ScreenSort = "latest",
@@ -678,7 +739,17 @@ export async function getAllSites(
   // Pull all screens through the existing path (handles filters + fixtures).
   const allScreens = await getAllScreens(filter, sort);
 
-  // Bucket by siteSlug; pick the landing row as the hero (fallback: first).
+  // Bucket by siteSlug and pick the tile each site shows.
+  //
+  // Landing page first, as before - but not a landing page the capture
+  // ruined. 99 of 767 tiles were fronting a cookie wall, a subscription
+  // modal, or a full-screen interstitial over a greyed-out page (LEGO's
+  // age-gate, the FT's "Try for £1"), which is the one thing a
+  // reference archive cannot show: the tile advertises the overlay
+  // instead of the design. Where the site has a clean capture of any
+  // other page, that becomes the tile. The record itself is untouched -
+  // /sites/[slug] goes through findSite() and still opens on the real
+  // landing page, flags and all.
   const bySite = new Map<string, { hero: ScreenSummary; count: number }>();
   for (const s of allScreens) {
     const key = s.siteSlug;
@@ -687,10 +758,7 @@ export async function getAllSites(
       bySite.set(key, { hero: s, count: 1 });
     } else {
       existing.count += 1;
-      // Prefer pageType='landing' over whatever was first.
-      if (existing.hero.pageType !== "landing" && s.pageType === "landing") {
-        existing.hero = s;
-      }
+      if (tileRank(s) < tileRank(existing.hero)) existing.hero = s;
     }
   }
   // Preserve the order of first occurrence (which already obeys `sort`).
@@ -701,6 +769,26 @@ export async function getAllSites(
     seen.add(s.siteSlug);
     const entry = bySite.get(s.siteSlug)!;
     out.push({ ...entry.hero, pageCount: entry.count });
+  }
+
+  // Roughly 75 sites have no clean capture at all - every page we hold
+  // of them is behind the same consent wall. They stay in the archive,
+  // searchable and browsable, but they sink behind everything that
+  // photographs well rather than being sprinkled through the shuffle,
+  // where they'd put a cookie banner every eighth tile on page one.
+  // Both partitions keep the running order they arrived in, so each
+  // stays shuffled. Only the archive sort does this; "featured" already
+  // prices obstruction in through featuredScore.
+  if (sort === "rotating") {
+    const obstructed = out.filter(isObstructed);
+    return [
+      ...out.filter((t) => !isObstructed(t)),
+      // A consent wall still shows some of the page behind it. A 404 or
+      // a capture that timed out mid-load shows nothing at all, so the
+      // handful of those go last rather than merely late.
+      ...obstructed.filter((t) => !isDamaged(t)),
+      ...obstructed.filter(isDamaged),
+    ];
   }
   return out;
 }

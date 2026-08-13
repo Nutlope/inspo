@@ -61,7 +61,13 @@ export default async function ArchivePage({
   // gallery-style: one tile per SITE, not per captured screen. The hero
   // (landing page) is what shows; pageCount surfaces on the tile. Click
   // routes to /sites/[siteSlug] which expands to all captured pages.
-  const allSites = await getAllSites();
+  //
+  // "rotating" rather than the default: the seed file is alphabetical,
+  // so the archive opened on a run of sites starting with "a" and the
+  // same ones fronted it on every visit. The order is shuffled but
+  // pinned to the clock hour, which keeps pagination coherent - see
+  // rotatingOrder() in packages/db.
+  const allSites = await getAllSites({}, "rotating");
   const allScreens = await getAllScreens();
   const noUrlMatch = Boolean(
     params.q && isUrl(params.q) && allScreens.every((s) => !s.sourceUrl.includes(params.q!)),
