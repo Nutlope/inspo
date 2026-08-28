@@ -1,17 +1,22 @@
 [
   {
-    "date": "2026-08-05",
-    "macrostructure": "Reference Index (masthead, argument, session table, minute ruler, refusals, close, colophon)",
-    "theme": "Almanac",
-    "hero": "Banner/typographic",
-    "nav": "masthead with dateline, non-sticky, no CTA in the bar",
-    "footer": "single colophon block plus one mono meta row",
+    "date": "2026-08-06",
+    "macrostructure": "bespoke: the exercise card (ruled fields on one sheet of card stock)",
+    "theme": "custom",
+    "direction": "the physiotherapy exercise card",
+    "posture": "committed",
+    "seed": "tenor-walking-meditation·2026-08-06·r0",
+    "draw": "4/7",
+    "wildcard": "none taken (Deco travel poster, Matchbox label both discarded)",
+    "vibe": "buff card stock, one green ink, prescriptive",
+    "hero": "Stage, no enrichment",
+    "nav": "two-line form header, not sticky, links as a right-hand grid",
+    "footer": "colophon paragraph plus link row and signature line",
     "enrichment": "none (typography only)",
-    "section-entry": "firm rule with hanging head, repeated; one change of paper at the refusals band",
-    "axes": "mid-cool/grotesk-sans/cool ink-blue ~250",
-    "fingerprint": "Left-bias|Ruled data table|Two rule weights|Ragged-right serif prose|Margin-aligned marginalia|Hero-only reveal",
+    "section-entry": "a double rule (3px plus hairline), repeated at every field",
+    "axes": "mid/slab-serif/chromatic-green ~158",
+    "fingerprint": "Left-biased|Ruled fields on one sheet|Double rule|Ruled outline CTA|Sheet-aligned|Single hero reveal",
     "waived": [],
-    "brief": "Tenor · walking meditation app, ten-minute sessions, restless professionals",
-    "note": "First Hallmark run in this directory: no rotation constraint. No reference archive on the session (pre-flight signal 8 absent), so the catalog route ran."
+    "brief": "Tenor · ten-minute walking meditation for restless professionals"
   }
 ]

@@ -151,3 +151,38 @@ It cost the skill arms a compliance point they should not have paid.
 
 Serve with `python3 -m http.server 4041 --directory mcp-eval-4/` and
 open `http://localhost:4041/<arm>/<brief>/`.
+
+---
+
+## Round 2 (2026-08-28) - five new briefs, control vs Inspo only
+
+Five briefs added (m6 hardware, m7 logistics, m8 editorial, m9 course,
+m10 OSS tool), run through the `nothing` and `inspo-only` arms only, so
+the pure nothing-vs-archive delta now stands at n=10 per arm. Same
+deliverable rules, same model family, fresh agents. The skill arms were
+deliberately not re-run; their round-1 columns stand.
+
+Cost, round-2 cells only (see usage.json for per-cell rows):
+
+| arm | avg tokens | avg tool calls | avg wall | avg page |
+|---|---|---|---|---|
+| nothing | 101,619 | 14 | 16m42s | 29 KB |
+| inspo-only | 139,125 | 15 | 13m15s | 30 KB |
+
+The archive premium holds at about +37k tokens (round 1 said +28k).
+Tool-call counts collapsed against round 1 (14-15 vs 48-58) - these
+agents verified with fewer, bigger steps.
+
+Mechanical checks: 10/10 charsets, 10/10 folds complete at 1280x800,
+zero desktop overflow. Two mobile overflows, both in the Inspo arm:
+2px on m7 (rounding noise) and a real 49px on m10-oss, where copy runs
+21px past the 375 viewport edge. That is the exact left-right failure
+this round was watching for, and it happened on the pre-fix server:
+round 2 ran before `spacingGuidance` (added to recommend() +
+instructions the same day) reached the session. These ten pages are the
+before-picture for that change.
+
+Spacing forensics (one-off `_measure-eval4-spacing.ts`): median section
+block padding 96-208px across all ten cells, so the crammed-seam
+failure did not reproduce here; desktop gutters 60-112px, mobile
+gutters 20-22px except the m10-oss escape above.

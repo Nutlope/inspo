@@ -3,30 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tenor · walking meditation, ten minutes at a time</title>
-<meta name="description" content="Tenor is a walking meditation app: five sessions, ten minutes each, for people who get worse at sitting still the longer they sit.">
+<title>Tenor · Meditation you do at walking pace</title>
+<meta name="description" content="Tenor is a ten-minute meditation you do while walking. Eyes open, audio only, nothing to sit still for.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Hallmark · macrostructure: Reference Index (masthead · argument · session table · minute ruler · refusals · close) · tone: editorial-exact · anchor hue: 245 · hero: Banner/typographic · nav: masthead with dateline (not the default wordmark-links-CTA bar) · footer: single colophon block · theme: Almanac · genre: editorial · enrichment: none (typography only) · section-entry: firm rule with hanging head, one change of paper · contrast: ink 11.9:1, muted 4.9:1, accent 6.0:1 on slate stock · mobile: 320/375/414/768 */
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 · weakest: E - a five-row data table is the highest-risk element on mobile; fixed by collapsing rows to labelled blocks under 46rem with data-label ::before rather than letting the table scroll */
-:root {
-  /* Almanac · slate stock, two rule weights, tabular figures, one library-stamp blue */
-  --color-paper:     oklch(84% 0.012 245);
-  --color-paper-2:   oklch(81% 0.012 245);
-  --color-paper-3:   oklch(77% 0.014 245);
-  --color-ink:       oklch(16% 0.020 245);
-  --color-muted:     oklch(42% 0.016 245);
-  --color-accent:    oklch(38% 0.135 250);
-  --color-accent-ink: oklch(94% 0.008 245);
-  --color-rule:      oklch(74% 0.012 240);
-  --color-rule-2:    oklch(38% 0.018 240);
-  --color-focus:     oklch(38% 0.135 250);
+/* Hallmark · macrostructure: bespoke: the exercise card (ruled fields on one sheet of card stock) · tone: utilitarian · anchor hue: 158 · hero: Stage/no-enrichment
+ * theme: custom · direction: "the physiotherapy exercise card" · vibe: "buff card stock, one green ink, prescriptive"
+ * paper: oklch(84% 0.035 82) · accent: oklch(44% 0.108 158) · display: Zilla Slab · body: IBM Plex Sans
+ * axes: mid / slab-serif / chromatic-green ~158 · posture: committed
+ * seed: tenor-walking-meditation·2026-08-06·r0 · draw 4/7 · wildcards discarded (Deco travel poster, Matchbox label)
+ * nav: two-line form header, not sticky, links as a right-hand grid · footer: colophon paragraph + link row
+ * contrast: body 4.5:1+ verified by L-delta; focus ring 3:1+ · mobile: 320/375/414/768 checked
+ * genre: editorial (inferred) · enrichment: none (typography only) · studied: no
+ * contract: kept (5/5) · sloplint: clean (0 FAIL, 0 REFLEX, 0 WARN) · v1.2.0
+ */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V4 · weakest: H - the library and the spec list sat at the same
+ * typographic weight on first pass; the library rows were given a display-scale term and the spec list was demoted
+ * to body rules, so the page has one clear second-level voice instead of two competing ones. */
+/* direction contract · seed tenor-walking-meditation·2026-08-06·r0
+ * THESIS: sitting still was never the requirement, and a meditation that admits it can be prescribed like an exercise.
+ * OWN-WORLD: the physiotherapy exercise card handed over at the end of an appointment: buff stock, one ink, a numbered
+ *   protocol, a table you can read in four seconds while standing up.
+ * STORY: a contract designer in Porto, 2:15pm on a Tuesday, already outside the building with headphones in, ten
+ *   minutes before the next call.
+ * FIRST-VIEWPORT: the wordmark and a one-line descriptor over a double rule; the headline set left in slab; two lines
+ *   of lede; one filled CTA; and to the right, the session card itself, a ruled table of the ten minutes.
+ * FORM: every section is a ruled field on one sheet; the signature move is that the session is a real table and a real
+ *   numbered list, legible as a prescription rather than described as an experience.
+ */
 
-  --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body:    "Newsreader", ui-serif, Georgia, serif;
-  --font-mono:    "IBM Plex Mono", ui-monospace, monospace;
+:root{
+  /* colour · committed posture: the card stock carries the surface, the ink stays a signal */
+  --color-paper:      oklch(84% 0.035 82);
+  --color-paper-2:    oklch(88% 0.028 82);
+  --color-paper-3:    oklch(79.5% 0.040 82);
+  --color-rule:       oklch(66% 0.030 82);
+  --color-rule-2:     oklch(73% 0.026 82);
+  --color-neutral:    oklch(52% 0.024 88);
+  --color-muted:      oklch(42% 0.020 96);
+  --color-ink:        oklch(23% 0.018 118);
+  --color-ink-2:      oklch(31% 0.018 118);
+  --color-accent:     oklch(44% 0.108 158);
+  --color-accent-2:   oklch(38% 0.100 158);
+  --color-accent-ink: oklch(93% 0.020 158);
+  --color-focus:      oklch(47% 0.190 158);
+
+  --font-display: "Zilla Slab", ui-serif, serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
 
   --text-xs:   0.75rem;
   --text-sm:   0.8125rem;
@@ -34,13 +59,11 @@
   --text-md:   1.125rem;
   --text-lg:   1.375rem;
   --text-xl:   1.75rem;
-  --text-2xl:  2.125rem;
+  --text-2xl:  2.1875rem;
   --text-3xl:  2.75rem;
-  --text-display:   clamp(2.6rem, 4.6vw + 0.9rem, 4.75rem);
-  --text-display-s: clamp(2.1rem, 3.6vw + 0.75rem, 3.6rem);
-
-  --tracking-label: 0.06em;
-  --measure: 62ch;
+  --text-display:   clamp(2.4rem, 3.4vw + 1rem, 3.5rem);
+  --text-display-s: clamp(2rem, 2.6vw + 0.9rem, 2.75rem);
+  --text-figure:    clamp(3rem, 6vw, 5rem);
 
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
@@ -54,182 +77,174 @@
   --space-4xl: 9rem;
 
   --rule-hair: 1px;
-  --rule-firm: 2px;
+  --rule-bold: 3px;
+  --radius-0:  0px;
   --radius-sm: 2px;
 
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
-  --dur-micro: 100ms;
-  --dur-short: 190ms;
-  --dur-long:  360ms;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
 
   --z-base: 1;
   --z-raised: 10;
 
-  --gutter: clamp(1.25rem, 4vw, 4.5rem);
-  --shell: 76rem;
+  --measure: 62ch;
+  --gutter: clamp(1.125rem, 4vw, 3.5rem);
+  --sheet: 76rem;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-
-html, body { overflow-x: clip; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
+*,*::before,*::after{ box-sizing: border-box; }
+html{ overflow-x: clip; -webkit-text-size-adjust: 100%; }
+body{
+  overflow-x: clip;
   margin: 0;
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--text-md);
-  line-height: 1.62;
-  font-optical-sizing: auto;
-  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+  font-weight: 400;
+  padding-inline: max(0px, env(safe-area-inset-left));
+  -webkit-font-smoothing: antialiased;
 }
-
-h1, h2, h3 {
+h1,h2,h3{
   font-family: var(--font-display);
   font-weight: 600;
-  letter-spacing: -0.014em;
+  letter-spacing: -0.02em;
   overflow-wrap: break-word;
   min-width: 0;
   text-wrap: balance;
   margin: 0;
 }
+p{ margin: 0; text-wrap: pretty; }
+ul,ol,dl{ margin: 0; padding: 0; }
+li{ list-style: none; }
+a{ color: inherit; }
 
-p { margin: 0; text-wrap: pretty; }
-ul, ol, dl { margin: 0; padding: 0; }
-
-a { color: var(--color-accent); }
-
-:focus-visible {
-  outline: var(--rule-firm) solid var(--color-focus);
+:where(a,button,summary):focus-visible{
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
-  transition: none;
+  border-radius: var(--radius-sm);
 }
 
-.shell {
+.sheet{
   width: 100%;
-  max-width: var(--shell);
+  max-width: var(--sheet);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
+.skip{
+  position: absolute; left: -9999px; top: 0;
+  background: var(--color-ink); color: var(--color-paper);
+  padding: var(--space-sm) var(--space-md); z-index: var(--z-raised);
+}
+.skip:focus{ left: var(--space-md); top: var(--space-md); }
 
-.rule-firm { border-bottom: var(--rule-firm) solid var(--color-rule-2); }
-
-.label {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
+/* ── the double rule: the one section-entry move, repeated ─────────────── */
+.field{
+  background-image:
+    linear-gradient(var(--color-ink), var(--color-ink)),
+    linear-gradient(var(--color-rule), var(--color-rule));
+  background-size: 100% var(--rule-bold), 100% var(--rule-hair);
+  background-position: 0 0, 0 calc(var(--rule-bold) + var(--space-2xs));
+  background-repeat: no-repeat;
 }
 
-.skip {
-  position: absolute;
-  inset-inline-start: -9999px;
-  top: 0;
-  background: var(--color-ink);
-  color: var(--color-paper);
-  padding: var(--space-sm) var(--space-md);
-  z-index: var(--z-raised);
+/* ── header: a two-line form head, not a sticky link bar ───────────────── */
+.head{ padding-block: var(--space-lg) var(--space-md); }
+.head__inner{
+  display: grid;
+  gap: var(--space-md) var(--space-xl);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
 }
-.skip:focus { inset-inline-start: 0; }
-
-/* ── Masthead: a running head, not a sticky app bar ───────────── */
-
-.masthead { padding-block: var(--space-lg) 0; }
-
-.masthead__top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-sm) var(--space-lg);
-  padding-bottom: var(--space-sm);
-}
-
-.wordmark {
+.wordmark{
   font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--text-xl);
   letter-spacing: -0.03em;
-  color: var(--color-ink);
+  line-height: 1;
   text-decoration: none;
-  white-space: nowrap;
+  display: inline-block;
 }
-.wordmark:hover { color: var(--color-accent); }
-
-.masthead__dateline { color: var(--color-muted); }
-
-.masthead__nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm) var(--space-lg);
-  padding-block: var(--space-sm);
-  border-top: var(--rule-firm) solid var(--color-rule-2);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
+.wordmark::after{
+  content: "";
+  display: block;
+  width: 1.6ch;
+  height: var(--rule-bold);
+  background: var(--color-accent);
+  margin-block-start: var(--space-xs);
 }
-
-.masthead__nav a {
-  font-family: var(--font-display);
+.head__desc{
+  color: var(--color-muted);
   font-size: var(--text-base);
-  font-weight: 500;
-  color: var(--color-ink);
-  text-decoration: none;
+  margin-block-start: var(--space-xs);
+  max-width: 48ch;
+}
+.head__nav ul{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, auto));
+  gap: var(--space-xs) var(--space-xl);
+  justify-content: start;
+}
+.head__nav a{
   white-space: nowrap;
-  padding-block: var(--space-3xs);
-  border-bottom: var(--rule-hair) solid transparent;
+  text-decoration: none;
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
+  padding-block: var(--space-2xs);
+  border-block-end: var(--rule-hair) solid transparent;
   transition: border-color var(--dur-short) var(--ease-out);
 }
-.masthead__nav a:hover { border-bottom-color: var(--color-accent); }
-
-/* ── Hero: Banner posture, left-biased, bottom-heavy ──────────── */
-
-.hero {
-  min-height: min(52dvh, 34rem);
-  display: grid;
-  align-content: center;
-  padding-block: var(--space-2xl) var(--space-4xl);
+.head__nav a:hover{ border-block-end-color: var(--color-accent); }
+.head__rules{
+  border-block-start: var(--rule-bold) solid var(--color-ink);
+  margin-block-start: var(--space-md);
+}
+.head__rules::after{
+  content: "";
+  display: block;
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  margin-block-start: var(--space-2xs);
 }
 
-.hero__grid {
+/* ── hero: Stage, text column + the session card ───────────────────────── */
+.hero{ padding-block: var(--space-xl) var(--space-3xl); }
+.hero__inner{
   display: grid;
-  gap: var(--space-xl) var(--space-2xl);
   grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+  align-items: start;
 }
-
-.hero__display {
+.hero h1{
   font-size: var(--text-display);
-  line-height: 1.03;
-  letter-spacing: -0.03em;
-  font-weight: 700;
-  max-width: 20ch;
+  line-height: 1.04;
+  max-width: 17ch;
+  margin-block-end: var(--space-md);
 }
-
-.hero__lede {
-  margin-top: var(--space-lg);
-  max-width: 48ch;
+.hero__lede{
   font-size: var(--text-lg);
-  line-height: 1.5;
+  line-height: 1.45;
+  color: var(--color-ink-2);
+  max-width: 40ch;
 }
-
-.hero__actions {
-  margin-top: var(--space-xl);
+.hero__actions{
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-lg);
+  margin-block-start: var(--space-xl);
 }
 
-.btn {
-  font-family: var(--font-display);
+.btn{
+  font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: 600;
-  line-height: 1;
   white-space: nowrap;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   min-height: 48px;
@@ -238,564 +253,439 @@ a { color: var(--color-accent); }
   border-radius: var(--radius-sm);
   background: var(--color-accent);
   color: var(--color-accent-ink);
-  text-decoration: none;
+  cursor: pointer;
   transition: background-color var(--dur-short) var(--ease-out),
               transform var(--dur-micro) var(--ease-out);
 }
-.btn:hover { background: var(--color-ink); border-color: var(--color-ink); }
-.btn:active { transform: translateY(1px); }
-
-.link-drawn {
-  font-family: var(--font-display);
-  font-size: var(--text-base);
-  font-weight: 500;
+.btn:hover{ background: var(--color-accent-2); border-color: var(--color-accent-2); }
+.btn:active{ transform: translateY(1px); }
+.btn--ruled{
+  background: transparent;
   color: var(--color-ink);
+  border: var(--rule-hair) solid var(--color-ink);
+  transition: background-color var(--dur-short) var(--ease-out),
+              color var(--dur-short) var(--ease-out),
+              transform var(--dur-micro) var(--ease-out);
+}
+.btn--ruled:hover{ background: var(--color-ink); color: var(--color-paper); }
+
+.textlink{
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
   text-decoration: none;
   white-space: nowrap;
-  border-bottom: var(--rule-firm) solid var(--color-accent);
-  padding-bottom: var(--space-3xs);
-  transition: color var(--dur-short) var(--ease-out);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  padding-block-end: var(--space-3xs);
+  transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
 }
-.link-drawn:hover { color: var(--color-accent); }
+.textlink:hover{ border-block-end-color: var(--color-accent); color: var(--color-accent); }
 
-.spec {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  column-gap: var(--space-lg);
-  align-self: end;
-  border-top: var(--rule-firm) solid var(--color-rule-2);
-  padding-top: var(--space-sm);
+/* the session card */
+.card{
   margin: 0;
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
 }
-.spec dt {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-muted);
-  padding-block: var(--space-xs);
-}
-.spec dd {
-  margin: 0;
-  font-size: var(--text-base);
-  font-variant-numeric: tabular-nums;
-  padding-block: var(--space-xs);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
-}
-.spec dt { border-bottom: var(--rule-hair) solid var(--color-rule); }
-
-/* ── Sections: one firm rule, one hanging head, repeated ───────── */
-
-.band { padding-block: var(--space-3xl); }
-.band--tight { padding-block: var(--space-2xl); }
-.band--tinted { background: var(--color-paper-3); padding-block: var(--space-3xl) var(--space-4xl); }
-.band--close { padding-block: var(--space-4xl) var(--space-3xl); }
-
-.head {
-  border-top: var(--rule-firm) solid var(--color-rule-2);
-  padding-top: var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-.head h2 {
-  font-size: var(--text-2xl);
-  line-height: 1.1;
-  max-width: 24ch;
-}
-
-/* ── Argument: prose with marginalia ──────────────────────────── */
-
-.argument {
-  display: grid;
-  gap: var(--space-xl) var(--space-2xl);
-  grid-template-columns: minmax(0, 1fr);
-}
-.argument__prose { max-width: var(--measure); }
-.argument__prose p + p { margin-top: var(--space-md); }
-.argument__note {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-  color: var(--color-muted);
-  border-top: var(--rule-hair) solid var(--color-rule);
-  padding-top: var(--space-sm);
-  max-width: 34ch;
-}
-
-/* ── Session table ────────────────────────────────────────────── */
-
-.sessions__lede {
-  max-width: var(--measure);
-  margin-bottom: var(--space-lg);
-}
-
-.table-wrap { overflow-x: auto; }
-
-table {
+.card table{
   width: 100%;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
-caption {
-  caption-side: bottom;
+.card caption{
   text-align: start;
-  padding-top: var(--space-md);
-  color: var(--color-muted);
-  font-size: var(--text-base);
-  max-width: var(--measure);
-}
-thead th {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-muted);
-  text-align: start;
-  padding: var(--space-xs) var(--space-md) var(--space-xs) 0;
-  border-bottom: var(--rule-firm) solid var(--color-rule-2);
-  white-space: nowrap;
-}
-tbody th, tbody td {
-  text-align: start;
-  padding: var(--space-md) var(--space-md) var(--space-md) 0;
-  border-bottom: var(--rule-hair) solid var(--color-rule);
-  vertical-align: baseline;
-  font-size: var(--text-base);
-  font-weight: 400;
-}
-tbody tr:nth-child(even) { background: var(--color-paper-2); }
-tbody th {
-  font-family: var(--font-mono);
-  color: var(--color-muted);
-  width: 3.5rem;
-  padding-inline-start: var(--space-2xs);
-}
-.cell-name {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-md);
+  letter-spacing: -0.01em;
+  padding-block-end: var(--space-sm);
 }
-.num {
-  text-align: end;
-  font-family: var(--font-mono);
-  padding-inline-end: var(--space-2xs);
-  white-space: nowrap;
-}
-thead .num { text-align: end; padding-inline-end: var(--space-2xs); }
-
-/* ── The ten minutes: ruler + real ordered list ────────────────── */
-
-.ruler {
-  margin: 0 0 var(--space-2xl);
-  max-width: 54rem;
-}
-.ruler__bars {
-  display: grid;
-  grid-template-columns: 2fr 5fr 3fr;
-  border-top: var(--rule-firm) solid var(--color-rule-2);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
-}
-.ruler__seg {
-  padding: var(--space-sm) var(--space-sm) var(--space-md) 0;
-  border-inline-end: var(--rule-hair) solid var(--color-rule);
-  font-family: var(--font-display);
+.card th{
+  text-align: start;
+  font-size: var(--text-sm);
   font-weight: 600;
-  font-size: var(--text-base);
-  min-width: 0;
-}
-.ruler__seg:last-child { border-inline-end: 0; }
-.ruler__seg span {
-  display: block;
-  font-family: var(--font-mono);
-  font-weight: 400;
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
-  margin-top: var(--space-2xs);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  padding-block-end: var(--space-xs);
 }
-.ruler figcaption {
-  margin-top: var(--space-sm);
-  color: var(--color-muted);
+.card td{
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  padding-block: var(--space-sm);
+  vertical-align: baseline;
   font-size: var(--text-base);
-  max-width: var(--measure);
+  line-height: 1.45;
 }
-
-.phases {
-  list-style: none;
-  counter-reset: phase;
-  display: grid;
-  gap: var(--space-lg);
-  grid-template-columns: minmax(0, 1fr);
+.card td:first-child{
+  font-family: var(--font-display);
+  font-weight: 600;
+  white-space: nowrap;
+  padding-inline-end: var(--space-lg);
+  color: var(--color-accent);
 }
-.phases li {
-  counter-increment: phase;
-  display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr);
-  gap: var(--space-md);
-  border-top: var(--rule-hair) solid var(--color-rule);
-  padding-top: var(--space-md);
-}
-.phases li::before {
-  content: counter(phase, decimal-leading-zero);
-  font-family: var(--font-mono);
+.card figcaption{
   font-size: var(--text-sm);
   color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
-}
-.phases h3 {
-  font-size: var(--text-lg);
-  line-height: 1.15;
-  margin-bottom: var(--space-2xs);
-}
-.phases h3 span {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-muted);
-  margin-inline-start: var(--space-sm);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.phases p { max-width: var(--measure); }
-
-/* ── Refusals: change of paper, ruled rows ────────────────────── */
-
-.refusals { margin: 0; }
-.refusals__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-2xs) var(--space-2xl);
-  border-top: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-md);
-}
-.refusals dt {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-lg);
-  line-height: 1.2;
-  letter-spacing: -0.014em;
-}
-.refusals dd {
-  margin: 0;
-  max-width: 46ch;
-  color: var(--color-ink);
+  margin-block-start: var(--space-md);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block-start: var(--space-xs);
+  max-width: 44ch;
 }
 
-/* ── Practicalities ───────────────────────────────────────────── */
-
-.practical {
-  display: grid;
-  gap: var(--space-xl) var(--space-2xl);
-  grid-template-columns: minmax(0, 1fr);
-}
-.practical ul { list-style: none; }
-.practical li {
-  border-top: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-md);
-  max-width: 46ch;
-}
-
-/* ── Close ────────────────────────────────────────────────────── */
-
-.close__display {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--text-display-s);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+/* ── generic section rhythm, deliberately uneven ───────────────────────── */
+.sec{ padding-block: var(--space-2xl); }
+.sec--tight{ padding-block: var(--space-xl) var(--space-2xl); }
+.sec--loose{ padding-block: var(--space-3xl) var(--space-2xl); }
+.sec h2{
+  font-size: var(--text-2xl);
+  line-height: 1.1;
   max-width: 24ch;
 }
-.close__line {
-  margin-top: var(--space-lg);
-  max-width: 46ch;
-  font-size: var(--text-lg);
-}
-.close__actions { margin-top: var(--space-xl); }
-
-/* ── Colophon ─────────────────────────────────────────────────── */
-
-.colophon {
-  border-top: var(--rule-firm) solid var(--color-rule-2);
-  padding-block: var(--space-xl) var(--space-2xl);
-}
-.colophon__prose {
+.sec__lede{
+  color: var(--color-ink-2);
   max-width: var(--measure);
+  margin-block-start: var(--space-md);
+}
+
+/* refusals: wide prose column, narrow ruled list */
+.refuse{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+  margin-block-start: var(--space-xl);
+}
+.refuse p{ max-width: var(--measure); }
+.refuse p + p{ margin-block-start: var(--space-md); }
+.refuse__list li{
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block: var(--space-sm);
   font-size: var(--text-base);
 }
-.colophon__meta {
-  margin-top: var(--space-lg);
-  padding-top: var(--space-sm);
-  border-top: var(--rule-hair) solid var(--color-rule);
+.refuse__list li:last-child{ border-block-end: var(--rule-hair) solid var(--color-rule); }
+.refuse__list b{
+  font-family: var(--font-display);
+  font-weight: 600;
+  display: block;
+  color: var(--color-ink);
+}
+.refuse__list span{ color: var(--color-muted); font-size: var(--text-sm); }
+
+/* the walk: a real ordered list, counter at graphic scale, tinted well */
+.band{ background-color: var(--color-paper-3); }
+.walk{
+  counter-reset: beat;
+  margin-block-start: var(--space-xl);
+  display: grid;
+  gap: var(--space-xl);
+}
+.walk li{
+  counter-increment: beat;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-xl);
+  align-items: start;
+}
+.walk li::before{
+  content: counter(beat);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-figure);
+  line-height: 0.85;
+  color: var(--color-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.walk h3{ font-size: var(--text-xl); line-height: 1.15; }
+.walk p{ color: var(--color-ink-2); max-width: 54ch; margin-block-start: var(--space-xs); }
+
+/* library: a description list, uneven columns */
+.lib{ margin-block-start: var(--space-xl); }
+.lib > div{
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block: var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-xl);
+  align-items: baseline;
+}
+.lib > div:last-child{ border-block-end: var(--rule-hair) solid var(--color-rule); }
+.lib dt{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.lib dd{ margin: 0; color: var(--color-ink-2); max-width: 52ch; }
+
+/* what it does on the walk: plain ruled specifications */
+.spec{ margin-block-start: var(--space-lg); max-width: 54ch; }
+.spec li{
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  padding-block: var(--space-sm);
+  display: flex;
+  gap: var(--space-md);
+  align-items: baseline;
+  font-size: var(--text-base);
+}
+.spec li::before{
+  content: "";
+  flex: 0 0 auto;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--color-accent);
+  transform: translateY(-0.1em);
+}
+
+/* close */
+.close{ padding-block: var(--space-3xl); }
+.close h2{
+  font-size: var(--text-display-s);
+  line-height: 1.06;
+  max-width: 20ch;
+}
+.close p{ color: var(--color-ink-2); max-width: 46ch; margin-block-start: var(--space-md); }
+.close__actions{ margin-block-start: var(--space-xl); display: flex; flex-wrap: wrap; gap: var(--space-lg); align-items: center; }
+
+/* footer: a colophon, not four columns */
+.foot{ padding-block: var(--space-xl) var(--space-2xl); }
+.foot__colophon{
+  max-width: 58ch;
+  color: var(--color-muted);
+  font-size: var(--text-base);
+}
+.foot__links{
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs) var(--space-lg);
-  justify-content: space-between;
+  gap: var(--space-md) var(--space-xl);
+  margin-block-start: var(--space-lg);
 }
-.colophon__meta a {
-  color: var(--color-muted);
-  text-decoration: none;
+.foot__links a{
   white-space: nowrap;
-  border-bottom: var(--rule-hair) solid transparent;
+  text-decoration: none;
+  font-size: var(--text-base);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  padding-block-end: var(--space-3xs);
+  transition: border-color var(--dur-short) var(--ease-out);
 }
-.colophon__meta a:hover { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+.foot__links a:hover{ border-block-end-color: var(--color-accent); }
+.foot__sign{
+  margin-block-start: var(--space-xl);
+  padding-block-start: var(--space-sm);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  font-size: var(--text-sm);
+  color: var(--color-neutral);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+}
 
-/* ── One orchestrated entrance, hero only ─────────────────────── */
-
-.reveal {
+/* ── one orchestrated reveal ───────────────────────────────────────────── */
+.reveal{
   opacity: 0;
   transform: translateY(8px);
   animation: reveal var(--dur-long) var(--ease-out) forwards;
   animation-delay: calc(var(--i, 0) * 70ms);
 }
-@keyframes reveal { to { opacity: 1; transform: none; } }
+@keyframes reveal{ to{ opacity: 1; transform: none; } }
 
-/* ── Breakpoints ──────────────────────────────────────────────── */
-
-@media (min-width: 46rem) {
-  .refusals__row { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-lg) var(--space-2xl); }
-  .practical { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
-  .phases { gap: var(--space-xl); }
+/* ── up from the small screen ──────────────────────────────────────────── */
+@media (min-width: 40rem){
+  .head__inner{ grid-template-columns: minmax(0, 1.4fr) minmax(0, auto); }
+  .head__nav ul{ justify-content: end; text-align: end; }
+  .refuse{ grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+  .walk li{ grid-template-columns: minmax(0, 4.5rem) minmax(0, 1fr); }
+  .lib > div{ grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr); }
+}
+@media (min-width: 60rem){
+  body{ font-size: var(--text-base); }
+  .head__desc, .head__nav a, .foot__links a, .textlink, .btn{ font-size: var(--text-sm); }
+  .hero__inner{ grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: var(--space-3xl); }
+  .hero{ padding-block: var(--space-xl) var(--space-4xl); }
+  .card td, .spec li, .refuse__list li, .lib dd{ font-size: var(--text-base); }
+  .sec h2{ font-size: var(--text-3xl); }
 }
 
-@media (min-width: 60rem) {
-  body { font-size: var(--text-base); }
-  .masthead__nav a, .btn, .link-drawn { font-size: var(--text-sm); }
-  .hero__grid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr); }
-  .argument { grid-template-columns: minmax(0, 0.28fr) minmax(0, 0.72fr); }
-  .argument__note { order: -1; }
-  .close__actions { padding-inline-start: var(--space-4xl); }
-}
-
-/* Table collapses to labelled blocks rather than scrolling sideways */
-@media (max-width: 45.999rem) {
-  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  tbody tr { display: block; border-bottom: var(--rule-firm) solid var(--color-rule-2); padding-block: var(--space-sm); }
-  tbody th, tbody td { display: block; border-bottom: 0; padding: var(--space-2xs) 0; width: auto; }
-  tbody td::before {
-    content: attr(data-label);
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
-    color: var(--color-muted);
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
   }
-  .num { text-align: start; padding-inline-end: 0; }
+  .reveal{ animation: reveal-reduced 150ms linear forwards; }
+  @keyframes reveal-reduced{ to{ opacity: 1; transform: none; } }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    transition-duration: 0.01ms !important;
-  }
-  .reveal { opacity: 1; transform: none; animation: none; }
+@media (pointer: coarse){
+  .btn{ min-height: 48px; }
 }
 </style>
 </head>
-<body id="top">
-<a class="skip" href="#sessions">Skip to the sessions</a>
+<body>
+<a class="skip" href="#main">Skip to the session</a>
 
-<header class="masthead shell">
-  <div class="masthead__top">
-    <a class="wordmark" href="#top">Tenor</a>
-    <p class="masthead__dateline label">Walking meditation · every session runs 10:00</p>
+<header class="head">
+  <div class="sheet">
+    <div class="head__inner">
+      <div>
+        <a class="wordmark" href="#main">Tenor</a>
+        <p class="head__desc">Ten-minute meditations for people who do their best thinking on the move.</p>
+      </div>
+      <nav class="head__nav" aria-label="Sections of this page">
+        <ul>
+          <li><a href="#session">The session</a></li>
+          <li><a href="#walk">On the walk</a></li>
+          <li><a href="#library">The library</a></li>
+          <li><a href="#start">Start</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="head__rules" role="presentation"></div>
   </div>
-  <nav class="masthead__nav" aria-label="Sections of this page">
-    <a href="#argument">Why walking</a>
-    <a href="#sessions">The five sessions</a>
-    <a href="#minute">The ten minutes</a>
-    <a href="#refusals">What it won’t do</a>
-    <a href="#colophon">Colophon</a>
-  </nav>
 </header>
 
-<main>
-  <section class="hero shell" aria-labelledby="hero-title">
-    <div class="hero__grid">
-      <div>
-        <h1 class="hero__display reveal" id="hero-title" style="--i: 0">Meditation at walking&nbsp;pace.</h1>
-        <p class="hero__lede reveal" style="--i: 1">Ten-minute sessions you do on the way somewhere. Made for people who get worse at sitting still the longer they sit.</p>
-        <div class="hero__actions reveal" style="--i: 2">
-          <a class="btn" href="#sessions">Start the first session</a>
-          <a class="link-drawn" href="#minute">See how ten minutes runs</a>
+<main id="main">
+
+  <section class="hero" id="session">
+    <div class="sheet">
+      <div class="hero__inner">
+        <div class="reveal" style="--i:0">
+          <h1>Meditation you do at walking pace.</h1>
+          <p class="hero__lede">Ten minutes, on foot, eyes open. Nothing to sit still for, no breathing to get right, no candle.</p>
+          <div class="hero__actions">
+            <a class="btn" href="#start">Start a ten-minute walk</a>
+            <a class="textlink" href="#walk">Hear what a session is like</a>
+          </div>
         </div>
-      </div>
-      <dl class="spec reveal" style="--i: 3">
-        <dt>Length</dt><dd>10:00</dd>
-        <dt>Eyes</dt><dd>Open</dd>
-        <dt>Ground</dt><dd>Pavement, stairwell, platform</dd>
-        <dt>Voice</dt><dd>Sparse after minute two</dd>
-      </dl>
-    </div>
-  </section>
 
-  <section class="band shell" id="argument" aria-labelledby="argument-title">
-    <div class="head">
-      <h2 id="argument-title">The chair was the problem, not your attention span.</h2>
-    </div>
-    <div class="argument">
-      <p class="argument__note">Divided attention is the method here, not a compromise. The feet keep the count, so there is always something to come back to.</p>
-      <div class="argument__prose">
-        <p>Every app you have tried opens by asking you to stop moving. That is the hardest part of the practice and it arrives first, before you have any reason to trust the thing asking. Ten minutes later you have negotiated with your own legs and lost, and the app has quietly filed the loss under a streak.</p>
-        <p>Tenor starts from the other end. You are already walking to the station, the meeting, the school gate, the shop that closes at six. The session rides along with the walk you were taking anyway. Nothing about your morning has to move to make room for it.</p>
+        <figure class="card reveal" style="--i:1">
+          <table>
+            <caption>One session, front and back of the card</caption>
+            <thead>
+              <tr><th scope="col">Minute</th><th scope="col">What you are doing</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0 to 1</td><td>Walking. No instruction yet, and none is coming for a minute.</td></tr>
+              <tr><td>1 to 3</td><td>Counting your own steps in fours, out to the pavement rather than inward.</td></tr>
+              <tr><td>3 to 6</td><td>Naming what you can hear, one sound at a time, in the order it arrives.</td></tr>
+              <tr><td>6 to 8</td><td>Dropping the counting. The walk keeps its own time from here.</td></tr>
+              <tr><td>8 to 10</td><td>Picking one thing you noticed and carrying it back inside with you.</td></tr>
+            </tbody>
+          </table>
+          <figcaption>Every session is printed like this before you leave, so you can read it standing up and then put the phone away.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <section class="band shell" id="sessions" aria-labelledby="sessions-title">
-    <div class="head">
-      <h2 id="sessions-title">Five sessions. All of them ten minutes.</h2>
-    </div>
-    <p class="sessions__lede">Pick by where you are, not by how you feel. Feelings are the thing you are going out to look at; they make a poor filter for choosing.</p>
-    <div class="table-wrap">
-      <table>
-        <caption>Every session runs to the same length, so the choice is only ever about where your feet are.</caption>
-        <thead>
-          <tr>
-            <th scope="col">No.</th>
-            <th scope="col">Session</th>
-            <th scope="col">Suits</th>
-            <th scope="col">What you attend to</th>
-            <th scope="col" class="num">Length</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">01</th>
-            <td class="cell-name" data-label="Session">First Light</td>
-            <td data-label="Suits">Quiet streets before eight</td>
-            <td data-label="Attend to">The sound your own steps make</td>
-            <td class="num" data-label="Length">10:00</td>
-          </tr>
-          <tr>
-            <th scope="row">02</th>
-            <td class="cell-name" data-label="Session">The Commute</td>
-            <td data-label="Suits">Pavement, crossings, traffic</td>
-            <td data-label="Attend to">The pause at every red light</td>
-            <td class="num" data-label="Length">10:00</td>
-          </tr>
-          <tr>
-            <th scope="row">03</th>
-            <td class="cell-name" data-label="Session">Stairwell</td>
-            <td data-label="Suits">Indoors, no weather, forty steps</td>
-            <td data-label="Attend to">The handrail under your hand</td>
-            <td class="num" data-label="Length">10:00</td>
-          </tr>
-          <tr>
-            <th scope="row">04</th>
-            <td class="cell-name" data-label="Session">The Long Way Round</td>
-            <td data-label="Suits">Canal paths, parks, deliberate detours</td>
-            <td data-label="Attend to">The width of your own stride</td>
-            <td class="num" data-label="Length">10:00</td>
-          </tr>
-          <tr>
-            <th scope="row">05</th>
-            <td class="cell-name" data-label="Session">Last Errand</td>
-            <td data-label="Suits">Dusk, shops, the walk back</td>
-            <td data-label="Attend to">What you are carrying</td>
-            <td class="num" data-label="Length">10:00</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="band shell" id="minute" aria-labelledby="minute-title">
-    <div class="head">
-      <h2 id="minute-title">How the ten minutes runs.</h2>
-    </div>
-    <figure class="ruler">
-      <div class="ruler__bars">
-        <div class="ruler__seg">Leaving<span>0:00 to 2:00</span></div>
-        <div class="ruler__seg">Counting<span>2:00 to 7:00</span></div>
-        <div class="ruler__seg">Arriving<span>7:00 to 10:00</span></div>
-      </div>
-      <figcaption>One session, drawn to length. The proportions are the same in all five, so the shape of the ten minutes is familiar by the second walk.</figcaption>
-    </figure>
-    <ol class="phases">
-      <li>
+  <section class="sec sec--loose field">
+    <div class="sheet">
+      <h2>Sitting still was the wrong ask.</h2>
+      <div class="refuse">
         <div>
-          <h3>Leaving <span>0:00 to 2:00</span></h3>
-          <p>One instruction, then quiet. Match your breath to the steps you are already taking; nobody asks you to slow down, and the first two minutes are allowed to be as distracted as they are.</p>
+          <p>The apps you bounced off were not badly made. They asked for the one thing you were never going to give them: a quiet room, a straight back, and the patience to stay in it while your legs argued. Two weeks in, the streak breaks, and the failure feels like it says something about you.</p>
+          <p>It does not. Attention has a body attached, and some bodies settle by moving. Tenor takes the same ten minutes and spends them outside, at whatever pace you already walk. The session ends when you get where you were going.</p>
         </div>
-      </li>
-      <li>
-        <div>
-          <h3>Counting <span>2:00 to 7:00</span></h3>
-          <p>Five minutes of counting footfall in fours. The count goes missing, and it will go missing, and the next left foot starts it again. That returning is the whole exercise; the counting is only the excuse for it.</p>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>Arriving <span>7:00 to 10:00</span></h3>
-          <p>The count drops away and you get three minutes to look at the street you have been walking down. The voice does not come back. The session ends where you happen to be.</p>
-        </div>
-      </li>
-    </ol>
+        <ul class="refuse__list" aria-label="What Tenor leaves out">
+          <li><b>No streak</b><span>Nothing is counting the days you missed.</span></li>
+          <li><b>No rain sounds</b><span>The street is the soundtrack. It is already there.</span></li>
+          <li><b>No stillness</b><span>Eyes open, feet moving, headphones in.</span></li>
+        </ul>
+      </div>
+    </div>
   </section>
 
-  <section class="band--tinted" id="refusals" aria-labelledby="refusals-title">
-    <div class="shell">
-      <div class="head">
-        <h2 id="refusals-title">Things Tenor will not do.</h2>
-      </div>
-      <dl class="refusals">
-        <div class="refusals__row">
-          <dt>No streak.</dt>
-          <dd>Missing Tuesday is not a debt, and Wednesday does not begin with an apology. There is no counter in here for you to protect.</dd>
+  <section class="sec sec--loose field band" id="walk">
+    <div class="sheet">
+      <h2>Three beats, and then you are back at your desk.</h2>
+      <p class="sec__lede">A voice arrives four or five times in ten minutes. The rest is you and the pavement, which is the part that works.</p>
+      <ol class="walk">
+        <li>
+          <div>
+            <h3>You leave</h3>
+            <p>Press start on the pavement, not before. The first minute has no instruction in it at all, which is deliberate: the walk has to become ordinary again before anything can be asked of it.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>You walk</h3>
+            <p>The cues are short and they point outward, at your own steps and at what you can hear. Nothing asks you to close your eyes, empty your mind, or notice your breath, because you are crossing a road.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>You arrive</h3>
+            <p>The session closes itself rather than fading out under a chime, and it hands you one thing to keep. Then the audio stops and the app has no further use for your attention.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec sec--tight field" id="library">
+    <div class="sheet">
+      <h2>Sessions are filed by the walk, not by the mood.</h2>
+      <p class="sec__lede">You pick the one that matches the ten minutes you actually have, which is usually the walk you were about to take anyway.</p>
+      <dl class="lib">
+        <div>
+          <dt>The commute leg</dt>
+          <dd>Station to office, or the last stretch home. Written for a route you already know by heart, where the walking takes none of your attention.</dd>
         </div>
-        <div class="refusals__row">
-          <dt>No chime at the end.</dt>
-          <dd>The voice stops. You keep walking. A bell in a crowded street is a way of telling everyone around you that you were meditating.</dd>
+        <div>
+          <dt>Once round the block</dt>
+          <dd>For the gap between two calls. Starts and ends at the same door, so nothing has to be planned before you leave.</dd>
         </div>
-        <div class="refusals__row">
-          <dt>No rainfall, no forest, no whale.</dt>
-          <dd>Ambient sound competes with a bus and loses. What you hear underneath the voice is the street you are actually in.</dd>
+        <div>
+          <dt>The long way</dt>
+          <dd>A deliberate detour, taken slowly, where the point is the extra streets rather than the arrival.</dd>
         </div>
-        <div class="refusals__row">
-          <dt>No reminder at eight in the evening.</dt>
-          <dd>You already know when you walk. An app guessing at it is a notification, not a practice.</dd>
-        </div>
-        <div class="refusals__row">
-          <dt>No circle to breathe along with.</dt>
-          <dd>Screen off, phone in a pocket, eyes on the crossing. Anything you have to watch is a session you are doing sitting down.</dd>
+        <div>
+          <dt>Corridors and stairwells</dt>
+          <dd>Indoors, for the days you cannot get out of the building. Shorter cues, no reference to weather or traffic.</dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section class="band--tight shell" aria-labelledby="practical-title">
-    <div class="head">
-      <h2 id="practical-title">Before you go out.</h2>
-    </div>
-    <div class="practical">
-      <ul>
-        <li>Headphones are optional. The voice is sparse enough to follow through one ear, and quiet enough to leave both out on a slow street.</li>
-        <li>It runs with the screen off and the phone in a pocket. Nothing on the page needs looking at once the session starts.</li>
-        <li>Indoors counts. Stairwell exists for the days the weather wins and for offices with a long enough corridor.</li>
+  <section class="sec field">
+    <div class="sheet">
+      <h2>What it does while you walk.</h2>
+      <ul class="spec" aria-label="How Tenor behaves during a session">
+        <li>Audio only, so the screen stays in your pocket for the whole ten minutes.</li>
+        <li>Sessions download in full, and a session that has downloaded runs without a signal.</li>
+        <li>No notification asks you to come back. You open it when you are already going somewhere.</li>
+        <li>Nothing is scored, ranked, or shown to anyone else.</li>
       </ul>
-      <p class="argument__note">Ten minutes is the length because it is the length of a walk you were already taking. Longer sessions exist in other apps, and that is where they should stay.</p>
     </div>
   </section>
 
-  <section class="band--close shell" aria-labelledby="close-title">
-    <h2 class="close__display" id="close-title">Put your shoes on.</h2>
-    <p class="close__line">Start with First Light or The Commute, whichever one your morning already contains.</p>
-    <p class="close__actions"><a class="link-drawn" href="#sessions">Read the five sessions again</a></p>
+  <section class="close field" id="start">
+    <div class="sheet">
+      <h2>Ten minutes, from wherever you are standing.</h2>
+      <p>Pick a session, put your headphones in, and walk out. If it does not suit you, you have lost a walk you were going to take anyway.</p>
+      <div class="close__actions">
+        <a class="btn btn--ruled" href="#session">Start a ten-minute walk</a>
+        <a class="textlink" href="#library">Look through the library first</a>
+      </div>
+    </div>
   </section>
+
 </main>
 
-<footer class="colophon shell" id="colophon">
-  <p class="colophon__prose">Tenor is a walking meditation app: five sessions, ten minutes each, written for pavement, stairwells and platforms rather than for a cushion. It was made by people who kept failing at sitting still and decided to stop treating that as the failure.</p>
-  <div class="colophon__meta label">
-    <span>Tenor · walking meditation</span>
-    <span>Availability: to confirm</span>
-    <a href="#top">Back to the top</a>
+<footer class="foot field">
+  <div class="sheet">
+    <p class="foot__colophon">Tenor is a walking meditation app. It is built by people who could not sit still for the other ones and stopped treating that as a character flaw.</p>
+    <nav class="foot__links" aria-label="Footer">
+      <a href="#session">The session</a>
+      <a href="#library">The library</a>
+      <a href="#start">Start walking</a>
+      <a href="#main">Support</a>
+      <a href="#main">Privacy</a>
+      <a href="#main">Accessibility</a>
+    </nav>
+    <p class="foot__sign">
+      <span>Tenor</span>
+      <span>Set in Zilla Slab and IBM Plex Sans</span>
+    </p>
   </div>
 </footer>
 </body>

@@ -24,30 +24,55 @@
     "toolUses": 66,
     "durationMs": 822556
   },
-  "hallmark-only/m1-meditation": {
+  "hallmark-old/m1-meditation": {
     "tokens": 168550,
     "toolUses": 34,
     "durationMs": 448360
   },
-  "hallmark-only/m2-devtool": {
+  "hallmark-old/m2-devtool": {
     "tokens": 153154,
     "toolUses": 46,
     "durationMs": 513603
   },
-  "hallmark-only/m3-fintech": {
+  "hallmark-old/m3-fintech": {
     "tokens": 169474,
     "toolUses": 48,
     "durationMs": 554892
   },
-  "hallmark-only/m4-ceramics": {
+  "hallmark-old/m4-ceramics": {
     "tokens": 150876,
     "toolUses": 41,
     "durationMs": 554133
   },
-  "hallmark-only/m5-producttour": {
+  "hallmark-old/m5-producttour": {
     "tokens": 195299,
     "toolUses": 58,
     "durationMs": 696910
+  },
+  "hallmark-only/m1-meditation": {
+    "tokens": 160906,
+    "toolUses": 48,
+    "durationMs": 585062
+  },
+  "hallmark-only/m2-devtool": {
+    "tokens": 159194,
+    "toolUses": 55,
+    "durationMs": 715550
+  },
+  "hallmark-only/m3-fintech": {
+    "tokens": 180168,
+    "toolUses": 48,
+    "durationMs": 608135
+  },
+  "hallmark-only/m4-ceramics": {
+    "tokens": 165180,
+    "toolUses": 69,
+    "durationMs": 762835
+  },
+  "hallmark-only/m5-producttour": {
+    "tokens": 182452,
+    "toolUses": 65,
+    "durationMs": 755502
   },
   "inspo-only/m1-meditation": {
     "tokens": 162700,
@@ -98,5 +123,55 @@
     "tokens": 110705,
     "toolUses": 56,
     "durationMs": 790374
+  },
+  "inspo-only/m9-course": {
+    "tokens": 106649,
+    "toolUses": 13,
+    "durationMs": 535149
+  },
+  "nothing/m6-hardware": {
+    "tokens": 94615,
+    "toolUses": 9,
+    "durationMs": 732451
+  },
+  "inspo-only/m7-logistics": {
+    "tokens": 125993,
+    "toolUses": 15,
+    "durationMs": 726586
+  },
+  "nothing/m8-editorial": {
+    "tokens": 95364,
+    "toolUses": 7,
+    "durationMs": 771707
+  },
+  "inspo-only/m8-editorial": {
+    "tokens": 153556,
+    "toolUses": 12,
+    "durationMs": 766946
+  },
+  "nothing/m10-oss": {
+    "tokens": 107338,
+    "toolUses": 11,
+    "durationMs": 910647
+  },
+  "inspo-only/m6-hardware": {
+    "tokens": 141702,
+    "toolUses": 14,
+    "durationMs": 925758
+  },
+  "inspo-only/m10-oss": {
+    "tokens": 167725,
+    "toolUses": 22,
+    "durationMs": 1019418
+  },
+  "nothing/m9-course": {
+    "tokens": 134606,
+    "toolUses": 31,
+    "durationMs": 1253480
+  },
+  "nothing/m7-logistics": {
+    "tokens": 76171,
+    "toolUses": 11,
+    "durationMs": 1344478
   }
 }

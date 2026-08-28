@@ -92,15 +92,35 @@
   .flag { font-size: 11px; padding: 1px 6px; border: 1px solid var(--rule); border-radius: 2px; }
   .flag.hit { color: var(--bad); border-color: var(--bad); }
   .flag.clean { color: var(--ok); border-color: var(--ok); }
-  footer { padding-block: 30px 60px; color: var(--ink-2); }
+  footer { padding-block: 30px 140px; color: var(--ink-2); }
+
+  /* Sticky Hallmark build switch. Bottom rather than top: the thing it
+     changes is the third column of every row, so it should sit where
+     the eye already is while scrolling the grid, not up with the page
+     furniture. */
+  .switch {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    z-index: 40; display: flex; align-items: center; gap: 14px;
+    padding: 9px 10px 9px 18px; border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: color-mix(in oklab, var(--paper) 88%, transparent);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 34px -14px rgba(0,0,0,.4);
+  }
+  .switch .lbl { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+  .switch .seg { display: flex; gap: 4px; }
+  .switch button { border-radius: 999px; padding: 5px 14px; }
+  .switch .note { font-size: 12px; color: var(--ink-2); white-space: nowrap;
+    border-left: 1px solid var(--rule); padding-left: 14px; }
+  @media (max-width: 620px) { .switch .note { display: none; } }
   a { color: inherit; }
 </style>
 </head>
 <body>
 <header class="band">
   <div class="wrap">
-    <h1>Eval 4 · four arms, five briefs, twenty pages</h1>
-    <p class="sub">Every page below was built by one agent under one condition. The only variable is which design aids it could reach for. Click any screenshot to open the live page.</p>
+    <h1>Eval 4 · four arms · ten briefs</h1>
+    <p class="sub">Every page below was built by one agent under one condition. The only variable is which design aids it could reach for. Briefs m1-m5 ran all four arms; the round-2 briefs (m6-m10) ran the control and the Inspo arm only. Click any screenshot to open the live page.</p>
   </div>
 </header>
 
@@ -110,7 +130,7 @@
 </section>
 
 <section class="band wrap" style="padding-top:0">
-  <h2>Banned patterns, counted across all twenty</h2>
+  <h2>Banned patterns, counted per arm</h2>
   <p class="sub" style="margin-bottom:14px">Two design-skill floor rules that can be checked mechanically rather than judged: no eyebrow before a heading, and no italicised word inside a roman heading. The only objective quality signal in the run.</p>
   <div class="scroll"><table id="patterns"></table></div>
 </section>
@@ -124,12 +144,18 @@
 
 <main id="rows"></main>
 
+<div class="switch" role="group" aria-label="Hallmark build">
+  <span class="lbl">Hallmark column</span>
+  <span class="seg" id="buildseg"></span>
+  <span class="note" id="buildnote"></span>
+</div>
+
 <footer class="wrap">
   Written up in <a href="REPORT.md">REPORT.md</a>. Per-cell rationale in each <code>NOTES.md</code>.
 </footer>
 
 <script>
-const D = {"arms":[{"id":"nothing","label":"Nothing","note":"no archive, no skill"},{"id":"inspo-only","label":"Inspo only","note":"reference archive"},{"id":"hallmark-only","label":"Hallmark only","note":"design skill"},{"id":"both","label":"Both","note":"archive + skill"}],"briefs":[{"id":"m1-meditation","label":"Tenor","note":"walking meditation app"},{"id":"m2-devtool","label":"Sightline","note":"CI observability"},{"id":"m3-fintech","label":"Even","note":"freelancer savings"},{"id":"m4-ceramics","label":"Kiln & Co","note":"ceramics studio"},{"id":"m5-producttour","label":"Reelframe","note":"guided product tour"}],"cells":[{"key":"nothing/m1-meditation","arm":"nothing","brief":"m1-meditation","tokens":89744,"toolUses":41,"secs":547,"inspo":0,"kb":26,"height":5339,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m1-meditation","page":"nothing/m1-meditation/index.html"},{"key":"nothing/m2-devtool","arm":"nothing","brief":"m2-devtool","tokens":79319,"toolUses":36,"secs":464,"inspo":0,"kb":35,"height":5420,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m2-devtool","page":"nothing/m2-devtool/index.html"},{"key":"nothing/m3-fintech","arm":"nothing","brief":"m3-fintech","tokens":143958,"toolUses":65,"secs":803,"inspo":0,"kb":38,"height":5605,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/nothing__m3-fintech","page":"nothing/m3-fintech/index.html"},{"key":"nothing/m4-ceramics","arm":"nothing","brief":"m4-ceramics","tokens":100969,"toolUses":40,"secs":517,"inspo":0,"kb":33,"height":3937,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m4-ceramics","page":"nothing/m4-ceramics/index.html"},{"key":"nothing/m5-producttour","arm":"nothing","brief":"m5-producttour","tokens":110705,"toolUses":56,"secs":790,"inspo":0,"kb":64,"height":6022,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/nothing__m5-producttour","page":"nothing/m5-producttour/index.html"},{"key":"inspo-only/m1-meditation","arm":"inspo-only","brief":"m1-meditation","tokens":162700,"toolUses":62,"secs":742,"inspo":4,"kb":40,"height":5877,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/inspo-only__m1-meditation","page":"inspo-only/m1-meditation/index.html"},{"key":"inspo-only/m2-devtool","arm":"inspo-only","brief":"m2-devtool","tokens":127719,"toolUses":50,"secs":683,"inspo":3,"kb":44,"height":6700,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/inspo-only__m2-devtool","page":"inspo-only/m2-devtool/index.html"},{"key":"inspo-only/m3-fintech","arm":"inspo-only","brief":"m3-fintech","tokens":113388,"toolUses":44,"secs":538,"inspo":3,"kb":33,"height":5799,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/inspo-only__m3-fintech","page":"inspo-only/m3-fintech/index.html"},{"key":"inspo-only/m4-ceramics","arm":"inspo-only","brief":"m4-ceramics","tokens":108838,"toolUses":45,"secs":557,"inspo":4,"kb":28,"height":5012,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/inspo-only__m4-ceramics","page":"inspo-only/m4-ceramics/index.html"},{"key":"inspo-only/m5-producttour","arm":"inspo-only","brief":"m5-producttour","tokens":151355,"toolUses":87,"secs":1135,"inspo":3,"kb":50,"height":5064,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/inspo-only__m5-producttour","page":"inspo-only/m5-producttour/index.html"},{"key":"hallmark-only/m1-meditation","arm":"hallmark-only","brief":"m1-meditation","tokens":168550,"toolUses":34,"secs":448,"inspo":0,"kb":27,"height":5010,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m1-meditation","page":"hallmark-only/m1-meditation/index.html"},{"key":"hallmark-only/m2-devtool","arm":"hallmark-only","brief":"m2-devtool","tokens":153154,"toolUses":46,"secs":514,"inspo":0,"kb":24,"height":3680,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m2-devtool","page":"hallmark-only/m2-devtool/index.html"},{"key":"hallmark-only/m3-fintech","arm":"hallmark-only","brief":"m3-fintech","tokens":169474,"toolUses":48,"secs":555,"inspo":0,"kb":24,"height":4232,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m3-fintech","page":"hallmark-only/m3-fintech/index.html"},{"key":"hallmark-only/m4-ceramics","arm":"hallmark-only","brief":"m4-ceramics","tokens":150876,"toolUses":41,"secs":554,"inspo":0,"kb":25,"height":3805,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m4-ceramics","page":"hallmark-only/m4-ceramics/index.html"},{"key":"hallmark-only/m5-producttour","arm":"hallmark-only","brief":"m5-producttour","tokens":195299,"toolUses":58,"secs":697,"inspo":0,"kb":31,"height":3756,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m5-producttour","page":"hallmark-only/m5-producttour/index.html"},{"key":"both/m1-meditation","arm":"both","brief":"m1-meditation","tokens":206734,"toolUses":62,"secs":744,"inspo":3,"kb":26,"height":5155,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m1-meditation","page":"both/m1-meditation/index.html"},{"key":"both/m2-devtool","arm":"both","brief":"m2-devtool","tokens":219664,"toolUses":66,"secs":737,"inspo":2,"kb":24,"height":3550,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m2-devtool","page":"both/m2-devtool/index.html"},{"key":"both/m3-fintech","arm":"both","brief":"m3-fintech","tokens":179027,"toolUses":45,"secs":600,"inspo":2,"kb":27,"height":4458,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m3-fintech","page":"both/m3-fintech/index.html"},{"key":"both/m4-ceramics","arm":"both","brief":"m4-ceramics","tokens":205413,"toolUses":58,"secs":714,"inspo":2,"kb":29,"height":3815,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m4-ceramics","page":"both/m4-ceramics/index.html"},{"key":"both/m5-producttour","arm":"both","brief":"m5-producttour","tokens":203808,"toolUses":66,"secs":823,"inspo":2,"kb":35,"height":3512,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m5-producttour","page":"both/m5-producttour/index.html"}],"byArm":[{"id":"nothing","label":"Nothing","note":"no archive, no skill","tokens":104939,"toolUses":48,"secs":624,"kb":39,"eyebrow":4,"italicH1":4},{"id":"inspo-only","label":"Inspo only","note":"reference archive","tokens":132800,"toolUses":58,"secs":731,"kb":39,"eyebrow":2,"italicH1":2},{"id":"hallmark-only","label":"Hallmark only","note":"design skill","tokens":167471,"toolUses":45,"secs":554,"kb":26,"eyebrow":0,"italicH1":0},{"id":"both","label":"Both","note":"archive + skill","tokens":202929,"toolUses":59,"secs":724,"kb":28,"eyebrow":0,"italicH1":0}]};
+const D = {"arms":[{"id":"nothing","label":"Nothing","note":"no archive, no skill"},{"id":"inspo-only","label":"Inspo only","note":"reference archive"},{"id":"hallmark-only","label":"Hallmark only","note":"design skill"},{"id":"both","label":"Both","note":"archive + skill"}],"builds":[{"id":"hallmark-old","label":"old","note":"skill at eval-4 (2026-08-05)"},{"id":"hallmark-only","label":"new","note":"skill as of 2026-08-06"}],"briefs":[{"id":"m1-meditation","label":"Tenor","note":"walking meditation app"},{"id":"m2-devtool","label":"Sightline","note":"CI observability"},{"id":"m3-fintech","label":"Even","note":"freelancer savings"},{"id":"m4-ceramics","label":"Kiln & Co","note":"ceramics studio"},{"id":"m5-producttour","label":"Reelframe","note":"guided product tour"},{"id":"m6-hardware","label":"Vellum","note":"pocket e-ink writing tablet","round":2},{"id":"m7-logistics","label":"Manifest","note":"customs automation for importers","round":2},{"id":"m8-editorial","label":"Footnote","note":"paid weekly letter on cities","round":2},{"id":"m9-course","label":"Primer","note":"writing course for engineers","round":2},{"id":"m10-oss","label":"Windlass","note":"SQLite job queue for Node","round":2}],"cells":[{"key":"nothing/m1-meditation","arm":"nothing","brief":"m1-meditation","tokens":89744,"toolUses":41,"secs":547,"inspo":0,"kb":26,"height":5339,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m1-meditation","page":"nothing/m1-meditation/index.html"},{"key":"nothing/m2-devtool","arm":"nothing","brief":"m2-devtool","tokens":79319,"toolUses":36,"secs":464,"inspo":0,"kb":35,"height":5420,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m2-devtool","page":"nothing/m2-devtool/index.html"},{"key":"nothing/m3-fintech","arm":"nothing","brief":"m3-fintech","tokens":143958,"toolUses":65,"secs":803,"inspo":0,"kb":38,"height":5605,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/nothing__m3-fintech","page":"nothing/m3-fintech/index.html"},{"key":"nothing/m4-ceramics","arm":"nothing","brief":"m4-ceramics","tokens":100969,"toolUses":40,"secs":517,"inspo":0,"kb":33,"height":3937,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/nothing__m4-ceramics","page":"nothing/m4-ceramics/index.html"},{"key":"nothing/m5-producttour","arm":"nothing","brief":"m5-producttour","tokens":110705,"toolUses":56,"secs":790,"inspo":0,"kb":64,"height":6022,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/nothing__m5-producttour","page":"nothing/m5-producttour/index.html"},{"key":"nothing/m6-hardware","arm":"nothing","brief":"m6-hardware","tokens":94615,"toolUses":9,"secs":732,"inspo":0,"kb":22,"height":4345,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/nothing__m6-hardware","page":"nothing/m6-hardware/index.html"},{"key":"nothing/m7-logistics","arm":"nothing","brief":"m7-logistics","tokens":76171,"toolUses":11,"secs":1344,"inspo":0,"kb":31,"height":5444,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/nothing__m7-logistics","page":"nothing/m7-logistics/index.html"},{"key":"nothing/m8-editorial","arm":"nothing","brief":"m8-editorial","tokens":95364,"toolUses":7,"secs":772,"inspo":0,"kb":26,"height":5072,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/nothing__m8-editorial","page":"nothing/m8-editorial/index.html"},{"key":"nothing/m9-course","arm":"nothing","brief":"m9-course","tokens":134606,"toolUses":31,"secs":1253,"inspo":0,"kb":31,"height":6902,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/nothing__m9-course","page":"nothing/m9-course/index.html"},{"key":"nothing/m10-oss","arm":"nothing","brief":"m10-oss","tokens":107338,"toolUses":11,"secs":911,"inspo":0,"kb":37,"height":5536,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/nothing__m10-oss","page":"nothing/m10-oss/index.html"},{"key":"inspo-only/m1-meditation","arm":"inspo-only","brief":"m1-meditation","tokens":162700,"toolUses":62,"secs":742,"inspo":4,"kb":40,"height":5877,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/inspo-only__m1-meditation","page":"inspo-only/m1-meditation/index.html"},{"key":"inspo-only/m2-devtool","arm":"inspo-only","brief":"m2-devtool","tokens":127719,"toolUses":50,"secs":683,"inspo":3,"kb":44,"height":6700,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/inspo-only__m2-devtool","page":"inspo-only/m2-devtool/index.html"},{"key":"inspo-only/m3-fintech","arm":"inspo-only","brief":"m3-fintech","tokens":113388,"toolUses":44,"secs":538,"inspo":3,"kb":33,"height":5799,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":false,"shot":"_shots/inspo-only__m3-fintech","page":"inspo-only/m3-fintech/index.html"},{"key":"inspo-only/m4-ceramics","arm":"inspo-only","brief":"m4-ceramics","tokens":108838,"toolUses":45,"secs":557,"inspo":4,"kb":28,"height":5012,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/inspo-only__m4-ceramics","page":"inspo-only/m4-ceramics/index.html"},{"key":"inspo-only/m5-producttour","arm":"inspo-only","brief":"m5-producttour","tokens":151355,"toolUses":87,"secs":1135,"inspo":3,"kb":50,"height":5064,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/inspo-only__m5-producttour","page":"inspo-only/m5-producttour/index.html"},{"key":"inspo-only/m6-hardware","arm":"inspo-only","brief":"m6-hardware","tokens":141702,"toolUses":14,"secs":926,"inspo":7,"kb":33,"height":5252,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":true,"shot":"_shots/inspo-only__m6-hardware","page":"inspo-only/m6-hardware/index.html"},{"key":"inspo-only/m7-logistics","arm":"inspo-only","brief":"m7-logistics","tokens":125993,"toolUses":15,"secs":727,"inspo":6,"kb":34,"height":5991,"foldOk":true,"ovf":0,"mobOvf":2,"eyebrow":true,"italicH1":false,"shot":"_shots/inspo-only__m7-logistics","page":"inspo-only/m7-logistics/index.html"},{"key":"inspo-only/m8-editorial","arm":"inspo-only","brief":"m8-editorial","tokens":153556,"toolUses":12,"secs":767,"inspo":6,"kb":29,"height":4703,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/inspo-only__m8-editorial","page":"inspo-only/m8-editorial/index.html"},{"key":"inspo-only/m9-course","arm":"inspo-only","brief":"m9-course","tokens":106649,"toolUses":13,"secs":535,"inspo":6,"kb":25,"height":5481,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":true,"italicH1":true,"shot":"_shots/inspo-only__m9-course","page":"inspo-only/m9-course/index.html"},{"key":"inspo-only/m10-oss","arm":"inspo-only","brief":"m10-oss","tokens":167725,"toolUses":22,"secs":1019,"inspo":5,"kb":27,"height":3911,"foldOk":true,"ovf":0,"mobOvf":49,"eyebrow":true,"italicH1":false,"shot":"_shots/inspo-only__m10-oss","page":"inspo-only/m10-oss/index.html"},{"key":"hallmark-only/m1-meditation","arm":"hallmark-only","brief":"m1-meditation","tokens":160906,"toolUses":48,"secs":585,"inspo":0,"kb":25,"height":4127,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m1-meditation","page":"hallmark-only/m1-meditation/index.html"},{"key":"hallmark-only/m2-devtool","arm":"hallmark-only","brief":"m2-devtool","tokens":159194,"toolUses":55,"secs":716,"inspo":0,"kb":25,"height":4194,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m2-devtool","page":"hallmark-only/m2-devtool/index.html"},{"key":"hallmark-only/m3-fintech","arm":"hallmark-only","brief":"m3-fintech","tokens":180168,"toolUses":48,"secs":608,"inspo":0,"kb":28,"height":4289,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m3-fintech","page":"hallmark-only/m3-fintech/index.html"},{"key":"hallmark-only/m4-ceramics","arm":"hallmark-only","brief":"m4-ceramics","tokens":165180,"toolUses":69,"secs":763,"inspo":0,"kb":31,"height":5427,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m4-ceramics","page":"hallmark-only/m4-ceramics/index.html"},{"key":"hallmark-only/m5-producttour","arm":"hallmark-only","brief":"m5-producttour","tokens":182452,"toolUses":65,"secs":756,"inspo":0,"kb":29,"height":5952,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-only__m5-producttour","page":"hallmark-only/m5-producttour/index.html"},{"key":"both/m1-meditation","arm":"both","brief":"m1-meditation","tokens":206734,"toolUses":62,"secs":744,"inspo":3,"kb":26,"height":5155,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m1-meditation","page":"both/m1-meditation/index.html"},{"key":"both/m2-devtool","arm":"both","brief":"m2-devtool","tokens":219664,"toolUses":66,"secs":737,"inspo":2,"kb":24,"height":3550,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m2-devtool","page":"both/m2-devtool/index.html"},{"key":"both/m3-fintech","arm":"both","brief":"m3-fintech","tokens":179027,"toolUses":45,"secs":600,"inspo":2,"kb":27,"height":4458,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m3-fintech","page":"both/m3-fintech/index.html"},{"key":"both/m4-ceramics","arm":"both","brief":"m4-ceramics","tokens":205413,"toolUses":58,"secs":714,"inspo":2,"kb":29,"height":3815,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m4-ceramics","page":"both/m4-ceramics/index.html"},{"key":"both/m5-producttour","arm":"both","brief":"m5-producttour","tokens":203808,"toolUses":66,"secs":823,"inspo":2,"kb":35,"height":3512,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/both__m5-producttour","page":"both/m5-producttour/index.html"},{"key":"hallmark-old/m1-meditation","arm":"hallmark-old","brief":"m1-meditation","tokens":168550,"toolUses":34,"secs":448,"inspo":0,"kb":27,"height":5010,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-old__m1-meditation","page":"hallmark-old/m1-meditation/index.html"},{"key":"hallmark-old/m2-devtool","arm":"hallmark-old","brief":"m2-devtool","tokens":153154,"toolUses":46,"secs":514,"inspo":0,"kb":24,"height":3680,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-old__m2-devtool","page":"hallmark-old/m2-devtool/index.html"},{"key":"hallmark-old/m3-fintech","arm":"hallmark-old","brief":"m3-fintech","tokens":169474,"toolUses":48,"secs":555,"inspo":0,"kb":24,"height":4232,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-old__m3-fintech","page":"hallmark-old/m3-fintech/index.html"},{"key":"hallmark-old/m4-ceramics","arm":"hallmark-old","brief":"m4-ceramics","tokens":150876,"toolUses":41,"secs":554,"inspo":0,"kb":25,"height":3805,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-old__m4-ceramics","page":"hallmark-old/m4-ceramics/index.html"},{"key":"hallmark-old/m5-producttour","arm":"hallmark-old","brief":"m5-producttour","tokens":195299,"toolUses":58,"secs":697,"inspo":0,"kb":31,"height":3756,"foldOk":true,"ovf":0,"mobOvf":0,"eyebrow":false,"italicH1":false,"shot":"_shots/hallmark-old__m5-producttour","page":"hallmark-old/m5-producttour/index.html"}],"byArm":[{"id":"nothing","label":"Nothing","note":"no archive, no skill","n":10,"tokens":103279,"toolUses":31,"secs":813,"kb":34,"eyebrow":6,"italicH1":5},{"id":"inspo-only","label":"Inspo only","note":"reference archive","n":10,"tokens":135963,"toolUses":36,"secs":763,"kb":34,"eyebrow":5,"italicH1":4},{"id":"hallmark-only","label":"Hallmark only","note":"design skill","n":5,"tokens":169580,"toolUses":57,"secs":686,"kb":28,"eyebrow":0,"italicH1":0},{"id":"both","label":"Both","note":"archive + skill","n":5,"tokens":202929,"toolUses":59,"secs":724,"kb":28,"eyebrow":0,"italicH1":0},{"id":"hallmark-old","label":"Hallmark (old)","note":"skill at eval-4","n":5,"tokens":167471,"toolUses":45,"secs":554,"kb":26,"eyebrow":0,"italicH1":0}]};
 let view = "fold";
 
 const fmt = n => n == null ? "—" : n.toLocaleString();
@@ -141,22 +167,27 @@ function table(el, head, rows) {
     "<tbody>" + rows.map(r => "<tr>" + r.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</tbody>";
 }
 
-table(document.getElementById("summary"),
-  ["Arm", "Tokens", "Tool calls", "Wall", "Page size"],
-  D.byArm.map(a => [
-    "<strong>" + a.label + "</strong> <span class='cap-note'>" + a.note + "</span>",
-    fmt(a.tokens), a.toolUses, mmss(a.secs), a.kb + " KB",
-  ]));
+function renderTables() {
+  const rows = D.arms.map(a => D.byArm.find(x => x.id === sourceFor(a.id)) || {});
+  const labels = D.arms.map(a => a.label + (sourceFor(a.id) === "hallmark-old" ? " (old)" : ""));
 
-table(document.getElementById("patterns"),
-  ["Arm", "Eyebrow", "Italic in heading"],
-  D.byArm.map(a => {
-    const cell = n => "<span class='" + (n === 0 ? "ok" : "bad") + "'>" + n + " / 5</span>";
-    return ["<strong>" + a.label + "</strong>", cell(a.eyebrow), cell(a.italicH1)];
-  }));
+  table(document.getElementById("summary"),
+    ["Arm", "Tokens", "Tool calls", "Wall", "Page size"],
+    rows.map((a, i) => [
+      "<strong>" + labels[i] + "</strong> <span class='cap-note'>" + (D.arms[i].note) + "</span>",
+      fmt(a.tokens), a.toolUses ?? "—", mmss(a.secs), (a.kb ?? "—") + " KB",
+    ]));
 
-function cellHtml(c) {
-  const arm = D.arms.find(a => a.id === c.arm);
+  table(document.getElementById("patterns"),
+    ["Arm", "Eyebrow", "Italic in heading"],
+    rows.map((a, i) => {
+      const cell = n => "<span class='" + (n === 0 ? "ok" : "bad") + "'>" + n + " / " + (a.n ?? 5) + "</span>";
+      return ["<strong>" + labels[i] + "</strong>", cell(a.eyebrow ?? 0), cell(a.italicH1 ?? 0)];
+    }));
+}
+
+function cellHtml(c, armOverride) {
+  const arm = armOverride || D.arms.find(a => a.id === c.arm);
   const flag = (label, hit) =>
     "<span class='flag " + (hit ? "hit" : "clean") + "'>" + label + (hit ? "" : " ✓") + "</span>";
   return "<figure>" +
@@ -164,7 +195,9 @@ function cellHtml(c) {
       "<img loading='lazy' alt='" + c.key + "' src='" + c.shot + "." + view + ".png'>" +
     "</a>" +
     "<figcaption>" +
-      "<div class='cap-arm'>" + arm.label + "</div>" +
+      "<div class='cap-arm'>" + arm.label +
+        (c.arm === "hallmark-old" ? " <span class='cap-note'>(old build)</span>" : "") +
+      "</div>" +
       "<div class='stats'>" +
         "<span>" + fmt(c.tokens) + " tok</span>" +
         "<span>" + c.toolUses + " calls</span>" +
@@ -182,15 +215,47 @@ function cellHtml(c) {
     "</figcaption></figure>";
 }
 
+/* The Hallmark column is the only one with two sources behind it, so
+   it is the only one that reads the active build. Everything else
+   resolves to its own arm id as before. */
+function sourceFor(armId) {
+  return armId === "hallmark-only" ? build : armId;
+}
+
 function render() {
   document.getElementById("rows").innerHTML = D.briefs.map(b =>
     "<section class='row'><div class='wrap'>" +
-      "<div class='row-head'><strong>" + b.label + "</strong><span>" + b.note + "</span></div>" +
+      "<div class='row-head'><strong>" + b.label + "</strong><span>" + b.note + (b.round === 2 ? " · round 2" : "") + "</span></div>" +
       "<div class='grid'>" +
-        D.arms.map(a => cellHtml(D.cells.find(c => c.arm === a.id && c.brief === b.id))).join("") +
+        D.arms.map(a => {
+          const cell = D.cells.find(c => c.arm === sourceFor(a.id) && c.brief === b.id);
+          return cell ? cellHtml(cell, a) : "<figure><div class='shot'></div><figcaption><div class='cap-arm'>" + a.label + "</div><div class='stats'>" + (b.round === 2 ? "not in round 2" : "not run") + "</div></figcaption></figure>";
+        }).join("") +
       "</div>" +
     "</div></section>").join("");
+  renderTables();
 }
+
+let build = localStorage.getItem("eval4-build") || "hallmark-only";
+
+const seg = document.getElementById("buildseg");
+seg.innerHTML = D.builds.map(b =>
+  "<button data-build='" + b.id + "'>" + b.label + "</button>").join("");
+function paintSwitch() {
+  for (const b of seg.querySelectorAll("[data-build]"))
+    b.setAttribute("aria-pressed", String(b.dataset.build === build));
+  document.getElementById("buildnote").textContent =
+    (D.builds.find(b => b.id === build) || {}).note || "";
+}
+for (const b of seg.querySelectorAll("[data-build]")) {
+  b.addEventListener("click", () => {
+    build = b.dataset.build;
+    localStorage.setItem("eval4-build", build);
+    paintSwitch();
+    render();
+  });
+}
+paintSwitch();
 
 for (const btn of document.querySelectorAll("[data-view]")) {
   btn.addEventListener("click", () => {

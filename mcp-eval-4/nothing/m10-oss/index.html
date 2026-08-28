@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windlass · background jobs for Node.js, backed by SQLite</title>
+<meta name="description" content="Windlass is an open-source job queue for Node.js built on SQLite. Durable, transactional background jobs with retries, scheduling and a dead-letter table: no Redis, no ops, one dependency.">
+<meta name="theme-color" content="#F4EFE3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23152532'/%3E%3Ccircle cx='16' cy='13' r='6.4' fill='none' stroke='%23F4EFE3' stroke-width='2.2'/%3E%3Cpath d='M16 19.4V27M13 27h6' fill='none' stroke='%23F4EFE3' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M20.6 8.4l3.6-3.6' fill='none' stroke='%23F4EFE3' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EFE3;
+    --paper-deep:#ECE5D2;
+    --card:#FCF9F0;
+    --ink:#152532;
+    --ink-soft:#41586A;
+    --muted:#6B7E8C;
+    --line:rgba(21,37,50,.16);
+    --line-strong:rgba(21,37,50,.3);
+    --ultra:#2B49C1;
+    --sea:#27684A;
+    --signal:#A83820;
+    --dark:#0D1B26;
+    --dark-card:#0A1520;
+    --dark-text:#E9E2D2;
+    --dark-muted:#93A6B2;
+    --dark-line:rgba(233,226,210,.16);
+    --ultra-dk:#8FA9FF;
+    --sea-dk:#8CC6A4;
+    --signal-dk:#E58A6F;
+    --serif:"Newsreader",Georgia,serif;
+    --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:60;
+    opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--ultra);color:var(--card)}
+  a{color:inherit}
+  :focus-visible{outline:2px dashed var(--ultra);outline-offset:3px;border-radius:2px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 36px}
+  .hero-grid>*,.why-grid>*,.watch-grid>*,.cards>*,.steps>*,.fit-grid>*,.foot-grid>*{min-width:0}
+  .skip{
+    position:absolute;left:-9999px;top:0;z-index:100;
+    background:var(--ink);color:var(--card);
+    font-family:var(--mono);font-size:13px;
+    padding:10px 16px;
+  }
+  .skip:focus{left:12px;top:12px}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{
+    display:flex;align-items:center;justify-content:space-between;
+    height:62px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    text-decoration:none;
+    font-family:var(--mono);font-weight:600;font-size:16px;
+    letter-spacing:.01em;
+  }
+  .brand svg{display:block;color:var(--ink)}
+  .nav-links{display:flex;align-items:center;gap:26px;font-family:var(--mono);font-size:13px}
+  .nav-links a{text-decoration:none;color:var(--ink-soft)}
+  .nav-links a:hover{color:var(--ultra)}
+  .nav-chip{
+    border:1.5px solid var(--ink);
+    padding:7px 14px;border-radius:6px;
+    color:var(--ink) !important;
+    background:var(--card);
+    box-shadow:2px 2px 0 var(--line-strong);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .nav-chip:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink);color:var(--ink) !important}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(var(--paper) 0%, rgba(244,239,227,0) 34%, rgba(244,239,227,0) 70%, var(--paper) 100%),
+      repeating-linear-gradient(0deg, rgba(43,73,193,.05) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(90deg, rgba(43,73,193,.05) 0 1px, transparent 1px 44px),
+      var(--paper);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.04fr .96fr;
+    gap:56px;
+    align-items:start;
+    padding:46px 0 40px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;font-weight:500;
+    letter-spacing:.17em;text-transform:uppercase;
+    color:var(--ultra);
+  }
+  .eyebrow .no{color:var(--muted)}
+  h1{
+    margin-top:16px;
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(40px,4.6vw,59px);
+    line-height:1.06;
+    letter-spacing:-.015em;
+  }
+  h1 em{font-style:italic;font-weight:400}
+  h1 .u{
+    background-image:linear-gradient(to top, rgba(43,73,193,.28) 0 .14em, transparent .14em);
+  }
+  .lede{
+    margin-top:22px;
+    max-width:56ch;
+    font-size:18.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .lede code{font-family:var(--mono);font-size:.86em;color:var(--ink)}
+  .cta-row{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px;margin-top:26px}
+  .install{
+    display:flex;align-items:center;
+    border:1.5px solid var(--ink);
+    background:var(--card);
+    border-radius:7px;
+    font-family:var(--mono);font-size:14px;
+    box-shadow:3px 3px 0 var(--line-strong);
+  }
+  .install .cmd{padding:12px 16px;white-space:nowrap}
+  .install .p{color:var(--muted);margin-right:8px}
+  .copy{
+    border:0;border-left:1.5px solid var(--ink);
+    background:transparent;
+    font-family:var(--mono);font-size:12px;
+    padding:0 14px;cursor:pointer;color:var(--ink-soft);
+    border-radius:0 5px 5px 0;
+    transition:background .15s ease,color .15s ease;
+  }
+  .copy:hover{background:var(--ink);color:var(--card)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:14px;font-weight:500;
+    text-decoration:none;
+    padding:12px 20px;border-radius:7px;
+    border:1.5px solid var(--ink);
+    background:var(--ink);color:var(--card);
+    box-shadow:3px 3px 0 var(--line-strong);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);background:#0B1B29}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--card)}
+  .ticker{
+    margin-top:30px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;color:var(--muted);
+    letter-spacing:.02em;
+  }
+  .ticker b{color:var(--ink);font-weight:500}
+
+  /* code card */
+  .codecard{
+    background:var(--card);
+    border:1.5px solid var(--ink);
+    border-radius:10px;
+    box-shadow:6px 6px 0 var(--line-strong);
+    overflow:hidden;
+  }
+  .codecard-h{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 16px;
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+  }
+  .codecard-h b{color:var(--ink);font-weight:500}
+  pre{
+    font-family:var(--mono);
+    font-size:13.5px;line-height:1.62;
+    padding:18px 20px;
+    overflow-x:auto;
+    color:rgba(21,37,50,.9);
+  }
+  .k{color:var(--ultra)}
+  .s{color:var(--sea)}
+  .n{color:var(--signal)}
+  .c{color:var(--muted);font-style:italic}
+  .caption{
+    margin-top:12px;
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:92px 0}
+  .sec-eyebrow{
+    font-family:var(--mono);font-size:11.5px;font-weight:500;
+    letter-spacing:.17em;text-transform:uppercase;color:var(--ultra);
+  }
+  .sec-eyebrow .no{color:var(--muted)}
+  h2{
+    margin-top:14px;
+    font-weight:500;
+    font-size:clamp(30px,3.4vw,42px);
+    line-height:1.12;
+    letter-spacing:-.012em;
+    max-width:22ch;
+  }
+  .deck{
+    margin-top:10px;
+    font-style:italic;font-size:20px;color:var(--ink-soft);
+  }
+
+  /* 01 why */
+  .why-grid{
+    display:grid;grid-template-columns:1fr 1.15fr;gap:64px;
+    margin-top:44px;align-items:start;
+  }
+  .statement{
+    font-size:clamp(23px,2.2vw,27px);
+    line-height:1.35;font-style:italic;
+    border-left:3px solid var(--ultra);
+    padding-left:22px;
+    color:var(--ink);
+  }
+  .why-copy p{color:var(--ink-soft);max-width:58ch}
+  .why-copy p + p{margin-top:18px}
+  .why-copy code{font-family:var(--mono);font-size:.84em;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .diagram{
+    margin-top:64px;
+    background:var(--card);
+    border:1.5px solid var(--ink);
+    border-radius:12px;
+    box-shadow:6px 6px 0 var(--line-strong);
+    padding:30px 26px 20px;
+    overflow-x:auto;
+  }
+  .diagram svg{display:block;min-width:860px;width:100%;height:auto}
+  .diagram text{font-family:var(--mono)}
+  .dg-cap{
+    margin-top:14px;
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+    max-width:78ch;
+  }
+  .rope{
+    stroke-dasharray:7 6;
+    animation:haul 26s linear infinite;
+  }
+  @keyframes haul{to{stroke-dashoffset:-780}}
+
+  /* 02 capabilities */
+  .band{
+    background:var(--paper-deep);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .cards{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+    margin-top:48px;
+  }
+  .cardx{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    padding:26px 24px 28px;
+    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .cardx:hover{transform:translateY(-3px);box-shadow:5px 5px 0 var(--line-strong);border-color:var(--ink)}
+  .cardx .num{
+    position:absolute;top:20px;right:22px;
+    font-family:var(--mono);font-size:11px;color:var(--muted);
+  }
+  .cardx .icon{color:var(--ultra);height:28px}
+  .cardx h3{
+    margin-top:16px;
+    font-weight:600;font-size:21px;line-height:1.2;letter-spacing:-.01em;
+  }
+  .cardx p{margin-top:10px;font-size:15.5px;line-height:1.6;color:var(--ink-soft)}
+  .cardx p code{font-family:var(--mono);font-size:.85em;color:var(--ink)}
+
+  /* 03 night watch */
+  .dark{
+    background:
+      repeating-linear-gradient(0deg, rgba(143,169,255,.045) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(90deg, rgba(143,169,255,.045) 0 1px, transparent 1px 44px),
+      var(--dark);
+    color:var(--dark-text);
+  }
+  .dark .sec-eyebrow{color:var(--ultra-dk)}
+  .dark .sec-eyebrow .no{color:var(--dark-muted)}
+  .watch-grid{
+    display:grid;grid-template-columns:.92fr 1.08fr;gap:60px;
+    margin-top:44px;align-items:start;
+  }
+  .watch-copy p{color:var(--dark-muted);max-width:52ch}
+  .watch-copy p b{color:var(--dark-text);font-weight:500}
+  .cli-list{list-style:none;margin-top:26px;border-top:1px solid var(--dark-line)}
+  .cli-list li{
+    display:flex;gap:18px;align-items:baseline;
+    padding:13px 2px;border-bottom:1px solid var(--dark-line);
+    font-size:15px;color:var(--dark-muted);
+  }
+  .cli-list code{
+    font-family:var(--mono);font-size:13px;color:var(--dark-text);
+    white-space:nowrap;min-width:15ch;
+  }
+  .term{
+    background:var(--dark-card);
+    border:1px solid var(--dark-line);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+  }
+  .term-h{
+    display:flex;justify-content:space-between;
+    padding:10px 16px;
+    border-bottom:1px solid var(--dark-line);
+    font-family:var(--mono);font-size:11.5px;color:var(--dark-muted);
+  }
+  .term pre{color:var(--dark-muted);font-size:13px;line-height:1.7;padding:18px 20px}
+  .term .cmd{color:var(--dark-text);font-weight:500}
+  .term .p{color:var(--dark-muted)}
+  .term .ok{color:var(--sea-dk)}
+  .term .bad{color:var(--signal-dk)}
+  .term .dim{color:rgba(147,166,178,.7)}
+
+  /* 04 load line */
+  .fit-intro{margin-top:18px;max-width:60ch;color:var(--ink-soft)}
+  .fit-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px;
+  }
+  .fit-col{
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    background:var(--card);
+    padding:26px 26px 30px;
+  }
+  .fit-col h3{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:13px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;
+  }
+  .fit-col.yes h3{color:var(--sea)}
+  .fit-col.no h3{color:var(--signal)}
+  .plimsoll{flex:none}
+  .fit-col ul{list-style:none;margin-top:18px}
+  .fit-col li{
+    position:relative;
+    padding:10px 0 10px 26px;
+    border-top:1px solid var(--line);
+    font-size:16px;color:var(--ink-soft);
+  }
+  .fit-col li::before{
+    position:absolute;left:2px;top:10px;
+    font-family:var(--mono);font-weight:600;
+  }
+  .fit-col.yes li::before{content:"+";color:var(--sea)}
+  .fit-col.no li::before{content:"\00d7";color:var(--signal)}
+  .fit-close{
+    margin-top:36px;
+    font-style:italic;font-size:19px;color:var(--ink);
+    max-width:64ch;
+  }
+  .fit-close code{font-family:var(--mono);font-size:.82em;font-style:normal;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+  /* 05 quickstart */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:48px;
+  }
+  .step{
+    border:1px solid var(--line-strong);
+    background:var(--card);
+    border-radius:10px;
+    padding:24px;
+    display:flex;flex-direction:column;
+  }
+  .step .no{
+    font-family:var(--mono);font-size:12px;color:var(--ultra);letter-spacing:.14em;
+  }
+  .step h3{margin-top:10px;font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .step pre{
+    margin-top:14px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:12.8px;
+    padding:14px 16px;
+  }
+  .step .why{margin-top:12px;font-size:14.5px;color:var(--muted);line-height:1.55}
+  .cta-band{
+    margin-top:76px;padding-top:56px;
+    border-top:1px solid var(--line-strong);
+    text-align:center;
+  }
+  .cta-band h2{margin:0 auto;max-width:none}
+  .cta-band .deck{margin-top:14px}
+  .cta-band .cta-row{justify-content:center;margin-top:30px}
+
+  /* footer */
+  footer{
+    background:var(--dark);color:var(--dark-muted);
+    border-top:1px solid var(--dark-line);
+  }
+  .foot-grid{
+    display:grid;grid-template-columns:1.3fr 1fr 1fr 1.3fr;gap:40px;
+    padding:64px 0 48px;
+  }
+  .foot-brand{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-weight:600;font-size:16px;color:var(--dark-text);
+  }
+  .foot-brand svg{color:var(--dark-text)}
+  .foot-tag{margin-top:14px;font-size:15px;max-width:26ch;line-height:1.6}
+  .foot-col h4{
+    font-family:var(--mono);font-size:11px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--dark-text);
+  }
+  .foot-col ul{list-style:none;margin-top:16px}
+  .foot-col li{margin-top:10px}
+  .foot-col a{
+    font-family:var(--mono);font-size:13px;color:var(--dark-muted);
+    text-decoration:none;
+  }
+  .foot-col a:hover{color:var(--ultra-dk)}
+  .colophon{font-size:14.5px;font-style:italic;line-height:1.65;max-width:30ch}
+  .foot-bottom{
+    display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:space-between;
+    padding:22px 0 30px;
+    border-top:1px solid var(--dark-line);
+    font-family:var(--mono);font-size:12px;
+  }
+
+  @media (max-width:1020px){
+    .hero-grid{grid-template-columns:1fr;gap:40px;padding-top:40px}
+    .codecard{max-width:640px}
+    .why-grid,.watch-grid{grid-template-columns:1fr;gap:36px}
+    .cards{grid-template-columns:1fr 1fr}
+    .steps{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:36px}
+  }
+  @media (max-width:680px){
+    .wrap{padding:0 22px}
+    section{padding:64px 0}
+    .nav-links a:not(.nav-chip){display:none}
+    .cards,.fit-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .cta-row{flex-direction:column;align-items:stretch}
+    .install{justify-content:space-between}
+    .btn{justify-content:center}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Windlass home">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="9.5" r="5.6"/>
+        <circle cx="11" cy="9.5" r="1.1" fill="currentColor" stroke="none"/>
+        <path d="M11 15.1v4.4M8.6 19.5h4.8"/>
+        <path d="M15.1 5.4l3-3M18.1 2.4h1.6"/>
+      </svg>
+      Windlass
+    </a>
+    <nav class="nav-links" aria-label="Site">
+      <a href="#why">Why</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#watch">CLI</a>
+      <a href="#quickstart">Quickstart</a>
+      <a class="nav-chip" href="#">GitHub &#8599;</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow"><span class="no">Open source · MIT ·</span> one dependency</p>
+      <h1>Background jobs, <em>backed by <span class="u">a&nbsp;file</span>.</em></h1>
+      <p class="lede">Windlass is a job queue for Node.js that keeps every job in a single SQLite database. Durable, transactional background work with retries, scheduling and a dead-letter table: no Redis to run, no broker to babysit, one line in your lockfile.</p>
+      <div class="cta-row">
+        <div class="install">
+          <span class="cmd"><span class="p">$</span>npm install windlass</span>
+          <button class="copy" type="button" data-copy="npm install windlass">copy</button>
+        </div>
+        <a class="btn" href="#quickstart">Read the quickstart &#8594;</a>
+      </div>
+      <p class="ticker"><b>SQLite WAL mode</b> · at-least-once delivery · exponential backoff · cron repeats · dead-letter table · <b>zero daemons</b></p>
+    </div>
+    <div>
+      <figure class="codecard" aria-label="Example worker code">
+        <div class="codecard-h"><b>server.js</b><span>node 18+</span></div>
+<pre><code><span class="k">import</span> { createQueue } <span class="k">from</span> <span class="s">"windlass"</span>;
+
+<span class="k">const</span> queue = createQueue(<span class="s">"./data/jobs.db"</span>);
+
+queue.work(<span class="s">"invoice.render"</span>, <span class="k">async</span> ({ data }) =&gt; {
+  <span class="k">const</span> pdf = <span class="k">await</span> renderInvoice(data.orderId);
+  <span class="k">await</span> archive.put(<span class="s">`invoice-${data.orderId}.pdf`</span>, pdf);
+});
+
+<span class="k">await</span> queue.add(
+  <span class="s">"invoice.render"</span>,
+  { orderId: <span class="n">8412</span> },
+  { retries: <span class="n">5</span>, backoff: <span class="s">"exponential"</span> }
+);
+
+queue.start({ concurrency: <span class="n">4</span> });</code></pre>
+      </figure>
+      <p class="caption">Durable the moment <b>add()</b> resolves. Retried on a curve. Yours to query.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 WHY ============ -->
+<section id="why">
+  <div class="wrap">
+    <p class="sec-eyebrow"><span class="no">01 ·</span> Working theory</p>
+    <h2>The queue is a database you already trust.</h2>
+    <div class="why-grid">
+      <p class="statement">A background queue should not be the most operationally demanding thing you run.</p>
+      <div class="why-copy">
+        <p>The standard recipe for background jobs in Node is a Redis instance, a connection pool, a worker fleet and a dashboard to keep watch over all of it. At forty engineers, that is Tuesday. For one person shipping a product, it is a second job with worse hours.</p>
+        <p>Windlass takes the other road. A job is a row. Enqueueing is an <code>INSERT</code>. Claiming work is a single <code>UPDATE</code> inside a transaction, so two workers can never hold the same job, even across processes. Everything the queue knows lives in one file you can copy, back up with the tools you already use, or open in the <code>sqlite3</code> shell when curiosity strikes.</p>
+      </div>
+    </div>
+
+    <figure class="diagram" aria-label="Diagram: your app inserts jobs into jobs.db; workers claim and run them">
+      <svg viewBox="0 0 1080 372" role="img" aria-hidden="true">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="#2B49C1"/>
+          </marker>
+          <marker id="ahm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="#6B7E8C"/>
+          </marker>
+        </defs>
+
+        <!-- your app -->
+        <rect x="28" y="112" width="226" height="128" rx="10" fill="#FCF9F0" stroke="#152532" stroke-width="1.5"/>
+        <text x="48" y="140" font-size="11" fill="#6B7E8C">any process, or many</text>
+        <text x="48" y="172" font-size="16" font-weight="600" fill="#152532">your app</text>
+        <text x="48" y="198" font-size="12.5" fill="#41586A">await queue.add(...)</text>
+        <text x="48" y="220" font-size="12.5" fill="#41586A">queue.schedule(...)</text>
+
+        <!-- rope: app -> db -->
+        <path class="rope" d="M254 176 C 310 176, 330 168, 396 158" fill="none" stroke="#2B49C1" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="262" y="140" font-size="11.5" font-weight="600" fill="#2B49C1">add = INSERT</text>
+        <text x="262" y="156" font-size="10.5" fill="#6B7E8C">in your own transaction, if you like</text>
+
+        <!-- jobs.db cylinder -->
+        <path d="M402 96 a118 24 0 0 1 236 0 v160 a118 24 0 0 1 -236 0 z" fill="#FCF9F0" stroke="#152532" stroke-width="1.5"/>
+        <ellipse cx="520" cy="96" rx="118" ry="24" fill="#FCF9F0" stroke="#152532" stroke-width="1.5"/>
+        <text x="520" y="166" font-size="17" font-weight="600" fill="#152532" text-anchor="middle">jobs.db</text>
+        <text x="520" y="190" font-size="11" fill="#6B7E8C" text-anchor="middle">SQLite · WAL mode</text>
+        <text x="520" y="216" font-size="10.5" fill="#41586A" text-anchor="middle">jobs · schedules · dead_letters</text>
+        <!-- plimsoll load line -->
+        <g stroke="#A83820" stroke-width="1.6" fill="none">
+          <circle cx="611" cy="235" r="8"/>
+          <path d="M598 235h26"/>
+        </g>
+        <text x="611" y="262" font-size="9.5" fill="#A83820" text-anchor="middle">load line</text>
+
+        <!-- rope: db -> workers -->
+        <path class="rope" d="M640 150 C 706 138, 724 130, 794 120" fill="none" stroke="#2B49C1" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="664" y="102" font-size="11.5" font-weight="600" fill="#2B49C1">claim = one UPDATE</text>
+        <text x="664" y="118" font-size="10.5" fill="#6B7E8C">no double delivery</text>
+
+        <!-- workers -->
+        <g>
+          <rect x="806" y="96" width="246" height="44" rx="8" fill="#FCF9F0" stroke="#152532" stroke-width="1.3"/>
+          <text x="826" y="123" font-size="12.5" font-weight="600" fill="#152532">worker 01</text>
+          <text x="1032" y="123" font-size="10.5" fill="#6B7E8C" text-anchor="end">invoice.render</text>
+
+          <rect x="806" y="152" width="246" height="44" rx="8" fill="#FCF9F0" stroke="#152532" stroke-width="1.3"/>
+          <text x="826" y="179" font-size="12.5" font-weight="600" fill="#152532">worker 02</text>
+          <text x="1032" y="179" font-size="10.5" fill="#6B7E8C" text-anchor="end">email.welcome</text>
+
+          <rect x="806" y="208" width="246" height="44" rx="8" fill="#FCF9F0" stroke="#152532" stroke-width="1.3"/>
+          <text x="826" y="235" font-size="12.5" font-weight="600" fill="#152532">worker 03</text>
+          <text x="1032" y="235" font-size="10.5" fill="#6B7E8C" text-anchor="end">export.csv</text>
+
+          <rect x="806" y="264" width="246" height="44" rx="8" fill="#FCF9F0" stroke="#152532" stroke-width="1.3" stroke-dasharray="4 4"/>
+          <text x="826" y="291" font-size="12.5" font-weight="600" fill="#6B7E8C">worker 04</text>
+          <text x="1032" y="291" font-size="10.5" fill="#6B7E8C" text-anchor="end">idle</text>
+        </g>
+
+        <!-- results return -->
+        <path d="M806 322 C 730 344, 640 330, 596 296" fill="none" stroke="#6B7E8C" stroke-width="1.4" stroke-dasharray="3 5" marker-end="url(#ahm)"/>
+        <text x="676" y="356" font-size="10.5" fill="#6B7E8C">results written back</text>
+
+        <!-- outcome chips -->
+        <g font-size="11" font-weight="600">
+          <rect x="300" y="308" width="128" height="32" rx="16" fill="none" stroke="#27684A" stroke-width="1.3"/>
+          <text x="364" y="328" fill="#27684A" text-anchor="middle">done &#8594; history</text>
+          <rect x="120" y="308" width="158" height="32" rx="16" fill="none" stroke="#A83820" stroke-width="1.3"/>
+          <text x="199" y="328" fill="#A83820" text-anchor="middle">failed &#215;5 &#8594; dead_letters</text>
+          <path d="M436 296 L 452 282" stroke="#6B7E8C" stroke-width="1.2" fill="none"/>
+        </g>
+      </svg>
+      <figcaption class="dg-cap">One file on disk. Any number of processes can add; any number can work. SQLite's write lock referees the claims, and WAL mode keeps reads flowing while they happen.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 02 CAPABILITIES ============ -->
+<section class="band" id="capabilities">
+  <div class="wrap">
+    <p class="sec-eyebrow"><span class="no">02 ·</span> Capabilities</p>
+    <h2>Everything a queue owes you.</h2>
+    <p class="deck">And nothing a fleet demands.</p>
+    <div class="cards">
+
+      <article class="cardx">
+        <span class="num">01</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="4.6" r="2.1"/><path d="M12 6.7V21"/><path d="M12 21c-4.5 0-8-3.3-8-7.4M12 21c4.5 0 8-3.3 8-7.4"/><path d="M4 13.6l-1.8.9M4 13.6l.5 2M20 13.6l1.8.9M20 13.6l-.5 2M8.4 9.6h7.2"/>
+        </svg>
+        <h3>Durable by default</h3>
+        <p>Every job lands in SQLite before <code>add()</code> resolves. Kill the process, trip over the power cord, deploy mid-batch: the work is still there when you come back.</p>
+      </article>
+
+      <article class="cardx">
+        <span class="num">02</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 8.2A8.4 8.4 0 0 0 5.6 5.6"/><path d="M5.6 2.4v3.2h3.2"/><path d="M4 15.8a8.4 8.4 0 0 0 14.4 2.6"/><path d="M18.4 21.6v-3.2h-3.2"/>
+        </svg>
+        <h3>Transactional enqueue</h3>
+        <p>Add jobs inside the same transaction as your own writes. If the order commits, the receipt job exists; if it rolls back, the job never happened. No outbox, no drift.</p>
+      </article>
+
+      <article class="cardx">
+        <span class="num">03</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 3.8v5h-5"/><path d="M20.7 8.8A8.6 8.6 0 1 0 21.4 13"/>
+        </svg>
+        <h3>Retries with backoff</h3>
+        <p>Failures retry on an exponential curve with jitter, up to the cap you set. After the last attempt the job moves to a dead-letter table you can query and requeue, not a black hole.</p>
+      </article>
+
+      <article class="cardx">
+        <span class="num">04</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.4"/><path d="M12 7v5l3.4 2.2"/>
+        </svg>
+        <h3>Scheduling and repeats</h3>
+        <p>Run a job in ten minutes, at 02:00, or on a cron expression. Delayed and repeating jobs sit in the same file as everything else, and survive restarts like everything else.</p>
+      </article>
+
+      <article class="cardx">
+        <span class="num">05</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M3.8 17.6a8.6 8.6 0 0 1 16.4 0"/><path d="M12 17.6l4-6.6"/><circle cx="12" cy="17.6" r="1.5"/><path d="M5 12.2l1.5 1M19 12.2l-1.5 1M12 6.4v1.8"/>
+        </svg>
+        <h3>Concurrency and rate limits</h3>
+        <p>Cap concurrency per queue, or per key within a queue: four renders at once, never two exports for the same customer. Backpressure is a setting, not an incident.</p>
+      </article>
+
+      <article class="cardx">
+        <span class="num">06</span>
+        <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <rect x="3" y="4.5" width="13.5" height="11" rx="1.5"/><path d="M3 8.5h13.5M8 4.5v11"/><circle cx="16.8" cy="16.8" r="3.8"/><path d="M19.7 19.7l2.5 2.5"/>
+        </svg>
+        <h3>Observability in plain SQL</h3>
+        <p>It is a database, so <code>SELECT</code> is your dashboard. Count the backlog, chart throughput, join jobs against your own tables. Any SQLite browser is a queue UI.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 NIGHT WATCH ============ -->
+<section class="dark" id="watch">
+  <div class="wrap">
+    <p class="sec-eyebrow"><span class="no">03 ·</span> Night watch</p>
+    <h2>Keep watch from any shell.</h2>
+    <div class="watch-grid">
+      <div class="watch-copy">
+        <p>The questions you actually ask a queue are small: <b>what is waiting, what is failing, and what did it say when it failed.</b> Windlass ships a three-command CLI for exactly those.</p>
+        <p style="margin-top:16px">Past that, the file is the API. Point any SQLite browser, BI tool or backup script at <b>jobs.db</b> and it simply works, because rows are rows.</p>
+        <ul class="cli-list">
+          <li><code>windlass status</code><span>the shape of the backlog, per queue</span></li>
+          <li><code>windlass retry</code><span>second chances, one job or all of them</span></li>
+          <li><code>windlass tail</code><span>failures streaming live, with the error that caused them</span></li>
+        </ul>
+      </div>
+      <div class="term" role="img" aria-label="Example terminal session showing windlass status, retry and tail commands">
+        <div class="term-h"><span>~/acme-app</span><span>example session</span></div>
+<pre><code><span class="p">$</span> <span class="cmd">npx windlass status ./data/jobs.db</span>
+
+<span class="dim">  queue             queued  active    done  failed</span>
+  invoice.render        12       4     214       <span class="bad">3</span>
+  email.welcome          0       1     962       0
+  export.csv             2       0      31       <span class="bad">1</span>
+
+<span class="p">$</span> <span class="cmd">npx windlass retry export.csv --dead</span>
+<span class="ok">  requeued 1 job from dead_letters</span>
+
+<span class="p">$</span> <span class="cmd">npx windlass tail --failed</span>
+<span class="dim">  22:14:07</span>  export.csv #31  attempt 3/5
+<span class="bad">            TimeoutError: s3 put exceeded 30s</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 LOAD LINE ============ -->
+<section id="fit">
+  <div class="wrap">
+    <p class="sec-eyebrow"><span class="no">04 ·</span> Load line</p>
+    <h2>Honest about its load line.</h2>
+    <p class="fit-intro">Ships carry a painted mark showing how deep they may safely sit in the water. Tools should carry one too. Windlass states its plainly, and floats best below it.</p>
+    <div class="fit-grid">
+      <div class="fit-col yes">
+        <h3>
+          <svg class="plimsoll" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M1.5 10h17"/></svg>
+          Made for
+        </h3>
+        <ul>
+          <li>Products that live on one box, or a few with a shared disk</li>
+          <li>Email, exports, thumbnails, webhooks, cleanup: the everyday cargo</li>
+          <li>Teams of one to ten who would rather ship than operate</li>
+          <li>Apps where every job must survive a deploy or a crash</li>
+        </ul>
+      </div>
+      <div class="fit-col no">
+        <h3>
+          <svg class="plimsoll" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M1.5 6.5h17"/></svg>
+          Not for
+        </h3>
+        <ul>
+          <li>Workers spread across many machines with no shared disk</li>
+          <li>Fan-out so hot that a single writer becomes the ceiling</li>
+          <li>Multi-region delivery with strict latency budgets</li>
+          <li>Teams already running Redis happily: keep it</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fit-close">Outgrowing the file is a milestone, not a trap. <code>windlass export</code> writes newline-delimited JSON that whatever comes next can drink.</p>
+  </div>
+</section>
+
+<!-- ============ 05 QUICKSTART ============ -->
+<section class="band" id="quickstart">
+  <div class="wrap">
+    <p class="sec-eyebrow"><span class="no">05 ·</span> Quickstart</p>
+    <h2>Weigh anchor in three moves.</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="no">STEP 01</span>
+        <h3>Install</h3>
+        <pre><code><span class="c">$</span> npm install windlass</code></pre>
+        <p class="why">Your lockfile grows by one line. That is the whole ops story.</p>
+      </div>
+      <div class="step">
+        <span class="no">STEP 02</span>
+        <h3>Define and add</h3>
+        <pre><code>queue.work(<span class="s">"email.welcome"</span>, sendWelcome);
+
+<span class="k">await</span> queue.add(<span class="s">"email.welcome"</span>, { userId: <span class="n">42</span> });</code></pre>
+        <p class="why">Jobs persist before <b>add()</b> resolves, and survive anything short of losing the disk.</p>
+      </div>
+      <div class="step">
+        <span class="no">STEP 03</span>
+        <h3>Start workers</h3>
+        <pre><code>queue.start({ concurrency: <span class="n">4</span> });</code></pre>
+        <p class="why">In the process you already run, or one of its own. Both restart clean.</p>
+      </div>
+    </div>
+
+    <div class="cta-band">
+      <h2>Your app has work to do.</h2>
+      <p class="deck">The whole thing is smaller than the ops doc you were about to write.</p>
+      <div class="cta-row">
+        <div class="install">
+          <span class="cmd"><span class="p">$</span>npm install windlass</span>
+          <button class="copy" type="button" data-copy="npm install windlass">copy</button>
+        </div>
+        <a class="btn ghost" href="#">Browse the docs &#8594;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-brand">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="9.5" r="5.6"/>
+            <circle cx="11" cy="9.5" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M11 15.1v4.4M8.6 19.5h4.8"/>
+            <path d="M15.1 5.4l3-3M18.1 2.4h1.6"/>
+          </svg>
+          Windlass
+        </p>
+        <p class="foot-tag">A job queue in one file. MIT licensed, built on SQLite's shoulders.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Project</h4>
+        <ul>
+          <li><a href="#quickstart">Quickstart</a></li>
+          <li><a href="#">Docs</a></li>
+          <li><a href="#">API reference</a></li>
+          <li><a href="#watch">CLI</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <ul>
+          <li><a href="#">GitHub</a></li>
+          <li><a href="#">npm</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">MIT license</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="colophon">Like the queue, this page is a single file: no build step, no trackers, HTML you can read in one sitting.</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Windlass contributors</span>
+      <span>Made for the smallest fleet: yours.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll(".copy").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var done = function(){
+        var t = btn.textContent;
+        btn.textContent = "copied";
+        setTimeout(function(){ btn.textContent = t; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(btn.getAttribute("data-copy")).then(done, done);
+      } else { done(); }
+    });
+  });
+</script>
+</body>
+</html>

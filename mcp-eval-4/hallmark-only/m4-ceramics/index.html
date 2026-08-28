@@ -3,61 +3,68 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kiln &amp; Co. · a ceramics studio in Lisboa</title>
-<meta name="description" content="Kiln &amp; Co. is a working ceramics studio in Lisboa: small-batch tableware, and weekend workshops at the wheel.">
+<title>Kiln &amp; Co. Tableware from a working studio in Lisbon.</title>
+<meta name="description" content="Kiln &amp; Co is a small ceramics studio in Lisbon. Short runs of tableware, thrown and fired on site, and workshops on Saturdays.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* Hallmark · macrostructure: plate-sheet catalogue (designed, not a catalog shape) · tone: editorial · anchor hue: 30 · hero: Stage/E5
- * genre: editorial · theme: Riso · axes: mid / grotesk-heavy / cool (~220)
- * enrichment: E5 custom illustration centrepiece · Tier B hand-built SVG · dominant scale · animation: none
- * nav: broadsheet masthead, non-sticky, links under the rule (decided, not the wordmark-left/CTA-right bar)
- * footer: one justified colophon line plus a rule (not four link columns)
- * section-entry: a change of paper, repeated · one drop cap, first paragraph only
- * texture: grain 0.055 page-wide + misregistration on two focal words (Riso's sanctioned pair)
- * contrast: ink 18% on paper 84%/80%/75% pass · accent 46% only at >=18px bold, as a fill under paper text, or as a rule
- * mobile: 320 / 375 / 414 / 768 checked · overflow-x: clip on html and body
- * inferred: audience = people who buy one good object · use = read the current run, then ask about a weekend · tone = editorial
+/* Hallmark · macrostructure: bespoke: the firing log (ruled ledger, margin rail of process metadata, sections as entries) · tone: utilitarian-editorial · anchor hue: 262 · hero: Stage/H7
+ * genre: editorial · nav: two-row ruled masthead, non-sticky, links on the lower rule, action typographic (decided, not the default bar) · footer: colophon set as the last log entry on the field colour
+ * theme: custom · direction: "the kiln log book" · vibe: "working studio, fired twice, nothing decorative"
+ * paper: oklch(95.5% 0.008 262) · accent: oklch(47% 0.148 262) · display: Zilla Slab · body: IBM Plex Sans · outlier: IBM Plex Mono (the log-field voice, one role)
+ * axes: light / slab-serif / cool ~262 · posture: committed
+ * seed: kiln-and-co-ceramics-lisbon·2026-08-06·r0 · draw 1/7 · wildcards declined
+ * axes note: landed on Cobalt's triple (light / grotesk-sans / cool ~256); moved the display class to slab-serif, which the log book wanted anyway. Clears Newsprint (light / slab / warm) on accent hue.
+ * contrast: body 21% on 95.5% paper; field band 93% ink on 26% field; accent link 47% on 95.5% paper. All >= 4.5:1.
+ * mobile: verified at 320 / 375 / 414 / 768 · v1.2.0
  */
-/* Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V4 · weakest: H - the ware list and the workshop steps are both numbered sequences, so the middle of the page runs at one hierarchic pitch; fix taken: the studio band between them drops the numerals entirely, changes measure to a single 58ch column, and carries the page's only drop cap */
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4 · weakest: H - the four piece drawings were reading as one flat rank; fixed by giving the platter a 7-column span and its own taller drawing box so the row has a lead. */
+/* direction contract · seed kiln-and-co-ceramics-lisbon·2026-08-06·r0
+ * THESIS: this studio sells the record of the making, not the mood of it.
+ * OWN-WORLD: the kiln log book. Ruled sheet, tabular fields, cone numbers, the hand that writes down what came out.
+ * STORY: a studio manager in Graca, 7:10 on a February Tuesday, unbricking the kiln door while it is still warm inside, clipboard on the shelf, fluorescents still on.
+ * FIRST-VIEWPORT: masthead over a ruled sheet; a seven-word claim about firing twice; the firing curve drawn to the right as a chart, cone 06 and cone 9 annotated on it.
+ * FORM: a continuous ruling runs the whole page, and every section is entered from a margin rail of process metadata rather than a label. Signature move: the page is the log sheet.
+ */
 
 :root {
-  /* paper and ink - everything tilts hue 30 */
-  --color-paper:    oklch(84% 0.048 30);
-  --color-paper-2:  oklch(80% 0.052 30);
-  --color-paper-3:  oklch(75% 0.056 30);
-  --color-ink:      oklch(18% 0.060 30);
-  --color-neutral:  oklch(34% 0.060 30);
-  --color-muted:    oklch(44% 0.050 30);
-  --color-rule:     oklch(70% 0.040 30);
-  /* two spot inks, plus the pink echo of a missed drum */
-  --color-accent:      oklch(46% 0.140 220);
-  --color-accent-deep: oklch(40% 0.135 222);
-  --color-accent-ink:  oklch(96% 0.020 30);
-  --color-accent-2: oklch(78% 0.180 95);
-  --color-echo:     oklch(64% 0.190 12);
-  --color-focus:    oklch(46% 0.140 220);
+  /* colour: committed posture. The field carries the workshops band and the footer; the accent proper stays a signal. */
+  --color-paper:    oklch(95.5% 0.008 262);
+  --color-paper-2:  oklch(92.5% 0.010 262);
+  --color-paper-3:  oklch(89%   0.012 262);
+  --color-field:    oklch(26%   0.045 262);
+  --color-field-2:  oklch(31%   0.045 262);
+  --color-rule:     oklch(76%   0.014 262);
+  --color-rule-2:   oklch(87%   0.010 262);
+  --color-neutral:  oklch(56%   0.012 262);
+  --color-muted:    oklch(46%   0.014 262);
+  --color-ink:      oklch(21%   0.012 262);
+  --color-ink-2:    oklch(30%   0.012 262);
+  --color-ink-on-field: oklch(93% 0.008 262);
+  --color-accent:   oklch(47%   0.148 262);
+  --color-accent-2: oklch(37%   0.130 262);
+  --color-accent-ink: oklch(97% 0.006 262);
+  --color-focus:    oklch(52%   0.190 262);
+  --color-field-muted: oklch(80% 0.020 262);
+  --color-field-label: oklch(70% 0.020 262);
+  --color-field-link:  oklch(86% 0.060 262);
+  --color-field-mark:  oklch(78% 0.090 262);
 
-  --font-display: "Public Sans", ui-sans-serif, sans-serif;
-  --font-body:    "Newsreader", ui-serif, Georgia, serif;
-  --font-label:   "Geist Mono", ui-monospace, monospace;
-
-  --display-weight: 900;
-  --tracking-display: -0.04em;
-  --tracking-label: 0.06em;
-  --lh-tight: 0.95;
-  --lh-body: 1.62;
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, monospace;
 
   --text-xs:   0.75rem;
   --text-sm:   0.8125rem;
-  --text-base: 1.0625rem;
-  --text-md:   1.1875rem;
-  --text-lg:   1.4375rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.375rem;
   --text-xl:   1.75rem;
-  --text-2xl:  clamp(1.85rem, 2.4vw + 0.6rem, 2.6rem);
-  --text-display:   clamp(2.5rem, 4.2vw + 0.5rem, 4.15rem);
-  --text-display-s: clamp(2rem, 3.3vw + 0.4rem, 3.3rem);
+  --text-2xl:  2.1875rem;
+  --text-3xl:  2.75rem;
+  --text-display:   clamp(2.5rem, 3.4vw + 1.1rem, 4.125rem);
+  --text-display-s: clamp(2rem, 2.6vw + 0.9rem, 3.25rem);
 
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
@@ -70,446 +77,423 @@
   --space-3xl: 6rem;
   --space-4xl: 9rem;
 
-  --rule-hair: 1px;
-  --rule-thick: 2px;
-  --radius-flat: 2px;
-
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long:  420ms;
 
-  --texture-opacity: 0.055;
-  --measure: 62ch;
-  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --rule-hair: 1px;
+  --rule-heavy: 2px;
+  --radius-sm: 2px;
+  --ledger: 2rem;
 
   --z-base: 1;
   --z-raised: 10;
+  --z-dropdown: 100;
   --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body { overflow-x: clip; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-
+html { overflow-x: clip; }
 body {
+  overflow-x: clip;
   margin: 0;
-  background: var(--color-paper);
+  background-color: var(--color-paper);
+  /* the log sheet: one continuous ruling under the whole page */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--ledger) - var(--rule-hair)),
+      var(--color-rule-2) calc(var(--ledger) - var(--rule-hair)),
+      var(--color-rule-2) var(--ledger));
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--text-base);
-  font-weight: 400;
-  line-height: var(--lh-body);
-  font-variant-numeric: oldstyle-nums;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-}
-
-/* paper grain - the ink is printed, not exported */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-raised);
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  opacity: var(--texture-opacity);
-  mix-blend-mode: multiply;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: var(--display-weight);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--lh-tight);
-  text-wrap: balance;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.02em;
   overflow-wrap: break-word;
   min-width: 0;
+  text-wrap: balance;
   margin: 0;
 }
 p { margin: 0; text-wrap: pretty; }
+ul, ol, dl, dd { margin: 0; padding: 0; }
+li { list-style: none; }
 
-a { color: inherit; }
+a { color: var(--color-accent); text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+a:hover { color: var(--color-accent-2); }
 
-:focus-visible {
-  outline: var(--rule-thick) solid var(--color-focus);
+:where(a, button, summary, input):focus-visible {
+  outline: var(--rule-heavy) solid var(--color-focus);
   outline-offset: 3px;
   transition: none;
 }
 
-.label {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-muted);
-  font-variant-numeric: tabular-nums;
-}
-
 .shell {
   width: 100%;
-  max-width: 78rem;
+  max-width: 84rem;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-/* THE move - two inks that missed the drum */
-.misreg { position: relative; display: inline-block; color: var(--color-ink); }
-.misreg::before, .misreg::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-.misreg::before { color: var(--color-accent); transform: translate(-2px, -2px); }
-.misreg::after  { color: var(--color-echo);   transform: translate(2px, 2px); }
-
-mark {
-  background: var(--color-accent-2);
-  color: var(--color-ink);
-  padding-inline: 0.12em;
-  box-decoration-break: clone;
+.field {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--color-muted);
 }
 
-/* ---------- masthead: broadsheet, not a sticky bar ---------- */
-.masthead { padding-block: var(--space-lg) 0; }
+/* ---------- masthead: two ruled rows, not sticky ---------- */
+.masthead {
+  border-block-end: var(--rule-heavy) solid var(--color-ink);
+  background-color: var(--color-paper);
+}
 .masthead__top {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-sm) var(--space-lg);
-  padding-block-end: var(--space-sm);
+  padding-block: var(--space-md) var(--space-xs);
 }
 .wordmark {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
-  letter-spacing: -0.045em;
-  line-height: 1;
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
   text-decoration: none;
-  white-space: nowrap;
 }
-.masthead__place { white-space: nowrap; }
-.masthead__rule { border: 0; border-top: var(--rule-thick) solid var(--color-ink); margin: 0; }
-.masthead__nav {
+.wordmark span { color: var(--color-accent); }
+.masthead__state { white-space: nowrap; }
+.masthead__rail {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md) var(--space-lg);
-  padding-block: var(--space-xs);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
+  align-items: center;
+  gap: var(--space-md) var(--space-xl);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block: var(--space-xs) var(--space-sm);
 }
-.masthead__nav a {
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
+.masthead__rail a {
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
   text-decoration: none;
   white-space: nowrap;
-  padding-block: var(--space-3xs);
-  border-bottom: var(--rule-thick) solid transparent;
+  padding-block: var(--space-2xs);
+  border-block-end: var(--rule-hair) solid transparent;
   transition: border-color var(--dur-micro) var(--ease-out);
 }
-.masthead__nav a:hover { border-bottom-color: var(--color-accent); }
-.masthead__nav a:active { border-bottom-color: var(--color-ink); }
+.masthead__rail a:hover { border-block-end-color: var(--color-accent); color: var(--color-ink); }
+.masthead__rail .is-action {
+  margin-inline-start: auto;
+  color: var(--color-accent);
+  border-block-end-color: var(--color-accent);
+  font-weight: 500;
+}
+.masthead__rail .is-action:hover { color: var(--color-accent-2); border-block-end-color: var(--color-accent-2); }
 
-/* ---------- hero: Stage ---------- */
+/* ---------- hero: Stage, text column + full-height drawn chart ---------- */
 .hero {
-  padding-block: var(--space-xl) var(--space-3xl);
-  min-height: clamp(28rem, 70dvh, 44rem);
   display: grid;
-  align-content: center;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-2xl);
+  gap: var(--space-xl);
+  padding-block: var(--space-xl) var(--space-3xl);
+  align-items: end;
 }
-@media (min-width: 60rem) {
-  .hero {
-    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-    align-items: center;
-    gap: var(--space-3xl);
-  }
-}
-.hero__title {
+.hero__display {
   font-size: var(--text-display);
-  max-width: 20ch;
-  margin-block-end: var(--space-lg);
+  line-height: 1.04;
+  max-width: 18ch;
+  letter-spacing: -0.03em;
 }
 .hero__lede {
   font-size: var(--text-md);
-  color: var(--color-neutral);
-  max-width: 52ch;
-  margin-block-end: var(--space-xl);
+  color: var(--color-ink-2);
+  max-width: 46ch;
+  margin-block-start: var(--space-lg);
 }
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-md) var(--space-lg);
-  margin-block-end: var(--space-lg);
+  gap: var(--space-lg);
+  margin-block-start: var(--space-xl);
+}
+.hero__note {
+  margin-block-start: var(--space-lg);
+  padding-block-start: var(--space-sm);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  max-width: 46ch;
 }
 
 .btn {
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 500;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   min-height: 48px;
   padding-inline: var(--space-lg);
-  border-radius: var(--radius-flat);
-  border: var(--rule-thick) solid transparent;
+  border: var(--rule-hair) solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
+  text-decoration: none;
+  cursor: pointer;
   transition: background-color var(--dur-micro) var(--ease-out),
-              border-color var(--dur-micro) var(--ease-out),
-              transform var(--dur-micro) var(--ease-out);
+              border-color var(--dur-micro) var(--ease-out);
 }
-.btn--ink { background: var(--color-accent-deep); color: var(--color-accent-ink); }
-.btn--ink:hover { background: var(--color-ink); }
-.btn--ink:active { transform: translateY(1px); }
-.btn--quiet {
-  background: transparent;
-  color: var(--color-ink);
-  border-color: var(--color-ink);
-  padding-inline: var(--space-md);
+.btn:hover { background-color: var(--color-accent-2); border-color: var(--color-accent-2); color: var(--color-accent-ink); }
+.btn:active { background-color: var(--color-accent); }
+.btn[aria-disabled="true"] { background-color: var(--color-neutral); border-color: var(--color-neutral); pointer-events: none; }
+
+.link-quiet {
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  text-decoration-color: var(--color-rule);
+  transition: text-decoration-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 }
-.btn--quiet:hover { border-color: var(--color-accent); color: var(--color-accent); }
-.btn--quiet:active { transform: translateY(1px); }
+.link-quiet:hover { color: var(--color-accent); text-decoration-color: var(--color-accent); }
 
-.hero__figure { margin: 0; }
-.hero__figure svg { display: block; width: 100%; height: auto; max-height: 27rem; margin-inline: auto; }
-.hero__figure figcaption { margin-block-start: var(--space-sm); }
+.curve {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 22rem;
+}
+.curve .plot { fill: none; stroke: var(--color-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.curve .grid-line { stroke: var(--color-rule); stroke-width: 1; }
+.curve .axis { stroke: var(--color-ink-2); stroke-width: 1; }
+.curve .tick { fill: var(--color-muted); font-family: var(--font-mono); font-size: 9px; }
+.curve .call { fill: var(--color-accent); font-family: var(--font-mono); font-size: 10px; font-weight: 500; }
+.curve .dot { fill: var(--color-accent); }
 
-/* ---------- band papers: the section break IS the change of paper ---------- */
-.band--2 { background: var(--color-paper-2); }
-.band--3 { background: var(--color-paper-3); }
-
-.band__head {
+/* ---------- sections: margin rail + body ---------- */
+.entry {
   display: grid;
-  gap: var(--space-md);
-  padding-block-end: var(--space-xl);
-  border-bottom: var(--rule-thick) solid var(--color-ink);
-  margin-block-end: var(--space-xl);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-md) var(--space-xl);
+  padding-block: var(--space-3xl);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
 }
-@media (min-width: 60rem) {
-  .band__head {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-    align-items: end;
-    gap: var(--space-3xl);
-  }
-}
-.band__head h2 { font-size: var(--text-2xl); max-width: 22ch; }
-.band__head p { color: var(--color-neutral); max-width: 48ch; }
-
-/* ---------- the ware: a plate sheet ---------- */
-.ware-band { padding-block: var(--space-3xl) var(--space-4xl); }
-.ware {
-  counter-reset: plate;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.ware li {
-  counter-increment: plate;
-  display: grid;
-  grid-template-columns: 3rem minmax(0, 1fr);
-  gap: var(--space-xs) var(--space-md);
-  padding-block: var(--space-lg);
-  border-top: var(--rule-hair) solid var(--color-rule);
-}
-.ware li:last-child { border-bottom: var(--rule-hair) solid var(--color-rule); }
-@media (min-width: 52rem) {
-  .ware li {
-    grid-template-columns: 4rem minmax(0, 0.8fr) minmax(0, 1.35fr);
-    align-items: baseline;
-    gap: var(--space-lg);
-  }
-}
-.ware li::before {
-  content: counter(plate, decimal-leading-zero);
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-accent);
-  font-variant-numeric: tabular-nums;
-}
-.ware__name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--text-lg);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
-.ware__note { color: var(--color-neutral); max-width: 54ch; }
-.ware__foot { margin-block-start: var(--space-lg); }
-
-/* ---------- the studio: prose, one column, one drop cap ---------- */
-.studio-band { padding-block: var(--space-4xl) var(--space-3xl); }
-.studio {
-  display: grid;
-  gap: var(--space-xl);
-}
-@media (min-width: 64rem) {
-  .studio {
-    grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
-    gap: var(--space-3xl);
-  }
-}
-.studio__aside { align-self: start; }
-.studio__aside p {
-  font-size: var(--text-sm);
-  color: var(--color-muted);
-  max-width: 32ch;
-  margin-block-start: var(--space-sm);
-  border-top: var(--rule-hair) solid var(--color-rule);
+.entry__title { font-size: var(--text-2xl); line-height: 1.08; max-width: 24ch; }
+.entry__body { max-width: var(--measure); font-size: var(--text-md); color: var(--color-ink-2); }
+.entry__rail {
+  border-block-start: var(--rule-hair) solid var(--color-rule);
   padding-block-start: var(--space-sm);
 }
-.studio__title { font-size: var(--text-2xl); max-width: 24ch; margin-block-end: var(--space-lg); }
-.studio__prose { max-width: 58ch; display: grid; gap: var(--space-md); font-size: var(--text-md); }
-.studio__prose > p:first-of-type::first-letter {
-  float: left;
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 3.6em;
-  line-height: 0.78;
-  padding-inline-end: 0.08em;
-  padding-block-start: 0.04em;
-  color: var(--color-ink);
-}
+.entry__rail dt { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral); letter-spacing: 0.06em; text-transform: uppercase; }
+.entry__rail dd { font-family: var(--font-mono); font-size: var(--text-sm); font-variant-numeric: tabular-nums; color: var(--color-ink-2); margin-block-end: var(--space-sm); }
 
-/* ---------- workshops ---------- */
-.shop-band { padding-block: var(--space-3xl); }
-.weekend {
+/* ---------- the batch ---------- */
+.batch {
   display: grid;
-  gap: var(--space-2xl);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-xl) var(--space-lg);
+  margin-block-start: var(--space-2xl);
 }
-@media (min-width: 64rem) {
-  .weekend { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: var(--space-3xl); }
+.piece { display: flex; flex-direction: column; gap: var(--space-sm); }
+.piece__plate {
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+  padding-block-end: var(--space-md);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 9rem;
 }
-.steps {
-  counter-reset: step;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-md);
+.piece__plate svg { width: 100%; height: auto; max-height: 12rem; }
+.profile .wall { fill: none; stroke: var(--color-ink); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
+.profile .axis { stroke: var(--color-rule); stroke-width: 1; stroke-dasharray: 5 4; }
+.profile .datum { stroke: var(--color-accent); stroke-width: 1.5; }
+.piece__name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg); line-height: 1.15; }
+.piece__note { color: var(--color-ink-2); max-width: 34ch; }
+.piece__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  padding-block-start: var(--space-xs);
+  margin-block-start: auto;
 }
-.steps li {
+.tbc { color: var(--color-neutral); }
+
+/* ---------- sequence ---------- */
+.sequence { counter-reset: step; margin-block-start: var(--space-2xl); }
+.step {
   counter-increment: step;
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: var(--space-md);
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-md) var(--space-lg);
   align-items: baseline;
-  font-size: var(--text-md);
+  padding-block: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
 }
-.steps li::before {
-  content: counter(step);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: var(--text-lg);
-  color: var(--color-rule);
+.step:first-child { border-block-start: 0; }
+.step::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  font-size: var(--text-xl);
+  color: var(--color-accent);
   line-height: 1;
 }
-.facts {
-  margin: 0;
-  border-top: var(--rule-thick) solid var(--color-ink);
-  padding-block-start: var(--space-md);
+.step h3 { font-size: var(--text-md); font-weight: 600; }
+.step p { color: var(--color-ink-2); max-width: 58ch; margin-block-start: var(--space-2xs); }
+.step__temp { grid-column: 2; }
+
+/* ---------- workshops: change of paper, the committed field ---------- */
+.band {
+  background-color: var(--color-field);
+  color: var(--color-ink-on-field);
+  padding-block: var(--space-3xl);
+  border-block: var(--rule-heavy) solid var(--color-ink);
 }
-.facts div {
+.band h2 { color: var(--color-ink-on-field); font-size: var(--text-2xl); max-width: 22ch; line-height: 1.08; }
+.band p { color: var(--color-ink-on-field); }
+.band .field { color: var(--color-field-muted); }
+.band__grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
-  gap: var(--space-md);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+  align-items: start;
+}
+.band__copy { max-width: 52ch; font-size: var(--text-md); margin-block-start: var(--space-lg); }
+.band__list { border-block-start: var(--rule-hair) solid var(--color-field-2); }
+.band__list div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
   padding-block: var(--space-sm);
-  border-bottom: var(--rule-hair) solid var(--color-rule);
+  border-block-end: var(--rule-hair) solid var(--color-field-2);
 }
-.facts dt {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-.facts dd { margin: 0; font-variant-numeric: tabular-nums; }
-.facts .tbc { color: var(--color-muted); font-style: italic; }
-.weekend__cta { margin-block-start: var(--space-xl); }
+.band__list dt { font-weight: 500; }
+.band__list dd { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-field-muted); text-align: end; }
+/* the band's action is the outlined secondary; the page keeps one filled primary (F4) */
+.band .btn { background-color: transparent; border-color: var(--color-ink-on-field); color: var(--color-ink-on-field); margin-block-start: var(--space-xl); }
+.band .btn:hover { background-color: var(--color-field-2); border-color: var(--color-ink-on-field); color: var(--color-ink-on-field); }
+.band .btn:active { background-color: transparent; }
+.band a:not(.btn) { color: var(--color-field-link); }
 
 /* ---------- visit ---------- */
-.visit-band { padding-block: var(--space-4xl) var(--space-2xl); }
-.visit__title {
-  font-size: var(--text-display-s);
-  max-width: 24ch;
-  margin-block-end: var(--space-lg);
+.visit__facts { border-block-start: var(--rule-hair) solid var(--color-rule); margin-block-start: var(--space-xl); }
+.visit__facts div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+  padding-block: var(--space-sm);
+  border-block-end: var(--rule-hair) solid var(--color-rule-2);
 }
-.visit__body { max-width: 54ch; font-size: var(--text-md); color: var(--color-neutral); }
-.visit .facts { margin-block-start: var(--space-xl); max-width: 34rem; }
+.visit__facts dt { font-family: var(--font-mono); font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-neutral); }
+.visit__facts dd { font-size: var(--text-base); text-align: end; }
 
-/* ---------- footer: one colophon line ---------- */
+/* ---------- footer: the last log entry ---------- */
 .colophon {
-  border-top: var(--rule-thick) solid var(--color-ink);
-  padding-block: var(--space-lg) var(--space-2xl);
+  background-color: var(--color-field);
+  color: var(--color-ink-on-field);
+  padding-block: var(--space-2xl) var(--space-xl);
+  padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom));
+}
+.colophon__line {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-sm) var(--space-lg);
+  gap: var(--space-sm) var(--space-xl);
+  border-block-end: var(--rule-hair) solid var(--color-field-2);
+  padding-block-end: var(--space-lg);
 }
-.colophon__set { max-width: 58ch; }
-.colophon__links { display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-lg); }
-.colophon__links a {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  text-decoration: none;
-  white-space: nowrap;
-  border-bottom: var(--rule-hair) solid var(--color-rule);
-  transition: border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+.colophon__line .wordmark { color: var(--color-ink-on-field); }
+.colophon__line .wordmark span { color: var(--color-field-mark); }
+.colophon__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-xl);
+  padding-block-start: var(--space-lg);
 }
-.colophon__links a:hover { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+.colophon__fields div { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+.colophon__fields dt { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-field-label); }
+.colophon__fields dd { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-ink-on-field); }
+.colophon__close {
+  margin-block-start: var(--space-xl);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  color: var(--color-ink-on-field);
+  max-width: 40ch;
+}
+.colophon a { color: var(--color-field-link); }
 
-/* ---------- the one orchestrated settle ---------- */
-.settle {
+/* ---------- one orchestrated reveal ---------- */
+.reveal {
   opacity: 0;
   transform: translateY(8px);
-  animation: settle var(--dur-long) var(--ease-out) forwards;
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
   animation-delay: calc(var(--i, 0) * 70ms);
 }
-@keyframes settle { to { opacity: 1; transform: none; } }
+@keyframes reveal { to { opacity: 1; transform: none; } }
 
-.misreg::before, .misreg::after {
-  animation: drift 380ms var(--ease-out) forwards;
+@media (min-width: 40rem) {
+  .batch { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .piece--a { grid-column: span 7; }
+  .piece--b { grid-column: span 5; }
+  .piece--c { grid-column: span 4; }
+  .piece--d { grid-column: span 8; }
+  .colophon__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .step { grid-template-columns: 5rem minmax(0, 1fr) 12rem; }
+  .step__temp { grid-column: 3; text-align: end; }
 }
-@keyframes drift {
-  from { transform: translate(0, 0); }
-}
-.misreg::after { animation-name: drift-b; }
-@keyframes drift-b {
-  from { transform: translate(0, 0); }
+
+@media (min-width: 60rem) {
+  .masthead__rail a, .btn, .link-quiet, .field { font-size: var(--text-sm); }
+  .masthead__rail a, .link-quiet { font-size: var(--text-base); }
+  .hero {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--space-3xl);
+    padding-block: var(--space-2xl) var(--space-4xl);
+    min-height: 62dvh;
+  }
+  .entry {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    column-gap: var(--space-3xl);
+  }
+  .entry__title { grid-column: 1 / -1; }
+  .entry__body { grid-column: 2; grid-row: 2; }
+  .entry__rail { grid-column: 1; grid-row: 2; border-block-start: var(--rule-hair) solid var(--color-ink-2); }
+  .entry--wide .entry__body, .entry--wide .sequence, .entry--wide .batch { grid-column: 2; }
+  .band__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: var(--space-4xl); }
+  .visit__facts dd { text-align: start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 1ms !important;
-    animation-delay: 0ms !important;
+    animation-duration: 150ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
+    transition-duration: 150ms !important;
   }
-  .settle { opacity: 1; transform: none; animation: none; }
-  .misreg::before { transform: translate(-2px, -2px); animation: none; }
-  .misreg::after  { transform: translate(2px, 2px);  animation: none; }
-}
-
-/* mobile runs larger, desktop tightens */
-@media (min-width: 60rem) {
-  .masthead__nav a, .colophon__links a { font-size: var(--text-xs); }
+  .reveal { animation: reveal-reduced 150ms linear forwards; }
+  @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
 }
 </style>
 </head>
@@ -518,191 +502,241 @@ mark {
 <header class="masthead">
   <div class="shell">
     <div class="masthead__top">
-      <a class="wordmark" href="#top"><span class="misreg" data-text="Kiln">Kiln</span> &amp; Co.</a>
-      <span class="label masthead__place">Lisboa · a working studio</span>
+      <a class="wordmark" href="#top" id="top">Kiln &amp; Co<span>.</span></a>
+      <p class="field masthead__state">Lisbon · workshop open Saturdays</p>
     </div>
-    <hr class="masthead__rule">
-    <nav class="masthead__nav" aria-label="Sections">
-      <a href="#ware">The ware</a>
-      <a href="#studio">The studio</a>
-      <a href="#workshops">Workshops</a>
+    <nav class="masthead__rail" aria-label="Primary">
+      <a href="#batch">Tableware</a>
+      <a href="#making">How a piece gets here</a>
+      <a href="#workshops">Saturdays</a>
       <a href="#visit">Visit</a>
+      <a class="is-action" href="#batch">See what is out of the kiln</a>
     </nav>
   </div>
 </header>
 
-<main id="top">
-
-  <section class="hero shell" aria-labelledby="hero-title">
-    <div>
-      <h1 class="hero__title settle" style="--i:0" id="hero-title">
-        <span class="misreg" data-text="Thrown">Thrown</span> in Lisboa, one run at a time.
-      </h1>
-      <p class="hero__lede settle" style="--i:1">
-        Small-batch tableware for the table you actually eat at, and weekend workshops
-        for people who want clay under their nails.
-      </p>
-      <div class="hero__actions settle" style="--i:2">
-        <a class="btn btn--ink" href="#ware">See the ware</a>
-        <a class="btn btn--quiet" href="#workshops">Weekend workshops</a>
+<main>
+  <section class="shell hero" aria-labelledby="hero-title">
+    <div class="reveal" style="--i: 0">
+      <h1 class="hero__display" id="hero-title">Everything here went through the kiln twice.</h1>
+      <p class="hero__lede">A working studio in Lisbon. Short runs of tableware, thrown, glazed and fired on site, then written down.</p>
+      <div class="hero__actions">
+        <a class="btn" href="#batch">See the current batch</a>
+        <a class="link-quiet" href="#workshops">Saturdays in the workshop</a>
       </div>
-      <p class="label settle" style="--i:3">Thrown, glazed and fired in one room</p>
+      <p class="field hero__note">Once at cone 06 to make it hard, once at cone 9 to make it glass. Nothing leaves before the second one cools.</p>
     </div>
 
-    <figure class="hero__figure settle" style="--i:2">
-      <svg viewBox="0 0 380 470" role="img" aria-labelledby="sheet-title" focusable="false">
-        <title id="sheet-title">Profile drawings of a bowl, a plate and a cup, printed in two inks slightly out of register</title>
-        <!-- second ink, laid down first and a hair out of register -->
-        <g fill="var(--color-accent-2)" style="mix-blend-mode: multiply" transform="translate(7,7)">
-          <path d="M30,45 C34,120 95,190 190,190 C285,190 346,120 350,45 Z"/>
-          <rect x="164" y="190" width="52" height="11" rx="1"/>
-          <path d="M18,262 C90,300 290,300 362,262 L358,248 C288,282 92,282 22,248 Z"/>
-          <path d="M135,352 L146,438 C160,449 220,449 234,438 L245,352 Z"/>
+    <figure class="reveal" style="--i: 1; margin: 0">
+      <svg class="curve" viewBox="0 0 420 300" role="img" aria-labelledby="curve-title curve-desc">
+        <title id="curve-title">A glaze firing, drawn as a temperature curve</title>
+        <desc id="curve-desc">Temperature climbs from room temperature to cone 9, holds, then falls slowly over the cooling period. The bisque firing at cone 06 is marked lower on the same axis.</desc>
+        <g class="grid-line">
+          <line x1="46" y1="40" x2="404" y2="40"></line>
+          <line x1="46" y1="100" x2="404" y2="100"></line>
+          <line x1="46" y1="160" x2="404" y2="160"></line>
+          <line x1="46" y1="220" x2="404" y2="220"></line>
         </g>
-        <!-- first ink, the drawn line -->
-        <g fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linejoin="round" style="mix-blend-mode: multiply">
-          <path d="M30,45 C34,120 95,190 190,190 C285,190 346,120 350,45 Z"/>
-          <path d="M164,190 L164,201 L216,201 L216,190"/>
-          <path d="M42,52 C48,118 104,180 190,180 C276,180 332,118 338,52"/>
-          <path d="M18,262 C90,300 290,300 362,262 L358,248 C288,282 92,282 22,248 Z"/>
-          <path d="M135,352 L146,438 C160,449 220,449 234,438 L245,352 Z"/>
-          <path d="M245,370 C282,371 284,414 247,419"/>
-          <path d="M137,364 C160,374 220,374 243,364"/>
+        <g class="axis">
+          <line x1="46" y1="20" x2="46" y2="262"></line>
+          <line x1="46" y1="262" x2="404" y2="262"></line>
         </g>
-        <line x1="0" y1="459" x2="380" y2="459" stroke="var(--color-ink)" stroke-width="2"/>
+        <g class="tick">
+          <text x="6" y="43">1280</text>
+          <text x="6" y="103">1000</text>
+          <text x="6" y="163">700</text>
+          <text x="6" y="223">400</text>
+          <text x="8" y="24">°C</text>
+          <text x="42" y="278">0h</text>
+          <text x="150" y="278">6h</text>
+          <text x="258" y="278">12h</text>
+          <text x="366" y="278">18h</text>
+          <text x="182" y="294">time in the kiln</text>
+        </g>
+        <path class="plot" d="M46 258 C 96 250, 118 196, 150 160 C 178 128, 196 76, 232 44 L 274 40 C 316 62, 344 152, 404 246"></path>
+        <circle class="dot" cx="150" cy="160" r="4"></circle>
+        <circle class="dot" cx="252" cy="41" r="4"></circle>
+        <g class="call">
+          <text x="150" y="190">cone 06, bisque</text>
+          <text x="198" y="30">cone 9, glaze</text>
+          <text x="286" y="216">cooling, slow</text>
+        </g>
       </svg>
-      <figcaption class="label">Profiles at the wheel: the bowl, the plate, the cup</figcaption>
     </figure>
   </section>
 
-  <section class="band--2 ware-band" id="ware" aria-labelledby="ware-title">
-    <div class="shell">
-      <div class="band__head">
-        <h2 id="ware-title">Five pieces on the shelf</h2>
-        <p>
-          Everything is thrown, trimmed, glazed and fired here. When a run sells out
-          it stays out until the next firing, which is a calendar the kiln keeps, not us.
-        </p>
+  <div class="shell">
+    <section class="entry entry--wide" id="batch" aria-labelledby="batch-title">
+      <h2 class="entry__title" id="batch-title">What is on the shelf right now</h2>
+      <div class="entry__body">
+        <p>Four forms, thrown in runs of a few dozen and finished one at a time. When a run sells out it is gone until the next firing, because the next firing is never quite the same.</p>
       </div>
+      <dl class="entry__rail">
+        <dt>Clay</dt><dd>stoneware</dd>
+        <dt>Glaze</dt><dd>studio-mixed</dd>
+        <dt>Firing</dt><dd>cone 9, reduction</dd>
+        <dt>Run</dt><dd>short, unrepeated</dd>
+      </dl>
 
-      <ol class="ware">
-        <li>
-          <span class="ware__name">Alfama bowl</span>
-          <p class="ware__note">Deep enough for soup, wide enough for rice. The glaze pools darker where the wall turns.</p>
+      <div class="batch">
+        <article class="piece piece--a">
+          <div class="piece__plate">
+            <svg class="profile" viewBox="0 0 240 130" role="img" aria-label="Section drawing of a wide serving platter with a low rolled rim">
+              <line class="axis" x1="120" y1="8" x2="120" y2="124"></line>
+              <path class="wall" d="M18 40 C 34 44, 48 92, 120 96 C 192 92, 206 44, 222 40 C 214 60, 208 112, 120 116 C 32 112, 26 60, 18 40 Z"></path>
+              <line class="datum" x1="18" y1="122" x2="222" y2="122"></line>
+            </svg>
+          </div>
+          <h3 class="piece__name">Serving platter, rolled rim</h3>
+          <p class="piece__note">Wide and shallow, thrown off the hump so the foot stays light. The rim is rolled by hand while the clay is still soft.</p>
+          <p class="piece__row field"><span>thrown off the hump</span><span class="tbc">size and price to confirm</span></p>
+        </article>
+
+        <article class="piece piece--b">
+          <div class="piece__plate">
+            <svg class="profile" viewBox="0 0 160 150" role="img" aria-label="Section drawing of a straight-sided mug with a pulled handle">
+              <line class="axis" x1="72" y1="10" x2="72" y2="142"></line>
+              <path class="wall" d="M38 22 L 32 128 C 32 136, 112 136, 112 128 L 106 22 Z"></path>
+              <path class="wall" d="M112 44 C 146 44, 148 104, 110 108"></path>
+              <line class="datum" x1="26" y1="140" x2="118" y2="140"></line>
+            </svg>
+          </div>
+          <h3 class="piece__name">Everyday mug</h3>
+          <p class="piece__note">Straight walls, pulled handle, a foot you can feel. Made to be picked up several times a day.</p>
+          <p class="piece__row field"><span>pulled handle</span><span class="tbc">size and price to confirm</span></p>
+        </article>
+
+        <article class="piece piece--c">
+          <div class="piece__plate">
+            <svg class="profile" viewBox="0 0 160 140" role="img" aria-label="Section drawing of a deep bowl on a cut foot ring">
+              <line class="axis" x1="80" y1="8" x2="80" y2="132"></line>
+              <path class="wall" d="M22 34 C 26 96, 52 116, 80 116 C 108 116, 134 96, 138 34 C 120 44, 100 48, 80 48 C 60 48, 40 44, 22 34 Z"></path>
+              <path class="wall" d="M62 116 L 62 128 L 98 128 L 98 116"></path>
+              <line class="datum" x1="22" y1="134" x2="138" y2="134"></line>
+            </svg>
+          </div>
+          <h3 class="piece__name">Deep bowl, cut foot</h3>
+          <p class="piece__note">For soup in winter and everything else the rest of the year.</p>
+          <p class="piece__row field"><span>cut foot ring</span><span class="tbc">size and price to confirm</span></p>
+        </article>
+
+        <article class="piece piece--d">
+          <div class="piece__plate">
+            <svg class="profile" viewBox="0 0 240 150" role="img" aria-label="Section drawing of a water jug with a pinched lip">
+              <line class="axis" x1="120" y1="8" x2="120" y2="142"></line>
+              <path class="wall" d="M78 30 C 70 62, 62 84, 66 132 L 174 132 C 178 84, 170 62, 162 30 C 150 24, 132 22, 120 22 C 108 22, 90 24, 78 30 Z"></path>
+              <path class="wall" d="M162 30 C 176 26, 186 30, 192 40"></path>
+              <path class="wall" d="M174 52 C 208 60, 206 108, 172 118"></path>
+              <line class="datum" x1="60" y1="140" x2="200" y2="140"></line>
+            </svg>
+          </div>
+          <h3 class="piece__name">Water jug, pinched lip</h3>
+          <p class="piece__note">Pours without dripping, which is the only test a jug has to pass. Sits on the table between meals without asking to be put away.</p>
+          <p class="piece__row field"><span>pinched lip</span><span class="tbc">size and price to confirm</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="entry entry--wide" id="making" aria-labelledby="making-title">
+      <h2 class="entry__title" id="making-title">How a piece gets from the wheel to the shelf</h2>
+      <div class="entry__body">
+        <p>Six operations, and most of the time is waiting. The log on the kiln door records every one of them, which is where this page got its ruling.</p>
+      </div>
+      <dl class="entry__rail">
+        <dt>Elapsed</dt><dd>mostly waiting</dd>
+        <dt>Kiln</dt><dd>gas, reduction</dd>
+        <dt>Order</dt><dd>never varied</dd>
+      </dl>
+
+      <ol class="sequence">
+        <li class="step">
+          <h3>Throw</h3>
+          <p>Stoneware, wedged and centred, thrown to a wall thickness the piece can carry when it is full.</p>
+          <p class="field step__temp">wet</p>
         </li>
-        <li>
-          <span class="ware__name">Tejo plate</span>
-          <p class="ware__note">A dinner plate with a low rim, so a knife has somewhere to go and nothing slides off.</p>
+        <li class="step">
+          <h3>Trim and pull</h3>
+          <p>The foot is cut on the wheel at leather hard, handles pulled and set the same day so they shrink at the same rate.</p>
+          <p class="field step__temp">leather hard</p>
         </li>
-        <li>
-          <span class="ware__name">Bica cup</span>
-          <p class="ware__note">Small, unhandled, sized for the coffee you drink standing at the counter.</p>
+        <li class="step">
+          <h3>Dry</h3>
+          <p>Slowly, under plastic first, then open on the rack. Rushing this is how a handle cracks off in the kiln, so nothing is rushed.</p>
+          <p class="field step__temp">days, not hours</p>
         </li>
-        <li>
-          <span class="ware__name">Graça jug</span>
-          <p class="ware__note">Water, wine, or a fistful of stems carried home from the market wrapped in paper.</p>
+        <li class="step">
+          <h3>Bisque fire</h3>
+          <p>The first firing. Chemically bound water leaves, the clay becomes porous and hard enough to handle wet glaze.</p>
+          <p class="field step__temp">cone 06, about 1000 °C</p>
         </li>
-        <li>
-          <span class="ware__name">Estufa dish</span>
-          <p class="ware__note">Oven to table, then straight into the middle of everything. Thick base, honest weight.</p>
+        <li class="step">
+          <h3>Glaze</h3>
+          <p>Dipped from studio-mixed buckets, wiped back off the foot, stacked on the shelf with room to move.</p>
+          <p class="field step__temp">by hand</p>
+        </li>
+        <li class="step">
+          <h3>Glaze fire, then cool</h3>
+          <p>The second firing vitrifies the body and melts the glaze to glass. The kiln then takes as long to cool as it did to climb.</p>
+          <p class="field step__temp">cone 9, about 1280 °C</p>
         </li>
       </ol>
+    </section>
+  </div>
 
-      <p class="label ware__foot">Photographs of the current run: to come · sizes and prices: to confirm</p>
-    </div>
-  </section>
-
-  <section class="studio-band" id="studio" aria-labelledby="studio-title">
-    <div class="shell studio">
-      <div class="studio__aside">
-        <p>One room with a door onto the street. It is open on Saturdays, and the tram is loud enough to hear through the wall.</p>
-      </div>
+  <section class="band" id="workshops" aria-labelledby="workshops-title">
+    <div class="shell band__grid">
       <div>
-        <h2 class="studio__title" id="studio-title">The kiln sets the calendar, not the shop</h2>
-        <div class="studio__prose">
-          <p>
-            Clay decides the week. A piece thrown on Monday is not finished until it has been
-            trimmed, dried slowly enough not to crack, fired once bare, glazed, and fired again.
-            None of that can be hurried by wanting it sooner, which is why the shelf is never
-            full and never quite empty.
-          </p>
-          <p>
-            We make what we use. If a shape does not survive a month of our own breakfasts,
-            it does not go on the shelf. That is the whole quality process: it is slower than
-            a spreadsheet and it has never once been wrong.
-          </p>
-          <p>
-            Small batches mean the pieces differ. Two Alfama bowls from the same firing will
-            not be identical twins, and the one you take home is the one you looked at.
-          </p>
-        </div>
+        <h2 id="workshops-title">Saturdays, a small group, one wheel each</h2>
+        <p class="band__copy">You throw for a morning, we trim and fire what survives, and you come back for it once it has cooled. No experience assumed, and no pretending that everything you make is worth keeping: choose two pieces, we recycle the rest.</p>
+        <a class="btn" href="#visit">Ask about a Saturday</a>
       </div>
-    </div>
-  </section>
-
-  <section class="band--3 shop-band" id="workshops" aria-labelledby="shop-title">
-    <div class="shell">
-      <div class="band__head">
-        <h2 id="shop-title">A weekend is enough to make one good thing</h2>
-        <p>
-          Two days, a wheel each, and the studio&rsquo;s clay. You leave with the pieces
-          worth keeping; we fire them, and you come back for them.
-        </p>
-      </div>
-
-      <div class="weekend">
-        <ol class="steps">
-          <li>Saturday morning: wedging, centring, and the first pull. Most people fail this one and then stop failing it.</li>
-          <li>Saturday afternoon: throw until one of them is worth keeping. Everything else goes back in the bucket.</li>
-          <li>Sunday morning: trim the foot, and sign the base while the clay still takes a mark.</li>
-          <li>Sunday afternoon: glaze, then hand it over to the kiln and go home with clay in your hair.</li>
-        </ol>
-
-        <div>
-          <dl class="facts">
-            <div><dt>Where</dt><dd>The studio, Lisboa</dd></div>
-            <div><dt>When</dt><dd>Saturday and Sunday</dd></div>
-            <div><dt>Group size</dt><dd class="tbc">to confirm</dd></div>
-            <div><dt>Fee</dt><dd class="tbc">to confirm</dd></div>
-            <div><dt>Bring</dt><dd>Short nails, and sleeves you do not mind</dd></div>
-          </dl>
-          <p class="weekend__cta">
-            <a class="btn btn--quiet" href="#visit">Ask about a weekend</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="visit-band visit" id="visit" aria-labelledby="visit-title">
-    <div class="shell">
-      <h2 class="visit__title" id="visit-title">Come and <mark>pick it up</mark> yourself</h2>
-      <p class="visit__body">
-        The shelf is open on Saturdays. Ask what came out of the last firing, and we will
-        also tell you what did not: the cracked ones go in a crate by the door and the
-        crate is honest.
-      </p>
-      <dl class="facts">
-        <div><dt>Address</dt><dd class="tbc">Lisboa, street address to confirm</dd></div>
-        <div><dt>Open</dt><dd>Saturdays, and by arrangement</dd></div>
-        <div><dt>Contact</dt><dd class="tbc">email to confirm</dd></div>
+      <dl class="band__list">
+        <div><dt>Group size</dt><dd>to confirm</dd></div>
+        <div><dt>Length</dt><dd>one morning</dd></div>
+        <div><dt>You take home</dt><dd>two fired pieces</dd></div>
+        <div><dt>Ready when</dt><dd>the glaze firing cools</dd></div>
+        <div><dt>Next dates</dt><dd>to confirm</dd></div>
+        <div><dt>Price</dt><dd>to confirm</dd></div>
       </dl>
     </div>
   </section>
 
+  <div class="shell">
+    <section class="entry" id="visit" aria-labelledby="visit-title">
+      <h2 class="entry__title" id="visit-title">The studio is a room with a kiln in it</h2>
+      <div class="entry__body">
+        <p>Not a showroom. There is a wheel, a wall of buckets, shelves of things waiting on the next firing, and a table by the window where the finished work sits until somebody takes it away. If the door is open you are welcome to come in and look, and if a firing is on you will hear it before you see it.</p>
+        <dl class="visit__facts">
+          <div><dt>Studio</dt><dd>Lisbon</dd></div>
+          <div><dt>Address</dt><dd class="tbc">to confirm</dd></div>
+          <div><dt>Open</dt><dd class="tbc">to confirm</dd></div>
+          <div><dt>Email</dt><dd class="tbc">to confirm</dd></div>
+        </dl>
+      </div>
+      <dl class="entry__rail">
+        <dt>Kiln</dt><dd>gas, reduction</dd>
+        <dt>Wheels</dt><dd>a row of them</dd>
+        <dt>Sold</dt><dd>here only</dd>
+      </dl>
+    </section>
+  </div>
 </main>
 
-<footer>
-  <div class="shell colophon">
-    <p class="label colophon__set">
-      Kiln &amp; Co., Lisboa · set in Public Sans and Newsreader · printed on screen in two inks, out of register on purpose
-    </p>
-    <nav class="colophon__links" aria-label="Footer">
-      <a href="#ware">The ware</a>
-      <a href="#workshops">Workshops</a>
-      <a href="#visit">Visit</a>
-      <a href="#top">Back to top</a>
-    </nav>
+<footer class="colophon">
+  <div class="shell">
+    <div class="colophon__line">
+      <span class="wordmark">Kiln &amp; Co<span>.</span></span>
+      <span class="field">Small-batch tableware · workshops on Saturdays · Lisbon</span>
+    </div>
+    <dl class="colophon__fields">
+      <div><dt>Studio</dt><dd>Lisbon</dd></div>
+      <div><dt>Address</dt><dd>to confirm</dd></div>
+      <div><dt>Open</dt><dd>to confirm</dd></div>
+      <div><dt>Email</dt><dd>to confirm</dd></div>
+      <div><dt>Clay</dt><dd>stoneware</dd></div>
+      <div><dt>Firing</dt><dd>cone 9, reduction</dd></div>
+    </dl>
+    <p class="colophon__close">Written down as it happened, the way the kiln log is.</p>
   </div>
 </footer>
 

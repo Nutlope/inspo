@@ -1,36 +1,36 @@
-/* Hallmark tokens · Even · theme: Field (warm cream, warm ink, one marigold highlighter)
- * The page ships self-contained per the brief's deliverable rules, so index.html carries
- * an identical :root block inline. This file is the portable copy.
+/* Even · Hallmark derived system · seed even-freelancer-tax-savings·2026-08-06·r0
+ * Record copy of the tokens. The deliverable page is self-contained by the eval's
+ * rules, so index.html carries this same :root block inline rather than importing
+ * this file. Kept here because the skill asks every build to emit tokens.css.
  */
 :root {
-  /* colour */
-  --color-paper:    oklch(96.5% 0.015 90);
-  --color-paper-2:  oklch(98.2% 0.010 90);
-  --color-paper-3:  oklch(93.0% 0.045 84);
-  --color-ink:      oklch(25% 0.02 70);
-  --color-ink-2:    oklch(40% 0.02 72);
-  --color-ink-3:    oklch(46% 0.02 72);
-  --color-rule:     oklch(84% 0.018 84);
-  --color-rule-2:   oklch(89% 0.016 86);
-  --color-accent:   oklch(75% 0.13 80);
-  --color-focus:    oklch(54% 0.14 72);
+  --color-paper:        oklch(94.8% 0.010 40);
+  --color-paper-2:      oklch(91.4% 0.013 40);
+  --color-ink:          oklch(21% 0.018 40);
+  --color-ink-2:        oklch(34% 0.016 40);
+  --color-muted:        oklch(47% 0.014 40);
+  --color-rule:         oklch(78% 0.014 40);
+  --color-rule-2:       oklch(86% 0.012 40);
+  --color-field:        oklch(34% 0.058 158);
+  --color-field-2:      oklch(28.5% 0.052 158);
+  --color-on-field:     oklch(95.5% 0.014 150);
+  --color-on-field-2:   oklch(80% 0.026 152);
+  --color-rule-field:   oklch(46% 0.045 158);
+  --color-signal:       oklch(54% 0.165 355);
+  --color-signal-deep:  oklch(44% 0.150 355);
+  --color-signal-light: oklch(72% 0.140 355);
+  --color-focus:        oklch(56% 0.190 355);
 
-  /* type */
-  --font-display: "Source Serif 4", ui-serif, Georgia, serif;
-  --font-body:    "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
 
-  --text-xs:   0.8rem;
-  --text-sm:   0.9rem;
-  --text-base: 1.0625rem;
-  --text-md:   1.25rem;
-  --text-lg:   1.5625rem;
-  --text-xl:   1.9531rem;
-  --text-2xl:  2.4414rem;
-  --text-3xl:  3.0518rem;
-  --text-display:   clamp(2.55rem, 4.1vw + 0.95rem, 4.35rem);
-  --text-display-s: clamp(2.05rem, 3.3vw + 0.75rem, 3.4rem);
+  --text-2xs:     0.66rem;
+  --text-sm:      0.8rem;
+  --text-base:    1rem;
+  --text-md:      1.25rem;
+  --text-2xl:     2.4414rem;
+  --text-display: clamp(2.55rem, 3.2vw + 1.15rem, 4.05rem);
 
-  /* space */
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
   --space-xs:  0.5rem;
@@ -42,21 +42,19 @@
   --space-3xl: 6rem;
   --space-4xl: 9rem;
 
-  /* form */
-  --radius-control: 10px;
-  --radius-card:    16px;
   --rule-hair: 1px;
-  --shadow-card: 0 10px 30px -18px oklch(25% 0.05 70 / 0.45);
+  --rule-bold: 3px;
+  --radius-none: 0px;
+  --radius-sm: 2px;
 
-  /* motion */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long:  420ms;
 
-  /* depth */
-  --z-base: 1;
+  --z-base:   1;
   --z-raised: 10;
   --z-sticky: 200;
 }

@@ -18,12 +18,28 @@ const ARMS = [
   { id: "hallmark-only", label: "Hallmark only", note: "design skill" },
   { id: "both", label: "Both", note: "archive + skill" },
 ];
+
+/* The Hallmark column has two builds behind it: the skill as it stood
+   when eval-4 first ran, and the current one. Same briefs, same spec,
+   same model - only the skill moved. The toggle swaps the column so the
+   two can be read against each other without leaving the page. */
+const HALLMARK_BUILDS = [
+  { id: "hallmark-old", label: "old", note: "skill at eval-4 (2026-08-05)" },
+  { id: "hallmark-only", label: "new", note: "skill as of 2026-08-06" },
+];
 const BRIEFS = [
   { id: "m1-meditation", label: "Tenor", note: "walking meditation app" },
   { id: "m2-devtool", label: "Sightline", note: "CI observability" },
   { id: "m3-fintech", label: "Even", note: "freelancer savings" },
   { id: "m4-ceramics", label: "Kiln & Co", note: "ceramics studio" },
   { id: "m5-producttour", label: "Reelframe", note: "guided product tour" },
+  /* Round 2 (2026-08-28): the control and the archive arm only, so the
+     signal is the pure nothing-vs-inspo delta at doubled n. */
+  { id: "m6-hardware", label: "Vellum", note: "pocket e-ink writing tablet", round: 2 },
+  { id: "m7-logistics", label: "Manifest", note: "customs automation for importers", round: 2 },
+  { id: "m8-editorial", label: "Footnote", note: "paid weekly letter on cities", round: 2 },
+  { id: "m9-course", label: "Primer", note: "writing course for engineers", round: 2 },
+  { id: "m10-oss", label: "Windlass", note: "SQLite job queue for Node", round: 2 },
 ];
 
 const usage = JSON.parse(readFileSync(join(ROOT, "usage.json"), "utf8"));
@@ -49,11 +65,14 @@ function inspoCalls(notes) {
   return m ? Number(m[1]) : 0;
 }
 
+const SOURCES = [...ARMS.map((a) => a.id), "hallmark-old"];
+
 const cells = [];
-for (const arm of ARMS) {
+for (const armId of SOURCES) {
   for (const brief of BRIEFS) {
-    const key = `${arm.id}/${brief.id}`;
-    const dir = join(ROOT, arm.id, brief.id);
+    const key = `${armId}/${brief.id}`;
+    const dir = join(ROOT, armId, brief.id);
+    if (!existsSync(dir)) continue; // round-2 brief, arm not in the round
     const htmlPath = join(dir, "index.html");
     const notesPath = join(dir, "NOTES.md");
     const html = existsSync(htmlPath) ? readFileSync(htmlPath, "utf8") : "";
@@ -62,7 +81,7 @@ for (const arm of ARMS) {
     const s = shotBy[key] ?? {};
     cells.push({
       key,
-      arm: arm.id,
+      arm: armId,
       brief: brief.id,
       tokens: u.tokens ?? null,
       toolUses: u.toolUses ?? null,
@@ -74,17 +93,18 @@ for (const arm of ARMS) {
       ovf: s.overflowPx ?? null,
       mobOvf: s.mobileOverflowPx ?? null,
       ...patterns(html),
-      shot: `_shots/${arm.id}__${brief.id}`,
-      page: `${arm.id}/${brief.id}/index.html`,
+      shot: `_shots/${armId}__${brief.id}`,
+      page: `${armId}/${brief.id}/index.html`,
     });
   }
 }
 
-const byArm = ARMS.map((a) => {
+const byArm = [...ARMS, { id: "hallmark-old", label: "Hallmark (old)", note: "skill at eval-4" }].map((a) => {
   const rows = cells.filter((c) => c.arm === a.id);
   const avg = (f) => Math.round(rows.reduce((n, r) => n + (r[f] ?? 0), 0) / rows.length);
   return {
     ...a,
+    n: rows.length,
     tokens: avg("tokens"),
     toolUses: avg("toolUses"),
     secs: avg("secs"),
@@ -94,7 +114,7 @@ const byArm = ARMS.map((a) => {
   };
 });
 
-const DATA = JSON.stringify({ arms: ARMS, briefs: BRIEFS, cells, byArm });
+const DATA = JSON.stringify({ arms: ARMS, builds: HALLMARK_BUILDS, briefs: BRIEFS, cells, byArm });
 
 const html = `<!doctype html>
 <html lang="en">
@@ -190,15 +210,35 @@ const html = `<!doctype html>
   .flag { font-size: 11px; padding: 1px 6px; border: 1px solid var(--rule); border-radius: 2px; }
   .flag.hit { color: var(--bad); border-color: var(--bad); }
   .flag.clean { color: var(--ok); border-color: var(--ok); }
-  footer { padding-block: 30px 60px; color: var(--ink-2); }
+  footer { padding-block: 30px 140px; color: var(--ink-2); }
+
+  /* Sticky Hallmark build switch. Bottom rather than top: the thing it
+     changes is the third column of every row, so it should sit where
+     the eye already is while scrolling the grid, not up with the page
+     furniture. */
+  .switch {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    z-index: 40; display: flex; align-items: center; gap: 14px;
+    padding: 9px 10px 9px 18px; border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: color-mix(in oklab, var(--paper) 88%, transparent);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 34px -14px rgba(0,0,0,.4);
+  }
+  .switch .lbl { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+  .switch .seg { display: flex; gap: 4px; }
+  .switch button { border-radius: 999px; padding: 5px 14px; }
+  .switch .note { font-size: 12px; color: var(--ink-2); white-space: nowrap;
+    border-left: 1px solid var(--rule); padding-left: 14px; }
+  @media (max-width: 620px) { .switch .note { display: none; } }
   a { color: inherit; }
 </style>
 </head>
 <body>
 <header class="band">
   <div class="wrap">
-    <h1>Eval 4 · four arms, five briefs, twenty pages</h1>
-    <p class="sub">Every page below was built by one agent under one condition. The only variable is which design aids it could reach for. Click any screenshot to open the live page.</p>
+    <h1>Eval 4 · four arms · ten briefs</h1>
+    <p class="sub">Every page below was built by one agent under one condition. The only variable is which design aids it could reach for. Briefs m1-m5 ran all four arms; the round-2 briefs (m6-m10) ran the control and the Inspo arm only. Click any screenshot to open the live page.</p>
   </div>
 </header>
 
@@ -208,7 +248,7 @@ const html = `<!doctype html>
 </section>
 
 <section class="band wrap" style="padding-top:0">
-  <h2>Banned patterns, counted across all twenty</h2>
+  <h2>Banned patterns, counted per arm</h2>
   <p class="sub" style="margin-bottom:14px">Two design-skill floor rules that can be checked mechanically rather than judged: no eyebrow before a heading, and no italicised word inside a roman heading. The only objective quality signal in the run.</p>
   <div class="scroll"><table id="patterns"></table></div>
 </section>
@@ -221,6 +261,12 @@ const html = `<!doctype html>
 </div>
 
 <main id="rows"></main>
+
+<div class="switch" role="group" aria-label="Hallmark build">
+  <span class="lbl">Hallmark column</span>
+  <span class="seg" id="buildseg"></span>
+  <span class="note" id="buildnote"></span>
+</div>
 
 <footer class="wrap">
   Written up in <a href="REPORT.md">REPORT.md</a>. Per-cell rationale in each <code>NOTES.md</code>.
@@ -239,22 +285,27 @@ function table(el, head, rows) {
     "<tbody>" + rows.map(r => "<tr>" + r.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</tbody>";
 }
 
-table(document.getElementById("summary"),
-  ["Arm", "Tokens", "Tool calls", "Wall", "Page size"],
-  D.byArm.map(a => [
-    "<strong>" + a.label + "</strong> <span class='cap-note'>" + a.note + "</span>",
-    fmt(a.tokens), a.toolUses, mmss(a.secs), a.kb + " KB",
-  ]));
+function renderTables() {
+  const rows = D.arms.map(a => D.byArm.find(x => x.id === sourceFor(a.id)) || {});
+  const labels = D.arms.map(a => a.label + (sourceFor(a.id) === "hallmark-old" ? " (old)" : ""));
 
-table(document.getElementById("patterns"),
-  ["Arm", "Eyebrow", "Italic in heading"],
-  D.byArm.map(a => {
-    const cell = n => "<span class='" + (n === 0 ? "ok" : "bad") + "'>" + n + " / 5</span>";
-    return ["<strong>" + a.label + "</strong>", cell(a.eyebrow), cell(a.italicH1)];
-  }));
+  table(document.getElementById("summary"),
+    ["Arm", "Tokens", "Tool calls", "Wall", "Page size"],
+    rows.map((a, i) => [
+      "<strong>" + labels[i] + "</strong> <span class='cap-note'>" + (D.arms[i].note) + "</span>",
+      fmt(a.tokens), a.toolUses ?? "—", mmss(a.secs), (a.kb ?? "—") + " KB",
+    ]));
 
-function cellHtml(c) {
-  const arm = D.arms.find(a => a.id === c.arm);
+  table(document.getElementById("patterns"),
+    ["Arm", "Eyebrow", "Italic in heading"],
+    rows.map((a, i) => {
+      const cell = n => "<span class='" + (n === 0 ? "ok" : "bad") + "'>" + n + " / " + (a.n ?? 5) + "</span>";
+      return ["<strong>" + labels[i] + "</strong>", cell(a.eyebrow ?? 0), cell(a.italicH1 ?? 0)];
+    }));
+}
+
+function cellHtml(c, armOverride) {
+  const arm = armOverride || D.arms.find(a => a.id === c.arm);
   const flag = (label, hit) =>
     "<span class='flag " + (hit ? "hit" : "clean") + "'>" + label + (hit ? "" : " ✓") + "</span>";
   return "<figure>" +
@@ -262,7 +313,9 @@ function cellHtml(c) {
       "<img loading='lazy' alt='" + c.key + "' src='" + c.shot + "." + view + ".png'>" +
     "</a>" +
     "<figcaption>" +
-      "<div class='cap-arm'>" + arm.label + "</div>" +
+      "<div class='cap-arm'>" + arm.label +
+        (c.arm === "hallmark-old" ? " <span class='cap-note'>(old build)</span>" : "") +
+      "</div>" +
       "<div class='stats'>" +
         "<span>" + fmt(c.tokens) + " tok</span>" +
         "<span>" + c.toolUses + " calls</span>" +
@@ -280,15 +333,47 @@ function cellHtml(c) {
     "</figcaption></figure>";
 }
 
+/* The Hallmark column is the only one with two sources behind it, so
+   it is the only one that reads the active build. Everything else
+   resolves to its own arm id as before. */
+function sourceFor(armId) {
+  return armId === "hallmark-only" ? build : armId;
+}
+
 function render() {
   document.getElementById("rows").innerHTML = D.briefs.map(b =>
     "<section class='row'><div class='wrap'>" +
-      "<div class='row-head'><strong>" + b.label + "</strong><span>" + b.note + "</span></div>" +
+      "<div class='row-head'><strong>" + b.label + "</strong><span>" + b.note + (b.round === 2 ? " · round 2" : "") + "</span></div>" +
       "<div class='grid'>" +
-        D.arms.map(a => cellHtml(D.cells.find(c => c.arm === a.id && c.brief === b.id))).join("") +
+        D.arms.map(a => {
+          const cell = D.cells.find(c => c.arm === sourceFor(a.id) && c.brief === b.id);
+          return cell ? cellHtml(cell, a) : "<figure><div class='shot'></div><figcaption><div class='cap-arm'>" + a.label + "</div><div class='stats'>" + (b.round === 2 ? "not in round 2" : "not run") + "</div></figcaption></figure>";
+        }).join("") +
       "</div>" +
     "</div></section>").join("");
+  renderTables();
 }
+
+let build = localStorage.getItem("eval4-build") || "hallmark-only";
+
+const seg = document.getElementById("buildseg");
+seg.innerHTML = D.builds.map(b =>
+  "<button data-build='" + b.id + "'>" + b.label + "</button>").join("");
+function paintSwitch() {
+  for (const b of seg.querySelectorAll("[data-build]"))
+    b.setAttribute("aria-pressed", String(b.dataset.build === build));
+  document.getElementById("buildnote").textContent =
+    (D.builds.find(b => b.id === build) || {}).note || "";
+}
+for (const b of seg.querySelectorAll("[data-build]")) {
+  b.addEventListener("click", () => {
+    build = b.dataset.build;
+    localStorage.setItem("eval4-build", build);
+    paintSwitch();
+    render();
+  });
+}
+paintSwitch();
 
 for (const btn of document.querySelectorAll("[data-view]")) {
   btn.addEventListener("click", () => {

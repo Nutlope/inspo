@@ -1,17 +1,21 @@
 [
   {
-    "date": "2026-08-05",
-    "macrostructure": "Narrative Workflow",
-    "theme": "Midnight",
+    "date": "2026-08-06",
+    "macrostructure": "bespoke: job docket (punched rail + numbered run of six work steps)",
+    "theme": "custom",
+    "direction": "The film-lab order envelope",
+    "posture": "committed",
+    "seed": "reelframe-product-tour·2026-08-06·r0",
+    "wildcard": "none taken (Seed packet, Paste-up mechanical both dealt and discarded)",
+    "vibe": "manila stock, grease pencil, typed field values",
     "hero": "Ledge/H1",
-    "nav": "chapter rail bar",
-    "footer": "statement colophon",
-    "enrichment": "hand-built CSS/SVG schematics, captioned as diagrams, no frames",
-    "section-entry": "real <ol> with counter(), the stage number inside the heading",
-    "axes": "dark/geometric-sans-thin/cool",
-    "fingerprint": "Left-biased|Alternating two-column with one full-width band|2px stage rule|Filled pill once, typographic CTA at the foot|Diagram, never capture|Single hero fade-rise",
-    "waived": ["47b"],
-    "brief": "Reelframe · guided tour of a video editor",
-    "notes": "First Hallmark run in this directory: no rotation constraint. No reference archive on the session (signal 8 absent), so catalog route."
+    "nav": "two-line masthead, flush-left, no CTA in the bar",
+    "footer": "closing colophon, one rule, no link columns",
+    "enrichment": "none (typography only; declared empty capture slots)",
+    "section-entry": "a real <ol> with counter() numerals, plus one change of paper",
+    "axes": "mid/grotesk-sans/warm ~32",
+    "fingerprint": "Left-flush|Unequal two-column steps|Registration line|Dashed capture slots|Bottom-anchored hero|Single settle reveal",
+    "waived": [],
+    "brief": "Reelframe · video editor product tour"
   }
 ]

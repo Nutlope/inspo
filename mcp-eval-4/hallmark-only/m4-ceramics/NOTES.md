@@ -1,48 +1,21 @@
 # hallmark-only / m4-ceramics
 
 ## Timing
-start: 1785927222
-end:   1785927727
+start: 1786029000
+end:   1786029721
 
 ## Tool calls
-total: 41
+total: 70
 inspo: 0
-breakdown: Read x18, Write x4, Edit x5, Bash x7, mcp__Claude_Browser__resize_window x1, mcp__Claude_Browser__computer x1, mcp__Claude_Browser__tabs_context x1, mcp__Claude_Browser__tabs_create x1, mcp__Claude_Browser__navigate x1, mcp__Claude_Browser__preview_start x1, mcp__ccd_session__mark_chapter x1
+breakdown: Read x15, Edit x23, mcp__Claude_Browser__* x20 (javascript_tool x7, screenshot x5, resize_window x3, computer scroll x3, preview_start x1, navigate x1), Bash x8, Write x3, Agent x1
 
 ## What drove the design
-The theme choice is where the skill did the most work. My unaided instinct for
-"independent ceramics studio" was cream paper, a high-contrast serif and a
-terracotta accent, which is Hallmark's Atelier or Newsprint almost exactly; the
-Rotation block's mirror test ("would this combination have come out for a
-neighbouring brief?") killed it, because that same system would come out for a
-Copenhagen leather workshop or a Provençal soap maker without changing a token.
-Riso replaced it: the theme-axes table let me check that mid pink stock, a
-grotesk-heavy display and a cool spot ink is a coordinate nothing else in the
-craft register occupies, and the material argument turned out to be specific to
-this brief rather than decorative (blush stock reads as unfired clay, the blue
-spot ink as azulejo glaze, and a studio that prints its own workshop posters is
-a plausible reason for the whole register). The eyebrow ban (gate 54) and
-`section-entry.md` changed the page's spine: I had planned small-caps labels
-over each section heading and a hand-typed "01 / 02 / 03" on the product list,
-and instead the sections are separated only by a change of paper, the ware is a
-real `<ol>` with `counter()` drawing the plate numbers, and one drop cap does
-the work the labels were going to do. The image-need table in
-`hero-enrichment.md` fired on the "product catalogue" row, which says real
-product photos, placeholder until the user provides; since no network images
-are allowed here, that resolved into a hand-built SVG of vessel *profiles*
-(a printer's plate sheet, honestly drawn) plus one labelled "photographs of the
-current run: to come" line, rather than the fake product tiles I would otherwise
-have grid-ed out. The no-invented-metrics rule removed prices, dimensions, group
-sizes and dates from the layout, so the workshop block became a `<dl>` with two
-real facts and three visibly italicised "to confirm" values instead of a pricing
-card. `finish.md`'s one-filled-primary rule demoted the workshop CTA from a
-second solid button to an outlined one. Sloplint caught a real defect I would
-have shipped: the accent-blue button on pink stock measured 3.82:1, fixed with a
-dedicated `--color-accent-deep` fill and an `--color-accent-ink` knockout.
+
+The brief is a ceramics studio, so the page I would have written without the skill is the one everybody writes: terracotta and oatmeal on linen-white paper, a big serif, photographs of hands on a wheel. Hallmark's Step 2.6 derivation ritual killed that in two moves. R.1 made me reject not just the category default but the second-order "tasteful" fallback (bone paper, high-contrast serif, hairlines everywhere), and R.2's spent-defaults table named my own rendition prior out loud: warm bookish briefs come out of me cream, serif and lamplit whatever the draw said. That is exactly where I was heading. R.3 then forced seven concrete artifacts from the studio's own world rather than seven moods, and R.4's `seed.mjs` draw, not my taste, picked entry 1: the kiln log book. That single decision produced the whole page: a continuous ruled sheet behind every section, tabular mono fields, a hero built around the firing curve rather than a product shot, and sections entered from a margin rail of process metadata. The second decision the skill changed was colour. My derived triple came out light paper / grotesk-sans / cool ~262, which the rejection table in `theme-axes.md` showed is Cobalt's exact coordinate; rather than move the accent (cobalt oxide is a real ceramics material and the argument for the palette) I moved the display class to slab-serif, which the log book wanted anyway. Gate 54 also changed a structural decision: my first instinct was a log-entry line above each heading (`CONE 9 · REDUCTION`), which is an eyebrow with a costume on, so the metadata went into a left margin rail beside the body instead, after the heading in DOM order. Everything else the skill supplied was hygiene rather than direction: sloplint caught six Floor gate-48 oklch literals I had improvised into the dark band, a failing hover contrast, an undefined accent-ink token, and two filled primary buttons, all fixed. The fresh-context reviewer caught a contract line that no longer described the shipped headline and two nav links pointing at the same anchor.
 
 ## Friction
-- The Browser pane refused `file://` access to my own output ("the user declined access"), so desktop and mobile were verified mechanically via sloplint and arithmetic rather than by eye; sloplint's `--render` tier was also unavailable (no puppeteer-core).
-- Before that, the shared Browser pane's active tab was another eval cell's page (`inspo-only/m3-fintech`), which I screenshotted once before realising it was not mine; different brief, so no cross-contamination on this cell, but worth recording.
-- SKILL.md mandates emitting `tokens.css` at the project root on every build, while SPEC.md rule 1 mandates one self-contained `index.html` with inline CSS. Resolved by inlining the tokens in the page and emitting `tokens.css` beside it as an unreferenced portable copy.
-- Sloplint gate 25 (measure 45-75ch) fires on the studio marginalia, which is deliberately a 32ch outer-margin column per `layout-and-space.md` § Asymmetry techniques. Dismissed on the record in `.hallmark/log.json` rather than "fixed" into a normal paragraph.
-- The Riso spec asks for one IntersectionObserver section-reveal, but `hero-discipline.md` bans scroll-fade-everything and the anti-pattern list flags animate-on-scroll; I cut the scroll reveals entirely and kept only the single hero settle.
+- The eval's "one self-contained index.html, no local asset files" rule contradicts Hallmark's "always emit tokens.css"; I wrote tokens.css alongside as a record and kept the page fully inlined.
+- Rule 5 (invent no numbers) fought the log-book direction, which is made of numbers. I kept only physical craft constants (cone 06, cone 9, roughly 1000 °C and 1280 °C) and replaced every studio-specific figure (dimensions, prices, capacities, group size, kiln volume, dates) with a labelled "to confirm" field.
+- The preview pane renders file:// pages outside the project as static snapshots: scrolled screenshots came back blank, so everything below the fold was verified by measuring boxes with `javascript_tool` rather than by eye.
+- `sloplint --render` is unavailable here (puppeteer-core not installed), so the render-tier gates ran as static checks only.
+- One `javascript_tool` call silently executed against another eval arm's tab because no `tabId` was passed; caught it and pinned the tab thereafter. Nothing was written to that arm.

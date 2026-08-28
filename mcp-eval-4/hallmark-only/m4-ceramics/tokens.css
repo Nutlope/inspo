@@ -1,45 +1,40 @@
-/* Kiln & Co. · Hallmark tokens · theme: Riso · anchor hue 30
- * The deliverable for this brief is a single self-contained index.html, so the
- * page inlines these values rather than importing this file. This is the
- * portable copy the skill asks every build to emit.
- */
 :root {
-  /* paper and ink - everything tilts hue 30 */
-  --color-paper:    oklch(84% 0.048 30);
-  --color-paper-2:  oklch(80% 0.052 30);
-  --color-paper-3:  oklch(75% 0.056 30);
-  --color-ink:      oklch(18% 0.060 30);
-  --color-neutral:  oklch(34% 0.060 30);
-  --color-muted:    oklch(44% 0.050 30);
-  --color-rule:     oklch(70% 0.040 30);
+  /* colour: committed posture. The field carries the workshops band and the footer; the accent proper stays a signal. */
+  --color-paper:    oklch(95.5% 0.008 262);
+  --color-paper-2:  oklch(92.5% 0.010 262);
+  --color-paper-3:  oklch(89%   0.012 262);
+  --color-field:    oklch(26%   0.045 262);
+  --color-field-2:  oklch(31%   0.045 262);
+  --color-rule:     oklch(76%   0.014 262);
+  --color-rule-2:   oklch(87%   0.010 262);
+  --color-neutral:  oklch(56%   0.012 262);
+  --color-muted:    oklch(46%   0.014 262);
+  --color-ink:      oklch(21%   0.012 262);
+  --color-ink-2:    oklch(30%   0.012 262);
+  --color-ink-on-field: oklch(93% 0.008 262);
+  --color-accent:   oklch(47%   0.148 262);
+  --color-accent-2: oklch(37%   0.130 262);
+  --color-accent-ink: oklch(97% 0.006 262);
+  --color-focus:    oklch(52%   0.190 262);
+  --color-field-muted: oklch(80% 0.020 262);
+  --color-field-label: oklch(70% 0.020 262);
+  --color-field-link:  oklch(86% 0.060 262);
+  --color-field-mark:  oklch(78% 0.090 262);
 
-  /* two spot inks, plus the pink echo of a missed drum */
-  --color-accent:      oklch(46% 0.140 220);
-  --color-accent-deep: oklch(40% 0.135 222);
-  --color-accent-ink:  oklch(96% 0.020 30);
-  --color-accent-2:    oklch(78% 0.180 95);
-  --color-echo:        oklch(64% 0.190 12);
-  --color-focus:       oklch(46% 0.140 220);
-
-  --font-display: "Public Sans", ui-sans-serif, sans-serif;
-  --font-body:    "Newsreader", ui-serif, Georgia, serif;
-  --font-label:   "Geist Mono", ui-monospace, monospace;
-
-  --display-weight: 900;
-  --tracking-display: -0.04em;
-  --tracking-label: 0.06em;
-  --lh-tight: 0.95;
-  --lh-body: 1.62;
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, monospace;
 
   --text-xs:   0.75rem;
   --text-sm:   0.8125rem;
-  --text-base: 1.0625rem;
-  --text-md:   1.1875rem;
-  --text-lg:   1.4375rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.375rem;
   --text-xl:   1.75rem;
-  --text-2xl:  clamp(1.85rem, 2.4vw + 0.6rem, 2.6rem);
-  --text-display:   clamp(2.5rem, 4.2vw + 0.5rem, 4.15rem);
-  --text-display-s: clamp(2rem, 3.3vw + 0.4rem, 3.3rem);
+  --text-2xl:  2.1875rem;
+  --text-3xl:  2.75rem;
+  --text-display:   clamp(2.5rem, 3.4vw + 1.1rem, 4.125rem);
+  --text-display-s: clamp(2rem, 2.6vw + 0.9rem, 3.25rem);
 
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
@@ -52,21 +47,26 @@
   --space-3xl: 6rem;
   --space-4xl: 9rem;
 
-  --rule-hair: 1px;
-  --rule-thick: 2px;
-  --radius-flat: 2px;
-
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long:  420ms;
 
-  --texture-opacity: 0.055;
-  --measure: 62ch;
-  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --rule-hair: 1px;
+  --rule-heavy: 2px;
+  --radius-sm: 2px;
+  --ledger: 2rem;
 
   --z-base: 1;
   --z-raised: 10;
+  --z-dropdown: 100;
   --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
 }

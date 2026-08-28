@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Footnote, a weekly letter on how cities actually work</title>
+<meta name="description" content="Footnote is a paid weekly letter about how cities actually work. One subject each week, read in fifteen minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E8;
+  --paper-deep:#ECE6D6;
+  --sheet:#FCF9F2;
+  --ink:#211C14;
+  --ink-mid:#453E30;
+  --ink-soft:#6A6350;
+  --ink-faint:#8E8671;
+  --line:#DAD3BF;
+  --line-strong:#C2B9A0;
+  --red:#A5301C;
+  --red-deep:#7E2312;
+  --dark:#211C14;
+  --dark-2:#2A2418;
+  --dark-line:#463E2B;
+  --paper-on-dark:#F1ECDE;
+  --soft-on-dark:#B0A78E;
+  --red-on-dark:#E5906E;
+  --serif:'Newsreader', Georgia, 'Times New Roman', serif;
+  --mono:'IBM Plex Mono', 'Courier New', monospace;
+  --masthead:65px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:17.5px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--red);color:var(--paper)}
+a{color:inherit}
+img,svg{max-width:100%}
+.container{max-width:1160px;margin-inline:auto;padding-inline:clamp(20px,4.5vw,48px)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:16px;top:-48px;z-index:99;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:.75rem;padding:10px 16px;text-decoration:none;transition:top .15s ease}
+.skip:focus{top:12px}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+
+/* ---------- shared apparatus ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:.7rem;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--red)
+}
+.sechead{display:flex;align-items:baseline;gap:24px;margin-bottom:52px}
+.sechead .rule{flex:1;height:1px;background:var(--line-strong);align-self:center}
+.sechead .aside-note{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+sup.fnref{font-family:var(--mono);line-height:0;font-weight:500}
+sup.fnref a{color:var(--red);text-decoration:none}
+sup.fnref a:hover,sup.fnref a:focus-visible{text-decoration:underline;text-underline-offset:.25em}
+.btn{
+  display:inline-block;font-family:var(--mono);font-size:.76rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;
+  background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);border-radius:2px;
+  padding:16px 28px;cursor:pointer;text-decoration:none;white-space:nowrap;
+  transition:background .15s ease,border-color .15s ease
+}
+.btn:hover{background:var(--red);border-color:var(--red)}
+.field{
+  font-family:var(--serif);font-size:1rem;color:var(--ink);
+  background:var(--sheet);border:1px solid var(--line-strong);border-radius:2px;
+  padding:15px 16px;width:100%;min-width:0
+}
+.field::placeholder{color:var(--ink-faint);font-style:italic}
+.field:focus{outline:2px solid var(--red);outline-offset:2px;border-color:var(--ink)}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:sticky;top:0;z-index:50;background:var(--paper);
+  border-bottom:1px solid var(--line-strong);height:var(--masthead)
+}
+.masthead .container{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.wordmark{font-family:var(--serif);font-weight:600;font-size:1.45rem;letter-spacing:-.01em;text-decoration:none}
+.wordmark .dot{color:var(--red)}
+.mastnav{display:flex;align-items:center;gap:30px}
+.mastnav a.navlink{
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;text-decoration:none;color:var(--ink-mid)
+}
+.mastnav a.navlink:hover{color:var(--red)}
+.mastnav .btn{padding:11px 20px}
+
+/* ---------- hero ---------- */
+.hero{min-height:calc(100vh - var(--masthead));display:flex;flex-direction:column}
+.hero-inner{padding-top:clamp(44px,8vh,76px)}
+.hero .eyebrow{display:block;margin-bottom:26px}
+.hero h1{
+  font-size:clamp(2.9rem,6.6vw,5.8rem);
+  line-height:1.03;font-weight:500;letter-spacing:-.022em;
+  max-width:16ch;margin-bottom:30px
+}
+.hero h1 em{font-style:italic;font-weight:500}
+.hero h1 sup.fnref{font-size:.32em;letter-spacing:0}
+.hero .dek{
+  font-size:clamp(1.08rem,1.55vw,1.24rem);line-height:1.6;
+  color:var(--ink-mid);max-width:58ch;margin-bottom:38px
+}
+.subform{display:flex;gap:10px;max-width:470px}
+.subform .field{flex:1}
+.hero .fine{
+  margin-top:16px;font-family:var(--mono);font-size:.78rem;
+  letter-spacing:.02em;color:var(--ink-soft)
+}
+.ticker{margin-top:auto;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong)}
+.ticker .container{display:flex;align-items:baseline;gap:20px;padding-top:15px;padding-bottom:15px}
+.ticker .eyebrow{flex:none}
+.ticker-clip{position:relative;overflow:hidden;flex:1;min-width:0}
+.ticker-clip::after{
+  content:"";position:absolute;top:0;right:0;bottom:0;width:120px;
+  background:linear-gradient(90deg,rgba(245,241,232,0),var(--paper))
+}
+.ticker-items{
+  white-space:nowrap;font-family:var(--mono);font-size:.76rem;
+  letter-spacing:.02em;color:var(--ink-soft)
+}
+.ticker-items b{font-weight:500;color:var(--ink-mid)}
+.ticker-items .sep{color:var(--red);padding:0 .9em}
+
+/* ---------- specimen ---------- */
+.specimen{background:var(--paper-deep);border-top:1px solid var(--line-strong);padding:96px 0 110px}
+.sheet{
+  background:var(--sheet);border:1px solid var(--line);border-radius:2px;
+  max-width:940px;margin-inline:auto;
+  padding:clamp(28px,5vw,64px);
+  box-shadow:0 1px 0 rgba(33,28,20,.05),0 36px 70px -48px rgba(33,28,20,.5)
+}
+.letterhead{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:34px
+}
+.letterhead .lh-right{color:var(--ink-faint);letter-spacing:.12em}
+.sheet h2{font-size:clamp(1.9rem,3.4vw,2.85rem);line-height:1.08;font-weight:500;letter-spacing:-.015em}
+.standfirst{font-style:italic;font-size:1.12rem;color:var(--ink-soft);margin-top:12px;max-width:52ch}
+.redrule{width:64px;height:1px;background:var(--red);border:0;margin:30px 0 36px}
+.letterbody{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:56px}
+.excerpt{position:relative;font-size:1.07rem;line-height:1.68;color:var(--ink)}
+.excerpt p+p{margin-top:1.3em}
+.excerpt::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:104px;
+  background:linear-gradient(rgba(252,249,242,0),var(--sheet))
+}
+.lede::first-letter{
+  float:left;font-size:4.5em;line-height:.8;font-weight:500;
+  padding:.05em .1em 0 0
+}
+.excerpt .mark{color:var(--red);font-family:var(--mono);font-size:.8em}
+.sidenotes{padding-top:6px}
+.note{
+  font-size:.86rem;line-height:1.6;color:var(--ink-soft);
+  border-top:1px solid var(--line);padding-top:12px
+}
+.note .mark{color:var(--red);font-family:var(--mono);margin-right:8px}
+.note+.note{margin-top:26px}
+.note.push{margin-top:150px}
+.readmore{text-align:center;margin-top:6px}
+.readmore a{
+  font-family:var(--mono);font-size:.74rem;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--red);text-decoration:underline;
+  text-underline-offset:5px;text-decoration-thickness:1px
+}
+.readmore a:hover{color:var(--red-deep)}
+
+/* ---------- format ---------- */
+.format{padding:104px 0}
+.format .sechead{border-top:2px solid var(--ink);padding-top:16px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
+.fcol{border-top:1px solid var(--line-strong);padding-top:24px}
+.fcol .num{
+  display:block;font-style:italic;font-weight:500;font-size:2rem;
+  line-height:1;color:var(--red);margin-bottom:18px
+}
+.fcol h3{font-size:1.42rem;font-weight:500;letter-spacing:-.01em;margin-bottom:12px}
+.fcol h3 sup.fnref{font-size:.5em}
+.fcol p{font-size:.98rem;line-height:1.65;color:var(--ink-soft)}
+
+/* ---------- archive ---------- */
+.archive{padding:0 0 104px}
+.archive .sechead{border-top:2px solid var(--ink);padding-top:16px}
+.arows{list-style:none}
+.arow{
+  display:grid;grid-template-columns:96px minmax(0,1fr) auto;
+  gap:32px;align-items:baseline;
+  padding:26px 4px;border-top:1px solid var(--line)
+}
+.arow:last-child{border-bottom:1px solid var(--line)}
+.ano{font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;color:var(--ink-faint)}
+.atitle{font-size:1.45rem;font-weight:500;letter-spacing:-.01em;line-height:1.2}
+.adek{display:block;font-size:.96rem;color:var(--ink-soft);margin-top:7px;font-weight:400}
+.atag{
+  font-family:var(--mono);font-size:.64rem;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);
+  border:1px solid var(--line-strong);border-radius:2px;padding:6px 10px;white-space:nowrap
+}
+.archive .tail{
+  margin-top:22px;font-family:var(--mono);font-size:.72rem;
+  letter-spacing:.04em;color:var(--ink-faint)
+}
+
+/* ---------- editor's note ---------- */
+.credo-band{background:var(--paper-deep);border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);padding:104px 0}
+.credo{
+  max-width:720px;margin-inline:auto;text-align:center;
+  font-style:italic;font-size:clamp(1.3rem,2.2vw,1.62rem);line-height:1.55;color:var(--ink-mid)
+}
+.sig{text-align:center;font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft)}
+.sig::before{content:"";display:block;width:56px;height:1px;background:var(--red);margin:34px auto 18px}
+
+/* ---------- subscription ---------- */
+.pricing{background:var(--dark);color:var(--paper-on-dark);padding:104px 0 88px}
+.pricing .eyebrow{color:var(--red-on-dark)}
+.pricing .sechead .rule{background:var(--dark-line)}
+.pgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:72px;align-items:start}
+.price-line{font-size:clamp(2.2rem,4vw,3.3rem);font-weight:500;letter-spacing:-.018em;line-height:1.08}
+.price-line sup.fnref{font-size:.4em}
+.price-line sup.fnref a{color:var(--red-on-dark)}
+.billing{
+  margin-top:14px;font-family:var(--mono);font-size:.74rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--soft-on-dark)
+}
+.includes{list-style:none;margin-top:40px}
+.includes li{
+  border-top:1px solid var(--dark-line);padding:15px 0;
+  font-size:1.05rem;color:var(--paper-on-dark)
+}
+.includes li::before{
+  content:"+";font-family:var(--mono);color:var(--red-on-dark);
+  margin-right:14px;font-weight:500
+}
+.subcard{
+  background:var(--dark-2);border:1px solid var(--dark-line);border-radius:2px;
+  padding:36px
+}
+.subcard h3{font-size:1.35rem;font-weight:500;font-style:italic;letter-spacing:-.01em;margin-bottom:22px}
+.subcard .field{
+  background:transparent;border-color:var(--dark-line);color:var(--paper-on-dark)
+}
+.subcard .field::placeholder{color:var(--soft-on-dark)}
+.subcard .field:focus{outline-color:var(--red-on-dark);border-color:var(--soft-on-dark)}
+.subcard form{display:flex;flex-direction:column;gap:12px}
+.btn-paper{background:var(--paper-on-dark);color:var(--ink);border-color:var(--paper-on-dark);text-align:center}
+.btn-paper:hover{background:var(--red-on-dark);border-color:var(--red-on-dark);color:var(--dark)}
+.subcard .alt{
+  margin-top:18px;text-align:center;font-family:var(--mono);font-size:.74rem;color:var(--soft-on-dark)
+}
+.subcard .alt a{color:var(--paper-on-dark);text-underline-offset:4px}
+.subcard .alt a:hover{color:var(--red-on-dark)}
+.endline{
+  margin-top:72px;border-top:1px solid var(--dark-line);padding-top:30px;
+  text-align:center;font-style:italic;font-size:1.05rem;color:var(--soft-on-dark)
+}
+.endline sup.fnref a{color:var(--red-on-dark)}
+
+/* ---------- footnotes ---------- */
+.footnotes{padding:92px 0 76px}
+.fnhead{
+  border-top:6px double var(--ink);padding-top:14px;margin-bottom:36px;
+  font-family:var(--mono);font-size:.7rem;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--ink)
+}
+.fnlist{list-style:none;max-width:760px}
+.fnlist li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding:13px 0}
+.fnlist .fno{font-family:var(--mono);font-size:.8rem;font-weight:500;color:var(--red);padding-top:2px}
+.fnlist p{font-size:.98rem;line-height:1.62;color:var(--ink-mid)}
+.backref{
+  font-family:var(--mono);font-size:.78rem;color:var(--red);
+  text-decoration:none;margin-left:10px
+}
+.backref:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- footer ---------- */
+.footer{border-top:1px solid var(--line-strong);padding:46px 0 56px}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:32px;flex-wrap:wrap}
+.footer .wordmark{font-size:1.3rem}
+.footer .tagline{
+  margin-top:10px;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)
+}
+.footlinks{display:flex;gap:28px;flex-wrap:wrap}
+.footlinks a{
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;text-decoration:none;color:var(--ink-mid)
+}
+.footlinks a:hover{color:var(--red)}
+.footer-bottom{
+  margin-top:40px;border-top:1px solid var(--line);padding-top:20px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--ink-faint)
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .letterbody{grid-template-columns:minmax(0,1fr)}
+  .sidenotes{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding-top:8px}
+  .note.push{margin-top:0}
+  .note+.note{margin-top:0}
+  .fgrid{grid-template-columns:1fr;gap:0}
+  .fcol{padding:26px 0}
+  .fcol .num{margin-bottom:10px}
+  .pgrid{grid-template-columns:1fr;gap:52px}
+}
+@media (max-width:720px){
+  .mastnav a.navlink{display:none}
+  .sidenotes{grid-template-columns:1fr;gap:18px}
+  .arow{grid-template-columns:minmax(0,1fr) auto;gap:16px;row-gap:10px}
+  .ano{grid-column:1 / -1}
+  .subform{flex-direction:column}
+  .sechead{flex-wrap:wrap;gap:12px}
+  .footer-top{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="container">
+    <a class="wordmark" href="#top" aria-label="Footnote, home">Footnote<span class="dot">.</span></a>
+    <nav class="mastnav" aria-label="Site">
+      <a class="navlink" href="#letter">The letter</a>
+      <a class="navlink" href="#format">Format</a>
+      <a class="navlink" href="#archive">Archive</a>
+      <a class="btn" href="#subscribe">Subscribe</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="top" aria-label="Introduction">
+    <div class="container hero-inner">
+      <span class="eyebrow">A paid weekly letter on how cities actually work</span>
+      <h1>Cities run on<br><em>fine print.</em><sup class="fnref"><a id="ref1" href="#fn1" aria-label="Footnote 1">1</a></sup></h1>
+      <p class="dek">Every Thursday, Footnote takes one subject (the curb, the bus lane, the zoning variance) and follows it all the way down. One essay, carefully made, read in fifteen minutes.</p>
+      <form class="subform" action="#subscribe">
+        <label class="sr-only" for="email-hero">Email address</label>
+        <input class="field" type="email" id="email-hero" name="email" placeholder="you@example.gov" autocomplete="email">
+        <button class="btn" type="submit">Subscribe</button>
+      </form>
+      <p class="fine">One letter a week. A free sample before you pay. Cancel anytime.</p>
+    </div>
+    <div class="ticker" aria-label="Recent subjects">
+      <div class="container">
+        <span class="eyebrow">Recently</span>
+        <div class="ticker-clip">
+          <span class="ticker-items"><b>No. 86</b> The parking space is never free<span class="sep">&middot;</span><b>No. 85</b> What the sewer knows<span class="sep">&middot;</span><b>No. 84</b> The zoning variance<span class="sep">&middot;</span><b>No. 83</b> The intersection is a negotiation<span class="sep">&middot;</span><b>No. 82</b> Why City Hall buys the expensive one</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SPECIMEN ================= -->
+  <section class="specimen" id="letter">
+    <div class="container">
+      <div class="sechead">
+        <span class="eyebrow">A recent letter</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span class="aside-note">Exactly as it lands in your inbox</span>
+      </div>
+      <article class="sheet" aria-label="Excerpt from issue 87, Why the bus is late">
+        <div class="letterhead">
+          <span>Footnote</span>
+          <span class="lh-right">No. 87 &middot; Thursday, 6:00 a.m.</span>
+        </div>
+        <h2>Why the bus is late</h2>
+        <p class="standfirst">On bunching, the physics of patience, and the case for promising less.</p>
+        <hr class="redrule">
+        <div class="letterbody">
+          <div class="excerpt">
+            <p class="lede">The bus is not late because the driver is slow, and it is not late because the schedule was drawn by optimists. It is late because lateness compounds. A bus that falls a minute behind meets more waiting passengers at every stop, and every extra boarding makes it a little later still. The bus behind it meets fewer, runs faster, and quietly closes the gap.<span class="mark">*</span> Left alone, the two will eventually arrive everywhere together, in a pair, like nervous guests.</p>
+            <p>The interesting question is what a city does about it. Some agencies pad the schedule until the bus is never late, which is another way of saying it is always slow. Some hold buses at timing points while the passengers stare at an open door.<span class="mark">&dagger;</span> The clever ones stop promising times altogether and promise a frequency instead: a bus every six minutes, no schedule to miss, nothing to be late against. Which of these your city chose says more about it than the skyline does, and this week we are going to read that choice closely.</p>
+          </div>
+          <aside class="sidenotes" aria-label="Margin notes">
+            <p class="note"><span class="mark">*</span>Riders know this as two 14s arriving at once, then nothing for twenty five minutes. It is not bad luck. It is a feedback loop with a schedule.</p>
+            <p class="note push"><span class="mark">&dagger;</span>If you have ever sat on a stopped bus while nothing visibly happened, you were briefly part of the control system. Thank you for your service.</p>
+          </aside>
+        </div>
+        <p class="readmore"><a href="#subscribe">Read the full letter, free &rarr;</a></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= FORMAT ================= -->
+  <section class="format" id="format">
+    <div class="container">
+      <div class="sechead">
+        <span class="eyebrow">The format</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span class="aside-note">Fixed since issue one</span>
+      </div>
+      <div class="fgrid">
+        <div class="fcol">
+          <span class="num" aria-hidden="true">1.</span>
+          <h3>One subject</h3>
+          <p>No roundups, no link lists, no takes on yesterday&rsquo;s news. Each letter picks a single question and follows it until the answer actually makes sense.</p>
+        </div>
+        <div class="fcol">
+          <span class="num" aria-hidden="true">2.</span>
+          <h3>Fifteen minutes<sup class="fnref"><a id="ref2" href="#fn2" aria-label="Footnote 2">2</a></sup></h3>
+          <p>Long enough to explain something properly. Short enough to finish in one sitting, with the coffee still warm at the end.</p>
+        </div>
+        <div class="fcol">
+          <span class="num" aria-hidden="true">3.</span>
+          <h3>Every Thursday</h3>
+          <p>It lands Thursday morning and reads like a letter from a sharp friend, not a briefing memo. Take it on the ride in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ARCHIVE ================= -->
+  <section class="archive" id="archive">
+    <div class="container">
+      <div class="sechead">
+        <span class="eyebrow">Recently in Footnote</span>
+        <span class="rule" aria-hidden="true"></span>
+        <span class="aside-note">One a week, every week</span>
+      </div>
+      <ul class="arows">
+        <li class="arow">
+          <span class="ano">No. 86</span>
+          <span class="atitle">The parking space is never free<span class="adek">Minimum parking rules, and the quiet rent everyone pays for empty asphalt.</span></span>
+          <span class="atag">Land</span>
+        </li>
+        <li class="arow">
+          <span class="ano">No. 85</span>
+          <span class="atitle">What the sewer knows<span class="adek">Wastewater is the city&rsquo;s most honest census. Nobody lies to a drain.</span></span>
+          <span class="atag">Water</span>
+        </li>
+        <li class="arow">
+          <span class="ano">No. 84</span>
+          <span class="atitle">The zoning variance<span class="adek">How the exception quietly became the process, and who can afford to apply.</span></span>
+          <span class="atag">Housing</span>
+        </li>
+        <li class="arow">
+          <span class="ano">No. 83</span>
+          <span class="atitle">The intersection is a negotiation<span class="adek">Signal timing decides who waits. Somebody has to program it.</span></span>
+          <span class="atag">Streets</span>
+        </li>
+        <li class="arow">
+          <span class="ano">No. 82</span>
+          <span class="atitle">Why City Hall buys the expensive one<span class="adek">Procurement rules make saving money expensive. The logic is better than you think.</span></span>
+          <span class="atag">Money</span>
+        </li>
+      </ul>
+      <p class="tail">The full archive stays open to subscribers.</p>
+    </div>
+  </section>
+
+  <!-- ================= EDITOR'S NOTE ================= -->
+  <section class="credo-band" aria-label="Why Footnote exists">
+    <div class="container">
+      <p class="credo">The decisions that shape a city are made in documents nobody reads, at meetings nobody attends, in language written to be skimmed. Footnote reads all of it closely, so that once a week, you can too.</p>
+      <p class="sig">The editor</p>
+    </div>
+  </section>
+
+  <!-- ================= SUBSCRIPTION ================= -->
+  <section class="pricing" id="subscribe">
+    <div class="container">
+      <div class="sechead">
+        <span class="eyebrow">The subscription</span>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <div class="pgrid">
+        <div>
+          <h2 class="price-line">Seven dollars a month.<sup class="fnref"><a id="ref3" href="#fn3" aria-label="Footnote 3">3</a></sup></h2>
+          <p class="billing">Billed monthly &middot; Stop whenever you like</p>
+          <ul class="includes">
+            <li>The letter, every Thursday morning</li>
+            <li>The complete archive, open for as long as you stay</li>
+            <li>No ads, no sponsors, no one else&rsquo;s agenda</li>
+          </ul>
+        </div>
+        <div class="subcard">
+          <h3>Get Thursday&rsquo;s letter.</h3>
+          <form action="#subscribe">
+            <label class="sr-only" for="email-sub">Email address</label>
+            <input class="field" type="email" id="email-sub" name="email" placeholder="you@example.gov" autocomplete="email">
+            <button class="btn btn-paper" type="submit">Subscribe to Footnote</button>
+          </form>
+          <p class="alt">or <a href="#letter">read the free sample first</a></p>
+        </div>
+      </div>
+      <p class="endline">Written for people who read to the end.<sup class="fnref"><a id="ref4" href="#fn4" aria-label="Footnote 4">4</a></sup></p>
+    </div>
+  </section>
+
+  <!-- ================= FOOTNOTES ================= -->
+  <section class="footnotes" aria-label="Footnotes">
+    <div class="container">
+      <h2 class="fnhead">Footnotes</h2>
+      <ol class="fnlist">
+        <li id="fn1">
+          <span class="fno">1.</span>
+          <p>The curb cut, the easement, the bond covenant, the snow route. The small print is where a city actually gets decided, which is why somebody should be reading it.<a class="backref" href="#ref1" aria-label="Back to reference 1">&#8617;</a></p>
+        </li>
+        <li id="fn2">
+          <span class="fno">2.</span>
+          <p>Timed at an ordinary reading pace, not a speed run. When a draft runs long, we cut the draft, never the reader.<a class="backref" href="#ref2" aria-label="Back to reference 2">&#8617;</a></p>
+        </li>
+        <li id="fn3">
+          <span class="fno">3.</span>
+          <p>Cancel in two clicks, no retention theater. The sample letter is free, and every letter you have received is yours to keep.<a class="backref" href="#ref3" aria-label="Back to reference 3">&#8617;</a></p>
+        </li>
+        <li id="fn4">
+          <span class="fno">4.</span>
+          <p>If you read the footnotes on a landing page, you are exactly who this letter is for. Welcome.<a class="backref" href="#ref4" aria-label="Back to reference 4">&#8617;</a></p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="wordmark" href="#top">Footnote<span class="dot">.</span></a>
+        <p class="tagline">One subject a week &middot; Fifteen minutes &middot; Cities</p>
+      </div>
+      <nav class="footlinks" aria-label="Footer">
+        <a href="#letter">The letter</a>
+        <a href="#format">Format</a>
+        <a href="#archive">Archive</a>
+        <a href="#subscribe">Subscribe</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Footnote. Written in, and about, cities.</span>
+      <span>Set in Newsreader and IBM Plex Mono.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

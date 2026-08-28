@@ -1,42 +1,21 @@
 # hallmark-only / m2-devtool
 
 ## Timing
-start: 1785927208
-end:   1785927679
+start: 1786028989
+end:   1786029649
 
 ## Tool calls
-total: 22
+total: 52
 inspo: 0
-breakdown: Read x14, Write x3, Edit x8, Bash x5, mark_chapter x1, browser resize/navigate/screenshot/tabs_create x5
+breakdown: Read x13, Bash x9, Edit x8, Write x4, mcp__Claude_Browser__computer x6, mcp__Claude_Browser__javascript_tool x5, mcp__Claude_Browser__navigate x3, mcp__Claude_Browser__resize_window x2, mcp__Claude_Browser__preview_start x1, Agent x1
 
 ## What drove the design
-The brief is a CI observability tool whose whole claim is causal ("why it broke"), so I
-built the page around a diagram of how a verdict is assembled rather than around a feature
-grid: four evidence readings on the left, converging wires in the middle, one verdict block
-on the right, with the single reading that carried the verdict drawn in coral. That came
-from Hallmark's macrostructure catalogue, where Map / Diagram was a shape I would not have
-reached for on a devtool brief; my untouched instinct was a Bento or feature-stack SaaS
-page. The skill's mirror test ("would this combination come out for a neighbouring brief?")
-is what killed my first theme pick: I had chosen Ledger, the dark navy terminal option, and
-a dark mono devtool page is exactly what any neighbouring devtool brief would also get, so
-I moved to Coral, warm near-white paper with one coral signal, and spent the whole accent
-budget on the semantics of failure (the failing step, the decisive evidence wire, the source
-line) instead of on decoration. Two further decisions were changed by specific steps rather
-than by taste: the hero-enrichment gate routes dev-tool briefs to "no imagery, typography
-only", which pulled the diagram out of the hero and put it below the fold as the page's
-body, and that in turn let the hero take the Banner posture (compressed, 52dvh) so the map's
-opening line peeks at the fold. Gate 54 (no eyebrows) removed a mono "Verdict" label I had
-written above the verdict sentence; it became a caption below the block naming the evidence
-it read from, which is a better idea than the one it replaced. Gate 47 (no re-drawn chrome)
-kept me from drawing a terminal or PR-comment window, so the example verdict is set as plain
-typography inside a `<figure>` with a caption that says the wording is an example. The "What
-it will not tell you" section is mine, not the skill's, but the skill's ban on invented
-metrics is what made a refusal section the obvious way to fill space that would otherwise
-have wanted proof numbers.
+
+Pre-flight found an empty directory: no design.md, no font stack, no palette, no `TOGETHER_API_KEY`, and no reference archive on the session, so signal 8 never fired and the full standalone flow ran. Genre detection put this on modern-minimal (observability, platform engineers, B2B), and left alone I would have built exactly what that genre file describes: near-white paper, a confident grotesk display, two-column hero, one blue accent, pill CTAs. Step 2.6 is what stopped that. The reflex check made me write down both the first-order default (near-black terminal, neon green) and the second-order one (the Linear-clone monochrome page), and R.2 then declared "near-black surface, one neon accent, mono labels" already spent for this brief family, which closed off the fallback too. The slate of seven had to be concrete objects from a platform engineer's world across three material families, and `seed.mjs` drew entry 4 rather than letting me pick: **the seismograph drum chart**. That single draw decided the page. The hero visual went from "no enrichment, typography only" (my instinct for a dev tool) to a hand-built SVG recorder trace with one excursion boxed and annotated, because the drawn world made "a failure is an event located in time" the literal argument of the page; the section notation became a hairline with one blip repeated down the page rather than the change-of-paper bands I would otherwise have alternated; and the display face moved from a grotesk to a slab (Bitter) because § D's rejection table showed light-paper + grotesk + cool is Cobalt's exact coordinate and light + slab is occupied only by warm Newsprint. Colour posture went to **committed** so the dark instrument field could carry roughly a third of the surface as a surface token rather than as accent sprawl, which gate 23 would otherwise have failed. Two smaller steps changed shipped copy: gate 46a caught a line I had written reflexively ("Half of all pipeline breaks are environmental") and it was rewritten as a qualitative claim, and the same rule is why the break notice and the trace both carry captions saying the values are illustrative rather than recorded. The finish review in fresh context caught two things I had gone blind to: inline `oklch()` in SVG presentation attributes (gate 48, fixed by moving all SVG paint into CSS classes reading the tokens) and four footer links pointing at the same dead anchor, now cut to three real in-page destinations plus the CTA.
 
 ## Friction
-- Coral's canonical display face is General Sans, hosted on Fontshare; the brief allows only Google Fonts, so I substituted Geist and recorded the swap in the stamp.
-- Hallmark requires a `tokens.css` at the project root on every build; the brief requires one self-contained `index.html` with no local asset files. I followed the brief and inlined the tokens, so that part of the skill's contract is unmet on purpose.
-- The hero-enrichment file routes dev-tool briefs to typography-only, while the chosen macrostructure (Map / Diagram) says the diagram IS the page. Resolved by keeping the hero typographic and making the diagram the body, but the two files do not acknowledge each other.
-- No visual verification: the shared browser pane was occupied by other agents' files and refused to open mine, and sloplint's `--render` tier needs puppeteer-core, which is not installed. Step 7 ran as the static sweep plus a manual gate walk only.
-- sloplint flagged an undefined `--color-accent-ink` because a 2px legend swatch counts as an accent-filled surface; the token exists now but nothing sets text on accent.
+
+- SKILL.md § 6 requires emitting `tokens.css` at the project root and importing it; the eval's deliverable rule 1 requires one self-contained `index.html` with no local asset files. Resolved by inlining the tokens in the page and writing `tokens.css` alongside it, unimported, with the conflict noted in its header.
+- The Browser preview renders files outside the project folder as static snapshots: `computer scroll` timed out twice and screenshots after a JS scroll came back stale, so everything below the fold was verified mechanically (measured geometry, overflow and wrap checks in the page) rather than by eye.
+- A `navigate` call without an explicit `tabId` landed on another eval arm's page in a shared browser tab, which cost a round trip to notice.
+- The Step 1 design-context gate and the direction ritual both want a written answer from the user; running unattended, both were inferred and disclosed, which is the documented opt-out path but means the vibe line feeding the slate was self-supplied.

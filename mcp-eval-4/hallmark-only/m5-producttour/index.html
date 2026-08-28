@@ -1,889 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reelframe · the tour</title>
-<meta name="description" content="Reelframe is a video editor you drive from the transcript. A guided tour of the five things you actually do in it, in order.">
+<meta name="description" content="A guided tour of Reelframe, a video editor you drive from the transcript. Six steps, in the order you would actually do them.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Hallmark · macrostructure: Narrative Workflow · tone: technical · anchor hue: 250 · hero: Ledge/H1 · genre: atmospheric · theme: Midnight · nav: chapter rail bar (decided, not the wordmark-links-CTA default) · footer: statement colophon · enrichment: hand-built CSS/SVG schematics, no frames · contrast: pass (40-41) · mobile: 320/375/414/768 · section-entry: real <ol> with counter(), repeated */
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 · weakest: E - the tour's product visuals are schematics rather than the screenshots the brief asked for; fixed by captioning each one as a diagram so nothing claims to be a capture */
-/* Hallmark · waive 47b · no window chrome, no bezel, no traffic lights, no title bar anywhere in the emit; the schematics sit directly on the paper with no frame at all · reason: the brief asks for product visuals to carry the argument and the deliverable forbids image files, so the interface is diagrammed honestly instead of mocked */
+/* Hallmark · macrostructure: bespoke "job docket" (punched rail + numbered run of six work steps) · tone: technical · anchor hue: 32 · hero: Ledge/H1
+ * genre: modern-minimal · theme: custom · nav: two-line masthead, flush-left, no CTA in the bar (decided; not the wordmark-left/links/CTA-right default)
+ * footer: closing colophon, one rule, no link columns · enrichment: none (typography only; captures are declared empty slots, no re-drawn app chrome)
+ * contrast: pass (ink 22% on field 83% · muted 46% on field 83% · accent-ink 46% on paper 93%) · mobile: 320/375/414/768 checked
+ */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V4 · weakest: H - the six step entries carried near-equal weight on first pass; fixed by giving step 04 a full-width capture as the page's single grid-break and tightening the entries around it */
+/* direction contract · seed reelframe-product-tour·2026-08-06·r0
+ * THESIS: a tour earns belief by showing the order of the work, not the feature list.
+ * OWN-WORLD: the film-lab order envelope, drawn 1/7: manila card stock, a punched sprocket edge, grease-pencil red numbering, typed field values.
+ * STORY: an editor in Lisbon, 4:10pm Thursday, west light on the desk, cutting a 90-second recap with the lab envelope still under the laptop.
+ * FIRST-VIEWPORT: masthead, the job line in mono, one flush-left headline resting at the base of a tall manila field, two-line lede, two controls.
+ * FORM: a punched edge, twice: the perforated rail at the page edge, and the registration line inside the content column that every step numeral hangs on, punched at each entry. The run itself is a real ordered list.
+ */
 
 :root {
-  /* type */
-  --font-display: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-label: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
-  --display-weight: 300;
-  --tracking-display: -0.03em;
-  --tracking-label: 0.16em;
-  --measure: 60ch;
+  /* paper family · committed posture: the manila field carries the surface */
+  --color-field:    oklch(83% 0.045 78);
+  --color-field-2:  oklch(79% 0.050 78);
+  --color-paper:    oklch(93% 0.018 78);
+  --color-paper-2:  oklch(88% 0.026 78);
+  --color-rule:     oklch(68% 0.024 78);
+  --color-rule-2:   oklch(75% 0.020 78);
+  --color-neutral:  oklch(56% 0.016 74);
+  --color-muted:    oklch(46% 0.016 70);
+  --color-ink:      oklch(22% 0.014 60);
+  --color-ink-2:    oklch(30% 0.014 62);
+  --color-accent:   oklch(52% 0.170 32);
+  --color-signal: oklch(46% 0.150 32);
+  --color-accent-ink: oklch(96% 0.012 78);
+  --color-focus:    oklch(56% 0.200 32);
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.8125rem;
+  --font-display: "Familjen Grotesk", ui-sans-serif, sans-serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-outlier: "IBM Plex Mono", ui-monospace, monospace;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.9rem;
   --text-base: 1rem;
-  --text-md: 1.125rem;
-  --text-lg: 1.375rem;
-  --text-xl: 1.9531rem;
-  --text-2xl: 2.4414rem;
-  --text-3xl: 3.0518rem;
-  --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
-  --text-display-s: clamp(2.2rem, 4vw + 0.75rem, 4.2rem);
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.6rem, 4.4vw + 1rem, 4.2rem);
+  --text-display-s: clamp(2.1rem, 3.4vw + 0.8rem, 3.2rem);
 
-  /* colour · Midnight */
-  --color-paper: oklch(15% 0.022 250);
-  --color-paper-2: oklch(20% 0.024 250);
-  --color-paper-3: oklch(25% 0.026 250);
-  --color-ink: oklch(95% 0.008 230);
-  --color-ink-2: oklch(86% 0.010 230);
-  --color-muted: oklch(68% 0.014 240);
-  --color-accent: oklch(72% 0.16 220);
-  --color-accent-quiet: oklch(72% 0.16 220 / 0.22);
-  --color-accent-ink: oklch(15% 0.022 250);
-  --color-rule: oklch(33% 0.024 245);
-  --color-rule-2: oklch(48% 0.020 240);
-  --color-focus: oklch(82% 0.14 220);
-  --color-glow: oklch(32% 0.07 232 / 0.55);
-  --color-glow-out: oklch(15% 0.022 250 / 0);
-
-  /* space */
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2.5rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
   --space-2xl: 4rem;
   --space-3xl: 6rem;
   --space-4xl: 9rem;
-  --section-gap: 6rem;
-  --gutter: clamp(1.25rem, 4vw, 3.5rem);
-  --page: 76rem;
 
-  /* motion */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-  --dur-micro: 110ms;
-  --dur-short: 200ms;
-  --dur-long: 420ms;
-
-  /* surface */
   --rule-hair: 1px;
-  --radius-control: 8px;
-  --radius-well: 10px;
+  --rule-bold: 2px;
+  --radius-slot: 3px;
+  --radius-control: 999px;
 
-  /* depth */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
   --z-base: 1;
   --z-raised: 10;
+  --z-dropdown: 100;
   --z-sticky: 200;
-  --z-sticky-nav: 210;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --rail: 3.25rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --measure: 68ch;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-
-html, body { overflow-x: clip; }
-
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
+  overflow-x: clip;
   margin: 0;
   background: var(--color-paper);
-  color: var(--color-ink-2);
+  color: var(--color-ink);
   font-family: var(--font-body);
-  font-weight: 400;
   font-size: var(--text-base);
   line-height: 1.6;
-  font-variant-numeric: tabular-nums;
+  font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 }
-
-/* the one cool light */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(58% 42% at 62% 14%, var(--color-glow), var(--color-glow-out) 72%);
-}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: var(--display-weight);
-  letter-spacing: var(--tracking-display);
-  color: var(--color-ink);
+  font-weight: 600;
+  letter-spacing: -0.03em;
   overflow-wrap: break-word;
   min-width: 0;
   text-wrap: balance;
   margin: 0;
 }
-
 p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; }
 
-a { color: inherit; }
-
-:where(a, button, summary):focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-  border-radius: var(--space-3xs);
-  transition: none;
+/* the punched rail: the page's registration edge */
+.rail {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--rail);
+  background:
+    linear-gradient(to right, var(--color-field-2) 0 100%);
+  border-inline-end: var(--rule-hair) solid var(--color-rule);
+  z-index: var(--z-base);
+  pointer-events: none;
+  display: none;
+}
+.rail::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  width: 0.85rem;
+  transform: translateX(-50%);
+  background-image: radial-gradient(circle at 50% 0.7rem,
+    var(--color-paper) 0 0.34rem, transparent 0.35rem);
+  background-size: 100% 1.6rem;
+  background-repeat: repeat-y;
+}
+@media (min-width: 64rem) {
+  .rail { display: block; }
+  body { padding-inline-start: var(--rail); }
 }
 
-.wrap {
+.shell {
   width: 100%;
-  max-width: var(--page);
+  max-width: 74rem;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-.label {
-  font-family: var(--font-label);
-  font-weight: 400;
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-muted);
-}
-
 .skip {
   position: absolute;
-  left: -9999px;
-  top: var(--space-xs);
-  background: var(--color-paper-3);
-  color: var(--color-ink);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-control);
-  z-index: var(--z-sticky-nav);
-}
-.skip:focus { left: var(--space-md); }
-
-/* ── nav: a chapter rail, not a wordmark-links-CTA bar ───────────── */
-
-.rail {
-  position: sticky;
+  inset-inline-start: -9999px;
   top: 0;
-  z-index: var(--z-sticky-nav);
+  background: var(--color-ink);
+  color: var(--color-accent-ink);
+  padding: var(--space-sm) var(--space-md);
+  z-index: var(--z-sticky);
+}
+.skip:focus { inset-inline-start: 0; }
+
+/* ── masthead ─────────────────────────────── */
+.masthead {
   background: var(--color-paper);
-  border-block-end: var(--rule-hair) solid var(--color-rule);
+  border-block-end: var(--rule-bold) solid var(--color-ink);
+  padding-block: var(--space-md) 0;
 }
-
-.rail__in {
+.masthead__top {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-lg);
-  padding-block: var(--space-sm);
+  gap: var(--space-sm) var(--space-lg);
 }
-
 .wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-family: var(--font-label);
-  font-weight: 500;
-  font-size: var(--text-sm);
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.035em;
   color: var(--color-ink);
   text-decoration: none;
-  white-space: nowrap;
 }
-.wordmark::before {
-  content: "";
-  inline-size: 0.5rem;
-  block-size: 0.5rem;
-  background: var(--color-accent);
-  border-radius: var(--space-3xs);
-}
-
-.chapters {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chapters a {
-  font-family: var(--font-label);
+.wordmark span { color: var(--color-signal); }
+.masthead__job {
+  font-family: var(--font-outlier);
   font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   color: var(--color-muted);
-  text-decoration: none;
-  white-space: nowrap;
-  padding-block: var(--space-2xs);
-  border-block-end: var(--rule-hair) solid transparent;
-  transition: color var(--dur-micro) var(--ease-out),
-              border-color var(--dur-micro) var(--ease-out);
+  letter-spacing: 0.02em;
 }
-.chapters a:hover { color: var(--color-ink); }
-.chapters a[aria-current="true"] {
-  color: var(--color-accent);
-  border-block-end-color: var(--color-accent);
-}
-
-@media (max-width: 60rem) {
-  .chapters { display: none; }
-}
-
-/* ── hero: Ledge · tall void above, content resting at the base ──── */
-
-.hero {
-  min-block-size: min(82dvh, 44rem);
-  display: grid;
-  align-content: end;
-  padding-block: clamp(3.5rem, 11vh, 7rem) var(--space-xl);
-  gap: var(--space-lg);
-}
-
-.hero__title {
-  font-size: var(--text-display);
-  line-height: 1.04;
-  max-inline-size: 20ch;
-}
-
-.hero__lede {
-  font-size: var(--text-md);
-  color: var(--color-ink-2);
-  max-inline-size: 46ch;
-  line-height: 1.5;
-}
-
-.hero__acts {
+.masthead__nav {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
   gap: var(--space-lg);
-  margin-block-start: var(--space-xs);
+  list-style: none;
+  padding-block: var(--space-sm);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+  margin-block-start: var(--space-sm);
 }
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-block-size: 46px;
-  padding-inline: var(--space-lg);
-  border: var(--rule-hair) solid var(--color-accent);
-  border-radius: var(--radius-control);
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: transform var(--dur-micro) var(--ease-out),
-              background-color var(--dur-short) var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .btn:hover { transform: translateY(-1.5px); }
-}
-.btn:active { transform: translateY(1px); }
-
-.textlink {
+.masthead__nav a {
   font-size: var(--text-base);
   color: var(--color-ink-2);
   text-decoration: none;
   white-space: nowrap;
-  border-block-end: var(--rule-hair) solid var(--color-rule-2);
-  padding-block-end: var(--space-3xs);
+  padding-block: var(--space-2xs);
+  border-block-end: var(--rule-bold) solid transparent;
   transition: color var(--dur-micro) var(--ease-out),
               border-color var(--dur-micro) var(--ease-out);
 }
-.textlink:hover { color: var(--color-accent); border-block-end-color: var(--color-accent); }
+.masthead__nav a:hover { color: var(--color-signal); border-block-end-color: var(--color-accent); }
+.masthead__nav a:active { color: var(--color-signal); }
 
-/* the hero schematic: the timeline, sitting on the hero's base edge */
-
-.strip {
-  margin: 0;
-  margin-block-start: var(--space-md);
-}
-
-.strip__track {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.55fr) minmax(0, 1fr) minmax(0, 0.8fr);
-  gap: var(--space-3xs);
-  border-block: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-2xs);
+:where(a, button, summary):focus-visible {
+  outline: var(--rule-bold) solid var(--color-focus);
+  outline-offset: 3px;
 }
 
-.strip__clip {
-  block-size: 1.75rem;
-  border-radius: var(--space-3xs);
-  background: var(--color-paper-3);
-  border-inline-start: 2px solid var(--color-rule-2);
-}
-.strip__clip--live {
-  background: var(--color-accent-quiet);
-  border-inline-start-color: var(--color-accent);
-}
-
-.strip__sound {
-  block-size: 1.1rem;
-  margin-block-start: var(--space-3xs);
-  background: repeating-linear-gradient(
-    to right,
-    var(--color-rule-2) 0 1px,
-    var(--color-glow-out) 1px 5px
-  );
-  opacity: 0.75;
-}
-
-.strip figcaption {
-  margin-block-start: var(--space-sm);
-  max-inline-size: 62ch;
-}
-
-/* ── the tour ─────────────────────────────────────────────────────── */
-
-.tour {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  counter-reset: stage;
-}
-
-.stage {
-  counter-increment: stage;
-  border-block-start: 2px solid var(--color-rule);
-  padding-block: var(--space-3xl) var(--space-2xl);
-}
-
-.stage__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-xl);
-  align-items: start;
-}
-
-.stage__title {
-  font-size: var(--text-xl);
-  line-height: 1.15;
-  max-inline-size: 22ch;
-  display: flex;
-  gap: var(--space-md);
-  align-items: baseline;
-}
-.stage__title::before {
-  content: counter(stage) ".0";
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--color-accent);
-  flex: none;
-}
-
-.stage__body {
-  margin-block-start: var(--space-md);
-  max-inline-size: 54ch;
-  color: var(--color-ink-2);
-}
-
-.stage__note {
-  margin-block-start: var(--space-md);
-  display: block;
-}
-
-@media (min-width: 60rem) {
-  .stage__grid {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    gap: var(--space-3xl);
-  }
-  .stage--flip .stage__text { order: 2; }
-  .stage--flip .stage__fig { order: 1; }
-}
-
-/* one stage breaks the rhythm: its own paper, full width, tighter block */
-.stage--band {
-  background: var(--color-paper-2);
-  color: var(--color-ink-2);
-  border-block-start-color: var(--color-rule-2);
-  padding-block: var(--space-2xl);
-}
-.stage--band .stage__grid { grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 60rem) {
-  .stage--band .stage__grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
-}
-
-figure { margin: 0; }
-
-figcaption {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-  color: var(--color-muted);
-  margin-block-start: var(--space-sm);
-}
-
-/* schematic · stage 1 · four sources landing on one sync point */
-
-.sync { display: grid; gap: var(--space-xs); }
-.sync__row {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-md);
-}
-.sync__name {
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-.sync__bar {
-  block-size: 1.5rem;
-  border-radius: var(--space-3xs);
-  background: var(--color-paper-3);
-  position: relative;
-  margin-inline-start: var(--offset, 0);
-}
-.sync__bar::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: var(--mark, 0);
-  inline-size: 2px;
-  background: var(--color-accent);
-}
-
-/* schematic · stage 2 · a transcript with one line cut */
-
-.script {
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  line-height: 2;
-  color: var(--color-ink-2);
-  background: var(--color-paper-2);
-  border-radius: var(--radius-well);
-  padding: var(--space-lg);
-}
-.script del {
-  text-decoration: line-through;
-  text-decoration-color: var(--color-accent);
-  text-decoration-thickness: 1px;
-  color: var(--color-muted);
-}
-.script mark {
-  background: var(--color-accent-quiet);
-  color: var(--color-ink);
-  padding-inline: var(--space-2xs);
-  border-radius: var(--space-3xs);
-}
-
-/* schematic · stage 3 · the sound bed, full width */
-
-.wave {
-  display: block;
-  inline-size: 100%;
-  block-size: 5.5rem;
-  padding-block-end: var(--space-sm);
+/* ── hero · Ledge ─────────────────────────── */
+.hero {
+  background: var(--color-field);
   border-block-end: var(--rule-hair) solid var(--color-rule);
-  fill: var(--color-rule-2);
-}
-.wave .is-lift { fill: var(--color-accent); }
-
-/* schematic · stage 4 · stacked passes over one shot */
-
-.layers { display: grid; gap: var(--space-xs); }
-.layers__row {
+  min-height: clamp(26rem, 62dvh, 34rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-paper-2);
-  border-inline-start: 2px solid var(--color-rule-2);
-  font-family: var(--font-label);
+  align-content: end;
+  padding-block: var(--space-3xl) var(--space-xl);
+}
+.hero__line {
+  font-family: var(--font-outlier);
   font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   color: var(--color-muted);
-}
-.layers__row--on {
-  border-inline-start-color: var(--color-accent);
-  color: var(--color-ink);
-}
-.ramp {
-  block-size: 0.5rem;
-  margin-block-start: var(--space-sm);
-  background: linear-gradient(to right, var(--color-paper), var(--color-accent));
-  border-radius: var(--space-3xs);
-}
-
-/* schematic · stage 5 · destinations */
-
-.out { border-block-start: var(--rule-hair) solid var(--color-rule); }
-.out__row {
   display: flex;
-  justify-content: space-between;
-  gap: var(--space-md);
-  padding-block: var(--space-sm);
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
+  padding-block-end: var(--space-md);
   border-block-end: var(--rule-hair) solid var(--color-rule);
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  margin-block-end: var(--space-lg);
 }
-.out__row b { color: var(--color-ink); font-weight: 500; }
-
-/* ── refusals ─────────────────────────────────────────────────────── */
-
-.refuse { padding-block: var(--section-gap); border-block-start: 2px solid var(--color-rule); }
-.refuse__title { font-size: var(--text-2xl); line-height: 1.1; max-inline-size: 24ch; }
-.refuse__list {
-  margin: var(--space-xl) 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: var(--space-lg);
-  max-inline-size: 58ch;
+.hero__line b { font-weight: 500; color: var(--color-ink-2); }
+.hero h1 {
+  font-size: var(--text-display);
+  line-height: 1.04;
+  max-width: 20ch;
+  font-weight: 700;
 }
-.refuse__list li {
-  padding-block-start: var(--space-md);
-  border-block-start: var(--rule-hair) solid var(--color-rule);
+.hero__lede {
+  margin-block-start: var(--space-lg);
+  max-width: 52ch;
+  font-size: var(--text-md);
+  color: var(--color-ink-2);
+  line-height: 1.5;
 }
-
-/* ── the ask ──────────────────────────────────────────────────────── */
-
-.ask {
-  padding-block: var(--space-4xl) var(--space-3xl);
-  border-block-start: 2px solid var(--color-rule);
-}
-.ask__title { font-size: var(--text-3xl); line-height: 1.05; max-inline-size: 18ch; }
-.ask__acts {
+.hero__controls {
   margin-block-start: var(--space-xl);
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-xl);
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
 }
-.ask__big {
-  font-family: var(--font-display);
-  font-weight: var(--display-weight);
-  font-size: var(--text-xl);
-  letter-spacing: var(--tracking-display);
-  color: var(--color-ink);
-  text-decoration: none;
+
+.btn {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
-  position: relative;
-  padding-block-end: var(--space-2xs);
-}
-.ask__big::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: 0;
-  block-size: 2px;
+  border: var(--rule-bold) solid var(--color-accent);
   background: var(--color-accent);
-  transform: scaleX(0.32);
-  transform-origin: left;
-  transition: transform var(--dur-short) var(--ease-out);
+  color: var(--color-accent-ink);
+  padding: 0.95rem var(--space-lg);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-out),
+              background-color var(--dur-micro) var(--ease-out);
 }
-.ask__big:hover::after { transform: scaleX(1); }
-
-/* ── footer ───────────────────────────────────────────────────────── */
-
-.foot {
-  border-block-start: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-2xl) var(--space-xl);
-}
-.foot__line {
-  font-family: var(--font-display);
-  font-weight: var(--display-weight);
-  font-size: var(--text-lg);
-  letter-spacing: var(--tracking-display);
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[aria-disabled="true"] { opacity: 0.55; pointer-events: none; }
+.btn--quiet {
+  background: transparent;
   color: var(--color-ink);
-  max-inline-size: 30ch;
-  line-height: 1.25;
+  border-color: transparent;
+  border-block-end: var(--rule-bold) solid var(--color-ink);
+  border-radius: 0;
+  padding-inline: 0;
+  padding-block: var(--space-2xs) var(--space-3xs);
+  font-weight: 500;
 }
-.foot__colophon {
+.btn--quiet:hover { color: var(--color-signal); border-block-end-color: var(--color-accent); }
+
+/* ── the run ──────────────────────────────── */
+.run-head {
+  padding-block: var(--space-2xl) var(--space-lg);
+}
+.run-head h2 {
+  font-size: var(--text-2xl);
+  max-width: 30ch;
+  line-height: 1.1;
+}
+.run-head p {
+  margin-block-start: var(--space-md);
+  max-width: 60ch;
+  color: var(--color-muted);
+}
+
+/* the registration line: the rail's rhythm, brought inside the content column */
+.run { list-style: none; counter-reset: step; }
+.step {
+  counter-increment: step;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding-block: var(--space-xl);
+  border-block-start: var(--rule-hair) solid var(--color-rule-2);
+}
+.step:first-child { border-block-start: var(--rule-bold) solid var(--color-ink); }
+.step__no {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-signal);
+  line-height: 1;
+}
+.step__no::before { content: counter(step, decimal-leading-zero); }
+.step h3 {
+  font-size: var(--text-lg);
+  line-height: 1.12;
+  max-width: 24ch;
+  margin-block-start: var(--space-sm);
+}
+.step p {
+  margin-block-start: var(--space-md);
+  max-width: 54ch;
+  color: var(--color-ink-2);
+}
+.step__do {
+  margin-block-start: var(--space-md);
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+.step__do b { font-weight: 500; color: var(--color-ink-2); }
+
+@media (min-width: 60rem) {
+  .run {
+    margin-inline-start: var(--space-xl);
+    padding-inline-start: var(--space-xl);
+    border-inline-start: var(--rule-hair) solid var(--color-rule);
+  }
+  .step { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-2xl); align-items: start; }
+  .step__no {
+    position: absolute;
+    inset-inline-start: calc(-1 * (var(--space-xl) + var(--space-lg)));
+    inset-block-start: var(--space-xl);
+    width: var(--space-lg);
+    text-align: end;
+  }
+  .step::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(-1 * var(--space-xl) - 0.22rem);
+    inset-block-start: calc(var(--space-xl) + 0.55rem);
+    width: 0.44rem;
+    height: 0.44rem;
+    border-radius: 50%;
+    background: var(--color-paper);
+    box-shadow: 0 0 0 1px var(--color-rule);
+  }
+  .step h3 { margin-block-start: 0; }
+  .step--wide { grid-template-columns: minmax(0, 1fr); }
+  .step--wide .step__text { max-width: 52ch; }
+  .step--tight { padding-block: var(--space-lg); }
+  .step--tight .step__no { inset-block-start: var(--space-lg); }
+  .step--tight::before { inset-block-start: calc(var(--space-lg) + 0.55rem); }
+}
+
+/* capture slots · declared empty, never a re-drawn app window */
+.capture { margin: 0; }
+.capture__slot {
+  aspect-ratio: 16 / 10;
+  border: var(--rule-hair) dashed var(--color-rule);
+  border-radius: var(--radius-slot);
+  background-color: var(--color-paper-2);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 10px,
+    color-mix(in oklch, var(--color-rule) 34%, transparent) 10px 11px);
+  display: grid;
+  place-content: center;
+  gap: var(--space-2xs);
+  text-align: center;
+  padding: var(--space-md);
+}
+.capture__slot span {
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+.capture__slot--wide { aspect-ratio: 20 / 9; }
+.capture figcaption {
+  margin-block-start: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  max-width: 46ch;
+  line-height: 1.5;
+}
+.capture figcaption b { font-weight: 600; color: var(--color-ink-2); }
+
+/* ── keys ─────────────────────────────────── */
+.keys {
+  background: var(--color-field);
+  border-block: var(--rule-hair) solid var(--color-rule);
+  padding-block: var(--space-2xl);
   margin-block-start: var(--space-2xl);
+}
+.keys h2 { font-size: var(--text-xl); max-width: 26ch; }
+.keys__list {
+  margin-block-start: var(--space-xl);
+  display: grid;
+  gap: var(--space-md) var(--space-2xl);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 48rem) { .keys__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.keys__row {
+  display: flex;
+  gap: var(--space-md);
+  align-items: baseline;
+  padding-block-end: var(--space-md);
+  border-block-end: var(--rule-hair) solid var(--color-rule);
+}
+kbd {
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-slot);
+  padding: var(--space-3xs) var(--space-xs);
+  white-space: nowrap;
+  flex: none;
+  min-width: 5.5rem;
+  text-align: center;
+}
+.keys__row span { color: var(--color-ink-2); }
+
+/* ── refusals ─────────────────────────────── */
+.refuse { padding-block: var(--space-2xl); }
+.refuse h2 { font-size: var(--text-xl); max-width: 26ch; }
+.refuse ul {
+  list-style: none;
+  margin-block-start: var(--space-lg);
+  display: grid;
+  gap: var(--space-md);
+  max-width: var(--measure);
+}
+.refuse li {
+  padding-inline-start: var(--space-lg);
+  border-inline-start: var(--rule-bold) solid var(--color-rule);
+  color: var(--color-ink-2);
+}
+
+/* ── closing ──────────────────────────────── */
+.closing {
+  background: var(--color-field-2);
+  border-block-start: var(--rule-bold) solid var(--color-ink);
+  padding-block: var(--space-3xl);
+}
+.closing h2 {
+  font-size: var(--text-display-s);
+  line-height: 1.06;
+  max-width: 24ch;
+}
+.closing p { margin-block-start: var(--space-md); max-width: 46ch; color: var(--color-ink-2); }
+.closing__controls {
+  margin-block-start: var(--space-xl);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md) var(--space-xl);
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
 }
-.foot__colophon a {
+
+footer {
+  background: var(--color-paper);
+  padding-block: var(--space-xl) var(--space-2xl);
+}
+.colophon {
+  display: grid;
+  gap: var(--space-lg);
+  border-block-start: var(--rule-hair) solid var(--color-rule);
+  padding-block-start: var(--space-lg);
+}
+@media (min-width: 48rem) {
+  .colophon { grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr); gap: var(--space-2xl); }
+}
+.colophon p { color: var(--color-muted); font-size: var(--text-sm); max-width: 56ch; }
+.colophon ul { list-style: none; display: grid; gap: var(--space-xs); }
+.colophon a {
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
   text-decoration: none;
-  white-space: nowrap;
-  border-block-end: var(--rule-hair) solid transparent;
+  border-block-end: var(--rule-hair) solid var(--color-rule);
   transition: color var(--dur-micro) var(--ease-out),
               border-color var(--dur-micro) var(--ease-out);
 }
-.foot__colophon a:hover { color: var(--color-accent); border-block-end-color: var(--color-accent); }
-
-/* ── the one orchestrated entrance ────────────────────────────────── */
-
-.reveal {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: reveal var(--dur-long) var(--ease-out) forwards;
-  animation-delay: calc(var(--i, 0) * 70ms);
+.colophon a:hover { color: var(--color-signal); border-block-end-color: var(--color-accent); }
+.colophon__mark {
+  margin-block-start: var(--space-lg);
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-neutral);
 }
-@keyframes reveal { to { opacity: 1; transform: none; } }
+
+/* ── the one orchestrated reveal ──────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .settle {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: settle var(--dur-long) var(--ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+@keyframes settle { to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 150ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 150ms !important;
   }
-  .reveal { opacity: 1; transform: none; animation: none; }
+  .settle { opacity: 1; transform: none; animation: none; }
+  .btn:hover { transform: none; }
 }
 
-@media (pointer: coarse) {
-  .btn { min-block-size: 48px; }
+@media (max-width: 47.999rem) {
+  .hero { min-height: auto; padding-block: var(--space-2xl) var(--space-xl); }
+  .hero__line { flex-direction: column; gap: var(--space-2xs); }
 }
 
+/* mobile runs larger, desktop tightens */
 @media (min-width: 60rem) {
-  .label, .chapters a, .foot__colophon { font-size: var(--text-xs); }
+  .masthead__nav a, .btn { font-size: var(--text-sm); }
+  .colophon a { font-size: var(--text-xs); }
 }
 </style>
-
+</head>
+<body>
+<div class="rail" aria-hidden="true"></div>
 <a class="skip" href="#tour">Skip to the tour</a>
 
-<header class="rail">
-  <div class="wrap rail__in">
-    <a class="wordmark" href="#top">reelframe</a>
-    <nav aria-label="Tour stages">
-      <ol class="chapters">
-        <li><a href="#s1">01 Land</a></li>
-        <li><a href="#s2">02 Cut</a></li>
-        <li><a href="#s3">03 Sound</a></li>
-        <li><a href="#s4">04 Finish</a></li>
-        <li><a href="#s5">05 Send</a></li>
-      </ol>
+<header class="masthead">
+  <div class="shell">
+    <div class="masthead__top">
+      <a class="wordmark" href="#top">Reel<span>frame</span></a>
+      <p class="masthead__job">the tour · six steps · updated 2026&nbsp;08&nbsp;06</p>
+    </div>
+    <nav aria-label="Sections of this tour">
+      <ul class="masthead__nav">
+        <li><a href="#tour">The six steps</a></li>
+        <li><a href="#keys">Keys</a></li>
+        <li><a href="#refuse">What it will not do</a></li>
+        <li><a href="#open">Open Reelframe</a></li>
+      </ul>
     </nav>
   </div>
 </header>
 
 <main id="top">
 
-  <section class="wrap hero">
-    <h1 class="hero__title reveal" style="--i: 0">Edit the words. The picture follows.</h1>
-    <p class="hero__lede reveal" style="--i: 1">
-      Reelframe is a video editor you drive from the transcript. What follows is the
-      whole tour: the five things you actually do in it, in the order you do them.
-    </p>
-    <div class="hero__acts reveal" style="--i: 2">
-      <a class="btn" href="#s1">Start the tour</a>
-      <a class="textlink" href="#s5">or skip to sending it out</a>
+  <section class="hero">
+    <div class="shell">
+      <p class="hero__line settle" style="--i:0">
+        <span><b>Job</b> a recap cut</span>
+        <span><b>Source</b> one card of rushes</span>
+        <span><b>Editor</b> one person, one afternoon</span>
+      </p>
+      <h1 class="settle" style="--i:1">Cut it in the order you think.</h1>
+      <p class="hero__lede settle" style="--i:2">
+        Reelframe transcribes the footage on the way in, so you edit the words.
+        Delete a sentence and the cut closes behind it. Six steps, in order.
+      </p>
+      <div class="hero__controls settle" style="--i:3">
+        <a class="btn" href="#tour">Start at step 01</a>
+        <a class="btn btn--quiet" href="#keys">Read the key sheet</a>
+      </div>
     </div>
-    <figure class="strip reveal" style="--i: 3">
-      <div class="strip__track" aria-hidden="true">
-        <div class="strip__clip"></div>
-        <div class="strip__clip strip__clip--live"></div>
-        <div class="strip__clip"></div>
-        <div class="strip__clip"></div>
-      </div>
-      <div class="strip__sound" aria-hidden="true"></div>
-      <figcaption>
-        Diagram of a Reelframe timeline: picture above, sound below, the selected clip
-        carrying the cut. Every visual on this page is drawn, not captured.
-      </figcaption>
-    </figure>
   </section>
 
-  <ol class="tour" id="tour">
+  <section id="tour">
+    <div class="shell">
+      <div class="run-head">
+        <h2>Six things you do, from the card reader to the render</h2>
+        <p>
+          One screen and one keystroke each. The frames for this revision are
+          not back from capture yet, so every slot below names the screen that
+          belongs in it rather than showing you something staged.
+        </p>
+      </div>
 
-    <li class="stage" id="s1">
-      <div class="wrap stage__grid">
-        <div class="stage__text">
-          <h2 class="stage__title">Land the footage</h2>
-          <p class="stage__body">
-            Drop the card, the second camera and the recorder in together. Reelframe
-            reads the sound on each one and lines them up against each other, so the
-            first thing you see is a synced stack rather than four loose files waiting
-            to be matched by hand.
-          </p>
-          <span class="label stage__note">Sources stay untouched on disk</span>
-        </div>
-        <figure class="stage__fig">
-          <div class="sync" aria-hidden="true">
-            <div class="sync__row"><span class="sync__name">A cam</span><span class="sync__bar" style="--mark: 34%"></span></div>
-            <div class="sync__row"><span class="sync__name">B cam</span><span class="sync__bar" style="--mark: 34%; --offset: 8%"></span></div>
-            <div class="sync__row"><span class="sync__name">Recorder</span><span class="sync__bar" style="--mark: 34%; --offset: 3%"></span></div>
-            <div class="sync__row"><span class="sync__name">Phone</span><span class="sync__bar" style="--mark: 34%; --offset: 14%"></span></div>
+      <ol class="run">
+
+        <li class="step">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Point it at the card, walk away</h3>
+            <p>
+              Drop a folder, a card, or a single file. Reelframe copies, indexes
+              and transcribes while it copies, so the transcript is ready at the
+              same moment the footage is. Nothing is transcoded and nothing is
+              moved out of your folder structure.
+            </p>
+            <p class="step__do"><b>You do:</b> drag the folder onto the window.<br>
+              <b>It does:</b> copy, hash, transcribe, list the takes.</p>
           </div>
-          <figcaption>
-            Diagram: four sources, each starting when its operator hit record, aligned
-            on the one moment the room made the same sound.
-          </figcaption>
-        </figure>
-      </div>
-    </li>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 1600x1000 -->
+            <div class="capture__slot"><span>capture 01 · 1600 &times; 1000</span></div>
+            <figcaption><b>Import, mid-run.</b> The file list with the transcript column filling in behind it, one take still queued.</figcaption>
+          </figure>
+        </li>
 
-    <li class="stage stage--flip" id="s2">
-      <div class="wrap stage__grid">
-        <div class="stage__text">
-          <h2 class="stage__title">Cut on the transcript</h2>
-          <p class="stage__body">
-            The interview arrives as text beside the picture. Delete a sentence and the
-            clip goes with it. Move a paragraph and the cut moves. This is where a long
-            interview becomes a short one, and it happens at reading speed, because
-            reading is the part you were doing anyway.
-          </p>
-          <span class="label stage__note">Every edit is reversible in the text</span>
-        </div>
-        <figure class="stage__fig">
-          <div class="script">
-            <p>so we moved the whole shoot into the kitchen,</p>
-            <p><del>um, into the kitchen, because,</del></p>
-            <p>because the light after four is better <mark>than anything we could rig.</mark></p>
+        <li class="step">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Read the transcript, not the waveform</h3>
+            <p>
+              The transcript is the edit surface. Click a sentence and the clip
+              that holds it is selected on the timeline; scrub the timeline and
+              the transcript follows. You are looking at speech, which is what
+              the cut is actually made of.
+            </p>
+            <p class="step__do"><b>You do:</b> read down the page, click a line.<br>
+              <b>It does:</b> select the clip, park the playhead on the word.</p>
           </div>
-          <figcaption>
-            Diagram: the struck line is gone from the cut. The marked phrase is the
-            selection, held on the timeline at the same time.
-          </figcaption>
-        </figure>
-      </div>
-    </li>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 1600x1000 -->
+            <div class="capture__slot"><span>capture 02 · 1600 &times; 1000</span></div>
+            <figcaption><b>Transcript and timeline, linked.</b> One sentence selected, the matching range lit on the timeline below it.</figcaption>
+          </figure>
+        </li>
 
-    <li class="stage stage--band" id="s3">
-      <div class="wrap stage__grid">
-        <div class="stage__text">
-          <h2 class="stage__title">Shape the sound</h2>
-          <p class="stage__body">
-            Voice first, everything else under it. Reelframe holds the dialogue at a
-            level you set once and ducks the music beneath it wherever the two overlap,
-            so a change in the cut does not send you back to redraw the volume by hand.
-          </p>
-        </div>
-        <figure class="stage__fig">
-          <svg class="wave" viewBox="0 0 720 100" preserveAspectRatio="none" role="presentation" aria-hidden="true">
-              <rect x="3" y="31" width="4" height="39" rx="1"/><rect x="13" y="19" width="4" height="63" rx="1"/><rect x="23" y="17" width="4" height="66" rx="1"/><rect x="33" y="13" width="4" height="75" rx="1"/><rect x="43" y="18" width="4" height="65" rx="1"/><rect x="53" y="23" width="4" height="55" rx="1"/>
-              <rect x="63" y="27" width="4" height="46" rx="1"/><rect x="73" y="23" width="4" height="55" rx="1"/><rect x="83" y="19" width="4" height="63" rx="1"/><rect x="93" y="23" width="4" height="55" rx="1"/><rect x="103" y="25" width="4" height="51" rx="1"/><rect x="113" y="34" width="4" height="32" rx="1"/>
-              <rect x="123" y="27" width="4" height="46" rx="1"/><rect x="133" y="24" width="4" height="52" rx="1"/><rect x="143" y="16" width="4" height="69" rx="1"/><rect x="153" y="18" width="4" height="64" rx="1"/><rect x="163" y="19" width="4" height="62" rx="1"/><rect x="173" y="27" width="4" height="47" rx="1"/>
-              <rect x="183" y="21" width="4" height="59" rx="1"/><rect x="193" y="15" width="4" height="70" rx="1"/><rect x="203" y="15" width="4" height="71" rx="1"/><rect x="213" y="16" width="4" height="69" rx="1"/><rect x="223" y="25" width="4" height="51" rx="1"/><rect x="233" y="27" width="4" height="46" rx="1"/>
-              <rect x="243" y="27" width="4" height="47" rx="1"/><rect x="253" y="19" width="4" height="62" rx="1"/><rect x="263" y="24" width="4" height="52" rx="1"/><rect x="273" y="24" width="4" height="52" rx="1"/><rect x="283" y="31" width="4" height="39" rx="1"/><rect x="293" y="28" width="4" height="44" rx="1"/>
-              <rect class="is-lift" x="303" y="5" width="4" height="90" rx="1"/><rect class="is-lift" x="313" y="2" width="4" height="96" rx="1"/><rect class="is-lift" x="323" y="2" width="4" height="96" rx="1"/><rect class="is-lift" x="333" y="4" width="4" height="93" rx="1"/><rect class="is-lift" x="343" y="8" width="4" height="84" rx="1"/><rect class="is-lift" x="353" y="9" width="4" height="83" rx="1"/>
-              <rect class="is-lift" x="363" y="2" width="4" height="96" rx="1"/><rect class="is-lift" x="373" y="2" width="4" height="96" rx="1"/><rect class="is-lift" x="383" y="2" width="4" height="96" rx="1"/><rect x="393" y="24" width="4" height="52" rx="1"/><rect x="403" y="29" width="4" height="42" rx="1"/><rect x="413" y="26" width="4" height="49" rx="1"/>
-              <rect x="423" y="22" width="4" height="57" rx="1"/><rect x="433" y="22" width="4" height="56" rx="1"/><rect x="443" y="25" width="4" height="51" rx="1"/><rect x="453" y="27" width="4" height="46" rx="1"/><rect x="463" y="31" width="4" height="39" rx="1"/><rect x="473" y="20" width="4" height="61" rx="1"/>
-              <rect x="483" y="19" width="4" height="62" rx="1"/><rect x="493" y="14" width="4" height="73" rx="1"/><rect x="503" y="21" width="4" height="59" rx="1"/><rect x="513" y="23" width="4" height="55" rx="1"/><rect x="523" y="24" width="4" height="52" rx="1"/><rect x="533" y="16" width="4" height="68" rx="1"/>
-              <rect x="543" y="15" width="4" height="70" rx="1"/><rect x="553" y="17" width="4" height="67" rx="1"/><rect x="563" y="22" width="4" height="57" rx="1"/><rect x="573" y="31" width="4" height="38" rx="1"/><rect x="583" y="25" width="4" height="50" rx="1"/><rect x="593" y="26" width="4" height="49" rx="1"/>
-              <rect x="603" y="21" width="4" height="59" rx="1"/><rect x="613" y="26" width="4" height="48" rx="1"/><rect x="623" y="25" width="4" height="51" rx="1"/><rect x="633" y="32" width="4" height="37" rx="1"/><rect x="643" y="20" width="4" height="60" rx="1"/><rect x="653" y="17" width="4" height="66" rx="1"/>
-              <rect x="663" y="14" width="4" height="72" rx="1"/><rect x="673" y="17" width="4" height="66" rx="1"/><rect x="683" y="23" width="4" height="54" rx="1"/><rect x="693" y="23" width="4" height="55" rx="1"/><rect x="703" y="20" width="4" height="61" rx="1"/><rect x="713" y="14" width="4" height="72" rx="1"/>
-          </svg>
-          
-          <figcaption>
-            Diagram: the lifted band is the line being spoken. The music sits under it
-            for as long as the words last, then comes back up on its own.
-          </figcaption>
-        </figure>
-      </div>
-    </li>
-
-    <li class="stage" id="s4">
-      <div class="wrap stage__grid">
-        <div class="stage__text">
-          <h2 class="stage__title">Grade, title, caption</h2>
-          <p class="stage__body">
-            The finishing passes stack on the shot rather than replacing it: a grade, a
-            lower third, captions burned from the transcript you already edited. Turn
-            any pass off and the shot underneath is exactly what the camera handed you.
-          </p>
-          <span class="label stage__note">Captions come from stage 2, not a second pass</span>
-        </div>
-        <figure class="stage__fig">
-          <div class="layers" aria-hidden="true">
-            <div class="layers__row layers__row--on">Grade</div>
-            <div class="layers__row layers__row--on">Lower third</div>
-            <div class="layers__row layers__row--on">Captions</div>
-            <div class="layers__row">Shot as recorded</div>
+        <li class="step">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Delete a sentence, the cut closes behind it</h3>
+            <p>
+              Select words, press delete, and the timeline ripples: the gap
+              closes, everything downstream slides, and the audio crossfades by
+              a couple of frames so the join does not click. Undo restores the
+              words and the gap together.
+            </p>
+            <p class="step__do"><b>You do:</b> select the sentence, press delete.<br>
+              <b>It does:</b> ripple the timeline, feather the join, keep the original take.</p>
           </div>
-          <div class="ramp" aria-hidden="true"></div>
-          <figcaption>
-            Diagram: three passes over one shot, and the ramp they are graded along.
-            The bottom row is the untouched original.
-          </figcaption>
-        </figure>
-      </div>
-    </li>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 1600x1000 -->
+            <div class="capture__slot"><span>capture 03 · 1600 &times; 1000</span></div>
+            <figcaption><b>After a ripple delete.</b> The struck sentence greyed in the transcript, the timeline already closed up.</figcaption>
+          </figure>
+        </li>
 
-    <li class="stage stage--flip" id="s5">
-      <div class="wrap stage__grid">
-        <div class="stage__text">
-          <h2 class="stage__title">Send it out</h2>
-          <p class="stage__body">
-            One cut, several shapes. Reelframe reframes the same edit for wherever it is
-            going and writes the caption file beside it, so the vertical version is not a
-            second project you have to keep in step with the first.
-          </p>
-          <span class="label stage__note">The tour ends here, and so does the edit</span>
-        </div>
-        <figure class="stage__fig">
-          <div class="out" aria-hidden="true">
-            <div class="out__row"><b>Landscape</b><span>master</span></div>
-            <div class="out__row"><b>Vertical</b><span>reframed from the same cut</span></div>
-            <div class="out__row"><b>Square</b><span>reframed from the same cut</span></div>
-            <div class="out__row"><b>Captions</b><span>sidecar file</span></div>
+        <li class="step step--wide">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Star the takes you like; the shortlist becomes the sequence</h3>
+            <p>
+              While you watch, press one key on anything worth keeping. The
+              starred lines collect into a shortlist you can reorder by dragging
+              the lines themselves. When the order reads right, the shortlist is
+              already a sequence: there is no separate assembly step, because the
+              list was the assembly all along.
+            </p>
+            <p class="step__do"><b>You do:</b> press S on a good take, drag lines until the order reads.<br>
+              <b>It does:</b> hold the shortlist as a live sequence, in order, with the source ranges attached.</p>
           </div>
-          <figcaption>
-            Diagram: the export list. Each shape is a view of one edit, not a copy of it.
-          </figcaption>
-        </figure>
-      </div>
-    </li>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 2000x900 -->
+            <div class="capture__slot capture__slot--wide"><span>capture 04 · 2000 &times; 900</span></div>
+            <figcaption><b>The shortlist, mid-reorder.</b> Starred lines on the left, the sequence they build on the right, one line lifted between two others.</figcaption>
+          </figure>
+        </li>
 
-  </ol>
+        <li class="step step--tight">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Trim on the timeline when the words are not enough</h3>
+            <p>
+              Words get you most of the way; frames finish it. J, K and L shuttle,
+              I and O set the in and out, and the trim handles snap to sentence
+              boundaries unless you hold the modifier to ignore them. This is the
+              one place the tour asks you to think in frames.
+            </p>
+            <p class="step__do"><b>You do:</b> park on the join, nudge the handle.<br>
+              <b>It does:</b> snap to the sentence, or let go when you tell it to.</p>
+          </div>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 1600x1000 -->
+            <div class="capture__slot"><span>capture 05 · 1600 &times; 1000</span></div>
+            <figcaption><b>Trim handles at a join.</b> The outgoing and incoming frames side by side, sentence boundary marked on the ruler.</figcaption>
+          </figure>
+        </li>
 
-  <section class="wrap refuse">
-    <h2 class="refuse__title">Things the tour did not show you</h2>
-    <ul class="refuse__list">
-      <li>There is no effects browser. If a look is worth having, it belongs in the grade.</li>
-      <li>There is no render queue to babysit. The timeline plays at full quality while you work.</li>
-      <li>There is nothing to configure before stage 1. The five steps above are the product.</li>
-    </ul>
+        <li class="step step--tight">
+          <div class="step__text">
+            <div class="step__no" aria-hidden="true"></div>
+            <h3>Send it out once, with the captions you already wrote</h3>
+            <p>
+              The transcript you edited is the caption file, so there is nothing
+              to write twice. Export burns them in or writes them beside the
+              video as a sidecar, and the render keeps going while you keep
+              cutting.
+            </p>
+            <p class="step__do"><b>You do:</b> pick burned-in or sidecar, press export.<br>
+              <b>It does:</b> render in the background, name the file after the job.</p>
+          </div>
+          <figure class="capture">
+            <!-- TODO: Replace with real screenshot, target size: 1600x1000 -->
+            <div class="capture__slot"><span>capture 06 · 1600 &times; 1000</span></div>
+            <figcaption><b>Export, running.</b> The caption toggle set to sidecar, the queue underneath with one job in progress.</figcaption>
+          </figure>
+        </li>
+
+      </ol>
+    </div>
   </section>
 
-  <section class="wrap ask">
-    <h2 class="ask__title">That is the whole editor.</h2>
-    <div class="ask__acts">
-      <a class="ask__big" href="#top">Get Reelframe</a>
-      <a class="textlink" href="#s1">Start again at 1.0</a>
+  <section class="keys" id="keys">
+    <div class="shell">
+      <h2>The keys the tour used</h2>
+      <div class="keys__list">
+        <div class="keys__row"><kbd>J K L</kbd><span>Shuttle back, hold, shuttle forward.</span></div>
+        <div class="keys__row"><kbd>I</kbd><span>Set the in point at the playhead.</span></div>
+        <div class="keys__row"><kbd>O</kbd><span>Set the out point at the playhead.</span></div>
+        <div class="keys__row"><kbd>S</kbd><span>Star the take under the playhead.</span></div>
+        <div class="keys__row"><kbd>Delete</kbd><span>Ripple-delete the selected words.</span></div>
+        <div class="keys__row"><kbd>&#8984; Z</kbd><span>Undo the words and the gap together.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="refuse" id="refuse">
+    <div class="shell">
+      <h2>What this tour did not show you, because Reelframe does not do it</h2>
+      <ul>
+        <li>No colour grading. Round-trip to whatever you already grade in; Reelframe keeps the source ranges intact so the conform is clean.</li>
+        <li>No motion graphics, no title animator, no plugin market. Titles are text on a track, and that is the whole of it.</li>
+        <li>No cloud requirement. The transcript is produced on your machine and the project is a folder you can zip.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="closing" id="open">
+    <div class="shell">
+      <h2>Run the six steps on your own footage.</h2>
+      <p>
+        The tour above is the whole product. If the order of the work matches
+        how you already cut, the app will not surprise you.
+      </p>
+      <div class="closing__controls">
+        <a class="btn" href="/download">Open Reelframe</a>
+        <a class="btn btn--quiet" href="#tour">Read the six steps again</a>
+      </div>
     </div>
   </section>
 
 </main>
 
-<footer class="wrap foot">
-  <p class="foot__line">A cut is a decision about words. Reelframe just puts the picture where the words are.</p>
-  <div class="foot__colophon">
-    <span class="label">Reelframe, a video editor</span>
-    <span class="label"><a href="#top">Back to the top of the tour</a></span>
-    <span class="label">2026</span>
+<footer>
+  <div class="shell">
+    <div class="colophon">
+      <div>
+        <p>
+          Reelframe is a desktop video editor built around the transcript. This
+          page is the tour: six steps, one screen each, and no claim that the
+          steps do not already make. Nothing here stands in for a number we
+          have not measured.
+        </p>
+        <p class="colophon__mark">the tour · six steps · set in Familjen Grotesk and IBM Plex</p>
+      </div>
+      <ul>
+        <li><a href="#tour">The six steps</a></li>
+        <li><a href="#keys">Key sheet</a></li>
+        <li><a href="#refuse">Scope</a></li>
+      </ul>
+    </div>
   </div>
 </footer>
-
-<script>
-(function () {
-  var links = Array.prototype.slice.call(document.querySelectorAll(".chapters a"));
-  if (!links.length || !("IntersectionObserver" in window)) return;
-  var byId = {};
-  links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      var a = byId[e.target.id];
-      if (!a) return;
-      if (e.isIntersecting) {
-        links.forEach(function (l) { l.removeAttribute("aria-current"); });
-        a.setAttribute("aria-current", "true");
-      }
-    });
-  }, { rootMargin: "-45% 0px -50% 0px" });
-  Object.keys(byId).forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) io.observe(el);
-  });
-})();
-</script>
+</body>
+</html>

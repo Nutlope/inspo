@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kiln &amp; Co. · a ceramics studio in Lisboa</title>
+<meta name="description" content="Kiln &amp; Co. is a working ceramics studio in Lisboa: small-batch tableware, and weekend workshops at the wheel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: plate-sheet catalogue (designed, not a catalog shape) · tone: editorial · anchor hue: 30 · hero: Stage/E5
+ * genre: editorial · theme: Riso · axes: mid / grotesk-heavy / cool (~220)
+ * enrichment: E5 custom illustration centrepiece · Tier B hand-built SVG · dominant scale · animation: none
+ * nav: broadsheet masthead, non-sticky, links under the rule (decided, not the wordmark-left/CTA-right bar)
+ * footer: one justified colophon line plus a rule (not four link columns)
+ * section-entry: a change of paper, repeated · one drop cap, first paragraph only
+ * texture: grain 0.055 page-wide + misregistration on two focal words (Riso's sanctioned pair)
+ * contrast: ink 18% on paper 84%/80%/75% pass · accent 46% only at >=18px bold, as a fill under paper text, or as a rule
+ * mobile: 320 / 375 / 414 / 768 checked · overflow-x: clip on html and body
+ * inferred: audience = people who buy one good object · use = read the current run, then ask about a weekend · tone = editorial
+ */
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R4 V4 · weakest: H - the ware list and the workshop steps are both numbered sequences, so the middle of the page runs at one hierarchic pitch; fix taken: the studio band between them drops the numerals entirely, changes measure to a single 58ch column, and carries the page's only drop cap */
+
+:root {
+  /* paper and ink - everything tilts hue 30 */
+  --color-paper:    oklch(84% 0.048 30);
+  --color-paper-2:  oklch(80% 0.052 30);
+  --color-paper-3:  oklch(75% 0.056 30);
+  --color-ink:      oklch(18% 0.060 30);
+  --color-neutral:  oklch(34% 0.060 30);
+  --color-muted:    oklch(44% 0.050 30);
+  --color-rule:     oklch(70% 0.040 30);
+  /* two spot inks, plus the pink echo of a missed drum */
+  --color-accent:      oklch(46% 0.140 220);
+  --color-accent-deep: oklch(40% 0.135 222);
+  --color-accent-ink:  oklch(96% 0.020 30);
+  --color-accent-2: oklch(78% 0.180 95);
+  --color-echo:     oklch(64% 0.190 12);
+  --color-focus:    oklch(46% 0.140 220);
+
+  --font-display: "Public Sans", ui-sans-serif, sans-serif;
+  --font-body:    "Newsreader", ui-serif, Georgia, serif;
+  --font-label:   "Geist Mono", ui-monospace, monospace;
+
+  --display-weight: 900;
+  --tracking-display: -0.04em;
+  --tracking-label: 0.06em;
+  --lh-tight: 0.95;
+  --lh-body: 1.62;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.1875rem;
+  --text-lg:   1.4375rem;
+  --text-xl:   1.75rem;
+  --text-2xl:  clamp(1.85rem, 2.4vw + 0.6rem, 2.6rem);
+  --text-display:   clamp(2.5rem, 4.2vw + 0.5rem, 4.15rem);
+  --text-display-s: clamp(2rem, 3.3vw + 0.4rem, 3.3rem);
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --rule-hair: 1px;
+  --rule-thick: 2px;
+  --radius-flat: 2px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
+  --texture-opacity: 0.055;
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 200;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { overflow-x: clip; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  font-variant-numeric: oldstyle-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* paper grain - the ink is printed, not exported */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-raised);
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: var(--texture-opacity);
+  mix-blend-mode: multiply;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--lh-tight);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  min-width: 0;
+  margin: 0;
+}
+p { margin: 0; text-wrap: pretty; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: var(--rule-thick) solid var(--color-focus);
+  outline-offset: 3px;
+  transition: none;
+}
+
+.label {
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.shell {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* THE move - two inks that missed the drum */
+.misreg { position: relative; display: inline-block; color: var(--color-ink); }
+.misreg::before, .misreg::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.misreg::before { color: var(--color-accent); transform: translate(-2px, -2px); }
+.misreg::after  { color: var(--color-echo);   transform: translate(2px, 2px); }
+
+mark {
+  background: var(--color-accent-2);
+  color: var(--color-ink);
+  padding-inline: 0.12em;
+  box-decoration-break: clone;
+}
+
+/* ---------- masthead: broadsheet, not a sticky bar ---------- */
+.masthead { padding-block: var(--space-lg) 0; }
+.masthead__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+  padding-block-end: var(--space-sm);
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.masthead__place { white-space: nowrap; }
+.masthead__rule { border: 0; border-top: var(--rule-thick) solid var(--color-ink); margin: 0; }
+.masthead__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+  padding-block: var(--space-xs);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+.masthead__nav a {
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: var(--space-3xs);
+  border-bottom: var(--rule-thick) solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+.masthead__nav a:hover { border-bottom-color: var(--color-accent); }
+.masthead__nav a:active { border-bottom-color: var(--color-ink); }
+
+/* ---------- hero: Stage ---------- */
+.hero {
+  padding-block: var(--space-xl) var(--space-3xl);
+  min-height: clamp(28rem, 70dvh, 44rem);
+  display: grid;
+  align-content: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xl);
+}
+@media (min-width: 60rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    align-items: center;
+    gap: var(--space-3xl);
+  }
+}
+.hero__title {
+  font-size: var(--text-display);
+  max-width: 20ch;
+  margin-block-end: var(--space-lg);
+}
+.hero__lede {
+  font-size: var(--text-md);
+  color: var(--color-neutral);
+  max-width: 52ch;
+  margin-block-end: var(--space-xl);
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
+  margin-block-end: var(--space-lg);
+}
+
+.btn {
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding-inline: var(--space-lg);
+  border-radius: var(--radius-flat);
+  border: var(--rule-thick) solid transparent;
+  transition: background-color var(--dur-micro) var(--ease-out),
+              border-color var(--dur-micro) var(--ease-out),
+              transform var(--dur-micro) var(--ease-out);
+}
+.btn--ink { background: var(--color-accent-deep); color: var(--color-accent-ink); }
+.btn--ink:hover { background: var(--color-ink); }
+.btn--ink:active { transform: translateY(1px); }
+.btn--quiet {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+  padding-inline: var(--space-md);
+}
+.btn--quiet:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.btn--quiet:active { transform: translateY(1px); }
+
+.hero__figure { margin: 0; }
+.hero__figure svg { display: block; width: 100%; height: auto; max-height: 27rem; margin-inline: auto; }
+.hero__figure figcaption { margin-block-start: var(--space-sm); }
+
+/* ---------- band papers: the section break IS the change of paper ---------- */
+.band--2 { background: var(--color-paper-2); }
+.band--3 { background: var(--color-paper-3); }
+
+.band__head {
+  display: grid;
+  gap: var(--space-md);
+  padding-block-end: var(--space-xl);
+  border-bottom: var(--rule-thick) solid var(--color-ink);
+  margin-block-end: var(--space-xl);
+}
+@media (min-width: 60rem) {
+  .band__head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    align-items: end;
+    gap: var(--space-3xl);
+  }
+}
+.band__head h2 { font-size: var(--text-2xl); max-width: 22ch; }
+.band__head p { color: var(--color-neutral); max-width: 48ch; }
+
+/* ---------- the ware: a plate sheet ---------- */
+.ware-band { padding-block: var(--space-3xl) var(--space-4xl); }
+.ware {
+  counter-reset: plate;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ware li {
+  counter-increment: plate;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-md);
+  padding-block: var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule);
+}
+.ware li:last-child { border-bottom: var(--rule-hair) solid var(--color-rule); }
+@media (min-width: 52rem) {
+  .ware li {
+    grid-template-columns: 4rem minmax(0, 0.8fr) minmax(0, 1.35fr);
+    align-items: baseline;
+    gap: var(--space-lg);
+  }
+}
+.ware li::before {
+  content: counter(plate, decimal-leading-zero);
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+.ware__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-lg);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.ware__note { color: var(--color-neutral); max-width: 54ch; }
+.ware__foot { margin-block-start: var(--space-lg); }
+
+/* ---------- the studio: prose, one column, one drop cap ---------- */
+.studio-band { padding-block: var(--space-4xl) var(--space-3xl); }
+.studio {
+  display: grid;
+  gap: var(--space-xl);
+}
+@media (min-width: 64rem) {
+  .studio {
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+    gap: var(--space-3xl);
+  }
+}
+.studio__aside { align-self: start; }
+.studio__aside p {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  max-width: 32ch;
+  margin-block-start: var(--space-sm);
+  border-top: var(--rule-hair) solid var(--color-rule);
+  padding-block-start: var(--space-sm);
+}
+.studio__title { font-size: var(--text-2xl); max-width: 24ch; margin-block-end: var(--space-lg); }
+.studio__prose { max-width: 58ch; display: grid; gap: var(--space-md); font-size: var(--text-md); }
+.studio__prose > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 3.6em;
+  line-height: 0.78;
+  padding-inline-end: 0.08em;
+  padding-block-start: 0.04em;
+  color: var(--color-ink);
+}
+
+/* ---------- workshops ---------- */
+.shop-band { padding-block: var(--space-3xl); }
+.weekend {
+  display: grid;
+  gap: var(--space-2xl);
+}
+@media (min-width: 64rem) {
+  .weekend { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: var(--space-3xl); }
+}
+.steps {
+  counter-reset: step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-md);
+}
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: baseline;
+  font-size: var(--text-md);
+}
+.steps li::before {
+  content: counter(step);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--text-lg);
+  color: var(--color-rule);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.facts {
+  margin: 0;
+  border-top: var(--rule-thick) solid var(--color-ink);
+  padding-block-start: var(--space-md);
+}
+.facts div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
+  gap: var(--space-md);
+  padding-block: var(--space-sm);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+.facts dt {
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.facts .tbc { color: var(--color-muted); font-style: italic; }
+.weekend__cta { margin-block-start: var(--space-xl); }
+
+/* ---------- visit ---------- */
+.visit-band { padding-block: var(--space-4xl) var(--space-2xl); }
+.visit__title {
+  font-size: var(--text-display-s);
+  max-width: 24ch;
+  margin-block-end: var(--space-lg);
+}
+.visit__body { max-width: 54ch; font-size: var(--text-md); color: var(--color-neutral); }
+.visit .facts { margin-block-start: var(--space-xl); max-width: 34rem; }
+
+/* ---------- footer: one colophon line ---------- */
+.colophon {
+  border-top: var(--rule-thick) solid var(--color-ink);
+  padding-block: var(--space-lg) var(--space-2xl);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-lg);
+}
+.colophon__set { max-width: 58ch; }
+.colophon__links { display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-lg); }
+.colophon__links a {
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  transition: border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+.colophon__links a:hover { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+
+/* ---------- the one orchestrated settle ---------- */
+.settle {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: settle var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes settle { to { opacity: 1; transform: none; } }
+
+.misreg::before, .misreg::after {
+  animation: drift 380ms var(--ease-out) forwards;
+}
+@keyframes drift {
+  from { transform: translate(0, 0); }
+}
+.misreg::after { animation-name: drift-b; }
+@keyframes drift-b {
+  from { transform: translate(0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .settle { opacity: 1; transform: none; animation: none; }
+  .misreg::before { transform: translate(-2px, -2px); animation: none; }
+  .misreg::after  { transform: translate(2px, 2px);  animation: none; }
+}
+
+/* mobile runs larger, desktop tightens */
+@media (min-width: 60rem) {
+  .masthead__nav a, .colophon__links a { font-size: var(--text-xs); }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="shell">
+    <div class="masthead__top">
+      <a class="wordmark" href="#top"><span class="misreg" data-text="Kiln">Kiln</span> &amp; Co.</a>
+      <span class="label masthead__place">Lisboa · a working studio</span>
+    </div>
+    <hr class="masthead__rule">
+    <nav class="masthead__nav" aria-label="Sections">
+      <a href="#ware">The ware</a>
+      <a href="#studio">The studio</a>
+      <a href="#workshops">Workshops</a>
+      <a href="#visit">Visit</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero shell" aria-labelledby="hero-title">
+    <div>
+      <h1 class="hero__title settle" style="--i:0" id="hero-title">
+        <span class="misreg" data-text="Thrown">Thrown</span> in Lisboa, one run at a time.
+      </h1>
+      <p class="hero__lede settle" style="--i:1">
+        Small-batch tableware for the table you actually eat at, and weekend workshops
+        for people who want clay under their nails.
+      </p>
+      <div class="hero__actions settle" style="--i:2">
+        <a class="btn btn--ink" href="#ware">See the ware</a>
+        <a class="btn btn--quiet" href="#workshops">Weekend workshops</a>
+      </div>
+      <p class="label settle" style="--i:3">Thrown, glazed and fired in one room</p>
+    </div>
+
+    <figure class="hero__figure settle" style="--i:2">
+      <svg viewBox="0 0 380 470" role="img" aria-labelledby="sheet-title" focusable="false">
+        <title id="sheet-title">Profile drawings of a bowl, a plate and a cup, printed in two inks slightly out of register</title>
+        <!-- second ink, laid down first and a hair out of register -->
+        <g fill="var(--color-accent-2)" style="mix-blend-mode: multiply" transform="translate(7,7)">
+          <path d="M30,45 C34,120 95,190 190,190 C285,190 346,120 350,45 Z"/>
+          <rect x="164" y="190" width="52" height="11" rx="1"/>
+          <path d="M18,262 C90,300 290,300 362,262 L358,248 C288,282 92,282 22,248 Z"/>
+          <path d="M135,352 L146,438 C160,449 220,449 234,438 L245,352 Z"/>
+        </g>
+        <!-- first ink, the drawn line -->
+        <g fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linejoin="round" style="mix-blend-mode: multiply">
+          <path d="M30,45 C34,120 95,190 190,190 C285,190 346,120 350,45 Z"/>
+          <path d="M164,190 L164,201 L216,201 L216,190"/>
+          <path d="M42,52 C48,118 104,180 190,180 C276,180 332,118 338,52"/>
+          <path d="M18,262 C90,300 290,300 362,262 L358,248 C288,282 92,282 22,248 Z"/>
+          <path d="M135,352 L146,438 C160,449 220,449 234,438 L245,352 Z"/>
+          <path d="M245,370 C282,371 284,414 247,419"/>
+          <path d="M137,364 C160,374 220,374 243,364"/>
+        </g>
+        <line x1="0" y1="459" x2="380" y2="459" stroke="var(--color-ink)" stroke-width="2"/>
+      </svg>
+      <figcaption class="label">Profiles at the wheel: the bowl, the plate, the cup</figcaption>
+    </figure>
+  </section>
+
+  <section class="band--2 ware-band" id="ware" aria-labelledby="ware-title">
+    <div class="shell">
+      <div class="band__head">
+        <h2 id="ware-title">Five pieces on the shelf</h2>
+        <p>
+          Everything is thrown, trimmed, glazed and fired here. When a run sells out
+          it stays out until the next firing, which is a calendar the kiln keeps, not us.
+        </p>
+      </div>
+
+      <ol class="ware">
+        <li>
+          <span class="ware__name">Alfama bowl</span>
+          <p class="ware__note">Deep enough for soup, wide enough for rice. The glaze pools darker where the wall turns.</p>
+        </li>
+        <li>
+          <span class="ware__name">Tejo plate</span>
+          <p class="ware__note">A dinner plate with a low rim, so a knife has somewhere to go and nothing slides off.</p>
+        </li>
+        <li>
+          <span class="ware__name">Bica cup</span>
+          <p class="ware__note">Small, unhandled, sized for the coffee you drink standing at the counter.</p>
+        </li>
+        <li>
+          <span class="ware__name">Graça jug</span>
+          <p class="ware__note">Water, wine, or a fistful of stems carried home from the market wrapped in paper.</p>
+        </li>
+        <li>
+          <span class="ware__name">Estufa dish</span>
+          <p class="ware__note">Oven to table, then straight into the middle of everything. Thick base, honest weight.</p>
+        </li>
+      </ol>
+
+      <p class="label ware__foot">Photographs of the current run: to come · sizes and prices: to confirm</p>
+    </div>
+  </section>
+
+  <section class="studio-band" id="studio" aria-labelledby="studio-title">
+    <div class="shell studio">
+      <div class="studio__aside">
+        <p>One room with a door onto the street. It is open on Saturdays, and the tram is loud enough to hear through the wall.</p>
+      </div>
+      <div>
+        <h2 class="studio__title" id="studio-title">The kiln sets the calendar, not the shop</h2>
+        <div class="studio__prose">
+          <p>
+            Clay decides the week. A piece thrown on Monday is not finished until it has been
+            trimmed, dried slowly enough not to crack, fired once bare, glazed, and fired again.
+            None of that can be hurried by wanting it sooner, which is why the shelf is never
+            full and never quite empty.
+          </p>
+          <p>
+            We make what we use. If a shape does not survive a month of our own breakfasts,
+            it does not go on the shelf. That is the whole quality process: it is slower than
+            a spreadsheet and it has never once been wrong.
+          </p>
+          <p>
+            Small batches mean the pieces differ. Two Alfama bowls from the same firing will
+            not be identical twins, and the one you take home is the one you looked at.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band--3 shop-band" id="workshops" aria-labelledby="shop-title">
+    <div class="shell">
+      <div class="band__head">
+        <h2 id="shop-title">A weekend is enough to make one good thing</h2>
+        <p>
+          Two days, a wheel each, and the studio&rsquo;s clay. You leave with the pieces
+          worth keeping; we fire them, and you come back for them.
+        </p>
+      </div>
+
+      <div class="weekend">
+        <ol class="steps">
+          <li>Saturday morning: wedging, centring, and the first pull. Most people fail this one and then stop failing it.</li>
+          <li>Saturday afternoon: throw until one of them is worth keeping. Everything else goes back in the bucket.</li>
+          <li>Sunday morning: trim the foot, and sign the base while the clay still takes a mark.</li>
+          <li>Sunday afternoon: glaze, then hand it over to the kiln and go home with clay in your hair.</li>
+        </ol>
+
+        <div>
+          <dl class="facts">
+            <div><dt>Where</dt><dd>The studio, Lisboa</dd></div>
+            <div><dt>When</dt><dd>Saturday and Sunday</dd></div>
+            <div><dt>Group size</dt><dd class="tbc">to confirm</dd></div>
+            <div><dt>Fee</dt><dd class="tbc">to confirm</dd></div>
+            <div><dt>Bring</dt><dd>Short nails, and sleeves you do not mind</dd></div>
+          </dl>
+          <p class="weekend__cta">
+            <a class="btn btn--quiet" href="#visit">Ask about a weekend</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="visit-band visit" id="visit" aria-labelledby="visit-title">
+    <div class="shell">
+      <h2 class="visit__title" id="visit-title">Come and <mark>pick it up</mark> yourself</h2>
+      <p class="visit__body">
+        The shelf is open on Saturdays. Ask what came out of the last firing, and we will
+        also tell you what did not: the cracked ones go in a crate by the door and the
+        crate is honest.
+      </p>
+      <dl class="facts">
+        <div><dt>Address</dt><dd class="tbc">Lisboa, street address to confirm</dd></div>
+        <div><dt>Open</dt><dd>Saturdays, and by arrangement</dd></div>
+        <div><dt>Contact</dt><dd class="tbc">email to confirm</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="shell colophon">
+    <p class="label colophon__set">
+      Kiln &amp; Co., Lisboa · set in Public Sans and Newsreader · printed on screen in two inks, out of register on purpose
+    </p>
+    <nav class="colophon__links" aria-label="Footer">
+      <a href="#ware">The ware</a>
+      <a href="#workshops">Workshops</a>
+      <a href="#visit">Visit</a>
+      <a href="#top">Back to top</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

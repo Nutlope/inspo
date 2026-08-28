@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Primer: a writing course for engineers</title>
+<meta name="description" content="Primer is a four-week writing course for senior engineers whose design docs get skimmed and whose proposals get misread. Cohorts of twenty, two evenings a week.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ctext%20x%3D%2232%22%20y%3D%2246%22%20font-size%3D%2248%22%20text-anchor%3D%22middle%22%20fill%3D%22%23B23A24%22%20font-family%3D%22Georgia%2Cserif%22%3E%C2%B6%3C%2Ftext%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+/* Primer. A writing course for engineers.
+   Two voices: Newsreader carries the prose, JetBrains Mono carries the structure.
+   One accent: the editor's red pen. */
+
+:root{
+  --paper:#F7F4ED;
+  --paper-deep:#EFEBE0;
+  --card:#FFFDF7;
+  --ink:#191510;
+  --ink-soft:#5A5244;
+  --line:#DED7C6;
+  --line-soft:#E8E2D4;
+  --red:#B23A24;
+  --red-deep:#96301D;
+  --dark:#171310;
+  --dark-text:#F2EDE1;
+  --dark-muted:rgba(242,237,225,.64);
+  --dark-line:rgba(242,237,225,.16);
+  --red-bright:#E7684C;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  --w:1120px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html{scroll-padding-top:84px}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+}
+
+body{
+  font-family:var(--serif);
+  font-size:17.5px;
+  line-height:1.65;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+::selection{background:var(--red);color:var(--paper)}
+
+.wrap{max-width:var(--w);margin:0 auto;padding:0 36px}
+
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{
+  outline:2px solid var(--red);outline-offset:3px;border-radius:2px
+}
+
+/* ---- shared type ---- */
+
+.kicker{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  display:flex;align-items:center;gap:10px;
+}
+.kicker .pilcrow{
+  color:var(--red);
+  font-family:var(--serif);
+  font-size:19px;
+  line-height:1;
+  transform:translateY(-1px);
+}
+
+h2{
+  font-family:var(--serif);
+  font-weight:500;
+  font-size:clamp(30px,3.4vw,44px);
+  line-height:1.12;
+  letter-spacing:-.012em;
+  margin:14px 0 0;
+}
+.section-head{margin-bottom:56px}
+.section-head .lede{
+  margin-top:16px;
+  font-size:19px;
+  color:var(--ink-soft);
+  max-width:58ch;
+}
+
+section{padding:104px 0}
+
+/* ---- buttons ---- */
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--mono);
+  font-size:13px;font-weight:500;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:15px 24px;
+  border-radius:8px;
+  border:1px solid var(--ink);
+  background:var(--ink);color:var(--paper);
+  text-decoration:none;cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,color .18s ease;
+}
+.btn:hover{background:var(--red);border-color:var(--red);color:#FFF8EE}
+.btn.small{padding:10px 16px;font-size:12px}
+
+.textlink{
+  font-family:var(--mono);
+  font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  text-decoration:none;
+  border-bottom:1px solid var(--line);
+  padding-bottom:3px;
+  transition:border-color .18s ease,color .18s ease;
+}
+.textlink:hover{color:var(--red);border-color:var(--red)}
+
+/* ---- top ribbon + nav ---- */
+
+.ribbon{height:3px;background:var(--red)}
+
+header.site{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,244,237,.9);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;
+}
+.brand{
+  font-family:var(--serif);
+  font-weight:600;font-size:23px;letter-spacing:-.01em;
+  text-decoration:none;
+}
+.brand .dot{color:var(--red)}
+.nav-links{display:flex;align-items:center;gap:30px;list-style:none}
+.nav-links a:not(.btn){
+  font-family:var(--mono);font-size:13px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink-soft);
+  transition:color .15s ease;
+}
+.nav-links a:not(.btn):hover{color:var(--red)}
+
+/* ---- hero ---- */
+
+.hero{padding:64px 0 88px}
+.hero h1{
+  font-weight:500;
+  font-size:clamp(40px,6.5vw,80px);
+  line-height:1.06;
+  letter-spacing:-.018em;
+  margin:24px 0 0;
+}
+.hero h1 .struck{
+  color:rgba(25,21,16,.42);
+  position:relative;
+  white-space:nowrap;
+  text-decoration:none;
+}
+.hero h1 .struck::after{
+  content:"";
+  position:absolute;left:-1%;right:-1%;top:53%;
+  height:.075em;min-height:3px;
+  background:var(--red);
+  border-radius:2px;
+  transform:rotate(-1.4deg) scaleX(0);
+  transform-origin:left center;
+  animation:strike .45s cubic-bezier(.65,0,.3,1) .55s forwards;
+}
+@keyframes strike{to{transform:rotate(-1.4deg) scaleX(1)}}
+@media (prefers-reduced-motion:reduce){
+  .hero h1 .struck::after{animation:none;transform:rotate(-1.4deg) scaleX(1)}
+}
+
+.hero .sub{
+  margin-top:26px;
+  font-size:20px;
+  line-height:1.6;
+  color:var(--ink-soft);
+  max-width:56ch;
+}
+.hero .sub strong{color:var(--ink);font-weight:500}
+
+.hero .cta-row{margin-top:34px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+
+.hero .facts{
+  margin-top:44px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  display:flex;gap:14px;flex-wrap:wrap;
+  list-style:none;
+  font-family:var(--mono);
+  font-size:12.5px;font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.hero .facts li{display:flex;align-items:center;gap:14px}
+.hero .facts li+li::before{
+  content:"";
+  width:4px;height:4px;border-radius:50%;
+  background:var(--red);
+  display:inline-block;
+}
+
+/* ---- symptoms ---- */
+
+.symptoms{padding-top:20px}
+.comment-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:22px;
+}
+.comment{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:26px 28px 24px;
+  position:relative;
+}
+.comment::before{
+  content:"";
+  position:absolute;left:-1px;top:22px;bottom:22px;
+  width:3px;background:var(--red);
+  border-radius:0 3px 3px 0;
+}
+.comment .said{
+  font-size:20px;
+  font-style:italic;
+  line-height:1.45;
+}
+.comment .meta{
+  font-family:var(--mono);
+  font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--red);
+  margin-top:14px;
+}
+.comment .gloss{
+  margin-top:8px;
+  font-size:15.5px;
+  color:var(--ink-soft);
+  line-height:1.6;
+}
+.pivot{
+  margin:72px auto 0;
+  max-width:30ch;
+  text-align:center;
+  font-size:clamp(23px,2.4vw,30px);
+  font-style:italic;
+  line-height:1.4;
+}
+.pivot em{
+  font-style:italic;
+  color:var(--red);
+  text-decoration:underline;
+  text-decoration-thickness:2px;
+  text-underline-offset:5px;
+}
+
+/* ---- curriculum ---- */
+
+.week{
+  display:grid;
+  grid-template-columns:190px 1fr 300px;
+  gap:44px;
+  padding:44px 0;
+  border-top:1px solid var(--line);
+}
+.week:last-of-type{border-bottom:1px solid var(--line)}
+.week .num{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:500;
+  font-size:44px;
+  line-height:1;
+  color:var(--red);
+}
+.week .evenings{
+  font-family:var(--mono);
+  font-size:11.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-top:12px;
+}
+.week h3{
+  font-weight:600;
+  font-size:26px;
+  letter-spacing:-.01em;
+  line-height:1.2;
+}
+.week .body{margin-top:12px;color:var(--ink-soft);max-width:58ch}
+.week .leave .label{
+  font-family:var(--mono);
+  font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--red);
+}
+.week .leave p{
+  margin-top:10px;
+  font-style:italic;
+  font-size:17px;
+  line-height:1.55;
+}
+
+/* ---- specimen ---- */
+
+.specimen{background:var(--paper-deep);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.doc{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 24px 60px rgba(25,21,16,.09);
+  max-width:860px;
+  margin:0 auto;
+  padding:46px 52px 42px;
+}
+.doc .pass+.pass{margin-top:36px;padding-top:32px;border-top:1px dashed var(--line)}
+.doc .pass-head{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  margin-bottom:14px;
+}
+.doc .pass-label{
+  font-family:var(--mono);
+  font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.doc .pass-note{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--red);
+}
+.doc .draft{
+  font-size:20px;line-height:1.7;color:var(--ink-soft);
+}
+.doc .draft s{
+  text-decoration:line-through;
+  text-decoration-color:var(--red);
+  text-decoration-thickness:2px;
+  color:rgba(90,82,68,.55);
+}
+.doc .rewrite{
+  font-size:20px;line-height:1.7;font-weight:500;color:var(--ink);
+}
+.doc-caption{
+  margin-top:26px;
+  text-align:center;
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.04em;
+  color:var(--ink-soft);
+}
+
+/* ---- format + fit ---- */
+
+.format-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:72px;
+  align-items:start;
+}
+.spec-row{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:26px;
+  padding:24px 0;
+  border-top:1px solid var(--line);
+}
+.spec-row:last-child{border-bottom:1px solid var(--line)}
+.spec-row dt{
+  font-family:var(--mono);
+  font-size:11.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--red);
+  padding-top:5px;
+}
+.spec-row dd{color:var(--ink-soft)}
+.spec-row dd strong{color:var(--ink);font-weight:500}
+
+.fit{display:grid;gap:22px}
+.fit-card{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--card);
+  padding:26px 28px;
+}
+.fit-card h4{
+  font-family:var(--mono);
+  font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.fit-card.for h4{color:var(--ink)}
+.fit-card.notfor h4{color:var(--ink-soft)}
+.fit-card ul{list-style:none;display:grid;gap:12px}
+.fit-card li{
+  padding-left:24px;position:relative;
+  font-size:16.5px;color:var(--ink-soft);line-height:1.55;
+}
+.fit-card.for li::before{
+  content:"¶";
+  position:absolute;left:0;top:0;
+  color:var(--red);
+  font-family:var(--serif);
+}
+.fit-card.notfor li::before{
+  content:"";
+  position:absolute;left:2px;top:.72em;
+  width:12px;height:2px;background:var(--line);
+}
+
+/* ---- house rules ---- */
+
+.rules{background:var(--dark);color:var(--dark-text)}
+.rules .kicker{color:var(--dark-muted)}
+.rules .kicker .pilcrow{color:var(--red-bright)}
+.rules h2{color:var(--dark-text)}
+.rules-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--dark-line);
+  border-left:1px solid var(--dark-line);
+}
+.rule{
+  border-right:1px solid var(--dark-line);
+  border-bottom:1px solid var(--dark-line);
+  padding:30px 34px;
+  display:flex;gap:22px;align-items:baseline;
+}
+.rule .n{
+  font-family:var(--mono);
+  font-size:12px;font-weight:500;
+  color:var(--red-bright);
+  letter-spacing:.06em;
+}
+.rule p{
+  font-size:clamp(19px,1.9vw,24px);
+  font-weight:500;
+  line-height:1.35;
+  letter-spacing:-.008em;
+}
+
+/* ---- faq ---- */
+
+.faq-list{max-width:820px;border-top:1px solid var(--line)}
+.faq-list details{border-bottom:1px solid var(--line)}
+.faq-list summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:24px;
+  padding:24px 2px;
+  font-size:20px;font-weight:500;
+}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary .mark{
+  font-family:var(--mono);
+  font-size:19px;font-weight:400;
+  color:var(--red);
+  transition:transform .2s ease;
+  flex:none;
+}
+.faq-list details[open] summary .mark{transform:rotate(45deg)}
+.faq-list .answer{
+  padding:0 2px 26px;
+  color:var(--ink-soft);
+  max-width:62ch;
+  font-size:16.5px;
+}
+
+/* ---- apply ---- */
+
+.apply{background:var(--dark);color:var(--dark-text);padding-bottom:0}
+.apply .kicker{color:var(--dark-muted)}
+.apply .kicker .pilcrow{color:var(--red-bright)}
+.apply h2{color:var(--dark-text)}
+.apply-grid{
+  display:grid;
+  grid-template-columns:1fr 460px;
+  gap:80px;
+  align-items:start;
+}
+.apply .pitch{font-size:19px;line-height:1.65;color:var(--dark-muted);margin-top:20px;max-width:48ch}
+.apply .pitch strong{color:var(--dark-text);font-weight:500}
+
+.circled{position:relative;display:inline-block;color:var(--dark-text);font-weight:500}
+.circled svg{
+  position:absolute;
+  left:-9%;top:-22%;
+  width:118%;height:148%;
+  overflow:visible;
+  pointer-events:none;
+}
+.circled svg path{
+  fill:none;
+  stroke:var(--red-bright);
+  stroke-width:2.6;
+  stroke-linecap:round;
+}
+
+.apply-form{
+  background:rgba(242,237,225,.045);
+  border:1px solid var(--dark-line);
+  border-radius:14px;
+  padding:34px 34px 30px;
+}
+.field{margin-bottom:20px}
+.field label{
+  display:block;
+  font-family:var(--mono);
+  font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dark-muted);
+  margin-bottom:9px;
+}
+.field input,.field textarea{
+  width:100%;
+  background:transparent;
+  border:1px solid rgba(242,237,225,.26);
+  border-radius:8px;
+  padding:13px 14px;
+  font-family:var(--mono);
+  font-size:14px;
+  color:var(--dark-text);
+  transition:border-color .15s ease;
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(242,237,225,.38)}
+.field input:focus,.field textarea:focus{border-color:var(--red-bright);outline:none}
+.field textarea{min-height:104px;resize:vertical;line-height:1.6}
+.apply-form .btn{
+  width:100%;
+  background:var(--dark-text);
+  border-color:var(--dark-text);
+  color:var(--dark);
+}
+.apply-form .btn:hover{background:var(--red-bright);border-color:var(--red-bright);color:#1B0F0A}
+.form-note{
+  margin-top:16px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--dark-muted);
+  text-align:center;
+}
+
+/* ---- footer ---- */
+
+footer.site{
+  margin-top:96px;
+  border-top:1px solid var(--dark-line);
+  padding:44px 0 40px;
+}
+.foot-top{
+  display:flex;justify-content:space-between;align-items:baseline;gap:32px;flex-wrap:wrap;
+}
+.foot-brand{font-family:var(--serif);font-size:22px;font-weight:600}
+.foot-brand .dot{color:var(--red-bright)}
+.foot-tag{color:var(--dark-muted);font-style:italic;font-size:16px}
+.foot-links{display:flex;gap:26px;list-style:none;flex-wrap:wrap}
+.foot-links a{
+  font-family:var(--mono);
+  font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--dark-muted);
+  text-decoration:none;
+  transition:color .15s ease;
+}
+.foot-links a:hover{color:var(--red-bright)}
+.foot-bottom{
+  margin-top:36px;
+  padding-top:22px;
+  border-top:1px solid var(--dark-line);
+  display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--dark-muted);
+}
+
+/* ---- responsive ---- */
+
+@media (max-width:980px){
+  section{padding:84px 0}
+  .week{grid-template-columns:1fr;gap:18px;padding:36px 0}
+  .week .numblock{display:flex;align-items:baseline;gap:18px}
+  .week .evenings{margin-top:0}
+  .week .leave{border-top:1px dashed var(--line);padding-top:16px}
+  .format-grid{grid-template-columns:1fr;gap:56px}
+  .apply-grid{grid-template-columns:1fr;gap:56px}
+  .doc{padding:36px 32px}
+}
+
+@media (max-width:720px){
+  .wrap{padding:0 22px}
+  .hero h1 .struck{
+    white-space:normal;
+    text-decoration:line-through;
+    text-decoration-color:var(--red);
+    text-decoration-thickness:3px;
+  }
+  .hero h1 .struck::after{display:none}
+  .comment-grid{grid-template-columns:1fr}
+  .rules-grid{grid-template-columns:1fr}
+  .hero{padding:64px 0 76px}
+  .hero .facts{gap:12px}
+  .hero .facts li+li::before{display:none}
+  .hero .facts li{border:1px solid var(--line);border-radius:999px;padding:7px 13px}
+  .hero .facts{border-top:none;padding-top:0}
+  .spec-row{grid-template-columns:1fr;gap:8px;padding:20px 0}
+  .doc .pass-head{flex-direction:column;gap:4px}
+  .section-head{margin-bottom:40px}
+}
+
+@media (max-width:600px){
+  .nav-links li.hide-mobile{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="ribbon" aria-hidden="true"></div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="#top">Primer<span class="dot">.</span></a>
+    <nav aria-label="Site">
+      <ul class="nav-links">
+        <li class="hide-mobile"><a href="#curriculum">Curriculum</a></li>
+        <li class="hide-mobile"><a href="#format">Format</a></li>
+        <li class="hide-mobile"><a href="#faq">FAQ</a></li>
+        <li><a class="btn small" href="#apply">Apply</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap">
+      <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> A writing course for engineers</p>
+      <h1>Writing is <span class="struck" aria-hidden="true">a soft skill</span><br>an engineering skill.</h1>
+      <p class="sub">Your design docs get skimmed. Your proposals get misread. <strong>Primer</strong> is four weeks of deliberate practice for senior engineers who write constantly and were never taught how.</p>
+      <div class="cta-row">
+        <a class="btn" href="#apply">Apply for the next cohort</a>
+        <a class="textlink" href="#curriculum">Read the four weeks ↓</a>
+      </div>
+      <ul class="facts">
+        <li>Four weeks</li>
+        <li>Two evenings a week</li>
+        <li>Cohorts of twenty</li>
+        <li>Your real documents</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SYMPTOMS -->
+  <section class="symptoms" aria-labelledby="symptoms-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> The symptoms</p>
+        <h2 id="symptoms-h">You've seen the comments.</h2>
+      </div>
+
+      <div class="comment-grid">
+        <article class="comment">
+          <p class="said">"Could you add a TL;DR?"</p>
+          <p class="meta">Translation</p>
+          <p class="gloss">There is a point, somewhere in section four. Your reader gave up before reaching it.</p>
+        </article>
+        <article class="comment">
+          <p class="said">"LGTM. A few small nits."</p>
+          <p class="meta">Translation</p>
+          <p class="gloss">Approved, not read. Every nit sits in the first two paragraphs, because nobody made it further.</p>
+        </article>
+        <article class="comment">
+          <p class="said">"Let's hop on a call to discuss."</p>
+          <p class="meta">Translation</p>
+          <p class="gloss">The document was supposed to be the meeting. Instead it scheduled one.</p>
+        </article>
+        <article class="comment">
+          <p class="said">"So we're rewriting everything in Rust?"</p>
+          <p class="meta">Translation</p>
+          <p class="gloss">You proposed nothing of the kind. A misread proposal breeds counter-proposals to plans nobody made.</p>
+        </article>
+      </div>
+
+      <p class="pivot">None of this is a reading problem. It's a <em>writing</em> problem.</p>
+    </div>
+  </section>
+
+  <!-- CURRICULUM -->
+  <section id="curriculum" aria-labelledby="curriculum-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> The curriculum</p>
+        <h2 id="curriculum-h">Four weeks. Eight evenings.<br>One document at a time.</h2>
+      </div>
+
+      <article class="week">
+        <div class="numblock">
+          <p class="num">01</p>
+          <p class="evenings">Evenings 1 &amp; 2</p>
+        </div>
+        <div>
+          <h3>The point</h3>
+          <p class="body">Every document exists to get a decision made. Week one is learning to find yours and put it first: the answer-first opening, headings that carry the argument, and a summary you could defend in a hallway.</p>
+        </div>
+        <div class="leave">
+          <p class="label">You leave with</p>
+          <p>Your current design doc, reopened and front-loaded.</p>
+        </div>
+      </article>
+
+      <article class="week">
+        <div class="numblock">
+          <p class="num">02</p>
+          <p class="evenings">Evenings 3 &amp; 4</p>
+        </div>
+        <div>
+          <h3>The design doc</h3>
+          <p class="body">Context without throat-clearing. Alternatives compared honestly instead of dismissed ceremonially. Scope, non-goals, and the failure modes you are choosing to accept, stated in writing.</p>
+        </div>
+        <div class="leave">
+          <p class="label">You leave with</p>
+          <p>A doc your reviewers can disagree with usefully.</p>
+        </div>
+      </article>
+
+      <article class="week">
+        <div class="numblock">
+          <p class="num">03</p>
+          <p class="evenings">Evenings 5 &amp; 6</p>
+        </div>
+        <div>
+          <h3>The proposal</h3>
+          <p class="body">Written for the person who can say yes. The ask in the first sentence, cost next to benefit, objections answered before they're raised, and a summary that survives being forwarded twice.</p>
+        </div>
+        <div class="leave">
+          <p class="label">You leave with</p>
+          <p>A real proposal, sent to a real decision-maker.</p>
+        </div>
+      </article>
+
+      <article class="week">
+        <div class="numblock">
+          <p class="num">04</p>
+          <p class="evenings">Evenings 7 &amp; 8</p>
+        </div>
+        <div>
+          <h3>The edit</h3>
+          <p class="body">Where the writing actually happens. Cut a third without losing meaning. Choose verbs over abstractions. Hunt hedges, passives, and the sentences that make readers feel stupid. Then: editing colleagues without making enemies.</p>
+        </div>
+        <div class="leave">
+          <p class="label">You leave with</p>
+          <p>A red pen, and the judgment to use it.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SPECIMEN -->
+  <section class="specimen" aria-labelledby="specimen-h">
+    <div class="wrap">
+      <div class="section-head" style="text-align:center">
+        <p class="kicker" style="justify-content:center"><span class="pilcrow" aria-hidden="true">¶</span> The work</p>
+        <h2 id="specimen-h">Twenty minutes into evening two.</h2>
+      </div>
+
+      <div class="doc">
+        <div class="pass">
+          <div class="pass-head">
+            <p class="pass-label">Draft, as submitted</p>
+            <p class="pass-note">the ask is missing</p>
+          </div>
+          <p class="draft">This document provides <s>something of</s> a high-level overview of <s>some of</s> the <s>potential</s> options <s>that could be considered</s> for the proposed migration of the billing pipeline <s>at some point in the coming quarters</s>.</p>
+        </div>
+        <div class="pass">
+          <div class="pass-head">
+            <p class="pass-label">After the workshop</p>
+            <p class="pass-note">the ask leads</p>
+          </div>
+          <p class="rewrite">Move billing to the queue-based pipeline by March. It removes our two worst sources of pager load and costs one quarter of platform time. Decision needed by Friday.</p>
+        </div>
+      </div>
+      <p class="doc-caption">Live edits, out loud, on documents the cohort actually owes someone.</p>
+    </div>
+  </section>
+
+  <!-- FORMAT -->
+  <section id="format" aria-labelledby="format-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> The format</p>
+        <h2 id="format-h">A workshop, not a webinar.</h2>
+      </div>
+
+      <div class="format-grid">
+        <dl>
+          <div class="spec-row">
+            <dt>Cohort</dt>
+            <dd><strong>Twenty engineers.</strong> Few enough that every document gets read aloud and marked up; enough that the arguments are real.</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Schedule</dt>
+            <dd><strong>Two evenings a week for four weeks.</strong> Ninety minutes each: a short seminar, then line edits in groups of four.</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Material</dt>
+            <dd><strong>Your own documents, start to finish.</strong> Bring the design doc you owe your team; redact what you must. Structure is what we're after, and structure survives redaction.</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Feedback</dt>
+            <dd><strong>Everything comes back marked up twice:</strong> once by an instructor, once by peers who, by week three, know how to be useful.</dd>
+          </div>
+        </dl>
+
+        <div class="fit">
+          <div class="fit-card for">
+            <h4>For you if</h4>
+            <ul>
+              <li>You're a senior engineer, a lead, or staff-adjacent, and the job is mostly persuasion now.</li>
+              <li>Your documents are correct, complete, and unread.</li>
+              <li>Performance feedback keeps spelling the problem "communication".</li>
+            </ul>
+          </div>
+          <div class="fit-card notfor">
+            <h4>Not for you if</h4>
+            <ul>
+              <li>You want grammar drills or a certificate to frame.</li>
+              <li>You haven't written a design doc yet. Come back after your first.</li>
+              <li>You'd rather a tool did the writing. The judgment is the point, and it doesn't delegate.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOUSE RULES -->
+  <section class="rules" aria-labelledby="rules-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> House rules</p>
+        <h2 id="rules-h">Six rules, drilled until they're reflexes.</h2>
+      </div>
+      <div class="rules-grid">
+        <div class="rule"><span class="n">01</span><p>Front-load the decision.</p></div>
+        <div class="rule"><span class="n">02</span><p>Write for the skimmer; reward the reader.</p></div>
+        <div class="rule"><span class="n">03</span><p>One idea per paragraph.</p></div>
+        <div class="rule"><span class="n">04</span><p>Headings should carry the argument alone.</p></div>
+        <div class="rule"><span class="n">05</span><p>Every hedge costs you a reader.</p></div>
+        <div class="rule"><span class="n">06</span><p>If it can be shorter, it isn't finished.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> Questions</p>
+        <h2 id="faq-h">Asked, answered.</h2>
+      </div>
+
+      <div class="faq-list">
+        <details>
+          <summary>How much time does it take outside the sessions? <span class="mark" aria-hidden="true">+</span></summary>
+          <p class="answer">Two to three hours a week, spent rewriting your own documents. The homework is your actual job, done better.</p>
+        </details>
+        <details>
+          <summary>Is it live? Where? <span class="mark" aria-hidden="true">+</span></summary>
+          <p class="answer">Live over video, in the evening, so it fits around a working day. Recordings go up the next morning, but the marking-up happens in the room.</p>
+        </details>
+        <details>
+          <summary>My documents are confidential. <span class="mark" aria-hidden="true">+</span></summary>
+          <p class="answer">Common, and fine. Redacted versions work well, and so does a parallel document about a stand-in system. Structure transfers; secrets don't have to.</p>
+        </details>
+        <details>
+          <summary>What if I miss an evening? <span class="mark" aria-hidden="true">+</span></summary>
+          <p class="answer">One is survivable: watch the recording, then catch up with your edit group. Miss more than that and we'll move you to a later cohort rather than let the course happen to an empty chair.</p>
+        </details>
+        <details>
+          <summary>Does my employer pay for this? <span class="mark" aria-hidden="true">+</span></summary>
+          <p class="answer">Usually, through an education budget. We invoice; you forward it. Consider it the cheapest infrastructure your documents will ever run on.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLY -->
+  <section id="apply" class="apply" aria-labelledby="apply-h">
+    <div class="wrap">
+      <div class="apply-grid">
+        <div>
+          <p class="kicker"><span class="pilcrow" aria-hidden="true">¶</span> Applications</p>
+          <h2 id="apply-h">The next cohort is forming.</h2>
+          <p class="pitch"><span class="circled">Twenty<svg viewBox="0 0 120 44" aria-hidden="true" preserveAspectRatio="none"><path d="M10 25 C6 12, 36 4, 62 5 C94 6, 114 11, 112 23 C110 36, 82 41, 52 40 C28 39, 13 34, 12 27"/></svg></span> <strong>seats, claimed in writing.</strong> Tell us who you are, what you write, and show us a paragraph. Applications are read in the order they arrive, red pen capped.</p>
+        </div>
+
+        <form class="apply-form" action="#apply" method="get">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Ada Example">
+          </div>
+          <div class="field">
+            <label for="f-email">Work email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@company.com">
+          </div>
+          <div class="field">
+            <label for="f-para">A paragraph you're not proud of <span style="opacity:.6">(optional)</span></label>
+            <textarea id="f-para" name="paragraph" placeholder="Paste it. We've seen worse."></textarea>
+          </div>
+          <button class="btn" type="submit">Apply for the cohort</button>
+          <p class="form-note">About ten minutes. Replies within the week, in writing.</p>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site">
+      <div class="wrap">
+        <div class="foot-top">
+          <div>
+            <p class="foot-brand">Primer<span class="dot">.</span></p>
+            <p class="foot-tag">A four-week writing course for engineers.</p>
+          </div>
+          <ul class="foot-links">
+            <li><a href="#curriculum">Curriculum</a></li>
+            <li><a href="#format">Format</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#apply">Apply</a></li>
+          </ul>
+        </div>
+        <div class="foot-bottom">
+          <p>Set in Newsreader and JetBrains Mono. Written, then rewritten.</p>
+          <p>© 2026 Primer</p>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+</main>
+
+</body>
+</html>

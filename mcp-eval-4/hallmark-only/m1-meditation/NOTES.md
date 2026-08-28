@@ -1,21 +1,53 @@
 # hallmark-only / m1-meditation
 
 ## Timing
-start: 1785927204
-end:   1785927607
+start: 1786028985
+end:   1786029524
 
 ## Tool calls
-total: 20
+total: 24
 inspo: 0
-breakdown: Read x13, Bash x5 (date, dir/log scan, sloplint, sloplint --render, mkdir, date), Write x4, Edit x1, browser resize/navigate/screenshot x3
+breakdown: Read x13, Bash x4, Write x3, Edit x4, Agent x1, mcp__Claude_Browser__preview_start x1, mcp__Claude_Browser__resize_window x3, mcp__Claude_Browser__computer x5, mcp__Claude_Browser__javascript_tool x4, mcp__Claude_Browser__navigate x1, mcp__Claude_Browser__tabs_select x1
 
-(Reads: SPEC.md, hallmark/SKILL.md, genres/playful.md, theme-axes.md, genres/editorial.md, themes/almanac.md, enrichment/hero-discipline.md, section-entry.md, anti-patterns.md, typography.md, color.md, layout-and-space.md, motion.md, copy.md, responsive.md, finish.md, microinteractions.md, hero-enrichment.md, slop-test.md.)
+(Read/Bash/Write/Edit and the browser calls are counted separately above; the
+total counts every tool invocation including the two `computer` calls that
+timed out because another arm had the browser pane.)
 
 ## What drove the design
-My untooled instinct for a meditation app was soft: warm off-white paper, a rounded sans, a low-chroma indigo, a centred hero, generous air. Two skill steps killed that. First, the genre gate: `genres/playful.md` says to pick playful sparingly because most consumer briefs still belong to editorial, and this brief is explicitly anti-Calm, so I routed editorial instead of the soft-consumer register I would have defaulted to. Second, the theme rotation with `theme-axes.md` in front of me: I picked Almanac (mid-band cool slate stock, Hanken Grotesk, deep library-stamp blue) precisely because its axes triple is the furthest thing in the catalog from wellness-app soft, and Almanac's "tables and figures as the material" gave the page its actual spine, a ruled index of five sessions where every Length cell reads 10:00. That table is the thing I would never have built unprompted, and it turned out to be the strongest argument on the page: same length every time, so the only choice left is where your feet are. `hero-discipline.md` changed the hero from the tall centred stack I first sketched to a Banner posture, compressed and left-biased with bottom-heavy padding, which fits the brief better than the fold-filling version did, and it left the right column free for a hairline spec list of real facts rather than an invented number or a decorative shape. Gate 54 and `section-entry.md` cost me the small mono section labels I had already written into the outline; the replacement, a firm 2px rule with the heading hanging under it and one change of paper at the refusals band, is quieter and reads as a reference book instead of a deck. `copy.md` pushed the refusal section from a feature list into five flat declaratives about what the app will not do, which is where the brief's "bounced off Headspace and Calm" positioning actually lives. Enrichment stayed at zero because the image-need table lands on typography-only and nothing here needed a picture; the only drawn object is a proportional ruler of the ten minutes, which carries data rather than decoration.
+
+Left alone I would have built the obvious page: a light, calm, roomy surface,
+a serif display, a soft warm accent, and a hero about breathing. Three steps of
+the skill each killed a decision before I made it. The **reflex check (R.1)**
+forced me to name and reject both the category default (sage and lavender, a
+dusk gradient, a breathing circle) and the tasteful fallback (bone paper,
+high-contrast serif, editorial calm), which took my first two instincts off the
+table in writing. **R.2's spent-defaults table** then took my third: it names
+Claude's own rendition prior as cream paper, serif display, italic accent,
+lamplight, which is precisely what I was drifting toward, so the paper became a
+saturated manila card at L 84% (mid band, not cream), the display became a
+blunt slab rather than a high-contrast serif, and there is no italic anywhere.
+**R.4's outside draw** picked the direction rather than me: seed
+`tenor-walking-meditation`, entry 4 of 7, the physiotherapy exercise card
+handed over at the end of an appointment. That single pick decided everything
+downstream: the page is a prescription rather than an invitation, the hero's
+right column is a real `<table>` of the ten minutes instead of a phone mockup,
+the sections are ruled fields on one sheet, and the accent is a green print ink
+instead of a wellness pastel. The two wildcards it dealt (Deco travel poster,
+Matchbox label) both lost on product clarity and were discarded. **Gate 54**
+(no eyebrows) and **section-entry.md** changed the section openings from
+"FEATURES / How it works" to headings that carry the subject themselves, with
+one repeated double rule as the only separator. The **rejection table** in
+theme-axes.md is the one place the skill confirmed rather than changed
+something: my triple (mid / slab-serif / chromatic-green ~158) cleared all 24
+catalog coordinates on the first check, so nothing moved. Copy stayed
+number-free by gate 46a: there are no session counts, no user counts, no
+ratings, and the only figures on the page are the minutes of a session, which
+are the product's own shape.
 
 ## Friction
-- SKILL.md Step 6 requires emitting `tokens.css` at the project root on every build; SPEC rule 1 requires one self-contained `index.html` with no local asset files. I followed SPEC and kept the token block inline, so no `tokens.css` was written.
-- No render verification available: the shared browser pane was already showing another arm's page and my `file://` navigation was declined, and sloplint's `--render` tier reported puppeteer-core missing. Fold fit at 1280x800 and the mobile gates were verified by arithmetic and by sloplint's static checks (clean: 0 FAIL, 0 REFLEX, 0 WARN) rather than by eye.
-- The skill's Step 1 question gate and the unattended eval design conflict by construction; per the task instructions I treated SPEC's brief as "go ahead" and disclosed the inferences instead of asking.
-- Almanac wants tables and figures, and the brief forbids invented metrics, so the only numbers on the page are the session length and the minute ranges. That constraint was productive but it did rule out the fuller data table the theme is built for.
+
+- SPEC rule 1 (one self-contained `index.html`, no local asset files) collides with the skill's Step 6 "always emit `tokens.css`"; I kept the tokens inline in the `<style>` block and skipped the file.
+- The skill's Step 0 signal 8 (reference archive) and Step 5.5 (comp, needs `TOGETHER_API_KEY`) both looked for things that are absent in this arm; recorded absent, took the standalone path, which is exactly what SKILL.md says to do.
+- The double-rule section entry was first built with a `::before`, which renders inside the section's top padding and floated the hairline 100px away from the bold rule; rebuilt as two background gradients pinned to the section's top edge.
+- The browser pane is shared across eval arms: two `computer` calls timed out and one screenshot came back from another arm's page, so mid-page desktop layout was verified from DOM geometry instead of a screenshot. The 1280x800 fold and the 375px mobile pass were both verified visually.
+- sloplint flagged the graphic-scale numerals set in accent (gate 23) and a 34ch measure on the header descriptor (gate 25); both taken rather than waived, so the numerals are ink and the descriptor is 48ch.

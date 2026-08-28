@@ -3,45 +3,63 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Even · tax money, set aside as invoices land</title>
-<meta name="description" content="Even moves your tax percentage out of the way each time an invoice is paid, so the money you can spend is the money that is actually yours.">
+<title>Even — the tax slice comes off before you see the money</title>
+<meta name="description" content="Even watches your invoices land and moves the tax share into a separate account the same day.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Hallmark · macrostructure: Reserve ledger · tone: warm-plain-concrete · anchor hue: 80 (marigold) · hero: Stage/drawn-artifact · genre: playful (warm-serious) · theme: Field · enrichment: tier-B hand-built SVG · nav: hairline masthead, no CTA, not sticky (decided, not the industry default) · footer: colophon line (decided) · contrast: pass (40-41, recomputed after darkening the muted ink) · slop: pass (42-45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50-57), verified from code, no render tier available */
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 · weakest: E - the two SVG figures are hand-set by hand rather than drawn in a tool; strokes were reduced to round-capped ink and one marigold pass so nothing reads as clip-art */
-/* Hallmark · display face: Source Serif 4 is named by the Field theme as its display, paired with Public Sans; picked deliberately, not by reflex */
+/* Hallmark · macrostructure: bespoke: seed-packet front, then the sowing table on the back · tone: editorial · anchor hue: 355 · hero: Stage/H2
+ * genre: editorial · nav: two-line masthead, rule between wordmark and rail (not the default bar) · footer: single justified colophon
+ * theme: custom · direction: "the seed-packet rack" · vibe: "two-colour print, sow now, lift later"
+ * paper: oklch(94.8% 0.010 40) · field: oklch(34% 0.058 158) · signal: oklch(54% 0.165 355) · display: Zilla Slab · body: IBM Plex Sans
+ * axes: light / slab-serif / chromatic-rose ~355 · posture: full-palette (field · signal · ink)
+ * note: landed on Newsprint's triple (light / slab-serif / warm ~28); moved the accent to chromatic-rose ~355 and gave the large colour to a pine field role
+ * seed: even-freelancer-tax-savings·2026-08-06·r0 · draw 5/7 · wildcards declined · contract: kept (5/5) · studied: no · v1.2.0
+ * contrast: ink/paper 13.6:1 · paper-on-field 9.1:1 · signal/paper 5.2:1 · signal-light/field 4.9:1 (40-41 pass)
+ * mobile: 320 / 375 / 414 / 768 verified in code (34, 49, 50-57)
+ */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V4 · weakest: S - the brief supplies no product facts, so the proof section is refusals and mechanics rather than specifics; fix taken: every claim is a mechanic the brief states, and the year band is captioned as schematic rather than dressed up as data */
+/* direction contract · seed even-freelancer-tax-savings·2026-08-06·r0
+ * THESIS: money you owe is not money you have, so it should leave the balance the moment the invoice lands.
+ * OWN-WORLD: the seed-packet rack — flat two-colour print, a pine ground with a carmine overprint, and a sowing table on the reverse that tells you when to sow and when to lift.
+ * STORY: a copywriter in Porto opens her laptop at 4pm on a grey Tuesday; the client's invoice cleared while she was out, and the tax slice is already gone from the balance she is looking at.
+ * FIRST-VIEWPORT: masthead over a rule; the left column carries the headline, a three-line lede, one filled CTA beside a quiet link, and a line naming who invoices; the right two-fifths is a pine panel holding the year band, twelve months of irregular invoices with the tax slice lifted off each one.
+ * FORM: packet front, then the reverse — steps, the split, the refusals, the questions; the signature move is the year band, one schematic that shows irregularity and the constant slice at once, reprised as a strip over the closing CTA.
+ */
+/* Hallmark · finish-review: subagent · 7 findings · 6 resolved, 1 partial (the reverse of the packet is editorial furniture rather than a sowing table; the band reprise is the repair taken) */
 
 :root {
-  /* colour · Field */
-  --color-paper:    oklch(96.5% 0.015 90);
-  --color-paper-2:  oklch(98.2% 0.010 90);
-  --color-paper-3:  oklch(93.0% 0.045 84);
-  --color-ink:      oklch(25% 0.02 70);
-  --color-ink-2:    oklch(40% 0.02 72);
-  --color-ink-3:    oklch(46% 0.02 72);
-  --color-rule:     oklch(84% 0.018 84);
-  --color-rule-2:   oklch(89% 0.016 86);
-  --color-accent:   oklch(75% 0.13 80);
-  --color-focus:    oklch(54% 0.14 72);
+  /* colour — full palette: field · signal · ink, on stone paper */
+  --color-paper:        oklch(94.8% 0.010 40);
+  --color-paper-2:      oklch(91.4% 0.013 40);
+  --color-ink:          oklch(21% 0.018 40);
+  --color-ink-2:        oklch(34% 0.016 40);
+  --color-muted:        oklch(47% 0.014 40);
+  --color-rule:         oklch(78% 0.014 40);
+  --color-rule-2:       oklch(86% 0.012 40);
+  --color-field:        oklch(34% 0.058 158);
+  --color-field-2:      oklch(28.5% 0.052 158);
+  --color-on-field:     oklch(95.5% 0.014 150);
+  --color-on-field-2:   oklch(80% 0.026 152);
+  --color-rule-field:   oklch(46% 0.045 158);
+  --color-signal:       oklch(54% 0.165 355);
+  --color-signal-deep:  oklch(44% 0.150 355);
+  --color-signal-light: oklch(72% 0.140 355);
+  --color-focus:        oklch(56% 0.190 355);
 
   /* type */
-  --font-display: "Source Serif 4", ui-serif, Georgia, serif;
-  --font-body:    "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Zilla Slab", ui-serif, Georgia, serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, sans-serif;
 
-  --text-xs:   0.8rem;
-  --text-sm:   0.9rem;
-  --text-base: 1.0625rem;
-  --text-md:   1.25rem;
-  --text-lg:   1.5625rem;
-  --text-xl:   1.9531rem;
-  --text-2xl:  2.4414rem;
-  --text-3xl:  3.0518rem;
-  --text-display:   clamp(2.55rem, 4.1vw + 0.95rem, 4.35rem);
-  --text-display-s: clamp(2.05rem, 3.3vw + 0.75rem, 3.4rem);
+  --text-2xs:     0.66rem;
+  --text-sm:      0.8rem;
+  --text-base:    1rem;
+  --text-md:      1.25rem;
+  --text-2xl:     2.4414rem;
+  --text-display: clamp(2.55rem, 3.2vw + 1.15rem, 4.05rem);
 
-  /* space */
+  /* space — 4pt scale */
   --space-3xs: 0.125rem;
   --space-2xs: 0.25rem;
   --space-xs:  0.5rem;
@@ -53,504 +71,644 @@
   --space-3xl: 6rem;
   --space-4xl: 9rem;
 
-  /* form */
-  --radius-control: 10px;
-  --radius-card:    16px;
   --rule-hair: 1px;
-  --shadow-card: 0 10px 30px -18px oklch(25% 0.05 70 / 0.45);
+  --rule-bold: 3px;
+  --radius-none: 0px;
+  --radius-sm: 2px;
 
-  /* motion */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long:  420ms;
 
-  /* depth */
   --z-base: 1;
   --z-raised: 10;
   --z-sticky: 200;
+
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { overflow-x: clip; }
-html { -webkit-text-size-adjust: 100%; }
 
+html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
 body {
+  overflow-x: clip;
   margin: 0;
   background: var(--color-paper);
-  color: var(--color-ink-2);
+  color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--text-base);
+  font-weight: 400;
   line-height: 1.6;
+  text-wrap: pretty;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  color: var(--color-ink);
-  letter-spacing: -0.02em;
-  line-height: 1.06;
-  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.022em;
   overflow-wrap: break-word;
   min-width: 0;
   text-wrap: balance;
+  margin: 0;
 }
-p { margin: 0; text-wrap: pretty; }
+p { margin: 0; }
 
 a { color: inherit; }
-:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-  border-radius: 3px;
-  transition: none;
-}
 
 .shell {
   width: 100%;
   max-width: 78rem;
   margin-inline: auto;
-  padding-inline: clamp(1.15rem, 4vw, 3.5rem);
+  padding-inline: var(--gutter);
 }
-
-.rule { border: 0; border-top: var(--rule-hair) solid var(--color-rule); margin: 0; }
 
 .skip {
-  position: absolute; inset-inline-start: -9999px; top: var(--space-xs);
-  background: var(--color-ink); color: var(--color-paper);
-  padding: var(--space-xs) var(--space-md); border-radius: var(--radius-control);
+  position: absolute;
+  left: -9999px;
+  top: 0;
   z-index: var(--z-sticky);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
 }
-.skip:focus { inset-inline-start: var(--space-md); }
+.skip:focus-visible { left: var(--space-md); top: var(--space-md); outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
-/* ---------- masthead ---------- */
-.masthead {
-  display: flex; flex-wrap: wrap; align-items: baseline;
-  gap: var(--space-sm) var(--space-xl);
-  padding-block: var(--space-lg) var(--space-md);
+/* ── masthead: two lines, the rule sits between them ─────────────── */
+
+.masthead { padding-block: var(--space-lg) 0; }
+.masthead__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-bottom: var(--space-sm);
 }
 .wordmark {
   font-family: var(--font-display);
-  font-weight: 600; font-size: var(--text-md);
-  color: var(--color-ink); text-decoration: none;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-xs);
   white-space: nowrap;
 }
-.wordmark .dot { color: var(--color-accent); }
-.masthead nav { margin-inline-start: auto; }
-.masthead ul {
-  display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-lg);
-  list-style: none; margin: 0; padding: 0;
+.wordmark::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-signal);
+  display: inline-block;
 }
-.masthead a:not(.wordmark) {
-  font-size: 1rem; color: var(--color-ink-2); text-decoration: none;
-  white-space: nowrap; padding-block: var(--space-2xs);
-  background-image: linear-gradient(var(--color-ink), var(--color-ink));
-  background-size: 0% var(--rule-hair);
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size var(--dur-short) var(--ease-out), color var(--dur-micro) var(--ease-out);
+.wordmark:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.masthead__note {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  text-align: right;
 }
-.masthead a:not(.wordmark):hover { background-size: 100% var(--rule-hair); color: var(--color-ink); }
+.masthead__rule { border: 0; border-top: var(--rule-bold) solid var(--color-ink); margin: 0; }
+.masthead__rail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-lg);
+  padding-block: var(--space-sm);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+.rail__link {
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: var(--space-3xs);
+  border-bottom: var(--rule-hair) solid transparent;
+  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+.rail__link:hover { color: var(--color-signal-deep); border-bottom-color: var(--color-signal); }
+.rail__link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
+.rail__link--now { color: var(--color-signal-deep); border-bottom-color: var(--color-signal); }
 
-/* ---------- hero ---------- */
-.hero { padding-block: var(--space-2xl) calc(var(--space-2xl) * 1.45); }
+/* ── hero: Stage — text column plus the pine year-band panel ─────── */
+
+.hero { padding-block: var(--space-xl) var(--space-3xl); }
 .hero__grid {
-  display: grid; gap: var(--space-2xl);
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
-  align-items: center;
+  gap: var(--space-xl);
+  align-items: start;
+}
+.hero__display {
+  font-size: var(--text-display);
+  line-height: 1.03;
+  max-width: 19ch;
+  letter-spacing: -0.03em;
 }
 .hero__lede {
-  font-size: var(--text-md); line-height: 1.5;
-  color: var(--color-ink-2); max-width: 50ch;
-  margin-block-start: var(--space-lg);
-}
-h1 { font-size: var(--text-display); max-width: 15ch; }
-.mark {
-  padding-inline: 0.06em;
-  -webkit-box-decoration-break: clone; box-decoration-break: clone;
-  background-image: linear-gradient(180deg, transparent 38%,
-    var(--color-accent) 38%, var(--color-accent) 92%, transparent 92%);
+  font-size: var(--text-md);
+  line-height: 1.45;
+  color: var(--color-ink-2);
+  max-width: 46ch;
+  margin-top: var(--space-lg);
 }
 .hero__actions {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: var(--space-md) var(--space-lg);
-  margin-block-start: var(--space-xl);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
 }
+.hero__aside {
+  margin-top: var(--space-lg);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  max-width: 42ch;
+}
+
 .btn {
-  display: inline-flex; align-items: center; gap: var(--space-xs);
-  font: inherit; font-weight: 600; font-size: 1rem;
-  white-space: nowrap; text-decoration: none; cursor: pointer;
-  border: 0; border-radius: var(--radius-control);
-  padding: 0.85rem 1.35rem; min-height: 48px;
-  background: var(--color-ink); color: var(--color-paper);
-  box-shadow: var(--shadow-card);
-  transition: transform var(--dur-short) var(--ease-out);
-}
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(0); }
-.btn .arrow { transition: transform var(--dur-short) var(--ease-out); }
-.btn:hover .arrow { transform: translateX(3px); }
-.link-quiet {
-  font-size: 1rem; color: var(--color-ink-2); text-decoration: none;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
-  background-image: linear-gradient(var(--color-accent), var(--color-accent));
-  background-size: 100% 2px; background-position: 0 100%; background-repeat: no-repeat;
-  padding-block-end: 2px;
-  transition: background-size var(--dur-short) var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding-inline: var(--space-lg);
+  border: var(--rule-hair) solid var(--color-ink);
+  border-radius: var(--radius-none);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out),
+              color var(--dur-short) var(--ease-out),
+              transform var(--dur-micro) var(--ease-out);
 }
-.link-quiet:hover { background-size: 100% 4px; }
+.btn:hover { background: var(--color-signal-deep); border-color: var(--color-signal-deep); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.btn:disabled { background: var(--color-rule-2); border-color: var(--color-rule); color: var(--color-ink-2); cursor: not-allowed; }
 
-.artifact {
-  background: var(--color-paper-2);
-  border: var(--rule-hair) solid var(--color-rule-2);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  transform: rotate(-1.6deg);
-  padding: var(--space-lg);
+.link-quiet {
+  font-size: var(--text-base);
+  color: var(--color-ink-2);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--color-rule);
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out), text-decoration-color var(--dur-micro) var(--ease-out);
 }
-.artifact figcaption {
-  font-size: var(--text-xs); color: var(--color-ink-3);
-  letter-spacing: 0.12em; text-transform: uppercase;
-  margin-block-start: var(--space-md);
-}
-.artifact svg { display: block; width: 100%; height: auto; }
-.ink { fill: none; stroke: var(--color-ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.acc { fill: none; stroke: var(--color-focus); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.svg-label { font-family: var(--font-body); font-size: 15px; font-weight: 500; fill: var(--color-ink); }
-.svg-label--muted { fill: var(--color-ink-3); font-weight: 400; }
+.link-quiet:hover { color: var(--color-signal-deep); text-decoration-color: var(--color-signal); }
+.link-quiet:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
 
-/* ---------- steps ---------- */
-.steps { padding-block: var(--space-3xl); }
-.steps h2 { font-size: var(--text-2xl); max-width: 24ch; }
-.steps ol {
-  list-style: none; counter-reset: step; margin: var(--space-2xl) 0 0; padding: 0;
+/* ── the year band: the signature move ───────────────────────────── */
+
+.band {
+  background: var(--color-field);
+  color: var(--color-on-field);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  border-top: var(--rule-bold) solid var(--color-signal);
+  margin: 0;
+}
+.band__plot {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-2xs);
+  height: 13.5rem;
+  border-bottom: var(--rule-hair) solid var(--color-rule-field);
+  padding-bottom: var(--space-2xs);
+}
+.band__month {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  height: 100%;
+}
+.band__bar {
+  background: var(--color-on-field-2);
+  height: calc(var(--h) * 1%);
+  min-height: 2px;
+}
+.band__slice {
+  background: var(--color-signal-light);
+  height: calc(var(--s) * 1%);
+  min-height: 2px;
+}
+.band__scale {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-2xs);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--color-on-field-2);
+  font-variant-numeric: tabular-nums;
+  padding-top: var(--space-2xs);
+  text-align: center;
+}
+.band__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-on-field-2);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: var(--rule-hair) solid var(--color-rule-field);
+}
+.band__key span { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.band__key i { width: 0.7rem; height: 0.7rem; display: inline-block; font-style: normal; }
+.band__key i.is-slice { background: var(--color-signal-light); }
+.band__key i.is-rest { background: var(--color-on-field-2); }
+.band__caption {
+  font-size: var(--text-sm);
+  color: var(--color-on-field-2);
+  margin-top: var(--space-sm);
+  max-width: 48ch;
+}
+
+/* ── sections ─────────────────────────────────────────────────────── */
+
+.section { padding-block: var(--space-3xl); }
+.section--tight { padding-block: var(--space-2xl); }
+.section--field {
+  background: var(--color-field);
+  color: var(--color-on-field);
+  padding-block: var(--space-3xl);
+}
+.section--paper-2 { background: var(--color-paper-2); }
+.section__title {
+  font-size: var(--text-2xl);
+  line-height: 1.1;
+  max-width: 24ch;
+}
+.section__title--wide { max-width: 30ch; }
+.lead {
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+  max-width: 52ch;
+  margin-top: var(--space-md);
+}
+.section--field .lead { color: var(--color-on-field-2); }
+
+/* steps — a real ordered list, numerals set at graphic scale */
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 .steps li {
   counter-increment: step;
-  display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-xs);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm);
   padding-block: var(--space-xl);
-  border-top: var(--rule-hair) solid var(--color-rule);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
 }
 .steps li::before {
-  content: counter(step);
-  font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600;
-  color: var(--color-focus); line-height: 1;
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-2xl);
+  line-height: 1;
+  color: var(--color-signal);
   font-variant-numeric: tabular-nums;
 }
-.steps h3 { font-size: var(--text-lg); }
-.steps p { max-width: 58ch; }
+.steps h3 { font-size: var(--text-md); line-height: 1.25; max-width: 22ch; }
+.steps p { color: var(--color-ink-2); max-width: var(--measure); }
 
-/* ---------- band ---------- */
-.band {
-  background: var(--color-paper-3);
-  border-block: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-3xl);
-}
-.band__grid { display: grid; gap: var(--space-2xl); grid-template-columns: minmax(0, 1fr); align-items: end; }
-.band h2 { font-size: var(--text-2xl); max-width: 18ch; }
-.band p { max-width: 52ch; margin-block-start: var(--space-lg); }
-.band figure { margin: 0; }
-.band figcaption {
-  font-size: var(--text-sm); color: var(--color-ink-2);
-  margin-block-start: var(--space-md); max-width: 48ch;
-}
-.bars { display: block; width: 100%; height: auto; }
-
-/* ---------- rate ---------- */
-.rate { padding-block: var(--space-3xl); }
-.rate__grid { display: grid; gap: var(--space-xl) var(--space-2xl); grid-template-columns: minmax(0, 1fr); }
-.rate h2 { font-size: var(--text-2xl); max-width: 16ch; }
-.rate p { max-width: 56ch; }
-.rate p + p { margin-block-start: var(--space-md); }
-.note {
-  border-inline-start: 2px solid var(--color-accent);
-  padding-inline-start: var(--space-md);
-  color: var(--color-ink-3); font-size: var(--text-sm);
-  margin-block-start: var(--space-lg);
-  max-width: 46ch;
-}
-
-/* ---------- refusals ---------- */
-.refuse { padding-block: var(--space-2xl) var(--space-3xl); }
-.refuse h2 { font-size: var(--text-xl); }
-.refuse dl { margin: var(--space-xl) 0 0; }
-.refuse div {
-  border-top: var(--rule-hair) solid var(--color-rule);
-  padding-block: var(--space-lg);
-  display: grid; gap: var(--space-2xs);
+/* the split: prose beside a two-column reckoning */
+.split {
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xl);
+  margin-top: var(--space-xl);
 }
-.refuse dt { font-family: var(--font-display); font-size: var(--text-md); color: var(--color-ink); font-weight: 600; }
-.refuse dd { margin: 0; max-width: 54ch; }
+.reckoning { margin: 0; }
+.reckoning dt {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-base);
+  letter-spacing: 0.01em;
+  padding-top: var(--space-md);
+  border-top: var(--rule-hair) solid var(--color-rule-field);
+  color: var(--color-on-field);
+}
+.reckoning dd {
+  margin: var(--space-2xs) 0 var(--space-lg);
+  color: var(--color-on-field-2);
+  max-width: 44ch;
+}
+.reckoning dd:last-child { margin-bottom: 0; }
 
-/* ---------- questions ---------- */
-.qa { padding-block: var(--space-3xl); border-top: var(--rule-hair) solid var(--color-rule); }
-.qa h2 { font-size: var(--text-xl); }
-.qa__list { margin-block-start: var(--space-xl); max-width: 62ch; }
-.qa details { border-top: var(--rule-hair) solid var(--color-rule); }
-.qa details:last-of-type { border-bottom: var(--rule-hair) solid var(--color-rule); }
-.qa summary {
-  list-style: none; cursor: pointer;
+/* refusals */
+.refusals { list-style: none; margin: var(--space-xl) 0 0; padding: 0; }
+.refusals li {
+  padding-block: var(--space-md);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  max-width: var(--measure);
+  font-size: var(--text-md);
+  line-height: 1.4;
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+.refusals li:first-child { border-top: var(--rule-hair) solid var(--color-rule); }
+
+/* questions */
+.qa { margin: var(--space-xl) 0 0; }
+.qa > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs);
   padding-block: var(--space-lg);
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);
-  font-weight: 600; color: var(--color-ink);
-  text-decoration-line: underline;
-  text-decoration-thickness: 2px;
-  text-decoration-color: transparent;
-  text-underline-offset: 3px;
-  transition: text-decoration-color var(--dur-micro) var(--ease-out);
-}
-.qa summary::-webkit-details-marker { display: none; }
-.qa summary:hover { text-decoration-color: var(--color-accent); }
-.qa summary .plus {
-  flex: none; width: 14px; height: 14px;
-  transition: transform var(--dur-short) var(--ease-out);
-}
-.qa details[open] summary .plus { transform: rotate(45deg); }
-.qa details p { padding-block-end: var(--space-lg); max-width: 58ch; }
-
-/* ---------- close ---------- */
-.close { padding-block: var(--space-3xl) var(--space-2xl); border-top: var(--rule-hair) solid var(--color-rule); }
-.close h2 { font-size: var(--text-display-s); max-width: 20ch; }
-.close__cta {
-  display: inline-flex; align-items: center; gap: var(--space-sm);
-  margin-block-start: var(--space-xl);
-  font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600;
-  color: var(--color-ink); text-decoration: none; white-space: nowrap;
-  background-image: linear-gradient(var(--color-accent), var(--color-accent));
-  background-size: 100% 3px; background-position: 0 100%; background-repeat: no-repeat;
-  padding-block-end: 4px;
-  transition: background-size var(--dur-short) var(--ease-out);
-}
-.close__cta:hover { background-size: 100% 8px; }
-.close__cta svg { flex: none; transition: transform var(--dur-short) var(--ease-out); }
-.close__cta:hover svg { transform: translateX(4px); }
-
-/* ---------- footer ---------- */
-.colophon {
-  padding-block: var(--space-xl) var(--space-2xl);
   border-top: var(--rule-hair) solid var(--color-rule);
-  display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-xl);
+}
+.qa dt { font-family: var(--font-display); font-weight: 500; font-size: var(--text-md); line-height: 1.3; }
+.qa dd { margin: 0; color: var(--color-ink-2); max-width: var(--measure); }
+
+/* closing band */
+.close__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xl);
+  align-items: end;
+}
+.close h2 { font-size: var(--text-2xl); line-height: 1.1; max-width: 18ch; color: var(--color-on-field); }
+.close .btn { background: var(--color-on-field); border-color: var(--color-on-field); color: var(--color-field); }
+.close .btn:hover { background: var(--color-signal-light); border-color: var(--color-signal-light); color: var(--color-field-2); }
+.close .btn:focus-visible { outline: 2px solid var(--color-signal-light); outline-offset: 3px; }
+.close p { color: var(--color-on-field-2); max-width: 46ch; }
+.close__line { margin-bottom: var(--space-lg); }
+.close__strip {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--space-2xs);
+  height: 4rem;
+  margin-bottom: var(--space-2xl);
+  border-bottom: var(--rule-hair) solid var(--color-rule-field);
+  padding-bottom: var(--space-2xs);
+}
+.close__strip span {
+  display: block;
+  background: var(--color-signal-light);
+  height: calc(var(--h) * 0.04rem);
+  min-height: 2px;
+}
+
+/* footer — one justified colophon, no columns */
+.colophon {
+  border-top: var(--rule-bold) solid var(--color-ink);
+  padding-block: var(--space-xl) var(--space-2xl);
+}
+.colophon p {
+  text-align: justify;
+  hyphens: auto;
+  max-width: 70ch;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+.colophon__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
   align-items: baseline;
-  font-size: 1rem; color: var(--color-ink-3);
+  margin-top: var(--space-lg);
+  font-size: var(--text-sm);
 }
-.colophon ul { display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-lg); list-style: none; margin: 0; padding: 0; }
-.colophon a { color: var(--color-ink-2); text-decoration: none; white-space: nowrap;
-  background-image: linear-gradient(var(--color-ink-2), var(--color-ink-2));
-  background-size: 0% var(--rule-hair); background-position: 0 100%; background-repeat: no-repeat;
-  transition: background-size var(--dur-short) var(--ease-out); }
-.colophon a:hover { background-size: 100% var(--rule-hair); }
-.colophon .end { margin-inline-start: auto; }
+.foot__link {
+  color: var(--color-ink-2);
+  white-space: nowrap;
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 2px;
+  transition: color var(--dur-micro) var(--ease-out), text-decoration-color var(--dur-micro) var(--ease-out);
+}
+.foot__link:hover { color: var(--color-signal-deep); text-decoration-color: var(--color-signal); }
+.foot__link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; }
 
-/* ---------- reveal ---------- */
-.reveal { opacity: 0; transform: translateY(8px); animation: reveal var(--dur-long) var(--ease-out) forwards; animation-delay: calc(var(--i, 0) * 70ms); }
+/* ── one orchestrated entrance ───────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
 @keyframes reveal { to { opacity: 1; transform: none; } }
-
-/* ---------- breakpoints ---------- */
-@media (min-width: 40rem) {
-  .steps li { grid-template-columns: 4.5rem minmax(0, 1fr); column-gap: var(--space-lg); }
-  .steps li::before { grid-row: span 2; }
-  .steps h3, .steps p { grid-column: 2; }
-  .refuse div { grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); column-gap: var(--space-xl); }
-}
-@media (min-width: 60rem) {
-  .masthead a:not(.wordmark), .colophon, .btn, .link-quiet { font-size: 0.9375rem; }
-  .hero { padding-block: calc(var(--space-2xl) * 0.9) calc(var(--space-3xl) * 1.15); }
-  .hero__grid { grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr); gap: var(--space-3xl); }
-  .band__grid { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--space-3xl); }
-  .rate__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
-  .steps ol { margin-inline-start: 0; }
-}
-@media (pointer: coarse) { .btn { min-height: 48px; } .qa summary { padding-block: var(--space-lg); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 1ms !important;
+    animation-duration: 150ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
+    transition-duration: 150ms !important;
   }
-  .reveal { opacity: 1; transform: none; animation: none; }
-  .btn:hover { transform: none; }
+  .reveal { animation: reveal-reduced 150ms linear forwards; }
+  @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
+}
+
+/* ── up ──────────────────────────────────────────────────────────── */
+
+@media (min-width: 60rem) {
+  .hero { padding-block: var(--space-2xl) var(--space-4xl); }
+  .hero__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: var(--space-3xl); }
+  .steps li { grid-template-columns: 4.5rem minmax(0, 15rem) minmax(0, 1fr); gap: var(--space-xl); align-items: start; }
+  .split { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--space-3xl); }
+  .qa > div { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--space-2xl); }
+  .close__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); gap: var(--space-3xl); }
+  .rail__link, .foot__link, .btn, .masthead__note { font-size: var(--text-sm); }
+  .btn { font-size: var(--text-base); }
+}
+
+@media (max-width: 34rem) {
+  .band__plot { height: 9rem; }
+  .band__scale { letter-spacing: 0; }
+  .masthead__rail { justify-content: flex-start; gap: var(--space-md); }
+  .masthead__note { display: none; }
 }
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">Skip to the page</a>
 
-<header class="shell masthead">
-  <a class="wordmark" href="#top">Even<span class="dot">.</span></a>
-  <nav aria-label="Primary">
-    <ul>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#rate">Your rate</a></li>
-      <li><a href="#questions">Questions</a></li>
-      <li><a href="#start">Sign in</a></li>
-    </ul>
-  </nav>
+<header class="masthead">
+  <div class="shell">
+    <div class="masthead__top">
+      <a class="wordmark" href="#main">Even</a>
+      <p class="masthead__note">Set aside for tax, as the money lands</p>
+    </div>
+    <hr class="masthead__rule">
+    <nav class="masthead__rail" aria-label="Sections of this page">
+      <a class="rail__link" href="#how">How it works</a>
+      <a class="rail__link" href="#split">The split</a>
+      <a class="rail__link" href="#refusals">What it will not do</a>
+      <a class="rail__link" href="#questions">Questions</a>
+      <a class="rail__link rail__link--now" href="#start">Start setting aside</a>
+    </nav>
+  </div>
 </header>
-<hr class="rule">
 
 <main id="main">
 
-  <section class="shell hero" id="top">
-    <div class="hero__grid">
+  <section class="hero">
+    <div class="shell hero__grid">
       <div>
-        <h1 class="reveal" style="--i: 0">Tax money, moved <span class="mark">before you spend it</span>.</h1>
-        <p class="hero__lede reveal" style="--i: 1">When an invoice clears, your tax percentage leaves with it. What stays in the account is genuinely yours to spend.</p>
+        <h1 class="hero__display reveal" style="--i: 0">Every invoice arrives already split.</h1>
+        <p class="hero__lede reveal" style="--i: 1">Even watches the money land, moves the tax share into a separate account the same day, and leaves the rest spendable.</p>
         <div class="hero__actions reveal" style="--i: 2">
-          <a class="btn" href="#start">Start setting aside <span class="arrow" aria-hidden="true">&rarr;</span></a>
-          <a class="link-quiet" href="#rate">How the rate is chosen</a>
+          <a class="btn" href="#start">Start setting aside</a>
+          <a class="link-quiet" href="#how">See how the split works</a>
         </div>
+        <p class="hero__aside reveal" style="--i: 3">No spreadsheet, no January arithmetic. Built for people whose income arrives in lumps: designers, writers, contractors.</p>
       </div>
 
-      <figure class="artifact reveal" style="--i: 3; margin: 0;">
-        <svg viewBox="0 0 440 250" role="img" aria-labelledby="split-title split-desc">
-          <title id="split-title">One payment, split in two on arrival</title>
-          <desc id="split-desc">A drawn diagram: an invoice payment arrives and divides into two paths, the upper one labelled yours to spend and the lower one, drawn in marigold, labelled set aside for tax.</desc>
-          <path class="ink" d="M18 125 H120"/>
-          <circle cx="18" cy="125" r="5.5" fill="var(--color-ink)" stroke="none"/>
-          <path class="ink" d="M120 125 C160 125 168 74 208 74 H296"/>
-          <path class="ink" d="M288 67 L297 74 L288 81"/>
-          <path class="acc" d="M120 125 C160 125 168 180 208 180 H296"/>
-          <path class="acc" d="M288 173 L297 180 L288 187"/>
-          <text class="svg-label svg-label--muted" x="18" y="106">Invoice paid</text>
-          <text class="svg-label" x="308" y="70">Yours</text>
-          <text class="svg-label svg-label--muted" x="308" y="90">to spend</text>
-          <text class="svg-label" x="308" y="176">Set aside</text>
-          <text class="svg-label svg-label--muted" x="308" y="196">for tax</text>
-        </svg>
-        <figcaption>Illustration, not your account</figcaption>
+      <figure class="band reveal" style="--i: 4">
+        <div class="band__plot" role="img" aria-label="Schematic of a freelance year: twelve months of irregular invoices, each with a tax slice lifted off the top.">
+          <div class="band__month"><span class="band__slice" style="--s: 9"></span><span class="band__bar" style="--h: 28"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 3"></span><span class="band__bar" style="--h: 9"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 21"></span><span class="band__bar" style="--h: 63"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 12"></span><span class="band__bar" style="--h: 37"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 0.5"></span><span class="band__bar" style="--h: 2"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 17"></span><span class="band__bar" style="--h: 51"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 25"></span><span class="band__bar" style="--h: 74"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 6"></span><span class="band__bar" style="--h: 18"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 14"></span><span class="band__bar" style="--h: 43"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 22"></span><span class="band__bar" style="--h: 66"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 4"></span><span class="band__bar" style="--h: 13"></span></div>
+          <div class="band__month"><span class="band__slice" style="--s: 19"></span><span class="band__bar" style="--h: 57"></span></div>
+        </div>
+        <div class="band__scale" aria-hidden="true">
+          <span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span>
+        </div>
+        <p class="band__key">
+          <span><i class="is-slice"></i> the slice that leaves</span>
+          <span><i class="is-rest"></i> what stays spendable</span>
+        </p>
+        <figcaption class="band__caption">Schematic. The bars show the shape of a freelance year, not anyone’s balance.</figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="shell steps" id="how">
-    <h2>Three things happen, and then nothing happens again.</h2>
-    <ol>
-      <li>
-        <h3>You connect the account you get paid into</h3>
-        <p>Read-only. Even needs to see money arrive; it never needs to move money out of that account on its own.</p>
-      </li>
-      <li>
-        <h3>You set the percentage you want held back</h3>
-        <p>One number, yours to pick, changeable whenever your situation changes. A note explaining what usually moves it sits further down this page.</p>
-      </li>
-      <li>
-        <h3>An invoice clears, and the slice leaves with it</h3>
-        <p>The reserve fills in lumps, exactly the way your income does. When the bill arrives, the money is already sitting in one place with a boring name.</p>
-      </li>
-    </ol>
-  </section>
-
-  <section class="band">
-    <div class="shell band__grid">
-      <div>
-        <h2>Saving a fixed amount every month assumes a fixed month.</h2>
-        <p>Freelance income does not arrive in equal instalments. Two projects land in March, nothing lands in April, and a standing order for a flat sum bounces at the worst possible moment. A percentage of each payment survives that; a monthly figure does not.</p>
-      </div>
-      <figure>
-        <svg class="bars" viewBox="0 0 440 210" role="img" aria-labelledby="bars-title bars-desc">
-          <title id="bars-title">Uneven payments, an even share held back</title>
-          <desc id="bars-desc">Nine bars of very different heights stand for payments arriving month by month. The lower part of each bar is marigold: the same share of every payment, however large or small it was.</desc>
-          <g stroke="var(--color-ink)" stroke-width="1.6" stroke-linejoin="round">
-            <rect x="12"  y="112" width="30" height="70"  fill="none"/>
-            <rect x="60"  y="70"  width="30" height="112" fill="none"/>
-            <rect x="108" y="148" width="30" height="34"  fill="none"/>
-            <rect x="156" y="52"  width="30" height="130" fill="none"/>
-            <rect x="204" y="102" width="30" height="80"  fill="none"/>
-            <rect x="252" y="164" width="30" height="18"  fill="none"/>
-            <rect x="300" y="62"  width="30" height="120" fill="none"/>
-            <rect x="348" y="90"  width="30" height="92"  fill="none"/>
-            <rect x="396" y="134" width="30" height="48"  fill="none"/>
-          </g>
-          <g fill="var(--color-accent)" stroke="none">
-            <rect x="12"  y="162" width="30" height="20"/>
-            <rect x="60"  y="150" width="30" height="32"/>
-            <rect x="108" y="172" width="30" height="10"/>
-            <rect x="156" y="145" width="30" height="37"/>
-            <rect x="204" y="159" width="30" height="23"/>
-            <rect x="252" y="177" width="30" height="5"/>
-            <rect x="300" y="148" width="30" height="34"/>
-            <rect x="348" y="156" width="30" height="26"/>
-            <rect x="396" y="169" width="30" height="13"/>
-          </g>
-          <path class="ink" d="M8 182 H432"/>
-        </svg>
-        <figcaption>Each bar is a payment. The marigold part is the same share of every one of them, whatever it was worth.</figcaption>
-      </figure>
+  <section class="section section--paper-2" id="how">
+    <div class="shell">
+      <h2 class="section__title">Three things happen, and you do none of them.</h2>
+      <p class="lead">Even sits beside the account you already invoice into. It does not replace your bank and it does not file anything for you.</p>
+      <ol class="steps">
+        <li>
+          <h3>The payment lands</h3>
+          <p>Even reads the incoming payment on the account you connect. Client name, amount, date. Nothing is moved until the money has actually cleared, so a bounced payment never sets anything aside.</p>
+        </li>
+        <li>
+          <h3>The slice is lifted off the top</h3>
+          <p>Your rate is applied to the amount that arrived, and that share moves into a separate savings account held in your name. It happens the same day, before the balance has time to look like yours.</p>
+        </li>
+        <li>
+          <h3>The rest is just money</h3>
+          <p>What is left in the current account is spendable without doing sums first. When the bill comes due, the other account is where you have been paying it from all year.</p>
+        </li>
+      </ol>
     </div>
   </section>
 
-  <section class="shell rate" id="rate">
-    <div class="rate__grid">
-      <h2>The percentage is a decision, not a default.</h2>
-      <div>
-        <p>Even will not guess your tax rate for you. Where you file, whether you are registered for VAT or its local equivalent, what you can deduct, and how much you have already paid this year all move the number, and none of that is visible from a bank feed.</p>
-        <p>So the rate is a field you fill in. Set it once, raise it after a good quarter, lower it when the numbers say you can. Every payment that lands afterwards follows the new number.</p>
-        <p class="note">Rate to confirm with whoever does your return. If you do not have one yet, start high: an over-full reserve is a pleasant problem.</p>
+  <section class="section section--field" id="split">
+    <div class="shell">
+      <h2 class="section__title section__title--wide">You set the rate once, and change it when your year changes.</h2>
+      <div class="split">
+        <div>
+          <p class="lead">A rate that is roughly right, applied to every invoice, beats a rate that is exactly right applied to none of them. Raise it after a good quarter; lower it when work thins out. The account keeps whatever is already in it.</p>
+        </div>
+        <dl class="reckoning">
+          <dt>What Even moves</dt>
+          <dd>Your chosen share of each payment that clears, into a savings account in your own name.</dd>
+          <dt>What Even leaves alone</dt>
+          <dd>Everything else in the current account. Standing orders, card payments and direct debits are none of its business.</dd>
+          <dt>What you still do</dt>
+          <dd>File your return, and decide the rate. Even is a habit, not an accountant.</dd>
+          <dt>Getting the money back out</dt>
+          <dd>It is your account. Withdraw any of it, any day, without asking Even first.</dd>
+        </dl>
       </div>
     </div>
   </section>
 
-  <section class="shell refuse">
-    <h2>Things Even does not do</h2>
-    <dl>
-      <div>
-        <dt>It does not file anything</dt>
-        <dd>Even holds money back. Submitting a return is still between you, your accountant, and the revenue office.</dd>
-      </div>
-      <div>
-        <dt>It does not invest the reserve</dt>
-        <dd>Tax money is not risk capital. It sits still until you need it.</dd>
-      </div>
-      <div>
-        <dt>It does not chase your clients</dt>
-        <dd>Even reacts to payments that arrive. Getting the invoice paid in the first place is a different job, and other tools already do it.</dd>
-      </div>
-    </dl>
-  </section>
-
-  <section class="shell qa" id="questions">
-    <h2>Questions people ask before signing up</h2>
-    <div class="qa__list">
-      <details>
-        <summary>Can I get the money back out?<svg class="plus" viewBox="0 0 14 14" aria-hidden="true"><path class="ink" stroke-width="1.8" d="M7 1 V13 M1 7 H13"/></svg></summary>
-        <p>Yes. It is your money in your reserve, and there is no lock on it. It is deliberately one step further away than your spending account, which is the whole point, but a step is not a wall.</p>
-      </details>
-      <details>
-        <summary>What if a client pays me in cash?<svg class="plus" viewBox="0 0 14 14" aria-hidden="true"><path class="ink" stroke-width="1.8" d="M7 1 V13 M1 7 H13"/></svg></summary>
-        <p>Even only sees what reaches the connected account, so cash and anything paid elsewhere has to be added by hand. You can record a payment yourself and the same percentage is applied to it.</p>
-      </details>
-      <details>
-        <summary>Does it work if my income is genuinely tiny some months?<svg class="plus" viewBox="0 0 14 14" aria-hidden="true"><path class="ink" stroke-width="1.8" d="M7 1 V13 M1 7 H13"/></svg></summary>
-        <p>That is the case it is built for. A percentage of a small payment is a small amount, so a thin month sets aside almost nothing rather than overdrawing you to hit a target.</p>
-      </details>
-      <details>
-        <summary>I already have a separate savings account for this.<svg class="plus" viewBox="0 0 14 14" aria-hidden="true"><path class="ink" stroke-width="1.8" d="M7 1 V13 M1 7 H13"/></svg></summary>
-        <p>Then you have the hard part solved and only the discipline left. Even is the transfer you keep meaning to make on the day the payment lands, made without you.</p>
-      </details>
+  <section class="section section--tight" id="refusals">
+    <div class="shell">
+      <h2 class="section__title">A short list of things this will never do.</h2>
+      <ul class="refusals">
+        <li>Lock your money away until a date it picked.</li>
+        <li>Guess your tax rate and then present the guess as advice.</li>
+        <li>Move anything on an invoice that has not actually been paid.</li>
+        <li>Send you a notification because you spent money on a Saturday.</li>
+      </ul>
     </div>
   </section>
 
-  <section class="shell close" id="start">
-    <h2>The bill is the same either way. The month it arrives in does not have to be.</h2>
-    <a class="close__cta" href="#start">Set your rate and start
-      <svg width="26" height="14" viewBox="0 0 26 14" aria-hidden="true"><path class="ink" d="M1 7 H23 M17 1 L24 7 L17 13"/></svg>
-    </a>
+  <section class="section" id="questions">
+    <div class="shell">
+      <h2 class="section__title">Questions people ask before they connect anything.</h2>
+      <dl class="qa">
+        <div>
+          <dt>My income is nothing for two months and then everything at once.</dt>
+          <dd>That is the case Even is built for. It works per payment rather than per month, so a quiet March sets aside nothing and a heavy April sets aside plenty. Nothing is ever taken from a balance that no invoice paid for.</dd>
+        </div>
+        <div>
+          <dt>What rate should I use?</dt>
+          <dd>Even will not tell you, because the honest answer depends on your country, your allowances and your expenses. Your accountant will give you a figure in one line; type it in and forget it.</dd>
+        </div>
+        <div>
+          <dt>What if I set aside too much?</dt>
+          <dd>Then you have savings. The account is yours, the money is withdrawable, and a year that ends with a surplus in it is not a failure of the tool.</dd>
+        </div>
+        <div>
+          <dt>Does it work with the way I already invoice?</dt>
+          <dd>Even watches the bank account, not the invoice. Whatever you send the invoice from, if the payment arrives in the connected account, Even sees it.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section section--field close" id="start">
+    <div class="shell">
+      <div class="close__strip" aria-hidden="true">
+        <span style="--h: 28"></span><span style="--h: 9"></span><span style="--h: 63"></span>
+        <span style="--h: 37"></span><span style="--h: 2"></span><span style="--h: 51"></span>
+        <span style="--h: 74"></span><span style="--h: 18"></span><span style="--h: 43"></span>
+        <span style="--h: 66"></span><span style="--h: 13"></span><span style="--h: 57"></span>
+      </div>
+    </div>
+    <div class="shell close__inner">
+      <h2>The next invoice can arrive already split.</h2>
+      <div>
+        <p class="close__line">Connect the account you invoice into, choose a rate, and then stop thinking about it.</p>
+        <button class="btn" type="button">Start setting aside</button>
+      </div>
+    </div>
   </section>
 
 </main>
 
-<footer class="shell colophon">
-  <span>Even &middot; a tax reserve for people who invoice.</span>
-  <ul>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#rate">Your rate</a></li>
-    <li><a href="#questions">Questions</a></li>
-  </ul>
-  <span class="end">&copy; 2026</span>
+<footer class="colophon">
+  <div class="shell">
+    <p>Even is a savings tool for self-employed people with irregular income. It moves a share of every payment that clears into a separate account held in your name, so the money you owe stops sitting in the balance you spend from. It does not give tax advice, it does not file returns, and it does not decide your rate for you. Typeset in Zilla Slab and IBM Plex Sans, printed here in two colours on stone.</p>
+    <div class="colophon__foot">
+      <span class="wordmark">Even</span>
+      <a class="foot__link" href="#how">How it works</a>
+      <a class="foot__link" href="#questions">Questions</a>
+      <a class="foot__link" href="#start">Start setting aside</a>
+    </div>
+  </div>
 </footer>
 
 </body>

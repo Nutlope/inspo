@@ -1,16 +1,21 @@
 [
   {
-    "date": "2026-08-05",
-    "macrostructure": "Reserve ledger (designed, not a catalog shape)",
-    "theme": "Field",
-    "hero": "Stage/drawn-artifact",
-    "nav": "hairline masthead, wordmark left, plain text links right, no CTA button, not sticky",
-    "footer": "single colophon line, links inline, no columns, no social row",
-    "enrichment": "tier-B hand-built SVG: split diagram in the hero, lumpy-income figure in the band",
-    "section-entry": "one full-bleed hairline, repeated, plus a single change of paper",
-    "axes": "light/roman-serif/chromatic-marigold ~80",
-    "fingerprint": "Left-biased|Asymmetric two-column|Hairline|Tinted band|Margin-hung numerals|Single staggered hero settle",
+    "date": "2026-08-06",
+    "macrostructure": "bespoke: seed-packet front, then the reverse",
+    "theme": "custom",
+    "direction": "the seed-packet rack",
+    "posture": "full-palette",
+    "seed": "even-freelancer-tax-savings·2026-08-06·r0",
+    "wildcard": "none (Letterpress playbill and Transit wayfinding both declined)",
+    "vibe": "two-colour print, sow now, lift later",
+    "hero": "Stage/H2",
+    "nav": "two-line masthead, rule between wordmark and rail",
+    "footer": "single justified colophon",
+    "enrichment": "pure CSS art: the year band",
+    "section-entry": "change of paper, repeated",
+    "axes": "light/slab-serif/chromatic-rose ~355",
+    "fingerprint": "Left-biased|Asymmetric two-column|Hairline + change of paper|Uncontained rows|Edge-aligned|Single hero settle",
     "waived": [],
-    "brief": "Even · tax reserve for freelancers with irregular income"
+    "brief": "Even · savings app that sets aside tax for freelancers with irregular income"
   }
 ]

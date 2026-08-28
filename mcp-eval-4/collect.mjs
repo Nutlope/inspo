@@ -19,6 +19,12 @@ const BRIEFS = [
   "m3-fintech",
   "m4-ceramics",
   "m5-producttour",
+  // Round 2 (2026-08-28): nothing + inspo-only arms only.
+  "m6-hardware",
+  "m7-logistics",
+  "m8-editorial",
+  "m9-course",
+  "m10-oss",
 ];
 
 /** Tokens/tool-calls/duration, keyed "<arm>/<brief>", filled from the
@@ -38,6 +44,7 @@ const rows = [];
 for (const arm of ARMS) {
   for (const brief of BRIEFS) {
     const dir = join(ROOT, arm, brief);
+    if (!existsSync(dir)) continue; // round-2 brief, arm not in the round
     const notesPath = join(dir, "NOTES.md");
     const htmlPath = join(dir, "index.html");
     const key = `${arm}/${brief}`;

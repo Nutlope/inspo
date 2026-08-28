@@ -84,3 +84,33 @@ commands.
 
 Do not score your own page. Do not write any file outside your own
 brief directory.
+
+## Round 2 briefs (m6-m10)
+
+Added 2026-08-28. Round 2 runs TWO arms only: `nothing` and
+`inspo-only`. Same deliverable rules, same NOTES.md format.
+
+**m6-hardware** - Vellum. A pocket e-ink writing tablet: a paper-grade
+screen, a real keyboard, a week of battery, and nothing to check.
+Audience is writers who draft away from their desk and are tired of
+typing on glass.
+
+**m7-logistics** - Manifest. Customs paperwork automation for small
+importers: it files the forms and flags the tariff codes that get a
+shipment held. Audience is 2-20 person import businesses that cannot
+afford a broker on retainer.
+
+**m8-editorial** - Footnote. A paid weekly letter on how cities
+actually work: one subject each week, read in fifteen minutes.
+Audience is policy people, urbanists and curious generalists who
+already pay for one or two newsletters.
+
+**m9-course** - Primer. A four-week writing course for engineers whose
+design docs get skimmed and whose proposals get misread. Cohorts of
+twenty, two evenings a week. Audience is senior engineers who write
+constantly and were never taught how.
+
+**m10-oss** - Windlass. An open-source job queue for Node.js backed by
+SQLite: no Redis, no ops, one dependency. Audience is solo developers
+and small teams who want background jobs without standing up more
+infrastructure.

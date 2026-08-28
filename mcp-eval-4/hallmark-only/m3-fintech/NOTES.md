@@ -1,50 +1,21 @@
 # hallmark-only / m3-fintech
 
 ## Timing
-start: 1785927218
-end:   1785927725
+start: 1786028993
+end:   1786029557
 
 ## Tool calls
-total: 48
+total: 47
 inspo: 0
-breakdown: Read x18, Edit x14, Bash x7, Write x4, mcp__Claude_Browser__resize_window x1, mcp__Claude_Browser__navigate x1, mcp__Claude_Browser__tabs_context x1, mcp__Claude_Browser__tabs_create x1, mcp__Claude_Browser__preview_start x1
+breakdown: Read x17, Edit x18, Bash x7, Write x4, Agent x1
 
 ## What drove the design
 
-Pre-flight found an empty directory: no fonts, no palette, no motion library, no
-framework, and (recorded as absent) no reference archive, so signal 8 never fired
-and the theme route stayed catalog rather than custom-derived. The skill's Step 1
-inference disclosure is what pushed me off my first instinct: writing down
-"audience = self-employed designers and writers, tone = warm, plain, concrete"
-made the cool-blue fintech palette I would otherwise have reached for look wrong
-in one line, and I routed to the Field theme (warm cream, warm ink, a single
-marigold highlighter) instead of the Cobalt/Ledger register the category expects.
-The mirror test then changed the structure: a neighbouring brief (an invoicing
-tool) would have got the same hero-plus-three-feature-cards page, so the middle of
-the page became things that only this product can say - a real `<ol>` for the
-three-step mechanic, a tinted band arguing that a fixed monthly transfer assumes a
-fixed month, a "things Even does not do" list, and a rate section that refuses to
-guess a number. Gate 54 (no eyebrows, ever) is the single rule that most changed
-the markup: my default section openings were all small-caps labels, and replacing
-them with one repeated full-bleed hairline plus one change of paper is what makes
-the page read as set rather than assembled. Gate 46a plus the brief's rule 5
-killed the illustration I first sketched, an example invoice with an amount on it;
-the drawn artifact now carries labels only ("Invoice paid", "Yours to spend",
-"Set aside for tax") and the income figure has bars with no figures and a caption
-saying it is an illustration. The Field theme file dictated three concrete things
-I would not have done unprompted: the primary button is ink-filled rather than
-accent-filled, the marigold appears exactly once as a highlighter behind the
-x-height of one phrase, and every shadow is warm-tinted at hue 70. The contrast
-gates (40-41) caught two real bugs during the sweep: the muted ink at 57% L was
-only 3.2:1 on cream and the accent-coloured step numerals were 1.8:1, both fixed
-by darkening tokens rather than by moving colour around. Gate 44b caught a third:
-the hero lede ran six lines at 1280x800, and shortening it to two is a copy fix
-the fold check forced.
+Inferred from the brief: audience = self-employed designers, writers and contractors; use = start setting money aside; tone = editorial. Left to myself I would have built the fintech reflex, a navy-and-emerald trust palette with a dashboard card in the hero, and after dodging that I would have landed on the second reflex, monochrome Swiss restraint with a tight grotesk. Step 2.6's derivation ritual is what stopped both: it made me write the rejection down, then made an outside script pick from a seven-entry slate of things this audience already knows rather than letting me choose. The draw landed on 5/7, the seed-packet rack, and that decision cascaded into everything visible: flat two-colour print (a pine field with a carmine overprint on stone paper), a slab display face, and the page shaped as a packet front with the sowing information on the reverse. Both dealt wildcards, a letterpress playbill and Vignelli transit wayfinding, lost on product clarity and were discarded. The rejection table in `theme-axes.md` then changed a decision I had already made: my first palette was light paper / slab-serif / warm brick, which is Newsprint's exact triple, so the accent moved to a carmine rose at ~355 and the large colour was handed to a declared field role instead of the accent. Gate 54 killed the section labels I would otherwise have set above each heading, and `section-entry.md` replaced them with one repeated move, a change of paper, plus a real `<ol>` with `counter()` for the three steps, which also removed the three-column feature grid I had half-sketched. The "invent no metrics" rule (gate 46a and the eval's own rule 5) is why the hero visual is a schematic year band captioned as such rather than a balance chart, and why the proof sections are refusals and mechanics instead of numbers. The fresh-context finish review the skill mandates at Step 7 caught a real rendering bug I had shipped blind: percentage-height bars inside a grid with `align-items: end` collapse to hairlines, so the signature move was printing without its illustration.
 
 ## Friction
 
-- No render tier: puppeteer-core is not installed for `sloplint --render`, the Browser pane had hit its tab cap (the other arms hold nine tabs) and direct file navigation was refused, so gates 34, 44b, 49 and the 320-768px sweep were verified from code by the skill's stated no-render path instead of by eye.
-- Hallmark requires emitting `tokens.css`; the brief requires one self-contained `index.html`. Resolved by inlining the tokens in the page and shipping `tokens.css` alongside as the portable copy the page does not import.
-- The first waiver line I wrote was rejected by sloplint as malformed (it wants a numeric gate id); since no font gate had actually fired, the honest fix was to delete the waiver and record the deliberate display-face choice in the stamp instead.
-- `typography.md` lists Source Serif among banned-by-reflex serifs while the Field theme names Source Serif 4 as its display face. Followed the theme, per the skill's rule that a theme's named faces win.
-- Genre routing is ambiguous for this brief: a tax tool for freelancers is neither "SaaS/B2B" nor "fun/consumer". Went playful (its warm-serious end, which is where Field lives) and said so in the stamp.
+- No render available: puppeteer-core is not installed, so sloplint's `--render` tier and gates 23/34/44b could only be checked by arithmetic and by code reading, not by looking at the page.
+- SKILL.md § 6 requires `tokens.css` at the project root; SPEC rule 1 requires one self-contained `index.html` with no local asset files. Resolved by inlining the token block in the page and writing `tokens.css` beside it as an unreferenced record, noted at the top of that file.
+- `direction.md` R.2 warns that Claude renders any paper-lineage direction as cream + serif + lamplight amber; the drawn direction was a paper good, so the warning and the draw pulled against each other. Handled by giving the page's large colour to a saturated pine field rather than to the paper.
+- The closing CTA has no destination to point at (the brief supplies no product URL), so it is a `<button>` with no handler rather than a self-anchoring link. Honest, but inert.
