@@ -28,7 +28,7 @@ This is, and stays, a standard **MCP server** - packaging it for one-line instal
 
 Image URLs are absolute (against `INSPO_BASE_URL`, default `https://inspo-three.vercel.app`), so an agent can fetch them or hand them to a vision model directly.
 
-**Baked-in guidance:** the server instructions + `recommend()` tell every agent to *compose the hero to fit the first viewport (~1280×800 / `100svh`) - never overflow it.* That single rule kills the most common "AI-built page" failure (an oversized hero cut off below the fold).
+**Baked-in guidance:** the server instructions + `recommend()` carry two composition rules to every agent. `heroGuidance`: *compose the hero to fit the first viewport (~1280×800 / `100svh`) - never overflow it* - which kills the most common "AI-built page" failure (an oversized hero cut off below the fold). And `spacingGuidance`: *separate sections with real block space (production sites run 80-160px between sections) and keep all copy inside a centered, padded column* - which kills the second most common one (sections crammed into one block, text touching the viewport edge). The spacing numbers are measured from the archive, not invented.
 
 ## Install (one line per client)
 

@@ -61,14 +61,14 @@ of security hardening. The service stays free and unauthenticated throughout.
 5. Content-type guard in `study()`: only parse `text/html` and `text/css`;
    skip binary bodies. Effort: XS.
 
-## Deploy steps to make the shipped work live
-1. npm: `cd apps/mcp/dist && npm publish` (v0.1.1; the token is already set).
-   Ships tool + security code; the catalogue is fetched from the CDN at runtime.
-2. Worker: register a workers.dev subdomain (still pending), then
-   `pnpm --filter @inspo/mcp worker:deploy`. The `[[ratelimits]]` binding and
-   `global_fetch_strictly_public` flag take effect on deploy. Needs wrangler
-   4.36+ for the rate-limit binding.
-3. Add the free WAF rate rule on `/mcp` in the Cloudflare dashboard.
+## Deploy steps (routine; both live since v0.1.6)
+1. npm: `pnpm --filter @inspo/mcp build:npm && cd apps/mcp/dist && npm publish`.
+   Bump `VERSION` in scripts/build-npm.mjs and both versions in server.json
+   first; re-run `mcp-publisher publish` after npm so the registry matches.
+2. Worker: `pnpm --filter @inspo/mcp worker:deploy` (hosted endpoint is live
+   at inspo-mcp.luffixos.workers.dev/mcp). Optional: `wrangler secret put
+   TOGETHER_API_KEY` to turn on semantic ranking for hosted callers.
+3. Still pending: the free WAF rate rule on `/mcp` (Cloudflare dashboard).
 
 ## Red-team residuals (deferred; low / latent after the fixes shipped)
 A multi-agent red-team reviewed the security work; the HIGH/MEDIUM findings

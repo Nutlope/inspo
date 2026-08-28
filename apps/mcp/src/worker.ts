@@ -54,6 +54,9 @@ interface AnalyticsDataset {
 export interface Env {
   DATABASE_URL?: string;
   INSPO_BASE_URL?: string;
+  /** Optional secret: enables query-embedding semantic search on the
+   *  hosted endpoint (bridged into process.env for the query layer). */
+  TOGETHER_API_KEY?: string;
   INSPO_CATALOGUE_URL?: string;
   ENFORCE_AUTH?: string;
   /** Default profile/images for every request (query params win). */
@@ -104,6 +107,10 @@ function bridgeEnv(env: Env) {
   if (p && p.env) {
     if (env.DATABASE_URL) p.env.DATABASE_URL = env.DATABASE_URL;
     if (env.INSPO_BASE_URL) p.env.INSPO_BASE_URL = env.INSPO_BASE_URL;
+    // Without this bridge the hosted endpoint could never rank
+    // semantically: vector.ts reads process.env, and the secret only
+    // lived on `env`. Set with `wrangler secret put TOGETHER_API_KEY`.
+    if (env.TOGETHER_API_KEY) p.env.TOGETHER_API_KEY = env.TOGETHER_API_KEY;
   }
 }
 

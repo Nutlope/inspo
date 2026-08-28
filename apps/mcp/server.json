@@ -6,13 +6,13 @@
     "url": "https://github.com/Luffixos/inspo",
     "source": "github"
   },
-  "version": "0.1.5",
+  "version": "0.1.7",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "inspo-mcp",
-      "version": "0.1.5",
+      "version": "0.1.7",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {

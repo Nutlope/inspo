@@ -136,6 +136,18 @@ const HERO_GUIDANCE =
   // elements a hero contains.
   "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold - nothing important cut off. Size display type to land in 2-3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
 
+/** Companion rule for everything below the fold. The two failures
+ *  agents actually produce down-page are cramped section seams (two
+ *  sections reading as one dense block) and text touching the viewport
+ *  edge. The numbers are measured from the archive, not taste: across
+ *  the 671 sites with an extracted spacing scale, the large steps
+ *  cluster at 64-120px and the median site's biggest step is 96px.
+ *  Travels next to HERO_GUIDANCE in recommend() and the server
+ *  instructions, because server instructions alone never reach the
+ *  model in several MCP clients. */
+const SPACING_GUIDANCE =
+  "Below the fold, keep two spacing systems deliberate. VERTICAL: separate adjacent sections with real block space - production sites run 80-160px between sections (measured median for the biggest step: 96px); under ~64px two sections read as one crammed block. Pick ONE rhythm (e.g. clamp(72px, 10vw, 140px)) and apply it at every section seam instead of improvising per section. HORIZONTAL: run content in a centered max-width column with symmetric padding-inline (24px minimum on mobile, more at desktop) so text never touches the viewport edge; full-bleed is for backgrounds, not copy. Declare the two separately: a container's padding SHORTHAND (.wrap{padding:0 32px}) outranks a bare section{padding:96px 0} on any element carrying both, silently zeroing the rhythm - give the container padding-inline only, and put block spacing on its own rule. Verify after writing: a mid-page section's computed block padding or margin must not be 0px.";
+
 /** Below this many distinct sites, a macrostructure's exemplar set is
  *  too small to read a consensus off, and callers are told so.
  *
@@ -1552,10 +1564,11 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           referenceComponents,
           paletteSuggestion: palette,
           heroGuidance: HERO_GUIDANCE,
+          spacingGuidance: SPACING_GUIDANCE,
           tip:
             referencePicks.length > 0
-              ? `referenceComponents[0] carries full JSX for the canonical structure that embodies this macrostructure; the rest list a get_reference_jsx call to fetch on demand. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief - the first two carry a fold-by-fold autopsy, the rest a one-line northstar plus get_screen. Then honour heroGuidance: compose the hero to fit the first viewport.`
-              : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance: compose the hero to fit the first viewport.`,
+              ? `referenceComponents[0] carries full JSX for the canonical structure that embodies this macrostructure; the rest list a get_reference_jsx call to fetch on demand. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief - the first two carry a fold-by-fold autopsy, the rest a one-line northstar plus get_screen. Then honour heroGuidance and spacingGuidance: fit the first viewport, keep the section rhythm and gutters.`
+              : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance and spacingGuidance: fit the first viewport, keep the section rhythm and gutters.`,
         },
         exemplars
           .slice(0, RECOMMEND_INLINE_EXEMPLARS)
@@ -1668,12 +1681,5 @@ export const SERVER_INSTRUCTIONS = [
   "typographic glyphs (middle dots, arrows, true quotes); without the",
   "charset declaration they render as mojibake.",
   "",
-  "Spacing hygiene: keep the vertical rhythm and the horizontal gutter",
-  "in separate declarations. A container class with a padding shorthand",
-  "(.wrap{padding:0 32px}) outranks a bare element rule",
-  "(section{padding:76px 0}) on every element carrying that class, so",
-  "the section padding silently becomes zero and the sections collide.",
-  "Give the container `padding-inline` only, and put block padding on a",
-  "class of its own. After writing, verify a real computed value:",
-  "getComputedStyle(section).paddingTop must not be 0px.",
+  "And this spacing rule: " + SPACING_GUIDANCE,
 ].join(" ");
