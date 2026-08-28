@@ -48,8 +48,6 @@ export default async function AboutPage() {
                 Together&nbsp;AI
               </a>
               . The hosted instance is free for everyone. No tiers, no paywall.
-              Agents have tools but not taste; Inspo gives your agent the
-              reference.
             </p>
           </div>
 
@@ -70,7 +68,7 @@ export default async function AboutPage() {
                     Visual range
                   </strong>{" "}
                   - {stats.screens.toLocaleString()} hand-curated captures,
-                  nearly all with a desktop and mobile pair. Palettes, type
+                  each with a desktop and mobile pair. Palettes, type
                   ramps, tech fingerprints extracted. The agent gets real
                   designs to study, not generative slop to remix.
                 </li>
