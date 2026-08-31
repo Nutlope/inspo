@@ -1,6 +1,5 @@
 /**
- * Stamp `tags.axes` onto every catalogue row, and drop the retired
- * `tags.hallmarkTheme`.
+ * Stamp `tags.axes` onto every catalogue row.
  *
  * Local computation over `palette`, `fonts` and the row's LQIP, all of
  * which every row already carries, so this is re-runnable and needs no
@@ -61,7 +60,6 @@ for (const r of rows) {
     modeDisagrees++;
   }
   r.tags = { ...(r.tags ?? {}) };
-  delete r.tags.hallmarkTheme;
   r.tags.axes = axes;
   bump(dist.paperBand, axes.paperBand);
   bump(dist.displayClass, axes.displayClass);
