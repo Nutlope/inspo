@@ -6,13 +6,13 @@
     "url": "https://github.com/Nutlope/inspo",
     "source": "github"
   },
-  "version": "0.1.7",
+  "version": "0.1.8",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "inspo-mcp",
-      "version": "0.1.7",
+      "version": "0.1.8",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {
@@ -45,7 +45,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://inspo-mcp.luffixos.workers.dev/mcp"
+      "url": "https://inspo-three.vercel.app/api/mcp"
     }
   ]
 }

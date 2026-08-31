@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Inspo MCP server — local stdio transport.
+ * Inspo MCP server - local stdio transport.
  *
- * For tool definitions see ./tools.ts (shared with the Cloudflare Worker
- * variant in ./worker.ts). For the full server story see /mcp.
+ * For tool definitions see ./tools.ts (shared with the hosted HTTP
+ * route via ./http-handler.ts). For the full server story see /mcp.
  */
 
 // Walk up from this file looking for a .env so the server picks up

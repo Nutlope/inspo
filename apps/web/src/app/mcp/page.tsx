@@ -145,7 +145,7 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
   },
 ];
 
-const HOSTED_URL = "https://inspo-mcp.luffixos.workers.dev/mcp";
+const HOSTED_URL = "https://inspo-three.vercel.app/api/mcp";
 const CURSOR_DEEPLINK =
   "cursor://anysphere.cursor-deeplink/mcp/install?name=inspo&config=eyJ1cmwiOiJodHRwczovL2luc3BvLW1jcC5sdWZmaXhvcy53b3JrZXJzLmRldi9tY3AifQ==";
 

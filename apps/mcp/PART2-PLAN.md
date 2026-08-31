@@ -65,10 +65,11 @@ of security hardening. The service stays free and unauthenticated throughout.
 1. npm: `pnpm --filter @inspo/mcp build:npm && cd apps/mcp/dist && npm publish`.
    Bump `VERSION` in scripts/build-npm.mjs and both versions in server.json
    first; re-run `mcp-publisher publish` after npm so the registry matches.
-2. Worker: `pnpm --filter @inspo/mcp worker:deploy` (hosted endpoint is live
-   at inspo-mcp.luffixos.workers.dev/mcp). Optional: `wrangler secret put
-   TOGETHER_API_KEY` to turn on semantic ranking for hosted callers.
-3. Still pending: the free WAF rate rule on `/mcp` (Cloudflare dashboard).
+2. Hosted endpoint: ships with the web deploy (push to main redeploys
+   inspo-three.vercel.app/api/mcp). `TOGETHER_API_KEY` on the Vercel
+   project turns on semantic ranking for hosted callers.
+3. Still pending: a Vercel WAF rate rule on `/api/mcp` (dashboard) to
+   back up the in-route per-IP limiter.
 
 ## Red-team residuals (deferred; low / latent after the fixes shipped)
 A multi-agent red-team reviewed the security work; the HIGH/MEDIUM findings

@@ -27,7 +27,7 @@ Sixteen tools expose all of it; `recommend(brief)` composes most of them into on
 
 ## Tech stack
 
-- TypeScript MCP server with two transports: stdio and Streamable HTTP on a Cloudflare Worker. No database at query time; the catalogue ships as a static seed.
+- TypeScript MCP server with two transports: stdio via npm, and Streamable HTTP served by the site's own Vercel deployment. No database at query time; the catalogue ships as a static seed.
 - Next.js 16 + Tailwind v4 gallery: the archive browser and the curator dashboard.
 - Playwright capture worker: desktop and mobile shots, palette, type ramp and CSS variable extraction, tag and autopsy passes via Together AI.
 - Together AI embeddings behind semantic search and `find_similar`.
@@ -35,7 +35,7 @@ Sixteen tools expose all of it; `recommend(brief)` composes most of them into on
 
 ## Cloning & running
 
-1. Hosted, nothing to install: `claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp`
+1. Hosted, nothing to install: `claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp`
 2. Or from npm, stdio: `npx -y inspo-mcp`
 3. Or clone: `git clone https://github.com/Nutlope/inspo.git && cd inspo && pnpm install`
 4. Gallery: `pnpm dev`, then open `localhost:3737`

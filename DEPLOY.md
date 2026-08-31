@@ -1,14 +1,13 @@
 # Deploy
 
-Inspo ships to three different surfaces — each picked for the runtime its workload actually needs.
+Inspo ships to two surfaces, each picked for the runtime its workload actually needs.
 
 | Surface | Where | Runs on | Why |
 |---|---|---|---|
-| Gallery + dashboard + admin | Vercel | `apps/web` | Next.js 16 SSR, Edge-compatible runtime |
-| MCP server | Cloudflare Workers | `apps/mcp` | Edge-cached, zero cold starts, free egress |
+| Gallery + dashboard + hosted MCP | Vercel | `apps/web` | Next.js 16 SSR; the MCP endpoint is a route handler in the same app |
 | Capture worker | Fly.io | `apps/worker` | Real Chromium needs a real VM |
 
-Provision once in this order: **Neon → Vercel → Cloudflare → Fly**. Each step depends on the previous.
+Provision once in this order: **Neon, then Vercel, then Fly**. Each step depends on the previous.
 
 ---
 
@@ -31,7 +30,7 @@ Provision once in this order: **Neon → Vercel → Cloudflare → Fly**. Each s
 
 ## 2. Gallery — Vercel
 
-The gallery is the only piece your users see directly. Deploy first so you can sign in and issue API keys before wiring Cloudflare or Fly.
+The gallery is the only piece your users see directly. Deploy first so you can sign in and issue API keys before wiring Fly.
 
 ```bash
 cd /path/to/inspo
@@ -63,34 +62,20 @@ already prefer an `http(s)://` stored key over the local disk.
 
 ---
 
-## 3. MCP — Cloudflare Workers
+## 3. MCP - hosted with the site on Vercel
 
-The Worker reads from the same Neon DB the gallery does and verifies bearer keys against the same `api_keys` table. No separate auth setup.
+The hosted MCP is a Next.js Route Handler (`apps/web/src/app/api/mcp/route.ts`), so deploying the gallery deploys the endpoint too: there is no separate service. The route serves the seed bundled into the web build and fetches the embedding sidecar from the CDN once per lambda (`INSPO_CATALOGUE_URL` overrides the store). Optional env on the Vercel project: `TOGETHER_API_KEY` turns on semantic ranking for hosted callers.
 
+After any seed change, re-publish the catalogue sidecar:
 ```bash
-cd apps/mcp
-npx wrangler login
-npx wrangler secret put DATABASE_URL          # paste Neon pooled URL
-npx wrangler secret put INSPO_BASE_URL        # paste your Vercel URL (used for image-URL absolutization)
-npx wrangler deploy
+pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
 ```
-
-To enforce auth:
-```bash
-npx wrangler secret put ENFORCE_AUTH          # set to "1"
-```
-
-Add a custom domain in `wrangler.toml` (`[[routes]]`) if you want `api.inspo.example.com`, otherwise use the workers.dev subdomain wrangler prints.
 
 Test:
 ```bash
-curl https://inspo-mcp.<account>.workers.dev/
-# → "inspo-mcp · POST /mcp"
-
-curl -X POST https://inspo-mcp.<account>.workers.dev/mcp \
+curl -X POST https://<your-domain>/api/mcp \
   -H 'content-type: application/json' \
   -H 'accept: application/json, text/event-stream' \
-  -H 'authorization: Bearer inspo_xxx' \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
@@ -136,19 +121,9 @@ pnpm --filter inspo start init \
 
 ## CI / preview deploys
 
-`apps/web/vercel.json` has an `ignoreCommand` so PRs that only touch `apps/worker` or `apps/mcp` don't trigger redundant Vercel builds.
+Every push to main triggers a Vercel build of `apps/web`, which redeploys the site and the hosted MCP endpoint together (the endpoint lives inside the web app, so never ignore `apps/mcp` changes in Vercel build filters).
 
-For the MCP, set up GitHub Actions with `cloudflare/wrangler-action`:
-
-```yaml
-- uses: cloudflare/wrangler-action@v3
-  with:
-    apiToken: ${{ secrets.CF_API_TOKEN }}
-    workingDirectory: apps/mcp
-    command: deploy
-```
-
-For the worker, add a step that runs `flyctl deploy --config apps/worker/fly.toml --remote-only` with `FLY_API_TOKEN`.
+For the capture worker, add a step that runs `flyctl deploy --config apps/worker/fly.toml --remote-only` with `FLY_API_TOKEN`.
 
 ---
 
@@ -157,7 +132,6 @@ For the worker, add a step that runs `flyctl deploy --config apps/worker/fly.tom
 | Surface | Free tier covers | Beyond that |
 |---|---|---|
 | Vercel | 100 GB-hours / mo | $20 / mo Pro |
-| Cloudflare Workers | 100k requests / day | $5 / mo + $0.30/M |
 | Fly.io | 3× shared 256MB VMs | $0.0000022 / s of `shared-cpu-2x@2gb` (~$15 / mo if always-on) |
 | Neon | 0.5 GB storage, 191.9 compute-hours | $19 / mo Launch tier |
 | Anthropic | — | ~$0.003 / capture (Sonnet vision call) |

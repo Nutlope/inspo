@@ -9,7 +9,7 @@
  * yet captured.
  *
  * Stays light: pure `fetch` + regex extraction. No Playwright (the
- * MCP also ships on Cloudflare Workers, where native deps don't
+ * MCP also ships in serverless runtimes, where native deps don't
  * work). No cheerio (1 MB of deps for what regex does in 100 LOC).
  *
  * What's extracted:

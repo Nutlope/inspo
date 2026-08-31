@@ -32,7 +32,7 @@ const OUT_FILE = resolve(OUT_DIR, "inspo-mcp.mjs");
 
 // Bump before every publish: npm refuses to overwrite a published
 // version, and this constant is the only place it is set.
-const VERSION = "0.1.7";
+const VERSION = "0.1.8";
 
 mkdirSync(OUT_DIR, { recursive: true });
 

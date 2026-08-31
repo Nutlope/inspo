@@ -1,9 +1,8 @@
 /**
  * Shared Streamable-HTTP MCP request handler.
  *
- * One stateless handler reused by every HTTP host: the Cloudflare
- * Worker (`worker.ts`) and the Vercel/Next route
- * (`apps/web/src/app/api/mcp/route.ts`). Keeping it here means the
+ * One stateless handler for the hosted HTTP transport: the Vercel/Next
+ * route (`apps/web/src/app/api/mcp/route.ts`). Keeping it here means the
  * transport wiring lives next to the tools, and web only needs to
  * depend on `@inspo/mcp` (not the MCP SDK directly).
  *

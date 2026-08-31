@@ -7,7 +7,7 @@ Every result is grounded in a real, shipped site: real fonts, frequency-ranked p
 This is, and stays, a standard **MCP server** - packaging it for one-line install just makes the same server trivially addable to any MCP client (Cursor, Claude Code, Claude Desktop, …). Two transports, same tools:
 
 - **stdio** (`src/server.ts`) - runs locally, reads the bundled static seed (no DB needed).
-- **Streamable HTTP** (`src/worker.ts`) - a Cloudflare Worker for a hosted URL.
+- **Streamable HTTP** - a Next.js Route Handler (`apps/web/src/app/api/mcp/route.ts`) that ships with the site's Vercel deployment.
 
 ## Tools
 
@@ -34,16 +34,16 @@ Image URLs are absolute (against `INSPO_BASE_URL`, default `https://inspo-three.
 
 ### Hosted (recommended - no clone, no deps)
 
-A hosted endpoint is **live and free** (no auth): `https://inspo-mcp.luffixos.workers.dev/mcp`. Add it as a remote MCP server:
+A hosted endpoint is **live and free** (no auth): `https://inspo-three.vercel.app/api/mcp`. Add it as a remote MCP server:
 
 ```bash
 # Claude Code
-claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp
+claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp
 ```
 
 ```jsonc
 // Cursor - ~/.cursor/mcp.json  ·  Claude Desktop - claude_desktop_config.json
-{ "mcpServers": { "inspo": { "url": "https://inspo-mcp.luffixos.workers.dev/mcp" } } }
+{ "mcpServers": { "inspo": { "url": "https://inspo-three.vercel.app/api/mcp" } } }
 ```
 
 ### `npx` (zero-config)
@@ -156,49 +156,32 @@ self-correct in one step.
 pnpm --filter @inspo/mcp start            # stdio server
 pnpm --filter @inspo/mcp test             # smoke test - boots in-process, calls every tool
 pnpm --filter @inspo/mcp inspect          # MCP Inspector UI
-pnpm --filter @inspo/mcp worker:dev       # Cloudflare Worker locally
 ```
 
-### Deploy the hosted Worker
+### Deploy the hosted endpoint
 
-The Worker **doesn't bundle** the ~16MB catalogue (it would bust Cloudflare's
-script-size cap). Instead it fetches the seed + embeddings from a CDN at
-runtime (once per isolate), so the deployed script is ~325KB gzipped. Deploy
-is two steps:
-
-```bash
-# 1. Publish the catalogue to Vercel Blob (re-run after any seed change)
-pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
-# 2. Deploy the Worker (needs `wrangler login`)
-pnpm --filter @inspo/mcp worker:deploy
-```
-
-`INSPO_CATALOGUE_URL` (in `wrangler.toml`) points at the published store -
-override it to host the data anywhere. The stdio server still reads the
-bundled seed, so local installs need no CDN.
-
-### Deploy on Vercel (no Cloudflare)
-
-The same MCP is exposed as a Next.js Route Handler in the web app, so it ships
-with your existing Vercel deployment - no extra account. Once `apps/web` is
-deployed, the endpoint is:
+The MCP is exposed as a Next.js Route Handler in the web app, so it ships with
+the site's Vercel deployment - deploying `apps/web` deploys the endpoint too.
+Once the site is up, point clients at:
 
 ```
 https://<your-domain>/api/mcp
 ```
 
-Add it like the hosted block above, swapping the URL. The route serves the
-seed bundled into the web build and fetches the embedding sidecar from the CDN
-for vector tools (`INSPO_CATALOGUE_URL`, same default as the Worker). Use this
-if you'd rather not run Cloudflare; use the Worker if you want a dedicated MCP
-host independent of the site.
+The route serves the seed bundled into the web build and fetches the embedding
+sidecar from the CDN once per lambda for the vector tools (`INSPO_CATALOGUE_URL`
+overrides the store). Re-run `publish-catalogue-to-blob.ts` after seed changes:
+
+```bash
+pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
+```
 
 ## Security
 
 - **Read-only.** No write/mutate tools; the server only reads the curated catalogue.
-- **No secrets in the response surface.** The Worker reads `DATABASE_URL` / tokens from Cloudflare secrets (never returned to clients). `.env` is gitignored; only `.env.example` is tracked.
+- **No secrets in the response surface.** The hosted route reads `DATABASE_URL` / tokens from Vercel environment variables (never returned to clients). `.env` is gitignored; only `.env.example` is tracked.
 - **Free + unauthenticated, abuse-resistant.** The hosted endpoint needs no auth or API key; abuse is contained by a per-IP rate limit rather than gating. (Optional self-hosted auth still exists: set `ENFORCE_AUTH=1` + provision `api_keys` to require `Authorization: Bearer inspo_…`.)
-- **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). Every URL (and every redirect) is validated by an SSRF guard before fetch: public http(s) named hosts only, no private / loopback / link-local / cloud-metadata or IP-literal targets, ports 80/443 only. The response body is byte-capped while streaming, and the hosted Worker runs with the `global_fetch_strictly_public` compatibility flag plus a per-IP rate limit.
+- **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). Every URL (and every redirect) is validated by an SSRF guard before fetch: public http(s) named hosts only, no private / loopback / link-local / cloud-metadata or IP-literal targets, ports 80/443 only. The response body is byte-capped while streaming, and the hosted route adds a request body cap plus a per-IP rate limit.
 
 ## Publishing `npx inspo-mcp`
 
@@ -219,9 +202,9 @@ artifact is published, so nothing here leaks. Re-run `build:npm` (and
 
 ## Files
 
-- `src/server.ts` - stdio entry (monorepo) · `src/worker.ts` - Cloudflare Worker
+- `src/server.ts` - stdio entry (monorepo)
 - `src/server-npm.ts` - standalone stdio entry for the published package (CDN catalogue)
-- `src/http-handler.ts` - shared Streamable-HTTP handler (Worker + Vercel route)
+- `src/http-handler.ts` - shared Streamable-HTTP handler (used by the Vercel route)
 - `src/tools.ts` - all tool registrations + `HERO_GUIDANCE` (shared by all transports)
 - `src/format.ts` - wire format (absolute URLs, inline image blocks, mobile fields)
 - `src/call.ts` - one-shot CLI client (`tsx src/call.ts <tool> '<json>'`)

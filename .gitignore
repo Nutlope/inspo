@@ -27,7 +27,6 @@ out/
 
 # deploy
 .vercel/
-.wrangler/
 .fly/
 
 # worker output (raw captures live in storage, not git)
