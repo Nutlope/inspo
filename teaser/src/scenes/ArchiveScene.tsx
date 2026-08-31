@@ -4,108 +4,176 @@ import {
   Easing,
   Img,
   interpolate,
-  Sequence,
   useCurrentFrame,
 } from "remotion";
-import {
-  cellRect,
-  EMBER,
-  EMBER_CELL,
-  GRID,
-  GRID_SLUGS,
-  MONTAGE,
-  tileSrc,
-} from "../shots";
-import { colors, EXPO } from "../theme";
+import { CARD, cellRect, GRID, GRID_SLUGS, PICKS, RESULT, tileSrc } from "../shots";
+import { colors, EXPO, fonts } from "../theme";
 
-/* Local timeline (scene starts at global frame 63):
-   0-67    seven full-bleed cuts, each shorter than the last
-   67-     ember-and-ash lands full-bleed
-   72-96   it shrinks into its grid cell
-   76-112  the other eleven tiles spring in, radiating from the center
-   until end: the whole grid drifts forward */
+/* Local timeline (scene starts at global frame 70):
+   0-14    the archive grid pops in, a cascade from the top-left
+   18/32/46  Inspo selects three references: ring + check, one by one
+   52-64   everything unselected falls away
+   62-88   the three picks fly to the center and stack like pulled cards
+   88-98   the stack snaps into perfect alignment
+   100-122 the stack expands full-bleed and becomes the new page
+   until end: the result holds with a slow push-in */
 
-const montageStarts = MONTAGE.reduce<number[]>((acc, s, i) => {
-  acc.push(i === 0 ? 0 : acc[i - 1] + MONTAGE[i - 1].duration);
-  return acc;
-}, []);
+const SEL_AT = [18, 32, 46];
+const CONV_START = 62;
+const BUILD_START = 100;
+const BUILD_END = 122;
 
-const SHRINK_START = 73;
-const SHRINK_END = 100;
+/* Fanned offsets for the card stack: two behind, the last pick in front. */
+const STACK = [
+  { dx: -36, dy: 20, rot: -5 },
+  { dx: 34, dy: -14, rot: 4 },
+  { dx: 0, dy: 0, rot: 0 },
+];
 
-const emberRect = cellRect(EMBER_CELL);
-const emberCol = EMBER_CELL % GRID.cols;
-const emberRow = Math.floor(EMBER_CELL / GRID.cols);
+const expo = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+  easing: Easing.bezier(...EXPO),
+};
 
 export const ArchiveScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const shrink = interpolate(frame, [SHRINK_START, SHRINK_END], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(...EXPO),
-  });
-
-  /* Slow forward drift once the grid exists, so the hold never sits still. */
-  const drift = interpolate(frame, [SHRINK_START, 150], [1, 1.045], {
+  /* Slow forward drift while the grid is up, so nothing ever sits still. */
+  const drift = interpolate(frame, [0, CONV_START], [1, 1.015], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.linear,
   });
 
+  const build = interpolate(frame, [BUILD_START, BUILD_END], [0, 1], expo);
+
   return (
     <AbsoluteFill style={{ backgroundColor: colors.paper }}>
-      {/* ── The cuts ────────────────────────────────────────── */}
-      {MONTAGE.map((s, i) => (
-        <Sequence
-          key={s.src}
-          from={montageStarts[i]}
-          durationInFrames={s.duration}
-          layout="absolute-fill"
-          name={`Cut ${i + 1}`}
-        >
-          <MontageCut src={s.src} duration={s.duration} />
-        </Sequence>
-      ))}
+      <AbsoluteFill style={{ scale: String(drift) }}>
+        {GRID_SLUGS.map((slug, i) => {
+          const pick = PICKS.indexOf(i);
+          if (pick !== -1) {
+            return null; /* picks render after, on top */
+          }
+          const rect = cellRect(i);
+          const col = i % GRID.cols;
+          const row = Math.floor(i / GRID.cols);
+          const inAt = (row + col) * 2;
+          /* Once the picking starts, the rest of the archive recedes,
+             then falls away entirely. */
+          const dimmed = interpolate(frame, [SEL_AT[0], 50], [1, 0.75], expo);
+          const gone = 52 + i * 0.5;
+          return (
+            <div
+              key={slug}
+              style={{
+                position: "absolute",
+                left: rect.x,
+                top: rect.y,
+                width: rect.w,
+                height: rect.h,
+                borderRadius: GRID.radius,
+                overflow: "hidden",
+                opacity:
+                  interpolate(frame, [inAt, inAt + 10], [0, 1], expo) *
+                  dimmed *
+                  interpolate(frame, [gone, gone + 10], [1, 0], expo),
+                scale: String(
+                  interpolate(frame, [inAt, inAt + 14], [0.86, 1], expo) *
+                    interpolate(frame, [gone, gone + 12], [1, 0.94], expo),
+                ),
+                translate: `0px ${
+                  interpolate(frame, [inAt, inAt + 12], [16, 0], expo) +
+                  interpolate(frame, [gone, gone + 12], [0, 16], expo)
+                }px`,
+              }}
+            >
+              <Img
+                src={tileSrc(slug)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "top",
+                }}
+              />
+            </div>
+          );
+        })}
 
-      {/* ── Ember + grid ────────────────────────────────────── */}
-      <Sequence from={67} layout="absolute-fill" name="Archive grid">
-        <AbsoluteFill style={{ scale: String(drift) }}>
-          {GRID_SLUGS.map((slug, i) => {
-            if (slug === null) {
-              return null;
-            }
-            const rect = cellRect(i);
-            const col = i % GRID.cols;
-            const row = Math.floor(i / GRID.cols);
-            /* Radiate outward from the ember cell. */
-            const dist = Math.abs(col - emberCol) + Math.abs(row - emberRow);
-            /* Neighbors are already flying in while ember shrinks, so
-               the frame is never mostly empty paper. */
-            const start = 69 + dist * 4;
-            return (
+        {/* ── The three picks ─────────────────────────────────── */}
+        {PICKS.map((cellIndex, k) => {
+          const slug = GRID_SLUGS[cellIndex];
+          const rect = cellRect(cellIndex);
+          const col = cellIndex % GRID.cols;
+          const row = Math.floor(cellIndex / GRID.cols);
+          const inAt = (row + col) * 2;
+          const s = SEL_AT[k];
+
+          /* Fly from the grid cell to the fanned card stack... */
+          const conv = interpolate(
+            frame,
+            [CONV_START + k * 4, CONV_START + k * 4 + 24],
+            [0, 1],
+            expo,
+          );
+          /* ...then snap into perfect alignment before the build. */
+          const align = interpolate(frame, [88, 98], [0, 1], expo);
+          const dx = STACK[k].dx * (1 - align);
+          const dy = STACK[k].dy * (1 - align);
+          const rot = STACK[k].rot * (1 - align);
+
+          const left = interpolate(conv, [0, 1], [rect.x, CARD.x + dx]);
+          const top = interpolate(conv, [0, 1], [rect.y, CARD.y + dy]);
+          const w = interpolate(conv, [0, 1], [rect.w, CARD.w]);
+          const h = interpolate(conv, [0, 1], [rect.h, CARD.h]);
+          const radius = interpolate(conv, [0, 1], [GRID.radius, CARD.radius]);
+
+          /* Selection pulse, eased back out as the card starts to fly. */
+          const pulse =
+            interpolate(frame, [s, s + 6], [1, 1.035], expo) *
+            interpolate(
+              frame,
+              [CONV_START + k * 4, CONV_START + k * 4 + 10],
+              [1, 1 / 1.035],
+              expo,
+            );
+
+          const trimOn = interpolate(frame, [s, s + 4], [0, 1], expo);
+          const trimOff = interpolate(frame, [58, 68], [1, 0], expo);
+
+          return (
+            <div
+              key={slug}
+              style={{
+                position: "absolute",
+                left,
+                top,
+                width: w,
+                height: h,
+                rotate: `${rot * conv}deg`,
+                scale: String(
+                  interpolate(frame, [inAt, inAt + 14], [0.86, 1], expo) *
+                    pulse,
+                ),
+                opacity:
+                  interpolate(frame, [inAt, inAt + 10], [0, 1], expo) *
+                  /* the result container takes over from here */
+                  (frame >= BUILD_START ? 0 : 1),
+                translate: `0px ${interpolate(frame, [inAt, inAt + 12], [16, 0], expo)}px`,
+              }}
+            >
               <div
-                key={slug}
                 style={{
                   position: "absolute",
-                  left: rect.x,
-                  top: rect.y,
-                  width: rect.w,
-                  height: rect.h,
-                  borderRadius: GRID.radius,
+                  inset: 0,
+                  borderRadius: radius,
                   overflow: "hidden",
-                  opacity: interpolate(frame, [start, start + 10], [0, 1], {
-                    extrapolateLeft: "clamp",
-                    extrapolateRight: "clamp",
-                    easing: Easing.bezier(...EXPO),
-                  }),
-                  scale: String(
-                    interpolate(frame, [start, start + 16], [0.82, 1], {
-                      extrapolateLeft: "clamp",
-                      extrapolateRight: "clamp",
-                      easing: Easing.bezier(...EXPO),
-                    }),
-                  ),
+                  boxShadow:
+                    conv > 0.05
+                      ? "0 30px 80px rgba(26, 26, 26, 0.28)"
+                      : "none",
                 }}
               >
                 <Img
@@ -118,64 +186,98 @@ export const ArchiveScene: React.FC = () => {
                   }}
                 />
               </div>
-            );
-          })}
 
-          {/* Ember: full-bleed cut that becomes a tile. */}
+              {/* Selection ring */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: -9,
+                  borderRadius: radius + 9,
+                  border: `5px solid ${colors.accent}`,
+                  opacity: trimOn * trimOff,
+                  scale: String(interpolate(frame, [s, s + 9], [1.1, 1], expo)),
+                }}
+              />
+
+              {/* Check badge */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: -16,
+                  right: -16,
+                  width: 52,
+                  height: 52,
+                  borderRadius: 9999,
+                  backgroundColor: colors.accent,
+                  color: colors.accentInk,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: fonts.sans,
+                  fontWeight: 600,
+                  fontSize: 28,
+                  opacity: trimOff * (frame >= s + 2 ? 1 : 0),
+                  scale: String(
+                    interpolate(frame, [s + 2, s + 7, s + 12], [0, 1.2, 1], expo),
+                  ),
+                }}
+              >
+                ✓
+              </div>
+            </div>
+          );
+        })}
+
+        {/* ── The result: the stack becomes the new page ──────── */}
+        {frame >= BUILD_START && (
           <div
             style={{
               position: "absolute",
-              left: interpolate(shrink, [0, 1], [0, emberRect.x]),
-              top: interpolate(shrink, [0, 1], [0, emberRect.y]),
-              width: interpolate(shrink, [0, 1], [1920, emberRect.w]),
-              height: interpolate(shrink, [0, 1], [1080, emberRect.h]),
-              borderRadius: interpolate(shrink, [0, 1], [0, GRID.radius]),
+              left: interpolate(build, [0, 1], [CARD.x, 0]),
+              top: interpolate(build, [0, 1], [CARD.y, 0]),
+              width: interpolate(build, [0, 1], [CARD.w, 1920]),
+              height: interpolate(build, [0, 1], [CARD.h, 1080]),
+              borderRadius: interpolate(build, [0, 1], [CARD.radius, 0]),
               overflow: "hidden",
+              boxShadow:
+                build < 1 ? "0 30px 80px rgba(26, 26, 26, 0.28)" : "none",
             }}
           >
+            {/* The front reference, still visible for a beat... */}
             <Img
-              src={EMBER}
+              src={tileSrc(GRID_SLUGS[PICKS[2]])}
               style={{
+                position: "absolute",
+                inset: 0,
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: "top",
               }}
             />
+            {/* ...becomes the new page as the card grows. */}
+            <Img
+              src={RESULT}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "top",
+                opacity: interpolate(frame, [102, 112], [0, 1], expo),
+                scale: String(
+                  interpolate(frame, [104, 150], [1.06, 1], {
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                    easing: Easing.linear,
+                  }),
+                ),
+              }}
+            />
           </div>
-        </AbsoluteFill>
-      </Sequence>
-    </AbsoluteFill>
-  );
-};
-
-/* One full-bleed cut with a touch of forward drift so no frame is static. */
-const MontageCut: React.FC<{ src: string; duration: number }> = ({
-  src,
-  duration,
-}) => {
-  const frame = useCurrentFrame();
-  return (
-    <AbsoluteFill
-      style={{
-        scale: String(
-          interpolate(frame, [0, duration], [1.06, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: Easing.linear,
-          }),
-        ),
-      }}
-    >
-      <Img
-        src={src}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "top",
-        }}
-      />
+        )}
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

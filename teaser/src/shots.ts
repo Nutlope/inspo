@@ -2,38 +2,30 @@ import { staticFile } from "remotion";
 
 const shot = (slug: string) => staticFile(`shots/${slug}.jpg`);
 
-/* Scene 2a: the accelerating full-bleed montage. Ordered for rhythm -
-   dark, light, dark, cream, navy, paper, black - so every cut reads as
-   a new page, ending on ember-and-ash (the red one) which becomes the
-   grid's center tile. */
-export const MONTAGE: { src: string; duration: number }[] = [
-  { src: shot("nocturne-festival"), duration: 14 },
-  { src: shot("alder-money"), duration: 12 },
-  { src: shot("attract-mode"), duration: 10 },
-  { src: shot("sable-patisserie"), duration: 9 },
-  { src: shot("halcyon-optics"), duration: 8 },
-  { src: shot("meridian-review"), duration: 7 },
-  { src: shot("studio-volta"), duration: 7 },
-];
-
-export const EMBER = shot("ember-and-ash");
-
-/* Scene 2b: the archive grid, 4 x 3, light/dark checkerboarded.
-   null marks the cell ember-and-ash shrinks into. Row-major. */
-export const GRID_SLUGS: (string | null)[] = [
-  "driftmail",
+/* The archive grid, 4 x 3, tones alternating so it reads as a wall of
+   different real sites. Row-major. */
+export const GRID_SLUGS: string[] = [
+  "alder-money",
+  "nocturne-festival",
   "saltgate-lido",
-  "nightjar-sleeper",
-  "loom-audio",
-  "aureole-parfum",
-  null,
-  "fieldnote-db",
-  "coire-dubh",
+  "studio-volta",
   "wavecast",
+  "meridian-review",
+  "aureole-parfum",
+  "coire-dubh",
+  "sable-patisserie",
+  "halcyon-optics",
   "spark-hall",
-  "rill-radio",
-  "northline-transit",
+  "nightjar-sleeper",
 ];
+
+/* The three references Inspo picks, in selection order: big display
+   type (nocturne), a bottle-hero product page (aureole), a warm food
+   palette (sable). Together they add up to ember-and-ash. */
+export const PICKS = [1, 6, 8];
+
+/* The new page those references become. */
+export const RESULT = shot("ember-and-ash");
 
 export const GRID = {
   cols: 4,
@@ -63,6 +55,8 @@ export const cellRect = (index: number) => {
   };
 };
 
-export const EMBER_CELL = GRID_SLUGS.indexOf(null);
+/* The converge target: one card in the middle of the frame that the
+   three picks stack into before expanding into the result. */
+export const CARD = { x: 520, y: 265, w: 880, h: 550, radius: 22 };
 
 export const tileSrc = (slug: string) => shot(slug);
