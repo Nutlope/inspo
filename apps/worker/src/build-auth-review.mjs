@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
-const scan = JSON.parse(readFileSync(resolve(ROOT, "mcp-eval-4/auth-scan.json"), "utf8"));
+const scan = JSON.parse(readFileSync(resolve(import.meta.dirname, "auth-scan.json"), "utf8"));
 const seed = JSON.parse(
   readFileSync(resolve(ROOT, "packages/db/src/static-screens.json"), "utf8"),
 );
@@ -212,7 +212,7 @@ document.getElementById("copy").onclick = () => {
 render();
 </script></body></html>`;
 
-const OUT = resolve(ROOT, "mcp-eval-4/auth-review.html");
+const OUT = resolve(import.meta.dirname, "auth-review.html");
 writeFileSync(OUT, html);
 console.log(
   `wrote ${OUT}\n  scanned ${scan.verdicts.length}/${scan.total}` +
