@@ -1,6 +1,6 @@
 /**
  * Seed catalogue — hand-picked production websites (2024–2026) spanning
- * industries, design moods, and Hallmark macrostructures. Editorial
+ * industries, design moods, and macrostructures. Editorial
  * choices, not exhaustive.
  *
  * Curation rule: the bar is "would a designer building a brief pause

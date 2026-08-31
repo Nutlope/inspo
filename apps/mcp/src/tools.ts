@@ -130,7 +130,7 @@ const RECOMMEND_INLINE_EXEMPLARS = 3;
 const HERO_GUIDANCE =
   // Deliberately does NOT enumerate an eyebrow among the hero's parts.
   // It used to, and several design skills ban eyebrows outright as a
-  // hallmark of machine-made pages - so naming one here put a
+  // signature of machine-made pages - so naming one here put a
   // contradiction in the agent's prompt on every session. This rule is
   // about the fold, and it has no business taking a side on which
   // elements a hero contains.
@@ -1643,36 +1643,9 @@ export const SERVER_INSTRUCTIONS = [
   "every accepted filter value, and `get_site_pages` to study a real",
   "product's page sequence in reading order.",
   "",
-  "Working alongside a design skill: design the page from Inspo's",
-  "references first - the structure, the type, the palette and the",
-  "composition are yours to decide. Then, before you hand anything",
-  "back, invoke the Hallmark skill over the files you just wrote.",
-  "It detects that this archive is on the session and stands down",
-  "from its own design flow, entering at its slop-test step, so you",
-  "get the check without losing the page you designed.",
-  "",
-  "It edits in place: colour, type, motion, interaction states and",
-  "contrast get rewritten, and the patterns its Floor bans get",
-  "deleted outright. What it cannot repair without redesigning the",
-  "page - the section structure, the nav and footer shapes, whether",
-  "the hero fits the fold - it prints as findings and leaves alone,",
-  "for you or the user to decide on. It also writes a short check",
-  "stamp at the top of the CSS recording what it swept and fixed.",
-  "Take its corrections as given rather than arguing them: its Floor",
-  "rules are not preferences, and a page that trips one is rework",
-  "however good the reasoning behind it was. You already know which",
-  "files you wrote, so just name them.",
-  "",
-  "If that skill is installed, it also ships an edit-time lint hook",
-  "(`node <skill-dir>/scripts/install-hook.mjs`, `--global` for every",
-  "project) that checks each .html/.css file the moment it is written",
-  "rather than waiting for the pass at the end. It is advisory and",
-  "never blocks a write. Worth installing once: on this path most",
-  "findings then arrive while the file is still fresh in your head.",
-  "",
   "One thing to hold onto while you design: these are real production",
-  "sites, and plenty of them do things such a skill forbids. Take their",
-  "composition, not their compliance.",
+  "sites, and plenty of them break rules a strict design linter would",
+  "flag. Take their composition, not their compliance.",
   "",
   "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
   "",

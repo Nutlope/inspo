@@ -146,7 +146,7 @@ export const MACROSTRUCTURES = [
 /**
  * The three diversification axes.
  *
- * Replaces the old 12-name `HALLMARK_THEMES` enum, which named themes
+ * Replaces the old 12-name theme enum, which named themes
  * from one specific version of one design skill and went stale the
  * moment that skill's catalogue changed. The axes are orthogonal,
  * derivable from data every row already carries (palette + fonts), and

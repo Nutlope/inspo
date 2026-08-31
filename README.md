@@ -43,10 +43,6 @@ Sixteen tools expose all of it; `recommend(brief)` composes most of them into on
 
 Per-client snippets (Cursor, Windsurf, Zed, Claude Desktop) are on [the MCP page](https://inspo-three.vercel.app/mcp); the self-host runbook is [DEPLOY.md](DEPLOY.md).
 
-## Pairs with Hallmark
-
-[Hallmark](https://github.com/Luffixos/hallmark) is an anti-slop design skill. With both installed they split the work instead of negotiating over it: Inspo designs, Hallmark checks. Hallmark detects the archive on the session, skips its own design flow, and enters at its slop-test step, so the page you designed survives and the check still happens.
-
 ## Roadmap
 
 - [ ] show the desktop and mobile capture side by side on every screen page

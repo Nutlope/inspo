@@ -43,7 +43,7 @@ pnpm db:seed       # loads the 16 fixture screens (so the gallery has content wh
 
 ## 3. Curate the URL list
 
-The 50 chosen sites live in [`apps/worker/src/seed-urls.ts`](apps/worker/src/seed-urls.ts). Edit freely — anything in there gets captured by the seed runner. Spread across industries, styles, and Hallmark macrostructures matters more than count.
+The 50 chosen sites live in [`apps/worker/src/seed-urls.ts`](apps/worker/src/seed-urls.ts). Edit freely - anything in there gets captured by the seed runner. Spread across industries, styles, and macrostructures matters more than count.
 
 Dry-run to confirm:
 

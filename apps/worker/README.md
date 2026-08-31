@@ -2,7 +2,7 @@
 
 The Playwright capture pipeline. Takes a URL, returns three viewports × hero+full PNGs, palette, fonts, tech fingerprint, AI tags, and embeddings.
 
-**Powered by Together AI** — same stack Hallmark runs on. One key, two endpoints (Qwen3-VL for vision, BGE for embeddings), flat per-token pricing.
+**Powered by Together AI.** One key, two endpoints (Qwen3-VL for vision, BGE for embeddings), flat per-token pricing.
 
 ## Setup
 

@@ -102,7 +102,7 @@ export const screens = pgTable(
     // Named macrostructure (denormalized for filter speed)
     macrostructure: text("macrostructure"),
     // The three diversification axes, measured rather than tagged.
-    // Replaces the retired `hallmark_theme` column, whose 12-name enum
+    // Replaces the retired theme column, whose 12-name enum
     // named themes from one version of one design skill. Derived by
     // `backfill-axes.ts`; see `deriveAxes` in @inspo/shared.
     axes: jsonb("axes").$type<Axes>(),

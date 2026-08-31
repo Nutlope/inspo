@@ -35,8 +35,8 @@ const isColorWord = (v: string): v is ColorWord =>
 const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
 
 /**
- * One-line definitions for each macrostructure, lifted from the
- * Hallmark canonical reference. Surfaced in the prompt so the vision
+ * One-line definitions for each named macrostructure in the
+ * taxonomy. Surfaced in the prompt so the vision
  * model picks based on the actual page shape rather than reaching for
  * whichever enum label happened to be listed first.
  *

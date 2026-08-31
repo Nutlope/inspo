@@ -2,7 +2,7 @@
  * The three diversification axes, measured from data every catalogue
  * row already carries.
  *
- * This replaces the old `hallmarkTheme` tag. That tag named a theme
+ * This replaces the old single-enum theme tag. That tag named a theme
  * from one version of one design skill, was written by the LLM tagger
  * (so it cost tokens and drifted), and went stale the moment the skill
  * renamed a theme. Two of its twelve names no longer exist anywhere.
