@@ -6,22 +6,35 @@ import {
   interpolate,
   useCurrentFrame,
 } from "remotion";
-import { CARD, cellRect, GRID, GRID_SLUGS, PICKS, RESULT, tileSrc } from "../shots";
+import {
+  CARD,
+  cellRect,
+  FINAL,
+  GRID,
+  GRID_SLUGS,
+  PICKS,
+  RESULT,
+  RESULT_IMG,
+  tileSrc,
+} from "../shots";
 import { colors, EXPO, fonts } from "../theme";
 
 /* Local timeline (scene starts at global frame 70):
    0-14    the archive grid pops in, a cascade from the top-left
-   18/32/46  Inspo selects three references: ring + check, one by one
-   52-64   everything unselected falls away
-   62-88   the three picks fly to the center and stack like pulled cards
-   88-98   the stack snaps into perfect alignment
-   100-122 the stack expands full-bleed and becomes the new page
-   until end: the result holds with a slow push-in */
+   16/27/38  Inspo selects three references: ring + check, one by one
+   44-56   everything unselected falls away
+   52-80   the three picks fly to the center and stack like pulled cards
+   78-88   the stack snaps into perfect alignment
+   90-110  the stack grows into the generated page, framed on the paper
+   116-146 a quick scroll through the page, top to footer */
 
-const SEL_AT = [18, 32, 46];
-const CONV_START = 62;
-const BUILD_START = 100;
-const BUILD_END = 122;
+const SEL_AT = [16, 27, 38];
+const FALL_AT = 44;
+const CONV_START = 52;
+const ALIGN = [78, 88] as const;
+const BUILD_START = 90;
+const BUILD_END = 110;
+const SCROLL = [116, 146] as const;
 
 /* Fanned offsets for the card stack: two behind, the last pick in front. */
 const STACK = [
@@ -36,6 +49,11 @@ const expo = {
   easing: Easing.bezier(...EXPO),
 };
 
+/* How tall the full-page shot renders inside the final frame, and how
+   far it has to travel to reach the footer. */
+const scrollImgH = RESULT_IMG.h * (FINAL.w / RESULT_IMG.w);
+const scrollDist = scrollImgH - FINAL.h;
+
 export const ArchiveScene: React.FC = () => {
   const frame = useCurrentFrame();
 
@@ -47,6 +65,14 @@ export const ArchiveScene: React.FC = () => {
   });
 
   const build = interpolate(frame, [BUILD_START, BUILD_END], [0, 1], expo);
+
+  /* The scroll-through: eased in and out so it reads as a hand on a
+     trackpad, not a conveyor belt. */
+  const scroll = interpolate(frame, [SCROLL[0], SCROLL[1]], [0, scrollDist], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.45, 0, 0.15, 1),
+  });
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.paper }}>
@@ -62,8 +88,8 @@ export const ArchiveScene: React.FC = () => {
           const inAt = (row + col) * 2;
           /* Once the picking starts, the rest of the archive recedes,
              then falls away entirely. */
-          const dimmed = interpolate(frame, [SEL_AT[0], 50], [1, 0.75], expo);
-          const gone = 52 + i * 0.5;
+          const dimmed = interpolate(frame, [SEL_AT[0], 42], [1, 0.75], expo);
+          const gone = FALL_AT + i * 0.5;
           return (
             <div
               key={slug}
@@ -119,7 +145,7 @@ export const ArchiveScene: React.FC = () => {
             expo,
           );
           /* ...then snap into perfect alignment before the build. */
-          const align = interpolate(frame, [88, 98], [0, 1], expo);
+          const align = interpolate(frame, [ALIGN[0], ALIGN[1]], [0, 1], expo);
           const dx = STACK[k].dx * (1 - align);
           const dy = STACK[k].dy * (1 - align);
           const rot = STACK[k].rot * (1 - align);
@@ -141,7 +167,7 @@ export const ArchiveScene: React.FC = () => {
             );
 
           const trimOn = interpolate(frame, [s, s + 4], [0, 1], expo);
-          const trimOff = interpolate(frame, [58, 68], [1, 0], expo);
+          const trimOff = interpolate(frame, [48, 58], [1, 0], expo);
 
           return (
             <div
@@ -159,7 +185,7 @@ export const ArchiveScene: React.FC = () => {
                 ),
                 opacity:
                   interpolate(frame, [inAt, inAt + 10], [0, 1], expo) *
-                  /* the result container takes over from here */
+                  /* the result frame takes over from here */
                   (frame >= BUILD_START ? 0 : 1),
                 translate: `0px ${interpolate(frame, [inAt, inAt + 12], [16, 0], expo)}px`,
               }}
@@ -228,19 +254,18 @@ export const ArchiveScene: React.FC = () => {
           );
         })}
 
-        {/* ── The result: the stack becomes the new page ──────── */}
+        {/* ── The result: the stack becomes the generated page ── */}
         {frame >= BUILD_START && (
           <div
             style={{
               position: "absolute",
-              left: interpolate(build, [0, 1], [CARD.x, 0]),
-              top: interpolate(build, [0, 1], [CARD.y, 0]),
-              width: interpolate(build, [0, 1], [CARD.w, 1920]),
-              height: interpolate(build, [0, 1], [CARD.h, 1080]),
-              borderRadius: interpolate(build, [0, 1], [CARD.radius, 0]),
+              left: interpolate(build, [0, 1], [CARD.x, FINAL.x]),
+              top: interpolate(build, [0, 1], [CARD.y, FINAL.y]),
+              width: interpolate(build, [0, 1], [CARD.w, FINAL.w]),
+              height: interpolate(build, [0, 1], [CARD.h, FINAL.h]),
+              borderRadius: interpolate(build, [0, 1], [CARD.radius, FINAL.radius]),
               overflow: "hidden",
-              boxShadow:
-                build < 1 ? "0 30px 80px rgba(26, 26, 26, 0.28)" : "none",
+              boxShadow: "0 30px 90px rgba(26, 26, 26, 0.22)",
             }}
           >
             {/* The front reference, still visible for a beat... */}
@@ -255,24 +280,16 @@ export const ArchiveScene: React.FC = () => {
                 objectPosition: "top",
               }}
             />
-            {/* ...becomes the new page as the card grows. */}
+            {/* ...becomes the generated page, then scrolls through it. */}
             <Img
               src={RESULT}
               style={{
                 position: "absolute",
-                inset: 0,
+                top: 0,
+                left: 0,
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "top",
-                opacity: interpolate(frame, [102, 112], [0, 1], expo),
-                scale: String(
-                  interpolate(frame, [104, 150], [1.06, 1], {
-                    extrapolateLeft: "clamp",
-                    extrapolateRight: "clamp",
-                    easing: Easing.linear,
-                  }),
-                ),
+                translate: `0px ${-scroll}px`,
+                opacity: interpolate(frame, [92, 102], [0, 1], expo),
               }}
             />
           </div>

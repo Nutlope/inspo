@@ -11,7 +11,7 @@ import { Sequence } from "remotion";
 
 /* Each of the three reference picks fires a shutter - the archive is,
    after all, a camera. Global frames. */
-const SHUTTERS = [88, 102, 116];
+const SHUTTERS = [86, 97, 108];
 
 export const Soundtrack: React.FC = () => {
   return (
@@ -27,13 +27,13 @@ export const Soundtrack: React.FC = () => {
           <Audio src={shutterModern} volume={0.4} />
         </Sequence>
       ))}
-      <Sequence from={132} name="sfx: stack">
+      <Sequence from={122} name="sfx: stack">
         <Audio src={whoosh} volume={0.45} />
       </Sequence>
-      <Sequence from={168} name="sfx: build">
+      <Sequence from={160} name="sfx: build">
         <Audio src={pageTurn} volume={0.5} />
       </Sequence>
-      <Sequence from={203} name="sfx: wash">
+      <Sequence from={187} name="sfx: scroll">
         <Audio src={whoosh} volume={0.3} />
       </Sequence>
       <Sequence from={255} name="sfx: mark">
