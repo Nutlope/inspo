@@ -70,7 +70,7 @@ export function renderDesignMd(s: ScreenSummary): string {
     "https://inspo-three.vercel.app";
   lines.push(`# ${s.title} design system`);
   lines.push("");
-  lines.push("> Extracted by [Inspo](https://github.com/Luffixos/inspo) (open source, MIT, powered by Together AI). Reference material for *intentional* design decisions: adapt, don't copy.");
+  lines.push("> Extracted by [Inspo](https://github.com/Nutlope/inspo) (open source, MIT, powered by Together AI). Reference material for *intentional* design decisions: adapt, don't copy.");
   lines.push("");
   lines.push(
     `> Save this as \`DESIGN.md\` in your project and re-reference it as you build; re-fetch anytime at ${base}/d/${s.slug}/DESIGN.md`,

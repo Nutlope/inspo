@@ -21,9 +21,9 @@ export const site = {
     { label: "About", href: "/about" },
   ],
   github: {
-    owner: "Luffixos",
+    owner: "Nutlope",
     repo: "inspo",
-    url: "https://github.com/Luffixos/inspo",
+    url: "https://github.com/Nutlope/inspo",
   },
   // Where DMCA / takedown requests land (see /dmca).
   contact: {

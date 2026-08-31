@@ -58,12 +58,12 @@ export default async function ExtractPage({
               <p className="max-w-[52ch] text-sm text-[var(--color-fg-muted)]">
                 Self-host the project from{" "}
                 <a
-                  href="https://github.com/Luffixos/inspo"
+                  href="https://github.com/Nutlope/inspo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline-offset-4 hover:underline hover:text-[var(--color-link)]"
                 >
-                  github.com/Luffixos/inspo
+                  github.com/Nutlope/inspo
                 </a>{" "}
                 to run captures locally.
               </p>

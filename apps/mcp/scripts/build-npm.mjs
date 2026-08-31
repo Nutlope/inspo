@@ -72,7 +72,7 @@ writeFileSync(
       // Ties the npm package to the MCP registry entry
       // (apps/mcp/server.json); the registry validates ownership
       // through this field at `mcp-publisher publish` time.
-      mcpName: "io.github.luffixos/inspo",
+      mcpName: "io.github.nutlope/inspo",
       type: "module",
       bin: { "inspo-mcp": "inspo-mcp.mjs" },
       files: ["inspo-mcp.mjs", "README.md"],
@@ -89,11 +89,11 @@ writeFileSync(
       ],
       repository: {
         type: "git",
-        url: "git+https://github.com/Luffixos/inspo.git",
+        url: "git+https://github.com/Nutlope/inspo.git",
         directory: "apps/mcp",
       },
-      homepage: "https://github.com/Luffixos/inspo#readme",
-      bugs: { url: "https://github.com/Luffixos/inspo/issues" },
+      homepage: "https://github.com/Nutlope/inspo#readme",
+      bugs: { url: "https://github.com/Nutlope/inspo/issues" },
       license: "MIT",
     },
     null,

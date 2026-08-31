@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
-  "name": "io.github.luffixos/inspo",
+  "name": "io.github.nutlope/inspo",
   "description": "Design inspiration for coding agents: real production sites with palettes, fonts, fold autopsies, and canonical reference JSX.",
   "repository": {
-    "url": "https://github.com/Luffixos/inspo",
+    "url": "https://github.com/Nutlope/inspo",
     "source": "github"
   },
   "version": "0.1.7",

@@ -1,123 +1,64 @@
-# Inspo
+<p align="center">
+  <a href="https://inspo-three.vercel.app"><img alt="Inspo" src="docs/img/og.png"></a>
+</p>
 
-A reference layer for AI coding agents: real production websites, queryable from your editor over MCP.
+<h1 align="center">Inspo</h1>
 
-[inspo-three.vercel.app](https://inspo-three.vercel.app)
+<p align="center">Real production websites your coding agent can study, over MCP, before it writes UI. <a href="https://inspo-three.vercel.app">inspo-three.vercel.app</a></p>
 
-Inspo ships three things at once, addressable from one server:
+## With and without
 
-1. **Visual range.** 2,141 hand-curated captures across 767 production sites, desktop and mobile, with palettes, type ramps, component breakdowns and a fold-by-fold autopsy on every screen. Your agent gets real designs to study, not generative slop to remix.
-2. **Canonical code.** 68 Hallmark-disciplined reference components (heroes, pricing, footers, CTAs, features, nav, testimonials, logo clouds, FAQ, stats). Every example demonstrates one named macrostructure or archetype, stamped with its design provenance.
-3. **Design systems on tap.** Every captured site gets a `DESIGN.md` extracted from its DOM: palette as semantic roles, type ramp by role, spacing scale, radius scale, CSS variables, container width. Your agent merges these tokens with the reference structures and the output looks like the brief, not like Inspo.
+Same brief, same model, no design skill on either run. The only difference: the page on the right was built with Inspo MCP on the session.
 
-Most reference tools ship one of these. Inspo ships all three from a single MCP surface, which is what makes the combination useful to an agent that doesn't read your design system the way a human would.
+<p>
+  <img alt="The bare agent's page: dark theme, neon accent, gradient app mock" src="docs/img/without-inspo.jpg" width="49.5%">
+  <img alt="The page built with Inspo: warm paper, editorial type, detailed product mock" src="docs/img/with-inspo.jpg" width="49.5%">
+</p>
 
-## Install
+That gap is the product. Agents have tools but not taste, and the open web already holds every reference they need: Inspo assembles, tags, and addresses it.
 
-Free, no account, no auth. The hosted endpoint is `https://inspo-mcp.luffixos.workers.dev/mcp`.
+## What's inside
 
-**Claude Code**
+- **2,141 captures across 767 real sites**, desktop and mobile pairs, with traced palettes, real fonts, detected tech, and a fold-by-fold autopsy on every screen.
+- **68 canonical reference components** (heroes, pricing, footers, navs, and more), each demonstrating one named macrostructure, with copy-pasteable JSX.
+- **A DESIGN.md for every site**, extracted from its DOM: semantic palette roles, type ramp, spacing scale, CSS variables, container width.
 
-```bash
-claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp
-```
+Sixteen tools expose all of it; `recommend(brief)` composes most of them into one call. The full tool table lives in [apps/mcp/README.md](apps/mcp/README.md).
 
-**Cursor, Windsurf, Codex, Zed and anything else** take either the hosted URL or the same server over stdio:
+## Tech stack
 
-```bash
-npx -y inspo-mcp
-```
+- TypeScript MCP server with two transports: stdio and Streamable HTTP on a Cloudflare Worker. No database at query time; the catalogue ships as a static seed.
+- Next.js 16 + Tailwind v4 gallery: the archive browser and the curator dashboard.
+- Playwright capture worker: desktop and mobile shots, palette, type ramp and CSS variable extraction, tag and autopsy passes via Together AI.
+- Together AI embeddings behind semantic search and `find_similar`.
+- A smoke harness that boots the server in-process and calls every tool.
 
-Per-client config snippets, plus a one-click Cursor deeplink and a live playground, are on [the MCP page](https://inspo-three.vercel.app/mcp).
+## Cloning & running
 
-## The tool surface
+1. Hosted, nothing to install: `claude mcp add --transport http inspo https://inspo-mcp.luffixos.workers.dev/mcp`
+2. Or from npm, stdio: `npx -y inspo-mcp`
+3. Or clone: `git clone https://github.com/Nutlope/inspo.git && cd inspo && pnpm install`
+4. Gallery: `pnpm dev`, then open `localhost:3737`
+5. Dev loop: `pnpm --filter @inspo/mcp test`
 
-Sixteen tools. `recommend` is the one to reach for first: it composes most of the others into a single call.
-
-| Tool | Returns |
-|---|---|
-| `recommend(brief, filters?)` | The orchestrator. A macrostructure pick plus the shortlist it came from, 5 real exemplars, 1 to 3 reference components, a palette, and an evidence packet measuring what the genre actually looks like. |
-| `search_screens(query, filters?)` | Plain-language archive search: screenshots, palettes, fonts, components. |
-| `find_similar(slug)` | Nearest design neighbours of a screen, by embedding. |
-| `find_by_color(hex)` | Perceptual OKLAB colour search near a brand colour. |
-| `find_examples_for_macrostructure(name)` | Real sites embodying one of the 21 named macrostructures. |
-| `get_screen(slug)` | One screen's full record: every viewport, the fold-by-fold autopsy. |
-| `get_design_system(slug)` | The `DESIGN.md`: fonts, ranked palette, type ramp, spacing, radii, CSS variables. |
-| `study(url)` | Extract a design system from any live URL, for brands not in the catalogue. SSRF-guarded. |
-| `compare(slugs[])` | Side-by-side breakdown of 2 to 4 sites, plus what they share. |
-| `find_components(type)` | Real sites featuring a component type, with crops. |
-| `find_reference_components(type?)` | The canonical reference JSX catalogue, stamped by macrostructure. |
-| `get_reference_jsx(type, id)` | Full source for one reference component, copy-pasteable. |
-| `get_site_pages(siteSlug?)` | A site's captured pages as an ordered flow, landing to pricing to features to auth. |
-| `list_collections()` / `get_collection(slug)` | Editor-curated themed issues. |
-| `get_filters()` | Every accepted filter and enum value, so the agent never guesses one. |
-
-Clients that read images poorly get a text-first profile automatically, detected at handshake.
-
-## A typical agent run
-
-```
-1. agent: "Build a pricing section for a calm B2B SaaS, technical tone."
-2. -> recommend("calm B2B SaaS pricing, technical tone")
-       returns a macrostructure pick, 5 exemplars with thumbnails,
-       reference JSX, a palette, and the genre evidence packet.
-3. -> get_design_system("linear-app")
-       returns DESIGN.md: Linear's exact type ramp, palette, spacing.
-4. agent merges the tokens with the reference structure and writes one file.
-```
-
-Two calls to start, every output grounded in real production craft.
-
-## Stack
-
-- **`apps/web`** Next.js 16 (App Router) + Tailwind v4. Gallery, components reference set, MCP install page, curator dashboard.
-- **`apps/mcp`** TypeScript MCP server. Exposes the tools above over stdio, HTTP, and a Cloudflare Worker.
-- **`apps/worker`** Playwright capture pipeline. Desktop and mobile, palette extraction, type-ramp inference, CSS variable scrape, tag and autopsy passes via Together.
-- **`apps/cli`** config-rewriter (unpublished; the hosted URL and `npx inspo-mcp` cover install today).
-- **`packages/db`** Drizzle schema, queries, and the static catalogue seed that ships in the bundle so the gallery renders without a DB connection.
-- **`packages/taxonomy`** hard allow-lists for style, industry, vibe, colour, plus the three diversification axes (paper band, display class, accent hue band). Shared by worker and web.
-- **`packages/shared`** cross-app types and the axis derivation.
-
-The hosted instance runs on Neon + Vercel + Cloudflare. Every dependency has a free tier; the worker runs on any Node host with Chromium.
-
-## Self-host
-
-```bash
-git clone https://github.com/Luffixos/inspo.git
-cd inspo
-pnpm install
-cp .env.example .env  # add NEON_DATABASE_URL, TOGETHER_API_KEY, blob token
-pnpm db:push
-pnpm capture:seed     # runs the curated seed list, ~2hr
-pnpm dev              # localhost:3737
-```
-
-The full runbook is in [`DEPLOY.md`](DEPLOY.md). No telemetry; search logs are anonymised.
-
-## Contribute
-
-Want to add a site? Append it to [`apps/worker/src/seed-urls.ts`](apps/worker/src/seed-urls.ts) and open a PR. The bar: *does this make the archive better for someone building a website?*
-
-Want to add a reference component? Drop it in [`apps/web/src/components/reference/<type>/<id>.tsx`](apps/web/src/components/reference/), stamp it with its Hallmark macrostructure or archetype, and register it in [`apps/web/src/components/reference/index.ts`](apps/web/src/components/reference/index.ts). Two references in the same type group must differ on at least one structural axis (paper band, display style, accent application, or section count); the diversification rule keeps the page from drifting into colour-swaps of the same template.
-
-## Licence
-
-MIT. Owned and operated by [Together AI](https://www.together.ai). Free for everyone, no tiers, no paywall.
+Per-client snippets (Cursor, Windsurf, Zed, Claude Desktop) are on [the MCP page](https://inspo-three.vercel.app/mcp); the self-host runbook is [DEPLOY.md](DEPLOY.md).
 
 ## Pairs with Hallmark
 
-[Hallmark](https://github.com/Luffixos/hallmark) is an anti-slop design skill. With both installed, they split the work rather than negotiate over it: **Inspo designs, Hallmark checks.**
+[Hallmark](https://github.com/Luffixos/hallmark) is an anti-slop design skill. With both installed they split the work instead of negotiating over it: Inspo designs, Hallmark checks. Hallmark detects the archive on the session, skips its own design flow, and enters at its slop-test step, so the page you designed survives and the check still happens.
 
-The agent designs the page from Inspo's references (structure, type, palette, composition) and writes the files. Then it invokes Hallmark over what it just wrote. Hallmark recognises a finished page and enters at its slop-test step instead of restarting its own design flow, so the page survives and the check still happens. Its Floor rules are not negotiable, so its corrections get taken rather than argued.
+## Roadmap
 
-Two things make that check cheaper:
+- [ ] show the desktop and mobile capture side by side on every screen page
+- [ ] backfill component crops so `find_components` returns a crop for every hit
+- [ ] paginate the list tools instead of capping them
+- [ ] re-shoot the mobile set at retina scale
+- Accounts and paywalls are skipped on purpose: the archive is more useful free. Self-hosters who want gating can flip `ENFORCE_AUTH=1`.
 
-**Install the edit-time lint hook.** Hallmark ships one, and on this path it is the most automatic version available: it lints each `.html` / `.css` file the moment it lands rather than waiting for a sweep at the end, so findings arrive while the file is still fresh.
+Want a site in the archive? Append it to [apps/worker/src/seed-urls.ts](apps/worker/src/seed-urls.ts) and open a PR. The bar: does it make the archive better for someone building a website?
 
-```bash
-node <hallmark-skill-dir>/scripts/install-hook.mjs --global
-```
+## Security
 
-It is advisory, never blocks a write, is idempotent, and comes off with `--remove`. Claude Code only.
+Every tool is read-only. The one that touches the outside world, `study(url)`, fetches a client-supplied URL server-side, so each URL and redirect passes an SSRF guard: public named hosts only, ports 80 and 443, byte-capped body, no JS execution. The hosted endpoint records per-tool counters only, never IPs or query text.
 
-**Inspo's output is already shaped for the gates it will meet.** The reference components emit `--color-accent` and `--color-accent-ink` under exactly those names, because they are the only colour tokens Hallmark's linter resolves by name; the accent/ink pairing clears its 4.5:1 contrast check in both light and dark. Component stamps use a `key= value` format that cannot be mistaken for a build stamp, so they never satisfy a gate on a page's behalf. And `HERO_GUIDANCE` names no eyebrow, since gate 54 is Floor and non-waivable: every eyebrow the guidance suggested would have been guaranteed rework.
+MIT, copyright Together AI and contributors. The screenshots remain the work of their designers: every screen credits and links its source, and takedowns are honoured at [/dmca](https://inspo-three.vercel.app/dmca).

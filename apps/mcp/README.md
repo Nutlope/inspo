@@ -80,7 +80,7 @@ Restart the client; the agent gains all the tools above.
 ## MCP registry
 
 The server is described by [`server.json`](./server.json) for the official
-MCP registry (name: `io.github.luffixos/inspo`), covering both the npm
+MCP registry (name: `io.github.nutlope/inspo`), covering both the npm
 stdio package and the hosted streamable-http endpoint. To publish or
 update the listing (needs the GitHub account that owns the repo):
 

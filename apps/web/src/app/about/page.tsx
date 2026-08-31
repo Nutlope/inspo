@@ -135,12 +135,12 @@ export default async function AboutPage() {
                 </code>{" "}
                 and open a PR at{" "}
                 <a
-                  href="https://github.com/Luffixos/inspo"
+                  href="https://github.com/Nutlope/inspo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
                 >
-                  github.com/Luffixos/inspo
+                  github.com/Nutlope/inspo
                 </a>
                 . The bar: does this make the archive better for someone
                 building a website?

@@ -33,7 +33,7 @@ export function FooterLongCopy() {
       <div className="mt-12 flex flex-wrap items-baseline justify-between gap-3 border-t rule pt-6 text-meta">
         <span>© {new Date().getFullYear()} - MIT</span>
         <a
-          href="https://github.com/Luffixos/inspo"
+          href="https://github.com/Nutlope/inspo"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[var(--color-fg)] hover:text-[var(--color-accent)]"
