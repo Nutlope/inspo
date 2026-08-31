@@ -15,8 +15,8 @@
  *   pnpm exec tsx src/scan-auth-walls.ts --limit 40 # pilot
  *   pnpm exec tsx src/scan-auth-walls.ts --resume   # skip done rows
  *
- * Writes mcp-eval-4/auth-scan.json incrementally, so a long run can be
- * interrupted and resumed without losing work.
+ * Writes auth-scan.json next to this script incrementally, so a long
+ * run can be interrupted and resumed without losing work.
  */
 
 import "./env.js";
@@ -54,7 +54,7 @@ type Verdict = {
 };
 
 const SEED = resolve(import.meta.dirname, "../../../packages/db/src/static-screens.json");
-const OUT = resolve(import.meta.dirname, "../../../mcp-eval-4/auth-scan.json");
+const OUT = resolve(import.meta.dirname, "auth-scan.json");
 const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
 const CONCURRENCY = 8;
 

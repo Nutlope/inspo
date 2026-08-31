@@ -7,8 +7,8 @@
  *
  * Why this exists: the shipped seed has 0 tags / 0 macrostructures /
  * 0 embeddings on 3,640 rows. The MCP's filter + vector-search surface
- * is dead until this runs. The eval (mcp-eval/REPORT.md) measured
- * exactly how much that costs in agent output quality.
+ * is dead until this runs. An early eval measured exactly how much
+ * that costs in agent output quality.
  *
  *   pnpm --filter @inspo/worker exec tsx src/enrich-archive.ts             dry-run summary
  *   pnpm --filter @inspo/worker exec tsx src/enrich-archive.ts --go        enrich missing sites
