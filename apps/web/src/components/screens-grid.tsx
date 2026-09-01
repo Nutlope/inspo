@@ -23,6 +23,7 @@ import {
   COLOR_WORDS,
   STYLES,
   INDUSTRIES,
+  INDUSTRY_LABELS,
   MACROSTRUCTURES,
   MACROSTRUCTURE_LABELS,
   MODES,
@@ -240,6 +241,7 @@ export function ScreensGrid({
       options: INDUSTRIES,
       count: (v) =>
         screens.filter((x) => x.tags.industry.includes(v as Industry)).length,
+      formatLabel: (v) => INDUSTRY_LABELS[v as Industry] ?? v,
     },
     {
       label: "Style",

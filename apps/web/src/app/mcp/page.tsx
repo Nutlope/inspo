@@ -56,7 +56,7 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
       {
         name: "find_examples_for_macrostructure",
         sig: "(name)",
-        desc: "Real sites embodying one of the 21 named macrostructures.",
+        desc: "Real sites embodying one of the 19 named macrostructures.",
         lite: true,
         accent: true,
       },
@@ -271,7 +271,7 @@ export default async function MCPPage() {
             </em>
           </h2>
           <p className="mx-auto mt-5 max-w-[58ch] text-[var(--color-fg-muted)]">
-            Before writing code, an agent picks one of 21 named shapes -
+            Before writing code, an agent picks one of 19 named shapes -
             Bento, Specimen, Manifesto, Workbench… - and gets four real
             production sites that embody it. Shape and reference, in one
             prompt.

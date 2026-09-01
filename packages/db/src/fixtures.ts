@@ -119,7 +119,7 @@ const _screens: RawFixture[] = [
     tech: ["Next.js", "Tailwind", "Vercel"],
     mode: "dark",
     tags: {
-      style: ["bento", "futurist"],
+      style: ["futurist", "dark-mode"],
       industry: ["ai", "saas", "developer-tools"],
       components: ["bento-grid", "sticky-nav", "feature-trio"],
       vibe: ["loud", "technical"],
@@ -144,7 +144,7 @@ const _screens: RawFixture[] = [
     mode: "light",
     tags: {
       style: ["editorial", "minimalism"],
-      industry: ["hospitality"],
+      industry: ["food-beverage"],
       components: ["hero-fullbleed", "feature-alternating", "footer-compact"],
       vibe: ["luxe", "warm", "calm"],
       macrostructure: "photographic",
@@ -169,9 +169,9 @@ const _screens: RawFixture[] = [
     tags: {
       style: ["dark-mode", "brutalism", "monochrome"],
       industry: ["developer-tools"],
-      components: ["sticky-nav", "hero-with-cta", "comparison-table"],
+      components: ["sticky-nav", "hero-with-cta"],
       vibe: ["technical", "raw"],
-      macrostructure: "workbench",
+      macrostructure: "component-playground",
     },
   },
   {
@@ -313,7 +313,7 @@ const _screens: RawFixture[] = [
     tags: {
       style: ["swiss", "minimalism"],
       industry: ["developer-tools", "saas"],
-      components: ["sticky-nav", "feature-trio", "comparison-table"],
+      components: ["sticky-nav", "feature-trio"],
       vibe: ["technical", "calm"],
       macrostructure: "component-playground",
     },
@@ -360,7 +360,7 @@ const _screens: RawFixture[] = [
     mode: "dark",
     tags: {
       style: ["maximalism", "vintage", "dark-mode"],
-      industry: ["hospitality"],
+      industry: ["food-beverage"],
       components: ["hero-fullbleed", "feature-alternating", "footer-compact"],
       vibe: ["luxe", "warm"],
       macrostructure: "photographic",
@@ -409,7 +409,7 @@ const _screens: RawFixture[] = [
     tags: {
       style: ["dark-mode", "futurist", "swiss"],
       industry: ["developer-tools", "ai"],
-      components: ["sticky-nav", "logo-cloud", "comparison-table", "footer-mega-menu"],
+      components: ["sticky-nav", "logo-cloud"],
       vibe: ["technical", "loud"],
       macrostructure: "ecosystem-index",
     },

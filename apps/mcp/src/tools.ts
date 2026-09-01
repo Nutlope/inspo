@@ -151,14 +151,14 @@ const SPACING_GUIDANCE =
 /** Below this many distinct sites, a macrostructure's exemplar set is
  *  too small to read a consensus off, and callers are told so.
  *
- *  Set against the real distribution rather than picked round: nine of
- *  the twenty-one shapes have four sites or fewer (two have none), and
- *  the gap between `letter` at 6 and `long-document` at 11 is where
- *  "here are some examples" starts being defensible. */
+ *  Set against the real distribution rather than picked round: several
+ *  of the nineteen shapes have four sites or fewer, and the gap
+ *  between `letter` at 6 and `long-document` at 11 is where "here are
+ *  some examples" starts being defensible. */
 const THIN_COVERAGE = 8;
 
 /** Nearest covered shapes per macrostructure, for when coverage is
- *  thin. Adjacency is by composition, not by name: Workbench and
+ *  thin. Adjacency is by composition, not by name: Feature Stack and
  *  Component Playground both put the product's own surface on the
  *  page, so one teaches the other. Rotation constraints push callers
  *  toward exactly the rare shapes, so this path is hit more than the
@@ -168,23 +168,21 @@ const MACRO_NEIGHBOURS: Record<string, Macrostructure[]> = {
   "long-document": ["letter", "specimen"],
   "marquee-hero": ["manifesto", "photographic"],
   "stat-led": ["marquee-hero", "split-studio"],
-  workbench: ["feature-stack", "component-playground"],
   "conversational-faq": ["long-document", "index-first"],
   manifesto: ["marquee-hero", "specimen"],
   photographic: ["marquee-hero", "portfolio-grid"],
-  "quote-led": ["long-document", "letter"],
   specimen: ["type-specimen", "long-document"],
   catalogue: ["portfolio-grid", "type-specimen"],
   letter: ["long-document", "manifesto"],
   "index-first": ["ecosystem-index", "long-document"],
   "narrative-workflow": ["feature-stack", "split-studio"],
   "split-studio": ["feature-stack", "bento-grid"],
-  "feature-stack": ["split-studio", "workbench"],
+  "feature-stack": ["split-studio", "component-playground"],
   "type-specimen": ["specimen", "catalogue"],
   "portfolio-grid": ["catalogue", "photographic"],
   "map-diagram": ["ecosystem-index", "feature-stack"],
   "ecosystem-index": ["index-first", "portfolio-grid"],
-  "component-playground": ["workbench", "catalogue"],
+  "component-playground": ["feature-stack", "catalogue"],
 };
 
 /* ────────────── tolerant argument parsing ──────────────
@@ -828,7 +826,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_examples_for_macrostructure",
     {
       description:
-        "Given one of the 21 named macrostructures, return real production sites that exemplify it. Call this at the macrostructure-pick step to ground the choice in real exemplars. Accepts both kebab-case slugs ('bento-grid') and display names ('Bento Grid').",
+        "Given one of the 19 named macrostructures, return real production sites that exemplify it. Call this at the macrostructure-pick step to ground the choice in real exemplars. Accepts both kebab-case slugs ('bento-grid') and display names ('Bento Grid').",
       inputSchema: {
         name: z
           .preprocess(looseTrim, z.string())

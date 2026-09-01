@@ -194,7 +194,7 @@ export function buildEvidence(
  *
  * Published in `get_filters` so a caller can see, before it commits,
  * that the shape it is about to build has four exemplars and not four
- * hundred. Nine of the twenty-one shapes have four sites or fewer, so
+ * hundred. Several of the nineteen shapes have four sites or fewer, so
  * this is not a footnote.
  */
 export function macrostructureCoverage(

@@ -20,7 +20,7 @@ This is, and stays, a standard **MCP server** - packaging it for one-line instal
 | `compare(slugs[])` | 2-4 sites side by side: shared style tags, distinct macrostructures, register agreement. |
 | `find_by_color(hex, tolerance?, limit?)` | Real sites whose palette sits near a target colour (OKLAB distance). |
 | `find_similar(slug, limit?)` | A site's visual + structural neighbours. |
-| `find_examples_for_macrostructure(name, limit?)` | Exemplars of one of the 21 named macrostructures (`Bento Grid`, `Specimen`, …). |
+| `find_examples_for_macrostructure(name, limit?)` | Exemplars of one of the 19 named macrostructures (`Bento Grid`, `Specimen`, …). |
 | `find_components(type, …)` / `find_reference_components(type?)` / `get_reference_jsx(type, id)` | Real component crops + canonical reference JSX shapes. |
 | `get_filters()` | Zero input: lists every accepted filter / enum value (styles, industries, macrostructures, vibes, page types) so the agent can pick valid arguments in one call. |
 | `get_site_pages(slug)` | A site's captured pages in reading order. |

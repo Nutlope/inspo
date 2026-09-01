@@ -15,10 +15,7 @@ export const STYLES = [
   "minimalism",
   "editorial",
   "brutalism",
-  "neumorphism",
   "glassmorphism",
-  "claymorphism",
-  "bento",
   "swiss",
   "maximalism",
   "playful",
@@ -28,22 +25,68 @@ export const STYLES = [
   "futurist",
 ] as const;
 
+/**
+ * Industry allow-list, rebuilt 2026-09-01 from a full re-audit of the
+ * 767-site corpus. The original 14-value list forced whole clusters
+ * (car brands, architecture firms, type foundries, museums, fashion
+ * houses) into whichever value was least wrong - Porsche was tagged
+ * "real-estate". Every value below has real sites behind it; every
+ * site was re-classified against this list.
+ */
 export const INDUSTRIES = [
   "agency",
-  "saas",
-  "portfolio",
-  "ecommerce",
-  "fintech",
   "ai",
-  "developer-tools",
+  "architecture",
+  "automotive",
+  "consumer-tech",
   "creator",
-  "media",
+  "crypto",
+  "culture",
+  "developer-tools",
+  "ecommerce",
   "education",
+  "fashion",
+  "fintech",
+  "food-beverage",
+  "furniture",
+  "gaming",
   "health",
-  "real-estate",
-  "hospitality",
+  "media",
+  "music",
   "non-profit",
+  "portfolio",
+  "saas",
+  "travel",
+  "type-foundry",
 ] as const;
+
+/** Human-readable labels for the industry filter rail. */
+export const INDUSTRY_LABELS: Record<(typeof INDUSTRIES)[number], string> = {
+  agency: "Agency",
+  ai: "AI",
+  architecture: "Architecture",
+  automotive: "Automotive",
+  "consumer-tech": "Consumer Tech",
+  creator: "Creator Economy",
+  crypto: "Crypto & Web3",
+  culture: "Culture & Museums",
+  "developer-tools": "Developer Tools",
+  ecommerce: "Ecommerce",
+  education: "Education",
+  fashion: "Fashion & Beauty",
+  fintech: "Fintech",
+  "food-beverage": "Food & Beverage",
+  furniture: "Furniture & Interiors",
+  gaming: "Gaming",
+  health: "Health & Fitness",
+  media: "Media",
+  music: "Music",
+  "non-profit": "Non-Profit",
+  portfolio: "Portfolio",
+  saas: "SaaS",
+  travel: "Travel & Hospitality",
+  "type-foundry": "Type Foundry",
+};
 
 export const COMPONENTS = [
   "sticky-nav",
@@ -56,14 +99,11 @@ export const COMPONENTS = [
   "testimonial-wall",
   "testimonial-quote",
   "pricing-3-col",
-  "pricing-toggle",
   "faq-accordion",
-  "footer-mega-menu",
   "footer-compact",
   "case-study-card",
   "stat-strip",
   "marquee-logos",
-  "comparison-table",
   "newsletter-signup",
   "blog-grid",
 ] as const;
@@ -115,20 +155,20 @@ export const VIEWPORTS = ["desktop", "tablet", "mobile"] as const;
 export const CAPTURE_DEVICES = ["desktop", "mobile"] as const;
 
 /**
- * The 21 named macrostructures, Inspo's named whole-page shapes. The
+ * The 19 named macrostructures, Inspo's named whole-page shapes. The
  * agent picks one before writing code; Inspo lets it browse real
- * exemplars per name.
+ * exemplars per name. ("workbench" and "quote-led" were retired
+ * 2026-09-01: zero screens in the 2,141-capture corpus embodied
+ * either, so they were dead filter values.)
  */
 export const MACROSTRUCTURES = [
   "bento-grid",
   "long-document",
   "marquee-hero",
   "stat-led",
-  "workbench",
   "conversational-faq",
   "manifesto",
   "photographic",
-  "quote-led",
   "specimen",
   "catalogue",
   "letter",
@@ -226,11 +266,9 @@ export const MACROSTRUCTURE_LABELS: Record<Macrostructure, string> = {
   "long-document": "Long Document",
   "marquee-hero": "Marquee Hero",
   "stat-led": "Stat-Led",
-  workbench: "Workbench",
   "conversational-faq": "Conversational FAQ",
   manifesto: "Manifesto",
   photographic: "Photographic",
-  "quote-led": "Quote-Led",
   specimen: "Specimen",
   catalogue: "Catalogue",
   letter: "Letter",
