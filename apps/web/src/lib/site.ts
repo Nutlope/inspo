@@ -27,6 +27,6 @@ export const site = {
   },
   // Where DMCA / takedown requests land (see /dmca).
   contact: {
-    dmca: "speedyoussef@gmail.com",
+    dmca: "hassan@hey.com",
   },
 } as const;

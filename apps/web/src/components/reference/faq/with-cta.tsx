@@ -49,10 +49,10 @@ export function FaqWithCta() {
           Question we didn&rsquo;t answer?
         </p>
         <a
-          href="mailto:speedyoussef@gmail.com"
+          href="mailto:hello@example.com"
           className="font-mono text-sm tracking-normal text-[var(--color-fg)] transition-colors hover:text-[var(--color-accent)]"
         >
-          speedyoussef@gmail.com ↗
+          hello@example.com ↗
         </a>
       </div>
     </section>

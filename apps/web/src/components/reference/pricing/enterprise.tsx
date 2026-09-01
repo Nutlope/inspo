@@ -37,7 +37,7 @@ export function PricingEnterprise() {
             Built for your set, on your terms.
           </p>
           <a
-            href="mailto:speedyoussef@gmail.com"
+            href="mailto:hello@example.com"
             className="mt-10 inline-flex h-12 items-center gap-3 border-2 px-7 font-mono text-sm tracking-normal transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
             style={{ borderColor: "var(--color-fg)" }}
           >
