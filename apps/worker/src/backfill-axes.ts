@@ -53,13 +53,23 @@ for (const r of rows) {
     paperL: paperL ?? undefined,
   });
   if (!axes.displayFace) noFonts++;
-  // The tagged `mode` and the measured surface disagree often enough
-  // to be worth counting: it is the reason paper band is measured
-  // rather than inferred.
-  if (paperL !== null && (r.mode === "dark") !== (axes.paperBand === "dark")) {
-    modeDisagrees++;
+  // The extractor's bgColor `mode` and the measured surface disagree
+  // often (white body behind a dark wrapper, and vice versa), so the
+  // measurement wins: `mode` is dark iff the median pixel is dark, and
+  // the dark-mode style tag is kept in exact sync with it. The 2026-09
+  // taxonomy audit applied this rule to the whole archive; running this
+  // script after new captures keeps the invariant.
+  if (paperL !== null) {
+    const measuredMode = paperL < 50 ? ("dark" as const) : ("light" as const);
+    if (r.mode !== measuredMode) modeDisagrees++;
+    r.mode = measuredMode;
   }
   r.tags = { ...(r.tags ?? {}) };
+  const style = ((r.tags.style ?? []) as string[]).filter(
+    (s) => s !== "dark-mode",
+  );
+  if (r.mode === "dark") style.push("dark-mode");
+  r.tags.style = style;
   r.tags.axes = axes;
   bump(dist.paperBand, axes.paperBand);
   bump(dist.displayClass, axes.displayClass);
