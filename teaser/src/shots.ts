@@ -2,41 +2,36 @@ import { staticFile } from "remotion";
 
 const real = (slug: string) => staticFile(`real/${slug}.jpg`);
 
-/* The archive grid, 4 x 3: real websites from the Inspo archive
-   (desktop-hero captures, 1440x900, same 1.6 aspect as the tiles).
-   Tones alternate so it reads as a wall of different real sites.
-   Row-major. */
+/* The archive grid, 3 x 3: the nine real sites featured on the Inspo
+   homepage, in the homepage's own "featured" order. Desktop-hero
+   captures, 1440x900, same 1.6 aspect as the tiles. Row-major. */
 export const GRID_SLUGS: string[] = [
-  "cron-com",
-  "graza-co",
-  "family-co",
-  "aesop-com",
-  "pentagram-com",
-  "linear-app",
-  "omsom-com",
-  "vercel-com",
-  "liquiddeath-com",
-  "notion-so",
-  "raycast-com",
-  "stumptowncoffee-com",
+  "buildkite-com",
+  "ghost-org",
+  "are-na",
+  "capacities-io",
+  "mercury-com",
+  "heptabase-com",
+  "highlight-xyz",
+  "dust-tt",
+  "bandcamp-com",
 ];
 
-/* The three references Inspo picks, in selection order: Graza (the
-   squeeze-bottle product page), Liquid Death (the loud display type),
-   Omsom last (the proud red food brand) so the front of the stack is
-   red when it becomes the page. */
-export const PICKS = [1, 8, 6];
+/* The three references Inspo picks, in selection order: Mercury (the
+   serif product polish), Bandcamp (the music), Capacities last (the
+   warm cream) so the front of the stack matches the page it becomes. */
+export const PICKS = [4, 8, 3];
 
-/* The generated page those references become: ember-and-ash, shot
+/* The generated page those references become: loom-audio, shot
    full-page so the teaser can scroll through it. */
-export const RESULT = staticFile("real/ember-full.jpg");
-export const RESULT_IMG = { w: 2560, h: 4626 };
+export const RESULT = staticFile("real/loom-full.jpg");
+export const RESULT_IMG = { w: 2560, h: 6110 };
 
 export const GRID = {
-  cols: 4,
+  cols: 3,
   rows: 3,
-  tileW: 440,
-  tileH: 275,
+  tileW: 496,
+  tileH: 310,
   gap: 14,
   radius: 18,
 };

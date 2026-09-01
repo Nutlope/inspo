@@ -3,7 +3,8 @@ import { loadFont as loadFrauncesItalic } from "@remotion/google-fonts/Fraunces"
 import { loadFont as loadInterTight } from "@remotion/google-fonts/InterTight";
 
 const fraunces = loadFraunces("normal", {
-  weights: ["500", "600"],
+  /* 400 is the masthead wordmark's weight on the site */
+  weights: ["400", "500", "600"],
   subsets: ["latin"],
 });
 

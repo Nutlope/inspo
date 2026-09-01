@@ -26,7 +26,7 @@ import { colors, EXPO, fonts } from "../theme";
    52-80   the three picks fly to the center and stack like pulled cards
    78-88   the stack snaps into perfect alignment
    90-110  the stack grows into the generated page, framed on the paper
-   116-146 a quick scroll through the page, top to footer */
+   112-146 a quick scroll through the page, top to footer */
 
 const SEL_AT = [16, 27, 38];
 const FALL_AT = 44;
@@ -34,7 +34,7 @@ const CONV_START = 52;
 const ALIGN = [78, 88] as const;
 const BUILD_START = 90;
 const BUILD_END = 110;
-const SCROLL = [116, 146] as const;
+const SCROLL = [112, 146] as const;
 
 /* Fanned offsets for the card stack: two behind, the last pick in front. */
 const STACK = [

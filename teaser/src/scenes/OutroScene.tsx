@@ -13,7 +13,7 @@ import { colors, EXPO, fonts } from "../theme";
    8-22    "Your agent doesn't have taste."
    18-32   "Lend it some."
    44-54   both lines leave
-   50-     "Inspo." wordmark, then the deck line */
+   50-     the "Inspo." wordmark, alone and centered */
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
 
@@ -93,22 +93,22 @@ export const OutroScene: React.FC = () => {
         </Interactive.Div>
       </AbsoluteFill>
 
-      {/* ── The mark ─────────────────────────────────────────── */}
+      {/* ── The mark: the site's masthead wordmark, exactly - ──
+          Fraunces 400, tracking-tight, accent period. Nothing else. */}
       <AbsoluteFill
         style={{
           justifyContent: "center",
           alignItems: "center",
-          gap: 24,
         }}
       >
         <Interactive.Div
           name="Wordmark"
           style={{
             fontFamily: fonts.display,
-            fontWeight: 600,
+            fontWeight: 400,
             fontSize: 220,
-            letterSpacing: "-0.04em",
-            lineHeight: 0.9,
+            letterSpacing: "-0.025em",
+            lineHeight: 1,
             color: colors.ink,
             opacity: interpolate(frame, [50, 62], [0, 1], {
               extrapolateLeft: "clamp",
@@ -141,29 +141,6 @@ export const OutroScene: React.FC = () => {
           >
             .
           </span>
-        </Interactive.Div>
-
-        <Interactive.Div
-          name="Deck"
-          style={{
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: 34,
-            letterSpacing: "0.01em",
-            color: colors.inkMuted,
-            opacity: interpolate(frame, [70, 82], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: Easing.bezier(...EXPO),
-            }),
-            translate: interpolate(frame, [70, 82], ["0px 14px", "0px 0px"], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: Easing.bezier(...EXPO),
-            }),
-          }}
-        >
-          Real websites as inspiration for your agent.
         </Interactive.Div>
       </AbsoluteFill>
     </AbsoluteFill>
