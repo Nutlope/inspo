@@ -19,7 +19,8 @@
     "build:npm": "node scripts/build-npm.mjs",
     "typecheck": "tsc --noEmit",
     "bench": "node bench/response-cost.mjs",
-    "bench:check": "node bench/response-cost.mjs --check"
+    "bench:check": "node bench/response-cost.mjs --check",
+    "verify:npm": "node scripts/verify-npm.mjs"
   },
   "dependencies": {
     "@inspo/db": "workspace:*",

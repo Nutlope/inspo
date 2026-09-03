@@ -15,10 +15,12 @@
  */
 
 import { build } from "esbuild";
+import { createHash } from "node:crypto";
 import {
   chmodSync,
   copyFileSync,
   mkdirSync,
+  readFileSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -32,7 +34,7 @@ const OUT_FILE = resolve(OUT_DIR, "inspo-mcp.mjs");
 
 // Bump before every publish: npm refuses to overwrite a published
 // version, and this constant is the only place it is set.
-const VERSION = "0.1.10";
+const VERSION = "0.1.11";
 
 mkdirSync(OUT_DIR, { recursive: true });
 
@@ -107,12 +109,28 @@ writeFileSync(
 
 copyFileSync(resolve(MCP_ROOT, "README.md"), resolve(OUT_DIR, "README.md"));
 
+// Guard against publishing a stale dist. 0.1.10 shipped a bundle built
+// BEFORE the installer landed - it passed every eyeball check because
+// the version string was already bumped, and `npx inspo-mcp install`
+// silently did nothing in production. Assert the surface is present,
+// and print a hash so the published tarball can be diffed against this
+// build (`pnpm verify:npm`).
+const bundle = readFileSync(OUT_FILE, "utf8");
+const REQUIRED = ["Will configure", "npx -y inspo-mcp install", "inspo-backup"];
+const missing = REQUIRED.filter((m) => !bundle.includes(m));
+if (missing.length) {
+  console.error(`\n  BUILD IS STALE - bundle is missing: ${missing.join(", ")}`);
+  process.exit(1);
+}
+const sha = createHash("sha256").update(bundle).digest("hex").slice(0, 12);
+
 // Report the bundle size from the metafile.
 const bytes = Object.values(result.metafile.outputs).reduce(
   (n, o) => n + o.bytes,
   0,
 );
 console.log(
-  `\n  built dist/inspo-mcp.mjs (${(bytes / 1024).toFixed(0)} KB) + package.json + README`,
+  `\n  built dist/inspo-mcp.mjs  v${VERSION}  ${(bytes / 1024).toFixed(0)} KB  sha256:${sha}`,
 );
-console.log("  publish:  cd apps/mcp/dist && npm publish\n");
+console.log("  publish:  cd apps/mcp/dist && npm publish");
+console.log("  then:     pnpm --filter @inspo/mcp verify:npm\n");
