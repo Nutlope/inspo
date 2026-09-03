@@ -20,7 +20,7 @@ import { parseBudget } from "./budget";
 
 /** Stateless HTTP never sees the client's initialize on the instance
  *  serving tools/list, so clientInfo auto-detection can't apply here.
- *  Remote callers opt into the OSS profile via query params instead:
+ *  Text-only harnesses opt down via query params instead:
  *  `…/mcp?profile=lite&images=none`. */
 export function optionsFromUrl(url: URL): RegisterOptions {
   const p = url.searchParams.get("profile")?.toLowerCase();
@@ -41,21 +41,32 @@ export async function handleMcpRequest(
     { name: "inspo", version: "0.0.1" },
     { instructions: SERVER_INSTRUCTIONS },
   );
-  // OSS-first hosted default, mirroring the Worker: query > env >
-  // lite + images=none. clientInfo isn't visible on the stateless HTTP
-  // transport, and most hosted callers are OSS-model harnesses; vision
-  // clients opt up with ?profile=full&images=thumbs.
+  // Precedence: query > env > full + thumbs.
+  //
+  // This defaulted to lite + images=none, inherited from the Worker on
+  // the assumption that most hosted callers were OSS-model harnesses.
+  // That stopped being true when `inspo-mcp install` started pointing
+  // Claude Code, Cursor, VS Code, Windsurf, Zed and Claude Desktop at
+  // this endpoint - every one of them reads images. clientInfo is
+  // invisible on the stateless HTTP transport, so there is no detecting
+  // it per request; the default has to be right for the population that
+  // actually arrives, and serving a screenshot archive as text to a
+  // vision client is the worse failure.
+  //
+  // Text-only harnesses opt DOWN with ?profile=lite&images=none, and
+  // INSPO_PROFILE / INSPO_IMAGES still flip the default without a
+  // deploy. Per-call maxTokens is unchanged.
   const fromUrl = optionsFromUrl(new URL(request.url));
   const envProfile = process.env.INSPO_PROFILE?.toLowerCase();
   const envImages = process.env.INSPO_IMAGES?.toLowerCase();
   const profile: Profile =
     fromUrl.profile ??
     (envProfile === "lite" || envProfile === "full" ? (envProfile as Profile) : undefined) ??
-    "lite";
+    "full";
   const images: ImagesMode =
     fromUrl.images ??
     (envImages === "none" || envImages === "thumbs" ? (envImages as ImagesMode) : undefined) ??
-    "none";
+    "thumbs";
   registerTools(server, {
     profile,
     images,

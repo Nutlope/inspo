@@ -152,7 +152,7 @@ client name from the MCP handshake. Kimi CLI, OpenCode, Cline, Roo,
 Crush, Goose, Aider, Continue, Droid, and iFlow get `lite` + text-only;
 Kilo and Qwen Code get `lite` + thumbnails (their image path works);
 everything else (Claude Code, Cursor, ...) keeps `full` + thumbnails.
-Env vars always win. The hosted endpoint now defaults to `lite` + `images=none` (OSS-first: the stateless HTTP transport can't read the client name, and most hosted callers are OSS-model harnesses); vision clients opt up with `https://.../mcp?profile=full&images=thumbs`. Text-only OSS models (GLM 5.2, DeepSeek V4) and the harnesses above get `lite` + text automatically.
+Env vars always win. The hosted endpoint defaults to `full` + `images=thumbs`, matching the clients `inspo-mcp install` actually wires up (Claude Code, Cursor, VS Code, Windsurf, Zed, Claude Desktop - all of which read images). The stateless HTTP transport can't read the client name, so text-only harnesses opt DOWN explicitly: `https://.../mcp?profile=lite&images=none`. Over stdio, clientInfo auto-detection still does this for you.
 
 Schemas are flat (no `$ref`, no `$schema`, no `additionalProperties`)
 to satisfy strict validators (Moonshot's API, Together's
