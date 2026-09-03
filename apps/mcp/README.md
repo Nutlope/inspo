@@ -46,6 +46,23 @@ claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp
 { "mcpServers": { "inspo": { "url": "https://inspo-three.vercel.app/api/mcp" } } }
 ```
 
+### One command, any client
+
+`inspo-mcp install` detects the MCP clients on the machine (Claude Code,
+Codex, VS Code, Cursor, Windsurf, Claude Desktop, Zed) and writes the
+config for each, pointed at the hosted endpoint:
+
+```bash
+npx -y inspo-mcp install
+```
+
+It shows the plan and asks before touching anything. `--dry-run` prints
+the plan and writes nothing, `--client <id>` targets one client,
+`--local` wires the npx stdio form instead of the hosted URL, and `-y`
+skips the prompt. Config files it edits are backed up alongside
+(`mcp.json.inspo-backup`); Zed's JSONC settings are printed for you to
+paste rather than rewritten, so your comments survive.
+
 ### `npx` (zero-config)
 
 No clone and no hosting - the stdio server (`inspo-mcp`) runs straight

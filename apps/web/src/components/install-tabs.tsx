@@ -26,6 +26,13 @@ export type InstallTab = {
   snippet: string;
   /** Optional one-click deeplink (Cursor). */
   deeplink?: { href: string; label: string };
+  /**
+   * How the snippet reads. Inferred when omitted: one line is a shell
+   * command, more is config. Set it explicitly for anything that is
+   * neither - a prompt for an agent must not wear a `$`, or people
+   * paste it into a terminal.
+   */
+  variant?: "shell" | "code" | "prose";
 };
 
 export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
@@ -35,8 +42,10 @@ export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
   if (!current) return null;
 
   const multiline = current.snippet.includes("\n");
-  // Single-line snippets are shell commands; they get the $ prompt.
-  const shell = !multiline;
+  const variant = current.variant ?? (multiline ? "code" : "shell");
+  // Only real shell commands get the $ prompt.
+  const shell = variant === "shell";
+  const prose = variant === "prose";
 
   async function copy() {
     try {
@@ -103,13 +112,24 @@ export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
         </div>
 
         <div
-          className={`flex gap-4 px-6 pt-2 pb-5 sm:px-7 ${
-            multiline ? "items-start" : "items-center"
+          // Stacked on narrow screens: a 24-character command plus a
+          // Copy button does not fit 375px side by side, and a command
+          // you have to scroll sideways to read is a command you mistype.
+          className={`flex flex-col gap-3 px-6 pt-2 pb-5 sm:flex-row sm:gap-4 sm:px-7 ${
+            multiline || prose ? "sm:items-start" : "sm:items-center"
           }`}
         >
-          <pre className="min-w-0 flex-1 overflow-x-auto py-1 text-left font-mono leading-relaxed">
+          <pre
+            className={`min-w-0 flex-1 py-1 text-left font-mono leading-relaxed ${
+              // A prompt is prose: wrap it instead of running it off
+              // the plate on one 400-character line.
+              prose ? "whitespace-pre-wrap" : "overflow-x-auto"
+            }`}
+          >
             <code
-              className={multiline ? "text-sm sm:text-base" : "text-base sm:text-lg"}
+              className={
+                multiline || prose ? "text-sm sm:text-base" : "text-base sm:text-lg"
+              }
             >
               {shell && (
                 <span
@@ -127,7 +147,7 @@ export function InstallTabs({ tabs }: { tabs: InstallTab[] }) {
             type="button"
             onClick={copy}
             aria-label={`Copy ${current.label} install snippet`}
-            className={`inline-flex h-10 shrink-0 items-center rounded-full px-5 text-sm transition-colors duration-200 ${
+            className={`inline-flex h-10 shrink-0 items-center justify-center rounded-full px-5 text-sm transition-colors duration-200 ${
               copied
                 ? "bg-[var(--color-ink-dark)] text-[var(--color-ink)]"
                 : // Literal ink on the accent: the plate ignores the theme,

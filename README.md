@@ -35,8 +35,8 @@ Sixteen tools expose all of it; `recommend(brief)` composes most of them into on
 
 ## Cloning & running
 
-1. Hosted, nothing to install: `claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp`
-2. Or from npm, stdio: `npx -y inspo-mcp`
+1. One command, any client: `npx -y inspo-mcp install` (detects Claude Code, Cursor, Codex, VS Code, Windsurf, Zed, Claude Desktop and writes the config; `--dry-run` shows the plan)
+2. Or point a client at the hosted endpoint yourself: `claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp`
 3. Or clone: `git clone https://github.com/Nutlope/inspo.git && cd inspo && pnpm install`
 4. Gallery: `pnpm dev`, then open `localhost:3737`
 5. Dev loop: `pnpm --filter @inspo/mcp test`

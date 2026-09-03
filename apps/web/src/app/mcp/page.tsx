@@ -146,10 +146,45 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
 ];
 
 const HOSTED_URL = "https://inspo-three.vercel.app/api/mcp";
+// base64 of {"url": HOSTED_URL} - Cursor's documented deeplink payload.
+// Keep in sync with HOSTED_URL: a stale payload silently installs a dead
+// server (it pointed at the retired Cloudflare Worker until 2026-09-03).
 const CURSOR_DEEPLINK =
-  "cursor://anysphere.cursor-deeplink/mcp/install?name=inspo&config=eyJ1cmwiOiJodHRwczovL2luc3BvLW1jcC5sdWZmaXhvcy53b3JrZXJzLmRldi9tY3AifQ==";
+  "cursor://anysphere.cursor-deeplink/mcp/install?name=inspo&config=eyJ1cmwiOiJodHRwczovL2luc3BvLXRocmVlLnZlcmNlbC5hcHAvYXBpL21jcCJ9";
 
+const AGENT_PROMPT =
+  `Add the Inspo MCP server to my setup. It is a free, hosted, no-auth ` +
+  `streamable-HTTP endpoint at ${HOSTED_URL}, and it should be registered ` +
+  `under the name "inspo" in whatever MCP config my client uses. If you ` +
+  `cannot reach a remote server, use the local stdio form instead: ` +
+  `command "npx", args ["-y", "inspo-mcp"]. When you are done, list the ` +
+  `inspo tools back to me so I know it connected.`;
+
+/**
+ * Install paths, loosest to tightest. The first tab is the one command
+ * that works everywhere (it detects the client and writes the config),
+ * the second hands the job to the agent already sitting in the editor,
+ * and the rest are the exact per-client lines for anyone who would
+ * rather wire it themselves.
+ *
+ * `npx -y inspo-mcp` WITHOUT `install` is not an install command - it
+ * boots the stdio server and waits on stdin, which reads as a hang.
+ * Never surface the bare form as something to paste into a shell.
+ */
 const installTabs: InstallTab[] = [
+  {
+    id: "one-command",
+    label: "One command",
+    note: "Detects Claude Code, Cursor, Codex, VS Code, Windsurf, Zed and Claude Desktop, then writes the config. Add --dry-run to see the plan first.",
+    snippet: "npx -y inspo-mcp install",
+  },
+  {
+    id: "agent",
+    label: "Ask your agent",
+    note: "Paste into the agent you already have open - it wires itself up.",
+    variant: "prose",
+    snippet: AGENT_PROMPT,
+  },
   {
     id: "claude-code",
     label: "Claude Code",
@@ -167,40 +202,35 @@ const installTabs: InstallTab[] = [
     },
   },
   {
-    id: "windsurf",
-    label: "Windsurf",
-    note: "~/.codeium/windsurf/mcp_config.json",
-    snippet: `{\n  "mcpServers": {\n    "inspo": { "serverUrl": "${HOSTED_URL}" }\n  }\n}`,
-  },
-  {
     id: "codex",
     label: "Codex",
-    note: "~/.codex/config.toml",
-    snippet: `[mcp_servers.inspo]\ncommand = "npx"\nargs = ["-y", "inspo-mcp"]`,
+    note: "Writes ~/.codex/config.toml for you.",
+    snippet: `codex mcp add inspo --url ${HOSTED_URL}`,
+  },
+  {
+    id: "vscode",
+    label: "VS Code",
+    note: "Copilot agent mode - adds it to your user profile.",
+    snippet: `code --add-mcp '{"name":"inspo","type":"http","url":"${HOSTED_URL}"}'`,
+  },
+  {
+    id: "windsurf",
+    label: "Windsurf",
+    note: "~/.codeium/windsurf/mcp_config.json - remote servers use serverUrl.",
+    snippet: `{\n  "mcpServers": {\n    "inspo": { "serverUrl": "${HOSTED_URL}" }\n  }\n}`,
   },
   {
     id: "zed",
     label: "Zed",
     note: "~/.config/zed/settings.json",
-    snippet: `{\n  "context_servers": {\n    "inspo": {\n      "command": { "path": "npx", "args": ["-y", "inspo-mcp"] }\n    }\n  }\n}`,
+    snippet: `{\n  "context_servers": {\n    "inspo": { "url": "${HOSTED_URL}" }\n  }\n}`,
   },
   {
-    id: "vscode",
-    label: "VS Code",
-    note: ".vscode/mcp.json (Copilot agent mode)",
-    snippet: `{\n  "servers": {\n    "inspo": { "type": "http", "url": "${HOSTED_URL}" }\n  }\n}`,
-  },
-  {
-    id: "npx",
-    label: "npx",
-    note: "Any MCP client, run locally over stdio - no config file, no auth.",
-    snippet: "npx -y inspo-mcp",
-  },
-  {
-    id: "json",
-    label: "Raw JSON",
-    note: "Hosted HTTP endpoint, or local stdio via npx - both free, no auth.",
-    snippet: `{\n  "mcpServers": {\n    "inspo": { "url": "${HOSTED_URL}" }\n  }\n}\n\n// or run locally over stdio\n{\n  "mcpServers": {\n    "inspo": { "command": "npx", "args": ["-y", "inspo-mcp"] }\n  }\n}`,
+    id: "endpoint",
+    label: "Endpoint",
+    note: "Any other client: hand it the URL, or run it locally over stdio. Both free, no auth.",
+    variant: "code",
+    snippet: `${HOSTED_URL}\n\n// or local stdio, no hosting in the loop\n{ "command": "npx", "args": ["-y", "inspo-mcp"] }`,
   },
 ];
 

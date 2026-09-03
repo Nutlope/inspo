@@ -102,8 +102,8 @@ export default async function HomePage() {
 
           <div className="mx-auto mt-8 inline-flex max-w-full items-center gap-3 rounded-full border rule bg-[var(--color-bg)] py-3 pl-6 pr-4">
             <span aria-hidden className="text-[var(--color-fg-muted)]">$</span>
-            <code className="truncate text-[var(--color-fg)]">npx -y inspo-mcp</code>
-            <CopyValue value="npx -y inspo-mcp" label="Copy install command" className="pl-1" />
+            <code className="truncate text-[var(--color-fg)]">npx -y inspo-mcp install</code>
+            <CopyValue value="npx -y inspo-mcp install" label="Copy install command" className="pl-1" />
           </div>
 
           <p className="mt-7">

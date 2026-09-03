@@ -6,7 +6,7 @@ import Link from "next/link";
 /**
  * The home hero's call to action.
  *
- * The primary CTA IS the install: a click-to-copy `npx -y inspo-mcp`
+ * The primary CTA IS the install: a click-to-copy `npx -y inspo-mcp install`
  * capsule styled like the primary button it replaces. A "Get started"
  * pill only added a hop to /mcp, where the first thing you'd do is
  * copy this exact command - so the hero hands it over directly.
@@ -18,7 +18,7 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
 
   async function copyInstall() {
     try {
-      await navigator.clipboard.writeText("npx -y inspo-mcp");
+      await navigator.clipboard.writeText("npx -y inspo-mcp install");
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
@@ -57,7 +57,7 @@ export function HomeCta({ screenCount }: { screenCount: number }) {
           >
             $
           </span>
-          <code className="font-mono tracking-wide">npx -y inspo-mcp</code>
+          <code className="font-mono tracking-wide">npx -y inspo-mcp install</code>
           <span
             aria-hidden
             className={`inline-flex h-9 items-center rounded-full px-3.5 text-sm transition-colors duration-200 ${

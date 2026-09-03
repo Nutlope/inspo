@@ -25,6 +25,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ensureCatalogue } from "@inspo/db";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
+import { install } from "./install";
 
 // Replaced at build time (scripts/build-npm.mjs) with the published version.
 declare const __INSPO_VERSION__: string;
@@ -38,21 +39,24 @@ const HELP = `
   study, components, palettes, flows and recommendations for coding
   agents that are about to write UI.
 
-  This is an MCP server, not a CLI. It speaks JSON-RPC on stdin/stdout
-  and is meant to be launched by an MCP client, not run by hand - which
-  is why a bare \`npx inspo-mcp\` looks like it does nothing.
+  This is an MCP server, not a CLI. Run bare, it speaks JSON-RPC on
+  stdin/stdout and waits for a client - which is why \`npx inspo-mcp\`
+  on its own looks like it does nothing. To set it up, run:
 
-  Add it to a client:
+    npx -y inspo-mcp install
 
-    Claude Code   claude mcp add inspo -- npx -y inspo-mcp
-    Codex         codex mcp add inspo -- npx -y inspo-mcp
+  That detects your MCP clients (Claude Code, Codex, VS Code, Cursor,
+  Windsurf, Claude Desktop, Zed) and writes the config for each.
 
-    Cursor (~/.cursor/mcp.json) · Claude Desktop · VS Code:
-      { "mcpServers": { "inspo": { "command": "npx", "args": ["-y", "inspo-mcp"] } } }
+    install --dry-run          show the plan, write nothing
+    install --local            use local stdio instead of the hosted URL
+    install --client cursor    target one client (repeatable)
+    install -y                 skip the confirmation
 
-  Or skip the download entirely and use the hosted endpoint:
+  Prefer to wire it yourself? Every client takes one of these:
 
-    claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp
+    url:      https://inspo-three.vercel.app/api/mcp
+    command:  npx -y inspo-mcp
 
   Optional env: TOGETHER_API_KEY (query-embedding semantic search),
                 INSPO_CATALOGUE_URL (self-hosted catalogue).
@@ -68,6 +72,11 @@ const CATALOGUE_URL =
 
 async function main() {
   const argv = process.argv.slice(2);
+
+  if (argv[0] === "install" || argv[0] === "setup") {
+    process.exitCode = await install(argv.slice(1), VERSION);
+    return;
+  }
 
   if (argv.includes("--version") || argv.includes("-v")) {
     console.log(VERSION);
