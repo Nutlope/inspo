@@ -59,6 +59,16 @@ from npm via `npx -y inspo-mcp` and fetches the catalogue from the CDN:
 Optional `env`: `TOGETHER_API_KEY` (enables query-embedding semantic search) and
 `INSPO_CATALOGUE_URL` (point at a self-hosted catalogue).
 
+> Running `npx -y inspo-mcp` by hand looks like it does nothing: an MCP server
+> speaks JSON-RPC on stdin/stdout and prints nothing on its own. From a
+> terminal it now prints these install instructions instead (`--help`,
+> `--version`; `--stdio` forces the server). It is meant to be *launched by a
+> client*, so add it with one of:
+>
+> ```bash
+> claude mcp add inspo -- npx -y inspo-mcp
+> ```
+
 ### Local (stdio, from a clone)
 
 The bin shim boots the TS server via `tsx` - no build step.

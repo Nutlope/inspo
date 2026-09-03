@@ -32,7 +32,7 @@ const OUT_FILE = resolve(OUT_DIR, "inspo-mcp.mjs");
 
 // Bump before every publish: npm refuses to overwrite a published
 // version, and this constant is the only place it is set.
-const VERSION = "0.1.9";
+const VERSION = "0.1.10";
 
 mkdirSync(OUT_DIR, { recursive: true });
 
@@ -46,7 +46,11 @@ const result = await build({
   banner: { js: "#!/usr/bin/env node" },
   // Some deps reference `require`; provide a shim so the ESM bundle can
   // resolve their internal CommonJS interop.
-  define: { "import.meta.vitest": "undefined" },
+  define: {
+    "import.meta.vitest": "undefined",
+    // The CLI reports this in --version and as the MCP serverInfo version.
+    __INSPO_VERSION__: JSON.stringify(VERSION),
+  },
   alias: {
     // Don't bundle the 16MB seed — the standalone server fetches the
     // catalogue from the CDN at runtime. Force the edge (null) variant.
