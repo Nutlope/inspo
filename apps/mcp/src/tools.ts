@@ -134,7 +134,7 @@ const HERO_GUIDANCE =
   // contradiction in the agent's prompt on every session. This rule is
   // about the fold, and it has no business taking a side on which
   // elements a hero contains.
-  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, i.e. min-height:100svh): the nav, headline, supporting line, primary CTA, and any hero visual/product mock must be visually COMPLETE above the fold - nothing important cut off. Size display type to land in 2-3 balanced lines within that height; never let an oversized wordmark or heading eat the viewport (the single most common failure). Lead with modest top spacing, not a tall empty gap. Study how the exemplars balance headline against visual inside their own first screen and match that restraint.";
+  "Compose the hero to fit the FIRST VIEWPORT (~1280×800, min-height:100svh): nav, headline, supporting line, primary CTA and any hero visual must be COMPLETE above the fold. Size display type to 2-3 balanced lines within that height - an oversized wordmark or heading eating the viewport is the single most common failure. Modest top spacing, not a tall empty gap.";
 
 /** Companion rule for everything below the fold. The two failures
  *  agents actually produce down-page are cramped section seams (two
@@ -146,7 +146,7 @@ const HERO_GUIDANCE =
  *  instructions, because server instructions alone never reach the
  *  model in several MCP clients. */
 const SPACING_GUIDANCE =
-  "Below the fold, keep two spacing systems deliberate. VERTICAL: separate adjacent sections with real block space - production sites run 80-160px between sections (measured median for the biggest step: 96px); under ~64px two sections read as one crammed block. Pick ONE rhythm (e.g. clamp(72px, 10vw, 140px)) and apply it at every section seam instead of improvising per section. HORIZONTAL: run content in a centered max-width column with symmetric padding-inline (24px minimum on mobile, more at desktop) so text never touches the viewport edge; full-bleed is for backgrounds, not copy. Declare the two separately: a container's padding SHORTHAND (.wrap{padding:0 32px}) outranks a bare section{padding:96px 0} on any element carrying both, silently zeroing the rhythm - give the container padding-inline only, and put block spacing on its own rule. Verify after writing: a mid-page section's computed block padding or margin must not be 0px.";
+  "Below the fold, two separate systems. VERTICAL: 80-160px between sections (measured median for the biggest step: 96px); under ~64px two sections read as one crammed block. Pick ONE rhythm (e.g. clamp(72px, 10vw, 140px)) and use it at every seam. HORIZONTAL: a centered max-width column with symmetric padding-inline (24px minimum on mobile) so copy never touches the edge; full-bleed is for backgrounds. Declare them separately - a container's padding SHORTHAND (.wrap{padding:0 32px}) outranks section{padding:96px 0} on the same element and silently zeroes the rhythm, so give the container padding-inline only. Verify: a mid-page section's computed block padding must not be 0px.";
 
 /** Below this many distinct sites, a macrostructure's exemplar set is
  *  too small to read a consensus off, and callers are told so.
@@ -251,24 +251,26 @@ const flexUrl = () =>
 
 /** Tip line for screen-list responses, phrased for whichever response
  *  shape the connecting harness actually receives. */
+/** The composition rules in one line, for the tools an agent reaches
+ *  for right before it writes markup. The long forms (HERO_GUIDANCE /
+ *  SPACING_GUIDANCE) ride on recommend(); repeating them on every
+ *  search result would cost more than the server instructions they
+ *  replaced. */
+const COMPOSE_RULE =
+  "COMPOSE: keep the hero complete inside the first viewport (~1280x800); 80-160px between sections (measured median 96px); copy in a centered, padded column. `recommend` returns the long form.";
+
 function resultsTip(inline: boolean, concise: boolean): string {
-  const mobile =
-    " Each result also carries `mobile` (375px) image URLs where captured, so you can study how the design reflows, not just the desktop look.";
+  const mobile = " Each result carries `mobile` (375px) URLs where captured.";
   const search =
     typeof process !== "undefined" && process.env?.TOGETHER_API_KEY
       ? ""
-      : " Ranking is lexical-only right now (no TOGETHER_API_KEY set, so semantic vector search is off); set it for sharper relevance.";
-  if (inline) {
-    return (
-      "Each result has an inline thumbnail (image block) plus full-resolution URLs (WebP when available, PNG otherwise)." +
-      mobile +
-      search
-    );
-  }
-  const base = concise
-    ? 'Text-only profile, concise results: each carries `northstar` (one-line essence), palette, fonts, mode and macrostructure. Call get_screen(slug), or pass detail:"full", for the full `autopsy` (fold breakdown) + description + tags + tech.'
-    : "Text-only profile: read each result's `autopsy` (fold composition breakdown), `northstar`, palette and fonts; they carry the visual essence.";
-  return base + mobile + search + " Image URLs are included if your harness can fetch them.";
+      : " Ranking is lexical-only (no TOGETHER_API_KEY); set it for sharper relevance.";
+  const base = inline
+    ? "Each result: inline thumbnail plus full-resolution URLs."
+    : concise
+      ? 'Concise results: `northstar`, palette, fonts, mode, macrostructure. get_screen(slug) or detail:"full" adds the fold-by-fold autopsy, description, tags and tech.'
+      : "Read each result's `autopsy` (fold-by-fold composition), `northstar`, palette and fonts.";
+  return `${base}${mobile}${search} ${COMPOSE_RULE}`;
 }
 
 /** Error payload for a slug miss, with close-match suggestions so the
@@ -316,14 +318,14 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     detail: flexEnum(["concise", "full"])
       .optional()
       .describe(
-        "Result verbosity. Defaults to concise on the text-only profile, full otherwise. 'full' adds the autopsy (fold breakdown), description, all tags and tech; 'concise' keeps northstar + palette + fonts. Use get_screen for one screen's full record.",
+        "Result verbosity. 'full' adds the fold-by-fold autopsy, description, all tags and tech; 'concise' keeps northstar + palette + fonts. Concise by default on the text profile.",
       ),
   });
   const deviceArg = () => ({
     device: flexEnum(CAPTURE_DEVICES as unknown as [string, ...string[]])
       .optional()
       .describe(
-        "'mobile' restricts to sites with a mobile (375px) capture pair and inlines the mobile thumbnail instead of the desktop one - use it when designing phone-first. Nearly the whole archive has mobile pairs; 'desktop' is the default behavior.",
+        "'mobile' restricts to sites with a 375px capture pair and inlines the mobile thumbnail. Default: desktop.",
       ),
   });
   // Hard ceiling on what one call may spend. Trims the tail of the
@@ -333,7 +335,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     maxTokens: flexInt(MIN_BUDGET_TOKENS, MAX_BUDGET_TOKENS)
       .optional()
       .describe(
-        "Approximate token ceiling for this response. Trims lower-ranked results and inline thumbnails to fit; the top result and all URLs always survive. Use it when context is tight.",
+        "Approximate token ceiling for this response. Trims lower-ranked results and thumbnails; the top result and all URLs survive.",
       ),
   });
   /** Budget for one response: the per-call `maxTokens` when the tool
@@ -387,7 +389,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "search_screens",
     {
       description:
-        "Search the curated archive of real website screenshots. Returns up to N screens with palette, fonts, components, and image URLs the agent can fetch or pass to a vision model.",
+        "Search the archive of real website screenshots. Returns screens with palette, fonts, components and image URLs.",
       inputSchema: {
         query: z
           .preprocess(looseTrim, z.string())
@@ -481,16 +483,21 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       return withImages(
         {
           query: args.query,
-          filters: {
-            style: args.style ?? null,
-            industry: args.industry ?? null,
-            macrostructure: args.macrostructure ?? null,
-            mode: args.mode ?? null,
-            vibe: args.vibe ?? null,
-            color: args.color ?? null,
-            pageType: args.pageType ?? null,
-            device: args.device ?? null,
-          },
+          // Only the filters actually set. Echoing eight nulls back on
+          // every search told the caller nothing it did not already
+          // know and cost ~40 tokens a call.
+          filters: Object.fromEntries(
+            Object.entries({
+              style: args.style,
+              industry: args.industry,
+              macrostructure: args.macrostructure,
+              mode: args.mode,
+              vibe: args.vibe,
+              color: args.color,
+              pageType: args.pageType,
+              device: args.device,
+            }).filter(([, v]) => v != null),
+          ),
           count: matched.length,
           tip:
             matched.length > 0
@@ -535,7 +542,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_design_system",
     {
       description:
-        "Return the full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, role-guessed colour tokens, type ramp where extracted. Two-stage strategy: (1) any tokens extracted at capture time are returned immediately; (2) if those are thin, the tool fetches the source URL live and runs the same extraction `study(url)` does, merging the result. Set `live=false` to skip the live fetch and return only the captured-time tokens.",
+        "The full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, colour roles, type ramp. Thin captured tokens are supplemented by a live fetch of the source; `live=false` skips that.",
       inputSchema: {
         slug: flexSlug()
           .describe("Screen slug, e.g. 'linear-app'. Use search_screens or find_similar first to discover slugs."),
@@ -618,7 +625,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_similar",
     {
       description:
-        "Given a screen slug, return its nearest design neighbours - ranked by overall design-similarity embeddings when available (with structural tags as tiebreak), falling back to macrostructure / industry / style overlap. One result per site.",
+        "A screen's nearest design neighbours - ranked by design-similarity embeddings where available, else by macrostructure / industry / style overlap. One result per site.",
       inputSchema: {
         slug: flexSlug(),
         limit: flexInt(1, 20).default(8),
@@ -632,6 +639,10 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       },
     },
     async ({ slug, limit, sameSite, detail, maxTokens }) => {
+      // Embeddings may still be in flight on a fresh server; ranking on
+      // tag overlap because they had not landed yet would be a silent
+      // downgrade, so wait for them rather than guess.
+      await opts.awaitVectors?.();
       const target = await findScreen(slug);
       if (!target) return asTextContent(await unknownSlug(slug));
       const { results: similar, method } = await findSimilarDetailed(slug, {
@@ -679,7 +690,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "compare",
     {
       description:
-        "Compare 2-4 captured sites side by side across design dimensions - palette, typefaces, macrostructure, mode, style tags, type-scale + spacing + radius scales, container width. Returns a per-site breakdown plus a `shared` block (style tags every site has in common, the set of distinct macrostructures, whether they share a light/dark register). Use it to answer 'what do linear, stripe, and vercel share visually' or to triangulate a house style from a few references. Inline thumbnails included.",
+        "Compare 2-4 captured sites across palette, typefaces, macrostructure, mode, style tags, type/spacing/radius scales and container width. Returns per-site breakdowns plus what they share - triangulates a house style from a few references.",
       inputSchema: {
         slugs: z
           .preprocess(
@@ -763,7 +774,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_by_color",
     {
       description:
-        "Given a hex colour, return real production sites whose extracted palette includes a close match. Distance is Euclidean in OKLAB - the colour space where perceived difference and numeric distance line up - so 'close' means same family of colour, not just same hue. Useful when a brief specifies a particular accent / brand colour and you want sites already living near it. Pairs with `get_design_system` to harvest the matching palette tokens.",
+        "Real sites whose extracted palette sits near a hex colour (OKLAB distance, so 'close' means the same colour family, not just the same hue). Use when a brief names a brand colour.",
       inputSchema: {
         hex: z
           .preprocess(looseTrim, z.string())
@@ -826,7 +837,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_examples_for_macrostructure",
     {
       description:
-        "Given one of the 19 named macrostructures, return real production sites that exemplify it. Call this at the macrostructure-pick step to ground the choice in real exemplars. Accepts both kebab-case slugs ('bento-grid') and display names ('Bento Grid').",
+        "Real sites exemplifying one of the 19 named macrostructures. Call it at the macrostructure-pick step. Accepts slugs ('bento-grid') or display names ('Bento Grid').",
       inputSchema: {
         name: z
           .preprocess(looseTrim, z.string())
@@ -951,7 +962,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_filters",
     {
       description:
-        "List every filter value the search / find tools accept: styles, industries, macrostructures (+ labels), modes, vibes, colors, page types, component types, and the tag-component vocabulary. Zero input. Call this first when unsure what a filter expects - an out-of-vocabulary enum value errors with no suggestion, so use these exact slugs.",
+        "Every value the filters accept: styles, industries, macrostructures, modes, vibes, colors, page types, component types. Zero input. Call it when unsure - an out-of-vocabulary value errors.",
       inputSchema: {},
     },
     async () =>
@@ -976,7 +987,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         displayClass: DISPLAY_CLASSES,
         accentHue: ACCENT_HUE_BANDS,
         macrostructureCoverage: macrostructureCoverage(await getAllScreens()),
-        tip: "Use these exact slugs in search_screens / recommend / find_components / find_examples_for_macrostructure. macrostructure accepts the slug or its label; componentType is for find_components / find_reference_components. device: 'mobile' restricts to sites with a mobile capture pair and inlines mobile thumbnails. paperBand / displayClass / accentHue are the three measured axes - use them to find a register, or to avoid one. macrostructureCoverage is how many distinct sites embody each shape: check it before committing to a rare one.",
+        tip: "Use these exact slugs. macrostructure accepts the slug or its label. paperBand / displayClass / accentHue are the three measured axes - use them to find a register or avoid one. macrostructureCoverage is how many sites embody each shape: check it before committing to a rare one.",
       }),
   );
 
@@ -985,7 +996,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_site_pages",
     {
       description:
-        "Given a site, return its captured pages as an ordered FLOW (landing → pricing → features → auth → about → blog → ...) with per-step titles, northstars and thumbnails - study how a real product sequences its pages before designing a multi-page experience. Call with NO arguments to get a directory of flow-capable sites (3+ captured pages) to pick from. Accepts a siteSlug or any screen slug (resolved to its site).",
+        "A site's captured pages as an ordered flow (landing → pricing → features → ...) with titles, northstars and thumbnails - how a real product sequences its pages. No arguments returns the directory of flow-capable sites. Accepts a site or screen slug.",
       inputSchema: {
         siteSlug: flexSlug()
           .optional()
@@ -1065,7 +1076,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_components",
     {
       description:
-        "Find real sites that feature a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat). Returns each parent page's image (a per-element crop where the crop dataset is populated, otherwise the whole-page thumb) - for 'show me sites with pricing tables' or 'study how 8 sites handle their CTAs'. For copy-pasteable canonical code for a component, use find_reference_components / get_reference_jsx.",
+        "Real sites featuring a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat), with a per-element crop where one exists. For copy-pasteable code use find_reference_components.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Which component type to find"),
@@ -1239,7 +1250,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_reference_components",
     {
       description:
-        "List the canonical reference components - JSX shapes for hero / pricing / cta / nav / footer / etc. Each entry stamps which macrostructure it embodies. Filter by `type` to get the full JSX source for every component in that category; without filters you get a scan-view with names + notes, so call again with the `type` you want. Pick the macrostructure, then this returns the canonical code shape that embodies it.",
+        "The canonical reference components - JSX shapes for hero / pricing / cta / nav / footer, each stamped with the macrostructure it embodies. Filter by `type` for full JSX; unfiltered gives a scan-view.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -1296,24 +1307,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    * The agent passes a brand URL, gets a DESIGN.md, then uses it as
    * the token block when writing code.
    */
-  reg(
-    "study",
-    {
-      description:
-        "Fetch any live URL and return its design system - real fonts, frequency-ranked colour palette, CSS variables, detected tech, title + meta. Use this for brands NOT in the catalogue (the user pastes a URL, a competitor, a partner). Lightweight: HTML + linked stylesheets only, no Playwright. Falls back gracefully on JS-rendered SPAs (flags it in the response). Public named http(s) hosts only (SSRF-guarded).",
-      inputSchema: {
-        url: flexUrl().describe(
-          "Full URL to study. E.g. 'https://stripe.com', 'https://aesop.com'. A bare domain ('stripe.com') is accepted.",
-        ),
-      },
-    },
-    async ({ url }) => {
-      const r = await study(url);
-      // Return the structured shape so agents can read individual
-      // fields, plus the formatted DESIGN.md as a sibling block.
-      return asTextContent(r);
-    },
-  );
+  /* `study(url)` was a tool here until 2026-09-03. It fetched an
+   * arbitrary URL and extracted its design system - useful, but it is
+   * not what Inspo is. Inspo is the archive; a general web fetcher
+   * sitting in the tool list invited calls that had nothing to do with
+   * inspiration, and cost every session ~163 tokens of schema to
+   * advertise. The extraction itself is untouched: get_design_system
+   * still calls study() to supplement thin captured tokens, and the
+   * web playground still uses it directly. */
+
 
   /* ────────────── recommend (orchestrator) ──────────
    *
@@ -1341,7 +1343,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "recommend",
     {
       description:
-        "Orchestrator. One call returns: a macrostructure pick plus the top-3 shortlist it was chosen from, 5 real exemplars (top 3 with inline thumbs), 1-3 canonical reference JSX components, a palette suggestion, and an `evidence` packet measuring what this genre actually looks like along three axes (paper band / display class / accent hue). Everything needed to start a page. Pass a macrostructure you've already picked to skip the pick step. No LLM call - composes search + find_examples + find_reference_components.",
+        "Orchestrator - start here for a brief. One call returns a macrostructure pick, 5 real exemplars, canonical reference JSX, a palette suggestion, and an `evidence` packet measuring the genre's paper band / display class / accent hue. Pass a macrostructure to skip the pick step. No LLM call.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))
@@ -1371,6 +1373,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       },
     },
     async (args) => {
+      await opts.awaitVectors?.();
       const all = await getAllScreens({
         device: args.device as CaptureDevice | undefined,
       });
@@ -1563,10 +1566,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           paletteSuggestion: palette,
           heroGuidance: HERO_GUIDANCE,
           spacingGuidance: SPACING_GUIDANCE,
+          // Was in the server instructions, where every session paid
+          // for it. It only matters at the moment a standalone file
+          // gets written, which is here.
+          htmlNote:
+            'Writing a standalone HTML file? Include <meta charset="utf-8">. These exemplars lean on typographic glyphs (middle dots, arrows, true quotes) and render as mojibake without it.',
           tip:
             referencePicks.length > 0
-              ? `referenceComponents[0] carries full JSX for the canonical structure that embodies this macrostructure; the rest list a get_reference_jsx call to fetch on demand. ${exemplarStudyPhrase} for palette + type + density choices specific to your brief - the first two carry a fold-by-fold autopsy, the rest a one-line northstar plus get_screen. Then honour heroGuidance and spacingGuidance: fit the first viewport, keep the section rhythm and gutters.`
-              : `No canonical reference matched the picked macrostructure. ${exemplarStudyPhrase} and write the page shape by hand. Honour heroGuidance and spacingGuidance: fit the first viewport, keep the section rhythm and gutters.`,
+              ? `referenceComponents[0] carries full JSX; the rest name a get_reference_jsx call. ${exemplarStudyPhrase} for palette, type and density - the first two carry a fold-by-fold autopsy, the rest a northstar plus get_screen. Then honour heroGuidance and spacingGuidance.`
+              : `No canonical reference matched this macrostructure. ${exemplarStudyPhrase} and write the page shape by hand, honouring heroGuidance and spacingGuidance.`,
         },
         exemplars
           .slice(0, RECOMMEND_INLINE_EXEMPLARS)
@@ -1584,7 +1592,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "get_reference_jsx",
     {
       description:
-        "Return the full canonical JSX source for one reference component. Use after `find_reference_components` to fetch the one you'll use. The source is the file's full content - including the `/* … */` stamp at the top that names the macrostructure / theme / states / contrast pass. Copy-pasteable into a React project as-is; tweak tokens to match the target brand.",
+        "The full canonical JSX source for one reference component, including the header stamp naming its macrostructure / theme / states. Copy-pasteable; tweak tokens to the target brand.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Component category"),
@@ -1628,29 +1636,25 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
 }
 
 export const SERVER_INSTRUCTIONS = [
-  "Inspo is a curated archive of real-website screenshots, designed",
-  "to give an agent visual reference before it writes UI. When the",
-  "user asks you to design or build something with a particular",
-  "vibe (editorial, brutalist, bento, dark SaaS, agency portfolio,",
-  "etc.) call `search_screens` first and study the returned palette,",
-  "fonts, and component breakdowns before generating code.",
+  "Inspo is an archive of real production websites - screenshots,",
+  "palettes, fonts and page structures - for visual reference before",
+  "you write UI.",
   "",
-  "When picking a macrostructure, call",
-  "`find_examples_for_macrostructure` to get real exemplars of e.g.",
-  "'Bento Grid' or 'Specimen'. Use `get_filters` (zero input) to see",
-  "every accepted filter value, and `get_site_pages` to study a real",
-  "product's page sequence in reading order.",
+  "CALL IT WHEN: designing a new page, screen or section; redesigning",
+  "an existing one; the user asks what something should look like, or",
+  "asks for references; the brief names an aesthetic direction",
+  "(editorial, brutalist, dark SaaS, agency portfolio).",
   "",
-  "One thing to hold onto while you design: these are real production",
-  "sites, and plenty of them break rules a strict design linter would",
-  "flag. Take their composition, not their compliance.",
+  "DO NOT CALL IT WHEN: the project already has a design system,",
+  "tokens or a component library - follow those instead; the change",
+  "follows a pattern already established in the codebase; the work is",
+  "copy, logic, tests or infrastructure; the user has already",
+  "specified the design. If the project's own conventions and Inspo",
+  "disagree, the project wins.",
   "",
-  "Whenever you build a page, honour this hero rule: " + HERO_GUIDANCE,
-  "",
-  "Deliverable hygiene: when you write a standalone HTML file, always",
-  "include <meta charset=\"utf-8\"> in <head>. Inspo's exemplars lean on",
-  "typographic glyphs (middle dots, arrows, true quotes); without the",
-  "charset declaration they render as mojibake.",
-  "",
-  "And this spacing rule: " + SPACING_GUIDANCE,
+  "Start with `recommend` for a brief, `search_screens` to browse;",
+  "`get_filters` lists every accepted filter value. These are real",
+  "shipped sites and plenty of them break rules a strict linter would",
+  "flag: take their composition, not their compliance. The composition",
+  "rules for whatever you build travel back with the results.",
 ].join(" ");

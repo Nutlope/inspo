@@ -53,12 +53,19 @@ async function fetchSidecarPair(
 
 export async function loadCatalogueFromUrl(
   base: string,
+  /** Skip the two embedding sidecars. They are 11.6MB of the 14MB a
+   *  cold start pulls, and only find_similar / recommend read them -
+   *  so a caller that can await them later should not pay for them
+   *  before it can answer its first search. `ensureSidecarFromUrl`
+   *  loads them separately. */
+  opts: { sidecars?: boolean } = {},
 ): Promise<CatalogueLoadResult> {
   const b = base.replace(/\/+$/, "");
+  const withSidecars = opts.sidecars !== false;
   const [screensRes, vectors, rowVectors] = await Promise.all([
     fetch(`${b}/static-screens.json`),
-    fetchSidecarPair(b, "embeddings", setSidecar),
-    fetchSidecarPair(b, "embeddings-rows", setRowSidecar),
+    withSidecars ? fetchSidecarPair(b, "embeddings", setSidecar) : 0,
+    withSidecars ? fetchSidecarPair(b, "embeddings-rows", setRowSidecar) : 0,
   ]);
   if (!screensRes.ok) {
     throw new Error(
@@ -75,12 +82,15 @@ export async function loadCatalogueFromUrl(
  * same promise on subsequent calls. The edge Worker calls this on every
  * request; only the first triggers a fetch.
  */
-export function ensureCatalogue(base: string): Promise<CatalogueLoadResult> {
+export function ensureCatalogue(
+  base: string,
+  opts: { sidecars?: boolean } = {},
+): Promise<CatalogueLoadResult> {
   // Reset the memo on rejection so a transient cold-start failure (CDN
   // blip, non-200, DNS hiccup) doesn't permanently brick the isolate:
   // the next request retries instead of re-awaiting a rejected promise.
   if (!_loaded) {
-    _loaded = loadCatalogueFromUrl(base).catch((e) => {
+    _loaded = loadCatalogueFromUrl(base, opts).catch((e) => {
       _loaded = null;
       throw e;
     });

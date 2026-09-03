@@ -48,11 +48,16 @@ export interface RegisterOptions {
    *  nothing, so local users emit zero telemetry. Must never throw
    *  into the response path (callers wrap it defensively anyway). */
   onToolCall?: (m: { tool: string; ok: boolean; ms: number }) => void;
+  /** Awaited by the two tools that rank on embeddings, so a server can
+   *  start serving before the 11.6MB of sidecars have landed without
+   *  those tools silently degrading to tag arithmetic. Resolves
+   *  immediately once the vectors are in. */
+  awaitVectors?: () => Promise<unknown>;
 }
 
 /** The lite tool surface. Everything an agent needs to go from brief
  *  to page: orchestrate (recommend), browse (search_screens), drill in
- *  (get_screen), harvest tokens (get_design_system, study), pick a
+ *  (get_screen), harvest tokens (get_design_system), pick a
  *  macrostructure (find_examples_for_macrostructure), and grab canonical
  *  code (find_reference_components, which returns full JSX when
  *  filtered by type). */
@@ -63,7 +68,6 @@ export const LITE_TOOLS: ReadonlySet<string> = new Set([
   "get_design_system",
   "find_examples_for_macrostructure",
   "find_reference_components",
-  "study",
   "get_site_pages",
   "get_filters",
 ]);

@@ -1,58 +1,58 @@
 {
   "schemas": {
     "vision": {
-      "tools": 16,
-      "chars": 20887,
-      "tokens": 5222
+      "tools": 15,
+      "chars": 16739,
+      "tokens": 4185
     },
     "text": {
-      "tools": 9,
-      "chars": 12581,
-      "tokens": 3145
+      "tools": 8,
+      "chars": 9924,
+      "tokens": 2481
     }
   },
   "calls": {
     "recommend [vision]": {
-      "textChars": 20983,
-      "textTokens": 5246,
+      "textChars": 22392,
+      "textTokens": 5598,
       "images": 3,
-      "imageKb": 28
+      "imageKb": 38
     },
     "search_screens [vision]": {
-      "textChars": 19800,
-      "textTokens": 4950,
+      "textChars": 19221,
+      "textTokens": 4805,
       "images": 6,
-      "imageKb": 84
+      "imageKb": 86
     },
     "search_screens/mobile [vision]": {
-      "textChars": 19804,
-      "textTokens": 4951,
+      "textChars": 19247,
+      "textTokens": 4812,
       "images": 6,
-      "imageKb": 111
+      "imageKb": 128
     },
     "search_screens/budgeted [vision]": {
-      "textChars": 5957,
-      "textTokens": 1489,
-      "images": 5,
-      "imageKb": 68
+      "textChars": 5729,
+      "textTokens": 1432,
+      "images": 6,
+      "imageKb": 86
     },
     "find_examples_for_macrostructure [vision]": {
-      "textChars": 13704,
-      "textTokens": 3426,
+      "textChars": 13633,
+      "textTokens": 3408,
       "images": 4,
       "imageKb": 79
     },
     "get_screen [vision]": {
-      "textChars": 3321,
-      "textTokens": 830,
+      "textChars": 3309,
+      "textTokens": 827,
       "images": 1,
       "imageKb": 13
     },
     "find_similar [vision]": {
-      "textChars": 28501,
-      "textTokens": 7125,
+      "textChars": 28252,
+      "textTokens": 7063,
       "images": 8,
-      "imageKb": 113
+      "imageKb": 124
     },
     "get_site_pages [vision]": {
       "textChars": 3752,
@@ -61,32 +61,32 @@
       "imageKb": 70
     },
     "find_components [vision]": {
-      "textChars": 4881,
+      "textChars": 4878,
       "textTokens": 1220,
       "images": 8,
       "imageKb": 114
     },
     "recommend [text]": {
-      "textChars": 11847,
-      "textTokens": 2962,
+      "textChars": 13212,
+      "textTokens": 3303,
       "images": 0,
       "imageKb": 0
     },
     "search_screens [text]": {
-      "textChars": 5935,
-      "textTokens": 1484,
+      "textChars": 5632,
+      "textTokens": 1408,
       "images": 0,
       "imageKb": 0
     },
     "find_examples_for_macrostructure [text]": {
-      "textChars": 3637,
+      "textChars": 3636,
       "textTokens": 909,
       "images": 0,
       "imageKb": 0
     },
     "get_screen [text]": {
-      "textChars": 3321,
-      "textTokens": 830,
+      "textChars": 3309,
+      "textTokens": 827,
       "images": 0,
       "imageKb": 0
     },

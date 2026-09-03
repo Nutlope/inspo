@@ -34,7 +34,7 @@ const OUT_FILE = resolve(OUT_DIR, "inspo-mcp.mjs");
 
 // Bump before every publish: npm refuses to overwrite a published
 // version, and this constant is the only place it is set.
-const VERSION = "0.1.11";
+const VERSION = "0.1.12";
 
 mkdirSync(OUT_DIR, { recursive: true });
 
@@ -74,7 +74,7 @@ writeFileSync(
       name: "inspo-mcp",
       version: VERSION,
       description:
-        "A curated archive of real website designs, served as an MCP server: 16 tools for search, study, components, palettes, flows, and recommendations.",
+        "A curated archive of real website designs, served as an MCP server: 15 tools for search, components, palettes, flows, and recommendations.",
       // Ties the npm package to the MCP registry entry
       // (apps/mcp/server.json); the registry validates ownership
       // through this field at `mcp-publisher publish` time.

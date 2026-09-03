@@ -78,12 +78,6 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
         lite: true,
       },
       {
-        name: "study",
-        sig: "(url)",
-        desc: "Extract a design system from any live URL. SSRF-guarded.",
-        lite: true,
-      },
-      {
         name: "compare",
         sig: "(slugs[])",
         desc: "Side-by-side breakdown of 2 to 4 sites, plus what they share.",
@@ -428,9 +422,9 @@ export default async function MCPPage() {
           </p>
           <p className="mx-auto mt-4 max-w-[60ch] text-sm text-[var(--color-fg-muted)]">
             The catalogue is read-only. The hosted endpoint is free and
-            unauthenticated but abuse-resistant:{" "}
-            <code className="font-mono">study(url)</code> is SSRF-guarded and
-            rate-limited per IP.
+            unauthenticated but abuse-resistant: the one path that fetches an
+            outside URL is SSRF-guarded, and every request is rate-limited
+            per IP.
           </p>
           <p className="mt-6">
             <Link

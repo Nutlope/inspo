@@ -16,7 +16,6 @@ This is, and stays, a standard **MCP server** - packaging it for one-line instal
 | `search_screens(query, style?, industry?, macrostructure?, mode?, vibe?, color?, pageType?, limit?)` | Hybrid lexical + vector search across the archive. Returns palette, fonts, tech, tags, **desktop + mobile** image URLs, inline thumbnails. |
 | `recommend(brief, macrostructure?, …)` | One-call moodboard: a macrostructure pick, 5 exemplars, canonical reference JSX, a palette suggestion - and **`heroGuidance`** (compose the hero to fit the first viewport). Start here. |
 | `get_design_system(slug, live?)` | Full DESIGN.md for a site - real fonts, palette + CSS vars, type ramp, detected tech. `live:true` supplements thin rows by fetching the source. |
-| `study(url)` | Same extraction for **any** live URL (not just the archive) - fonts, palette, CSS vars, tech. |
 | `compare(slugs[])` | 2-4 sites side by side: shared style tags, distinct macrostructures, register agreement. |
 | `find_by_color(hex, tolerance?, limit?)` | Real sites whose palette sits near a target colour (OKLAB distance). |
 | `find_similar(slug, limit?)` | A site's visual + structural neighbours. |
@@ -133,7 +132,7 @@ actually run in. Two independent knobs:
 
 | Env var | Values | What it does |
 |---|---|---|
-| `INSPO_PROFILE` | `full` (default) / `lite` | `full` exposes 16 tools; `lite` exposes the 9 highest-leverage tools (`recommend`, `search_screens`, `get_screen`, `get_design_system`, `find_examples_for_macrostructure`, `find_reference_components`, `study`, `get_site_pages`, `get_filters`). Small models pick tools more reliably from a short list. |
+| `INSPO_PROFILE` | `full` (default) / `lite` | `full` exposes 15 tools; `lite` exposes the 8 highest-leverage tools (`recommend`, `search_screens`, `get_screen`, `get_design_system`, `find_examples_for_macrostructure`, `find_reference_components`, `get_site_pages`, `get_filters`). Small models pick tools more reliably from a short list. |
 | `INSPO_IMAGES` | `thumbs` (default) / `none` | `none` returns text-only responses: no inline image blocks. Use it when the harness drops MCP images (Cline, OpenCode with a non-vision model) or the model is text-only (MiniMax, DeepSeek). Each result still carries the `autopsy` text (fold-composition breakdown), `northstar`, palette, and fonts, so the model "sees" through text. On the text-only profile (`images=none`) the list tools return a lean shape (`northstar` + palette + fonts); pass `detail:"full"` or call `get_screen` for the full autopsy. Inline images are PNG / JPEG / WebP (never AVIF). |
 | `INSPO_MAX_TOKENS` | unset (default) / an integer, 300-200000 | Hard ceiling on what one tool response may spend. Results are formatted concise, then the ranked tail is dropped, then inline thumbnails, until the response fits; the top result and every scalar field (tips, filters, hero guidance) always survive, and trimmed responses carry a `budgetNote` saying how many entries were dropped. Set this when the context window is tight. Every list tool also takes a per-call `maxTokens` argument, which wins over the env var. |
 
@@ -208,7 +207,7 @@ pnpm --filter @inspo/worker exec tsx src/publish-catalogue-to-blob.ts --go
 - **Read-only.** No write/mutate tools; the server only reads the curated catalogue.
 - **No secrets in the response surface.** The hosted route reads `DATABASE_URL` / tokens from Vercel environment variables (never returned to clients). `.env` is gitignored; only `.env.example` is tracked.
 - **Free + unauthenticated, abuse-resistant.** The hosted endpoint needs no auth or API key; abuse is contained by a per-IP rate limit rather than gating. (Optional self-hosted auth still exists: set `ENFORCE_AUTH=1` + provision `api_keys` to require `Authorization: Bearer inspo_…`.)
-- **`study(url)` fetches an arbitrary client-supplied URL server-side** (HTML + linked CSS only, no JS execution). Every URL (and every redirect) is validated by an SSRF guard before fetch: public http(s) named hosts only, no private / loopback / link-local / cloud-metadata or IP-literal targets, ports 80/443 only. The response body is byte-capped while streaming, and the hosted route adds a request body cap plus a per-IP rate limit.
+- **`get_design_system(live:true)` fetches the screen's own source URL server-side** (HTML + linked CSS only, no JS execution). Every URL (and every redirect) is validated by an SSRF guard before fetch: public http(s) named hosts only, no private / loopback / link-local / cloud-metadata or IP-literal targets, ports 80/443 only. The response body is byte-capped while streaming, and the hosted route adds a request body cap plus a per-IP rate limit.
 
 ## Publishing `npx inspo-mcp`
 

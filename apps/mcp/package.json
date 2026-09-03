@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "bench": "node bench/response-cost.mjs",
     "bench:check": "node bench/response-cost.mjs --check",
-    "verify:npm": "node scripts/verify-npm.mjs"
+    "verify:npm": "node scripts/verify-npm.mjs",
+    "bench:surface": "node --max-old-space-size=6144 bench/measure-surface.mjs"
   },
   "dependencies": {
     "@inspo/db": "workspace:*",

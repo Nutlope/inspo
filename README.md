@@ -55,6 +55,6 @@ Want a site in the archive? Append it to [apps/worker/src/seed-urls.ts](apps/wor
 
 ## Security
 
-Every tool is read-only. The one that touches the outside world, `study(url)`, fetches a client-supplied URL server-side, so each URL and redirect passes an SSRF guard: public named hosts only, ports 80 and 443, byte-capped body, no JS execution. The hosted endpoint records per-tool counters only, never IPs or query text.
+Every tool is read-only. The one path that touches the outside world - `get_design_system(live:true)`, which supplements thin captured tokens from the screen's own source - passes each URL and redirect through an SSRF guard: public named hosts only, ports 80 and 443, byte-capped body, no JS execution. The hosted endpoint records per-tool counters only, never IPs or query text.
 
 MIT, copyright Together AI and contributors. The screenshots remain the work of their designers: every screen credits and links its source, and takedowns are honoured at [/dmca](https://inspo-three.vercel.app/dmca).
