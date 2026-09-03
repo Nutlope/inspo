@@ -68,6 +68,7 @@ export function TileMedia({
 }) {
   const [failed, setFailed] = useState(false);
   const [activated, setActivated] = useState(false);
+  const [ready, setReady] = useState(false);
 
   /* The full-page image is fetched only once the user actually hovers,
      so a grid nobody touches costs nothing beyond the resting frames.
@@ -75,6 +76,31 @@ export function TileMedia({
      free - no React state per hover. */
   const activate = useCallback(() => {
     setActivated((a) => a || true);
+  }, []);
+
+  /* The scroll must not start until the image can actually paint.
+     The <img> mounts into a parent that is ALREADY :hover, so the
+     keyframes begin at insertion - but the bytes are still in flight.
+     By the time the first frame paints, the animation clock has run
+     several hundred ms and the image appears mid-page: the hero and
+     the section under it are skipped. On the second hover the file is
+     decoded, paint and animation coincide, and it looks fine - which
+     is why this only ever showed up on the first hover.
+
+     So gate the whole rule on `is-ready` and set it only after decode
+     resolves. If the cursor left in the meantime, `.group:hover` no
+     longer matches and nothing plays; if it is still there, the rule
+     starts applying now and the animation runs from its first frame. */
+  const markReady = useCallback((el: HTMLImageElement | null) => {
+    if (!el) return;
+    const done = () => setReady(true);
+    const decode = () => el.decode().then(done, done);
+    if (el.complete) {
+      decode();
+      return;
+    }
+    el.addEventListener("load", decode, { once: true });
+    el.addEventListener("error", done, { once: true });
   }, []);
 
   return (
@@ -133,12 +159,16 @@ export function TileMedia({
           ) : null}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            ref={markReady}
             src={fullPageUrl}
             alt=""
             aria-hidden
-            loading="lazy"
+            /* Mounted only on hover, so there is nothing to defer: lazy
+               would just add a beat before the fetch even starts. */
+            loading="eager"
+            fetchPriority="high"
             decoding="async"
-            className="hover-scroll-img"
+            className={`hover-scroll-img${ready ? " is-ready" : ""}`}
           />
         </picture>
       ) : null}

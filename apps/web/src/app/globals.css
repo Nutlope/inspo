@@ -225,9 +225,15 @@ textarea:focus-visible {
    (because the user has been hovering since before the img existed),
    so the browser sees no state delta and skips the animation. An
    animation plays from start every time the rule applies, regardless
-   of when the element was inserted. */
-.group:hover .hover-scroll-img,
-.group:focus-within .hover-scroll-img {
+   of when the element was inserted.
+
+   `.is-ready` is added by the component once the image has decoded.
+   Without it the animation starts at mount, runs while the bytes are
+   still downloading, and the first painted frame lands wherever the
+   clock happens to be - several hundred ms in, past the hero. Gating
+   on decode is what makes the first hover match every later one. */
+.group:hover .hover-scroll-img.is-ready,
+.group:focus-within .hover-scroll-img.is-ready {
   opacity: 1;
   animation: hover-scroll-down var(--hover-scroll-duration, 5500ms)
     cubic-bezier(0.33, 0, 0.4, 1) forwards;
