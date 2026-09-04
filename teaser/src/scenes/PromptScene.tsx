@@ -8,21 +8,21 @@ import {
 } from "remotion";
 import { colors, EXPO, fonts } from "../theme";
 
-const PROMPT = "Create a landing page for my product.";
+const PROMPT = "build a landing page for my synth company, warm and editorial";
 
-/* Frame math: pill lands 0-12, typing 8-45, send press 50-57,
-   zoom-out handoff 57-70. Scene is 70 frames long. */
+/* Frame math: pill lands 0-12, typing 8-42, send press 44-50,
+   handoff zoom 50-58. Scene is 58 frames long. */
 export const PromptScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const typed = PROMPT.slice(0, Math.max(0, Math.floor(frame - 8)));
+  const typed = PROMPT.slice(0, Math.max(0, Math.floor((frame - 8) * 1.8)));
   const doneTyping = typed.length >= PROMPT.length;
 
-  /* Caret blinks only once typing is done; solid during typing. */
+  /* Caret blinks only once typing is done; solid while typing. */
   const caretOn = doneTyping ? Math.floor(frame / 9) % 2 === 0 : true;
 
   /* The send press: a quick dip and release on the whole pill. */
-  const press = interpolate(frame, [50, 53, 57], [1, 0.965, 1], {
+  const press = interpolate(frame, [44, 47, 50], [1, 0.965, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.4, 0, 0.2, 1),
@@ -36,13 +36,13 @@ export const PromptScene: React.FC = () => {
         alignItems: "center",
         /* Handoff: the camera pushes through the pill into the archive. */
         scale: String(
-          interpolate(frame, [57, 70], [1, 2.4], {
+          interpolate(frame, [50, 58], [1, 2.4], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(0.5, 0, 0.9, 0.4),
           }),
         ),
-        opacity: interpolate(frame, [61, 69], [1, 0], {
+        opacity: interpolate(frame, [52, 58], [1, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.linear,
@@ -55,7 +55,7 @@ export const PromptScene: React.FC = () => {
           display: "flex",
           alignItems: "center",
           gap: 24,
-          width: 1000,
+          width: 1280,
           height: 104,
           paddingLeft: 44,
           paddingRight: 16,
@@ -90,7 +90,7 @@ export const PromptScene: React.FC = () => {
             alignItems: "center",
             fontFamily: fonts.sans,
             fontWeight: 400,
-            fontSize: 40,
+            fontSize: 34,
             letterSpacing: "-0.01em",
             color: colors.ink,
             whiteSpace: "pre",
@@ -101,7 +101,7 @@ export const PromptScene: React.FC = () => {
             style={{
               display: "inline-block",
               width: 3,
-              height: 46,
+              height: 40,
               marginLeft: 6,
               backgroundColor: colors.ink,
               opacity: caretOn ? 1 : 0,
@@ -123,7 +123,7 @@ export const PromptScene: React.FC = () => {
             fontFamily: fonts.sans,
             fontSize: 36,
             scale: String(
-              interpolate(frame, [48, 52, 57], [1, 1.14, 1], {
+              interpolate(frame, [42, 46, 50], [1, 1.14, 1], {
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp",
                 easing: Easing.bezier(...EXPO),

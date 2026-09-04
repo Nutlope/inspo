@@ -1,0 +1,414 @@
+import React from "react";
+import {
+  AbsoluteFill,
+  Easing,
+  Img,
+  Interactive,
+  interpolate,
+  useCurrentFrame,
+} from "remotion";
+import {
+  CARD,
+  FINAL,
+  PICKS,
+  pickSrc,
+  RESULT,
+  RESULT_IMG,
+  SCREEN_COUNT,
+  WALL,
+  WALL_ORDER,
+  WALL_REST_Y,
+  WALL_START_Y,
+  wallCell,
+  wallH,
+  wallTile,
+  ZOOM_ANCHOR,
+  ZOOM_MAX,
+} from "../shots";
+import { colors, EXPO, fonts } from "../theme";
+
+/* Local timeline (scene starts at global frame 55):
+   0-52     the archive scrolls past, hundreds of screens deep
+   0-48     the tool chip counts the screens it has searched
+   48-70    the camera pushes into the three it kept
+   54/61/68 each pick takes a ring and a check
+   72-96    the picks fly out and stack like pulled cards
+   96-106   the stack squares up
+   108-128  it grows into the generated page, framed on the paper
+   130-175  a quick scroll through that page, hero to footer */
+
+const SCROLL_END = 52;
+const ZOOM = [48, 70] as const;
+const SEL_AT = [54, 61, 68];
+const CONV_START = 72;
+const ALIGN = [96, 106] as const;
+const BUILD = [108, 128] as const;
+const PAGE_SCROLL = [130, 175] as const;
+
+/* Fanned offsets for the card stack: two behind, the last pick in front. */
+const STACK = [
+  { dx: -36, dy: 20, rot: -5 },
+  { dx: 34, dy: -14, rot: 4 },
+  { dx: 0, dy: 0, rot: 0 },
+];
+
+const expo = {
+  extrapolateLeft: "clamp" as const,
+  extrapolateRight: "clamp" as const,
+  easing: Easing.bezier(...EXPO),
+};
+
+/* How tall the full-page shot renders inside the final frame, and how
+   far it has to travel to reach the footer. */
+const scrollImgH = RESULT_IMG.h * (FINAL.w / RESULT_IMG.w);
+const scrollDist = scrollImgH - FINAL.h;
+
+export const SearchScene: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  /* The scan: already at speed when we arrive, then a long settle. */
+  const wallY = interpolate(
+    frame,
+    [0, SCROLL_END],
+    [WALL_START_Y, WALL_REST_Y],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.bezier(0.1, 0.72, 0.12, 1),
+    },
+  );
+
+  /* The push-in. `zoom` scales, `pin` slides the anchor from the frame
+     centre onto the picks, so at zoom 1 nothing has moved yet. */
+  const zoom = interpolate(frame, [ZOOM[0], ZOOM[1]], [1, ZOOM_MAX], expo);
+  const pin = interpolate(frame, [ZOOM[0], ZOOM[1]], [0, 1], expo);
+  const anchor = {
+    x: interpolate(pin, [0, 1], [960, ZOOM_ANCHOR.x]),
+    y: interpolate(pin, [0, 1], [540, ZOOM_ANCHOR.y + wallY]),
+  };
+  const project = (x: number, y: number) => ({
+    x: (x - anchor.x) * zoom + 960,
+    y: (y - anchor.y) * zoom + 540,
+  });
+
+  /* Speed reads as blur while the wall is really moving. */
+  const blur = interpolate(frame, [0, 34], [5, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.bezier(0.2, 0.7, 0.2, 1),
+  });
+
+  /* Everything that was not picked recedes, then leaves. */
+  const wallOpacity =
+    interpolate(frame, [SEL_AT[0], ZOOM[1]], [1, 0.22], expo) *
+    interpolate(frame, [76, 92], [1, 0], expo);
+
+  const searched = Math.round(
+    interpolate(frame, [2, 48], [0, SCREEN_COUNT], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.bezier(0.25, 0.9, 0.2, 1),
+    }),
+  );
+
+  const chipIn = interpolate(frame, [2, 12], [0, 1], expo);
+  const chipOut = interpolate(frame, [48, 58], [1, 0], expo);
+
+  const build = interpolate(frame, [BUILD[0], BUILD[1]], [0, 1], expo);
+  const pageScroll = interpolate(
+    frame,
+    [PAGE_SCROLL[0], PAGE_SCROLL[1]],
+    [0, scrollDist],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.bezier(0.45, 0, 0.15, 1),
+    },
+  );
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.paper }}>
+      {/* ── The archive, scrolling ──────────────────────────── */}
+      {wallOpacity > 0.01 && (
+        <AbsoluteFill
+          style={{
+            opacity: wallOpacity,
+            filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
+          }}
+        >
+          {[0, 1].map((copy) =>
+            WALL_ORDER.map((slug, i) => {
+              if (slug === null) {
+                return null;
+              }
+              const cell = wallCell(i);
+              const top = cell.y - copy * wallH + wallY;
+              const p = project(cell.x, top);
+              const h = WALL.tileH * zoom;
+              if (p.y > 1080 + h || p.y + h < -h) {
+                return null;
+              }
+              return (
+                <div
+                  key={`${copy}-${slug}`}
+                  style={{
+                    position: "absolute",
+                    left: p.x,
+                    top: p.y,
+                    width: WALL.tileW * zoom,
+                    height: h,
+                    borderRadius: WALL.radius * zoom,
+                    overflow: "hidden",
+                    backgroundColor: colors.accentInk,
+                  }}
+                >
+                  <Img
+                    src={wallTile(slug)}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "top",
+                    }}
+                  />
+                </div>
+              );
+            }),
+          )}
+        </AbsoluteFill>
+      )}
+
+      {/* ── The tool call ───────────────────────────────────── */}
+      <Interactive.Div
+        name="ToolChip"
+        style={{
+          position: "absolute",
+          top: 58,
+          left: 0,
+          right: 0,
+          margin: "0 auto",
+          width: "fit-content",
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          height: 66,
+          paddingLeft: 28,
+          paddingRight: 30,
+          borderRadius: 9999,
+          backgroundColor: colors.accentInk,
+          border: `1.5px solid ${colors.rule}`,
+          boxShadow: "0 18px 44px rgba(26, 26, 26, 0.16)",
+          opacity: chipIn * chipOut,
+          translate: interpolate(chipIn, [0, 1], ["0px -18px", "0px 0px"]),
+        }}
+      >
+        <div
+          style={{
+            width: 13,
+            height: 13,
+            borderRadius: 9999,
+            backgroundColor: colors.accent,
+            opacity: 0.55 + 0.45 * Math.sin(frame / 2.4),
+          }}
+        />
+        <span
+          style={{
+            fontFamily: fonts.sans,
+            fontWeight: 500,
+            fontSize: 27,
+            letterSpacing: "-0.01em",
+            color: colors.ink,
+          }}
+        >
+          inspo · search_screens
+        </span>
+        <span style={{ width: 1, height: 26, backgroundColor: colors.rule }} />
+        <span
+          style={{
+            fontFamily: fonts.sans,
+            fontWeight: 400,
+            fontSize: 27,
+            letterSpacing: "0.01em",
+            color: colors.inkMuted,
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          {searched.toLocaleString("en-US")} screens
+        </span>
+      </Interactive.Div>
+
+      {/* ── The three it kept ───────────────────────────────── */}
+      {frame < BUILD[0] &&
+        PICKS.map((pick, k) => {
+          const cell = wallCell(pick.cell);
+          const p = project(cell.x, cell.y + wallY);
+          const s = SEL_AT[k];
+
+          /* Fly from the wall to the fanned card stack... */
+          const conv = interpolate(
+            frame,
+            [CONV_START + k * 4, CONV_START + k * 4 + 24],
+            [0, 1],
+            expo,
+          );
+          /* ...then square up before the build. */
+          const align = interpolate(frame, [ALIGN[0], ALIGN[1]], [0, 1], expo);
+          const dx = STACK[k].dx * (1 - align);
+          const dy = STACK[k].dy * (1 - align);
+          const rot = STACK[k].rot * (1 - align);
+
+          const left = interpolate(conv, [0, 1], [p.x, CARD.x + dx]);
+          const top = interpolate(conv, [0, 1], [p.y, CARD.y + dy]);
+          const w = interpolate(conv, [0, 1], [WALL.tileW * zoom, CARD.w]);
+          const h = interpolate(conv, [0, 1], [WALL.tileH * zoom, CARD.h]);
+          const radius = interpolate(
+            conv,
+            [0, 1],
+            [WALL.radius * zoom, CARD.radius],
+          );
+
+          /* Selection pulse, eased back out as the card starts to fly. */
+          const pulse =
+            interpolate(frame, [s, s + 6], [1, 1.05], expo) *
+            interpolate(
+              frame,
+              [CONV_START + k * 4, CONV_START + k * 4 + 10],
+              [1, 1 / 1.05],
+              expo,
+            );
+
+          const trimOn = interpolate(frame, [s, s + 4], [0, 1], expo);
+          const trimOff = interpolate(frame, [76, 88], [1, 0], expo);
+
+          return (
+            <div
+              key={pick.slug}
+              style={{
+                position: "absolute",
+                left,
+                top,
+                width: w,
+                height: h,
+                rotate: `${rot * conv}deg`,
+                scale: String(pulse),
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: radius,
+                  overflow: "hidden",
+                  boxShadow:
+                    conv > 0.05 ? "0 30px 80px rgba(26, 26, 26, 0.28)" : "none",
+                }}
+              >
+                <Img
+                  src={pickSrc(pick.slug)}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "top",
+                  }}
+                />
+              </div>
+
+              {/* Selection ring */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: -9,
+                  borderRadius: radius + 9,
+                  border: `5px solid ${colors.accent}`,
+                  opacity: trimOn * trimOff,
+                  scale: String(interpolate(frame, [s, s + 9], [1.12, 1], expo)),
+                }}
+              />
+
+              {/* Check badge */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: -18,
+                  right: -18,
+                  width: 54,
+                  height: 54,
+                  borderRadius: 9999,
+                  backgroundColor: colors.accent,
+                  color: colors.accentInk,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: fonts.sans,
+                  fontWeight: 600,
+                  fontSize: 29,
+                  opacity: trimOff * (frame >= s + 2 ? 1 : 0),
+                  scale: String(
+                    interpolate(
+                      frame,
+                      [s + 2, s + 7, s + 12],
+                      [0, 1.2, 1],
+                      expo,
+                    ),
+                  ),
+                }}
+              >
+                ✓
+              </div>
+            </div>
+          );
+        })}
+
+      {/* ── The page they become ────────────────────────────── */}
+      {frame >= BUILD[0] && (
+        <div
+          style={{
+            position: "absolute",
+            left: interpolate(build, [0, 1], [CARD.x, FINAL.x]),
+            top: interpolate(build, [0, 1], [CARD.y, FINAL.y]),
+            width: interpolate(build, [0, 1], [CARD.w, FINAL.w]),
+            height: interpolate(build, [0, 1], [CARD.h, FINAL.h]),
+            borderRadius: interpolate(
+              build,
+              [0, 1],
+              [CARD.radius, FINAL.radius],
+            ),
+            overflow: "hidden",
+            boxShadow: "0 30px 90px rgba(26, 26, 26, 0.22)",
+          }}
+        >
+          {/* The front reference, still there for a beat... */}
+          <Img
+            src={pickSrc(PICKS[2].slug)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "top",
+            }}
+          />
+          {/* ...becomes the generated page, then scrolls through it. */}
+          <Img
+            src={RESULT}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              translate: `0px ${-pageScroll}px`,
+              opacity: interpolate(
+                frame,
+                [BUILD[0] + 2, BUILD[0] + 14],
+                [0, 1],
+                expo,
+              ),
+            }}
+          />
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+};
