@@ -8,14 +8,14 @@ import {
 } from "remotion";
 import { colors, EXPO, fonts } from "../theme";
 
-const PROMPT = "build a site for our transit authority, live network map";
+const PROMPT = "build me a landing page that actually looks good";
 
 /* Frame math: pill lands 0-12, typing 8-42, send press 44-50,
    handoff zoom 50-58. Scene is 58 frames long. */
 export const PromptScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const typed = PROMPT.slice(0, Math.max(0, Math.floor((frame - 8) * 1.8)));
+  const typed = PROMPT.slice(0, Math.max(0, Math.floor((frame - 8) * 1.5)));
   const doneTyping = typed.length >= PROMPT.length;
 
   /* Caret blinks only once typing is done; solid while typing. */
@@ -55,7 +55,7 @@ export const PromptScene: React.FC = () => {
           display: "flex",
           alignItems: "center",
           gap: 24,
-          width: 1280,
+          width: 1080,
           height: 104,
           paddingLeft: 44,
           paddingRight: 16,
