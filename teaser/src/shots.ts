@@ -40,14 +40,15 @@ export const wallCell = (index: number) => {
 export const wallTile = (slug: string) => staticFile(`wall/${slug}.webp`);
 
 /* ── The three Inspo picks ───────────────────────────────────
-   Cells inside the zoom band, in selection order: Mercury (serif
-   product polish), Bandcamp (the music), Capacities last (the warm
-   cream) so the front of the stack matches the page it becomes.
+   Cells inside the zoom band, in selection order: Mercury (the live
+   dashboard), Bandcamp (dense and colour-coded), Buildkite last
+   because it is dark, like the page the stack becomes - a cream card
+   turning black as it grows would read as a flash.
    Full-size captures, not the wall's 384px thumbnails. */
 export const PICKS: { cell: number; slug: string }[] = [
   { cell: 88, slug: "mercury-com" },
   { cell: 103, slug: "bandcamp-com" },
-  { cell: 113, slug: "capacities-io" },
+  { cell: 113, slug: "buildkite-com" },
 ];
 
 export const pickSrc = (slug: string) => real(slug);
@@ -76,5 +77,5 @@ export const SCREEN_COUNT = 2141;
 export const CARD = { x: 520, y: 265, w: 880, h: 550, radius: 22 };
 export const FINAL = { x: 180, y: 101, w: 1560, h: 878, radius: 24 };
 
-export const RESULT = staticFile("real/loom-full.jpg");
-export const RESULT_IMG = { w: 2560, h: 6110 };
+export const RESULT = staticFile("real/northline-full.jpg");
+export const RESULT_IMG = { w: 2560, h: 4802 };

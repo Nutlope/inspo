@@ -11,7 +11,7 @@ export const WALL_ORDER: (string | null)[] = [
   "klim-co-nz", "cal-com", "oddcommon-com", "atomixnyc-com", "thejewishmuseum-org", "behance-net", "mori-art-museum", "gusto-com", "dust-tt", "about-google", "evernote-com", "paperclip-ing",
   "magnumphotos-com", "formstack-com", "sunsama-com", "codepen-io", "500px-com", "ahmm-co-uk", "tv-youtube-com", "tigerbeetle-com", "hoshinoresorts-com", "langfuse-com", "pitch-com", "saga-so",
   "remarkable-com", "nvg8-io", "rippling-com", "fontsinuse-com", "nbstudio-co-uk", "arcteryx-com", "dazeddigital-com", "intergestcanada-com", "config-figma-com", "pi-ai", "rollupjs-org", "breyta-ai",
-  "cloudflare-com", "heptabase-com", "casetify-com", "headshotpro-com", null, "trayvax-com", "dragcity-com", "heroku-com", "blog-figma-com", "gisi-com", "buildkite-com", "patch-io",
+  "cloudflare-com", "heptabase-com", "casetify-com", "headshotpro-com", null, "trayvax-com", "dragcity-com", "heroku-com", "blog-figma-com", "gisi-com", "capacities-io", "patch-io",
   "kvs-services", "stability-ai", "stash-com", "inkfishnyc-com", "pentagram-com", "price-pierce-co-uk", "oma-com", null, "benvenusa-com", "savvycal-com", "airtable-com", "nick-scialli-me",
   "floema-com", "courier-com", "box-com", "studiomuseum-org", "freepik-com", null, "deliveroo-com", "skillshare-com", "porsche-com", "spendesk-com", "grillitype-com", "crew-ai",
   "hardwareoperations-com", "pacegallery-com", "awards-com", "lucidmotors-com", "sweetgreen-com", "konstfack-se", "eyemagazine-com", "seriouseats-com", "addyosmani-com", "fastify-dev", "playbookux-com", "antinomy-studio",

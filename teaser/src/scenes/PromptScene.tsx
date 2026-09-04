@@ -8,7 +8,7 @@ import {
 } from "remotion";
 import { colors, EXPO, fonts } from "../theme";
 
-const PROMPT = "build a landing page for my synth company, warm and editorial";
+const PROMPT = "build a site for our transit authority, live network map";
 
 /* Frame math: pill lands 0-12, typing 8-42, send press 44-50,
    handoff zoom 50-58. Scene is 58 frames long. */
