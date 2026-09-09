@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backhouse - Payroll for restaurants</title>
+<meta name="description" content="Backhouse is payroll built for restaurants: tips, shifts and compliance handled in one calm pay run, priced per location.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens */
+  :root{
+    --t-display: clamp(40px, 4.2vw, 54px);
+    --t-title: clamp(28px, 2.7vw, 36px);
+    --t-lead: 19px;
+    --t-body: 16px;
+    --t-small: 13.5px;
+
+    --paper: #F6F5F1;
+    --ink: #16201B;
+    --muted: #5C6862;
+    --rule: #E2E0D9;
+    --accent: #1B6B52;
+    --accent-soft: #E3EFE8;
+    --tip: #B8791F;
+
+    --display: "Inter Tight", "Inter", system-ui, sans-serif;
+    --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --section: clamp(72px, 9vw, 120px);
+    --radius: 16px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--t-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p{margin:0}
+  a{color:inherit;text-decoration:none}
+  ul{margin:0;padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  strong{font-weight:600}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{max-width:1180px;margin-inline:auto;padding-inline:32px}
+  .wrap-narrow{max-width:880px;margin-inline:auto;padding-inline:32px}
+
+  section{padding-block:var(--section)}
+  .eyebrow{font-size:var(--t-small);font-weight:500;color:var(--accent);margin-bottom:14px}
+  .title{font-family:var(--display);font-size:var(--t-title);font-weight:600;letter-spacing:-0.02em;line-height:1.12;max-width:22ch;text-wrap:balance}
+  .lead{font-size:var(--t-lead);color:var(--muted);line-height:1.5;max-width:56ch}
+  .rule-top{border-top:1px solid var(--rule)}
+
+  /* Buttons */
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 20px;border-radius:999px;
+    font-size:var(--t-small);font-weight:500;line-height:1;
+    border:1px solid transparent;transition:background .18s,border-color .18s,color .18s;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:#155543}
+  .btn-secondary{background:#fff;border-color:var(--rule);color:var(--ink)}
+  .btn-secondary:hover{border-color:var(--ink)}
+  .btn-ghost{padding-inline:12px;color:var(--ink)}
+  .btn-ghost:hover{color:var(--accent)}
+  .btn-paper{background:#fff;color:var(--accent)}
+  .btn-paper:hover{background:var(--accent-soft)}
+
+  /* Fold */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{padding-block:20px}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-0.01em}
+  .brand svg{width:26px;height:26px}
+  .nav-links{display:flex;gap:26px;font-size:var(--t-small);font-weight:500}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-actions{display:flex;align-items:center;gap:6px}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:24px 40px}
+  .hero .wrap{display:grid;grid-template-columns:minmax(0,4.6fr) minmax(0,7.4fr);gap:48px;align-items:center;width:100%}
+  .hero h1{font-family:var(--display);font-size:var(--t-display);font-weight:600;letter-spacing:-0.025em;line-height:1.06;text-wrap:balance;max-width:16ch}
+  .hero .lead{margin-top:20px;max-width:42ch}
+  .hero-cta{display:flex;align-items:center;gap:10px;margin-top:28px;flex-wrap:wrap}
+  .hero-proof{margin-top:26px;display:flex;align-items:center;gap:12px;font-size:var(--t-small);color:var(--muted)}
+  .hero-proof .dots{display:flex}
+  .hero-proof .dots span{width:22px;height:22px;border-radius:50%;border:2px solid var(--paper);margin-left:-6px;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:600;display:grid;place-items:center}
+  .hero-proof .dots span:first-child{margin-left:0}
+
+  /* Product screen nested in a tinted field */
+  .screen-field{
+    position:relative;border-radius:24px;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 100% 0%, #d7e8df 0%, transparent 60%),
+      linear-gradient(180deg, #e9f1ec 0%, #dfe9e3 100%);
+    padding:28px 0 0 28px;
+  }
+  .screen{
+    background:#fff;border-radius:14px 0 0 0;
+    box-shadow:0 30px 60px -30px rgba(22,32,27,.35), 0 0 0 1px rgba(22,32,27,.06);
+    display:grid;grid-template-columns:152px minmax(0,1fr);
+    font-size:12.5px;line-height:1.4;min-height:470px;
+  }
+  .side{border-right:1px solid var(--rule);padding:16px 12px;background:#FBFBF9}
+  .side .org{display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px;padding:4px 6px 14px}
+  .side .org i{width:22px;height:22px;border-radius:7px;background:var(--tip);display:inline-block}
+  .side .org small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+  .side li{padding:7px 8px;border-radius:7px;color:var(--muted);font-weight:500;display:flex;justify-content:space-between}
+  .side li.on{background:var(--accent-soft);color:var(--accent)}
+  .side li b{font-weight:600;font-size:10.5px;background:#fff;border:1px solid var(--rule);border-radius:999px;padding:1px 6px;color:var(--ink)}
+  .main{padding:16px 18px 14px;min-width:0}
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+  .topbar h3{font-size:14px;font-weight:600;letter-spacing:-0.01em}
+  .topbar .sub{color:var(--muted);font-size:11.5px;margin-top:2px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;border-radius:999px;padding:4px 9px;border:1px solid var(--rule);background:#fff}
+  .pill.review{background:#FFF6E6;border-color:#F1DDB6;color:#8A5A12}
+  .pill i{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+  .topbar .actions{display:flex;gap:6px;align-items:center}
+  .mini-btn{font-size:11.5px;font-weight:500;padding:6px 10px;border-radius:999px;border:1px solid var(--rule);background:#fff}
+  .mini-btn.go{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+  .card{border:1px solid var(--rule);border-radius:9px;padding:9px 10px;background:#fff}
+  .card small{display:block;color:var(--muted);font-size:10.5px;margin-bottom:3px}
+  .card b{font-size:14px;font-weight:600;letter-spacing:-0.01em;font-variant-numeric:tabular-nums}
+  .card.total{background:var(--accent-soft);border-color:#CFE2D8}
+  .card.total b{color:var(--accent)}
+
+  .table{margin-top:12px;border:1px solid var(--rule);border-radius:9px;overflow:hidden}
+  .row{display:grid;grid-template-columns:1.55fr 1fr .7fr .6fr .9fr 1fr;gap:6px;padding:8px 10px;align-items:center;font-variant-numeric:tabular-nums}
+  .row > :not(:first-child):not(:nth-child(2)){text-align:right}
+  .row.head{background:#FBFBF9;color:var(--muted);font-size:10.5px;font-weight:500;border-bottom:1px solid var(--rule)}
+  .row.body{border-bottom:1px solid var(--rule)}
+  .row.body:last-of-type{border-bottom:0}
+  .row .who{display:flex;align-items:center;gap:8px;min-width:0}
+  .row .who i{width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:600;display:grid;place-items:center;flex:none;background:#EEF0EA;color:var(--muted)}
+  .row .who span{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .role{color:var(--muted)}
+  .row .ot{color:var(--muted)}
+  .row .ot.flag{color:#8A5A12;font-weight:500}
+  .row .tips{color:var(--tip);font-weight:500}
+  .row .gross{font-weight:600}
+  .row.foot{background:#FBFBF9;font-weight:600}
+  .row.foot .lbl{color:var(--muted);font-weight:500}
+  .note{display:flex;justify-content:space-between;align-items:center;gap:10px 18px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+  .note b{color:var(--accent);font-weight:500}
+
+  /* Logo cloud */
+  .logos{padding-block:44px}
+  .logos p{font-size:var(--t-small);color:var(--muted);text-align:center}
+  .logos ul{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:22px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-0.01em;color:#4F5B55}
+  .logos li{white-space:nowrap}
+
+  /* Features */
+  .features-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:48px}
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feature{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:18px}
+  .feature h3{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-0.015em;line-height:1.2}
+  .feature p{color:var(--muted);font-size:15px}
+  .feature .demo{border:1px solid var(--rule);border-radius:10px;padding:14px;background:#FBFBF9;font-size:12px;margin-top:auto}
+  .demo .cap{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:10px}
+  .demo .cap b{color:var(--ink);font-weight:600}
+  .pool{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px}
+  .pool span{display:block;height:100%}
+  .pool-key{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:10px;color:var(--muted);font-size:11px}
+  .pool-key span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+  .shift{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule)}
+  .shift:last-child{border-bottom:0}
+  .shift small{color:var(--muted);display:block;font-size:11px}
+  .shift .tag{font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:999px;background:#FFF6E6;color:#8A5A12}
+  .shift .tag.ok{background:var(--accent-soft);color:var(--accent)}
+  .check{display:flex;gap:9px;align-items:flex-start;padding:6px 0}
+  .check i{flex:none;width:15px;height:15px;border-radius:50%;background:var(--accent);margin-top:2px;position:relative}
+  .check i::after{content:"";position:absolute;left:5px;top:2px;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .check small{display:block;color:var(--muted);font-size:11px}
+
+  /* How it works */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;border-top:1px solid var(--rule)}
+  .step{padding:26px 24px 0 0;border-right:1px solid var(--rule);margin-right:24px}
+  .step:last-child{border-right:0;margin-right:0}
+  .step .num{font-family:var(--display);font-size:var(--t-title);font-weight:600;color:var(--accent);letter-spacing:-0.02em;line-height:1}
+  .step h3{font-size:18px;font-weight:600;margin-top:16px;letter-spacing:-0.01em}
+  .step p{color:var(--muted);font-size:15px;margin-top:8px}
+  .how-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end}
+
+  /* Testimonial */
+  .quote{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:44px 48px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:40px;align-items:center}
+  .quote blockquote{margin:0;font-family:var(--display);font-size:clamp(22px,2.2vw,28px);font-weight:500;letter-spacing:-0.015em;line-height:1.3;text-wrap:balance}
+  .quote figcaption{border-left:1px solid var(--rule);padding-left:28px;font-size:var(--t-small);color:var(--muted)}
+  .quote figcaption b{display:block;color:var(--ink);font-size:var(--t-body);font-weight:600}
+  .quote figcaption .stat{margin-top:18px;display:grid;gap:6px}
+  .quote figcaption .stat span{display:flex;justify-content:space-between;gap:12px}
+  .quote figcaption .stat strong{color:var(--ink)}
+
+  /* Pricing */
+  .pricing-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:40px}
+  .toggle{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:#fff;font-size:var(--t-small);font-weight:500}
+  .toggle button{padding:8px 14px;border-radius:999px;color:var(--muted)}
+  .toggle button.on{background:var(--ink);color:#fff}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .tier{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:26px 26px 24px;display:flex;flex-direction:column;transition:transform .25s ease}
+  .tier:hover{transform:translateY(-3px)}
+  .tier.hot{border-top:3px solid var(--accent)}
+  .tier .name{font-weight:600;font-size:var(--t-body)}
+  .tier .for{color:var(--muted);font-size:var(--t-small);margin-top:2px}
+  .tier .price{display:flex;align-items:baseline;gap:8px;margin-top:22px;font-family:var(--display);font-size:44px;font-weight:600;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .tier .price small{font-family:var(--body);font-size:var(--t-small);font-weight:400;color:var(--muted);letter-spacing:0}
+  .tier .per{font-size:var(--t-small);color:var(--muted);margin-top:8px}
+  .tier ul{margin-top:22px;padding-top:20px;border-top:1px solid var(--rule);display:grid;gap:10px;font-size:15px}
+  .tier li{display:flex;gap:10px;align-items:baseline}
+  .tier li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);position:relative;top:-2px}
+  .tier .btn{margin-top:26px;justify-content:center}
+  .pricing-foot{margin-top:24px;font-size:var(--t-small);color:var(--muted);max-width:70ch}
+
+  /* Security */
+  .security{background:#fff;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .sec-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:start}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--rule);margin-top:36px}
+  .stat{padding:20px 20px 20px 0;border-bottom:1px solid var(--rule)}
+  .stat:nth-child(odd){border-right:1px solid var(--rule);padding-right:20px}
+  .stat:nth-child(even){padding-left:20px}
+  .stat b{font-family:var(--display);font-size:var(--t-title);font-weight:600;letter-spacing:-0.02em;line-height:1;display:block;font-variant-numeric:tabular-nums}
+  .stat span{display:block;color:var(--muted);font-size:var(--t-small);margin-top:8px}
+  .facts{display:grid;gap:0}
+  .fact{display:grid;grid-template-columns:36px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .fact:first-child{padding-top:0}
+  .fact svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .fact h3{font-size:17px;font-weight:600;letter-spacing:-0.01em}
+  .fact p{color:var(--muted);font-size:15px;margin-top:4px;max-width:52ch}
+
+  /* CTA band */
+  .cta{background:var(--accent);color:#fff;padding-block:clamp(56px,7vw,88px)}
+  .cta .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:center}
+  .cta h2{font-family:var(--display);font-size:var(--t-title);font-weight:600;letter-spacing:-0.02em;line-height:1.12;max-width:20ch;text-wrap:balance}
+  .cta p{margin-top:12px;color:#D6E7DE;max-width:48ch}
+  .cta .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .cta .btn-ghost{color:#fff}
+  .cta .btn-ghost:hover{color:#D6E7DE}
+
+  /* Footer */
+  footer{padding-block:56px 32px;border-top:1px solid var(--rule)}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+  .foot-grid p{color:var(--muted);font-size:var(--t-small);max-width:34ch;margin-top:14px}
+  .foot-grid h3{font-size:var(--t-small);font-weight:600;margin-bottom:14px}
+  .foot-grid li{font-size:var(--t-small);color:var(--muted);padding:4px 0}
+  .foot-grid li a:hover{color:var(--accent)}
+  .foot-bar{margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:var(--t-small);color:var(--muted)}
+
+  @media (max-width:960px){
+    .hero .wrap{grid-template-columns:1fr;gap:36px}
+    .hero h1{max-width:18ch}
+    .nav-links{display:none}
+    .features-head,.how-head,.sec-grid{grid-template-columns:1fr}
+    .feature-grid,.tiers{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .step{border-right:0;margin-right:0}
+    .quote{grid-template-columns:1fr;padding:32px}
+    .quote figcaption{border-left:0;padding-left:0}
+    .cta .wrap{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .screen{grid-template-columns:1fr}
+    .side{display:none}
+    .cards{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Backhouse home">
+        <svg viewBox="0 0 26 26" aria-hidden="true">
+          <rect x="1" y="1" width="24" height="24" rx="7" fill="#1B6B52"/>
+          <path d="M8 18V8h5.2c2.1 0 3.4 1 3.4 2.6 0 1-.6 1.8-1.5 2.1 1.3.3 2.1 1.3 2.1 2.5 0 1.8-1.4 2.8-3.7 2.8H8zm2.4-5.9h2.5c1 0 1.5-.4 1.5-1.2s-.5-1.2-1.5-1.2h-2.5v2.4zm0 4.1h2.9c1.1 0 1.7-.5 1.7-1.3s-.6-1.3-1.7-1.3h-2.9v2.6z" fill="#fff"/>
+        </svg>
+        Backhouse
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#product">Product</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#security">Security</a>
+        <a href="#customers">Customers</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="#signin">Sign in</a>
+        <a class="btn btn-primary" href="#demo">Book a demo</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <h1>Payroll that already knows how restaurants work.</h1>
+        <p class="lead">Backhouse pulls in every shift and every tip, applies the wage rules your state actually enforces, and pays your team on Friday. One calm pay run, every two weeks.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#demo">Book a demo</a>
+          <a class="btn btn-secondary" href="#product">See a sample pay run</a>
+        </div>
+        <div class="hero-proof">
+          <div class="dots" aria-hidden="true"><span>H</span><span>S</span><span>M</span><span>L</span></div>
+          <span>Runs payroll for 1,400 restaurants across 38 states</span>
+        </div>
+      </div>
+
+      <div class="screen-field" aria-label="A Backhouse pay run for Marigold Taqueria, shown as a product screen">
+        <div class="screen">
+          <aside class="side">
+            <div class="org"><i></i><div>Marigold Taqueria<small>Alberta St, Portland</small></div></div>
+            <ul>
+              <li class="on">Pay runs <b>1</b></li>
+              <li>People</li>
+              <li>Tips</li>
+              <li>Schedules</li>
+              <li>Taxes</li>
+              <li>Reports</li>
+            </ul>
+          </aside>
+          <div class="main">
+            <div class="topbar">
+              <div>
+                <h3>Pay run 47 <span class="pill review"><i></i>Ready for review</span></h3>
+                <div class="sub">Aug 25 to Sep 7, 2026 &middot; Pay date Fri Sep 11 &middot; 5 people</div>
+              </div>
+              <div class="actions"><span class="mini-btn">Export</span><span class="mini-btn go">Approve pay run</span></div>
+            </div>
+            <div class="cards">
+              <div class="card"><small>Gross pay</small><b>$8,636.95</b></div>
+              <div class="card"><small>Tips distributed</small><b>$4,304.95</b></div>
+              <div class="card"><small>Employer taxes</small><b>$842.10</b></div>
+              <div class="card total"><small>Total to fund</small><b>$9,479.05</b></div>
+            </div>
+            <div class="table" role="table" aria-label="Employees on this pay run">
+              <div class="row head" role="row"><span>Employee</span><span>Role</span><span>Hours</span><span>Overtime</span><span>Tips</span><span>Gross</span></div>
+              <div class="row body" role="row"><div class="who"><i>A</i><span>Ana Ruiz</span></div><span class="role">Server</span><span>74.5</span><span class="ot flag">2.0</span><span class="tips">$1,284.50</span><span class="gross">$1,890.25</span></div>
+              <div class="row body" role="row"><div class="who"><i>M</i><span>Marcus Bell</span></div><span class="role">Line cook</span><span>80.0</span><span class="ot flag">4.0</span><span class="tips">$212.00</span><span class="gross">$2,132.00</span></div>
+              <div class="row body" role="row"><div class="who"><i>P</i><span>Priya Nair</span></div><span class="role">Bartender</span><span>62.0</span><span class="ot">0.0</span><span class="tips">$1,502.75</span><span class="gross">$2,029.75</span></div>
+              <div class="row body" role="row"><div class="who"><i>T</i><span>Tom Okafor</span></div><span class="role">Host</span><span>48.5</span><span class="ot">0.0</span><span class="tips">$186.30</span><span class="gross">$913.80</span></div>
+              <div class="row body" role="row"><div class="who"><i>L</i><span>Lena Fischer</span></div><span class="role">Server</span><span>70.0</span><span class="ot flag">1.5</span><span class="tips">$1,119.40</span><span class="gross">$1,671.15</span></div>
+              <div class="row foot" role="row"><span class="lbl">Totals</span><span></span><span>335.0</span><span>7.5</span><span class="tips">$4,304.95</span><span>$8,636.95</span></div>
+            </div>
+            <div class="note">
+              <span>Tip credit this period: <b>$312.40</b> &middot; Oregon minimum wage $16.00 applied</span>
+              <span>Approve by Wed 5:00 pm for Friday deposit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="logos rule-top" id="customers">
+  <div class="wrap">
+    <p>Independent restaurants and small groups run payroll on Backhouse</p>
+    <ul aria-label="Customers">
+      <li>Hearth &amp; Vine</li>
+      <li>Salt Creek Oyster Bar</li>
+      <li>Marigold Taqueria</li>
+      <li>Dockside Group</li>
+      <li>Little Owl Bakery</li>
+      <li>Ember Pizza Co.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="product" class="rule-top">
+  <div class="wrap">
+    <div class="features-head">
+      <div>
+        <p class="eyebrow">Built for the back of house</p>
+        <h2 class="title">Tips, shifts and compliance, handled before you open the pay run.</h2>
+      </div>
+      <p class="lead">General payroll tools treat a restaurant like an office with a kitchen. Backhouse starts from the schedule and the tip pool, so the numbers you review are already right.</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature">
+        <div>
+          <h3>Tip pooling that matches your house rules</h3>
+          <p style="margin-top:8px">Card tips, cash tips and service charges land in the right pool by shift and role. Points-based or hours-based splits, with every dollar traceable to a check.</p>
+        </div>
+        <div class="demo">
+          <div class="cap"><span>Saturday dinner pool</span><b>$2,418.00</b></div>
+          <div class="pool" aria-hidden="true">
+            <span style="width:58%;background:var(--accent)"></span>
+            <span style="width:20%;background:var(--tip)"></span>
+            <span style="width:14%;background:#7FA895"></span>
+            <span style="width:8%;background:#D3B87A"></span>
+          </div>
+          <div class="pool-key">
+            <span style="--c:var(--accent)">Servers 58%</span>
+            <span style="--c:var(--tip)">Bartenders 20%</span>
+            <span style="--c:#7FA895">Bussers 14%</span>
+            <span style="--c:#D3B87A">Hosts 8%</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div>
+          <h3>Shifts imported, overtime caught</h3>
+          <p style="margin-top:8px">Clock-ins flow in from Toast, Square, 7shifts and Homebase. Split shifts, spread of hours and meal break rules are applied per state, and anything unusual is flagged for you.</p>
+        </div>
+        <div class="demo">
+          <div class="cap"><span>Ana Ruiz, this week</span><b>36.5 h</b></div>
+          <div class="shift"><div>Tue 4:02 pm to 11:47 pm<small>7.75 h, 30 min break</small></div><span class="tag ok">Paid</span></div>
+          <div class="shift"><div>Fri 3:30 pm to 12:15 am<small>8.75 h, spread of hours</small></div><span class="tag">Overtime 0.75 h</span></div>
+          <div class="shift"><div>Sat 10:00 am to 3:00 pm and 5:00 pm to 10:30 pm<small>Split shift premium added</small></div><span class="tag ok">Paid</span></div>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div>
+          <h3>Compliance you can show an auditor</h3>
+          <p style="margin-top:8px">Tip credits, minimum wage floors, Form 8027 and new-hire reporting are calculated and filed on schedule. Every rule is cited, so you know why a number is what it is.</p>
+        </div>
+        <div class="demo">
+          <div class="cap"><span>Checks before approval</span><b>4 of 4 passed</b></div>
+          <div class="check"><i></i><div>Minimum wage floor met<small>$16.00 Oregon rate on 335.0 hours</small></div></div>
+          <div class="check"><i></i><div>Tip credit within federal limit<small>$312.40 claimed this period</small></div></div>
+          <div class="check"><i></i><div>Form 8027 draft updated<small>Allocated tips at 8% of gross receipts</small></div></div>
+          <div class="check"><i></i><div>New hire reported<small>Lena Fischer, filed to the state Sep 2</small></div></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="rule-top">
+  <div class="wrap">
+    <div class="how-head">
+      <div>
+        <p class="eyebrow">A pay run in four steps</p>
+        <h2 class="title">Twenty minutes every other Wednesday. That is the whole job.</h2>
+      </div>
+      <p class="lead">Most operators approve a pay run from their phone between lunch and dinner service. Backhouse does the collection, the math and the filing; you do the reviewing.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Shifts and tips sync overnight</h3>
+        <p>Hours, breaks and card tips arrive from your point of sale and scheduling tools. Cash tips are declared by staff in the app.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Rules are applied and checked</h3>
+        <p>Overtime, tip credits, split shifts and state wage floors are calculated. Anything that looks off gets a flag with a plain explanation.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>You review and approve</h3>
+        <p>One screen with every person, every hour and every dollar. Fix a shift inline, then approve. Managers can be limited to their own location.</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <h3>Friday, everyone is paid</h3>
+        <p>Direct deposit lands on pay day, taxes are withheld and filed, and staff see a pay stub that separates wages from tips.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <figure class="quote" style="margin:0">
+      <blockquote>We used to spend Sunday night with a spreadsheet, a calculator and the tip jar. Now the pool is split before I sit down, and the state filings are simply done. I trust the number on the screen.</blockquote>
+      <figcaption>
+        <b>Dana Whitfield</b>
+        Owner, Salt Creek Oyster Bar<br>Three locations, 64 staff
+        <div class="stat">
+          <span>Time per pay run <strong>22 min</strong></span>
+          <span>Tip disputes last year <strong>0</strong></span>
+          <span>On Backhouse since <strong>2023</strong></span>
+        </div>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="pricing" class="rule-top">
+  <div class="wrap">
+    <div class="pricing-head">
+      <div>
+        <p class="eyebrow">Pricing per location</p>
+        <h2 class="title">One flat fee per location, plus a small amount per person paid.</h2>
+      </div>
+      <div class="toggle" role="group" aria-label="Billing period">
+        <button type="button" class="on" data-period="monthly">Monthly</button>
+        <button type="button" data-period="annual">Annual, two months free</button>
+      </div>
+    </div>
+
+    <div class="tiers">
+      <article class="tier">
+        <div class="name">Counter</div>
+        <div class="for">Cafes, bakeries, quick service</div>
+        <div class="price"><span data-monthly="$39" data-annual="$33">$39</span><small>per location, per month</small></div>
+        <div class="per">plus $6 per person paid each month</div>
+        <ul>
+          <li>Direct deposit and pay stubs</li>
+          <li>Federal and state tax filing</li>
+          <li>Card tip payout and cash tip declarations</li>
+          <li>Point of sale and scheduling imports</li>
+          <li>New hire reporting</li>
+        </ul>
+        <a class="btn btn-secondary" href="#demo">Start with Counter</a>
+      </article>
+
+      <article class="tier hot">
+        <div class="name">Full service</div>
+        <div class="for">Dining rooms with tipped staff and bar</div>
+        <div class="price"><span data-monthly="$79" data-annual="$66">$79</span><small>per location, per month</small></div>
+        <div class="per">plus $8 per person paid each month</div>
+        <ul>
+          <li>Everything in Counter</li>
+          <li>Tip pooling by shift, role, points or hours</li>
+          <li>Tip credit and Form 8027 handling</li>
+          <li>Overtime, split shift and spread of hours rules</li>
+          <li>Manager approvals per location</li>
+          <li>Phone support seven days a week</li>
+        </ul>
+        <a class="btn btn-primary" href="#demo">Start with Full service</a>
+      </article>
+
+      <article class="tier">
+        <div class="name">Group</div>
+        <div class="for">Five or more locations, one owner</div>
+        <div class="price"><span data-monthly="$59" data-annual="$49">$59</span><small>per location, per month</small></div>
+        <div class="per">plus $8 per person paid, volume pricing over 300 people</div>
+        <ul>
+          <li>Everything in Full service</li>
+          <li>Consolidated funding across locations</li>
+          <li>Shared staff who work at more than one location</li>
+          <li>Labor cost reports by location and daypart</li>
+          <li>Accountant access and general ledger export</li>
+          <li>A named payroll specialist</li>
+        </ul>
+        <a class="btn btn-secondary" href="#demo">Talk to us about Group</a>
+      </article>
+    </div>
+    <p class="pricing-foot">No setup fee. Year-end forms are included. Switching mid-year is fine: we bring across year-to-date wages and tips from your previous provider so employees get one correct W-2.</p>
+  </div>
+</section>
+
+<section class="security" id="security">
+  <div class="wrap sec-grid">
+    <div>
+      <p class="eyebrow">Security and trust</p>
+      <h2 class="title">Your team's pay moves through a system built to be boring.</h2>
+      <p class="lead" style="margin-top:16px">Payroll is money and personal data at the same time. We treat both the way a bank would, and we publish the facts so you do not have to take our word for it.</p>
+      <div class="stats">
+        <div class="stat"><b>99.98%</b><span>Uptime over the last twelve months, measured on pay days</span></div>
+        <div class="stat"><b>$412M</b><span>Wages and tips paid out through Backhouse in 2025</span></div>
+        <div class="stat"><b>0</b><span>Missed tax filing deadlines since launch in 2021</span></div>
+        <div class="stat"><b>38</b><span>States where we file and remit on your behalf</span></div>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <div><h3>Encrypted in transit and at rest</h3><p>Every record, from a clock-in to a bank account number, is encrypted with keys rotated on a schedule. Staff never see one another's pay.</p></div>
+      </div>
+      <div class="fact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div><h3>Independently audited every year</h3><p>An outside firm reviews our controls annually and the report is available to customers under a standard agreement. The current report covers 2025.</p></div>
+      </div>
+      <div class="fact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10h18M5 10V7l7-4 7 4v3M5 10v9M19 10v9M3 19h18"/></svg>
+        <div><h3>Payroll funds are held apart from ours</h3><p>Money you fund for a pay run sits in a segregated account at a federally insured partner bank until it is paid out. It is never used to run Backhouse.</p></div>
+      </div>
+      <div class="fact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h9l5 5v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M15 4v5h5M9 14h6M9 17h4"/></svg>
+        <div><h3>Tax filing guarantee</h3><p>If a filing we made is late or wrong, we pay the penalty and the interest. Since 2021 that has happened zero times, and we intend to keep it there.</p></div>
+      </div>
+      <div class="fact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+        <div><h3>Access limited by role and location</h3><p>Owners see everything, managers see their own location, staff see their own stubs. Every change to a pay run is logged with who made it and when.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="demo">
+  <div class="wrap">
+    <div>
+      <h2>See your own pay run in twenty minutes.</h2>
+      <p>Bring last period's timesheets and tip report. We will build the run with you on the call, and you keep the numbers whether you sign up or not.</p>
+    </div>
+    <div class="btns">
+      <a class="btn btn-paper" href="#demo">Book a demo</a>
+      <a class="btn btn-ghost" href="#pricing">Compare plans</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top" aria-label="Backhouse home">
+          <svg viewBox="0 0 26 26" aria-hidden="true">
+            <rect x="1" y="1" width="24" height="24" rx="7" fill="#1B6B52"/>
+            <path d="M8 18V8h5.2c2.1 0 3.4 1 3.4 2.6 0 1-.6 1.8-1.5 2.1 1.3.3 2.1 1.3 2.1 2.5 0 1.8-1.4 2.8-3.7 2.8H8zm2.4-5.9h2.5c1 0 1.5-.4 1.5-1.2s-.5-1.2-1.5-1.2h-2.5v2.4zm0 4.1h2.9c1.1 0 1.7-.5 1.7-1.3s-.6-1.3-1.7-1.3h-2.9v2.6z" fill="#fff"/>
+          </svg>
+          Backhouse
+        </a>
+        <p>Payroll for restaurants. Built in Portland, Oregon by people who have closed a restaurant on a Saturday night and opened it again on Sunday.</p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#product">Tips</a></li>
+          <li><a href="#product">Shifts and overtime</a></li>
+          <li><a href="#product">Compliance</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#security">Security</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#customers">Customers</a></li>
+          <li><a href="#top">About</a></li>
+          <li><a href="#top">Careers</a></li>
+          <li><a href="#top">Press</a></li>
+          <li><a href="#top">Status page</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Support</h3>
+        <ul>
+          <li><a href="mailto:help@backhouse.com">help@backhouse.com</a></li>
+          <li>(503) 555-0142</li>
+          <li>Seven days a week, 6 am to 9 pm Pacific</li>
+          <li><a href="#top">Help center</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span>&copy; <span id="year">2026</span> Backhouse Payroll, Inc. Registered payroll service provider.</span>
+      <span><a href="#top">Privacy</a> &nbsp;&middot;&nbsp; <a href="#top">Terms</a> &nbsp;&middot;&nbsp; <a href="#top">Accessibility</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var buttons = document.querySelectorAll('.toggle button');
+    var prices = document.querySelectorAll('.tier .price span[data-monthly]');
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        buttons.forEach(function(b){ b.classList.remove('on'); });
+        btn.classList.add('on');
+        var period = btn.getAttribute('data-period');
+        prices.forEach(function(p){
+          p.textContent = p.getAttribute('data-' + period);
+        });
+      });
+    });
+    var y = document.getElementById('year');
+    if (y) { y.textContent = new Date().getFullYear(); }
+  })();
+</script>
+</body>
+</html>

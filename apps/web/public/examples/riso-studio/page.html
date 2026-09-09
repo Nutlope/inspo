@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blotter Press - risograph print studio, Glasgow</title>
+<meta name="description" content="Blotter Press is a two-colour risograph studio in Glasgow. Flat prices by size and quantity, twelve inks, five papers, three-day turnaround.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale: five steps */
+  --t-xs: 0.8125rem;
+  --t-s: 1rem;
+  --t-m: 1.375rem;
+  --t-l: clamp(1.9rem, 3.2vw, 2.75rem);
+  --t-xl: clamp(2.9rem, 6vw, 5.1rem);
+
+  /* palette: uncoated stock plus the two house drums */
+  --paper: #f3eee2;
+  --ink: #1f1b1a;
+  --muted: #6d645f;
+  --rule: #cfc6b4;
+  --blue: #0078bf;
+  --pink: #ff48b0;
+  --yellow: #ffe800;
+
+  --gap: clamp(72px, 10vw, 128px);
+  --noise: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.4 0.4 0.4 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Space Mono", "Courier New", monospace;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--display);
+  font-size:var(--t-s);
+  line-height:1.5;
+  font-optical-sizing:auto;
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain over everything */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:var(--noise);
+  background-size:260px 260px;
+  opacity:.22;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  z-index:60;
+}
+a{color:inherit}
+h1,h2,h3,p,ul,ol,dl{margin:0}
+ul,ol{padding:0;list-style:none}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.wrap{
+  max-width:1180px;
+  margin-inline:auto;
+  padding-inline:clamp(20px, 4vw, 48px);
+}
+section{padding-block:var(--gap)}
+.mono{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:0}
+.muted{color:var(--muted)}
+h2{
+  font-size:var(--t-l);
+  font-weight:800;
+  line-height:1.02;
+  letter-spacing:-0.02em;
+  font-variation-settings:"opsz" 96;
+  max-width:18ch;
+  text-wrap:balance;
+}
+h3{font-size:var(--t-m);font-weight:700;line-height:1.15;letter-spacing:-0.01em}
+.section-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);
+  gap:24px clamp(24px, 5vw, 80px);
+  align-items:end;
+  margin-bottom:clamp(36px, 5vw, 56px);
+}
+.section-head p{max-width:52ch}
+.kicker{
+  font-family:var(--mono);
+  font-size:var(--t-xs);
+  color:var(--blue);
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.kicker::before{content:"";width:22px;height:2px;background:var(--pink)}
+
+/* ---------- ink blocks (flat riso colour with grain) ---------- */
+.ink{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.ink::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.18), transparent 60%);
+  pointer-events:none;
+}
+.ink::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:var(--noise);
+  background-size:260px 260px;
+  opacity:.55;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+}
+
+/* misregistered display text: pink copy printed a touch off */
+.reg{position:relative;display:inline-block;isolation:isolate}
+.reg::before{
+  content:attr(data-text);
+  position:absolute;
+  left:4px;top:3px;
+  color:var(--pink);
+  mix-blend-mode:multiply;
+  z-index:-1;
+  pointer-events:none;
+  white-space:pre-wrap;
+}
+
+/* ---------- pills ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 22px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:var(--t-s);
+  text-decoration:none;
+  border:2px solid var(--ink);
+  transition:transform .15s ease, background .15s ease, color .15s ease;
+}
+.btn:hover{transform:translate(-2px,-2px)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:var(--blue);border-color:var(--blue)}
+.btn-line:hover{background:var(--yellow)}
+
+/* ---------- fold ---------- */
+.fold{min-height:100svh;display:flex;flex-direction:column}
+nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding-block:22px;
+  border-bottom:2px solid var(--ink);
+}
+.wordmark{
+  display:flex;align-items:center;gap:12px;
+  font-weight:800;font-size:var(--t-m);letter-spacing:-0.02em;
+  text-decoration:none;
+}
+.wordmark .dot{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--blue);position:relative;isolation:isolate;
+}
+.wordmark .dot::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:var(--pink);transform:translate(9px,5px);mix-blend-mode:multiply;
+}
+nav ul{display:flex;gap:26px;font-weight:500}
+nav ul a{text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+nav ul a:hover{border-color:var(--pink)}
+nav .btn{padding:10px 18px}
+
+.hero{
+  flex:1;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(24px, 4vw, 64px);
+  align-items:center;
+  padding-block:clamp(28px, 4vh, 48px);
+}
+.hero h1{
+  font-size:var(--t-xl);
+  font-weight:800;
+  line-height:.96;
+  letter-spacing:-0.035em;
+  font-variation-settings:"opsz" 96;
+  max-width:15ch;
+  text-wrap:balance;
+}
+.hero .lede{
+  font-size:var(--t-m);
+  line-height:1.35;
+  max-width:36ch;
+  margin-top:26px;
+  color:var(--ink);
+}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+.hero .facts{
+  display:flex;flex-wrap:wrap;gap:8px 28px;
+  margin-top:34px;
+  font-family:var(--mono);font-size:var(--t-xs);color:var(--muted);
+}
+.hero .facts span::before{content:"+ ";color:var(--pink)}
+
+/* the poster on the right: pure CSS overprint */
+.poster{
+  position:relative;
+  aspect-ratio:3/4;
+  height:min(540px, 60vh);
+  width:auto;
+  justify-self:center;
+  background:#f7f2e6;
+  border:2px solid var(--ink);
+  box-shadow:10px 10px 0 var(--ink);
+  transform:rotate(-2deg);
+  overflow:hidden;
+  isolation:isolate;
+}
+.poster .shape{position:absolute;mix-blend-mode:multiply}
+.poster .circle{
+  width:64%;aspect-ratio:1;border-radius:50%;
+  background:var(--blue);
+  left:-8%;top:8%;
+}
+.poster .slab{
+  width:58%;height:70%;
+  background:var(--pink);
+  right:-6%;top:22%;
+  transform:rotate(9deg);
+}
+.poster .stripes{
+  left:8%;bottom:-6%;width:52%;height:34%;
+  background:repeating-linear-gradient(0deg, var(--blue) 0 6px, transparent 6px 14px);
+  transform:rotate(-8deg);
+}
+.poster .stamp{
+  position:absolute;left:8%;top:6%;
+  font-family:var(--mono);font-size:var(--t-xs);
+  line-height:1.35;
+}
+.poster .num{
+  position:absolute;right:7%;bottom:6%;
+  font-size:clamp(3rem, 6vw, 5rem);font-weight:800;line-height:1;letter-spacing:-0.04em;
+  color:var(--ink);
+}
+.poster .face{position:absolute;left:14%;top:38%;width:44%}
+
+/* ---------- price list ---------- */
+.prices{border-top:2px solid var(--ink)}
+.toggle{
+  display:inline-flex;border:2px solid var(--ink);border-radius:999px;padding:4px;gap:4px;
+  font-family:var(--mono);font-size:var(--t-xs);
+}
+.toggle button{padding:8px 16px;border-radius:999px;color:var(--muted)}
+.toggle button[aria-checked="true"]{background:var(--ink);color:var(--paper)}
+.toggle button:hover:not([aria-checked="true"]){color:var(--ink)}
+.price-table{width:100%;border-collapse:collapse}
+.price-table th,.price-table td{
+  text-align:left;padding:18px 12px 18px 0;
+  border-bottom:1px solid var(--rule);vertical-align:baseline;
+}
+.price-table thead th{
+  font-family:var(--mono);font-size:var(--t-xs);font-weight:400;color:var(--muted);
+  border-bottom:2px solid var(--ink);padding-top:0;
+}
+.price-table td.num,.price-table th.num{text-align:right;padding-right:0}
+.price-table tbody th{font-weight:700;font-size:var(--t-m);letter-spacing:-0.01em}
+.price-table tbody th small{display:block;font-family:var(--mono);font-size:var(--t-xs);font-weight:400;color:var(--muted);margin-top:4px}
+.price-table td.num{font-family:var(--mono);font-size:var(--t-m);}
+.price-table tbody tr:hover{background:rgba(31,27,26,.035)}
+.price-table td.num b{font-weight:400;color:var(--blue)}
+.price-notes{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 36px;
+  margin-top:36px;padding-top:28px;border-top:1px solid var(--rule);
+}
+.price-notes p{font-size:var(--t-xs);font-family:var(--mono);line-height:1.6;color:var(--muted)}
+.price-notes p b{color:var(--ink);font-weight:700;display:block;margin-bottom:6px}
+
+/* ---------- inks ---------- */
+.ink-grid{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;
+}
+.swatch{
+  aspect-ratio:1/1.15;border:2px solid var(--ink);
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:14px;text-align:left;color:var(--ink);
+  transition:transform .15s ease;
+}
+.swatch:hover{transform:translateY(-4px)}
+.swatch[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:3px}
+.swatch .name{font-weight:800;font-size:var(--t-m);line-height:1;letter-spacing:-0.02em;position:relative;z-index:1}
+.swatch .code{font-family:var(--mono);font-size:var(--t-xs);position:relative;z-index:1}
+.swatch.on-dark{color:var(--paper)}
+.mixer{
+  margin-top:28px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  border:2px solid var(--ink);
+}
+.mixer .demo{
+  position:relative;min-height:260px;overflow:hidden;background:#f7f2e6;
+  border-right:2px solid var(--ink);isolation:isolate;
+}
+.mixer .demo .a,.mixer .demo .b{
+  position:absolute;width:56%;aspect-ratio:1;border-radius:50%;
+  mix-blend-mode:multiply;transition:background .25s ease;
+}
+.mixer .demo .a{left:8%;top:14%}
+.mixer .demo .b{right:8%;top:30%}
+.mixer .demo .a::after,.mixer .demo .b::after{opacity:.45}
+.mixer .read{padding:28px}
+.mixer .read dl{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-family:var(--mono);font-size:var(--t-xs);margin-top:18px}
+.mixer .read dt{color:var(--muted)}
+.mixer .read dd{margin:0}
+.mixer .chip{display:inline-block;width:14px;height:14px;border:1px solid var(--ink);vertical-align:-2px;margin-right:8px}
+
+/* ---------- paper ---------- */
+.paper-list{border-top:2px solid var(--ink)}
+.paper-list li{
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.7fr) minmax(0,1.6fr) auto;
+  gap:16px 32px;align-items:baseline;
+  padding:22px 0;border-bottom:1px solid var(--rule);
+}
+.paper-list .sheet{
+  display:inline-block;width:38px;height:48px;border:2px solid var(--ink);
+  vertical-align:middle;margin-right:14px;position:relative;
+}
+.paper-list .sheet::after{
+  content:"";position:absolute;right:-2px;top:-2px;width:12px;height:12px;
+  background:var(--paper);border-left:2px solid var(--ink);border-bottom:2px solid var(--ink);
+}
+.paper-list h3{display:inline-flex;align-items:center}
+.paper-list .w{font-family:var(--mono);font-size:var(--t-xs);color:var(--muted)}
+.paper-list .p{font-family:var(--mono);font-size:var(--t-s);white-space:nowrap}
+.paper-list .p em{font-style:normal;color:var(--muted);font-size:var(--t-xs)}
+
+/* ---------- turnaround ---------- */
+.turn{background:var(--ink);color:var(--paper)}
+.turn h2{color:var(--paper)}
+.turn .kicker{color:var(--yellow)}
+.turn .muted{color:#b7ada4}
+.lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.lane{
+  border:2px solid var(--paper);padding:26px 24px 30px;
+  display:flex;flex-direction:column;gap:14px;min-height:280px;
+}
+.lane .days{font-size:var(--t-xl);font-weight:800;line-height:.9;letter-spacing:-0.04em}
+.lane .days small{display:block;font-family:var(--mono);font-size:var(--t-xs);font-weight:400;letter-spacing:0;margin-top:10px;color:#b7ada4}
+.lane p{font-size:var(--t-s);line-height:1.45}
+.lane .tag{margin-top:auto;font-family:var(--mono);font-size:var(--t-xs);display:inline-flex;align-items:center;gap:8px}
+.lane .tag i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.lane.fast{background:var(--pink);color:var(--ink);border-color:var(--pink)}
+.lane.fast .days small,.lane.fast .tag{color:var(--ink)}
+.timeline{
+  margin-top:40px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  font-family:var(--mono);font-size:var(--t-xs);color:#b7ada4;
+}
+.timeline li{padding-top:14px;border-top:2px solid var(--paper);position:relative;padding-right:16px}
+.timeline li::before{content:"";position:absolute;top:-6px;left:0;width:10px;height:10px;border-radius:50%;background:var(--yellow)}
+.timeline li b{display:block;color:var(--paper);font-weight:700;margin-bottom:4px}
+
+/* ---------- file prep ---------- */
+.rules{counter-reset:rule;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;border-top:2px solid var(--ink)}
+.rules li{
+  counter-increment:rule;
+  display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;
+  padding:26px 0;border-bottom:1px solid var(--rule);
+}
+.rules li::before{
+  content:counter(rule, decimal-leading-zero);
+  font-family:var(--mono);font-size:var(--t-m);color:var(--blue);line-height:1.2;
+}
+.rules p{margin-top:8px;color:var(--muted);font-size:var(--t-s);max-width:44ch}
+.rules code{font-family:var(--mono);font-size:var(--t-xs);background:rgba(31,27,26,.07);padding:2px 6px;border-radius:4px}
+
+/* ---------- good and bad ---------- */
+.verdict{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.verdict .col{border:2px solid var(--ink);padding:0}
+.verdict .col header{padding:22px 26px;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.verdict .col header h3{font-size:var(--t-l);letter-spacing:-0.02em;font-weight:800}
+.verdict .col.good header{background:var(--blue);color:var(--paper)}
+.verdict .col.bad header{background:var(--yellow)}
+.verdict .col ul{padding:10px 26px 18px}
+.verdict .col li{padding:14px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:28px 1fr;gap:10px}
+.verdict .col li:last-child{border-bottom:0}
+.verdict .col li b{display:block;margin-bottom:3px}
+.verdict .col li span{grid-column:2;color:var(--muted);font-size:var(--t-s)}
+.verdict .col li::before{font-family:var(--mono);font-size:var(--t-s);line-height:1.5}
+.verdict .good li::before{content:"+";color:var(--blue)}
+.verdict .bad li::before{content:"x";color:var(--muted)}
+
+/* ---------- closing cta ---------- */
+.close{
+  border-top:2px solid var(--ink);
+}
+.close .box{
+  position:relative;overflow:hidden;isolation:isolate;
+  border:2px solid var(--ink);
+  padding:clamp(36px, 6vw, 72px);
+  display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:32px;align-items:center;
+}
+.close .box .blob{position:absolute;mix-blend-mode:multiply;pointer-events:none}
+.close .box .blob.a{width:420px;height:420px;border-radius:50%;background:var(--pink);right:-120px;top:-160px}
+.close .box .blob.b{width:520px;height:220px;background:var(--blue);right:-60px;bottom:-110px;transform:rotate(-8deg)}
+.close h2{max-width:16ch}
+.close .contact{position:relative;z-index:1;font-family:var(--mono);font-size:var(--t-s);line-height:1.9}
+.close .contact a{text-decoration:none;border-bottom:2px solid var(--pink)}
+
+/* ---------- footer ---------- */
+footer{padding:36px 0 48px;border-top:2px solid var(--ink)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px;font-family:var(--mono);font-size:var(--t-xs);color:var(--muted)}
+footer ul{display:flex;flex-wrap:wrap;gap:8px 22px}
+footer a{text-decoration:none}
+footer a:hover{color:var(--blue)}
+
+@media (max-width: 900px){
+  .hero{grid-template-columns:1fr}
+  .poster{height:auto;width:min(100%, 320px);transform:rotate(-1.5deg)}
+  nav ul{display:none}
+  .section-head{grid-template-columns:1fr}
+  .ink-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .mixer{grid-template-columns:1fr}
+  .mixer .demo{border-right:0;border-bottom:2px solid var(--ink)}
+  .paper-list li{grid-template-columns:1fr 1fr}
+  .lanes,.rules,.verdict,.price-notes{grid-template-columns:1fr}
+  .timeline{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+  .close .box{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .btn,.swatch{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <div class="wrap">
+    <nav aria-label="Primary">
+      <a class="wordmark" href="#top"><span class="dot" aria-hidden="true"></span>Blotter Press</a>
+      <ul>
+        <li><a href="#prices">Prices</a></li>
+        <li><a href="#inks">Inks</a></li>
+        <li><a href="#paper">Paper</a></li>
+        <li><a href="#turnaround">Turnaround</a></li>
+        <li><a href="#prep">File prep</a></li>
+        <li><a href="#verdict">Good and bad</a></li>
+      </ul>
+      <a class="btn btn-ink" href="#contact">Send a job</a>
+    </nav>
+  </div>
+
+  <div class="wrap hero" id="top">
+    <div>
+      <h1><span class="reg" data-text="Two colours, one drum, prices you can read.">Two colours, one drum, prices you can read.</span></h1>
+      <p class="lede">We are a risograph studio in Glasgow. Flat sheet prices by size and quantity, twelve inks on the shelf, and a proof on your desk within three working days.</p>
+      <div class="ctas">
+        <a class="btn btn-ink" href="#prices">See the price list</a>
+        <a class="btn btn-line" href="#prep">Prepare your file</a>
+      </div>
+      <p class="facts">
+        <span>Two-drum Riso duplicator</span>
+        <span>Soy-based ink</span>
+        <span>A5 to A3</span>
+        <span>Minimum 50 sheets</span>
+      </p>
+    </div>
+
+    <div class="poster" aria-hidden="true">
+      <div class="ink shape circle"></div>
+      <div class="ink shape slab"></div>
+      <div class="shape stripes"></div>
+      <p class="stamp">Blotter Press<br>Job 0412 · 2 col<br>Blue over pink</p>
+      <svg class="face" viewBox="0 0 200 200" fill="none" stroke="#1f1b1a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 96c4-38 30-62 68-62s66 26 68 64-24 66-66 66-74-30-70-68z"/>
+        <path d="M70 84c6-6 14-6 20 0M112 84c6-6 14-6 20 0"/>
+        <path d="M62 122c14 22 60 24 76 0"/>
+        <path d="M50 46l-8-18M150 44l10-16M100 30v-16"/>
+      </svg>
+      <p class="num">02</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ price list ============ -->
+<section class="prices" id="prices">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Price list</p>
+        <h2>By size, by quantity, no quote needed.</h2>
+      </div>
+      <p class="muted">Every number here is what you pay. Master fees, setup and a wrapped parcel to a mainland address are all folded in. Pick the sheet size, pick the run length, read across.</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:22px">
+      <div class="toggle" role="radiogroup" aria-label="Number of ink colours">
+        <button type="button" role="radio" aria-checked="true" data-colours="1">One colour</button>
+        <button type="button" role="radio" aria-checked="false" data-colours="2">Two colours</button>
+      </div>
+      <p class="mono muted" id="price-note">Single pass. One drum, one ink, one side.</p>
+    </div>
+
+    <table class="price-table" id="price-table">
+      <thead>
+        <tr>
+          <th>Sheet</th>
+          <th class="num">50</th>
+          <th class="num">100</th>
+          <th class="num">250</th>
+          <th class="num">500</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">A5 <small>148 × 210 mm · flyers, cards, zine pages</small></th>
+          <td class="num" data-one="28" data-two="44">£28</td>
+          <td class="num" data-one="38" data-two="58">£38</td>
+          <td class="num" data-one="62" data-two="92">£62</td>
+          <td class="num" data-one="98" data-two="150">£98</td>
+        </tr>
+        <tr>
+          <th scope="row">A4 <small>210 × 297 mm · prints, menus, inserts</small></th>
+          <td class="num" data-one="36" data-two="56">£36</td>
+          <td class="num" data-one="50" data-two="78">£50</td>
+          <td class="num" data-one="85" data-two="130">£85</td>
+          <td class="num" data-one="140" data-two="215">£140</td>
+        </tr>
+        <tr>
+          <th scope="row">A3 <small>297 × 420 mm · posters, folded A4 booklets</small></th>
+          <td class="num" data-one="58" data-two="92">£58</td>
+          <td class="num" data-one="82" data-two="128">£82</td>
+          <td class="num" data-one="150" data-two="235">£150</td>
+          <td class="num" data-one="255" data-two="395">£255</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="price-notes">
+      <p><b>Extra colours</b>Third and fourth colours add 40% of the two-colour price each. Registration gets looser with every pass, so we will talk you out of four.</p>
+      <p><b>Double sided</b>Printing the back adds 60% per colour. Backs run after the front has dried overnight, so add a day.</p>
+      <p><b>Finishing</b>Trimming to bleed £6 per 100 sheets. Saddle stitching 60p per booklet. Scoring and folding 40p per sheet, minimum £12.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ inks ============ -->
+<section id="inks">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Ink colours</p>
+        <h2>Twelve drums on the shelf.</h2>
+      </div>
+      <p class="muted">Riso ink is translucent, so two colours printed over each other make a third. Tap any two swatches below and the mixer shows roughly what the overprint will look like on our house paper.</p>
+    </div>
+
+    <div class="ink-grid" id="ink-grid">
+      <button type="button" class="ink swatch" style="background:#0078bf" data-name="Blue" data-hex="#0078bf" aria-pressed="true"><span class="name">Blue</span><span class="code">01 · house</span></button>
+      <button type="button" class="ink swatch" style="background:#ff48b0" data-name="Fluorescent pink" data-hex="#ff48b0" aria-pressed="true"><span class="name">Fluo pink</span><span class="code">02 · house</span></button>
+      <button type="button" class="ink swatch" style="background:#ffe800" data-name="Yellow" data-hex="#ffe800"><span class="name">Yellow</span><span class="code">03</span></button>
+      <button type="button" class="ink swatch on-dark" style="background:#1f1b1a" data-name="Black" data-hex="#1f1b1a"><span class="name">Black</span><span class="code">04</span></button>
+      <button type="button" class="ink swatch" style="background:#ff6c2f" data-name="Orange" data-hex="#ff6c2f"><span class="name">Orange</span><span class="code">05</span></button>
+      <button type="button" class="ink swatch" style="background:#ff665e" data-name="Bright red" data-hex="#ff665e"><span class="name">Bright red</span><span class="code">06</span></button>
+      <button type="button" class="ink swatch" style="background:#00a95c" data-name="Green" data-hex="#00a95c"><span class="name">Green</span><span class="code">07</span></button>
+      <button type="button" class="ink swatch on-dark" style="background:#00838a" data-name="Teal" data-hex="#00838a"><span class="name">Teal</span><span class="code">08</span></button>
+      <button type="button" class="ink swatch on-dark" style="background:#914e72" data-name="Burgundy" data-hex="#914e72"><span class="name">Burgundy</span><span class="code">09</span></button>
+      <button type="button" class="ink swatch on-dark" style="background:#5c55a6" data-name="Violet" data-hex="#5c55a6"><span class="name">Violet</span><span class="code">10</span></button>
+      <button type="button" class="ink swatch" style="background:#f7b1c8" data-name="Light pink" data-hex="#f7b1c8"><span class="name">Light pink</span><span class="code">11</span></button>
+      <button type="button" class="ink swatch" style="background:#b7c3ae" data-name="Aqua grey" data-hex="#b7c3ae"><span class="name">Aqua grey</span><span class="code">12</span></button>
+    </div>
+
+    <div class="mixer" aria-live="polite">
+      <div class="demo">
+        <div class="ink a" id="mix-a" style="background:#0078bf"></div>
+        <div class="ink b" id="mix-b" style="background:#ff48b0"></div>
+      </div>
+      <div class="read">
+        <h3 id="mix-title">Blue over Fluorescent pink</h3>
+        <p class="muted" style="margin-top:8px;max-width:38ch">Where the two circles cross is the overprint. It is always darker than either ink, never lighter, and it is the cheapest third colour you will ever buy.</p>
+        <dl>
+          <dt>First drum</dt><dd><i class="chip" id="chip-a" style="background:#0078bf"></i><span id="hex-a">#0078bf</span></dd>
+          <dt>Second drum</dt><dd><i class="chip" id="chip-b" style="background:#ff48b0"></i><span id="hex-b">#ff48b0</span></dd>
+          <dt>Overprint</dt><dd><i class="chip" id="chip-c" style="background:#002284"></i><span id="hex-c">#002284</span> approx.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ paper ============ -->
+<section id="paper">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Paper stocks</p>
+        <h2>Five papers we trust in the machine.</h2>
+      </div>
+      <p class="muted">Risograph needs uncoated, absorbent paper or the ink never dries. These five feed reliably, take two passes without curling, and are all held in stock. Prices are per 100 sheets on top of the print price.</p>
+    </div>
+
+    <ul class="paper-list">
+      <li>
+        <h3><span class="sheet" aria-hidden="true"></span>Munken Lynx</h3>
+        <span class="w">100 gsm · natural white</span>
+        <span class="muted">Our house stock and the price-list default. Smooth, bright, holds fine linework.</span>
+        <span class="p">Included</span>
+      </li>
+      <li>
+        <h3><span class="sheet" aria-hidden="true"></span>Munken Lynx heavy</h3>
+        <span class="w">170 gsm · natural white</span>
+        <span class="muted">For posters and cards. Stiff enough to stand up, still feeds without misregistration.</span>
+        <span class="p">+ £9 <em>/ 100</em></span>
+      </li>
+      <li>
+        <h3><span class="sheet" aria-hidden="true"></span>Cyclus Offset</h3>
+        <span class="w">115 gsm · recycled grey</span>
+        <span class="muted">Speckled 100% post-consumer stock. Fluo pink and yellow go a little dusty on it, which is often the point.</span>
+        <span class="p">+ £7 <em>/ 100</em></span>
+      </li>
+      <li>
+        <h3><span class="sheet" aria-hidden="true"></span>Colorplan</h3>
+        <span class="w">135 gsm · nine colours</span>
+        <span class="muted">Coloured base sheets in stone, mist, vermilion, cobalt, forest, sorbet yellow, candy pink, ebony and pristine white.</span>
+        <span class="p">+ £18 <em>/ 100</em></span>
+      </li>
+      <li>
+        <h3><span class="sheet" aria-hidden="true"></span>Newsprint</h3>
+        <span class="w">52 gsm · off-white</span>
+        <span class="muted">Zines and giveaways. Thin, cheap, beautiful show-through. Single sided only above 100 sheets.</span>
+        <span class="p">+ £3 <em>/ 100</em></span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ turnaround ============ -->
+<section class="turn" id="turnaround">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Turnaround</p>
+        <h2>Three working days as standard.</h2>
+      </div>
+      <p class="muted">The clock starts when your file passes preflight and you have approved the proof photo. Days are working days, Monday to Friday, and the studio closes for the last week of December.</p>
+    </div>
+
+    <div class="lanes">
+      <div class="lane">
+        <p class="days">3<small>working days</small></p>
+        <h3>Standard</h3>
+        <p>Included in the price list. Fronts printed on day one, backs on day two, trimmed and packed on day three.</p>
+        <p class="tag"><i style="background:var(--yellow)"></i>No surcharge</p>
+      </div>
+      <div class="lane fast">
+        <p class="days">1<small>working day</small></p>
+        <h3>Rush</h3>
+        <p>Single-sided, one or two colours, house paper only, in by 10am and collected after 4pm the same day.</p>
+        <p class="tag"><i style="background:var(--ink)"></i>+ 50% of print price</p>
+      </div>
+      <div class="lane">
+        <p class="days">7<small>working days</small></p>
+        <h3>Booklets</h3>
+        <p>Anything stitched or folded. Sheets need a full day to dry before they meet the guillotine and the stapler.</p>
+        <p class="tag"><i style="background:var(--blue)"></i>Finishing priced per unit</p>
+      </div>
+    </div>
+
+    <ol class="timeline">
+      <li><b>Day 0</b>File in, preflight, proof photo sent</li>
+      <li><b>Day 1</b>Masters burned, fronts printed</li>
+      <li><b>Day 2</b>Backs printed, sheets racked to dry</li>
+      <li><b>Day 3</b>Trimmed, counted, packed</li>
+      <li><b>Day 4</b>Collected or on the van</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ file prep ============ -->
+<section id="prep">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">File preparation</p>
+        <h2>Eight rules that save a reprint.</h2>
+      </div>
+      <p class="muted">Riso is not a digital press. Each colour is a separate stencil burned from a black and white image, so we need your file split the way the machine thinks. Follow these and preflight passes first time.</p>
+    </div>
+
+    <ol class="rules">
+      <li><div><h3>One greyscale layer per colour</h3><p>Send each ink as its own page or layer in pure greyscale. Black in the file is 100% ink, white is bare paper. Name the layers after the drum: <code>01-blue.pdf</code>, <code>02-pink.pdf</code>.</p></div></li>
+      <li><div><h3>Keep tints between 10% and 85%</h3><p>Below 10% the stencil drops out to nothing; above 85% the ink floods and looks the same as solid. A 30% blue over a 30% pink is where the good stuff lives.</p></div></li>
+      <li><div><h3>300 dpi, exported as .pdf</h3><p>Bitmaps at 300 dots per inch at final size. Vector shapes and live text are fine. No screen-colour files, no four-colour process, no spot channels.</p></div></li>
+      <li><div><h3>3 mm bleed, 5 mm safe zone</h3><p>Add 3 mm past the trim edge and keep anything important 5 mm inside it. The feed rollers drift a millimetre or two on every sheet.</p></div></li>
+      <li><div><h3>Expect 1 to 2 mm of misregistration</h3><p>Colours will not sit exactly on top of each other, and thin outlines that rely on it will look broken. Design so a slip reads as charm, or trap it with a knockout.</p></div></li>
+      <li><div><h3>Leave a 10 mm paper margin on the feed edge</h3><p>The rollers grip the top of the sheet and leave marks in heavy ink there. Keep the short top edge light, or plan for us to trim it.</p></div></li>
+      <li><div><h3>No large solid floods on the reverse</h3><p>Two-sided jobs with big solids on both faces will smear because riso ink never fully cures. Keep one side lighter than the other.</p></div></li>
+      <li><div><h3>Send a colour mock-up too</h3><p>A flattened screen image of how you imagine it, with the ink names written on. It is the only way we can check your separations are the right way round.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ good and bad ============ -->
+<section id="verdict">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Honest bit</p>
+        <h2>What riso does well, and what it does badly.</h2>
+      </div>
+      <p class="muted">A risograph is a 1980s stencil duplicator with beautiful ink. It is cheap, fast and vivid, and it is also messy, imprecise and allergic to some kinds of artwork. Read both columns before you send us a job.</p>
+    </div>
+
+    <div class="verdict">
+      <div class="col good">
+        <header><h3>Good at</h3><span class="mono">say yes to</span></header>
+        <ul>
+          <li><b>Flat, punchy colour</b><span>Fluo pink and blue cannot be reproduced by an inkjet. The ink sits on the paper rather than in it.</span></li>
+          <li><b>Short runs at long-run prices</b><span>Fifty posters for £58 is not a typo. A master costs pennies and the ink is cheap.</span></li>
+          <li><b>Halftones and grain</b><span>Photographs converted to a coarse dot or stochastic grain look better on riso than on any other press.</span></li>
+          <li><b>Overprints as free colours</b><span>Two drums give you three colours, three give you six or seven. Layers are the whole trick.</span></li>
+          <li><b>Low footprint</b><span>Soy ink, no heat, no solvent, no plate chemistry, and recycled paper goes through fine.</span></li>
+        </ul>
+      </div>
+      <div class="col bad">
+        <header><h3>Bad at</h3><span class="mono">talk to us first</span></header>
+        <ul>
+          <li><b>Tight registration</b><span>Colours drift 1 to 2 mm. Outlined text and fine multi-colour logos will look drunk.</span></li>
+          <li><b>Large solid floods</b><span>Big areas of 100% ink go blotchy, roller-marked and never quite dry. Tints under 85% behave far better.</span></li>
+          <li><b>Exact brand colours</b><span>There are twelve inks. None of them is your corporate teal, and mixing does not work like paint.</span></li>
+          <li><b>Smudge-proof finishes</b><span>Riso ink stays soft. It rubs onto fingers and facing pages, especially on coated or glossy stock, which we will not run.</span></li>
+          <li><b>Photo-real colour</b><span>Skin tones, gradients and full-colour photography come out as posterised art prints, not proofs. Sometimes that is lovely. Sometimes not.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ contact ============ -->
+<section class="close" id="contact">
+  <div class="wrap">
+    <div class="box">
+      <div class="blob a ink" aria-hidden="true"></div>
+      <div class="blob b ink" aria-hidden="true"></div>
+      <div style="position:relative;z-index:1">
+        <p class="kicker">Send a job</p>
+        <h2>Email the separations and a mock-up. We reply within the day.</h2>
+        <div class="ctas" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:28px">
+          <a class="btn btn-ink" href="mailto:jobs@blotterpress.co.uk">jobs@blotterpress.co.uk</a>
+          <a class="btn btn-line" href="#prices">Back to prices</a>
+        </div>
+      </div>
+      <div class="contact">
+        Blotter Press<br>
+        Unit 9, Sawmill Yard<br>
+        41 Dalmarnock Road<br>
+        Glasgow, east end<br><br>
+        Studio hours: Tuesday to Saturday, 10 to 6<br>
+        Collections from the yard door, ring twice<br>
+        <a href="tel:+441410000000">0141 000 0000</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <p>Blotter Press Ltd · risograph studio, Glasgow · printing on a two-drum Riso since 2019</p>
+      <ul>
+        <li><a href="#prices">Prices</a></li>
+        <li><a href="#inks">Inks</a></li>
+        <li><a href="#paper">Paper</a></li>
+        <li><a href="#prep">File prep</a></li>
+        <li><a href="https://instagram.com" rel="noopener">Instagram</a></li>
+        <li><a href="#top">Top</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // price toggle: one colour vs two colours
+  var group = document.querySelector('.toggle');
+  var cells = document.querySelectorAll('#price-table td.num');
+  var note = document.getElementById('price-note');
+  var notes = {
+    '1': 'Single pass. One drum, one ink, one side.',
+    '2': 'Two passes. Any two inks from the shelf, one side.'
+  };
+  group.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if(!btn) return;
+    var c = btn.getAttribute('data-colours');
+    group.querySelectorAll('button').forEach(function(b){
+      b.setAttribute('aria-checked', b === btn ? 'true' : 'false');
+    });
+    cells.forEach(function(td){
+      var v = td.getAttribute(c === '2' ? 'data-two' : 'data-one');
+      td.innerHTML = c === '2' ? '<b>£</b>' + v : '£' + v;
+    });
+    note.textContent = notes[c];
+  });
+
+  // overprint mixer: multiply two inks
+  var grid = document.getElementById('ink-grid');
+  var picked = ['#0078bf', '#ff48b0'];
+  var names = ['Blue', 'Fluorescent pink'];
+  var order = [0, 1];
+  function hexToRgb(h){ h = h.replace('#',''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+  function rgbToHex(r){ return '#' + r.map(function(v){ v = Math.max(0, Math.min(255, Math.round(v))); return ('0' + v.toString(16)).slice(-2); }).join(''); }
+  function multiply(a, b){
+    var A = hexToRgb(a), B = hexToRgb(b);
+    return rgbToHex([A[0]*B[0]/255, A[1]*B[1]/255, A[2]*B[2]/255]);
+  }
+  function render(){
+    var a = picked[order[0]], b = picked[order[1]];
+    var c = multiply(a, b);
+    document.getElementById('mix-a').style.background = a;
+    document.getElementById('mix-b').style.background = b;
+    document.getElementById('chip-a').style.background = a;
+    document.getElementById('chip-b').style.background = b;
+    document.getElementById('chip-c').style.background = c;
+    document.getElementById('hex-a').textContent = a;
+    document.getElementById('hex-b').textContent = b;
+    document.getElementById('hex-c').textContent = c;
+    document.getElementById('mix-title').textContent = names[order[0]] + ' over ' + names[order[1]];
+    grid.querySelectorAll('.swatch').forEach(function(s){
+      s.setAttribute('aria-pressed', picked.indexOf(s.getAttribute('data-hex')) > -1 ? 'true' : 'false');
+    });
+  }
+  var slot = 0;
+  grid.addEventListener('click', function(e){
+    var s = e.target.closest('.swatch');
+    if(!s) return;
+    var hex = s.getAttribute('data-hex');
+    if(picked.indexOf(hex) > -1) return;
+    picked[slot] = hex;
+    names[slot] = s.getAttribute('data-name');
+    slot = slot === 0 ? 1 : 0;
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ichiwan - one bowl of tantanmen, Sangenjaya, Tokyo</title>
+<meta name="description" content="Ichiwan is a ramen shop in Sangenjaya, Tokyo, that makes one dish: sesame and chili tantanmen. Menu, ticket machine guide, queue times by hour, opening hours and address.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- type scale (five tokens) ---------- */
+  :root{
+    --t-display: clamp(52px, 6.6vw, 88px);
+    --t-title:   clamp(34px, 4vw, 54px);
+    --t-sub:     clamp(22px, 2.2vw, 28px);
+    --t-body:    17px;
+    --t-meta:    13px;
+
+    /* ---------- palette ---------- */
+    --paper:    #F3EADB;
+    --cream:    #FBF6EC;
+    --ink:      #1A1412;
+    --muted:    #6E625A;
+    --red:      #D4211F;
+    --red-deep: #8E0F14;
+    --rule:     rgba(26, 20, 18, 0.14);
+
+    /* ---------- rhythm ---------- */
+    --seam: clamp(72px, 10vw, 128px);
+    --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --text: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--text);
+    font-size:var(--t-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  h1,h2,h3,p,ul,ol,figure{margin:0}
+  ul,ol{padding:0;list-style:none}
+  svg{display:block}
+
+  /* container owns the gutter with padding-inline only */
+  .wrap{
+    max-width:1180px;
+    margin-inline:auto;
+    padding-inline:clamp(24px, 4vw, 56px);
+  }
+
+  section{padding-block:var(--seam)}
+
+  .meta{
+    font-size:var(--t-meta);
+    letter-spacing:0.01em;
+    color:var(--muted);
+  }
+  .meta strong{color:var(--ink);font-weight:600}
+
+  .display{
+    font-family:var(--display);
+    font-variation-settings:"opsz" 144;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    line-height:0.98;
+  }
+  .title{
+    font-family:var(--display);
+    font-variation-settings:"opsz" 96;
+    font-weight:700;
+    font-size:var(--t-title);
+    letter-spacing:-0.015em;
+    line-height:1.02;
+    text-wrap:balance;
+  }
+  .title em{font-style:italic;color:var(--red);font-weight:600}
+  .sub{
+    font-family:var(--display);
+    font-size:var(--t-sub);
+    font-weight:500;
+    line-height:1.25;
+    letter-spacing:-0.005em;
+  }
+
+  .pill{
+    display:inline-flex;align-items:center;gap:10px;
+    border-radius:999px;
+    padding:13px 22px;
+    font-weight:500;
+    text-decoration:none;
+    font-size:var(--t-body);
+    line-height:1;
+    transition:transform .2s ease, background .2s ease, color .2s ease;
+  }
+  .pill-red{background:var(--red);color:var(--cream)}
+  .pill-red:hover{background:var(--red-deep);transform:translateY(-1px)}
+  .pill-ghost{border:1.5px solid var(--ink);color:var(--ink)}
+  .pill-ghost:hover{border-color:var(--red);color:var(--red)}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-block:20px;
+    border-bottom:1px solid var(--rule);
+  }
+  .wordmark{
+    display:flex;align-items:baseline;gap:10px;
+    text-decoration:none;
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:700;
+    font-size:28px;
+    color:var(--red);
+    letter-spacing:-0.02em;
+    line-height:1;
+  }
+  .wordmark small{
+    font-family:var(--text);
+    font-style:normal;
+    font-weight:500;
+    font-size:var(--t-meta);
+    color:var(--muted);
+  }
+  .nav-links{display:flex;gap:26px;font-size:15px;font-weight:500}
+  .nav-links a{text-decoration:none;position:relative}
+  .nav-links a::after{
+    content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;
+    background:var(--red);transition:right .25s ease;
+  }
+  .nav-links a:hover::after{right:0}
+  .queue-pill{
+    display:inline-flex;align-items:center;gap:9px;
+    border:1.5px solid var(--red);color:var(--red);
+    border-radius:999px;padding:9px 16px;
+    font-size:var(--t-meta);font-weight:600;line-height:1;
+    white-space:nowrap;
+  }
+  .queue-pill .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--red);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.55);opacity:.55}}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:24px}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr);
+    align-items:center;
+    gap:clamp(24px, 4vw, 64px);
+    width:100%;
+  }
+  .hero h1{
+    font-size:var(--t-display);
+    color:var(--red);
+    max-width:11ch;
+    margin-top:18px;
+    text-wrap:balance;
+  }
+  .hero h1 em{font-style:italic;font-weight:600}
+  .hero .lede{
+    max-width:44ch;
+    margin-top:22px;
+    font-size:calc(var(--t-body) + 2px);
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;align-items:center}
+  .hero .ctas .meta{margin-left:6px}
+
+  .bowl-figure{width:100%;max-width:560px;margin-inline:auto}
+  .bowl-figure svg{width:100%;height:auto;max-height:min(70svh, 600px)}
+  .steam path{
+    fill:none;
+    stroke:url(#steamGrad);
+    stroke-width:14;
+    stroke-linecap:round;
+    animation:rise 4.2s ease-in-out infinite;
+    opacity:0;
+  }
+  .steam path:nth-child(2){animation-delay:1.3s;stroke-width:11}
+  .steam path:nth-child(3){animation-delay:2.4s;stroke-width:12}
+  @keyframes rise{
+    0%{transform:translateY(26px);opacity:0}
+    25%{opacity:.85}
+    75%{opacity:.5}
+    100%{transform:translateY(-78px);opacity:0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .steam path{animation:none;opacity:.6}
+    .queue-pill .dot{animation:none}
+  }
+
+  /* ---------- section header pattern ---------- */
+  .sec-head{
+    display:grid;
+    grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);
+    gap:clamp(24px, 4vw, 64px);
+    align-items:end;
+  }
+  .sec-head .meta{margin-bottom:14px}
+  .sec-head p.lead{max-width:52ch;color:var(--ink)}
+
+  /* ---------- the bowl ---------- */
+  #bowl{border-top:1px solid var(--rule)}
+  .bowl-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);
+    gap:clamp(24px, 4vw, 64px);
+    margin-top:56px;
+  }
+  .bowl-left{position:sticky;top:32px;align-self:start}
+  .price-line{
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    padding-top:22px;margin-top:22px;border-top:1px solid var(--rule);
+  }
+  .price-line .price{
+    font-family:var(--display);font-weight:700;font-size:var(--t-title);
+    letter-spacing:-0.02em;line-height:1;
+  }
+  .price-line .meta{max-width:26ch}
+
+  .parts{border-top:1px solid var(--rule)}
+  .parts li{
+    display:grid;
+    grid-template-columns:28px minmax(0,1fr) auto;
+    gap:16px;align-items:baseline;
+    padding-block:16px;border-bottom:1px solid var(--rule);
+  }
+  .parts .swatch{
+    width:18px;height:18px;border-radius:50%;
+    position:relative;top:3px;
+    box-shadow:inset 0 0 0 1.5px rgba(26,20,18,.12);
+  }
+  .parts .name{font-weight:600}
+  .parts .note{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+  .parts .yen{
+    font-family:var(--display);font-weight:600;font-size:20px;
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .parts .yen.free{color:var(--red);font-style:italic;font-weight:500}
+  .parts-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-top:44px;margin-bottom:10px;
+  }
+
+  /* ---------- add-ons (red panel) ---------- */
+  #addons{padding-block:0}
+  .red-panel{
+    background:linear-gradient(160deg, var(--red) 0%, #B91A1B 60%, var(--red-deep) 100%);
+    color:var(--cream);
+    padding-block:var(--seam);
+  }
+  .red-panel .meta{color:rgba(251,246,236,.72)}
+  .red-panel .meta strong{color:var(--cream)}
+  .red-panel .title em{color:var(--cream)}
+  .addon-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:0 clamp(24px, 3vw, 48px);
+    margin-top:52px;
+    border-top:1px solid rgba(251,246,236,.28);
+  }
+  .addon{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:baseline;
+    padding-block:20px;border-bottom:1px solid rgba(251,246,236,.28);
+  }
+  .addon .name{font-weight:600}
+  .addon .note{display:block;font-size:15px;color:rgba(251,246,236,.78);margin-top:3px;max-width:30ch}
+  .addon .yen{
+    font-family:var(--display);font-weight:600;font-size:22px;
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .red-panel .fine{margin-top:36px;max-width:60ch;color:rgba(251,246,236,.8);font-size:15px}
+
+  /* ---------- ticket machine ---------- */
+  .machine-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 4fr) minmax(0, 8fr);
+    gap:clamp(32px, 5vw, 80px);
+    margin-top:56px;
+    align-items:start;
+  }
+  .machine-art{max-width:300px;margin-inline:auto;width:100%}
+  .machine-art svg{width:100%;height:auto}
+  .steps{counter-reset:step;border-top:1px solid var(--rule)}
+  .steps li{
+    display:grid;
+    grid-template-columns:72px minmax(0,1fr);
+    gap:20px;
+    padding-block:26px;
+    border-bottom:1px solid var(--rule);
+  }
+  .steps .num{
+    font-family:var(--display);font-weight:700;font-style:italic;
+    font-size:var(--t-title);line-height:.9;color:var(--red);
+    letter-spacing:-0.02em;
+  }
+  .steps h3{
+    font-family:var(--display);font-weight:600;font-size:var(--t-sub);line-height:1.2;
+    letter-spacing:-0.005em;
+  }
+  .steps p{margin-top:8px;max-width:56ch;color:var(--ink)}
+  .steps p.meta{margin-top:10px}
+
+  /* ---------- queue ---------- */
+  #queue{border-top:1px solid var(--rule)}
+  .toggle{
+    display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;padding:4px;gap:2px;
+  }
+  .toggle button{
+    border:0;background:transparent;font:inherit;font-weight:500;font-size:15px;
+    padding:8px 18px;border-radius:999px;cursor:pointer;color:var(--ink);
+  }
+  .toggle button[aria-checked="true"]{background:var(--ink);color:var(--cream)}
+  .chart-wrap{margin-top:44px}
+  .chart-top{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  .chart{
+    display:grid;
+    grid-template-columns:repeat(11, minmax(0,1fr));
+    gap:clamp(6px, 1vw, 14px);
+    align-items:end;
+    height:280px;
+    margin-top:28px;
+    padding-bottom:0;
+    border-bottom:1.5px solid var(--ink);
+  }
+  .col{display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
+  .col .val{
+    font-family:var(--display);font-weight:600;font-size:18px;
+    font-variant-numeric:tabular-nums;line-height:1;margin-bottom:8px;text-align:center;
+    color:var(--ink);
+  }
+  .col .bar{
+    background:var(--ink);
+    border-radius:8px 8px 0 0;
+    transition:height .5s cubic-bezier(.2,.8,.2,1);
+    min-height:6px;
+  }
+  .col.now .bar{background:var(--red)}
+  .col.now .val{color:var(--red)}
+  .col.now::before{
+    content:"now";
+    position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+    font-size:var(--t-meta);font-weight:600;color:var(--red);
+    border:1.5px solid var(--red);border-radius:999px;padding:3px 9px;line-height:1;
+  }
+  .chart-labels{
+    display:grid;grid-template-columns:repeat(11, minmax(0,1fr));
+    gap:clamp(6px, 1vw, 14px);margin-top:10px;text-align:center;
+  }
+  .queue-notes{
+    display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:32px;margin-top:48px;
+  }
+  .queue-notes h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.2;letter-spacing:-0.005em}
+  .queue-notes p{margin-top:8px;color:var(--ink);font-size:16px}
+
+  /* ---------- find us ---------- */
+  #find{border-top:1px solid var(--rule)}
+  .find-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);
+    gap:clamp(24px, 4vw, 64px);
+    margin-top:56px;
+    align-items:start;
+  }
+  .hours{border-top:1px solid var(--rule);margin-top:20px}
+  .hours li{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;
+    padding-block:13px;border-bottom:1px solid var(--rule);
+    font-variant-numeric:tabular-nums;
+  }
+  .hours li.closed span:last-child{color:var(--red);font-style:italic;font-family:var(--display);font-weight:500;font-size:19px}
+  .hours .day{font-weight:600}
+  .info-cols{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:32px}
+  .info-cols h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.2;letter-spacing:-0.005em}
+  .info-cols p{margin-top:10px}
+  .info-cols address{font-style:normal;margin-top:10px;line-height:1.55}
+  .map{margin-top:28px;border:1px solid var(--rule);border-radius:16px;background:var(--cream);padding:18px}
+  .map svg{width:100%;height:auto}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--rule);padding-block:var(--seam) 40px}
+  footer .statement{
+    font-family:var(--display);font-weight:700;font-size:var(--t-title);
+    letter-spacing:-0.015em;line-height:1.05;max-width:22ch;text-wrap:balance;
+  }
+  footer .statement em{font-style:italic;color:var(--red);font-weight:600}
+  .foot-cols{
+    display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:32px;
+    margin-top:56px;padding-top:28px;border-top:1px solid var(--rule);
+  }
+  .foot-cols p{margin-top:8px;font-size:15px;line-height:1.55}
+  .foot-cols a{text-decoration:none;border-bottom:1px solid var(--rule)}
+  .foot-cols a:hover{color:var(--red);border-color:var(--red)}
+  .foot-base{
+    display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+    margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 960px){
+    .nav-links{display:none}
+    .hero-grid{grid-template-columns:1fr}
+    .bowl-figure{max-width:420px}
+    .bowl-figure svg{max-height:46svh}
+    .sec-head,.bowl-grid,.machine-grid,.find-grid{grid-template-columns:1fr}
+    .bowl-left{position:static}
+    .addon-grid{grid-template-columns:1fr}
+    .queue-notes,.foot-cols{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .chart{height:220px}
+    .col .val{font-size:14px}
+  }
+  @media (max-width: 600px){
+    .hero h1{max-width:none}
+    .queue-notes,.foot-cols,.info-cols{grid-template-columns:1fr}
+    .chart-labels{font-size:11px}
+    .queue-pill span.text{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a class="wordmark" href="#top" aria-label="Ichiwan, home">Ichiwan <small>一椀, Sangenjaya</small></a>
+      <div class="nav-links">
+        <a href="#bowl">The bowl</a>
+        <a href="#addons">Add-ons</a>
+        <a href="#ticket">Ticket machine</a>
+        <a href="#queue">Queue</a>
+        <a href="#find">Find us</a>
+      </div>
+      <a class="queue-pill" href="#queue" id="queuePill"><span class="dot" aria-hidden="true"></span><span class="text">Queue right now: about 20 min</span></a>
+    </nav>
+  </header>
+
+  <main class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="meta"><strong>Sangenjaya, Tokyo.</strong> Open from 11:00. Cash only. No reservations.</p>
+        <h1 class="display">One bowl. <em>All day.</em> Nothing else.</h1>
+        <p class="lede">We make tantanmen: a sesame cream broth, our own chili oil, hand-pulled noodles and pork mince. It is the only thing on the menu, and it has been since 2019.</p>
+        <div class="ctas">
+          <a class="pill pill-red" href="#bowl">See the bowl, ¥1,100</a>
+          <a class="pill pill-ghost" href="#queue">Queue times by hour</a>
+        </div>
+      </div>
+
+      <figure class="bowl-figure" aria-label="A bowl of tantanmen with steam rising, drawn in cream and red">
+        <svg viewBox="0 0 600 600" role="img" aria-hidden="true">
+          <defs>
+            <radialGradient id="discGrad" cx="42%" cy="34%" r="70%">
+              <stop offset="0%" stop-color="#E23A31"/>
+              <stop offset="70%" stop-color="#D4211F"/>
+              <stop offset="100%" stop-color="#8E0F14"/>
+            </radialGradient>
+            <linearGradient id="steamGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FBF6EC" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#FBF6EC" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#E9DCC3"/>
+              <stop offset="35%" stop-color="#FBF6EC"/>
+              <stop offset="100%" stop-color="#E4D5BA"/>
+            </linearGradient>
+            <radialGradient id="brothGrad" cx="50%" cy="40%" r="65%">
+              <stop offset="0%" stop-color="#F7E4BC"/>
+              <stop offset="100%" stop-color="#E5C58A"/>
+            </radialGradient>
+            <clipPath id="bowlClip">
+              <path d="M90 330 C 100 460, 200 522, 300 522 C 400 522, 500 460, 510 330 Z"/>
+            </clipPath>
+            <clipPath id="brothClip">
+              <ellipse cx="300" cy="330" rx="192" ry="50"/>
+            </clipPath>
+            <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2.2"/>
+            </filter>
+          </defs>
+
+          <!-- red field behind the bowl -->
+          <circle cx="300" cy="300" r="270" fill="url(#discGrad)"/>
+
+          <!-- bowl foot and body -->
+          <rect x="222" y="500" width="156" height="42" rx="10" fill="#8E0F14"/>
+          <path d="M90 330 C 100 460, 200 522, 300 522 C 400 522, 500 460, 510 330 Z" fill="url(#bodyGrad)"/>
+          <g clip-path="url(#bowlClip)">
+            <path d="M70 402 C 140 470, 220 500, 300 500 C 380 500, 460 470, 530 402" fill="none" stroke="#D4211F" stroke-width="16"/>
+            <path d="M70 436 C 140 500, 220 528, 300 528 C 380 528, 460 500, 530 436" fill="none" stroke="#D4211F" stroke-width="5"/>
+          </g>
+
+          <!-- rim and broth -->
+          <ellipse cx="300" cy="330" rx="210" ry="58" fill="#FBF6EC" stroke="#E4D5BA" stroke-width="2"/>
+          <ellipse cx="300" cy="330" rx="192" ry="50" fill="url(#brothGrad)"/>
+
+          <g clip-path="url(#brothClip)">
+            <!-- chili oil -->
+            <path d="M118 330 C 170 288, 430 288, 482 330 C 436 306, 164 306, 118 330 Z" fill="#D4211F" opacity=".82"/>
+            <ellipse cx="170" cy="342" rx="26" ry="9" fill="#D4211F" opacity=".8"/>
+            <ellipse cx="452" cy="346" rx="22" ry="8" fill="#D4211F" opacity=".8"/>
+            <ellipse cx="240" cy="366" rx="34" ry="9" fill="#D4211F" opacity=".72"/>
+            <ellipse cx="372" cy="368" rx="30" ry="8" fill="#D4211F" opacity=".72"/>
+            <ellipse cx="300" cy="376" rx="18" ry="5" fill="#D4211F" opacity=".7"/>
+            <circle cx="140" cy="322" r="4" fill="#D4211F" opacity=".8"/>
+            <circle cx="470" cy="322" r="3.5" fill="#D4211F" opacity=".8"/>
+            <circle cx="210" cy="312" r="3" fill="#D4211F" opacity=".8"/>
+            <!-- noodles -->
+            <g fill="none" stroke="#FBF1D6" stroke-width="5" stroke-linecap="round">
+              <path d="M200 356 C 230 340, 250 366, 280 350 C 305 338, 330 362, 360 348"/>
+              <path d="M186 344 C 220 326, 244 352, 274 336 C 300 322, 326 348, 356 334 C 376 326, 392 338, 410 334"/>
+              <path d="M214 368 C 244 356, 266 372, 296 362 C 322 354, 344 370, 372 360"/>
+              <path d="M232 330 C 258 318, 280 336, 306 326"/>
+            </g>
+            <!-- pork mince -->
+            <g fill="#6B3A22">
+              <circle cx="284" cy="336" r="7"/><circle cx="300" cy="330" r="8"/><circle cx="316" cy="338" r="6.5"/>
+              <circle cx="292" cy="348" r="6"/><circle cx="308" cy="350" r="7"/><circle cx="324" cy="326" r="5.5"/>
+              <circle cx="276" cy="324" r="5.5"/><circle cx="298" cy="320" r="5"/><circle cx="330" cy="348" r="5"/>
+              <circle cx="270" cy="346" r="5"/>
+            </g>
+            <g fill="#8A4B2A">
+              <circle cx="290" cy="330" r="3"/><circle cx="312" cy="344" r="3"/><circle cx="304" cy="338" r="2.5"/>
+              <circle cx="282" cy="350" r="2.5"/><circle cx="322" cy="332" r="2.5"/>
+            </g>
+            <!-- bok choy -->
+            <path d="M206 344 C 186 320, 166 302, 150 284 C 174 294, 200 316, 220 340 Z" fill="#5E9A44"/>
+            <path d="M226 352 C 214 326, 204 306, 198 286 C 216 300, 232 322, 242 348 Z" fill="#79B25A"/>
+            <path d="M224 354 C 214 334, 208 318, 204 300" fill="none" stroke="#D6E5B0" stroke-width="3" stroke-linecap="round"/>
+            <path d="M206 344 C 192 330, 178 314, 164 300" fill="none" stroke="#D6E5B0" stroke-width="3" stroke-linecap="round"/>
+            <!-- egg -->
+            <ellipse cx="404" cy="342" rx="36" ry="24" fill="#FFF8EA" stroke="#E8D9B8" stroke-width="1.5"/>
+            <ellipse cx="404" cy="342" rx="19" ry="12.5" fill="#F2A431"/>
+            <ellipse cx="399" cy="339" rx="8" ry="4.5" fill="#F7C25C"/>
+            <!-- spring onion -->
+            <g fill="#A9CF6A" stroke="#5E9A44" stroke-width="2">
+              <circle cx="352" cy="318" r="6"/><circle cx="256" cy="322" r="5.5"/><circle cx="338" cy="366" r="5.5"/>
+              <circle cx="262" cy="372" r="5"/><circle cx="378" cy="322" r="4.5"/><circle cx="196" cy="366" r="5"/>
+            </g>
+            <!-- sesame -->
+            <g fill="#FBF1D6">
+              <ellipse cx="240" cy="338" rx="3" ry="1.6" transform="rotate(-20 240 338)"/>
+              <ellipse cx="346" cy="340" rx="3" ry="1.6" transform="rotate(30 346 340)"/>
+              <ellipse cx="318" cy="312" rx="3" ry="1.6" transform="rotate(10 318 312)"/>
+              <ellipse cx="428" cy="360" rx="3" ry="1.6" transform="rotate(-35 428 360)"/>
+              <ellipse cx="176" cy="356" rx="3" ry="1.6" transform="rotate(15 176 356)"/>
+            </g>
+          </g>
+
+          <!-- steam -->
+          <g class="steam" filter="url(#soft)">
+            <path d="M236 306 C 206 268, 268 238, 238 198 C 212 164, 266 138, 244 100"/>
+            <path d="M302 300 C 334 262, 270 232, 302 192 C 334 156, 282 126, 308 88"/>
+            <path d="M364 306 C 338 270, 392 240, 362 200 C 338 168, 386 138, 366 104"/>
+          </g>
+
+          <!-- chopsticks resting on the rim -->
+          <line x1="342" y1="298" x2="548" y2="206" stroke="#B8894E" stroke-width="7" stroke-linecap="round"/>
+          <line x1="352" y1="310" x2="556" y2="222" stroke="#A97C43" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+      </figure>
+    </div>
+  </main>
+</div>
+
+<!-- ============ the bowl ============ -->
+<section id="bowl">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><strong>The bowl</strong> · the only thing we cook</p>
+        <h2 class="title">Tantanmen, the way we have made it <em>every day since 2019.</em></h2>
+      </div>
+      <p class="lead">Sesame paste is ground each morning and whisked into a pork and chicken broth until it turns to cream. The chili oil is made on Mondays from three dried peppers and sansho, and rested for a week before it touches a bowl. Noodles are pulled to order, medium thick, with a bite.</p>
+    </div>
+
+    <div class="bowl-grid">
+      <div class="bowl-left">
+        <p class="sub">What is in it</p>
+        <p style="margin-top:12px;max-width:40ch">Six things. Nothing you did not ask for. Pick your spice level at the counter, from 1 (a warm hum) to 4 (we will hand you a towel).</p>
+        <div class="price-line">
+          <span class="price">¥1,100</span>
+          <span class="meta">for the bowl as it comes, tax included. Toppings on the right.</span>
+        </div>
+      </div>
+
+      <div>
+        <ul class="parts" aria-label="Components of the bowl">
+          <li><span class="swatch" style="background:#F1D9A6"></span><span><span class="name">Sesame cream broth</span><span class="note">Pork and chicken stock, white sesame paste, a little soy and rice vinegar.</span></span><span class="yen free">in the bowl</span></li>
+          <li><span class="swatch" style="background:#D4211F"></span><span><span class="name">House chili oil</span><span class="note">Three peppers, sansho, ginger. Level 1 to 4, your call.</span></span><span class="yen free">in the bowl</span></li>
+          <li><span class="swatch" style="background:#FBF1D6"></span><span><span class="name">Hand-pulled noodles</span><span class="note">Medium thick, pulled when your ticket reaches the kitchen.</span></span><span class="yen free">in the bowl</span></li>
+          <li><span class="swatch" style="background:#6B3A22"></span><span><span class="name">Pork mince</span><span class="note">Fried hard with fermented bean paste and garlic.</span></span><span class="yen free">in the bowl</span></li>
+          <li><span class="swatch" style="background:#5E9A44"></span><span><span class="name">Bok choy and spring onion</span><span class="note">Blanched for 20 seconds. Green on purpose.</span></span><span class="yen free">in the bowl</span></li>
+          <li><span class="swatch" style="background:#FBF6EC"></span><span><span class="name">Crushed peanuts and sesame</span><span class="note">Over the top, for crunch. Say no peanuts at the counter if you need to.</span></span><span class="yen free">in the bowl</span></li>
+        </ul>
+
+        <div class="parts-head">
+          <p class="sub">Toppings</p>
+          <p class="meta">Press these on the machine after the bowl</p>
+        </div>
+        <ul class="parts" aria-label="Toppings with prices">
+          <li><span class="swatch" style="background:#F2A431"></span><span><span class="name">Ajitama</span><span class="note">Soy-marinated egg, soft yolk. Cut in half in the bowl.</span></span><span class="yen">¥150</span></li>
+          <li><span class="swatch" style="background:#A0522D"></span><span><span class="name">Chashu, two slices</span><span class="note">Rolled pork belly, braised, torched at the counter.</span></span><span class="yen">¥300</span></li>
+          <li><span class="swatch" style="background:#8A4B2A"></span><span><span class="name">Double mince</span><span class="note">Twice the pork. The broth can take it.</span></span><span class="yen">¥200</span></li>
+          <li><span class="swatch" style="background:#79B25A"></span><span><span class="name">Extra greens</span><span class="note">More bok choy, more spring onion.</span></span><span class="yen">¥100</span></li>
+          <li><span class="swatch" style="background:#E5C58A"></span><span><span class="name">Kaedama</span><span class="note">A second helping of noodles for the broth you have left. Order at the counter, not the machine.</span></span><span class="yen">¥150</span></li>
+          <li><span class="swatch" style="background:#D4211F"></span><span><span class="name">Extra chili oil or extra sansho</span><span class="note">Ask when you hand over the ticket.</span></span><span class="yen free">free</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ add-ons ============ -->
+<section id="addons">
+  <div class="red-panel">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="meta"><strong>Add-ons</strong> · beside the bowl, not in it</p>
+          <h2 class="title">A short menu, printed once a year, <em>on the wall by the door.</em></h2>
+        </div>
+        <p class="lead">Everything below fits on one sheet of paper. It has not changed much, and the prices only move when the rice does.</p>
+      </div>
+
+      <div class="addon-grid">
+        <div class="addon"><span><span class="name">Small rice</span><span class="note">For the last of the broth. Most people order it.</span></span><span class="yen">¥150</span></div>
+        <div class="addon"><span><span class="name">Half bowl for children</span><span class="note">Half noodles, no chili oil, same broth.</span></span><span class="yen">¥650</span></div>
+        <div class="addon"><span><span class="name">Oolong tea</span><span class="note">Cold, unsweetened. Water is free and on the counter.</span></span><span class="yen">¥200</span></div>
+        <div class="addon"><span><span class="name">Bottled beer</span><span class="note">Asahi or Sapporo, 334 ml, one per person.</span></span><span class="yen">¥600</span></div>
+        <div class="addon"><span><span class="name">Chili oil to take home</span><span class="note">100 ml jar of the Monday batch. Keeps a month.</span></span><span class="yen">¥800</span></div>
+        <div class="addon"><span><span class="name">Sesame paste, 200 g</span><span class="note">The same one we grind for the broth.</span></span><span class="yen">¥900</span></div>
+      </div>
+
+      <p class="fine">Everything is tax included. We do not do takeaway bowls, delivery, or a second dish. If you want something that is not on this sheet, the shop two doors down is very good.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ticket machine ============ -->
+<section id="ticket">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><strong>Ticket machine</strong> · by the door, coins and notes</p>
+        <h2 class="title">Buy your ticket first. <em>It takes about twenty seconds.</em></h2>
+      </div>
+      <p class="lead">The machine is the whole ordering system. There is no waiter, no tablet, no app. One big red button for the bowl, a row of small ones for toppings, and a slot that gives you tickets and your change.</p>
+    </div>
+
+    <div class="machine-grid">
+      <figure class="machine-art" aria-label="Drawing of the ticket machine: a big red button for the bowl, six small buttons for toppings, a coin slot and a ticket slot">
+        <svg viewBox="0 0 300 420" aria-hidden="true">
+          <rect x="18" y="12" width="264" height="396" rx="18" fill="#FBF6EC" stroke="#1A1412" stroke-width="2.5"/>
+          <rect x="40" y="34" width="220" height="44" rx="8" fill="#1A1412"/>
+          <text x="150" y="62" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="15" font-weight="600" fill="#FBF6EC">Ichiwan · tantanmen only</text>
+          <!-- big button -->
+          <rect x="40" y="96" width="220" height="90" rx="14" fill="#D4211F"/>
+          <rect x="48" y="104" width="204" height="74" rx="10" fill="none" stroke="#FBF6EC" stroke-opacity=".55" stroke-width="1.5"/>
+          <text x="150" y="134" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="22" font-weight="700" fill="#FBF6EC">Tantanmen</text>
+          <text x="150" y="162" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="15" font-weight="500" fill="#FBF6EC">¥1,100 · the bowl</text>
+          <!-- small buttons -->
+          <g font-family="Inter Tight, Arial, sans-serif" font-size="11" font-weight="500" fill="#1A1412">
+            <rect x="40" y="204" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="92" y="222" text-anchor="middle">Ajitama</text><text x="92" y="236" text-anchor="middle" fill="#6E625A">¥150</text>
+            <rect x="156" y="204" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="208" y="222" text-anchor="middle">Chashu</text><text x="208" y="236" text-anchor="middle" fill="#6E625A">¥300</text>
+            <rect x="40" y="254" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="92" y="272" text-anchor="middle">Double mince</text><text x="92" y="286" text-anchor="middle" fill="#6E625A">¥200</text>
+            <rect x="156" y="254" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="208" y="272" text-anchor="middle">Extra greens</text><text x="208" y="286" text-anchor="middle" fill="#6E625A">¥100</text>
+            <rect x="40" y="304" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="92" y="322" text-anchor="middle">Small rice</text><text x="92" y="336" text-anchor="middle" fill="#6E625A">¥150</text>
+            <rect x="156" y="304" width="104" height="40" rx="8" fill="#F3EADB" stroke="#1A1412" stroke-width="1.5"/>
+            <text x="208" y="322" text-anchor="middle">Beer</text><text x="208" y="336" text-anchor="middle" fill="#6E625A">¥600</text>
+          </g>
+          <!-- slots -->
+          <rect x="40" y="364" width="70" height="8" rx="4" fill="#1A1412"/>
+          <text x="40" y="392" font-family="Inter Tight, Arial, sans-serif" font-size="11" fill="#6E625A">coins, notes</text>
+          <rect x="190" y="360" width="70" height="16" rx="4" fill="#1A1412"/>
+          <rect x="196" y="352" width="58" height="22" rx="2" fill="#FBF6EC" stroke="#1A1412" stroke-width="1.5"/>
+          <text x="260" y="392" text-anchor="end" font-family="Inter Tight, Arial, sans-serif" font-size="11" fill="#6E625A">tickets, change</text>
+        </svg>
+      </figure>
+
+      <ol class="steps">
+        <li>
+          <span class="num" aria-hidden="true">1</span>
+          <div>
+            <h3>Put your money in</h3>
+            <p>Coins and 1,000 yen notes only. The machine does not take cards, transit cards or phones, and it does not break a 10,000 yen note. There is a bank next to the station if you need change.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num" aria-hidden="true">2</span>
+          <div>
+            <h3>Press the big red button</h3>
+            <p>That is the bowl. Press it once per person. The small buttons underneath are toppings and add-ons; press as many as you like, in any order.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num" aria-hidden="true">3</span>
+          <div>
+            <h3>Take your tickets and your change</h3>
+            <p>One ticket per item drops into the tray on the right. Keep them together. If you bought a beer, the ticket for it is green.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num" aria-hidden="true">4</span>
+          <div>
+            <h3>Join the line outside, then hand the tickets over</h3>
+            <p>When you reach the counter, give the tickets to whoever is nearest and say your spice level, 1 to 4. Kaedama and extra chili oil are asked for out loud, not bought at the machine.</p>
+            <p class="meta">Twelve seats at one counter. Groups are seated as seats free up, so a party of four sometimes eats in two pairs.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ queue ============ -->
+<section id="queue">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><strong>Queue times</strong> · measured at the door</p>
+        <h2 class="title">How long you will stand outside, <em>by the hour.</em></h2>
+      </div>
+      <p class="lead">We count the line every half hour and average the last eight weeks. These are typical waits from joining the line to sitting down. Rain shortens them. Payday and the first warm Saturday of spring do the opposite.</p>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-top">
+        <div class="toggle" role="radiogroup" aria-label="Day type">
+          <button type="button" role="radio" aria-checked="true" data-kind="weekday">Weekdays</button>
+          <button type="button" role="radio" aria-checked="false" data-kind="weekend">Weekends</button>
+        </div>
+        <p class="meta" id="chartCaption">Minutes in line, weekdays, from opening at 11:00 to last ticket at 21:30.</p>
+      </div>
+
+      <div class="chart" id="chart" role="img" aria-label="Bar chart of typical queue minutes per hour"></div>
+      <div class="chart-labels meta" id="chartLabels"></div>
+
+      <div class="queue-notes">
+        <div>
+          <h3>Shortest wait</h3>
+          <p>14:30 to 17:00 on a weekday you will usually walk straight in. That is when the staff eat too.</p>
+        </div>
+        <div>
+          <h3>Longest wait</h3>
+          <p>Saturday at noon, and any weekday at 12:15. Forty minutes is normal. Bring a book or a friend who talks.</p>
+        </div>
+        <div>
+          <h3>Last ticket</h3>
+          <p>The machine locks at 21:30 (19:30 on Sundays). If you are in line before then, you eat. We do not cut the line.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ find us ============ -->
+<section id="find">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><strong>Hours and address</strong> · Setagaya ward</p>
+        <h2 class="title">Four minutes from Sangenjaya station, <em>past the tea shop.</em></h2>
+      </div>
+      <p class="lead">We are on a quiet street off Chazawa-dori, in a two-storey building with a red curtain and no sign. If you can smell sesame, you are close. If you can see a line, you have arrived.</p>
+    </div>
+
+    <div class="find-grid">
+      <div>
+        <p class="sub">Opening hours</p>
+        <ul class="hours">
+          <li><span class="day">Monday</span><span>11:00 to 22:00</span></li>
+          <li><span class="day">Tuesday</span><span>11:00 to 22:00</span></li>
+          <li class="closed"><span class="day">Wednesday</span><span>closed</span></li>
+          <li><span class="day">Thursday</span><span>11:00 to 22:00</span></li>
+          <li><span class="day">Friday</span><span>11:00 to 22:00</span></li>
+          <li><span class="day">Saturday</span><span>11:00 to 22:00</span></li>
+          <li><span class="day">Sunday</span><span>11:00 to 20:00</span></li>
+        </ul>
+        <p class="meta" style="margin-top:14px">Last ticket 30 minutes before closing. We close early if the broth runs out, which happens on about one Saturday a month; the queue pill at the top of this page turns to closed when it does.</p>
+      </div>
+
+      <div>
+        <div class="info-cols">
+          <div>
+            <h3>Address</h3>
+            <address>Ichiwan<br>2-14-6 Sangenjaya, Setagaya<br>Tokyo 154-0024<br>Japan</address>
+            <p class="meta">No phone, no bookings, no website form. This page and the curtain are the whole operation.</p>
+          </div>
+          <div>
+            <h3>Getting here</h3>
+            <p>Take the Tokyu Den-en-toshi line or the Setagaya line to Sangenjaya. Leave by the south exit, walk along Chazawa-dori for three minutes, turn right after the tea shop with the green awning. We are the second door on the left.</p>
+            <p class="meta">Bicycles: there is a rack by the station. Please do not lean bikes on the neighbours' wall.</p>
+          </div>
+        </div>
+
+        <div class="map" aria-hidden="true">
+          <svg viewBox="0 0 640 220">
+            <rect x="0" y="0" width="640" height="220" rx="10" fill="#FBF6EC"/>
+            <path d="M40 150 L 600 150" stroke="#1A1412" stroke-width="10" stroke-linecap="round" opacity=".12"/>
+            <path d="M40 150 L 600 150" stroke="#1A1412" stroke-width="2"/>
+            <text x="320" y="180" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#6E625A">Chazawa-dori</text>
+            <path d="M430 150 L 430 40" stroke="#1A1412" stroke-width="2"/>
+            <circle cx="70" cy="150" r="14" fill="#1A1412"/>
+            <circle cx="70" cy="150" r="5" fill="#FBF6EC"/>
+            <text x="70" y="118" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A1412">Sangenjaya station</text>
+            <text x="70" y="134" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="12" fill="#6E625A">south exit</text>
+            <rect x="404" y="128" width="22" height="22" rx="4" fill="#79B25A"/>
+            <text x="392" y="114" text-anchor="end" font-family="Inter Tight, Arial, sans-serif" font-size="12" fill="#6E625A">tea shop, green awning</text>
+            <path d="M392 108 L 404 126" stroke="#6E625A" stroke-width="1"/>
+            <circle cx="430" cy="62" r="16" fill="#D4211F"/>
+            <circle cx="430" cy="62" r="6" fill="#FBF6EC"/>
+            <text x="456" y="58" font-family="Fraunces, Georgia, serif" font-style="italic" font-size="20" font-weight="700" fill="#D4211F">Ichiwan</text>
+            <text x="456" y="76" font-family="Inter Tight, Arial, sans-serif" font-size="12" fill="#6E625A">second door on the left</text>
+            <text x="250" y="140" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="12" fill="#6E625A">about 3 minutes on foot</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ footer ============ -->
+<footer>
+  <div class="wrap">
+    <p class="statement">We could add a second dish. We would rather make <em>the first one better.</em></p>
+
+    <div class="foot-cols">
+      <div>
+        <p class="meta"><strong>Ichiwan</strong></p>
+        <p>One bowl of tantanmen, made all day in Sangenjaya since 2019. Twelve seats, one counter, cash only.</p>
+      </div>
+      <div>
+        <p class="meta"><strong>On this page</strong></p>
+        <p><a href="#bowl">The bowl</a><br><a href="#addons">Add-ons</a><br><a href="#ticket">Ticket machine</a><br><a href="#queue">Queue times</a><br><a href="#find">Hours and address</a></p>
+      </div>
+      <div>
+        <p class="meta"><strong>Good to know</strong></p>
+        <p>Peanuts, sesame, wheat, soy, egg and pork are in the kitchen. We cannot make a bowl without sesame or wheat. Say no peanuts at the counter and we will leave them off.</p>
+      </div>
+      <div>
+        <p class="meta"><strong>Write to us</strong></p>
+        <p><a href="mailto:hello@ichiwan.tokyo">hello@ichiwan.tokyo</a><br>We read everything and answer slowly, usually on a Wednesday.</p>
+      </div>
+    </div>
+
+    <div class="foot-base meta">
+      <span>Ichiwan, 2-14-6 Sangenjaya, Setagaya, Tokyo · <span id="year">2026</span></span>
+      <span>Set in Fraunces and Inter Tight. Drawn, not photographed.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var hours = [11,12,13,14,15,16,17,18,19,20,21];
+  var data = {
+    weekday: [25, 40, 35, 15, 5, 5, 10, 30, 35, 20, 10],
+    weekend: [35, 45, 40, 30, 20, 20, 25, 40, 40, 25, 15]
+  };
+  var chart = document.getElementById('chart');
+  var labels = document.getElementById('chartLabels');
+  var caption = document.getElementById('chartCaption');
+  var pill = document.getElementById('queuePill');
+  var buttons = document.querySelectorAll('.toggle button');
+
+  var now = new Date();
+  var day = now.getDay();
+  var hour = now.getHours();
+  var minute = now.getMinutes();
+  var isWeekend = (day === 0 || day === 6);
+  var closedToday = (day === 3);
+  var closeHour = (day === 0) ? 20 : 22;
+  var lastTicket = closeHour - 0.5;
+  var nowFrac = hour + minute / 60;
+  var open = !closedToday && nowFrac >= 11 && nowFrac < lastTicket;
+  var todayKind = isWeekend ? 'weekend' : 'weekday';
+
+  function render(kind){
+    var values = data[kind];
+    var max = 45;
+    chart.innerHTML = '';
+    labels.innerHTML = '';
+    for (var i = 0; i < hours.length; i++){
+      var col = document.createElement('div');
+      col.className = 'col';
+      if (open && kind === todayKind && hours[i] === hour) col.className += ' now';
+      var val = document.createElement('span');
+      val.className = 'val';
+      val.textContent = values[i];
+      var bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.style.height = Math.round(values[i] / max * 78) + '%';
+      bar.setAttribute('title', hours[i] + ':00, about ' + values[i] + ' minutes');
+      col.appendChild(val);
+      col.appendChild(bar);
+      chart.appendChild(col);
+      var lab = document.createElement('span');
+      lab.textContent = hours[i] + ':00';
+      labels.appendChild(lab);
+    }
+    caption.textContent = 'Minutes in line, ' + (kind === 'weekend' ? 'weekends' : 'weekdays') + ', from opening at 11:00 to last ticket at ' + (kind === 'weekend' ? '21:30 (19:30 on Sundays)' : '21:30') + '.';
+    for (var b = 0; b < buttons.length; b++){
+      buttons[b].setAttribute('aria-checked', buttons[b].getAttribute('data-kind') === kind ? 'true' : 'false');
+    }
+  }
+
+  for (var b = 0; b < buttons.length; b++){
+    buttons[b].addEventListener('click', function(){ render(this.getAttribute('data-kind')); });
+  }
+  render(todayKind);
+
+  var text = pill.querySelector('.text');
+  if (closedToday){
+    text.textContent = 'Closed today, back tomorrow at 11:00';
+  } else if (nowFrac < 11){
+    text.textContent = 'Opens at 11:00, about ' + data[todayKind][0] + ' min wait at the door';
+  } else if (!open){
+    text.textContent = 'Closed for the night, opens 11:00';
+  } else {
+    var idx = Math.min(Math.max(hour - 11, 0), hours.length - 1);
+    text.textContent = 'Queue right now: about ' + data[todayKind][idx] + ' min';
+  }
+
+  document.getElementById('year').textContent = now.getFullYear();
+})();
+</script>
+</body>
+</html>

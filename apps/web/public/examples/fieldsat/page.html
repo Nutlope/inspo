@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overpass - satellite field intelligence for growers</title>
+<meta name="description" content="Overpass turns every Sentinel-2 pass over your farm into a crop health map, a season timeline and an alert on your phone. Priced per hectare.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale: five steps */
+  --t-1: 0.8125rem;                    /* meta, readouts */
+  --t-2: 1rem;                         /* body */
+  --t-3: 1.375rem;                     /* lead, card titles */
+  --t-4: clamp(1.75rem, 2.6vw, 2.25rem);  /* section headings */
+  --t-5: clamp(2.5rem, 4.4vw, 3.5rem);    /* display */
+
+  --font-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --paper: #0b0e0b;
+  --panel: #121712;
+  --panel-2: #181f18;
+  --rule: rgba(236,239,232,0.10);
+  --ink: #ecefe8;
+  --muted: #98a295;
+  --accent: #b6f04a;
+  --accent-ink: #0b0e0b;
+  --stress: #e6a23c;
+  --soil: #8a5a3c;
+
+  --seam: clamp(80px, 10vw, 128px);
+  --radius: 14px;
+  --wrap: 1200px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-size:var(--t-2);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.wrap{
+  width:100%;
+  max-width:var(--wrap);
+  margin-inline:auto;
+  padding-inline:clamp(20px, 4vw, 40px);
+}
+
+.mono{font-family:var(--font-mono);font-size:var(--t-1);letter-spacing:0;font-weight:400}
+.muted{color:var(--muted)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 20px;border-radius:999px;
+  font-size:var(--t-2);font-weight:500;line-height:1;
+  border:1px solid var(--rule);
+  transition:transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn-primary:hover{background:#c8ff5e}
+.btn-ghost:hover{border-color:rgba(236,239,232,.3)}
+.btn svg{width:16px;height:16px}
+
+/* ---------- fold ---------- */
+.fold{min-height:100svh;display:flex;flex-direction:column}
+
+.nav{
+  border-bottom:1px solid var(--rule);
+  background:rgba(11,14,11,.85);
+  backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:20;
+}
+.nav .wrap{
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:var(--t-3);letter-spacing:-0.01em}
+.brand svg{width:26px;height:26px}
+.nav-links{display:flex;gap:28px;font-size:var(--t-2);color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:18px}
+.nav-cta .login{color:var(--muted)}
+.nav-cta .login:hover{color:var(--ink)}
+.nav .btn{padding:10px 16px}
+
+.hero{flex:1;display:flex;align-items:center;position:relative;overflow:hidden;padding-block:0}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 78% 45%, rgba(182,240,74,.10), transparent 70%),
+    linear-gradient(180deg, transparent, rgba(0,0,0,.35));
+}
+.hero .wrap{
+  position:relative;
+  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
+  gap:clamp(28px, 4vw, 56px);align-items:center;
+  padding-block:28px;
+}
+.hero-copy{display:flex;flex-direction:column;gap:22px}
+.hero h1{
+  font-size:var(--t-5);line-height:1.02;letter-spacing:-0.025em;font-weight:500;
+  max-width:14ch;text-wrap:balance;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero .lead{font-size:var(--t-3);line-height:1.4;color:var(--muted);max-width:38ch}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.hero-proof{
+  display:flex;gap:22px;flex-wrap:wrap;margin-top:8px;
+  font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+}
+.hero-proof span b{color:var(--ink);font-weight:500}
+
+/* map card */
+.map{
+  position:relative;width:100%;aspect-ratio:5/4;max-height:min(600px, calc(100svh - 170px));
+  border:1px solid var(--rule);border-radius:var(--radius);
+  background:#0d120e;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.map svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.map .cell{transition:opacity .15s ease}
+.map .cell:hover{opacity:1;stroke:#fff;stroke-width:1}
+.readout{
+  position:absolute;z-index:2;
+  background:rgba(11,14,11,.86);backdrop-filter:blur(8px);
+  border:1px solid var(--rule);border-radius:10px;
+  padding:12px 14px;font-family:var(--font-mono);font-size:var(--t-1);line-height:1.5;
+}
+.readout.tl{top:14px;left:14px;min-width:210px}
+.readout.bl{bottom:14px;left:14px}
+.readout.br{bottom:14px;right:14px;text-align:right}
+.readout .k{color:var(--muted)}
+.readout .v{color:var(--ink)}
+.readout .big{font-size:var(--t-4);line-height:1;color:var(--accent);font-weight:500;letter-spacing:-0.02em;margin:6px 0 2px}
+.readout .delta{color:var(--accent)}
+.readout .row{display:flex;justify-content:space-between;gap:18px}
+.ramp{
+  width:200px;height:8px;border-radius:4px;margin:8px 0 6px;
+  background:linear-gradient(90deg,#6b4226 0%,#b0762f 25%,#c9a23c 42%,#8fbf3a 62%,#3f9a3c 80%,#1d6e34 100%);
+}
+.ramp-scale{display:flex;justify-content:space-between;color:var(--muted)}
+.map-tag{
+  position:absolute;top:14px;right:14px;z-index:2;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 12px;border-radius:999px;
+  background:rgba(182,240,74,.12);border:1px solid rgba(182,240,74,.35);
+  font-family:var(--font-mono);font-size:var(--t-1);color:var(--accent);
+}
+.map-tag i{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(182,240,74,.5)}60%{box-shadow:0 0 0 7px rgba(182,240,74,0)}}
+
+/* ---------- sections ---------- */
+section{padding-block:var(--seam)}
+.section-head{
+  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
+  gap:32px;align-items:end;margin-bottom:clamp(36px, 5vw, 56px);
+}
+.section-head h2{font-size:var(--t-4);line-height:1.1;letter-spacing:-0.02em;font-weight:500;text-wrap:balance}
+.section-head p{font-size:var(--t-3);line-height:1.4;color:var(--muted);max-width:52ch}
+.section-head .eyebrow{margin-bottom:14px}
+
+/* proof strip */
+.proof{padding-block:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.proof .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.proof .stat{padding:28px 24px 28px 0;border-right:1px solid var(--rule)}
+.proof .stat:last-child{border-right:0}
+.proof .stat + .stat{padding-left:24px}
+.proof .num{font-size:var(--t-4);letter-spacing:-0.02em;font-weight:500;line-height:1}
+.proof .lab{margin-top:8px;color:var(--muted);font-size:var(--t-1);font-family:var(--font-mono)}
+
+/* timeline */
+.timeline-card{
+  border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel);
+  padding:24px 24px 18px;overflow:hidden;
+}
+.timeline-top{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:8px}
+.timeline-top .title{font-size:var(--t-3);font-weight:500}
+.timeline-legend{display:flex;gap:18px;font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.timeline-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.timeline-legend .clear i{background:var(--accent)}
+.timeline-legend .cloud i{background:transparent;border:1.5px solid var(--muted)}
+.timeline-legend .alert i{background:var(--stress)}
+.timeline-legend .last i{width:18px;height:0;border-radius:0;border-top:1.5px dashed rgba(236,239,232,.45)}
+.timeline-scroll{overflow-x:auto}
+.timeline-card svg{width:100%;min-width:760px;height:auto;display:block}
+.timeline-notes{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px;
+}
+.note{border-top:1px solid var(--rule);padding-top:16px}
+.note .date{font-family:var(--font-mono);font-size:var(--t-1);color:var(--accent)}
+.note .date.warn{color:var(--stress)}
+.note h3{font-size:var(--t-2);font-weight:500;margin:8px 0 6px}
+.note p{color:var(--muted);font-size:var(--t-1);line-height:1.55}
+
+/* index bands */
+.bands{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.band{
+  border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel);
+  padding:22px;display:flex;flex-direction:column;gap:12px;min-height:250px;
+}
+.band .swatch{height:54px;border-radius:8px;position:relative;overflow:hidden}
+.band .swatch::after{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,0,0,.18) 1px, transparent 1px),linear-gradient(90deg, rgba(0,0,0,.18) 1px, transparent 1px);
+  background-size:9px 9px;
+}
+.band .range{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.band h3{font-size:var(--t-3);font-weight:500;line-height:1.2;letter-spacing:-0.01em}
+.band p{color:var(--muted);font-size:var(--t-1);line-height:1.55}
+.band .action{margin-top:auto;font-family:var(--font-mono);font-size:var(--t-1);color:var(--ink)}
+.band .action::before{content:"→ ";color:var(--accent)}
+.index-foot{
+  margin-top:28px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px;
+  color:var(--muted);font-size:var(--t-1);line-height:1.6;
+}
+.index-foot code{font-family:var(--font-mono);color:var(--ink);background:var(--panel-2);padding:2px 6px;border-radius:4px}
+
+/* delivery */
+.flow{
+  position:relative;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:24px;align-items:stretch;
+}
+.flow::before{
+  content:"";position:absolute;left:8%;right:8%;top:38px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--rule) 15%,var(--rule) 85%,transparent);
+}
+.flow-step{position:relative;padding-top:0}
+.flow-step .dot{
+  width:76px;height:76px;border-radius:50%;
+  background:var(--panel);border:1px solid var(--rule);
+  display:grid;place-items:center;position:relative;z-index:1;
+}
+.flow-step .dot svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.flow-step .n{position:absolute;top:0;left:60px;font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.flow-step h3{font-size:var(--t-3);font-weight:500;margin:22px 0 8px;letter-spacing:-0.01em}
+.flow-step > p{color:var(--muted);font-size:var(--t-2);line-height:1.55;max-width:40ch}
+.channels{margin-top:18px;display:grid;gap:8px}
+.channel{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--rule);border-radius:10px;background:var(--panel);padding:10px 12px;
+}
+.channel svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.channel span{font-size:var(--t-1)}
+.channel small{margin-left:auto;font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.pipeline{
+  margin-top:18px;border:1px solid var(--rule);border-radius:10px;background:var(--panel);
+  font-family:var(--font-mono);font-size:var(--t-1);line-height:1.7;padding:12px 14px;color:var(--muted);
+}
+.pipeline b{color:var(--ink);font-weight:500}
+.pipeline .ok{color:var(--accent)}
+
+/* pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.plan{
+  border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+  transition:transform .25s ease;
+}
+.plan:hover{transform:translateY(-3px)}
+.plan.featured::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.plan .head{padding:26px 24px 0}
+.plan .name{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.plan .price{display:flex;align-items:baseline;gap:8px;margin-top:10px}
+.plan .price b{font-size:var(--t-5);font-weight:500;letter-spacing:-0.03em;line-height:1}
+.plan .price span{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.plan .desc{padding:14px 24px 0;color:var(--muted);font-size:var(--t-1);line-height:1.55}
+.plan ul{margin-top:22px;border-top:1px solid var(--rule);padding:20px 24px;display:grid;gap:10px;font-size:var(--t-1)}
+.plan li{display:flex;gap:10px;align-items:baseline}
+.plan li::before{content:"·";color:var(--accent);font-weight:600}
+.plan .est{
+  margin:0 24px;padding:12px 14px;border-radius:10px;background:var(--panel-2);
+  font-family:var(--font-mono);font-size:var(--t-1);display:flex;justify-content:space-between;gap:12px;
+}
+.plan .est b{color:var(--accent);font-weight:500}
+.plan .btn{margin:16px 24px 24px;justify-content:space-between}
+.calc{
+  margin-bottom:28px;border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel);
+  padding:18px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;
+}
+.calc label{font-size:var(--t-2);white-space:nowrap}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc output{font-family:var(--font-mono);font-size:var(--t-3);color:var(--accent);min-width:110px;text-align:right}
+.pricing-foot{margin-top:22px;color:var(--muted);font-size:var(--t-1);line-height:1.6;max-width:70ch}
+
+/* voice + faq */
+.voice{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(32px, 5vw, 72px);align-items:start}
+.quote{
+  border-left:2px solid var(--accent);padding-left:28px;
+}
+.quote p{font-size:var(--t-3);line-height:1.4;letter-spacing:-0.01em;text-wrap:pretty}
+.quote .who{margin-top:22px;display:flex;align-items:center;gap:14px}
+.quote .avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:conic-gradient(from 200deg, #3f9a3c, #c9a23c, #6b4226, #3f9a3c);
+  border:1px solid var(--rule);
+}
+.quote .who b{display:block;font-weight:500}
+.quote .who span{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.quote .farm-stats{
+  margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+}
+.farm-stats div{border-top:1px solid var(--rule);padding-top:10px}
+.farm-stats b{display:block;font-size:var(--t-3);font-weight:500;letter-spacing:-0.01em}
+.farm-stats span{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+.faq h2{font-size:var(--t-4);letter-spacing:-0.02em;font-weight:500;line-height:1.1;margin-bottom:18px}
+.faq details{border-top:1px solid var(--rule)}
+.faq details:last-child{border-bottom:1px solid var(--rule)}
+.faq summary{
+  cursor:pointer;list-style:none;padding:18px 0;display:flex;justify-content:space-between;gap:20px;
+  font-size:var(--t-2);font-weight:500;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent);font-weight:400;font-size:var(--t-3);line-height:1}
+.faq details[open] summary::after{content:"-"}
+.faq details p{padding:0 0 18px;color:var(--muted);font-size:var(--t-1);line-height:1.6;max-width:60ch}
+
+/* final cta */
+.final{padding-block:0}
+.final .wrap > div{
+  border:1px solid var(--rule);border-radius:20px;
+  background:
+    radial-gradient(70% 90% at 90% 0%, rgba(182,240,74,.16), transparent 60%),
+    var(--panel);
+  padding:clamp(40px, 6vw, 72px);
+  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px;align-items:center;
+}
+.final h2{font-size:var(--t-4);letter-spacing:-0.02em;font-weight:500;line-height:1.1;text-wrap:balance}
+.final p{color:var(--muted);margin-top:12px;max-width:48ch}
+.final .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+
+/* footer */
+footer{margin-top:var(--seam);border-top:1px solid var(--rule);padding-block:48px 32px;color:var(--muted);font-size:var(--t-1)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+.foot-grid .brand{color:var(--ink)}
+.foot-grid p{margin-top:14px;max-width:34ch;line-height:1.6}
+.foot-grid h3{font-size:var(--t-2);font-weight:500;color:var(--ink);margin-bottom:12px}
+.foot-grid li{margin-bottom:8px}
+.foot-grid a:hover{color:var(--ink)}
+.foot-bottom{
+  margin-top:40px;padding-top:20px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--font-mono);
+}
+
+/* responsive */
+@media (max-width: 960px){
+  .nav-links{display:none}
+  .hero .wrap{grid-template-columns:1fr;padding-block:24px 40px}
+  .hero h1{max-width:16ch}
+  .map{aspect-ratio:4/3;max-height:none}
+  .section-head,.voice,.index-foot,.final .wrap > div{grid-template-columns:1fr}
+  .final .actions{justify-content:flex-start}
+  .proof .wrap{grid-template-columns:repeat(2,1fr)}
+  .proof .stat:nth-child(2){border-right:0}
+  .proof .stat:nth-child(3){padding-left:0;border-top:1px solid var(--rule)}
+  .proof .stat:nth-child(4){border-top:1px solid var(--rule)}
+  .bands,.pricing-grid,.timeline-notes{grid-template-columns:1fr 1fr}
+  .flow{grid-template-columns:1fr}
+  .flow::before{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .calc{grid-template-columns:1fr;gap:12px}
+}
+@media (max-width: 600px){
+  .bands,.pricing-grid,.timeline-notes,.foot-grid{grid-template-columns:1fr}
+  .proof .wrap{grid-template-columns:1fr}
+  .proof .stat{border-right:0;padding-left:0}
+  .readout.br{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Overpass home">
+        <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="22" height="22" rx="6" stroke="#b6f04a" stroke-width="1.6"/>
+          <path d="M5 16c3-6 5-6 8 0s5 6 8 0" stroke="#b6f04a" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="13" cy="8" r="1.6" fill="#b6f04a"/>
+        </svg>
+        overpass
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#season">Season</a>
+        <a href="#index">Health index</a>
+        <a href="#delivery">Delivery</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">Questions</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="login" href="#pricing">Sign in</a>
+        <a class="btn btn-primary" href="#pricing">Map my fields</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Sentinel-2 pass over Lincolnshire, 08 Sep 2026, 10:42</span>
+        <h1>See every field from orbit, <em>before</em> the yield map tells you.</h1>
+        <p class="lead">Overpass turns each satellite pass over your farm into a crop health map, a season timeline and a plain alert on your phone. Priced per hectare, no hardware, no drone.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#pricing">
+            Map my fields
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#season">Walk through a season</a>
+        </div>
+        <div class="hero-proof">
+          <span><b>612,000 ha</b> watched</span>
+          <span><b>every 5 days</b> at 10 m</span>
+          <span><b>from $1.20</b> per ha</span>
+        </div>
+      </div>
+
+      <div class="map" id="map">
+        <span class="map-tag"><i></i>live pass</span>
+
+        <div class="readout tl" id="readout">
+          <div class="k">Field 12 · North Quarter</div>
+          <div class="big" id="ro-ndvi">0.71</div>
+          <div class="row"><span class="k">NDVI mean</span><span class="delta" id="ro-delta">+0.04 vs 03 Sep</span></div>
+          <div class="row"><span class="k">Crop</span><span class="v">winter wheat</span></div>
+          <div class="row"><span class="k">Area</span><span class="v">41.2 ha</span></div>
+          <div class="row"><span class="k">Pixel</span><span class="v" id="ro-pixel">hover the field</span></div>
+        </div>
+
+        <div class="readout bl">
+          <div class="k">Vegetation index</div>
+          <div class="ramp"></div>
+          <div class="ramp-scale"><span>0.2</span><span>0.4</span><span>0.6</span><span>0.8</span></div>
+        </div>
+
+        <div class="readout br">
+          <div class="v">Sentinel-2B · orbit 137</div>
+          <div class="k">cloud 3% · 10 m per pixel</div>
+          <div class="k">next pass 13 Sep 10:38</div>
+        </div>
+
+        <svg viewBox="0 0 800 640" role="img" aria-label="Field map of a farm with crop health colouring per satellite pixel">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M40 0H0V40" fill="none" stroke="rgba(236,239,232,0.05)" stroke-width="1"/>
+            </pattern>
+            <clipPath id="f12clip">
+              <polygon points="300,215 600,200 630,430 320,420"/>
+            </clipPath>
+            <filter id="soft"><feGaussianBlur stdDeviation="0.4"/></filter>
+          </defs>
+
+          <rect width="800" height="640" fill="#0d120e"/>
+          <rect width="800" height="640" fill="url(#grid)"/>
+
+          <!-- stream -->
+          <path d="M660 640 C 640 560, 700 520, 690 470 S 760 400, 800 380" fill="none" stroke="#1c3550" stroke-width="7" opacity=".9"/>
+          <path d="M660 640 C 640 560, 700 520, 690 470 S 760 400, 800 380" fill="none" stroke="#2b5c86" stroke-width="2" opacity=".8"/>
+
+          <!-- neighbouring fields, coloured by their mean index -->
+          <g stroke="rgba(236,239,232,0.28)" stroke-width="1">
+            <polygon points="40,60 250,40 270,200 60,220" fill="#2a5a2a"/>
+            <polygon points="270,40 480,55 470,210 280,205" fill="#5f7a2c"/>
+            <polygon points="490,50 740,70 720,195 610,205" fill="#1f5c2f"/>
+            <polygon points="60,230 270,215 290,400 80,410" fill="#3e7a2f"/>
+            <polygon points="650,215 760,230 770,440 640,435" fill="#8a6a2c"/>
+            <polygon points="90,425 320,430 340,580 110,590" fill="#2c6a33"/>
+            <polygon points="340,435 640,440 660,590 350,585" fill="#4b7f2f"/>
+          </g>
+
+          <!-- selected field, drawn pixel by pixel -->
+          <g id="pixels" clip-path="url(#f12clip)"></g>
+          <polygon points="300,215 600,200 630,430 320,420" fill="none" stroke="#b6f04a" stroke-width="2"/>
+          <polygon points="300,215 600,200 630,430 320,420" fill="none" stroke="#b6f04a" stroke-width="10" opacity=".12"/>
+
+          <!-- stress patch marker -->
+          <g id="marker" font-family="JetBrains Mono, monospace" font-size="12">
+            <circle cx="545" cy="365" r="22" fill="none" stroke="#e6a23c" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <line x1="567" y1="365" x2="640" y2="332" stroke="#e6a23c" stroke-width="1"/>
+            <rect x="640" y="318" width="118" height="28" rx="6" fill="#0b0e0b" stroke="#e6a23c" stroke-width="1"/>
+            <text x="650" y="336" fill="#e6a23c">stress · 3.1 ha</text>
+          </g>
+
+          <!-- track / road -->
+          <path d="M0 226 L 800 204" stroke="rgba(236,239,232,0.35)" stroke-width="1.5" stroke-dasharray="8 6" fill="none"/>
+
+          <!-- field labels -->
+          <g font-family="JetBrains Mono, monospace" font-size="12" fill="rgba(236,239,232,0.85)">
+            <text x="60" y="130">F9 · 27.8 ha</text>
+            <text x="300" y="130">F10 · 22.4 ha</text>
+            <text x="560" y="130">F13 · 31.0 ha</text>
+            <text x="110" y="315">F11 · 36.5 ha</text>
+            <text x="150" y="510">F15 · 29.9 ha</text>
+            <text x="420" y="515">F16 · 44.2 ha</text>
+          </g>
+          <g font-family="JetBrains Mono, monospace" font-size="12" fill="#b6f04a">
+            <text x="318" y="245">F12 · 41.2 ha · winter wheat</text>
+          </g>
+
+          <!-- scale bar -->
+          <g font-family="JetBrains Mono, monospace" font-size="11" fill="rgba(236,239,232,0.7)">
+            <line x1="560" y1="618" x2="660" y2="618" stroke="rgba(236,239,232,0.7)" stroke-width="2"/>
+            <line x1="560" y1="612" x2="560" y2="624" stroke="rgba(236,239,232,0.7)" stroke-width="2"/>
+            <line x1="660" y1="612" x2="660" y2="624" stroke="rgba(236,239,232,0.7)" stroke-width="2"/>
+            <text x="672" y="622">500 m</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="proof" aria-label="Key numbers">
+  <div class="wrap">
+    <div class="stat"><div class="num">2,140</div><div class="lab">farms on Overpass</div></div>
+    <div class="stat"><div class="num">612,000 ha</div><div class="lab">watched this season</div></div>
+    <div class="stat"><div class="num">5 days</div><div class="lab">between passes, 2 to 3 with both satellites</div></div>
+    <div class="stat"><div class="num">10 m</div><div class="lab">per pixel, 3 m on the Grower plan</div></div>
+  </div>
+</section>
+
+<section id="season">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Season timeline</span>
+        <h2>One field, one season, every pass that mattered.</h2>
+      </div>
+      <p>Field 12 from drilling to harvest. Each dot is a satellite pass; the filled ones were clear enough to read. Overpass joins them into a curve you can compare against last year, the neighbouring field or the variety trial down the road.</p>
+    </div>
+
+    <div class="timeline-card">
+      <div class="timeline-top">
+        <div class="title">Field 12 · winter wheat · 2026</div>
+        <div class="timeline-legend">
+          <span class="clear"><i></i>clear pass</span>
+          <span class="cloud"><i></i>cloud, skipped</span>
+          <span class="alert"><i></i>alert sent</span>
+          <span class="last"><i></i>2025, same field</span>
+        </div>
+      </div>
+      <div class="timeline-scroll">
+        <svg id="timeline" viewBox="0 0 1100 300" role="img" aria-label="Season timeline of satellite passes and field mean NDVI"></svg>
+      </div>
+      <div class="timeline-notes">
+        <div class="note">
+          <div class="date">14 Apr · pass 9</div>
+          <h3>Tillering complete, canopy closing</h3>
+          <p>Field mean crossed 0.55. The headland along the road lagged by 0.08, matching the compaction you flagged after the wet drilling.</p>
+        </div>
+        <div class="note">
+          <div class="date warn">22 Jun · pass 22</div>
+          <h3>Stress patch, south-east corner</h3>
+          <p>3.1 ha dropped 0.11 in ten days while the rest of the field held. Alert sent at 11:05; your agronomist found yellow rust at the edge two days later.</p>
+        </div>
+        <div class="note">
+          <div class="date">05 Aug · pass 31</div>
+          <h3>Senescence on schedule</h3>
+          <p>Index fell below 0.40 across 90% of the field. Overpass estimated harvest readiness for 12 Aug; the combine went in on the 13th.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="index">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Crop health index</span>
+        <h2>Read the index the way an agronomist does.</h2>
+      </div>
+      <p>NDVI compares how much red light the canopy absorbs with how much near-infrared it bounces back. Healthy leaves absorb red and reflect infrared hard, so the number climbs. Overpass shows the raw value and, next to it, what it usually means for the crop you are growing.</p>
+    </div>
+
+    <div class="bands">
+      <div class="band">
+        <div class="swatch" style="background:linear-gradient(135deg,#6b4226,#8a5a3c)"></div>
+        <div class="range">0.10 to 0.30</div>
+        <h3>Bare soil and stubble</h3>
+        <p>Post-harvest, freshly drilled ground, or a field that has failed. Useful for confirming cover-crop establishment.</p>
+        <div class="action">check drilling date, watch for emergence</div>
+      </div>
+      <div class="band">
+        <div class="swatch" style="background:linear-gradient(135deg,#b0762f,#c9a23c)"></div>
+        <div class="range">0.30 to 0.50</div>
+        <h3>Thin or stressed canopy</h3>
+        <p>Early growth, late-season senescence, or trouble: waterlogging, disease, nutrient shortfall. Context from the timeline tells you which.</p>
+        <div class="action">walk the low patch, compare with last pass</div>
+      </div>
+      <div class="band">
+        <div class="swatch" style="background:linear-gradient(135deg,#8fbf3a,#5aa83c)"></div>
+        <div class="range">0.50 to 0.70</div>
+        <h3>Established crop</h3>
+        <p>Canopy closing, biomass building. Variation inside this band is where variable-rate nitrogen earns its keep.</p>
+        <div class="action">export zones to the spreader</div>
+      </div>
+      <div class="band">
+        <div class="swatch" style="background:linear-gradient(135deg,#3f9a3c,#1d6e34)"></div>
+        <div class="range">0.70 to 0.90</div>
+        <h3>Dense, vigorous canopy</h3>
+        <p>Peak season. The index saturates here, so Overpass switches to a red-edge index to keep separating the top of the field from the very top.</p>
+        <div class="action">lodging risk check if wind is forecast</div>
+      </div>
+    </div>
+
+    <div class="index-foot">
+      <p>Every value on the map is atmospherically corrected and cloud-masked before you see it. Pixels under thin haze are flagged rather than guessed. The formula is the standard one, <code>(nir - red) / (nir + red)</code>, computed from bands 8 and 4 at 10 m, and you can download the underlying reflectances for any pass.</p>
+      <p>Overpass also runs a moisture index and a chlorophyll index on the same pass. They live one tap away from the map and share the same season timeline, so a dip in one is always seen alongside the others.</p>
+    </div>
+  </div>
+</section>
+
+<section id="delivery">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">How the data reaches you</span>
+        <h2>From orbit to your pocket in under four hours.</h2>
+      </div>
+      <p>You never open a satellite archive. The pass lands, Overpass processes your fields, and the result arrives wherever you already are: a phone, a tractor terminal, or your agronomist's inbox.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l2 2M16.4 16.4l2 2M18.4 5.6l-2 2M7.6 16.4l-2 2"/></svg>
+        </div>
+        <span class="n">01</span>
+        <h3>The pass</h3>
+        <p>Two Sentinel-2 satellites cover your farm every five days at 10 m, and the Grower plan adds a 3 m tasked pass in the weeks that decide the crop.</p>
+        <div class="pipeline">
+          <div><b>10:42</b> orbit 137 tile received</div>
+          <div><b>10:58</b> cloud mask · 3% cover</div>
+          <div><b>11:14</b> reflectance corrected</div>
+          <div><b>11:31</b> 7 fields indexed <span class="ok">ok</span></div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
+        </div>
+        <span class="n">02</span>
+        <h3>Your fields, not the whole tile</h3>
+        <p>Overpass clips the pass to your field boundaries, compares every pixel with the previous pass and with the field's own history, and decides whether anything is worth telling you about.</p>
+        <div class="pipeline">
+          <div>field 12 · mean <b>0.71</b> · <span class="ok">+0.04</span></div>
+          <div>field 14 · mean <b>0.46</b> · -0.09 · <span style="color:var(--stress)">alert</span></div>
+          <div>field 9 · mean <b>0.68</b> · +0.01</div>
+          <div>quiet fields stay quiet · <b>no message</b></div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="dot">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        </div>
+        <span class="n">03</span>
+        <h3>Where you already look</h3>
+        <p>Pick the channels once. Overpass only speaks when a field changes, and it says which field, how much, and where to walk.</p>
+        <div class="channels">
+          <div class="channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+            <span>Text or chat alert with a map link</span><small>4 h after pass</small>
+          </div>
+          <div class="channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6l7-3 7 3 4-2v15l-4 2-7-3-7 3z"/><path d="M10 3v15M17 6v15"/></svg>
+            <span>Web and phone map, offline in the field</span><small>same day</small>
+          </div>
+          <div class="channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/><path d="M4 14V7h9l3 5h4v5"/></svg>
+            <span>Zone file for the tractor terminal</span><small>any make</small>
+          </div>
+          <div class="channel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+            <span>Weekly field report for your agronomist</span><small>Mondays</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Pricing per hectare</span>
+        <h2>Pay for the ground you farm, not for seats.</h2>
+      </div>
+      <p>One price per hectare per season, eight months from drilling to harvest. Draw your boundaries, see the total before you commit, and add or drop fields at any pass.</p>
+    </div>
+
+    <div class="calc">
+      <label for="ha">Your farmed area</label>
+      <input type="range" id="ha" min="20" max="2000" step="10" value="320" aria-describedby="ha-out">
+      <output id="ha-out" for="ha">320 ha</output>
+    </div>
+
+    <div class="pricing-grid">
+      <article class="plan">
+        <div class="head">
+          <div class="name">Scout</div>
+          <div class="price"><b>$1.20</b><span>per ha per season</span></div>
+        </div>
+        <p class="desc">Every clear 10 m pass, the health index and the season timeline for each field. Enough to see the season take shape.</p>
+        <ul>
+          <li>Sentinel-2 passes every 5 days</li>
+          <li>NDVI map and timeline per field</li>
+          <li>Text alert when a field drops</li>
+          <li>Up to 10 fields, 20 ha minimum</li>
+        </ul>
+        <div class="est"><span>your season</span><b data-rate="1.20">$384</b></div>
+        <a class="btn btn-ghost" href="#top">Start with Scout <span>→</span></a>
+      </article>
+
+      <article class="plan featured">
+        <div class="head">
+          <div class="name">Grower</div>
+          <div class="price"><b>$2.40</b><span>per ha per season</span></div>
+        </div>
+        <p class="desc">Sharper pixels when it counts, zones you can spread against, and the moisture and chlorophyll indices next to NDVI.</p>
+        <ul>
+          <li>Everything in Scout</li>
+          <li>3 m tasked passes, six per season</li>
+          <li>Zone files for any tractor terminal</li>
+          <li>Moisture and chlorophyll indices</li>
+          <li>Unlimited fields, history back to 2017</li>
+        </ul>
+        <div class="est"><span>your season</span><b data-rate="2.40">$768</b></div>
+        <a class="btn btn-primary" href="#top">Start with Grower <span>→</span></a>
+      </article>
+
+      <article class="plan">
+        <div class="head">
+          <div class="name">Co-op</div>
+          <div class="price"><b>$1.60</b><span>per ha, pooled above 5,000 ha</span></div>
+        </div>
+        <p class="desc">For groups, buying co-ops and agronomy firms watching many farms. Grower features on every member's fields, one invoice.</p>
+        <ul>
+          <li>Everything in Grower</li>
+          <li>Member farms under one account</li>
+          <li>Agronomist view across all farms</li>
+          <li>Data feed into your own systems</li>
+          <li>Named support, harvest-season cover</li>
+        </ul>
+        <div class="est"><span>your season</span><b data-rate="1.60" data-min="5000">from $8,000</b></div>
+        <a class="btn btn-ghost" href="#top">Talk to us <span>→</span></a>
+      </article>
+    </div>
+
+    <p class="pricing-foot">Prices in dollars, billed at the start of the season with a 30-day refund if the first passes are not useful. Fields under 20 ha in total are free on Scout for smallholders and trials.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="voice">
+      <div class="quote">
+        <p>"The June alert paid for the season on its own. Three hectares of rust in a corner I would not have walked for another fortnight. Now I look at the map on Monday morning before I look at the weather."</p>
+        <div class="who">
+          <div class="avatar" aria-hidden="true"></div>
+          <div><b>Helen Marsh</b><span>Marsh Farms, 640 ha combinable crops, Lincolnshire</span></div>
+        </div>
+        <div class="farm-stats">
+          <div><b>640 ha</b><span>on Grower since 2024</span></div>
+          <div><b>11</b><span>alerts acted on in 2026</span></div>
+          <div><b>8%</b><span>less nitrogen, same yield</span></div>
+        </div>
+      </div>
+
+      <div class="faq">
+        <h2>Common questions</h2>
+        <details open>
+          <summary>What happens when it is cloudy for weeks?</summary>
+          <p>Cloudy passes are skipped, not guessed. The timeline shows them as hollow dots so you know the gap is real. In a wet spring the Grower plan's tasked passes can be pulled forward, and the moisture index still reads through thin haze.</p>
+        </details>
+        <details>
+          <summary>How do I get my field boundaries in?</summary>
+          <p>Draw them on the map, upload the boundary file from your existing farm software, or send us your subsidy claim map and we will trace it for you within a day.</p>
+        </details>
+        <details>
+          <summary>Does the zone file work with my tractor?</summary>
+          <p>Yes. Overpass exports the open format every current terminal reads, plus the older shapefile if your kit predates it. Each zone carries the rate you set, so the spreader just runs the job.</p>
+        </details>
+        <details>
+          <summary>Who owns the data about my fields?</summary>
+          <p>You do. The satellite imagery is public; the boundaries, history and alerts are yours, and you can export or delete them at any time. We never sell field-level data to anyone.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <div>
+      <div>
+        <h2>The next pass over your farm is in five days.</h2>
+        <p>Draw your fields today and it will be the first one on your timeline. No hardware, no drone pilot, nothing to install in the cab.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="#pricing">Map my fields</a>
+        <a class="btn btn-ghost" href="#season">See a season first</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top">
+          <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="22" height="22" rx="6" stroke="#b6f04a" stroke-width="1.6"/>
+            <path d="M5 16c3-6 5-6 8 0s5 6 8 0" stroke="#b6f04a" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="13" cy="8" r="1.6" fill="#b6f04a"/>
+          </svg>
+          overpass
+        </a>
+        <p>Satellite field intelligence for growers. Built in Lincoln by people who grew up on combinable crops and got tired of finding problems from the combine seat.</p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#season">Season timeline</a></li>
+          <li><a href="#index">Crop health index</a></li>
+          <li><a href="#delivery">Alerts and delivery</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Data</h3>
+        <ul>
+          <li><a href="#index">How the index is computed</a></li>
+          <li><a href="#faq">Cloud and gaps</a></li>
+          <li><a href="#faq">Ownership and export</a></li>
+          <li><a href="#delivery">Data feed</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#top">About</a></li>
+          <li><a href="#top">Field notes</a></li>
+          <li><a href="#top">Careers</a></li>
+          <li><a href="#top">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Contains modified Copernicus Sentinel data 2026, processed by Overpass.</span>
+      <span>Overpass Ltd, Lincoln, England</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---- colour ramp shared by the map and the timeline ----
+  var stops = [
+    [0.20,[107,66,38]],
+    [0.35,[176,118,47]],
+    [0.45,[201,162,60]],
+    [0.60,[143,191,58]],
+    [0.75,[63,154,60]],
+    [0.90,[29,110,52]]
+  ];
+  function ramp(v){
+    if(v<=stops[0][0]) return rgb(stops[0][1]);
+    for(var i=1;i<stops.length;i++){
+      if(v<=stops[i][0]){
+        var a=stops[i-1], b=stops[i], t=(v-a[0])/(b[0]-a[0]);
+        return rgb([lerp(a[1][0],b[1][0],t),lerp(a[1][1],b[1][1],t),lerp(a[1][2],b[1][2],t)]);
+      }
+    }
+    return rgb(stops[stops.length-1][1]);
+  }
+  function lerp(a,b,t){return a+(b-a)*t}
+  function rgb(c){return 'rgb('+Math.round(c[0])+','+Math.round(c[1])+','+Math.round(c[2])+')'}
+  function hash(x,y){var h=Math.sin(x*12.9898+y*78.233)*43758.5453;return h-Math.floor(h)}
+
+  // ---- field 12 pixel grid ----
+  var g=document.getElementById('pixels');
+  if(g){
+    var cell=11, x0=298, y0=198, x1=634, y1=434, frag=document.createDocumentFragment();
+    for(var y=y0;y<y1;y+=cell){
+      for(var x=x0;x<x1;x+=cell){
+        var cx=x+cell/2, cy=y+cell/2;
+        var v=0.66
+          +0.10*Math.sin(cx/95+0.8)*Math.cos(cy/70)
+          +0.05*Math.sin((cx+cy)/38)
+          +0.04*(hash(x,y)-0.5);
+        // headland along the road drags the index down
+        v-=0.09*Math.exp(-Math.pow((cy-212)/22,2));
+        // stress patch, south-east corner
+        var dx=(cx-545)/34, dy=(cy-365)/26;
+        v-=0.28*Math.exp(-(dx*dx+dy*dy));
+        v=Math.max(0.22,Math.min(0.88,v));
+        var r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        r.setAttribute('x',x);r.setAttribute('y',y);
+        r.setAttribute('width',cell);r.setAttribute('height',cell);
+        r.setAttribute('fill',ramp(v));
+        r.setAttribute('opacity','0.92');
+        r.setAttribute('class','cell');
+        r.setAttribute('data-ndvi',v.toFixed(2));
+        frag.appendChild(r);
+      }
+    }
+    g.appendChild(frag);
+    var pix=document.getElementById('ro-pixel');
+    g.addEventListener('mousemove',function(e){
+      var v=e.target&&e.target.getAttribute('data-ndvi');
+      if(v){pix.textContent='NDVI '+v; pix.style.color = v<0.45?'var(--stress)':'var(--accent)';}
+    });
+    g.addEventListener('mouseleave',function(){pix.textContent='hover the field';pix.style.color='';});
+  }
+
+  // ---- season timeline ----
+  var svg=document.getElementById('timeline');
+  if(svg){
+    var NS='http://www.w3.org/2000/svg';
+    function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;svg.appendChild(e);return e}
+    var W=1100,H=300,L=60,R=1060,T=40,B=222;
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'];
+    var days=[0,31,59,90,120,151,181,212,243,273];
+    var season=273;
+    function X(d){return L+(R-L)*d/season}
+    function Y(v){return B-(B-T)*(v-0.1)/0.8}
+
+    // growth stage bands
+    var stages=[['drilled, dormant',0,68],['emergence',68,95],['tillering',95,130],['stem extension',130,160],['heading',160,185],['grain fill',185,215],['ripening',215,232],['harvest',232,273]];
+    stages.forEach(function(s,i){
+      el('rect',{x:X(s[1]),y:T-14,width:X(s[2])-X(s[1]),height:B-T+14,fill:i%2?'rgba(236,239,232,0.025)':'transparent'});
+      el('text',{x:X(s[1])+6,y:T-2,fill:'rgba(236,239,232,0.45)','font-size':'11','font-family':'JetBrains Mono, monospace'},s[0]);
+    });
+
+    // gridlines and axis
+    [0.2,0.4,0.6,0.8].forEach(function(v){
+      el('line',{x1:L,x2:R,y1:Y(v),y2:Y(v),stroke:'rgba(236,239,232,0.08)'});
+      el('text',{x:L-10,y:Y(v)+4,fill:'#98a295','font-size':'11','text-anchor':'end','font-family':'JetBrains Mono, monospace'},v.toFixed(1));
+    });
+    months.forEach(function(m,i){
+      el('line',{x1:X(days[i]),x2:X(days[i]),y1:B,y2:B+6,stroke:'rgba(236,239,232,0.3)'});
+      el('text',{x:X(days[i])+4,y:B+22,fill:'#98a295','font-size':'11','font-family':'JetBrains Mono, monospace'},m);
+    });
+
+    // passes: [day, ndvi, cloudy, alert]
+    var passes=[
+      [3,0.19,0,0],[8,0.19,1,0],[13,0.20,1,0],[18,0.21,0,0],[23,0.22,1,0],[28,0.22,0,0],
+      [33,0.23,0,0],[38,0.24,1,0],[43,0.25,0,0],[48,0.27,0,0],[53,0.28,1,0],[58,0.30,0,0],
+      [63,0.33,0,0],[68,0.36,0,0],[73,0.39,1,0],[78,0.42,0,0],[83,0.45,0,0],[88,0.49,1,0],
+      [93,0.52,0,0],[98,0.55,0,0],[103,0.58,0,0],[108,0.62,1,0],[113,0.65,0,0],[118,0.68,0,0],
+      [123,0.71,0,0],[128,0.73,1,0],[133,0.75,0,0],[138,0.77,0,0],[143,0.78,0,0],[148,0.79,1,0],
+      [153,0.80,0,0],[158,0.80,0,0],[163,0.79,0,0],[168,0.78,1,0],[173,0.77,0,1],[178,0.75,0,0],
+      [183,0.72,0,0],[188,0.68,0,0],[193,0.63,1,0],[198,0.58,0,0],[203,0.52,0,0],[208,0.46,0,0],
+      [213,0.40,0,0],[218,0.35,0,0],[223,0.31,1,0],[228,0.28,0,0],[233,0.26,0,0],[238,0.22,0,0],
+      [243,0.20,0,0],[248,0.19,1,0],[253,0.19,0,0],[258,0.21,0,0],[263,0.23,0,0],[268,0.24,0,0]
+    ];
+    // last-year comparison, dashed
+    var d2='';
+    passes.forEach(function(p,i){var v=Math.max(0.17,p[1]-0.04+0.03*Math.sin(p[0]/40));d2+=(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(v).toFixed(1)+' '});
+    el('path',{d:d2,fill:'none',stroke:'rgba(236,239,232,0.28)','stroke-width':'1.5','stroke-dasharray':'4 5'});
+
+    // this year, clear passes only
+    var clear=passes.filter(function(p){return !p[2]});
+    var d='';var area='';
+    clear.forEach(function(p,i){d+=(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)+' '});
+    area=d+'L'+X(clear[clear.length-1][0]).toFixed(1)+' '+B+' L'+X(clear[0][0]).toFixed(1)+' '+B+' Z';
+    var grad=el('linearGradient',{id:'tl-fill',x1:'0',y1:'0',x2:'0',y2:'1'});
+    var s1=document.createElementNS(NS,'stop');s1.setAttribute('offset','0');s1.setAttribute('stop-color','rgba(182,240,74,0.22)');
+    var s2=document.createElementNS(NS,'stop');s2.setAttribute('offset','1');s2.setAttribute('stop-color','rgba(182,240,74,0)');
+    grad.appendChild(s1);grad.appendChild(s2);
+    el('path',{d:area,fill:'url(#tl-fill)'});
+    el('path',{d:d,fill:'none',stroke:'#b6f04a','stroke-width':'2','stroke-linejoin':'round'});
+
+    passes.forEach(function(p){
+      if(p[2]){
+        el('circle',{cx:X(p[0]),cy:B+42,r:3.5,fill:'none',stroke:'#98a295','stroke-width':'1.5'});
+      }else{
+        el('circle',{cx:X(p[0]),cy:B+42,r:3.5,fill:p[3]?'#e6a23c':'#b6f04a'});
+        el('circle',{cx:X(p[0]),cy:Y(p[1]),r:p[3]?6:3.5,fill:p[3]?'#e6a23c':'#0b0e0b',stroke:p[3]?'#e6a23c':'#b6f04a','stroke-width':'2'});
+      }
+    });
+    el('text',{x:L-10,y:B+46,fill:'#98a295','font-size':'11','text-anchor':'end','font-family':'JetBrains Mono, monospace'},'passes');
+
+    // alert callout
+    var a=passes.filter(function(p){return p[3]})[0];
+    el('line',{x1:X(a[0]),x2:X(a[0]),y1:Y(a[1])-8,y2:Y(a[1])-46,stroke:'#e6a23c','stroke-width':'1'});
+    el('rect',{x:X(a[0])-92,y:Y(a[1])-72,width:184,height:26,rx:6,fill:'#0b0e0b',stroke:'#e6a23c'});
+    el('text',{x:X(a[0]),y:Y(a[1])-55,fill:'#e6a23c','font-size':'11','text-anchor':'middle','font-family':'JetBrains Mono, monospace'},'22 Jun · stress alert · 3.1 ha');
+  }
+
+  // ---- per-hectare calculator ----
+  var range=document.getElementById('ha'), out=document.getElementById('ha-out');
+  if(range&&out){
+    var ests=document.querySelectorAll('.plan .est b');
+    function fmt(n){return '$'+Math.round(n).toLocaleString('en-US')}
+    function update(){
+      var ha=+range.value;
+      out.textContent=ha.toLocaleString('en-US')+' ha';
+      ests.forEach(function(b){
+        var rate=+b.getAttribute('data-rate'), min=+b.getAttribute('data-min')||0;
+        if(min&&ha<min){b.textContent='from '+fmt(rate*min);}
+        else{b.textContent=fmt(rate*ha);}
+      });
+    }
+    range.addEventListener('input',update);
+    update();
+  }
+})();
+</script>
+</body>
+</html>

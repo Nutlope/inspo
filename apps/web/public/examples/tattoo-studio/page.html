@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sable Tattoo</title>
+<meta name="description" content="Sable is a black ink tattoo studio in Stokes Croft, Bristol. Four artists, a flash sheet on the wall, booking by artist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, used everywhere below */
+  :root {
+    --t-meta: 0.8125rem;
+    --t-body: 1.0625rem;
+    --t-lead: 1.375rem;
+    --t-title: clamp(1.75rem, 2.6vw, 2.5rem);
+    --t-display: clamp(2.5rem, 4.8vw, 4.25rem);
+
+    --paper: #101010;
+    --panel: #171716;
+    --ink: #ebe8e0;
+    --muted: #8c8a82;
+    --rule: #2b2a27;
+    --accent: #c9361f;
+    --accent-ink: #ffffff;
+
+    --display: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+
+    --seam: clamp(72px, 9vw, 128px);
+    --gutter: clamp(20px, 4vw, 48px);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: var(--t-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  svg { display: block; }
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); }
+
+  section { padding-block: var(--seam); }
+  section + section { border-top: 1px solid var(--rule); }
+
+  .meta { font-size: var(--t-meta); color: var(--muted); letter-spacing: 0.01em; }
+  .lead { font-size: var(--t-lead); line-height: 1.35; }
+  .display { font-family: var(--display); font-weight: 400; letter-spacing: -0.01em; }
+  .title { font-family: var(--display); font-size: var(--t-title); font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; }
+  em, .em { font-style: italic; }
+  .accent { color: var(--accent); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    height: 48px; padding-inline: 22px;
+    font-size: var(--t-meta); font-weight: 500;
+    border: 1px solid var(--ink);
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .btn-solid { background: var(--ink); color: var(--paper); }
+  .btn-solid:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Section header: label left, sentence right */
+  .head {
+    display: grid; grid-template-columns: 1fr; gap: 16px 40px;
+    margin-bottom: clamp(40px, 5vw, 64px);
+  }
+  @media (min-width: 860px) { .head { grid-template-columns: 220px 1fr; align-items: end; } }
+  .head .title { max-width: 34ch; text-wrap: balance; }
+
+  /* ---------- Fold ---------- */
+  .fold { min-height: 100svh; display: flex; flex-direction: column; }
+
+  .nav {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand .wordmark { font-family: var(--display); font-size: var(--t-title); line-height: 1; }
+  .brand .meta { display: none; }
+  @media (min-width: 720px) { .brand .meta { display: inline; } }
+  .nav-links { display: none; gap: 28px; font-size: var(--t-meta); }
+  .nav-links a { padding-block: 4px; border-bottom: 1px solid transparent; transition: border-color .18s ease; }
+  .nav-links a:hover { border-color: var(--ink); }
+  @media (min-width: 860px) { .nav-links { display: flex; } }
+
+  .hero { flex: 1; display: flex; flex-direction: column; }
+  .hero-top {
+    display: grid; grid-template-columns: 1fr; gap: 40px;
+    padding-block: clamp(32px, 5vh, 56px) 36px;
+  }
+  @media (min-width: 960px) { .hero-top { grid-template-columns: 1fr 280px; align-items: end; } }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: var(--t-display); line-height: 1.0; letter-spacing: -0.015em;
+    max-width: 21ch; margin-top: 20px; text-wrap: balance;
+  }
+  .hero .support { max-width: 46ch; color: var(--muted); margin-top: 22px; }
+  .hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+  .notes { border-left: 1px solid var(--rule); padding-left: 20px; font-size: var(--t-meta); display: grid; gap: 10px; }
+  .notes .row { display: flex; justify-content: space-between; gap: 16px; }
+  .notes .row span:last-child { color: var(--muted); text-align: right; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); vertical-align: middle; margin-right: 8px; }
+  .dot.open { background: var(--accent); }
+  .dot.closed { background: transparent; border: 1px solid var(--muted); }
+
+  /* The shelf: flash bleeding edge to edge along the bottom of the fold */
+  .shelf {
+    margin-top: auto;
+    border-top: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .shelf-row {
+    display: flex; align-items: flex-end; gap: 0;
+    padding-block: 18px 16px;
+  }
+  .shelf-item {
+    flex: 1 0 auto; min-width: 120px;
+    display: grid; justify-items: center; gap: 8px;
+    padding-inline: 8px;
+    border-right: 1px solid var(--rule);
+  }
+  .shelf-item:last-child { border-right: 0; }
+  .shelf-item svg { width: 112px; height: 112px; color: var(--ink); }
+  .shelf-item .meta { white-space: nowrap; }
+
+  /* ---------- Ticker ---------- */
+  .ticker {
+    border-block: 1px solid var(--rule);
+    background: var(--accent); color: var(--accent-ink);
+    overflow: hidden; white-space: nowrap;
+    font-size: var(--t-meta); font-weight: 500;
+    padding-block: 10px;
+  }
+  .ticker-track { display: inline-flex; gap: 0; animation: slide 38s linear infinite; }
+  .ticker-track span { padding-inline: 18px; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+  /* ---------- Studio ---------- */
+  .studio-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+  @media (min-width: 860px) { .studio-grid { grid-template-columns: 220px 1fr; } }
+  .studio-copy { max-width: 62ch; display: grid; gap: 18px; }
+  .studio-copy .lead { max-width: 30ch; }
+  .facts {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
+    margin-top: clamp(40px, 5vw, 64px);
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 720px) { .facts { grid-template-columns: repeat(4, 1fr); } }
+  .fact { padding: 20px 20px 22px 0; border-bottom: 1px solid var(--rule); }
+  .fact .display { font-size: var(--t-title); line-height: 1; margin-top: 8px; }
+
+  /* ---------- Artists ---------- */
+  .roster { border-top: 1px solid var(--rule); }
+  .artist {
+    display: grid; gap: 12px 32px;
+    grid-template-columns: 1fr;
+    padding-block: 28px;
+    border-bottom: 1px solid var(--rule);
+    transition: background .18s ease;
+  }
+  .artist:hover { background: var(--panel); }
+  @media (min-width: 960px) {
+    .artist { grid-template-columns: 56px 1.1fr 1.6fr 1fr auto; align-items: baseline; }
+  }
+  .artist .num { font-size: var(--t-meta); color: var(--muted); }
+  .artist .name { font-family: var(--display); font-size: var(--t-title); line-height: 1.05; }
+  .artist .style { color: var(--muted); font-size: var(--t-meta); margin-top: 6px; }
+  .artist .about { max-width: 46ch; color: var(--ink); font-size: var(--t-body); }
+  .artist .avail { font-size: var(--t-meta); display: grid; gap: 4px; }
+  .artist .avail .meta { display: block; }
+  .artist .book { font-size: var(--t-meta); font-weight: 500; white-space: nowrap; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+  .artist .book:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- Flash ---------- */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .filters button {
+    font-size: var(--t-meta); padding: 8px 14px;
+    border: 1px solid var(--rule); color: var(--muted);
+    transition: color .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .filters button:hover { color: var(--ink); border-color: var(--ink); }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .flash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 720px) { .flash-grid { grid-template-columns: repeat(4, 1fr); } }
+  .tile {
+    background: #0b0b0b; padding: 20px;
+    display: grid; grid-template-rows: auto 1fr auto; gap: 12px;
+    aspect-ratio: 1 / 1.08;
+    position: relative;
+  }
+  .tile[hidden] { display: none; }
+  .tile .who { display: flex; justify-content: space-between; font-size: var(--t-meta); color: var(--muted); }
+  .tile .art { display: grid; place-items: center; }
+  .tile .art svg { width: 70%; max-width: 160px; height: auto; color: var(--ink); transition: color .18s ease; }
+  .tile:hover .art svg { color: var(--accent); }
+  .tile .foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .tile .foot .display { font-size: var(--t-lead); line-height: 1.1; }
+  .tile .foot .price { font-size: var(--t-meta); font-weight: 500; white-space: nowrap; }
+  .tile .claim {
+    position: absolute; inset: 0; opacity: 0;
+    display: grid; place-items: end start; padding: 20px;
+    font-size: var(--t-meta); font-weight: 500; color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(16,16,16,.85));
+    transition: opacity .18s ease;
+  }
+  .tile:hover .claim, .tile:focus-within .claim { opacity: 1; }
+  .flash-note { margin-top: 20px; max-width: 60ch; }
+
+  /* ---------- Booking ---------- */
+  .booking-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
+  @media (min-width: 960px) { .booking-grid { grid-template-columns: 1.1fr 1fr; gap: 72px; } }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
+  .step { display: grid; grid-template-columns: 48px 1fr; gap: 16px; }
+  .step .num { font-size: var(--t-meta); color: var(--muted); padding-top: 6px; }
+  .step .display { font-size: var(--t-lead); line-height: 1.15; }
+  .step p.meta { margin-top: 6px; max-width: 52ch; font-size: var(--t-body); color: var(--muted); }
+
+  .lines { margin-top: 48px; border-top: 1px solid var(--rule); }
+  .line { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; padding-block: 16px; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .line .display { font-size: var(--t-lead); line-height: 1.1; }
+  .line .rate { font-weight: 500; white-space: nowrap; }
+
+  form.book { border: 1px solid var(--rule); background: var(--panel); padding: clamp(20px, 3vw, 32px); display: grid; gap: 18px; }
+  .field { display: grid; gap: 8px; }
+  .field label { font-size: var(--t-meta); color: var(--muted); }
+  .field input, .field select, .field textarea {
+    font: inherit; font-size: var(--t-body); color: var(--ink);
+    background: var(--paper); border: 1px solid var(--rule); padding: 12px 14px;
+    width: 100%; border-radius: 0;
+  }
+  .field textarea { min-height: 96px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 1px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+  .two { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
+  .choice { display: flex; gap: 8px; }
+  .choice label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--rule); font-size: var(--t-meta); color: var(--ink); cursor: pointer; }
+  .choice input { accent-color: var(--accent); margin: 0; }
+  .choice label:has(input:checked) { border-color: var(--ink); background: var(--paper); }
+  .live { font-size: var(--t-meta); color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; line-height: 1.5; }
+  .live strong { color: var(--ink); font-weight: 500; }
+  .sent { display: none; padding: 18px; border: 1px solid var(--accent); font-size: var(--t-body); }
+  .sent.on { display: block; }
+
+  /* ---------- Aftercare ---------- */
+  .qa { border-top: 1px solid var(--rule); }
+  .qa .row { display: grid; grid-template-columns: 1fr; gap: 12px 40px; padding-block: 28px; border-bottom: 1px solid var(--rule); }
+  @media (min-width: 860px) { .qa .row { grid-template-columns: 1fr 2fr; } }
+  .qa dt { font-family: var(--display); font-size: var(--t-title); line-height: 1.05; }
+  .qa dd { margin: 0; max-width: 62ch; color: var(--muted); }
+  .qa dd strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Visit ---------- */
+  .visit-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+  @media (min-width: 960px) { .visit-grid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; } }
+  .hours { border-top: 1px solid var(--rule); margin-top: 24px; }
+  .hours .row { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; padding-block: 12px; border-bottom: 1px solid var(--rule); font-size: var(--t-body); }
+  .hours .row .meta { text-align: right; }
+  .hours .row.today { color: var(--accent); }
+  .map { border: 1px solid var(--rule); background: #0b0b0b; }
+  .map svg { width: 100%; height: auto; }
+  .visit-copy { display: grid; gap: 18px; max-width: 56ch; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--rule); padding-block: clamp(56px, 7vw, 96px) 40px; }
+  .statement { font-family: var(--display); font-size: var(--t-display); line-height: 1.02; letter-spacing: -0.015em; max-width: 18ch; text-wrap: balance; }
+  .foot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 24px; margin-top: clamp(48px, 6vw, 80px); padding-top: 32px; border-top: 1px solid var(--rule); }
+  @media (min-width: 860px) { .foot-grid { grid-template-columns: repeat(4, 1fr); } }
+  .foot-grid p { margin-top: 10px; font-size: var(--t-meta); line-height: 1.6; }
+  .foot-grid a:hover { color: var(--accent); }
+  .colophon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: var(--t-meta); color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Line-art flash, defined once and reused on the shelf and the sheet -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="fl-dagger" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 8 L67 30 L67 76 L60 92 L53 76 L53 30 Z"/>
+      <path d="M60 30 V76"/>
+      <path d="M38 78 H82"/>
+      <path d="M55 80 V100 H65 V80"/>
+      <path d="M57 86 H63 M57 92 H63"/>
+      <circle cx="60" cy="106" r="4"/>
+      <path d="M26 58 C40 46 52 66 60 56 C68 46 80 66 94 58"/>
+      <path d="M26 58 L20 66 L30 64 M94 58 L100 66 L90 64"/>
+    </g>
+    <g id="fl-moth" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="60" cy="66" rx="5" ry="22"/>
+      <circle cx="60" cy="38" r="4.5"/>
+      <path d="M57 35 Q50 24 42 20 M63 35 Q70 24 78 20"/>
+      <path d="M55 48 C36 36 14 44 18 62 C21 76 42 74 55 62"/>
+      <path d="M65 48 C84 36 106 44 102 62 C99 76 78 74 65 62"/>
+      <path d="M56 70 C42 76 30 90 40 98 C48 102 56 90 58 80"/>
+      <path d="M64 70 C78 76 90 90 80 98 C72 102 64 90 62 80"/>
+      <circle cx="34" cy="58" r="4"/>
+      <circle cx="86" cy="58" r="4"/>
+      <path d="M57 58 H63 M57 66 H63 M57 74 H63"/>
+    </g>
+    <g id="fl-snake" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M58 60 a2 2 0 1 0 4 0 a8 8 0 1 0 -16 0 a16 16 0 1 0 32 0 a24 24 0 1 0 -48 0 a32 32 0 1 0 64 0"/>
+      <path d="M94 60 C97 50 92 42 84 43 C78 44 76 50 80 53"/>
+      <circle cx="87" cy="46" r="1.3" fill="currentColor" stroke="none"/>
+      <path d="M84 43 L76 40 M78 37 L76 40 L78 43"/>
+      <path d="M46 84 l4 -3 M56 88 l4 -3 M66 86 l4 -3"/>
+    </g>
+    <g id="fl-candle" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M48 54 H72 V100 H48 Z"/>
+      <path d="M48 62 q5 6 0 14 M72 68 q-5 6 0 12"/>
+      <path d="M60 54 V44"/>
+      <path d="M60 44 C51 36 53 26 60 18 C67 26 69 36 60 44 Z"/>
+      <path d="M60 40 C57 36 58 31 60 27 C62 31 63 36 60 40"/>
+      <path d="M38 100 H82"/>
+      <path d="M42 100 Q60 112 78 100"/>
+      <path d="M52 76 H68 M52 84 H68"/>
+    </g>
+    <g id="fl-moon" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M72 16 A42 42 0 1 0 72 104 A32 32 0 1 1 72 16 Z"/>
+      <path d="M50 50 q5 -5 10 0"/>
+      <path d="M62 56 l-4 10 h6"/>
+      <path d="M52 76 q7 5 14 0"/>
+      <path d="M94 36 v8 M90 40 h8 M100 72 v6 M97 75 h6"/>
+    </g>
+    <g id="fl-rose" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 46 C38 42 32 66 46 78 C54 84 66 84 74 78 C88 66 82 42 60 46 Z"/>
+      <path d="M60 46 C50 50 46 64 56 70 C62 74 70 68 68 58 C67 52 64 48 60 46"/>
+      <path d="M58 60 c2 -5 7 -3 5 2 c-2 3 -6 1 -5 -2"/>
+      <path d="M46 78 C40 74 34 76 30 82 M74 78 C80 74 86 76 90 82"/>
+      <path d="M60 84 V112"/>
+      <path d="M60 94 C50 88 40 92 38 100 C46 102 56 100 60 94 Z"/>
+      <path d="M60 102 C70 96 80 100 82 108 C74 110 64 108 60 102 Z"/>
+    </g>
+    <g id="fl-anchor" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="60" cy="18" r="6"/>
+      <path d="M60 24 V98"/>
+      <path d="M40 36 H80"/>
+      <path d="M26 74 C28 96 48 106 60 98 C72 106 92 96 94 74"/>
+      <path d="M26 74 l-8 8 M26 74 l10 6 M94 74 l8 8 M94 74 l-10 6"/>
+      <path d="M44 42 C38 58 40 80 52 94" stroke-dasharray="3 4"/>
+    </g>
+    <g id="fl-spider" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 6 V34"/>
+      <circle cx="60" cy="42" r="7"/>
+      <ellipse cx="60" cy="68" rx="14" ry="19"/>
+      <path d="M56 62 l4 6 l4 -6 M56 74 l4 6 l4 -6"/>
+      <path d="M48 52 C36 42 30 32 22 22 M46 60 C32 56 22 54 10 52 M46 70 C34 74 26 82 14 90 M50 80 C42 90 38 98 30 108"/>
+      <path d="M72 52 C84 42 90 32 98 22 M74 60 C88 56 98 54 110 52 M74 70 C86 74 94 82 106 90 M70 80 C78 90 82 98 90 108"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="fold">
+  <header class="wrap">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="#top">
+        <span class="wordmark">Sable</span>
+        <span class="meta">Tattoo, Stokes Croft, Bristol</span>
+      </a>
+      <div class="nav-links">
+        <a href="#artists">Artists</a>
+        <a href="#flash">Flash</a>
+        <a href="#booking">Booking</a>
+        <a href="#aftercare">Aftercare</a>
+        <a href="#visit">Visit</a>
+      </div>
+      <a class="btn btn-solid" href="#booking" style="height:40px">Book by artist</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="top" style="padding-block:0;border-top:0">
+    <div class="wrap hero-top">
+      <div>
+        <p class="meta">Black ink tattoo studio, four chairs, open since 2019</p>
+        <h1>Black ink only. Four chairs. <em class="accent">Walk in</em> for flash, book for the rest.</h1>
+        <p class="support">Sable is a small studio that does one thing well: black work, no colour, no shading tricks. Pick an artist, pick a piece off the wall or bring an idea, pay a deposit, sit down.</p>
+        <div class="ctas">
+          <a class="btn btn-solid" href="#booking">Book by artist</a>
+          <a class="btn btn-ghost" href="#flash">See the flash sheet</a>
+        </div>
+      </div>
+      <aside class="notes" aria-label="Studio notes">
+        <div class="row"><span><span class="dot open"></span>Walk-ins today</span><span>12:00 to 18:00</span></div>
+        <div class="row"><span>Wren</span><span>Books open, October</span></div>
+        <div class="row"><span>Teo</span><span>Walk-ins, this week</span></div>
+        <div class="row"><span>Ines</span><span>Waitlist, January</span></div>
+        <div class="row"><span>Cal</span><span>Books open, this week</span></div>
+      </aside>
+    </div>
+
+    <div class="shelf" aria-label="Flash on the wall this week">
+      <div class="shelf-row">
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-dagger"/></svg><span class="meta">Dagger, £120</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-moth"/></svg><span class="meta">Moth, £140</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-snake"/></svg><span class="meta">Coiled snake, £160</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-candle"/></svg><span class="meta">Candle, £90</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-moon"/></svg><span class="meta">Moon, £110</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-rose"/></svg><span class="meta">Rose, £130</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-anchor"/></svg><span class="meta">Anchor, £100</span></div>
+        <div class="shelf-item"><svg viewBox="0 0 120 120"><use href="#fl-spider"/></svg><span class="meta">Spider, £120</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Walk-ins Thursday to Saturday from 12:00</span><span>·</span>
+    <span>Flash from £80</span><span>·</span>
+    <span>Deposits from £50, taken off the final price</span><span>·</span>
+    <span>Black ink only, no colour, no exceptions</span><span>·</span>
+    <span>Bring photo identification, you must be 18</span><span>·</span>
+    <span>Walk-ins Thursday to Saturday from 12:00</span><span>·</span>
+    <span>Flash from £80</span><span>·</span>
+    <span>Deposits from £50, taken off the final price</span><span>·</span>
+    <span>Black ink only, no colour, no exceptions</span><span>·</span>
+    <span>Bring photo identification, you must be 18</span><span>·</span>
+  </div>
+</div>
+
+<!-- Studio -->
+<section id="studio">
+  <div class="wrap">
+    <div class="studio-grid">
+      <p class="meta">The studio</p>
+      <div class="studio-copy">
+        <p class="lead">We opened on Stokes Croft in 2019 with two chairs and a wall of flash. We have four chairs now. The wall is still the point.</p>
+        <p>Every artist here works in black ink. That is not a limitation we tolerate, it is the reason the studio exists: black heals cleaner, ages slower and reads from across a room. The flash sheet is drawn in-house, redrawn every season, and priced on the wall so nobody has to ask.</p>
+        <p>Custom work happens too, by consultation, with the artist whose hand suits the idea. If you are not sure who that is, tell us the idea and we will tell you the name.</p>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="fact"><span class="meta">Chairs</span><div class="display">Four</div></div>
+      <div class="fact"><span class="meta">Ink</span><div class="display">Black only</div></div>
+      <div class="fact"><span class="meta">Flash on the wall</span><div class="display">62 pieces</div></div>
+      <div class="fact"><span class="meta">Walk-in wait, typical</span><div class="display">Under an hour</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Artists -->
+<section id="artists">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">Artists</p>
+      <h2 class="title">Four hands. Pick the one that suits the piece, then book with them directly.</h2>
+    </div>
+    <div class="roster">
+      <article class="artist">
+        <span class="num">01</span>
+        <div>
+          <h3 class="name">Wren Halloran</h3>
+          <p class="style">Fine line, botanical blackwork, small script</p>
+        </div>
+        <p class="about">Single-needle work with a light hand. Wren draws most of the botanical flash and takes custom pieces up to a forearm. Best for first tattoos and anything that needs to stay delicate.</p>
+        <div class="avail">
+          <span><span class="dot"></span>Books open</span>
+          <span class="meta">Tuesday and Wednesday. Next opening 14 October.</span>
+        </div>
+        <a class="book" href="#booking" data-artist="wren">Book with Wren</a>
+      </article>
+
+      <article class="artist">
+        <span class="num">02</span>
+        <div>
+          <h3 class="name">Teo Marsh</h3>
+          <p class="style">Bold traditional, heavy outlines, flash first</p>
+        </div>
+        <p class="about">Thick lines, solid black fills, the kind of tattoo that still looks like a tattoo in forty years. Teo runs the walk-in chair and draws the daggers, anchors and moons on the wall.</p>
+        <div class="avail">
+          <span><span class="dot open"></span>Walk-ins this week</span>
+          <span class="meta">Thursday to Saturday from 12:00. Flash only, first come.</span>
+        </div>
+        <a class="book" href="#booking" data-artist="teo">Book with Teo</a>
+      </article>
+
+      <article class="artist">
+        <span class="num">03</span>
+        <div>
+          <h3 class="name">Ines Okafor</h3>
+          <p class="style">Ornamental, geometric, dotwork, large scale</p>
+        </div>
+        <p class="about">Sleeves, back pieces and chest panels built from pattern and dotwork. Ines works in multi-session projects only and draws each design to the body in consultation. Expect a wait; it is worth it.</p>
+        <div class="avail">
+          <span><span class="dot closed"></span>Books closed</span>
+          <span class="meta">Waitlist for January. Consultations reopen 1 December.</span>
+        </div>
+        <a class="book" href="#booking" data-artist="ines">Join the waitlist</a>
+      </article>
+
+      <article class="artist">
+        <span class="num">04</span>
+        <div>
+          <h3 class="name">Cal Petrie</h3>
+          <p class="style">Ignorant style, hand poke, small flash</p>
+        </div>
+        <p class="about">Loose, deliberate, slightly wrong on purpose. Cal does machine and hand-poked pieces up to palm size and is the cheapest chair in the room. Good for a tattoo that is meant to be funny.</p>
+        <div class="avail">
+          <span><span class="dot"></span>Books open</span>
+          <span class="meta">Wednesday to Saturday. Next opening this week.</span>
+        </div>
+        <a class="book" href="#booking" data-artist="cal">Book with Cal</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Flash -->
+<section id="flash">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">Flash sheet</p>
+      <h2 class="title">Off the wall, priced on the wall. Each piece is drawn once and tattooed by the hand that drew it.</h2>
+    </div>
+    <div class="filters" role="group" aria-label="Filter flash by artist">
+      <button type="button" data-filter="all" aria-pressed="true">All artists</button>
+      <button type="button" data-filter="wren" aria-pressed="false">Wren</button>
+      <button type="button" data-filter="teo" aria-pressed="false">Teo</button>
+      <button type="button" data-filter="ines" aria-pressed="false">Ines</button>
+      <button type="button" data-filter="cal" aria-pressed="false">Cal</button>
+    </div>
+
+    <div class="flash-grid" id="flashGrid">
+      <article class="tile" data-artist="teo" data-name="Dagger with ribbon">
+        <div class="who"><span>Teo</span><span>8 by 4 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-dagger"/></svg></div>
+        <div class="foot"><span class="display">Dagger with ribbon</span><span class="price">£120</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="wren" data-name="Moth">
+        <div class="who"><span>Wren</span><span>7 by 7 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-moth"/></svg></div>
+        <div class="foot"><span class="display">Moth</span><span class="price">£140</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="ines" data-name="Coiled snake">
+        <div class="who"><span>Ines</span><span>9 by 9 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-snake"/></svg></div>
+        <div class="foot"><span class="display">Coiled snake</span><span class="price">£160</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="cal" data-name="Candle">
+        <div class="who"><span>Cal</span><span>6 by 3 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-candle"/></svg></div>
+        <div class="foot"><span class="display">Candle</span><span class="price">£90</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="teo" data-name="Moon with a face">
+        <div class="who"><span>Teo</span><span>7 by 6 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-moon"/></svg></div>
+        <div class="foot"><span class="display">Moon with a face</span><span class="price">£110</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="wren" data-name="Rose, two leaves">
+        <div class="who"><span>Wren</span><span>8 by 5 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-rose"/></svg></div>
+        <div class="foot"><span class="display">Rose, two leaves</span><span class="price">£130</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="teo" data-name="Anchor with rope">
+        <div class="who"><span>Teo</span><span>7 by 5 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-anchor"/></svg></div>
+        <div class="foot"><span class="display">Anchor with rope</span><span class="price">£100</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+      <article class="tile" data-artist="cal" data-name="Spider on a thread">
+        <div class="who"><span>Cal</span><span>8 by 7 cm</span></div>
+        <div class="art"><svg viewBox="0 0 120 120"><use href="#fl-spider"/></svg></div>
+        <div class="foot"><span class="display">Spider on a thread</span><span class="price">£120</span></div>
+        <a class="claim" href="#booking">Book this piece</a>
+      </article>
+    </div>
+    <p class="flash-note meta">Prices are for the size shown, on an arm or leg. Ribs, hands, neck and feet add £30. Each design is tattooed a limited number of times, then retired from the wall; the count is on the sheet in the studio.</p>
+  </div>
+</section>
+
+<!-- Booking -->
+<section id="booking">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">Booking and deposits</p>
+      <h2 class="title">You book the artist, not the studio. Here is how it goes.</h2>
+    </div>
+    <div class="booking-grid">
+      <div>
+        <ol class="steps">
+          <li class="step">
+            <span class="num">01</span>
+            <div>
+              <h3 class="display">Pick an artist</h3>
+              <p class="meta">Flash goes to the hand that drew it. For custom work, choose from the roster or describe the idea and we will route it to the right chair.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="num">02</span>
+            <div>
+              <h3 class="display">Send the form</h3>
+              <p class="meta">Design or idea, placement, rough size. The artist replies within three working days with a date and a quote. Custom pieces get a short consultation first, in person or on the phone.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="num">03</span>
+            <div>
+              <h3 class="display">Pay the deposit</h3>
+              <p class="meta">A bank link arrives with the date. The deposit holds the slot and comes off the final price on the day. Reschedule once for free with 48 hours notice; less than that, or a no-show, and it is forfeited.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="num">04</span>
+            <div>
+              <h3 class="display">Come in, sit down</h3>
+              <p class="meta">Eat first, sleep the night before, bring photo identification. Card or cash for the balance. We do not tattoo anyone under 18 or anyone who has been drinking.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="lines" aria-label="Deposits and rates">
+          <div class="line"><span class="display">Flash piece deposit</span><span class="rate">£50</span></div>
+          <div class="line"><span class="display">Custom piece deposit</span><span class="rate">£100</span></div>
+          <div class="line"><span class="display">Multi-session project deposit</span><span class="rate">£200</span></div>
+          <div class="line"><span class="display">Studio minimum</span><span class="rate">£80</span></div>
+          <div class="line"><span class="display">Hourly rate, custom work</span><span class="rate">£120 to £160 by artist</span></div>
+          <div class="line"><span class="display">Full day with Ines</span><span class="rate">£800</span></div>
+        </div>
+      </div>
+
+      <form class="book" id="bookForm" novalidate>
+        <div class="field">
+          <label for="artist">Artist</label>
+          <select id="artist" name="artist">
+            <option value="wren">Wren Halloran, fine line and botanical</option>
+            <option value="teo">Teo Marsh, bold traditional</option>
+            <option value="ines">Ines Okafor, ornamental and large scale</option>
+            <option value="cal">Cal Petrie, ignorant style and hand poke</option>
+            <option value="any">Not sure, route it for me</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="meta" id="kindLabel">What kind of piece</span>
+          <div class="choice" role="radiogroup" aria-labelledby="kindLabel">
+            <label><input type="radio" name="kind" value="flash" checked> Flash off the wall</label>
+            <label><input type="radio" name="kind" value="custom"> Custom idea</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="design" id="designLabel">Which piece, or the idea</label>
+          <textarea id="design" name="design" placeholder="Dagger with ribbon, from the wall"></textarea>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="placement">Placement</label>
+            <input id="placement" name="placement" type="text" placeholder="Outer forearm">
+          </div>
+          <div class="field">
+            <label for="size">Rough size</label>
+            <input id="size" name="size" type="text" placeholder="8 by 4 cm">
+          </div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email">
+          </div>
+        </div>
+        <p class="live" id="live"></p>
+        <button class="btn btn-solid" type="submit" style="justify-content:center">Send the request</button>
+        <p class="sent" id="sent"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Aftercare -->
+<section id="aftercare">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">Aftercare</p>
+      <h2 class="title">Black ink heals well if you leave it alone. This is the whole method.</h2>
+    </div>
+    <dl class="qa">
+      <div class="row">
+        <dt>The first night</dt>
+        <dd>We wrap the tattoo in a clear second-skin film. <strong>Leave it on for three to five days</strong> unless it fills with fluid or lifts at the edge. Ink and plasma under the film are normal and look worse than they are. Do not re-wrap with cling film.</dd>
+      </div>
+      <div class="row">
+        <dt>Taking the film off</dt>
+        <dd>In a warm shower, peel it slowly in the direction of hair growth. Wash with lukewarm water and an unscented soap, using your hand only. <strong>Pat dry with clean kitchen roll</strong>, not a towel, and let it air for twenty minutes.</dd>
+      </div>
+      <div class="row">
+        <dt>Days five to fourteen</dt>
+        <dd>Wash twice a day. Apply a rice-grain amount of unscented moisturiser after each wash, rubbed in until there is no shine. <strong>Peeling and itching start around day five</strong>; do not pick, scratch or soak. Loose cotton over the tattoo, nothing tight.</dd>
+      </div>
+      <div class="row">
+        <dt>Weeks two to four</dt>
+        <dd>The surface heals first and looks milky for a while as the deeper skin settles. Keep moisturising once a day. <strong>No swimming, saunas, baths or direct sun</strong> until the skin is fully flat and matte, usually four weeks. After that, sunscreen for life keeps black black.</dd>
+      </div>
+      <div class="row">
+        <dt>If something looks wrong</dt>
+        <dd>Redness spreading past the tattoo, heat, yellow discharge or a fever are not normal healing. <strong>Message your artist the same day</strong> with a photo; we will tell you whether to see a doctor. Free touch-ups within three months for anything that fell out through no fault of yours.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- Visit -->
+<section id="visit">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">Visit</p>
+      <h2 class="title">Up the stairs at 41 Stokes Croft, above the record shop. Ring the bell marked Sable.</h2>
+    </div>
+    <div class="visit-grid">
+      <div>
+        <div class="visit-copy">
+          <p>Sable Tattoo<br>41 Stokes Croft, first floor<br>Bristol, England</p>
+          <p class="meta">Ten minutes on foot from Bristol bus station and fifteen from Temple Meads. The 70, 71 and 72 buses stop outside. Street parking is metered until 18:00; there is a bike rack under the window.</p>
+          <p class="meta">The studio is on the first floor with no lift. If stairs are a problem, tell us when you book and we will set up the ground-floor chair for the day.</p>
+        </div>
+        <div class="hours" aria-label="Opening hours">
+          <div class="row"><span>Monday</span><span class="meta">Closed</span><span class="meta"></span></div>
+          <div class="row"><span>Tuesday</span><span>11:00 to 19:00</span><span class="meta">Appointments</span></div>
+          <div class="row"><span>Wednesday</span><span>11:00 to 19:00</span><span class="meta">Appointments</span></div>
+          <div class="row today"><span>Thursday</span><span>11:00 to 19:00</span><span class="meta">Walk-ins from 12:00</span></div>
+          <div class="row"><span>Friday</span><span>11:00 to 19:00</span><span class="meta">Walk-ins from 12:00</span></div>
+          <div class="row"><span>Saturday</span><span>11:00 to 18:00</span><span class="meta">Walk-ins from 12:00</span></div>
+          <div class="row"><span>Sunday</span><span class="meta">Closed</span><span class="meta"></span></div>
+        </div>
+      </div>
+      <div class="map" aria-label="Sketch map of Stokes Croft">
+        <svg viewBox="0 0 600 440" role="img">
+          <title>Sketch map: Stokes Croft running north to south, Jamaica Street crossing, the studio marked</title>
+          <g fill="none" stroke="#3a3936" stroke-width="1.5">
+            <path d="M0 60 H600 M0 140 H600 M0 220 H600 M0 300 H600 M0 380 H600"/>
+            <path d="M100 0 V440 M200 0 V440 M300 0 V440 M400 0 V440 M500 0 V440"/>
+          </g>
+          <g fill="none" stroke="#ebe8e0" stroke-width="2" stroke-linecap="round">
+            <path d="M330 0 C322 90 318 180 320 260 C322 330 316 390 306 440"/>
+            <path d="M0 268 C90 258 200 262 320 260 C420 258 520 250 600 232"/>
+            <path d="M320 260 C360 200 420 150 600 110" stroke-dasharray="4 6"/>
+          </g>
+          <g fill="#8c8a82" font-family="Archivo, sans-serif" font-size="13">
+            <text x="342" y="80">Stokes Croft</text>
+            <text x="40" y="252">Jamaica Street</text>
+            <text x="470" y="140">to Bristol bus station</text>
+            <text x="120" y="330">Full Moon pub</text>
+            <text x="30" y="410">Bearpit</text>
+          </g>
+          <g>
+            <circle cx="304" cy="210" r="18" fill="#c9361f"/>
+            <text x="304" y="216" text-anchor="middle" fill="#ffffff" font-family="Instrument Serif, serif" font-size="20">S</text>
+            <text x="304" y="185" text-anchor="middle" fill="#ebe8e0" font-family="Archivo, sans-serif" font-size="13">41 Stokes Croft</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="statement">Black ink holds. <em class="accent">So does a good tattoo.</em></p>
+    <div class="foot-grid">
+      <div>
+        <span class="meta">Find us</span>
+        <p>41 Stokes Croft, first floor<br>Bristol, England</p>
+      </div>
+      <div>
+        <span class="meta">Write</span>
+        <p><a href="mailto:hello@sabletattoo.co.uk">hello@sabletattoo.co.uk</a><br><span class="meta">Replies within three working days.</span></p>
+      </div>
+      <div>
+        <span class="meta">Hours</span>
+        <p>Tuesday to Saturday<br><span class="meta">11:00 to 19:00, Saturday to 18:00</span></p>
+      </div>
+      <div>
+        <span class="meta">Elsewhere</span>
+        <p><a href="#top">Instagram, sable.tattoo</a><br><a href="#flash">This season's flash, printed</a></p>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>Sable Tattoo, 2019 to 2026. Licensed by Bristol City Council.</span>
+      <span>Set in Instrument Serif and Archivo.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var artists = {
+      wren: { name: "Wren", next: "Tuesday 14 October", deposit: { flash: 50, custom: 100 }, note: "Wren replies within three working days." },
+      teo:  { name: "Teo",  next: "walk-in slots Thursday to Saturday, or Tuesday 23 September by appointment", deposit: { flash: 50, custom: 100 }, note: "Flash with Teo is first come on walk-in days; the form reserves a slot on appointment days." },
+      ines: { name: "Ines", next: "January, waitlist only", deposit: { flash: 100, custom: 200 }, note: "Ines works in multi-session projects; this form adds you to the waitlist and a consultation follows in December." },
+      cal:  { name: "Cal",  next: "Wednesday 17 September", deposit: { flash: 50, custom: 100 }, note: "Cal replies within two working days." },
+      any:  { name: "the studio", next: "whoever suits the piece", deposit: { flash: 50, custom: 100 }, note: "We read the idea and route it to the right chair, then that artist replies." }
+    };
+
+    var form = document.getElementById("bookForm");
+    var artistSel = document.getElementById("artist");
+    var live = document.getElementById("live");
+    var sent = document.getElementById("sent");
+    var design = document.getElementById("design");
+
+    function kind() {
+      var k = form.querySelector('input[name="kind"]:checked');
+      return k ? k.value : "flash";
+    }
+
+    function update() {
+      var a = artists[artistSel.value] || artists.any;
+      var k = kind();
+      var dep = a.deposit[k];
+      live.innerHTML = "Next opening with <strong>" + a.name + "</strong>: " + a.next +
+        ". Deposit for this piece: <strong>£" + dep + "</strong>, taken off the final price. " + a.note;
+      design.placeholder = k === "flash" ? "Dagger with ribbon, from the wall" : "A moth over a candle, roughly palm sized, loose and open";
+    }
+
+    artistSel.addEventListener("change", update);
+    form.querySelectorAll('input[name="kind"]').forEach(function (r) { r.addEventListener("change", update); });
+    update();
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var a = artists[artistSel.value] || artists.any;
+      var nameField = document.getElementById("name");
+      var emailField = document.getElementById("email");
+      if (!emailField.value || emailField.value.indexOf("@") < 0) {
+        emailField.focus();
+        live.innerHTML = "<strong>Add an email</strong> so " + a.name + " can reply with a date and a quote.";
+        return;
+      }
+      sent.textContent = "Sent. " + (nameField.value ? nameField.value + ", " : "") + a.name +
+        " will reply to " + emailField.value + " within three working days with a date, a quote and the deposit link.";
+      sent.classList.add("on");
+      form.querySelector('button[type="submit"]').disabled = true;
+    });
+
+    // Roster links preselect the artist in the form
+    document.querySelectorAll(".artist .book").forEach(function (link) {
+      link.addEventListener("click", function () {
+        artistSel.value = link.getAttribute("data-artist");
+        update();
+      });
+    });
+
+    // Flash tiles preselect the artist and name the piece
+    document.querySelectorAll(".tile .claim").forEach(function (link) {
+      link.addEventListener("click", function () {
+        var tile = link.closest(".tile");
+        artistSel.value = tile.getAttribute("data-artist");
+        form.querySelector('input[name="kind"][value="flash"]').checked = true;
+        design.value = tile.getAttribute("data-name") + ", from the wall";
+        var size = tile.querySelector(".who span:last-child");
+        if (size) document.getElementById("size").value = size.textContent;
+        update();
+      });
+    });
+
+    // Filter the sheet by artist
+    var buttons = document.querySelectorAll(".filters button");
+    var tiles = document.querySelectorAll("#flashGrid .tile");
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var f = b.getAttribute("data-filter");
+        buttons.forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        tiles.forEach(function (t) { t.hidden = !(f === "all" || t.getAttribute("data-artist") === f); });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -10,11 +10,11 @@
  *     with-Inspo arm of the 2026-07-31 run. Their briefs are the frozen
  *     corpus in bench/briefs.json.
  *   - The rest were built later against the same rules, chosen to widen
- *     the range of register the gallery shows. The last ten (Shirakawa
- *     Kiln through Calder Frameworks) were generated on Claude Fable 5.1
- *     at high effort on 2026-09-09, ten parallel agents with the Inspo
- *     MCP as their only tool; each made 11 to 13 calls, against the one
- *     or two the earlier pages needed.
+ *     the range of register the gallery shows. The last twenty (Shirakawa
+ *     Kiln through Sedge & Hollis) were generated on Claude Fable 5.1 at
+ *     high effort on 2026-09-09, two batches of ten parallel agents with
+ *     the Inspo MCP as their only tool; each made 8 to 13 calls, against
+ *     the one or two the earlier pages needed.
  *
  * Two of the benchmark pages shipped without a `<meta charset>` and
  * rendered as mojibake from disk; that one line was added and nothing
@@ -3137,6 +3137,1211 @@ export const EXAMPLES: Example[] = [
       },
     ],
     highlight: "The hero is the geometry chart. The right half of the fold is a to-scale side drawing of the Ridgeway on a drafting grid, with wheelbase, head angle, seat tube, top tube, chainstay, drop and rake pinned by together-ai style hairline callouts, and a title block in the corner naming the sheet. Further down, the size picker above the six-column chart highlights a column and rewrites every value in the hero drawing at the same time, so the page's first image and its densest table are literally the same data; the copy sits between them and stays out of the way.",
+  },
+  {
+    slug: "nordal-chair",
+    brand: "Holmgren",
+    tagline: "A Malmö workshop selling one solid oak dining chair that ships flat and bolts together in twelve minutes.",
+    prompt: "A Scandinavian furniture maker's flat-pack oak chair: single-product page, exploded diagram, assembly steps.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "fermliving-com",
+        took: "The only true single-product page in the furniture set: product name and price left, black full-width add-to-cart, accordion details, warm canvas ground (#f7f5ef in its own tokens). It gave the buy card its shape and the warm paper the page sits on.",
+      },
+      {
+        slug: "artek-fi",
+        took: "Scandinavian restraint: a lowercase wordmark, one chair as the whole hero, no shouting. It set the tone for the nav (wordmark, five plain links, one pill) and the decision to let a single drawing carry the fold.",
+      },
+      {
+        slug: "teenageengineering-com",
+        took: "Product floating in a void, tiny technical labels, \"reads like a specification sheet\". That register is why the hero is a measured side elevation rather than a lifestyle mood, and why dimensions get their own drawings with real ticks.",
+      },
+      {
+        slug: "hermanmiller-com",
+        took: "Sentence-case headline, ~3:1 display jump, black pill CTA, product-as-catalogue composition. Confirmed sentence case and pill buttons as the house convention for the category.",
+      },
+      {
+        slug: "casper-com",
+        took: "A furniture site that goes against the 63% grotesk gravity with a serif display over clean sans body. It licensed the Fraunces + IBM Plex Sans pairing.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief: Scandinavian flat-pack oak chair product page, detail full",
+        took: "Feature Stack pick with SaaS exemplars (arrows-to, clay-com, puzzle-io, sourcegraph-com, dia-com); the useful part was the evidence packet: 63% grotesk display, mid/light paper, warm accent, plus the hero-fit and spacing guidance and the pricing table reference JSX.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"Scandinavian wooden furniture single product page chair oak\", industry furniture, limit 8, detail full",
+        took: "artek-fi, branchfurniture-ca, hay-com, fermliving-com--products-muses-clio, casper-com, flos-com, gardinex-com, hermanmiller-com with fold autopsies and palettes.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"technical product page exploded diagram specifications dimensions\", macrostructure specimen, limit 6, detail full",
+        took: "fellowproducts-com, kvs-services, price-pierce-co-uk, teenageengineering-com, render-com, arweave-org; Teenage Engineering was the one that fit.",
+      },
+      {
+        tool: "find_components",
+        args: "type hero, industry furniture, limit 8",
+        took: "Hero crops for hermanmiller-com, branchfurniture-ca, floema-com, gardinex-com, parachutehome-com.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero, macro Split",
+        took: "The split-screen hero JSX: typography one half, pure-CSS atmospheric panel the other, no image placeholder. The hero panel gradient is lifted from it.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug fermliving-com--products-muses-clio",
+        took: "Full record and hero capture: price under name, stepper, black add-to-cart, accordion, promo bar.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug teenageengineering-com",
+        took: "Full record: hardware centred in a gradient void, 8:1 scale jump, orange accent on a single dot.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug artek-fi",
+        took: "Full record: underscaled wordmark, chair-led photography, Futura-class geometric sans.",
+      },
+      {
+        tool: "find_similar",
+        args: "slug fermliving-com--products-muses-clio, limit 6",
+        took: "snowpeak-com, marni-com--en-ca-new-in, cuyana-com--pages-about-us, maxsiedentopf-com, artek-fi--en-company-about, heatherwick-com--studio-about; confirmed the serif-display-over-sans-body pattern in warm ecommerce.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "Seven footer archetypes; took the Address card (Ft8) and its \"no social icons\" note, plus the colophon-style bottom line.",
+      },
+      {
+        tool: "compare",
+        args: "artek-fi, fermliving-com--products-muses-clio, hermanmiller-com, teenageengineering-com",
+        took: "Shared minimalism + swiss, radius scales of 0 / 4-5 / 50 (square panels, pill buttons), Ferm's 8 / 24 / 32 / 128 spacing scale, five-step type ramps.",
+      },
+      {
+        tool: "get_design_system",
+        args: "slug fermliving-com--products-muses-clio, live false",
+        took: "Ferm's real CSS tokens: canvas #f7f5ef, cream #fffefa, light beige #dcd3cb, cognac #61451d, orange #ca8a55; type ramp 32 / 18 / 16 / 14.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f5f1e9",
+        from: "Page ground, tuned a touch warmer than Ferm Living's #f7f5ef canvas so untreated oak still reads as the warmest thing on the page.",
+      },
+      {
+        token: "--paper-deep",
+        hex: "#ebe4d6",
+        from: "Base of the hero panel gradient and the section-card contrast, one step down from paper like Ferm's light beige.",
+      },
+      {
+        token: "--ink",
+        hex: "#1f1a14",
+        from: "Text, chair outlines, the primary pill; a brown-black rather than pure black so strokes on the drawings sit with the oak.",
+      },
+      {
+        token: "--muted",
+        hex: "#6b6259",
+        from: "Meta labels, dimension lines, table headers; from the same brown family as ink at roughly 46 contrast.",
+      },
+      {
+        token: "--rule",
+        hex: "#d7cdbd",
+        from: "Every hairline: nav, table rows, cards, the stat list; lifted from Ferm's parchment and light beige tokens.",
+      },
+      {
+        token: "--accent",
+        hex: "#b5482c",
+        from: "One rust for the buy button, nav dot, callout bolts in the step figures and the \"new part\" highlight; sits between Artek's #b84450 and Ferm's #ca8a55 and is deployed nowhere else.",
+      },
+      {
+        token: "--oak-base",
+        hex: "#d6b384",
+        from: "The timber itself, driving every SVG fill through --oak; swapped by data attributes to #8c6646 smoked oak and #e7dbc0 ash, then mixed by finish with color-mix.",
+      },
+    ],
+    highlight: "The whole page is drawn from one set of SVG part definitions, a side elevation of the chair at one unit per millimetre. The hero shows it assembled and a single button pulls it apart with CSS transforms; the exploded section is the same parts translated and numbered; the dimension drawing reuses them with ticks and labels; the six assembly steps reuse them again with done / new / pending classes; and the timber and finish radios set data attributes on the body so every one of those drawings recolours at once and the price follows into the nav and buy card. It is a product page where the product is the diagram, which is the honest version of a flat-pack chair.",
+  },
+  {
+    slug: "fieldsat",
+    brand: "Overpass",
+    tagline: "Satellite passes over your farm become a crop health map, a season timeline and an alert on your phone.",
+    prompt: "A satellite imagery service for farmers: dark, field-map led, crop health index, seasonal timeline.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "unkey-com",
+        took: "The dark, map-diagram exemplar: near-black ground with one lime accent and a diagram that bleeds behind the type. Gave the accent temperature (vegetation lime on charcoal) and the idea of the visual carrying the fold.",
+      },
+      {
+        slug: "digitalocean-com",
+        took: "Wireframe terrain with floating data points and a scale gauge along the edge, plus stat cards riding the bottom edge of the hero. Gave the readout overlays, the scale bar and the four-up proof strip directly under the fold.",
+      },
+      {
+        slug: "dovetail-com",
+        took: "45/55 copy-to-product split with the product panel vertically centred and sentence-case headline at ~72px. Gave the hero grid ratio and the left-anchored copy stack.",
+      },
+      {
+        slug: "tinybird-co",
+        took: "Data-proof card with a client name and one oversized green metric embedded in flowing copy. Gave the grower quote block with a three-up farm stats row underneath.",
+      },
+      {
+        slug: "featurebase-app",
+        took: "Dashboard mockup filling the lower half of a dark fold, two pills (white and dark). Confirmed the two-CTA pairing and the framed product card treatment.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief + mode dark, detail full",
+        took: "Feature Stack pick, evidence packet (67% dark paper, 71% grotesk display, cool/other accent), five exemplars, pricing table JSX, hero and spacing guidance",
+      },
+      {
+        tool: "find_examples_for_macrostructure",
+        args: "map-diagram, limit 6, full",
+        took: "Only two sites embody it (moderntreasury-com, unkey-com); unkey-com autopsy became the main dark reference",
+      },
+      {
+        tool: "search_screens",
+        args: "\"satellite earth observation data platform dark map dashboard technical\", paperBand dark, limit 8, full",
+        took: "mage-ai, unkey-com, featurebase-app, diffusion-studio, digitalocean-com, dovetail-com, turso-tech, tinybird-co with autopsies",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "Seven canonical hero shapes; split-screen (type one half, atmospheric panel the other) informed the copy-plus-map split",
+      },
+      {
+        tool: "get_screen",
+        args: "digitalocean-com",
+        took: "Full record: terrain-as-hero signature, scale markers, stat cards overlapping the visual",
+      },
+      {
+        tool: "get_screen",
+        args: "unkey-com",
+        took: "Full record: lime accent placement (hub nodes, primary pill), radius scale 0/2/6, spacing scale up to 200px",
+      },
+      {
+        tool: "find_components",
+        args: "type pricing, mode dark, limit 5",
+        took: "artek-fi, astro-build, audius-co, audocph-com crops; none were true plan grids so I leaned on the reference JSX instead",
+      },
+      {
+        tool: "search_screens",
+        args: "\"agriculture farm land earth green data timeline\", accentHue chromatic-other, paperBand dark, limit 5",
+        took: "mage-ai, modal-com, thoughtbot-com, turso-tech, resend-com; confirmed green-on-charcoal is a well-worn register and that the archive has no agriculture site, so the field map had to be invented",
+      },
+      {
+        tool: "compare",
+        args: "unkey-com, digitalocean-com, dovetail-com, tinybird-co",
+        took: "Shared dark-mode minimalism, 5 to 6 type steps, section seams around 64 to 96px, radius 0 to 8px; used for the type scale count and the seam rhythm",
+      },
+      {
+        tool: "get_reference_jsx",
+        args: "pricing, three-card",
+        took: "The plan trio with the featured tier raised by a thin accent rule instead of a badge; copied the structure and the middle-dot bullets",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#0b0e0b",
+        from: "Page ground; near-black with a green cast so the map card does not read as a foreign object on a neutral black",
+      },
+      {
+        token: "--panel",
+        hex: "#121712",
+        from: "Cards, timeline, plans and pipelines; one step up from paper so borders can stay faint",
+      },
+      {
+        token: "--ink",
+        hex: "#ecefe8",
+        from: "Headlines and body; warm off-white rather than pure white to sit with the vegetation greens",
+      },
+      {
+        token: "--muted",
+        hex: "#98a295",
+        from: "Secondary copy, mono readout keys, axis labels; green-grey so it belongs to the same family as the accent",
+      },
+      {
+        token: "--accent",
+        hex: "#b6f04a",
+        from: "Vegetation lime: selected field outline, clear passes, the primary pill, the index value in the readout; it is the colour of a healthy canopy in the ramp",
+      },
+      {
+        token: "--stress",
+        hex: "#e6a23c",
+        from: "Amber for the stress patch, alert passes and dropped fields; the one warm puncture, reserved for things that need walking",
+      },
+      {
+        token: "--soil",
+        hex: "#8a5a3c",
+        from: "Bare-soil end of the vegetation ramp and the first index band swatch",
+      },
+    ],
+    highlight: "The fold is a working field map rather than a picture of one. The selected field is drawn pixel by pixel in JavaScript from a smooth index surface with a headland drag along the road and a Gaussian stress patch in the south-east corner, clipped to the field polygon, so hovering any 10 m cell reads its NDVI into the readout card and flips the value amber when it falls under 0.45. The same colour ramp drives the legend, the index band cards and the season timeline, where fifty-four passes are plotted with cloudy ones hollow, last year dashed underneath and the June stress alert called out, so the story told in the fold is the same story told in the timeline and the pricing calculator further down.",
+  },
+  {
+    slug: "storybook-game",
+    brand: "Pennyfold",
+    tagline: "A hand-painted puzzle game where you fold, turn and stitch a storybook town back into order.",
+    prompt: "An indie studio's hand-painted puzzle game: storybook, whimsical, release date, wishlist-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "fly-io",
+        took: "Gave the hero its shape: a painted band sweeping across the upper viewport with the headline nesting in the calm gap beneath it, a soft serif display with one italic word, and the type ramp ratio (120 / 48 / 19 / 16) that became the five tokens.",
+      },
+      {
+        slug: "pi-ai",
+        took: "Warm cream paper instead of white, the filled-plus-outline pill pairing for the two calls to action, and a row of rounded cards that bleeds off both edges, which became the chapters rail.",
+      },
+      {
+        slug: "lookback-com",
+        took: "The hand-drawn accent swoosh under the emphasised headline word and the small scattered stars around the headline, both redrawn in SVG.",
+      },
+      {
+        slug: "ponpon-mania-com",
+        took: "Permission to let a full-bleed painted scene carry the fold with a single centred pill; the lamplighter and lantern glow motif sit in that spirit.",
+      },
+      {
+        slug: "kelseydake-com",
+        took: "Dashed stitch borders framing tiles into a quilt; reused as the dashed outlines on the mechanic cards, the page card and the footer rule to echo the game's stitch verb.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief: hand-painted indie puzzle game, storybook, wishlist-led; detail full",
+        took: "Picked Bento Grid with SaaS-heavy exemplars (brightful-me, hex-tech, ponpon-mania-com, canvasapp-com, cofounder-co), evidence packet (mid paper, warm accent at 33%), a bento features JSX and the hero and spacing guidance.",
+      },
+      {
+        tool: "search_screens",
+        args: "query indie game landing wishlist release date; industry gaming; limit 10; detail full",
+        took: "itch-io, xbox-com, gog-com, epicgames-com, brightful-me, analogue-co, store-steampowered-com, twitch-tv, discord-com. Mostly dark storefronts; confirmed the genre gravity to push against and gave the warm beige of itch-io as a counterpoint.",
+      },
+      {
+        tool: "search_screens",
+        args: "query hand-drawn illustrated storybook whimsical painterly; style playful; limit 10; detail full",
+        took: "kelseydake-com, duolingo-com, fly-io, oliverjeffers-com, buttondown-email, lookback-com, ethereum-org, doodles-app, lottiefiles-com, basecamp-com. This is where the build's composition came from.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug ponpon-mania-com",
+        took: "Full record and autopsy: full-bleed cartoon hero, no headline block, centred lowercase pill CTA, palette #fbac15 / #7c7cfb.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "Seven canonical hero JSX shapes (documentary, manifesto, marquee, question, split-screen, stat-led, word-as-art); took the italic-emphasis and marginalia habits, not a shape.",
+      },
+      {
+        tool: "get_design_system",
+        args: "slug fly-io; live false",
+        took: "Type ramp (Mackinac 120px h1 at 0.95 line-height, 48px h2, 16px body), spacing scale 32 / 64 / 80 / 96, radius set up to 20px, palette roles.",
+      },
+      {
+        tool: "find_components",
+        args: "type cta; style playful; limit 6",
+        took: "brilliant-org and bunny-net crops; the filled green pill beside an outlined pill confirmed the two-button pairing.",
+      },
+      {
+        tool: "find_components",
+        args: "type footer; vibe playful; limit 6",
+        took: "Returned zero components, so the footer was composed from the page's own system.",
+      },
+      {
+        tool: "find_similar",
+        args: "slug fly-io; limit 6",
+        took: "amazon-com, canva-com, pi-ai, ethereum-org, capacities-io, bird-co--about. pi-ai was the useful neighbour: cream paper and the edge-bleeding card row.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f3ecdf",
+        from: "Page ground. Warm cream after pi-ai and itch-io rather than white, so the gouache shapes look painted on paper; a fractal-noise grain overlay sits on top at 16% multiply.",
+      },
+      {
+        token: "--paper-2",
+        hex: "#eae0cf",
+        from: "Tile and card surfaces, the alternating mechanics section; one step deeper than the paper so cards read as cut sheets without borders.",
+      },
+      {
+        token: "--ink",
+        hex: "#2e2440",
+        from: "Text, strokes, the lead bento tile. A plum-ink rather than black, following fly-io's #36265f, so type sits inside the painted world.",
+      },
+      {
+        token: "--accent",
+        hex: "#d9642b",
+        from: "The one loud colour: wishlist buttons, the swoosh, the mechanic step numbers, apples in the orchard. Warm accent matches the genre evidence (33% warm) and reads as marmalade against the cream.",
+      },
+      {
+        token: "--moss",
+        hex: "#6f8f5a",
+        from: "Hills in every scene and the green stroke motifs on the mechanic glyphs; the painted world's dominant pigment.",
+      },
+      {
+        token: "--dusk",
+        hex: "#b9a6cf",
+        from: "Far hills and the muted meta text on the dark band; lavender air borrowed from fly-io's paper.",
+      },
+      {
+        token: "--gold",
+        hex: "#e9c46a",
+        from: "Lantern light, the moon, hero stars, the folded page of hill; the storybook's light source and the only warm highlight allowed on the night band.",
+      },
+    ],
+    highlight: "The standout move is treating the game's three verbs as the page's visual grammar. The hero art is a painted hillscape with one segment of hill literally folded over as a paper corner, dashed crease line and all, sitting in the band that fly-io taught me to sweep across the upper fold. The same dashed crease becomes the stitch border on the mechanic cards and the page card, the swoosh under \"Mend\" is the same hand-drawn stroke lookback uses, and every scene in the chapters rail, the story card and the studio avatars is drawn from a single tin of eleven pigments declared as tokens, so a page built with no screenshots still looks like one painter made it.",
+  },
+  {
+    slug: "city-library",
+    brand: "Larkspur Branch Library",
+    tagline: "Halden's first new library in twenty-two years opens 3 October, and stays open until nine.",
+    prompt: "A city library's new branch opening: civic, welcoming, events calendar, open late.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.0,
+    references: [
+      {
+        slug: "thebroad-org",
+        took: "The status line sitting beside the logo in the nav (\"Open Today at 11 am\") became the live opening countdown chip; the split hero with a solid colour panel on one side and the \"Plan your visit\" three-column info block shaped the fold and the getting-here section.",
+      },
+      {
+        slug: "lacma-org",
+        took: "One coral word (\"TICKETS\") as the only chromatic event in a monochrome page; that discipline is why the accent lands on a single phrase in each headline, the primary button and the lit windows, and nowhere else. Its top-ruled card rows became the opening-day timeline slots.",
+      },
+      {
+        slug: "walkerart-org",
+        took: "The arrowed index rows (Exhibitions, Performances, Screenings) and the \"closed today\" strip; the rooms list is that index shape with a number, a name, a sub-line and the floor, and the hours table borrows its row-per-item rhythm.",
+      },
+      {
+        slug: "stedelijk-nl",
+        took: "The dense what's-on list where every row is a full-width rule with a label, a title and a thumbnail; the October events calendar is that structure with the date as the big glyph instead of the title.",
+      },
+      {
+        slug: "harvard-edu",
+        took: "The asymmetric split with a big headline left and a short body block right over one shared ground; every section head on the page uses that two-column pairing.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A city library's new branch opening: civic, welcoming, events calendar, open late\", mode light, detail full",
+        took: "Picked Marquee Hero with feature-stack and specimen as runners-up; evidence over 24 sites: paper band mid 63%, grotesk-sans display 50%, warm accent 50%; exemplars wallpaper-com, newmuseum-org--about, openai-com, doodles-app, harvard-edu--about; the marquee hero JSX; hero-fit and 80-160px section rhythm guidance.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"public library civic institution events calendar opening hours welcoming\", industry culture, paperBand light, limit 8, detail full",
+        took: "guggenheim-org--about-us, lacma-org, cooperhewitt-org--blog, louvre-fr--credits, stedelijk-nl, thebroad-org, walkerart-org, madmuseum-org--about with full autopsies; the nav status line, single-accent-word and index-row patterns came from here.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"community non-profit welcoming warm editorial with events programme and visiting information\", industry non-profit, mode light, limit 8, detail full",
+        took: "propublica-org, ecologi-com, frontierclimate-com, effectivealtruism-org, dropdeadgenerous-org, ghost-org, signal-org; confirmed the warm off-white paper plus one coral element as the civic register.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug harvard-edu--about",
+        took: "Full autopsy: massive left headline balanced by a right body block over one background, crimson used only as a small marker; the section-head pairing on this page.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "Seven footer archetypes with JSX; the Ft8 Address card (find us, write, hours, no social row) is the footer shape used, with a fourth column for the other branches.",
+      },
+      {
+        tool: "compare",
+        args: "thebroad-org, lacma-org, walkerart-org, stedelijk-nl",
+        took: "Shared minimalism plus editorial in the light register; spacing scales of 15-100px and 12-48px, container widths 1170-1688px, radii 0-5px; set the 1180px container, 6px radius and the clamp(72px, 9vw, 128px) rhythm.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "Seven hero archetypes; the split-screen note (typography on one half, a pure CSS atmospheric panel on the other, no stock photo) is why the right half of the fold is a drawn SVG facade rather than a photo placeholder.",
+      },
+      {
+        tool: "get_design_system",
+        args: "slug thebroad-org, live false",
+        took: "Type ramp (36px display at 0.83 leading, 14px body), spacing 15/20/40/65/80/100, container 1170px, radius 0/5/50; used as a sanity check for the four-step spacing and squared buttons.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f5f1e8",
+        from: "Page ground; the warm off-white that propublica-org and effectivealtruism-org measured in the light band, warmer than white so the dusk panel reads as night rather than as a dark-mode block.",
+      },
+      {
+        token: "--ink",
+        hex: "#1b1915",
+        from: "All body and display text, rules under the events list and the room index, hover fill on the outline button; a warm near-black rather than pure black to sit on the cream.",
+      },
+      {
+        token: "--muted",
+        hex: "#6a6459",
+        from: "Secondary copy, meta labels, map street names; one step of contrast down so descriptions read as captions under the display names.",
+      },
+      {
+        token: "--rule",
+        hex: "#d9d2c4",
+        from: "Every hairline: nav border, event rows, membership steps, footer; chosen to be visible on paper without becoming a grid.",
+      },
+      {
+        token: "--card",
+        hex: "#ece6d9",
+        from: "The rooms and services section ground and the map panel; a half-step darker paper so those sections change register without a colour change.",
+      },
+      {
+        token: "--accent",
+        hex: "#cf3a1e",
+        from: "The one chromatic word in each headline, the primary button, the rooftop sign, the library block on the map and the brand mark; a civic vermilion in the warm band the evidence measured, applied the way lacma-org applies its single coral word.",
+      },
+      {
+        token: "--dusk",
+        hex: "#1e2b45",
+        from: "The hero panel sky, the hours section ground and the tram line on the map; the \"open late\" idea made into a surface, with --glow #F2C14E for the lit windows and the late-night hours so the two sections rhyme.",
+      },
+    ],
+    highlight: "The fold and the hours section are the same argument told twice. The right half of the hero is a drawn SVG of the branch at 8:40 pm, every ground-floor bay lit in the glow colour with shelves and readers visible, under a small caption that says the lights stay on; the nav beside it carries a live chip that counts down to 3 October and, once the building is open, switches to \"Open now until 9 pm\" from the real hours table. Then the hours section repeats the dusk ground, sets the four late nights in the same glow, and marks today's row from the same script. The page never has to say \"we are the late library\" in a slogan; the colour system says it first, and the copy just confirms the times.",
+  },
+  {
+    slug: "ramen-shop",
+    brand: "Ichiwan",
+    tagline: "A twelve-seat Sangenjaya ramen counter that has made one bowl of tantanmen, all day, since 2019.",
+    prompt: "A Tokyo ramen shop with one dish: bold, red and cream, steam, one-page menu, queue times.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.0,
+    references: [
+      {
+        slug: "outfit-hellohello-is",
+        took: "Pure red type on a warm beige field with nothing else in the fold; gave the paper colour (#F3EADB is a warmer cousin of its #ece3db), the red-on-cream wordmark and the confidence to let the headline carry the hero.",
+      },
+      {
+        slug: "chickfila-com",
+        took: "Giant red italic serif headline on a bright ground with the food floating in open space, no container or shadow; the hero headline in Fraunces italic red and the bowl sitting on its own with no card come from here.",
+      },
+      {
+        slug: "wagamama-com",
+        took: "Lowercase sentence-case headline with terminal periods and one solid red pill as the only CTA; the \"One bowl. All day. Nothing else.\" cadence and the single red pill are lifted from its restraint.",
+      },
+      {
+        slug: "tempo-fit",
+        took: "A figure floating on a solid deep-red field; became the red disc behind the SVG bowl, which is what lets cream steam read against the cream page.",
+      },
+      {
+        slug: "thebroad-org",
+        took: "Crimson panel splitting the viewport against a pale ground; the full-bleed red add-ons panel between two cream sections is that move turned horizontal.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A Tokyo ramen shop with one dish: bold, red and cream, steam, one-page menu, queue times\", detail full",
+        took: "Picked Marquee Hero, exemplars bauhausclock-com, museumofmoney-com, mistral-ai, columbia-com, ritual-com; evidence said the genre sits on light paper (67%) with grotesk display; hero-fit and spacing guidance (96px median seam, padding-inline only on containers).",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"restaurant single dish bold red menu food\", industry food-beverage, limit 8, detail full",
+        took: "chickfila-com, grassrootscoop-com, wagamama-com, chipotle-com, mirazur-fr, oatly-com, dinnerbyheston-com, goodeggs-com with fold autopsies; wagamama and chickfila were the two worth keeping.",
+      },
+      {
+        tool: "get_screen",
+        args: "wagamama-com",
+        took: "Full record: #e12e26 red accent on the CTA only, lowercase headline with periods, 5-step type scale, 24/32/48/64 spacing.",
+      },
+      {
+        tool: "get_screen",
+        args: "chickfila-com",
+        took: "Full record: #d40c24 red headline and buttons on white, italic serif display, food floating on a void.",
+      },
+      {
+        tool: "find_by_color",
+        args: "hex #c8102e, limit 10, detail full",
+        took: "tempo-fit, raycast-com, qdrant-tech, together-ai, alinapapazova-framer-ai, crackmagazine-net, thedesignersfoundry-com, chickfila-com, thebroad-org, metmuseum-org; confirmed the red family and gave tempo-fit's red field and thebroad-org's crimson panel.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "Seven archetypes (documentary, manifesto, marquee, question, split-screen, stat-led, word-as-art); took the marquee's \"one thought set big\" and the split-screen's type-on-one-half, visual-on-the-other.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type pricing",
+        took: "per-use line items (grid of name, note, price with hairline rules) became the toppings and add-on lists; single-plan reinforced \"the page is the menu\".",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type stat",
+        took: "bar-chart reference (pure CSS bars, figure as a typographic label, no chart library) became the queue-by-hour chart.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "address card (hours, postal, no social row) shaped the hours and address section; statement footer (one big sentence, quiet sign-off) shaped the footer.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"bold red and cream typographic specimen single product\", macrostructure specimen, accentHue warm, limit 8, detail full",
+        took: "brandappart-com, fellowproducts-com, idyllic-co-nz, houseindustries-com, ecal-ch, parsons-edu, outfit-hellohello-is, jhey-dev; outfit-hellohello-is was the find.",
+      },
+      {
+        tool: "compare",
+        args: "wagamama-com, chickfila-com, outfit-hellohello-is, tempo-fit",
+        took: "Shared only minimalism; three of four use a 5-step type scale and radius 0 or full pill, which settled the five-token scale and the pill-only radius language.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f3eadb",
+        from: "Page ground. Warmer than outfit-hellohello-is's #ece3db so the sesame broth and the cream bowl still read as a step lighter than the page.",
+      },
+      {
+        token: "--cream",
+        hex: "#fbf6ec",
+        from: "Bowl ceramic, steam, button text on red, the map card. The second half of \"red and cream\".",
+      },
+      {
+        token: "--ink",
+        hex: "#1a1412",
+        from: "Body text, chart bars, the toggle. A warm near-black so hairlines and bars do not go cold against the paper.",
+      },
+      {
+        token: "--muted",
+        hex: "#6e625a",
+        from: "Eyebrows, notes under menu lines, chart labels. Brown-grey rather than neutral grey to stay in the same warm family.",
+      },
+      {
+        token: "--red",
+        hex: "#d4211f",
+        from: "The one accent: wordmark, headline, disc behind the bowl, chili oil, CTA pill, add-ons panel, the \"now\" bar. Sits between wagamama's #e12e26 and chickfila's #d40c24.",
+      },
+      {
+        token: "--red-deep",
+        hex: "#8e0f14",
+        from: "Bowl foot, disc edge, panel gradient end, CTA hover. Taken from tempo-fit's #890416 so the red has depth instead of one flat value.",
+      },
+    ],
+    highlight: "The bowl is the design. It is drawn entirely in SVG (cream ceramic with a red band, sesame broth, chili-oil crescent, mince, bok choy, egg, chopsticks) and sits on a deep-red disc borrowed from tempo-fit's red field, which solves the brief's steam problem: cream steam would vanish on a cream page, but over the red disc three blurred, gradient-faded strokes rise and fade on a staggered loop and read as steam from across the room. The same six ingredient colours then reappear as swatches beside each line of the menu, so the menu reads as a key to the drawing, and the queue chart's red \"now\" bar is fed by the same live clock that writes the wait time into the nav pill.",
+  },
+  {
+    slug: "payroll-saas",
+    brand: "Backhouse",
+    tagline: "Restaurant payroll that pulls in shifts and tips, applies state wage rules, and pays on Friday.",
+    prompt: "A payroll platform for restaurants: clean SaaS, product-UI led, calm, trustworthy.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "amie-so",
+        took: "The product screen carries the fold: a real, dense app interface (sidebar, header, table) as the hero visual rather than an illustration. Backhouse's pay run screen follows that density and its blue-pill primary button sits next to a white secondary the same way.",
+      },
+      {
+        slug: "coinbase-com",
+        took: "The phone nested inside an oversized rounded color field, two concentric radii, device bleeding out of its own tinted panel. The pay run screen sits inside a soft green field with 28px inset and bleeds off the panel's right and bottom edges.",
+      },
+      {
+        slug: "todoist-com",
+        took: "Left text column at roughly 40% with the product UI vertically centered on the right, plus the soft radial vignette behind the screenshot instead of a hard drop shadow. The hero grid split and the radial tint in the screen field come from here.",
+      },
+      {
+        slug: "moderntreasury-com",
+        took: "Warm off-white paper, near-black text, muted teal accent used sparingly on tags, sentence case throughout, calm authority. Set the paper, accent temperature and the restraint of the type ramp.",
+      },
+      {
+        slug: "cleanshot-com",
+        took: "Dual-action hero CTA where the filled accent pill and the white bordered pill share a row without equal weight; also the single-accent discipline where only primary actions and one badge carry the brand color.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A payroll platform for restaurants: clean SaaS, product-UI led, calm, trustworthy\", mode light, vibe calm",
+        took: "Feature Stack pick (6 of top hits), evidence: 92% light paper, 83% grotesk sans, accent hue leaning green/teal; exemplars mailchimp-com, cleanshot-com, supabase-com, arrows-to, everlaw-com; comparison-table pricing JSX; hero and spacing guidance",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"payroll HR fintech product dashboard hero screenshot calm trustworthy\", industry fintech, paperBand light, limit 8, detail full",
+        took: "public-com, forestadmin-com, polar-sh, moderntreasury-com, coinbase-com, rainbow-me, n26-com--de-de-blog-alle, gusto-com with fold autopsies; coinbase's nested device and moderntreasury's warm paper were the takeaways",
+      },
+      {
+        tool: "find_components",
+        args: "type pricing, industry saas, mode light, vibe calm, limit 6",
+        took: "pricing crops from amie-so, bear-app, frame-com; surfaced amie-so as a product-UI-led hero worth pulling in full",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "seven canonical hero shapes (documentary, manifesto, marquee, question, split-screen, stat-led, word-as-art); read for the split-screen tinted-panel idea, none copied directly",
+      },
+      {
+        tool: "get_screen",
+        args: "slug amie-so",
+        took: "full record and autopsy: headline in upper quarter, app screenshot dominating the lower two thirds, Inter, single blue accent on pills",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"SaaS landing with product dashboard screenshot as hero, table UI, clean sans, trustworthy\", industry saas, paperBand light, macrostructure feature-stack, limit 8, detail full",
+        took: "cleanshot-com, trello-com, hey-com, dovetail-com--product-development-wireframing, todoist-com, basecamp-com, ghost-org--about, clay-com; todoist's 40/55 split and vignette confirmed the hero grid",
+      },
+      {
+        tool: "get_reference_jsx",
+        args: "type pricing, id three-card",
+        took: "the three-card tier layout with one plan raised by a thin accent top rule and no \"most popular\" badge; used for the Full service tier",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "seven footer archetypes; note that the four-column sitemap is the most templated shape, so the footer here keeps a brand statement column plus three short lists and a single sign-off bar",
+      },
+      {
+        tool: "compare",
+        args: "slugs amie-so, cleanshot-com, todoist-com, moderntreasury-com",
+        took: "shared minimalism and light register; five-step type scales on three of four; radius scales topping out at 12 to 16px on the product-led sites, which set the 16px card radius",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f6f5f1",
+        from: "Page ground. Warm off-white rather than pure white, following moderntreasury-com and mailchimp-com, so the white product screen and cards lift off the page without shadows doing all the work",
+      },
+      {
+        token: "--ink",
+        hex: "#16201b",
+        from: "All headings and body text; a green-black rather than neutral black so it sits with the accent",
+      },
+      {
+        token: "--muted",
+        hex: "#5c6862",
+        from: "Supporting copy, table headers, captions and footer links; one step lighter than ink so hierarchy comes from tone, not size",
+      },
+      {
+        token: "--rule",
+        hex: "#e2e0d9",
+        from: "Every hairline: card borders, table rows, section seams, footer bar; warm gray so rules do not read as blue on the warm paper",
+      },
+      {
+        token: "--accent",
+        hex: "#1b6b52",
+        from: "Deep green for primary buttons, eyebrows, the active sidebar item, check marks, the pricing tier rule and the CTA band; green because the category evidence leans green/teal and it reads as money and calm rather than alarm",
+      },
+      {
+        token: "--accent-soft",
+        hex: "#e3efe8",
+        from: "Tinted surfaces: the hero screen field, the total-to-fund card, active states and paid tags; lets the accent appear as a surface without adding a second hue",
+      },
+      {
+        token: "--tip",
+        hex: "#b8791f",
+        from: "Amber reserved for tip amounts in the pay run and the bartender share of the tip pool; the one warm note, so tips are visually separable from wages everywhere they appear",
+      },
+    ],
+    highlight: "The standout move is treating the pay run itself as the hero, drawn in HTML with numbers that add up. Five real staff, hours that sum to 335.0, overtime flagged in amber, tips totalling $4,304.95 and a total-to-fund card that equals gross plus employer taxes, all inside a white screen nested in a soft green field that it bleeds out of on two sides, the way coinbase-com nests its phone. The same amber tip color, green check marks and paid tags then reappear in the three feature demos below, so the page reads as one product rather than a landing page with a screenshot pasted in.",
+  },
+  {
+    slug: "tattoo-studio",
+    brand: "Sable Tattoo",
+    tagline: "A black ink only tattoo studio in Bristol with four chairs, a flash wall and booking by artist.",
+    prompt: "A tattoo studio with four artists: black ink, flash-sheet led, booking by artist.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "dark",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "nbstudio-co-uk",
+        took: "The hero composition: text floating high-left on a black void, with imagery bleeding edge to edge along the bottom of the fold like a shelf. Sable's shelf is a row of line-art flash with prices, the wall the studio is built around.",
+      },
+      {
+        slug: "ohnotype-co",
+        took: "White line art on a near-black panel, bare arrow-style links instead of chrome, and radius zero throughout. This is the flash sheet: eight tiles of 1.7px white strokes on #0b0b0b, borders as hairlines, no rounding anywhere.",
+      },
+      {
+        slug: "furoweb-eu",
+        took: "A single italic serif word in warm red interrupting an otherwise grey-on-black page. Sable does this twice: \"Walk in\" in the headline and \"So does a good tattoo.\" in the footer statement, and nowhere else in the copy.",
+      },
+      {
+        slug: "xlrecordings-com",
+        took: "The red ticker pinned under the hero. Here it carries the studio's house rules (walk-in days, deposit terms, black ink only, bring identification) as a moving strip in sentence case.",
+      },
+      {
+        slug: "emigre-com",
+        took: "The catalogue idea that the product is the visual: each flash tile is only the drawing, its name, its size and its price, with the artist's first name as the sole label.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A tattoo studio with four artists: black ink, flash-sheet led, booking by artist.\", detail full",
+        took: "Split Studio pick with the split-screen hero JSX; evidence packet: 54% dark paper band, 58% grotesk-sans display, warm accents on a third of the set. Exemplars animaapp-com, furoweb-eu, gallery-it, drams-framer-website, dropout-tv--about. Took the dark band and the furoweb italic-accent move, took a position against the grotesk consensus with a serif display.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"tattoo studio artists black ink flash sheet\", limit 8",
+        took: "nbstudio-co-uk (black void plus bottom shelf), stinkstudios-com, inkfishnyc-com, furoweb-eu, hodinkee-com, archigreendesigns-com, generalcondition-com, designstudio-com. nbstudio gave the fold.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"monochrome studio roster of people, index list with availability, raw editorial\", macrostructure index-first, limit 6",
+        took: "adcker-com, perplexity-ai, minimal-so, humaan-com. adcker's typographic index with small flanking labels informed the roster rows (number, name, style, availability, link).",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"catalogue grid of line drawings with prices, sparse black and white, print-like\", macrostructure catalogue, limit 6",
+        took: "emigre-com only. Product-as-visual tiles for the flash sheet.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"raw brutalist black and white studio with heavy rules and mono details\", vibe raw, color monochrome, limit 6",
+        took: "davidzwirner-com, beauxartsparis-fr, maharishistore-com, norrona-com, xlrecordings-com, ohnotype-co. ohnotype gave the flash sheet treatment; xlrecordings gave the ticker; davidzwirner's framed-object hairlines informed the tile borders.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug ohnotype-co",
+        took: "Full record: palette #424242 / #bcbcbc / #7f7f7f, Covik Sans plus Vulf Mono, portfolio-grid, radius 0, spacing scale 8/16/32/64/128. Confirmed the hairline-and-black-panel language.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug nbstudio-co-uk",
+        took: "Full record: #000000 field, white type, accent only inside the imagery, scale jump only 1.5:1 display to body. Confirmed the restrained hero with the shelf carrying the visual weight.",
+      },
+      {
+        tool: "compare",
+        args: "slugs furoweb-eu, ohnotype-co, nbstudio-co-uk, emigre-com",
+        took: "Shared style: minimalism only; radius scales all start at 0; furoweb has 5 type steps and a 1440 container; ohnotype 1248 container. Settled on radius 0, a 1240px container and a five-token type scale.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "Seven archetypes. Used the Address card (find us, write, hours) merged with the Statement (one big sentence, one quiet sign-off) and a colophon line.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type faq",
+        took: "Seven archetypes. Used Two-column open (question left, answer right, all visible) for aftercare, since the answers are the meat, and the Numbered list shape for the four booking steps.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type pricing",
+        took: "Seven archetypes. Used Per-use line items for the deposits and rates: a menu of six rows with a rate on the right, not tiered cards.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#101010",
+        from: "Page ground. Near-black rather than pure black so the #0b0b0b flash tiles and the map read as darker objects sitting on it, the nbstudio void without the crushed feel.",
+      },
+      {
+        token: "--panel",
+        hex: "#171716",
+        from: "Booking form ground and the roster row hover. One step up from paper, warm-leaning so it does not read blue.",
+      },
+      {
+        token: "--ink",
+        hex: "#ebe8e0",
+        from: "Type, stroke colour of every flash drawing, the solid button fill. Warm off-white, the tone of paper flash sheets, taken from furoweb's #d4ccd4 direction but lifted for contrast.",
+      },
+      {
+        token: "--muted",
+        hex: "#8c8a82",
+        from: "Meta labels, supporting copy, aftercare answers, shelf price labels. Warm grey so hierarchy comes from value, not hue.",
+      },
+      {
+        token: "--rule",
+        hex: "#2b2a27",
+        from: "Every hairline: nav, section seams, roster rows, tile grid gaps, hours table, form borders. Low enough to structure without striping.",
+      },
+      {
+        token: "--accent",
+        hex: "#c9361f",
+        from: "The only colour. Italic headline word, footer statement, ticker background, walk-in availability dot, the \"today\" row in hours, the map marker, hover state on tiles and buttons, form focus ring. A warm red in the furoweb #b42e04 family, chosen because it reads as tattoo red against black ink.",
+      },
+      {
+        token: "--accent-ink",
+        hex: "#ffffff",
+        from: "Text on the red ticker and the solid button hover, where off-white would look dirty on saturated red.",
+      },
+    ],
+    highlight: "The fold is built like a shop: type high-left on the black void, and along the bottom edge a shelf of the actual flash, eight line drawings with prices bleeding across the full width, so a visitor sees the product before they scroll. The same eight SVG symbols are defined once and reused in the sheet below, where the filter buttons narrow them by artist and the \"Book this piece\" overlay pre-fills the booking form with the artist, the design name and its size, then the form's live line quotes that artist's next opening and deposit. Booking by artist is not a claim in the copy; it is what every link on the page actually does.",
+  },
+  {
+    slug: "riso-studio",
+    brand: "Blotter Press",
+    tagline: "A two-colour risograph studio in Glasgow with a flat price list you can read across.",
+    prompt: "A risograph print studio: grainy two-colour overprint, playful, price-list led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "emigre-com",
+        took: "The catalogue of solid-colour tiles, each block carrying its own name in its own face, became the ink shelf: twelve flat swatches with grain on top, the product speaking for itself.",
+      },
+      {
+        slug: "gumroad-com",
+        took: "Typographic centre with playful objects framing the edges; I kept the type as the anchor and let the overprint shapes and doodle sit in a tilted poster beside it instead of scattering them.",
+      },
+      {
+        slug: "generalcondition-com",
+        took: "Loud single-hue display plus thick-outline doodle creatures; gave the page its nerve, the hand-drawn face on the hero poster, and the hard 2px ink rules that box every section.",
+      },
+      {
+        slug: "brilliant-org",
+        took: "Heavy display type with decorative fragments threaded through it; the misregistered pink shadow on the headline is the riso version of that \"the graphic lives in the same space as the type\" move.",
+      },
+      {
+        slug: "oliverjeffers-com",
+        took: "Warm aged paper texture and the raw ink-on-paper feel with no accent colour deployed in the hero; the uncoated paper tone and grain overlay come from this.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A risograph print studio: grainy two-colour overprint, playful, price-list led\", detail full",
+        took: "Picked Marquee Hero, exemplars generalcondition-com, fromanother-love, wallpaper-com, doodles-app, columbia-com; evidence said grotesk-sans 67% consensus, mid paper band; marquee hero JSX; hero and spacing guidance",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"playful print studio, bold flat colour, grainy, two-colour poster feel\", style playful, paperBand light, limit 8, detail full",
+        took: "oliverjeffers-com--art, gusto-com, kentcdodds-com, brilliant-org, gumroad-com, buttondown-email, chickfila-com, columbia-com--p-mens-redmond-shoe-1553631-html with fold autopsies",
+      },
+      {
+        tool: "find_components",
+        args: "type pricing, style playful, limit 8",
+        took: "Pricing crops from babbel-com, fal-ai, fly-io, headspace-com, kentcdodds-com, lego-com, netlify-com; none were price-list shaped, which pushed me toward the reference JSX instead",
+      },
+      {
+        tool: "find_examples_for_macrostructure",
+        args: "name catalogue, limit 6, detail full",
+        took: "Only emigre-com in the archive (thin coverage), but its colour-tile grid was exactly the swatch shelf I needed",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type pricing",
+        took: "Seven canonical JSX shapes; the per-use \"line items\" and the comparison table (thin rules, no zebra striping, hover lift) shaped the size-by-quantity table",
+      },
+      {
+        tool: "get_screen",
+        args: "slug emigre-com",
+        took: "Full record: white ground, black nav, solid tiles in orange, plum, pink, olive; confirmed the tile-with-name pattern and the 2px rule language",
+      },
+      {
+        tool: "get_screen",
+        args: "slug gumroad-com",
+        took: "Full record: warm off-white paper #e4c6c8, pink #fb93eb on objects only, black pill buttons; borrowed the black pill CTAs and the paper-plus-one-hot-colour balance",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"poster print shop, screen print, flat ink colours, editorial price list\", vibe raw, limit 6, detail full",
+        took: "stinkstudios-com, inkfishnyc-com, posterco-tv, maharishistore-com, inkandswitch-com, norrona-com; mostly dark agency sites, only stinkstudios' cut-paper collage energy was useful",
+      },
+      {
+        tool: "compare",
+        args: "slugs emigre-com, gumroad-com, generalcondition-com, brilliant-org",
+        took: "Four different macrostructures, no shared register; confirmed a 5-step type scale is normal for these sites and that radius is either 0 or full pill, nothing in between",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f3eee2",
+        from: "Page ground; a warm uncoated Munken-style stock rather than white, so flat inks read as printed not rendered",
+      },
+      {
+        token: "--ink",
+        hex: "#1f1b1a",
+        from: "Text, 2px rules, pill fills, the turnaround band; a warm near-black because riso black ink is never truly neutral",
+      },
+      {
+        token: "--blue",
+        hex: "#0078bf",
+        from: "First house drum: kickers, price highlights, the \"good at\" header, the big hero circle; the classic riso blue",
+      },
+      {
+        token: "--pink",
+        hex: "#ff48b0",
+        from: "Second house drum: misregistered headline shadow, rush lane, poster slab, kicker dash; fluorescent pink is the colour people come to riso for",
+      },
+      {
+        token: "--yellow",
+        hex: "#ffe800",
+        from: "Third drum used sparingly: outline-button hover, \"bad at\" header, timeline dots; keeps the page from being a two-colour cliche without adding a fourth hue",
+      },
+      {
+        token: "--muted",
+        hex: "#6d645f",
+        from: "Secondary copy and mono metadata; a brown-grey so it looks like a 40% tint of the ink, not a screen grey",
+      },
+      {
+        token: "--rule",
+        hex: "#cfc6b4",
+        from: "Hairline table and list rules; a tint of the paper so the 2px ink rules stay the loud ones",
+      },
+    ],
+    highlight: "The overprint is real, not illustrated. Every coloured surface is a flat CSS fill with an SVG feTurbulence grain multiplied over it, the hero headline carries a pink copy of itself printed four pixels off register through mix-blend-mode: multiply, and the ink section has a working mixer: pick any two of the twelve swatches and two grained circles overlap with multiply blending while a small script computes the actual overprint hex, so the page teaches the one thing riso customers never understand (two drums make three colours) by doing it in front of them.",
+  },
+  {
+    slug: "mountain-rescue",
+    brand: "Harrowdale Mountain Rescue Team",
+    tagline: "Thirty-eight unpaid volunteers covering 420 square kilometres of fell, funded entirely by donations.",
+    prompt: "A mountain rescue volunteer team: serious, high-visibility orange, callout log, donation-led.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "instituteofhealth-com",
+        took: "The hero's stat sidebar is lifted from here: big numerals on the right, each with a hairline rule, sitting beside a flush-left sentence-case headline. Also the model for tabular numerals and a single grotesk family doing display and body.",
+      },
+      {
+        slug: "propublica-org",
+        took: "The one-coral-element rule. Orange lands on exactly one nav element (Donate) against a monochrome warm-grey page, and the newsletter bar idea became the full-bleed donate band lower down.",
+      },
+      {
+        slug: "cloudflare-com",
+        took: "Evidence that a saturated orange field can carry a whole section with white type and a white pill on top. The donate section is a Cloudflare band: orange paper, white text, paper-coloured button.",
+      },
+      {
+        slug: "mux-com",
+        took: "Warm grey paper (#d5d0c0 there, lightened here) with near-black ink and one vivid orange, plus mono for utility text only. Set the paper and the mono-for-metadata discipline for the nav, log and footnotes.",
+      },
+      {
+        slug: "arweave-org",
+        took: "Orange used purely as an index marker on numbered items; the numbered steps in \"how to call for help\", the footnote superscripts and the module numbers follow that pattern, with everything else in ink.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"A mountain rescue volunteer team: serious, high-visibility orange, callout log, donation-led.\", detail full",
+        took: "Picked Marquee Hero; exemplars cloudflare-com, 11x-com, gatesnotes-com, ritual-com, fromanother-love; evidence of grotesk-sans display at 75%, mid/light paper split, warm accent as a live option; hero-in-fold and 96px seam guidance.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"non-profit donation charity serious stat-led figures\", industry non-profit, limit 8, detail full",
+        took: "effectivealtruism-org, participantinc-org, ghost-org, siena-film, propublica-org, frontierclimate-com, dropdeadgenerous-org, signal-org; propublica-org's single Donate puncture was the takeaway.",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"high-visibility orange accent serious technical log table dark\", macrostructure stat-led, limit 8, detail full",
+        took: "digitalocean-com--blog, reactsummit-com, tinybird-co, instituteofhealth-com; instituteofhealth-com's numeral sidebar became the hero's right column.",
+      },
+      {
+        tool: "find_by_color",
+        args: "hex #ff5a00, limit 8, detail full",
+        took: "brex-com, drams-framer-website, cloudflare-com, substack-com, typotheque-com, mux-com, arweave-org, brightful-me; confirmed warm-grey paper plus #fc5c04-ish orange as a working family and gave mux-com and arweave-org.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type stat",
+        took: "annotated, bar-chart, before-after, grid, row, single-hero; the year-to-date section is the annotated 3x2 grid with footnotes plus the pure-CSS bar chart, and the 999 block is the single-hero stat idea.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug instituteofhealth-com",
+        took: "Full autopsy of the stat sidebar with rules between numerals and the sentence-case headline in the lower left.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug propublica-org",
+        took: "Autopsy confirming accent on the Donate pill only, warm off-white paper, rigid left gutter.",
+      },
+      {
+        tool: "get_screen",
+        args: "slug mux-com",
+        took: "Autopsy of the warm grey paper, orange primary pill, mono reserved for utility text.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "address, colophon, list, long-copy, newsletter, sitemap, statement; the footer is the Ft8 address card (base, write, team, money) with no social row.",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type nav",
+        took: "breadcrumb, floating-pill, inline, marginal, mega, off-canvas, search-first; the nav is N1 inline minimal with a mono link row and a tighter utility cluster on the right.",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#e9e5dc",
+        from: "Page ground. Warm stone grey between mux-com's #d5d0c0 and propublica-org's off-white, light enough for body text at 16px.",
+      },
+      {
+        token: "--ink",
+        hex: "#16150f",
+        from: "Headlines, body, rules that need weight, the intake box and the road on the map. Warm near-black so it does not go blue against the paper.",
+      },
+      {
+        token: "--muted",
+        hex: "#6a665c",
+        from: "Mono metadata, supporting paragraphs, footnotes and map labels. Contrast stays above 4.5:1 on the paper.",
+      },
+      {
+        token: "--rule",
+        hex: "#c6c0b1",
+        from: "Hairlines in the stat grids, table rows, legend boxes and the map grid. Visible but never competing with ink.",
+      },
+      {
+        token: "--orange",
+        hex: "#ff5a00",
+        from: "The high-visibility orange. Nav Donate pill, hero eyebrow tick, callout dots and patch boundary on the map, and the full donate band. Deliberately rationed so the band lands hard.",
+      },
+      {
+        token: "--orange-deep",
+        hex: "#b83c00",
+        from: "Orange for text on light paper (footnote numbers, step numbers, hover states) where #FF5A00 would fail contrast.",
+      },
+      {
+        token: "--night",
+        hex: "#1c1b18",
+        from: "The callout log band. A warm black so the log reads as an operations board rather than a dark-mode switch.",
+      },
+    ],
+    highlight: "The callout log is the page's centre of gravity: a warm-black band directly under the fold where eight real incidents sit in a table with mono dates, durations and team counts, orange only on the callout number and on the \"air\" tag for helicopter lifts. It is the thing a mountain rescue team actually has that nobody else does, and the donate section that follows converts it, with eight fixed amounts each naming the exact piece of kit it buys and a live panel that rewrites itself as you pick, including a monthly mode that multiplies the figure out to what the team can plan around.",
+  },
+  {
+    slug: "house-listing",
+    brand: "Sedge & Hollis",
+    tagline: "A single-property listing for Larch House, an architect-designed timber house for sale in Wivenhoe.",
+    prompt: "An architect-designed house for sale: listing-led, floorplan, quiet, one property.",
+    stack: "pure-inspo",
+    origin: "gallery",
+    mode: "light",
+    scoreSelf: 7.5,
+    references: [
+      {
+        slug: "snohetta-com",
+        took: "The fold shape: a left-aligned sentence-case headline with the visual as a captioned strip beneath it, not a background. The strip here is a drawn south elevation with the caption pair below, exactly where Snøhetta puts \"Aura / Viabizzuno\".",
+      },
+      {
+        slug: "big-dk",
+        took: "Text-left, image-right rows in a quiet 12-column grid, small type, no hero shouting. Section 01 (facts list beside the section drawing) and section 05 (copy beside the map) follow that split.",
+      },
+      {
+        slug: "heatherwick-com",
+        took: "The serif-for-captions warmth and the pale muted green in its palette. Newsreader for display and room labels comes from that Plantin caption feeling; the sage plan and water fill is its #d6db9d cooled down.",
+      },
+      {
+        slug: "kkaa-co-jp",
+        took: "Vast whitespace with small scattered text and a map as the only visual anchor. The location section repeats that: an address block and a distance list on the left, a sketch map anchoring the right.",
+      },
+      {
+        slug: "floema-com",
+        took: "The warm off-white paper (#f5f2ed) with a terracotta accent used sparingly on one word and one ring. The paper token and the restraint on the accent come from here.",
+      },
+    ],
+    mcpCalls: [
+      {
+        tool: "recommend",
+        args: "brief \"An architect-designed house for sale: listing-led, floorplan, quiet, one property\", detail full",
+        took: "picked bento-grid with houseofhoney-com, hypereffekt-com, milanote-com, vimcal-com, eduardbodak-com; evidence packet said light paper 46%, grotesk display 58%; the pick did not fit a one-property listing so I searched instead",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"architecture studio house residential quiet editorial\", industry architecture, paperBand light, limit 8, detail full",
+        took: "kkaa-co-jp--about, normarchitects-com--about, big-dk, snohetta-com, herzogdemeuron-com, archdaily-com, heatherwick-com--projects, floema-com with fold autopsies",
+      },
+      {
+        tool: "search_screens",
+        args: "query \"property listing real estate house for sale floorplan\", limit 8, detail full",
+        took: "arrows-to, abyssale-com, detroit-paris, gardinex-com, magicspoon-com, houseofhoney-com, polar-sh, brandappart-com; mostly off-genre, confirmed the archive has no true listing page so the architecture set was the right anchor",
+      },
+      {
+        tool: "find_examples_for_macrostructure",
+        args: "specimen, limit 5, detail full",
+        took: "apartamentomagazine-com, aristidebenoist-com, arweave-org, astro-build, barbican-org-uk; arweave-org's text-only spec page reinforced the schedule-table approach",
+      },
+      {
+        tool: "get_screen",
+        args: "snohetta-com",
+        took: "full record and autopsy: headline then image strip, caption beneath, disciplines list below the fold",
+      },
+      {
+        tool: "get_screen",
+        args: "big-dk",
+        took: "full record: stacked project rows, text cluster left, picture right, all on a pale ground",
+      },
+      {
+        tool: "get_design_system",
+        args: "heatherwick-com--projects, live false",
+        took: "type ramp (Relative for meta, Plantin Light for headings and body), 10px spacing base, zero radius, palette roles",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type hero",
+        took: "seven canonical heroes; used the Documentary shape (headline left, credit aside right) for the hero grid",
+      },
+      {
+        tool: "find_reference_components",
+        args: "type footer",
+        took: "seven footers; used the Address card shape, four columns of real contact detail and no social row",
+      },
+    ],
+    palette: [
+      {
+        token: "--paper",
+        hex: "#f5f2ec",
+        from: "Page ground. Warm off-white from the floema-com and heatherwick range so the ink drawings read like a printed set, not a screen",
+      },
+      {
+        token: "--paper-2",
+        hex: "#ebe6dc",
+        from: "Plan sheets, the map panel and the viewings block. One step darker so the drawings sit on a sheet inside the page",
+      },
+      {
+        token: "--ink",
+        hex: "#1f1c18",
+        from: "Text, walls, roof lines and the primary pill. Warm near-black, never pure black, so it matches the paper",
+      },
+      {
+        token: "--muted",
+        hex: "#6e675d",
+        from: "Meta labels, dimensions, captions and secondary copy. Carries the small architectural annotations",
+      },
+      {
+        token: "--rule",
+        hex: "#d8d1c4",
+        from: "Hairlines between sections, table rows and the facts list. Quiet enough to structure without boxing",
+      },
+      {
+        token: "--accent",
+        hex: "#a45c1e",
+        from: "Burnt orange taken from snohetta-com's extracted palette. Used only on one italic phrase per heading, the house marker on the map, the energy band bar and pill hover",
+      },
+      {
+        token: "--sage",
+        hex: "#cfd6c2",
+        from: "Glazing on the plans and elevation, trees, hedge, estuary water. A cooled version of heatherwick's pale green so every drawn opening reads as glass",
+      },
+    ],
+    highlight: "The page is drawn rather than photographed, and the drawings do the selling: a scaled south elevation with a person and a heat pump for scale sits under the headline as the hero strip, then a cross section through the double-height living room, two floor plans with wall thicknesses, door swings, glazing bands and every room dimensioned, and a sketch map with a north arrow and scale bar. Because the plans carry real numbers, the room schedule totals to the 214 sq m in the hero, the energy section quotes meter readings instead of marketing adjectives, and a small metric to imperial toggle lets a buyer read the facts list in the units they think in.",
   },
 ];
 

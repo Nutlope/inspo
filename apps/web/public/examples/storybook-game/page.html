@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pennyfold - a hand-painted puzzle game by Teacup Pines</title>
+<meta name="description" content="Pennyfold is a hand-painted puzzle game about folding, turning and stitching the pages of a storybook town back into order. Wishlist now, releasing 12 March 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,0..100;1,9..144,400..600,0..100&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;1,6..12,400&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale: five steps */
+  --t-xs: 0.875rem;                          /* meta, captions */
+  --t-s:  1.0625rem;                         /* body */
+  --t-m:  1.375rem;                          /* lead, card titles */
+  --t-l:  clamp(1.9rem, 3.2vw, 2.75rem);     /* section headings */
+  --t-xl: clamp(2.6rem, 5.4vw, 4.6rem);      /* hero display */
+
+  --paper:   #F3ECDF;   /* warm cream page */
+  --paper-2: #EAE0CF;   /* deeper cream for tiles */
+  --ink:     #2E2440;   /* plum-ink text */
+  --muted:   #6F6478;   /* secondary text */
+  --rule:    #D8CCB8;   /* hairlines and stitches */
+  --accent:  #D9642B;   /* marmalade, the one loud colour */
+  --moss:    #6F8F5A;   /* hills, positive states */
+  --dusk:    #B9A6CF;   /* far hills, lavender air */
+  --gold:    #E9C46A;   /* lantern light, stars */
+  --night:   #23203A;   /* the wishlist band */
+
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+
+  --gap: clamp(72px, 10vw, 128px);  /* section rhythm */
+  --radius: 22px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:var(--t-s);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain over everything */
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:.16; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.2 0 0 0 .5 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+}
+main, header, footer{position:relative; z-index:1}
+
+h1,h2,h3{font-family:var(--display); font-weight:600; line-height:1.05; margin:0; letter-spacing:-0.01em; font-variation-settings:"SOFT" 60, "opsz" 96}
+h1{font-size:var(--t-xl); letter-spacing:-0.02em}
+h2{font-size:var(--t-l)}
+h3{font-size:var(--t-m); line-height:1.2}
+p{margin:0}
+a{color:inherit}
+em{font-style:italic; font-variation-settings:"SOFT" 100, "opsz" 96}
+
+.wrap{max-width:1180px; margin-inline:auto; padding-inline:clamp(20px, 4vw, 48px)}
+.meta{font-size:var(--t-xs); color:var(--muted); font-weight:600; letter-spacing:.01em}
+.lead{font-size:var(--t-m); line-height:1.45; color:var(--ink)}
+.muted{color:var(--muted)}
+
+/* buttons: rounded pills, pi-ai pairing of filled + outline */
+.btn{
+  display:inline-flex; align-items:center; gap:.55em;
+  padding:.85em 1.45em; border-radius:999px;
+  font-weight:700; font-size:var(--t-s); text-decoration:none; line-height:1;
+  border:2px solid transparent; cursor:pointer; white-space:nowrap;
+  transition:transform .15s ease, background .15s ease, color .15s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-fill{background:var(--accent); color:#FFF7EE; border-color:var(--accent)}
+.btn-fill:hover{background:#C4561F}
+.btn-line{background:transparent; color:var(--ink); border-color:var(--ink)}
+.btn-line:hover{background:var(--ink); color:var(--paper)}
+.btn-paper{background:var(--paper); color:var(--ink); border-color:var(--paper)}
+.btn svg{width:1.05em; height:1.05em; flex:none}
+
+/* ---------- fold: nav + hero ---------- */
+.fold{min-height:100svh; display:flex; flex-direction:column}
+.nav{padding-block:18px}
+.nav .wrap{display:flex; align-items:center; justify-content:space-between; gap:24px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font-family:var(--display); font-weight:600; font-size:1.35rem; letter-spacing:-0.01em}
+.brand svg{width:34px; height:34px}
+.nav-links{display:flex; gap:28px; list-style:none; margin:0; padding:0}
+.nav-links a{text-decoration:none; font-weight:600; font-size:var(--t-xs); color:var(--ink); opacity:.85}
+.nav-links a:hover{opacity:1; text-decoration:underline; text-underline-offset:4px; text-decoration-color:var(--accent)}
+.nav .btn{padding:.7em 1.2em; font-size:var(--t-xs)}
+
+.hero{flex:1; display:flex; flex-direction:column; justify-content:flex-end; position:relative; overflow:hidden}
+.hero-art{
+  width:100%; height:clamp(170px, 30vh, 320px);
+  display:block;
+}
+.hero-art svg{width:100%; height:100%; display:block}
+.hero-copy{
+  text-align:center; padding-block:clamp(18px, 3vh, 34px) clamp(24px, 4vh, 44px);
+  position:relative;
+}
+.hero-copy .wrap{max-width:900px}
+.hero-copy h1{margin-inline:auto; max-width:16ch; text-wrap:balance}
+.swoosh{position:relative; display:inline-block; white-space:nowrap}
+.swoosh svg{position:absolute; left:-2%; right:-2%; bottom:-0.16em; width:104%; height:.32em; overflow:visible}
+.hero-copy .lead{max-width:58ch; margin:clamp(12px, 2vh, 20px) auto 0; color:var(--muted)}
+.hero-ctas{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:clamp(18px, 3vh, 28px)}
+.hero-facts{display:flex; gap:10px 26px; justify-content:center; flex-wrap:wrap; margin-top:clamp(14px, 2.4vh, 22px); font-size:var(--t-xs); color:var(--muted); font-weight:600}
+.hero-facts span{display:inline-flex; align-items:center; gap:8px}
+.hero-facts i{width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block}
+.star{position:absolute; color:var(--gold); width:22px; height:22px}
+.star-a{left:11%; top:6%; transform:rotate(-12deg)}
+.star-b{right:12%; top:2%; width:16px; height:16px; transform:rotate(18deg)}
+.star-c{right:7%; bottom:36%; width:13px; height:13px}
+
+/* ---------- sections ---------- */
+section{padding-block:var(--gap)}
+.section-head{max-width:56ch}
+.section-head h2{margin-top:10px; text-wrap:balance}
+.section-head .lead{margin-top:16px; color:var(--muted)}
+.rule{border:0; border-top:1px solid var(--rule); margin:0}
+
+/* story */
+.story .wrap{display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(32px, 6vw, 88px); align-items:center}
+.story-copy p + p{margin-top:16px}
+.story-copy .section-head{margin-bottom:24px}
+.page-card{
+  aspect-ratio:4/5; border-radius:var(--radius); overflow:hidden; position:relative;
+  background:#DED2C1; box-shadow:0 30px 60px -30px rgba(46,36,64,.35);
+  outline:2px dashed var(--rule); outline-offset:-12px;
+}
+.page-card svg{width:100%; height:100%; display:block}
+
+/* how it plays */
+.mechanics{background:var(--paper-2)}
+.mech-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:44px}
+.mech{
+  background:var(--paper); border-radius:var(--radius); padding:28px 28px 30px;
+  border:2px dashed var(--rule); display:flex; flex-direction:column; gap:18px;
+}
+.mech .glyph{width:84px; height:84px}
+.mech h3{margin-top:4px}
+.mech p{color:var(--muted)}
+.mech .step{font-family:var(--display); font-size:var(--t-m); color:var(--accent); font-style:italic}
+
+/* chapters */
+.chapters .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; max-width:none}
+.chapter-nav{display:flex; gap:8px}
+.chapter-nav button{
+  width:44px; height:44px; border-radius:50%; border:2px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; display:grid; place-items:center;
+}
+.chapter-nav button:hover{background:var(--ink); color:var(--paper)}
+.chapter-nav svg{width:18px; height:18px}
+.rail{
+  margin-top:40px; display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory;
+  padding-inline:max(20px, calc((100vw - 1180px)/2 + 48px)); padding-bottom:12px;
+  scrollbar-width:none;
+}
+.rail::-webkit-scrollbar{display:none}
+.chap{
+  flex:0 0 clamp(280px, 26vw, 340px); scroll-snap-align:start;
+  background:var(--paper-2); border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--rule); display:flex; flex-direction:column;
+  transition:transform .2s ease;
+}
+.chap:hover{transform:translateY(-4px)}
+.chap .scene{aspect-ratio:16/10; display:block}
+.chap .scene svg{width:100%; height:100%; display:block}
+.chap-body{padding:20px 22px 24px; display:flex; flex-direction:column; gap:8px; flex:1}
+.chap-body .meta{display:flex; justify-content:space-between}
+.chap-body p{color:var(--muted); font-size:var(--t-xs); line-height:1.55}
+.chap-body h3{font-size:1.25rem}
+
+/* painted by hand: bento */
+.craft .bento{display:grid; grid-template-columns:repeat(3, 1fr); grid-auto-rows:auto; gap:18px; margin-top:44px}
+.tile{background:var(--paper-2); border-radius:var(--radius); padding:28px; display:flex; flex-direction:column; gap:12px; min-height:200px}
+.tile-lead{grid-column:span 2; grid-row:span 2; background:var(--ink); color:var(--paper); justify-content:space-between; padding:34px}
+.tile-lead h3{font-size:var(--t-l); line-height:1.05; max-width:18ch; text-wrap:balance}
+.tile-lead p{color:#C9BFD8; max-width:46ch}
+.tile .num{font-family:var(--display); font-size:var(--t-l); line-height:1; letter-spacing:-0.02em}
+.tile .num small{font-size:.5em; color:var(--muted); font-family:var(--body); font-weight:600; margin-left:.3em}
+.tile p{color:var(--muted); font-size:var(--t-xs)}
+.tile-wide{grid-column:span 2; flex-direction:row; align-items:center; justify-content:space-between; gap:24px}
+.pigments{display:flex; gap:8px; flex-wrap:wrap}
+.pigments i{width:30px; height:30px; border-radius:50% 46% 52% 48%; display:inline-block; box-shadow:inset 0 -3px 0 rgba(0,0,0,.12); transform:rotate(var(--r, 0deg))}
+
+/* studio */
+.studio .wrap{display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(32px, 6vw, 88px); align-items:start}
+.studio-copy p + p{margin-top:16px}
+.studio-copy .section-head{margin-bottom:24px}
+.people{display:grid; gap:14px}
+.person{display:grid; grid-template-columns:76px 1fr; gap:18px; align-items:center; padding:18px; background:var(--paper-2); border-radius:18px}
+.avatar{width:76px; height:76px; border-radius:50% 45% 50% 48%; position:relative; overflow:hidden}
+.avatar::after{content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 55%)}
+.person h3{font-size:1.15rem}
+.person p{color:var(--muted); font-size:var(--t-xs); margin-top:2px}
+.prev-game{margin-top:22px; padding:18px 20px; border:2px dashed var(--rule); border-radius:18px; display:flex; gap:16px; align-items:center}
+.prev-game .thumb{width:56px; height:56px; border-radius:14px; background:linear-gradient(160deg, #4B4A6B, #23203A); flex:none; display:grid; place-items:center}
+.prev-game .thumb svg{width:34px; height:34px}
+.prev-game p{font-size:var(--t-xs); color:var(--muted)}
+
+/* wishlist band */
+.studio{padding-block-end:calc(var(--gap) * .5)}
+.wishlist{padding-block:calc(var(--gap) * .5) 40px}
+.band{
+  background:var(--night); color:var(--paper); border-radius:calc(var(--radius) + 10px);
+  padding:clamp(40px, 6vw, 72px); position:relative; overflow:hidden;
+  display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(28px, 5vw, 64px); align-items:center;
+}
+.band::before{content:""; position:absolute; inset:auto -10% -55% auto; width:70%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, rgba(233,196,106,.28), transparent 62%); pointer-events:none}
+.band .meta{color:#B9A6CF}
+.band h2{margin-top:8px; text-wrap:balance}
+.band .lead{color:#C9BFD8; margin-top:16px; max-width:44ch}
+.band .hero-ctas{justify-content:flex-start; margin-top:26px}
+.countdown{display:flex; gap:14px; margin-top:26px}
+.countdown div{background:rgba(243,236,223,.08); border:1px solid rgba(243,236,223,.16); border-radius:16px; padding:14px 18px; min-width:92px; text-align:center}
+.countdown b{display:block; font-family:var(--display); font-size:var(--t-l); line-height:1; letter-spacing:-0.02em}
+.countdown span{font-size:var(--t-xs); color:#B9A6CF; font-weight:600}
+.signup{background:rgba(243,236,223,.06); border:1px solid rgba(243,236,223,.14); border-radius:var(--radius); padding:28px; position:relative}
+.signup h3{font-size:var(--t-m)}
+.signup p{color:#C9BFD8; font-size:var(--t-xs); margin-top:8px}
+.signup form{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
+.signup input{
+  flex:1; min-width:200px; padding:.85em 1.1em; border-radius:999px; border:1px solid rgba(243,236,223,.25);
+  background:rgba(243,236,223,.08); color:var(--paper); font:inherit; font-size:var(--t-s);
+}
+.signup input::placeholder{color:#8F84A3}
+.signup input:focus{outline:2px solid var(--gold); outline-offset:2px}
+.signup .ok{display:none; margin-top:14px; color:var(--gold); font-weight:700}
+.signup.sent form{display:none}
+.signup.sent .ok{display:block}
+.signup .fine{margin-top:12px; font-size:.8rem; color:#8F84A3}
+
+/* footer */
+footer{padding-block:64px 36px}
+.foot{display:grid; grid-template-columns:1.4fr repeat(3, 1fr); gap:32px}
+.foot .brand{font-size:1.2rem}
+.foot p{color:var(--muted); font-size:var(--t-xs); max-width:34ch; margin-top:12px}
+.foot h4{margin:0 0 12px; font-family:var(--body); font-size:var(--t-xs); font-weight:700}
+.foot ul{list-style:none; margin:0; padding:0; display:grid; gap:8px}
+.foot li a{font-size:var(--t-xs); color:var(--muted); text-decoration:none}
+.foot li a:hover{color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+.foot-bottom{margin-top:44px; padding-top:20px; border-top:1px dashed var(--rule); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+
+/* responsive */
+@media (max-width: 900px){
+  .nav-links{display:none}
+  .story .wrap, .studio .wrap, .band{grid-template-columns:1fr}
+  .mech-grid{grid-template-columns:1fr}
+  .craft .bento{grid-template-columns:1fr 1fr}
+  .tile-lead{grid-column:span 2; grid-row:auto}
+  .tile-wide{grid-column:span 2; flex-direction:column; align-items:flex-start}
+  .foot{grid-template-columns:1fr 1fr}
+  .page-card{max-width:440px}
+}
+@media (max-width: 560px){
+  .craft .bento{grid-template-columns:1fr}
+  .tile-lead, .tile-wide{grid-column:span 1}
+  .foot{grid-template-columns:1fr}
+  .countdown div{min-width:0; flex:1}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .btn, .chap{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- shared painterly filters -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="brush" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="3" seed="7" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="brush-soft" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3ECDF"/>
+      <stop offset="1" stop-color="#E4D6E4"/>
+    </linearGradient>
+    <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9B8D8"/>
+      <stop offset="1" stop-color="#B9A6CF"/>
+    </linearGradient>
+    <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9DB98A"/>
+      <stop offset="1" stop-color="#7C9B68"/>
+    </linearGradient>
+    <linearGradient id="hillNear" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6F8F5A"/>
+      <stop offset="1" stop-color="#4F6E41"/>
+    </linearGradient>
+    <linearGradient id="hillFold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E9C46A"/>
+      <stop offset="1" stop-color="#D9A94C"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#E9C46A" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#E9C46A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A2650"/>
+      <stop offset="1" stop-color="#4A3F6E"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8FB3C9"/>
+      <stop offset="1" stop-color="#5E86A3"/>
+    </linearGradient>
+    <linearGradient id="rust" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E0A25C"/>
+      <stop offset="1" stop-color="#B8623A"/>
+    </linearGradient>
+    <linearGradient id="plum" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7A5F8F"/>
+      <stop offset="1" stop-color="#4A3A5E"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Pennyfold home">
+        <svg viewBox="0 0 34 34" aria-hidden="true">
+          <path d="M5 6h20l4 4v18H5z" fill="#E9C46A"/>
+          <path d="M25 6v4h4z" fill="#D9642B"/>
+          <path d="M5 6h20l4 4v18H5z" fill="none" stroke="#2E2440" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M11 22c3-6 9-6 12 0" fill="none" stroke="#2E2440" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="17" cy="14" r="2.4" fill="#2E2440"/>
+        </svg>
+        Pennyfold
+      </a>
+      <ul class="nav-links">
+        <li><a href="#story">The story</a></li>
+        <li><a href="#play">How it plays</a></li>
+        <li><a href="#chapters">Chapters</a></li>
+        <li><a href="#studio">The studio</a></li>
+        <li><a href="#press">Press kit</a></li>
+      </ul>
+      <a class="btn btn-fill" href="#wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/></svg>
+        Wishlist on Steam
+      </a>
+    </div>
+  </header>
+
+  <section class="hero" id="top" style="padding-block:0">
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 1400 340" preserveAspectRatio="xMidYMid slice">
+        <rect width="1400" height="340" fill="url(#skyDusk)"/>
+        <!-- moon -->
+        <circle cx="1010" cy="118" r="70" fill="#E9C46A" opacity=".35" filter="url(#glow)"/>
+        <circle cx="1010" cy="118" r="42" fill="#F1D385" filter="url(#brush-soft)"/>
+        <!-- birds -->
+        <g fill="none" stroke="#2E2440" stroke-width="2" stroke-linecap="round" opacity=".7">
+          <path d="M300 104c6-6 12-6 18 0M318 104c6-6 12-6 18 0"/>
+          <path d="M360 122c5-5 10-5 15 0M375 122c5-5 10-5 15 0"/>
+          <path d="M1180 96c5-5 10-5 15 0M1195 96c5-5 10-5 15 0"/>
+        </g>
+        <!-- far hills -->
+        <path filter="url(#brush)" fill="url(#hillFar)" d="M-20 230C120 170 260 150 400 190S640 250 800 200 1080 130 1250 170 1400 200 1420 210V340H-20z"/>
+        <!-- mid hills -->
+        <path filter="url(#brush)" fill="url(#hillMid)" d="M-20 270C100 240 220 220 360 250S600 300 760 260 980 220 1120 250 1330 290 1420 270V340H-20z"/>
+        <!-- folded page of hill: the mechanic on the fold -->
+        <g filter="url(#brush-soft)">
+          <path fill="url(#hillFold)" d="M560 340L640 262L860 262L780 340z"/>
+          <path fill="#C99A3E" opacity=".55" d="M640 262L700 300L860 262z"/>
+        </g>
+        <path d="M640 262L780 340" fill="none" stroke="#2E2440" stroke-width="2" stroke-dasharray="6 7" stroke-linecap="round"/>
+        <!-- near hills -->
+        <path filter="url(#brush)" fill="url(#hillNear)" d="M-20 320C140 290 280 280 420 300S620 340 700 340H-20z"/>
+        <path filter="url(#brush)" fill="url(#hillNear)" d="M900 340C980 300 1120 290 1260 305S1400 330 1420 340z"/>
+        <!-- cottage -->
+        <g filter="url(#brush-soft)">
+          <path d="M1112 236l30-28 30 28v34h-60z" fill="#F3ECDF"/>
+          <path d="M1108 238l34-32 34 32" fill="none" stroke="#B8623A" stroke-width="9" stroke-linejoin="round"/>
+          <rect x="1136" y="250" width="12" height="14" rx="2" fill="#E9C46A"/>
+        </g>
+        <!-- trees -->
+        <g filter="url(#brush-soft)">
+          <ellipse cx="240" cy="266" rx="26" ry="36" fill="#4F6E41"/>
+          <ellipse cx="282" cy="276" rx="18" ry="26" fill="#5E7F4C"/>
+          <ellipse cx="1330" cy="270" rx="22" ry="30" fill="#4F6E41"/>
+          <rect x="237" y="290" width="6" height="22" fill="#5A4636"/>
+          <rect x="279" y="296" width="5" height="16" fill="#5A4636"/>
+          <rect x="1327" y="292" width="6" height="18" fill="#5A4636"/>
+        </g>
+        <!-- lamplighter with lantern -->
+        <circle cx="470" cy="238" r="52" fill="url(#lamp)"/>
+        <g filter="url(#brush-soft)">
+          <path d="M486 292c0-24 6-40 6-52 0-10-8-16-16-16s-16 6-16 16c0 12 6 28 6 52z" fill="#2E2440"/>
+          <circle cx="476" cy="214" r="10" fill="#2E2440"/>
+          <rect x="452" y="210" width="3" height="60" fill="#2E2440"/>
+          <rect x="446" y="228" width="14" height="18" rx="3" fill="#E9C46A" stroke="#2E2440" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-copy">
+      <svg class="star star-a" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z"/></svg>
+      <svg class="star star-b" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z"/></svg>
+      <svg class="star star-c" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z"/></svg>
+      <div class="wrap">
+        <p class="meta">A hand-painted puzzle game from Teacup Pines</p>
+        <h1>Fold the page. <span class="swoosh"><em>Mend</em> the story.<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8C40 2 90 10 130 5s50-3 66 2" fill="none" stroke="#D9642B" stroke-width="3.2" stroke-linecap="round"/></svg></span></h1>
+        <p class="lead">Marrowby's pages have been shuffled. You are Wren, the lamplighter's apprentice, folding, turning and stitching them back into a story.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-fill" href="#wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/></svg>
+            Wishlist on Steam
+          </a>
+          <a class="btn btn-line" href="#chapters">See the chapters</a>
+        </div>
+        <p class="hero-facts">
+          <span><i></i>Releasing 12 March 2027</span>
+          <span><i></i>Steam for Windows and macOS</span>
+          <span><i></i>Nintendo Switch</span>
+          <span><i></i>No timers, no fail states</span>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<main>
+
+  <!-- 1. the story -->
+  <section class="story" id="story">
+    <div class="wrap">
+      <div class="story-copy">
+        <div class="section-head">
+          <p class="meta">The story</p>
+          <h2>A town whose book came unbound</h2>
+        </div>
+        <p class="lead">Marrowby was written down once, long ago, and it has lived inside that book ever since. One autumn night the binding gave out. Now the baker wakes up on the harbour page, the tide comes in over the orchard, and the clocktower strikes hours that have not happened yet.</p>
+        <p>Wren is not a hero. She is fourteen, she carries a lantern that is slightly too heavy for her, and she is the only person in town who can still see the creases. Each chapter hands her a bundle of loose pages. Fold them the right way and a road meets its bridge; turn them and a window faces the moon again; stitch two pages together and a lost neighbour walks home.</p>
+        <p>There is no clock and nothing to lose. If a page will not sit right, Wren sets it down, has a cup of tea, and you try again with a clearer head.</p>
+      </div>
+      <div class="page-card" aria-hidden="true">
+        <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="500" fill="url(#night)"/>
+          <circle cx="290" cy="120" r="90" fill="#E9C46A" opacity=".25" filter="url(#glow)"/>
+          <circle cx="290" cy="120" r="54" fill="#F1D385" filter="url(#brush-soft)"/>
+          <g fill="#F3ECDF" opacity=".8">
+            <circle cx="60" cy="70" r="2.2"/><circle cx="120" cy="40" r="1.6"/><circle cx="180" cy="90" r="2"/>
+            <circle cx="90" cy="150" r="1.4"/><circle cx="360" cy="230" r="1.8"/><circle cx="40" cy="220" r="1.6"/>
+          </g>
+          <path filter="url(#brush)" fill="url(#plum)" d="M-10 330C60 290 140 280 210 300S330 350 410 320V510H-10z"/>
+          <path filter="url(#brush)" fill="#2A2646" d="M-10 400C80 370 170 380 250 400S360 440 410 420V510H-10z"/>
+          <!-- rooftops -->
+          <g filter="url(#brush-soft)">
+            <path d="M40 420l28-26 28 26v50H40z" fill="#3E3562"/>
+            <path d="M300 410l26-24 26 24v52h-52z" fill="#3E3562"/>
+            <rect x="60" y="436" width="10" height="12" rx="2" fill="#E9C46A"/>
+            <rect x="318" y="428" width="10" height="12" rx="2" fill="#E9C46A"/>
+          </g>
+          <!-- Wren -->
+          <circle cx="200" cy="360" r="70" fill="url(#lamp)"/>
+          <g filter="url(#brush-soft)">
+            <path d="M226 460c0-40 10-66 10-84 0-16-14-26-30-26s-30 10-30 26c0 18 10 44 10 84z" fill="#23203A"/>
+            <path d="M176 370c10-8 40-8 50 0" fill="none" stroke="#D9642B" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="206" cy="326" r="18" fill="#F3ECDF"/>
+            <path d="M188 322c4-16 32-18 36-2-8-6-28-6-36 2z" fill="#B8623A"/>
+            <rect x="158" y="322" width="4" height="100" fill="#23203A"/>
+            <rect x="150" y="346" width="20" height="26" rx="4" fill="#E9C46A" stroke="#23203A" stroke-width="3"/>
+          </g>
+          <!-- crease lines: a loose page in the sky -->
+          <g transform="rotate(-8 110 200)">
+            <rect x="60" y="170" width="100" height="70" rx="4" fill="#F3ECDF" opacity=".92" filter="url(#brush-soft)"/>
+            <path d="M60 170l100 70" stroke="#23203A" stroke-width="1.5" stroke-dasharray="4 5"/>
+            <path d="M75 220c15-14 40-14 60 0" fill="none" stroke="#6F8F5A" stroke-width="5" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. how it plays -->
+  <section class="mechanics" id="play">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="meta">How it plays</p>
+        <h2>Three verbs, and a whole town to put right</h2>
+        <p class="lead">Every puzzle is a real sheet of painted paper with rules you can feel in your hands. Nothing is hidden behind a menu; if you can see the crease, you can use it.</p>
+      </div>
+      <div class="mech-grid">
+        <article class="mech">
+          <svg class="glyph" viewBox="0 0 84 84" aria-hidden="true">
+            <rect x="10" y="12" width="64" height="60" rx="6" fill="#F3ECDF" stroke="#2E2440" stroke-width="2.5"/>
+            <path d="M74 12L40 46V12z" fill="#E9C46A" stroke="#2E2440" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M40 46L74 12" stroke="#D9642B" stroke-width="2.5" stroke-dasharray="4 5"/>
+            <path d="M20 58c8-10 24-10 32 0" fill="none" stroke="#6F8F5A" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <p class="step">One. Fold</p>
+          <h3>Bring far things near</h3>
+          <p>Crease a page along any painted line and the two halves meet. A river on the left edge folds over to reach the mill on the right. Fold twice and a whole valley disappears into a pocket.</p>
+        </article>
+        <article class="mech">
+          <svg class="glyph" viewBox="0 0 84 84" aria-hidden="true">
+            <circle cx="42" cy="42" r="26" fill="#F3ECDF" stroke="#2E2440" stroke-width="2.5"/>
+            <path d="M42 16a26 26 0 0 1 26 26" fill="none" stroke="#D9642B" stroke-width="5" stroke-linecap="round"/>
+            <path d="M60 36l8 6-8 6" fill="none" stroke="#D9642B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M30 48c6-8 18-8 24 0" fill="none" stroke="#6F8F5A" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="42" cy="34" r="4" fill="#E9C46A" stroke="#2E2440" stroke-width="2"/>
+          </svg>
+          <p class="step">Two. Turn</p>
+          <h3>Face the other way</h3>
+          <p>Some pages are pinned at a corner and swing like a gate. Turn the harbour page a quarter and the lighthouse points inland; turn the sky and the moon rises over a different street. Light and shadow move with it.</p>
+        </article>
+        <article class="mech">
+          <svg class="glyph" viewBox="0 0 84 84" aria-hidden="true">
+            <rect x="8" y="26" width="32" height="40" rx="4" fill="#F3ECDF" stroke="#2E2440" stroke-width="2.5"/>
+            <rect x="44" y="18" width="32" height="40" rx="4" fill="#F3ECDF" stroke="#2E2440" stroke-width="2.5"/>
+            <path d="M40 34c2 8 2 16 4 22" fill="none" stroke="#D9642B" stroke-width="2.5" stroke-dasharray="3 4"/>
+            <path d="M16 50c8-8 20-6 28-2M52 40c6-6 14-6 20-2" fill="none" stroke="#6F8F5A" stroke-width="4" stroke-linecap="round"/>
+            <path d="M58 66l10-12" stroke="#2E2440" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="69" cy="53" r="2.5" fill="#2E2440"/>
+          </svg>
+          <p class="step">Three. Stitch</p>
+          <h3>Sew two pages into one</h3>
+          <p>Hold two edges together and run a thread along them. Once stitched, the pages behave as one sheet, so a fold on the orchard now pulls the market square with it. Undo the seam whenever you like; the thread never runs out.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. chapters -->
+  <section class="chapters" id="chapters">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">Five chapters, 112 pages</p>
+          <h2>Marrowby, one district at a time</h2>
+        </div>
+        <div class="chapter-nav" aria-label="Scroll chapters">
+          <button type="button" data-dir="-1" aria-label="Previous chapters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" data-dir="1" aria-label="Next chapters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </div>
+    <div class="rail" id="rail">
+      <article class="chap">
+        <div class="scene" aria-hidden="true">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <rect width="320" height="200" fill="#F1E6C8"/>
+            <circle cx="250" cy="52" r="26" fill="#F1D385" filter="url(#brush-soft)"/>
+            <path filter="url(#brush)" fill="url(#hillMid)" d="M-5 130C60 100 140 100 200 120S290 150 325 130V205H-5z"/>
+            <path filter="url(#brush)" fill="url(#hillNear)" d="M-5 170C80 150 160 150 240 165S325 180 325 180V205H-5z"/>
+            <g filter="url(#brush-soft)">
+              <ellipse cx="70" cy="118" rx="24" ry="30" fill="#7C9B68"/><ellipse cx="130" cy="112" rx="20" ry="26" fill="#6F8F5A"/><ellipse cx="190" cy="124" rx="22" ry="28" fill="#5E7F4C"/>
+              <g fill="#D9642B"><circle cx="62" cy="112" r="4"/><circle cx="80" cy="122" r="4"/><circle cx="126" cy="104" r="4"/><circle cx="138" cy="118" r="4"/><circle cx="184" cy="118" r="4"/><circle cx="198" cy="132" r="4"/></g>
+            </g>
+          </svg>
+        </div>
+        <div class="chap-body">
+          <div class="meta"><span>Chapter one</span><span>18 pages</span></div>
+          <h3>The Orchard Rows</h3>
+          <p>Wren learns to fold. The apple rows have been shuffled so the harvest cart cannot reach the press, and every tree remembers where it used to stand.</p>
+        </div>
+      </article>
+      <article class="chap">
+        <div class="scene" aria-hidden="true">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <rect width="320" height="200" fill="#DCE6EA"/>
+            <path filter="url(#brush)" fill="url(#sea)" d="M-5 110C60 100 120 120 180 110S280 100 325 115V205H-5z"/>
+            <g fill="none" stroke="#F3ECDF" stroke-width="3" stroke-linecap="round" opacity=".7"><path d="M40 150c10-6 20-6 30 0M150 170c10-6 20-6 30 0M230 140c10-6 20-6 30 0"/></g>
+            <g filter="url(#brush-soft)">
+              <path d="M236 40l14 0 6 80h-26z" fill="#F3ECDF"/><rect x="238" y="36" width="10" height="10" fill="#E9C46A"/><path d="M226 120h34" stroke="#B8623A" stroke-width="6"/>
+              <path d="M60 128c10-8 60-8 70 0l-8 14H68z" fill="#B8623A"/><rect x="92" y="96" width="5" height="34" fill="#2E2440"/><path d="M97 98l26 16-26 6z" fill="#F3ECDF"/>
+            </g>
+          </svg>
+        </div>
+        <div class="chap-body">
+          <div class="meta"><span>Chapter two</span><span>22 pages</span></div>
+          <h3>Tidewell Harbour</h3>
+          <p>The sea page has slid over the town. Turn the harbour so the tide runs back out, and find where the ferryman's boat has been folded away.</p>
+        </div>
+      </article>
+      <article class="chap">
+        <div class="scene" aria-hidden="true">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <rect width="320" height="200" fill="#E4D6E4"/>
+            <g filter="url(#brush-soft)" fill="#7A5F8F">
+              <path d="M40 200V70l16-30 16 30v130z"/><path d="M110 200V50l14-26 14 26v150z"/><path d="M200 200V80l18-34 18 34v120z"/><path d="M270 200V60l12-24 12 24v140z"/>
+            </g>
+            <g filter="url(#brush-soft)" fill="#4A3A5E"><path d="M72 200V100l12-24 12 24v100z"/><path d="M160 200V110l10-20 10 20v90z"/></g>
+            <path filter="url(#brush)" fill="#4A3A5E" d="M-5 175C80 160 200 165 325 178V205H-5z"/>
+            <circle cx="150" cy="160" r="30" fill="url(#lamp)"/><rect x="146" y="140" width="10" height="14" rx="3" fill="#E9C46A"/>
+          </svg>
+        </div>
+        <div class="chap-body">
+          <div class="meta"><span>Chapter three</span><span>26 pages</span></div>
+          <h3>The Paper Woods</h3>
+          <p>Stitching arrives. The wood is a stack of pages layered too deep to see through, and the woodcutter's daughter is somewhere in the middle of it.</p>
+        </div>
+      </article>
+      <article class="chap">
+        <div class="scene" aria-hidden="true">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <rect width="320" height="200" fill="#F1DFC4"/>
+            <path filter="url(#brush)" fill="url(#rust)" d="M-5 140C60 120 120 130 180 125S280 110 325 130V205H-5z"/>
+            <g filter="url(#brush-soft)">
+              <rect x="130" y="40" width="60" height="150" fill="#F3ECDF"/><path d="M124 40l36-24 36 24z" fill="#B8623A"/>
+              <circle cx="160" cy="84" r="22" fill="#F3ECDF" stroke="#2E2440" stroke-width="3"/>
+              <path d="M160 84V68M160 84l11 6" stroke="#2E2440" stroke-width="3" stroke-linecap="round"/>
+              <rect x="152" y="150" width="16" height="24" rx="3" fill="#E9C46A"/>
+            </g>
+            <g fill="none" stroke="#2E2440" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="M40 60c5-5 10-5 15 0M55 60c5-5 10-5 15 0"/></g>
+          </svg>
+        </div>
+        <div class="chap-body">
+          <div class="meta"><span>Chapter four</span><span>24 pages</span></div>
+          <h3>The Clocktower</h3>
+          <p>Pages from different hours have been bound together. Fold the tower so that noon sits beside noon, and the bell can finally strike the right day.</p>
+        </div>
+      </article>
+      <article class="chap">
+        <div class="scene" aria-hidden="true">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <rect width="320" height="200" fill="url(#night)"/>
+            <g fill="#F3ECDF" opacity=".85"><circle cx="40" cy="30" r="2"/><circle cx="90" cy="60" r="1.5"/><circle cx="150" cy="24" r="2"/><circle cx="210" cy="50" r="1.5"/><circle cx="280" cy="30" r="2"/><circle cx="250" cy="90" r="1.5"/></g>
+            <circle cx="230" cy="70" r="50" fill="#E9C46A" opacity=".25" filter="url(#glow)"/><circle cx="230" cy="70" r="26" fill="#F1D385" filter="url(#brush-soft)"/>
+            <path filter="url(#brush)" fill="url(#plum)" d="M-5 150C60 130 140 125 200 140S280 165 325 150V205H-5z"/>
+            <g filter="url(#brush-soft)"><path d="M40 170l20-18 20 18v30H40z" fill="#23203A"/><path d="M120 178l16-14 16 14v22h-32z" fill="#23203A"/><path d="M250 172l22-20 22 20v28h-44z" fill="#23203A"/>
+              <g fill="#E9C46A"><rect x="55" y="180" width="8" height="10" rx="2"/><rect x="132" y="186" width="7" height="9" rx="2"/><rect x="266" y="184" width="8" height="10" rx="2"/></g></g>
+          </svg>
+        </div>
+        <div class="chap-body">
+          <div class="meta"><span>Chapter five</span><span>22 pages</span></div>
+          <h3>The Long Night</h3>
+          <p>Every district at once. The whole book is open on the table and the binding has to be sewn back before the lanterns burn down.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 4. painted by hand -->
+  <section class="craft" id="craft">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="meta">Painted by hand</p>
+        <h2>Gouache, scanned, and not a pixel smoothed over</h2>
+      </div>
+      <div class="bento">
+        <article class="tile tile-lead">
+          <h3>Every page in the game is a real sheet of paper that sat on Ida's desk.</h3>
+          <p>We paint each district at twice the size it appears on screen, scan it on a flatbed that has seen better days, and cut the pages out by hand so the edges keep their fibres. When you fold a page in Pennyfold, the crease you see is a photographed crease from the same sheet.</p>
+        </article>
+        <article class="tile">
+          <p class="num">1,860 <small>painted tiles</small></p>
+          <p>Hills, roofs, tide lines and the backs of pages, each painted once and never mirrored.</p>
+        </article>
+        <article class="tile">
+          <p class="num">41 <small>minutes of score</small></p>
+          <p>Harp, clarinet and a slightly out-of-tune upright piano, recorded in June's front room.</p>
+        </article>
+        <article class="tile tile-wide">
+          <div>
+            <h3>Eleven pigments, no more</h3>
+            <p>The whole town is mixed from one small tin. That is why the night in chapter five still looks like the noon of chapter one.</p>
+          </div>
+          <div class="pigments" aria-label="The eleven pigments">
+            <i style="background:#F3ECDF;--r:3deg"></i><i style="background:#E9C46A;--r:-5deg"></i><i style="background:#E0A25C;--r:8deg"></i><i style="background:#D9642B;--r:-3deg"></i><i style="background:#B8623A;--r:6deg"></i><i style="background:#9DB98A;--r:-7deg"></i><i style="background:#6F8F5A;--r:4deg"></i><i style="background:#4F6E41;--r:-2deg"></i><i style="background:#8FB3C9;--r:5deg"></i><i style="background:#B9A6CF;--r:-6deg"></i><i style="background:#2E2440;--r:2deg"></i>
+          </div>
+        </article>
+        <article class="tile">
+          <p class="num">0 <small>timers</small></p>
+          <p>Nothing counts down and nothing resets. Put the controller down for a month and Marrowby waits.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. the studio -->
+  <section class="studio" id="studio">
+    <div class="wrap">
+      <div class="studio-copy">
+        <div class="section-head">
+          <p class="meta">The studio</p>
+          <h2>Teacup Pines is three people in a room above a bakery</h2>
+        </div>
+        <p class="lead">We are a small studio in Bristol, England. We started in 2021 with a shared laptop and a rule that nothing goes in the game unless one of us painted, wrote or played it first.</p>
+        <p>Pennyfold is our second game and the first one big enough to need a table. It has taken three years, two flatbed scanners and roughly four hundred cups of tea. We are publishing it ourselves, which means the release date on this page is ours to keep.</p>
+        <div class="prev-game">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 34 34"><circle cx="17" cy="19" r="10" fill="#2E2440"/><circle cx="13" cy="17" r="2" fill="#E9C46A"/><circle cx="21" cy="17" r="2" fill="#E9C46A"/><path d="M8 10c3-6 15-6 18 0" fill="none" stroke="#E9C46A" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <strong>Sootling (2022)</strong>
+            <p>A ninety-minute game about a chimney spirit finding its way home. Free on itch, still played more than we expected.</p>
+          </div>
+        </div>
+      </div>
+      <div class="people">
+        <div class="person">
+          <div class="avatar" style="background:linear-gradient(150deg,#E9C46A,#D9642B)"></div>
+          <div><h3>Ida Halvorsen</h3><p>Art and direction. Paints every page, names every cat in Marrowby, refuses to use a ruler.</p></div>
+        </div>
+        <div class="person">
+          <div class="avatar" style="background:linear-gradient(150deg,#9DB98A,#4F6E41)"></div>
+          <div><h3>Tomas Reyes</h3><p>Code and puzzle design. Wrote the paper simulation twice, then a third time so it would run on Switch.</p></div>
+        </div>
+        <div class="person">
+          <div class="avatar" style="background:linear-gradient(150deg,#B9A6CF,#4A3A5E)"></div>
+          <div><h3>June Okafor</h3><p>Music and sound. Recorded the tide with a microphone in a bucket. It worked.</p></div>
+        </div>
+        <div class="person">
+          <div class="avatar" style="background:linear-gradient(150deg,#8FB3C9,#2E2440)"></div>
+          <div><h3>Biscuit</h3><p>Studio dog. Responsible for the sound the lantern makes when you set it down.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. wishlist band -->
+  <section class="wishlist" id="wishlist">
+    <div class="wrap">
+      <div class="band">
+        <div>
+          <p class="meta">Wishlist now</p>
+          <h2>Marrowby opens on 12 March 2027</h2>
+          <p class="lead">A wishlist is the single thing that helps a small studio most on launch day. If Pennyfold looks like your kind of evening, add it and we will send one email when it is out.</p>
+          <div class="countdown" aria-live="polite">
+            <div><b id="cd-days">0</b><span>days</span></div>
+            <div><b id="cd-weeks">0</b><span>weeks</span></div>
+            <div><b>5</b><span>chapters</span></div>
+          </div>
+          <div class="hero-ctas">
+            <a class="btn btn-fill" href="#wishlist">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/></svg>
+              Wishlist on Steam
+            </a>
+            <a class="btn btn-paper" href="#wishlist">Nintendo Switch wishlist</a>
+          </div>
+        </div>
+        <div class="signup" id="signup">
+          <h3>Or leave your address with the lamplighter</h3>
+          <p>One letter on release day, one when the demo is ready, and nothing else. We are three people; we do not have time to spam you.</p>
+          <form id="signup-form" novalidate>
+            <label for="email" class="meta" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>
+            <input id="email" type="email" name="email" placeholder="you@somewhere.quiet" required>
+            <button class="btn btn-fill" type="submit">Keep me posted</button>
+          </form>
+          <p class="ok" id="signup-ok">Noted. Wren has written you down in the ledger.</p>
+          <p class="fine">Demo planned for autumn 2026 on Steam. Press and creator keys available on request.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="press">
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top">
+          <svg viewBox="0 0 34 34" aria-hidden="true">
+            <path d="M5 6h20l4 4v18H5z" fill="#E9C46A"/>
+            <path d="M25 6v4h4z" fill="#D9642B"/>
+            <path d="M5 6h20l4 4v18H5z" fill="none" stroke="#2E2440" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M11 22c3-6 9-6 12 0" fill="none" stroke="#2E2440" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="17" cy="14" r="2.4" fill="#2E2440"/>
+          </svg>
+          Pennyfold
+        </a>
+        <p>A hand-painted puzzle game by Teacup Pines. Releasing 12 March 2027 on Steam for Windows and macOS, and on Nintendo Switch.</p>
+      </div>
+      <div>
+        <h4>The game</h4>
+        <ul>
+          <li><a href="#story">The story</a></li>
+          <li><a href="#play">How it plays</a></li>
+          <li><a href="#chapters">Chapters</a></li>
+          <li><a href="#craft">Painted by hand</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="#studio">About Teacup Pines</a></li>
+          <li><a href="#studio">Sootling (2022)</a></li>
+          <li><a href="#wishlist">Newsletter</a></li>
+          <li><a href="#press">Press kit and keys</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Elsewhere</h4>
+        <ul>
+          <li><a href="#top">Steam page</a></li>
+          <li><a href="#top">Nintendo eShop</a></li>
+          <li><a href="#top">Bluesky</a></li>
+          <li><a href="#top">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Copyright 2026 Teacup Pines Ltd. Marrowby and its residents are fictional; the tea was real.</span>
+      <span>Made in Bristol. Privacy, accessibility and contact: hello at teacuppines dot studio</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // countdown to release
+  var release = new Date(2027, 2, 12);
+  var now = new Date();
+  var days = Math.max(0, Math.ceil((release - now) / 86400000));
+  var d = document.getElementById('cd-days');
+  var w = document.getElementById('cd-weeks');
+  if (d) d.textContent = days.toLocaleString();
+  if (w) w.textContent = Math.floor(days / 7);
+
+  // chapter rail arrows
+  var rail = document.getElementById('rail');
+  document.querySelectorAll('.chapter-nav button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = rail.querySelector('.chap');
+      var step = card ? card.getBoundingClientRect().width + 20 : 320;
+      rail.scrollBy({left: step * Number(btn.dataset.dir), behavior: 'smooth'});
+    });
+  });
+
+  // signup form (no network: this page is a static preview)
+  var form = document.getElementById('signup-form');
+  if (form) form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var input = document.getElementById('email');
+    if (!input.value || input.value.indexOf('@') < 1) { input.focus(); return; }
+    document.getElementById('signup').classList.add('sent');
+  });
+})();
+</script>
+</body>
+</html>

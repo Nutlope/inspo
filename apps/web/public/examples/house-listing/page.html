@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Larch House, Wivenhoe · Sedge &amp; Hollis</title>
+<meta name="description" content="Larch House: a four-bedroom timber house above the Colne estuary, designed by Marta Ilves Architects and finished in 2019. For sale through Sedge and Hollis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, used everywhere below */
+  :root{
+    --t-1: 0.8125rem;                         /* meta, captions, dimensions */
+    --t-2: 1rem;                              /* body */
+    --t-3: 1.25rem;                           /* lead paragraphs, facts */
+    --t-4: clamp(1.5rem, 2.4vw, 2rem);        /* section headings */
+    --t-5: clamp(2rem, 3.6vw, 2.875rem);      /* display */
+
+    --paper:   #f5f2ec;
+    --paper-2: #ebe6dc;
+    --ink:     #1f1c18;
+    --muted:   #6e675d;
+    --rule:    #d8d1c4;
+    --accent:  #a45c1e;
+    --sage:    #cfd6c2;
+
+    --display: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --body: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+
+    --gap: clamp(72px, 10vw, 128px);
+    --measure: 62ch;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--t-2);
+    line-height:1.55;
+    font-feature-settings:"tnum" 1;
+  }
+  a{color:inherit;text-decoration:none}
+  p{margin:0}
+  h1,h2,h3{margin:0;font-weight:300;font-family:var(--display);letter-spacing:-0.01em}
+  svg{display:block}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(20px, 4vw, 48px)}
+
+  .meta{
+    font-size:var(--t-1);
+    color:var(--muted);
+    letter-spacing:0.01em;
+  }
+  .meta strong{color:var(--ink);font-weight:500}
+
+  /* Fold */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-block:20px;
+    border-bottom:1px solid var(--rule);
+  }
+  .wordmark{font-family:var(--display);font-size:var(--t-3);font-weight:400;letter-spacing:-0.01em}
+  .wordmark span{color:var(--muted);font-style:italic;font-weight:300}
+  .nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:var(--t-1)}
+  .nav ul a{color:var(--muted);transition:color .2s}
+  .nav ul a:hover{color:var(--ink)}
+  .pill{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:10px 18px;border-radius:999px;
+    background:var(--ink);color:var(--paper);
+    font-size:var(--t-1);font-weight:500;
+    transition:background .2s;
+  }
+  .pill:hover{background:var(--accent)}
+  .pill.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+  .pill.ghost:hover{border-color:var(--accent);color:var(--accent);background:transparent}
+
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:20px 24px}
+  .hero-grid{
+    display:grid;grid-template-columns:repeat(12, 1fr);gap:24px 40px;align-items:end;
+  }
+  .hero-copy{grid-column:1 / span 8}
+  .hero-aside{
+    grid-column:9 / span 4;
+    border-left:1px solid var(--rule);padding-left:28px;
+    display:grid;gap:14px;
+  }
+  .hero-aside div{display:flex;justify-content:space-between;gap:16px;align-items:baseline;font-size:var(--t-1)}
+  .hero-aside dt{color:var(--muted)}
+  .hero-aside dd{margin:0;font-weight:500}
+  .hero h1{font-size:var(--t-5);line-height:1.08;max-width:28ch;text-wrap:balance;margin-top:12px}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero .lead{font-size:var(--t-3);color:var(--muted);max-width:52ch;margin-top:16px;line-height:1.4}
+  .hero .actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:18px}
+  .hero .actions .link{font-size:var(--t-1);color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:2px;transition:color .2s,border-color .2s}
+  .hero .actions .link:hover{color:var(--accent);border-color:var(--accent)}
+
+  .strip{margin:22px 0 0}
+  .strip svg{width:100%;height:auto}
+  .strip .cap{display:flex;justify-content:space-between;gap:16px;margin-top:10px;font-size:var(--t-1);color:var(--muted)}
+  .strip .cap strong{color:var(--ink);font-weight:500}
+
+  /* Sections */
+  section{padding-block:var(--gap)}
+  section + section{border-top:1px solid var(--rule)}
+  .head{
+    display:grid;grid-template-columns:repeat(12, 1fr);gap:16px 40px;align-items:start;
+    margin-bottom:clamp(36px, 5vw, 56px);
+  }
+  .head .meta{grid-column:1 / span 3;padding-top:.5em}
+  .head h2{grid-column:4 / span 8;font-size:var(--t-4);line-height:1.15;text-wrap:balance;max-width:24ch}
+  .head h2 em{font-style:italic;color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(12, 1fr);gap:32px 40px}
+  .prose{max-width:var(--measure);display:grid;gap:1em}
+  .prose p{color:var(--ink)}
+  .prose .muted{color:var(--muted)}
+
+  /* 01 The house: facts + section drawing */
+  .facts-col{grid-column:1 / span 5}
+  .facts{margin:0}
+  .facts div{
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:baseline;
+    padding-block:12px;border-top:1px solid var(--rule);
+  }
+  .facts div:last-child{border-bottom:1px solid var(--rule)}
+  .facts dt{color:var(--muted);font-size:var(--t-1)}
+  .facts dd{margin:0;font-family:var(--display);font-size:var(--t-3);font-weight:400;line-height:1.2}
+  .facts dd small{font-family:var(--body);font-size:var(--t-1);color:var(--muted);margin-left:6px}
+  .units{display:flex;gap:6px;margin-top:16px;font-size:var(--t-1);color:var(--muted);align-items:center}
+  .units button{padding:5px 12px;border-radius:999px;border:1px solid var(--rule);font-size:var(--t-1);color:var(--muted)}
+  .units button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .section-drawing{grid-column:6 / span 7}
+  .section-drawing svg{width:100%;height:auto}
+  .drawing-cap{margin-top:10px;font-size:var(--t-1);color:var(--muted)}
+  .house-prose{grid-column:1 / span 12;margin-top:16px}
+
+  /* 02 Plans */
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .plan{background:var(--paper-2);padding:24px;border:1px solid var(--rule)}
+  .plan svg{width:100%;height:auto}
+  .plan .ttl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;font-size:var(--t-1);color:var(--muted)}
+  .plan .ttl strong{color:var(--ink);font-weight:500;font-size:var(--t-2)}
+  .schedule{margin-top:40px;display:grid;grid-template-columns:repeat(12,1fr);gap:24px 40px}
+  .schedule .meta{grid-column:1 / span 3}
+  .schedule table{grid-column:4 / span 9;border-collapse:collapse;width:100%;font-size:var(--t-1)}
+  .schedule th{text-align:left;font-weight:500;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--ink)}
+  .schedule td{padding:8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  .schedule td:nth-child(2),.schedule th:nth-child(2),.schedule td:nth-child(3),.schedule th:nth-child(3){text-align:right;white-space:nowrap}
+  .schedule tr.total td{font-weight:500;border-bottom:0;border-top:1px solid var(--ink)}
+
+  /* 03 Materials */
+  .materials{display:grid;grid-template-columns:repeat(3, 1fr);gap:40px 32px}
+  .mat .sw{aspect-ratio:4 / 3;border:1px solid var(--rule);position:relative;overflow:hidden}
+  .mat h3{font-size:var(--t-3);margin-top:14px;font-weight:400}
+  .mat p{color:var(--muted);font-size:var(--t-1);margin-top:6px;max-width:34ch}
+  .sw-larch{
+    background:
+      repeating-linear-gradient(90deg, #c9ab86 0 9px, #b9976f 9px 11px, #d4b892 11px 20px, #b08c66 20px 22px);
+  }
+  .sw-larch::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(0,0,0,.08))}
+  .sw-zinc{
+    background:
+      repeating-linear-gradient(90deg, transparent 0 62px, rgba(0,0,0,.28) 62px 64px),
+      linear-gradient(180deg, #9aa0a3, #7c8386 60%, #8d9497);
+  }
+  .sw-lime{
+    background:
+      radial-gradient(120% 90% at 20% 10%, rgba(255,255,255,.55), transparent 55%),
+      radial-gradient(80% 70% at 80% 90%, rgba(120,100,80,.16), transparent 60%),
+      #e8e1d3;
+  }
+  .sw-concrete{
+    background:
+      radial-gradient(circle at 20% 30%, rgba(0,0,0,.08) 0 1px, transparent 2px),
+      radial-gradient(circle at 70% 60%, rgba(0,0,0,.07) 0 1px, transparent 2px),
+      radial-gradient(circle at 45% 80%, rgba(255,255,255,.35) 0 1px, transparent 2px),
+      linear-gradient(160deg, #c8c4bb, #b3afa6 55%, #c1bdb4);
+    background-size: 23px 19px, 31px 27px, 17px 29px, 100% 100%;
+  }
+  .sw-fir{
+    background:
+      repeating-linear-gradient(94deg, #c98a52 0 3px, #b9773f 3px 5px, #d09a66 5px 14px, #c07f48 14px 16px),
+      #c98a52;
+  }
+  .sw-fir::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,255,255,.12), transparent 40%, rgba(0,0,0,.1))}
+  .sw-glass{
+    background:
+      linear-gradient(115deg, rgba(255,255,255,.55) 0 18%, transparent 18.5% 40%, rgba(255,255,255,.3) 40.5% 46%, transparent 46.5%),
+      linear-gradient(180deg, #d6ddcc, #b9c4b2);
+  }
+  .sw-glass::after{content:"";position:absolute;inset:0;border:10px solid rgba(31,28,24,.85);box-sizing:border-box}
+
+  /* 04 Energy */
+  .stats{display:grid;grid-template-columns:repeat(4, 1fr);gap:40px 32px}
+  .stat{border-top:1px solid var(--ink);padding-top:14px}
+  .stat .n{font-family:var(--display);font-size:var(--t-5);line-height:1;font-weight:300;letter-spacing:-0.02em}
+  .stat .n small{font-size:var(--t-3);color:var(--muted);margin-left:6px;font-style:italic}
+  .stat .l{margin-top:10px;font-size:var(--t-1);color:var(--muted);max-width:26ch}
+  .band{margin-top:48px;display:grid;grid-template-columns:repeat(12,1fr);gap:24px 40px;align-items:center}
+  .band .meta{grid-column:1 / span 3}
+  .band .bars{grid-column:4 / span 9;display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;padding-bottom:28px}
+  .band .bar{height:10px;background:var(--rule);border-radius:999px;position:relative}
+  .band .bar span{position:absolute;left:0;top:16px;font-size:var(--t-1);color:var(--muted)}
+  .band .bar.on{background:var(--accent);height:14px}
+  .band .bar.on span{color:var(--ink);font-weight:500}
+
+  /* 05 Location */
+  .loc-copy{grid-column:1 / span 5}
+  .loc-map{grid-column:6 / span 7;border:1px solid var(--rule);background:var(--paper-2)}
+  .loc-map svg{width:100%;height:auto}
+  .dist{list-style:none;margin:28px 0 0;padding:0;font-size:var(--t-1)}
+  .dist li{display:flex;justify-content:space-between;gap:16px;padding-block:10px;border-top:1px solid var(--rule)}
+  .dist li:last-child{border-bottom:1px solid var(--rule)}
+  .dist li span:last-child{color:var(--muted);white-space:nowrap}
+
+  /* 06 Viewings */
+  .viewing{background:var(--paper-2);border:1px solid var(--rule);padding:clamp(28px,4vw,48px);display:grid;grid-template-columns:repeat(12,1fr);gap:32px 40px;align-items:start}
+  .viewing .big{grid-column:1 / span 7;font-family:var(--display);font-size:var(--t-4);font-weight:300;line-height:1.2;text-wrap:balance}
+  .viewing .big em{font-style:italic;color:var(--accent)}
+  .viewing .who{grid-column:9 / span 4;font-size:var(--t-1);display:grid;gap:14px}
+  .viewing .who p strong{display:block;color:var(--ink);font-weight:500;font-size:var(--t-2)}
+  .viewing .who p{color:var(--muted)}
+  .viewing .cta{grid-column:1 / span 12;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;padding-top:8px}
+  .viewing .cta .meta{margin-left:auto}
+
+  /* Footer */
+  footer{border-top:1px solid var(--rule);padding-block:64px 40px}
+  .foot{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 40px}
+  .foot p{font-size:var(--t-1);line-height:1.6;margin-top:10px}
+  .foot p a{border-bottom:1px solid var(--rule);transition:color .2s}
+  .foot p a:hover{color:var(--accent)}
+  .foot .muted{color:var(--muted)}
+  .legal{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:var(--t-1);color:var(--muted)}
+
+  /* Drawing type */
+  .dr text{font-family:var(--body);font-size:11px;fill:var(--ink)}
+  .dr text.dim{fill:var(--muted);font-size:10px}
+  .dr text.room{font-family:var(--display);font-size:13px}
+  .dr text.note{fill:var(--muted);font-size:10.5px}
+
+  @media (max-width: 900px){
+    .nav ul{display:none}
+    .hero-copy,.hero-aside{grid-column:1 / span 12}
+    .hero-aside{border-left:0;padding-left:0;border-top:1px solid var(--rule);padding-top:16px;grid-template-columns:1fr 1fr}
+    .head .meta,.head h2{grid-column:1 / span 12}
+    .facts-col,.section-drawing,.loc-copy,.loc-map{grid-column:1 / span 12}
+    .plans{grid-template-columns:1fr}
+    .schedule .meta,.schedule table{grid-column:1 / span 12}
+    .materials{grid-template-columns:1fr 1fr}
+    .stats{grid-template-columns:1fr 1fr}
+    .band .meta,.band .bars{grid-column:1 / span 12}
+    .viewing .big,.viewing .who{grid-column:1 / span 12}
+    .foot{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 560px){
+    .materials,.stats,.foot,.hero-aside{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap nav">
+    <a class="wordmark" href="#top">Sedge &amp; Hollis <span>· Larch House</span></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#house">The house</a></li>
+        <li><a href="#plans">Plans</a></li>
+        <li><a href="#materials">Materials</a></li>
+        <li><a href="#energy">Energy</a></li>
+        <li><a href="#location">Location</a></li>
+        <li><a href="#viewings">Viewings</a></li>
+      </ul>
+    </nav>
+    <a class="pill" href="#viewings">Arrange a viewing <span aria-hidden="true">→</span></a>
+  </header>
+
+  <main class="hero wrap" id="top">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="meta"><strong>For sale</strong> · Wivenhoe, Essex · Freehold · Sole agent</p>
+        <h1>A four-bedroom larch house above the Colne, <em>designed by Marta Ilves Architects</em>.</h1>
+        <p class="lead">Asking price £1,450,000. Finished in 2019, one owner from new, sold with the full drawing set and a garden studio.</p>
+        <div class="actions">
+          <a class="pill" href="#viewings">Arrange a viewing <span aria-hidden="true">→</span></a>
+          <a class="link" href="#plans">Read the floorplan</a>
+        </div>
+      </div>
+      <dl class="hero-aside">
+        <div><dt>Floor area</dt><dd>214 sq m · 2,303 sq ft</dd></div>
+        <div><dt>Bedrooms</dt><dd>4, two bathrooms</dd></div>
+        <div><dt>Plot</dt><dd>0.38 acre · 1,540 sq m</dd></div>
+        <div><dt>Built</dt><dd>2019, Marta Ilves Architects</dd></div>
+        <div><dt>Energy</dt><dd>Band B, 85</dd></div>
+      </dl>
+    </div>
+
+    <figure class="strip">
+      <svg class="dr" viewBox="0 0 1200 280" role="img" aria-labelledby="elev-t">
+        <title id="elev-t">South elevation of Larch House from the garden, with the garden studio to the right</title>
+        <defs>
+          <pattern id="boards" width="5" height="10" patternUnits="userSpaceOnUse">
+            <rect width="5" height="10" fill="#e6dfd0"/>
+            <line x1="0.5" y1="0" x2="0.5" y2="10" stroke="#8f8574" stroke-width="0.7"/>
+          </pattern>
+          <pattern id="boards2" width="5" height="10" patternUnits="userSpaceOnUse">
+            <rect width="5" height="10" fill="#e0d8c6"/>
+            <line x1="0.5" y1="0" x2="0.5" y2="10" stroke="#8f8574" stroke-width="0.7"/>
+          </pattern>
+          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#1f1c18" stroke-width="0.8"/>
+          </pattern>
+        </defs>
+
+        <!-- ground and lawn -->
+        <rect x="0" y="250" width="1200" height="30" fill="#e3e6d6"/>
+        <line x1="0" y1="250" x2="1200" y2="250" stroke="#1f1c18" stroke-width="1.4"/>
+
+        <!-- estuary hint far left -->
+        <path d="M0 246 C40 244 70 249 110 246 S190 244 240 247" fill="none" stroke="#aeb9ae" stroke-width="1.2"/>
+        <path d="M0 240 C30 238 60 242 90 240 S150 238 180 241" fill="none" stroke="#aeb9ae" stroke-width="1"/>
+
+        <!-- trees -->
+        <g>
+          <line x1="205" y1="250" x2="205" y2="150" stroke="#5c5346" stroke-width="3"/>
+          <ellipse cx="205" cy="120" rx="46" ry="42" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+          <ellipse cx="178" cy="146" rx="26" ry="22" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+          <ellipse cx="238" cy="150" rx="24" ry="20" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+        </g>
+        <g>
+          <line x1="1135" y1="250" x2="1135" y2="170" stroke="#5c5346" stroke-width="2.5"/>
+          <ellipse cx="1135" cy="148" rx="38" ry="34" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+          <ellipse cx="1108" cy="170" rx="20" ry="17" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+        </g>
+
+        <!-- house body: mono-pitch, high to the living end -->
+        <polygon points="380,34 740,82 740,250 380,250" fill="url(#boards)" stroke="#1f1c18" stroke-width="1.6"/>
+        <!-- roof fascia (zinc) -->
+        <polygon points="372,28 748,76 748,84 372,36" fill="#8d9497" stroke="#1f1c18" stroke-width="1.2"/>
+        <!-- plinth -->
+        <rect x="380" y="238" width="360" height="12" fill="#c1bdb4" stroke="#1f1c18" stroke-width="1"/>
+
+        <!-- living glazing, double height -->
+        <rect x="400" y="62" width="180" height="176" fill="#cfd6c2" stroke="#1f1c18" stroke-width="1.6"/>
+        <line x1="460" y1="62" x2="460" y2="238" stroke="#1f1c18" stroke-width="1.6"/>
+        <line x1="520" y1="62" x2="520" y2="238" stroke="#1f1c18" stroke-width="1.6"/>
+        <line x1="400" y1="150" x2="580" y2="150" stroke="#1f1c18" stroke-width="1.6"/>
+        <path d="M404 66 L456 66 L404 146 Z" fill="rgba(255,255,255,.35)"/>
+        <path d="M524 154 L576 154 L524 234 Z" fill="rgba(255,255,255,.3)"/>
+
+        <!-- bedroom window, first floor -->
+        <rect x="612" y="104" width="96" height="40" fill="#cfd6c2" stroke="#1f1c18" stroke-width="1.4"/>
+        <line x1="660" y1="104" x2="660" y2="144" stroke="#1f1c18" stroke-width="1.2"/>
+        <!-- kitchen sliding doors -->
+        <rect x="600" y="170" width="120" height="68" fill="#cfd6c2" stroke="#1f1c18" stroke-width="1.4"/>
+        <line x1="660" y1="170" x2="660" y2="238" stroke="#1f1c18" stroke-width="1.2"/>
+        <path d="M604 174 L656 174 L604 234 Z" fill="rgba(255,255,255,.3)"/>
+
+        <!-- heat pump unit -->
+        <rect x="764" y="224" width="40" height="26" fill="#d9d5cc" stroke="#1f1c18" stroke-width="1"/>
+        <circle cx="784" cy="237" r="8" fill="none" stroke="#1f1c18" stroke-width="1"/>
+
+        <!-- hedge -->
+        <path d="M828 250 L828 224 Q874 206 920 224 L920 250 Z" fill="#cfd6c2" stroke="#7d8a70" stroke-width="1"/>
+
+        <!-- person for scale, 1.7 m -->
+        <circle cx="864" cy="204" r="4.5" fill="none" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="864" y1="209" x2="864" y2="234" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="864" y1="234" x2="858" y2="250" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="864" y1="234" x2="870" y2="250" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="864" y1="216" x2="855" y2="228" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="864" y1="216" x2="873" y2="228" stroke="#1f1c18" stroke-width="1.2"/>
+
+        <!-- garden studio -->
+        <rect x="944" y="156" width="120" height="94" fill="url(#boards2)" stroke="#1f1c18" stroke-width="1.4"/>
+        <rect x="938" y="150" width="132" height="8" fill="#8d9497" stroke="#1f1c18" stroke-width="1"/>
+        <rect x="958" y="178" width="92" height="60" fill="#cfd6c2" stroke="#1f1c18" stroke-width="1.2"/>
+        <line x1="1004" y1="178" x2="1004" y2="238" stroke="#1f1c18" stroke-width="1"/>
+
+        <!-- dimension line under the house -->
+        <line x1="380" y1="266" x2="740" y2="266" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="380" y1="261" x2="380" y2="271" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="740" y1="261" x2="740" y2="271" stroke="#6e675d" stroke-width="0.8"/>
+        <text class="dim" x="560" y="278" text-anchor="middle">12.0 m</text>
+        <line x1="944" y1="266" x2="1064" y2="266" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="944" y1="261" x2="944" y2="271" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="1064" y1="261" x2="1064" y2="271" stroke="#6e675d" stroke-width="0.8"/>
+        <text class="dim" x="1004" y="278" text-anchor="middle">4.0 m</text>
+
+        <!-- ridge height -->
+        <line x1="352" y1="34" x2="352" y2="250" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="347" y1="34" x2="357" y2="34" stroke="#6e675d" stroke-width="0.8"/>
+        <line x1="347" y1="250" x2="357" y2="250" stroke="#6e675d" stroke-width="0.8"/>
+        <text class="dim" x="340" y="146" text-anchor="end">7.2 m</text>
+
+        <text class="note" x="8" y="16">South elevation, from the garden. Not to scale; dimensions as marked.</text>
+      </svg>
+      <figcaption class="cap">
+        <span><strong>South elevation</strong> · larch rainscreen, standing-seam zinc roof, double-height glazing to the living room</span>
+        <span>Drawn from the architect's construction issue, sheet 210</span>
+      </figcaption>
+    </figure>
+  </main>
+</div>
+
+<!-- 01 The house -->
+<section id="house">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">01 · The house</p>
+      <h2>A long timber box on the ridge, opened to the south and the estuary, <em>closed to the lane</em>.</h2>
+    </div>
+    <div class="grid">
+      <div class="facts-col">
+      <dl class="facts">
+        <div><dt>Asking price</dt><dd>£1,450,000 <small>freehold</small></dd></div>
+        <div><dt>Floor area</dt><dd><span class="u" data-metric="214 sq m" data-imperial="2,303 sq ft">214 sq m</span> <small>including the studio</small></dd></div>
+        <div><dt>Bedrooms</dt><dd>4 <small>two bathrooms, cloakroom</small></dd></div>
+        <div><dt>Plot</dt><dd><span class="u" data-metric="1,540 sq m" data-imperial="0.38 acre">1,540 sq m</span> <small>south-facing, sloping</small></dd></div>
+        <div><dt>Year built</dt><dd>2019 <small>completed May</small></dd></div>
+        <div><dt>Architect</dt><dd>Marta Ilves Architects <small>Colchester</small></dd></div>
+        <div><dt>Construction</dt><dd>Timber frame <small>on a concrete raft</small></dd></div>
+        <div><dt>Council tax</dt><dd>Band G <small>Colchester City Council</small></dd></div>
+        <div><dt>Energy rating</dt><dd>Band B, 85 <small>certificate dated 2024</small></dd></div>
+      </dl>
+      <div class="units" role="group" aria-label="Measurement units">
+        <span>Show measurements in</span>
+        <button type="button" data-units="metric" aria-pressed="true">metric</button>
+        <button type="button" data-units="imperial" aria-pressed="false">imperial</button>
+      </div>
+      </div>
+
+      <figure class="section-drawing" style="margin:0">
+        <svg class="dr" viewBox="0 0 760 360" role="img" aria-labelledby="sec-t">
+          <title id="sec-t">Cross section through the double-height living room and the gallery</title>
+          <defs>
+            <pattern id="cut" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="6" stroke="#1f1c18" stroke-width="0.9"/>
+            </pattern>
+          </defs>
+          <!-- ground -->
+          <line x1="20" y1="310" x2="740" y2="310" stroke="#1f1c18" stroke-width="1.4"/>
+          <rect x="20" y="310" width="720" height="30" fill="#e3e6d6"/>
+          <!-- raft slab -->
+          <rect x="110" y="296" width="540" height="14" fill="url(#cut)" stroke="#1f1c18" stroke-width="1"/>
+          <!-- walls (cut) -->
+          <rect x="110" y="58" width="14" height="238" fill="url(#cut)" stroke="#1f1c18" stroke-width="1"/>
+          <rect x="636" y="112" width="14" height="184" fill="url(#cut)" stroke="#1f1c18" stroke-width="1"/>
+          <!-- roof (cut), mono pitch -->
+          <polygon points="100,52 660,106 660,118 100,64" fill="url(#cut)" stroke="#1f1c18" stroke-width="1"/>
+          <!-- first floor slab: gallery over the kitchen side -->
+          <rect x="400" y="190" width="236" height="12" fill="url(#cut)" stroke="#1f1c18" stroke-width="1"/>
+          <!-- balustrade -->
+          <line x1="402" y1="190" x2="402" y2="152" stroke="#1f1c18" stroke-width="1.6"/>
+          <line x1="402" y1="152" x2="440" y2="152" stroke="#1f1c18" stroke-width="1.6"/>
+          <line x1="416" y1="190" x2="416" y2="154" stroke="#1f1c18" stroke-width="0.8"/>
+          <line x1="430" y1="190" x2="430" y2="154" stroke="#1f1c18" stroke-width="0.8"/>
+          <!-- glazing to the left wall: full height -->
+          <rect x="124" y="80" width="6" height="216" fill="#cfd6c2" stroke="#1f1c18" stroke-width="1"/>
+          <!-- stair from ground to gallery -->
+          <polyline points="440,296 440,283 456,283 456,270 472,270 472,257 488,257 488,244 504,244 504,231 520,231 520,218 536,218 536,205 552,205 552,192" fill="none" stroke="#1f1c18" stroke-width="1.4"/>
+          <line x1="440" y1="296" x2="552" y2="192" stroke="#1f1c18" stroke-width="0.8" stroke-dasharray="2 3"/>
+          <!-- pendant -->
+          <line x1="300" y1="72" x2="300" y2="150" stroke="#1f1c18" stroke-width="0.9"/>
+          <path d="M282 150 L318 150 L310 168 L290 168 Z" fill="#f5f2ec" stroke="#1f1c18" stroke-width="1"/>
+          <!-- sofa -->
+          <rect x="170" y="266" width="120" height="30" rx="4" fill="#f5f2ec" stroke="#1f1c18" stroke-width="1.2"/>
+          <rect x="170" y="250" width="14" height="30" rx="4" fill="#f5f2ec" stroke="#1f1c18" stroke-width="1.2"/>
+          <!-- dining table under the gallery -->
+          <line x1="470" y1="270" x2="600" y2="270" stroke="#1f1c18" stroke-width="2"/>
+          <line x1="482" y1="270" x2="482" y2="296" stroke="#1f1c18" stroke-width="1.2"/>
+          <line x1="588" y1="270" x2="588" y2="296" stroke="#1f1c18" stroke-width="1.2"/>
+          <!-- person on the gallery -->
+          <circle cx="600" cy="150" r="4.5" fill="none" stroke="#1f1c18" stroke-width="1.1"/>
+          <line x1="600" y1="155" x2="600" y2="176" stroke="#1f1c18" stroke-width="1.1"/>
+          <line x1="600" y1="176" x2="595" y2="190" stroke="#1f1c18" stroke-width="1.1"/>
+          <line x1="600" y1="176" x2="605" y2="190" stroke="#1f1c18" stroke-width="1.1"/>
+          <!-- bookshelf on the gallery wall -->
+          <g stroke="#1f1c18" stroke-width="0.9" fill="none">
+            <rect x="470" y="128" width="120" height="58"/>
+            <line x1="470" y1="146" x2="590" y2="146"/>
+            <line x1="470" y1="166" x2="590" y2="166"/>
+          </g>
+          <!-- leaders and labels -->
+          <g stroke="#6e675d" stroke-width="0.8" fill="none">
+            <line x1="380" y1="60" x2="380" y2="34"/>
+            <line x1="100" y1="200" x2="60" y2="200"/>
+            <line x1="410" y1="196" x2="410" y2="226"/>
+            <line x1="656" y1="240" x2="700" y2="240"/>
+            <line x1="200" y1="296" x2="200" y2="334"/>
+          </g>
+          <text class="note" x="386" y="30">Standing-seam zinc on 400 mm of cellulose insulation</text>
+          <text class="note" x="58" y="196" text-anchor="end" transform="rotate(-90 58 196)">Triple-glazed screen, 5.9 m high</text>
+          <text class="note" x="416" y="230">Gallery and library over the kitchen</text>
+          <text class="note" x="704" y="244">Lime plaster</text>
+          <text class="note" x="206" y="338">Polished concrete floor, underfloor heating</text>
+          <text class="room" x="250" y="120">Living room</text>
+          <text class="dim" x="250" y="136">6.2 × 5.4 m, 5.9 m to the ridge</text>
+          <text class="room" x="470" y="250">Kitchen and dining</text>
+          <text class="dim" x="470" y="264">2.6 m ceiling under the gallery</text>
+        </svg>
+        <figcaption class="drawing-cap">Section A, looking east. The roof falls from 7.2 m at the living end to 5.6 m over the bedrooms.</figcaption>
+      </figure>
+
+      <div class="house-prose prose">
+        <p>Larch House sits at the top of a sloping plot on the edge of Wivenhoe, with the lane to the north and the Colne estuary opening out below the garden to the south. The plan is simple: a twelve-metre timber frame, one room deep at the living end, with every principal room facing the water. The living room is double height under the high end of the mono-pitch roof; a gallery library runs above the kitchen and looks back into it.</p>
+        <p class="muted">The house was built by the current owners over fourteen months and completed in May 2019. It is sold with the full set of Marta Ilves Architects' drawings, the structural calculations, the air-test certificate and the ten-year structural warranty, which has four years to run.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Plans -->
+<section id="plans">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">02 · Plans</p>
+      <h2>Two floors, one stair, and a void that lets the living room breathe upstairs.</h2>
+    </div>
+
+    <div class="plans">
+      <figure class="plan" style="margin:0">
+        <div class="ttl"><strong>Ground floor</strong><span>108.0 sq m · garden side, south, at the top</span></div>
+        <svg class="dr" viewBox="0 0 580 430" role="img" aria-labelledby="gf-t">
+          <title id="gf-t">Ground floor plan with room names and dimensions</title>
+          <defs>
+            <pattern id="stair" width="40" height="10" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0.5" x2="40" y2="0.5" stroke="#1f1c18" stroke-width="0.8"/>
+            </pattern>
+          </defs>
+          <!-- overall dimensions -->
+          <line x1="50" y1="22" x2="530" y2="22" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="50" y1="17" x2="50" y2="27" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="530" y1="17" x2="530" y2="27" stroke="#6e675d" stroke-width="0.8"/>
+          <text class="dim" x="290" y="14" text-anchor="middle">12.0 m</text>
+          <line x1="28" y1="40" x2="28" y2="400" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="23" y1="40" x2="33" y2="40" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="23" y1="400" x2="33" y2="400" stroke="#6e675d" stroke-width="0.8"/>
+          <text class="dim" x="18" y="224" text-anchor="middle" transform="rotate(-90 18 224)">9.0 m</text>
+
+          <!-- floor -->
+          <rect x="50" y="40" width="480" height="360" fill="#f5f2ec"/>
+          <!-- internal walls -->
+          <g stroke="#1f1c18" stroke-width="3" stroke-linecap="square">
+            <line x1="298" y1="40" x2="298" y2="256"/>
+            <line x1="50" y1="256" x2="530" y2="256"/>
+            <line x1="146" y1="256" x2="146" y2="400"/>
+            <line x1="282" y1="256" x2="282" y2="400"/>
+            <line x1="394" y1="256" x2="394" y2="400"/>
+            <line x1="458" y1="256" x2="458" y2="400"/>
+            <line x1="394" y1="320" x2="458" y2="320"/>
+          </g>
+          <!-- door openings in internal walls -->
+          <g stroke="#f5f2ec" stroke-width="5">
+            <line x1="298" y1="200" x2="298" y2="236"/>
+            <line x1="100" y1="256" x2="136" y2="256"/>
+            <line x1="200" y1="256" x2="236" y2="256"/>
+            <line x1="330" y1="256" x2="366" y2="256"/>
+            <line x1="410" y1="256" x2="446" y2="256"/>
+            <line x1="480" y1="256" x2="516" y2="256"/>
+            <line x1="394" y1="340" x2="394" y2="376"/>
+          </g>
+          <g stroke="#1f1c18" stroke-width="0.9" fill="none">
+            <path d="M298 236 L334 236 A36 36 0 0 0 298 200"/>
+            <path d="M136 256 L136 220 A36 36 0 0 0 100 256"/>
+            <path d="M236 256 L236 292 A36 36 0 0 0 200 256"/>
+            <path d="M366 256 L366 292 A36 36 0 0 0 330 256"/>
+            <path d="M446 256 L446 292 A36 36 0 0 0 410 256"/>
+            <path d="M516 256 L516 292 A36 36 0 0 0 480 256"/>
+            <path d="M394 376 L430 376 A36 36 0 0 0 394 340"/>
+          </g>
+          <!-- outer wall -->
+          <rect x="50" y="40" width="480" height="360" fill="none" stroke="#1f1c18" stroke-width="6"/>
+          <!-- glazing on the south (garden) wall: drawn over the wall -->
+          <g stroke="#cfd6c2" stroke-width="6">
+            <line x1="70" y1="40" x2="250" y2="40"/>
+            <line x1="320" y1="40" x2="440" y2="40"/>
+            <line x1="50" y1="80" x2="50" y2="200"/>
+          </g>
+          <g stroke="#1f1c18" stroke-width="0.8">
+            <line x1="70" y1="37" x2="250" y2="37"/>
+            <line x1="70" y1="43" x2="250" y2="43"/>
+            <line x1="320" y1="37" x2="440" y2="37"/>
+            <line x1="320" y1="43" x2="440" y2="43"/>
+            <line x1="47" y1="80" x2="47" y2="200"/>
+            <line x1="53" y1="80" x2="53" y2="200"/>
+          </g>
+          <!-- north wall windows -->
+          <g stroke="#cfd6c2" stroke-width="6">
+            <line x1="180" y1="400" x2="250" y2="400"/>
+            <line x1="310" y1="400" x2="350" y2="400"/>
+          </g>
+          <!-- front door on the north wall -->
+          <line x1="58" y1="400" x2="94" y2="400" stroke="#f5f2ec" stroke-width="8"/>
+          <line x1="58" y1="400" x2="58" y2="364" stroke="#1f1c18" stroke-width="1.2"/>
+          <path d="M58 364 A36 36 0 0 1 94 400" fill="none" stroke="#1f1c18" stroke-width="0.9"/>
+          <!-- stair in the hall -->
+          <rect x="104" y="268" width="36" height="120" fill="url(#stair)" stroke="#1f1c18" stroke-width="1"/>
+          <line x1="122" y1="388" x2="122" y2="272" stroke="#1f1c18" stroke-width="0.8"/>
+          <polygon points="118,278 122,270 126,278" fill="#1f1c18"/>
+          <text class="dim" x="122" y="402" text-anchor="middle">up</text>
+          <!-- kitchen island and run -->
+          <rect x="330" y="150" width="120" height="30" fill="none" stroke="#1f1c18" stroke-width="1"/>
+          <rect x="510" y="46" width="14" height="200" fill="none" stroke="#1f1c18" stroke-width="0.8"/>
+          <!-- labels -->
+          <g text-anchor="middle">
+            <text class="room" x="174" y="140">Living room</text>
+            <text class="dim" x="174" y="156">6.2 × 5.4 m · double height</text>
+            <text class="room" x="414" y="110">Kitchen and dining</text>
+            <text class="dim" x="414" y="126">5.8 × 5.4 m</text>
+            <text class="room" x="80" y="330">Hall</text>
+            <text class="dim" x="80" y="346">2.4 × 3.6</text>
+            <text class="room" x="214" y="326">Study</text>
+            <text class="dim" x="214" y="342">3.4 × 3.6 m</text>
+            <text class="room" x="338" y="326">Utility</text>
+            <text class="dim" x="338" y="342">2.8 × 3.6 m</text>
+            <text class="room" x="426" y="286">Cloaks</text>
+            <text class="dim" x="426" y="300">1.6 × 1.6</text>
+            <text class="room" x="426" y="358">Plant</text>
+            <text class="dim" x="426" y="372">1.6 × 2.0</text>
+            <text class="room" x="494" y="326">Boot</text>
+            <text class="dim" x="494" y="342">1.8 × 3.6</text>
+          </g>
+          <text class="note" x="50" y="422">Garden to the south, lane to the north. Front door opens from the lane side.</text>
+        </svg>
+      </figure>
+
+      <figure class="plan" style="margin:0">
+        <div class="ttl"><strong>First floor</strong><span>91.9 sq m · gallery over the kitchen</span></div>
+        <svg class="dr" viewBox="0 0 580 430" role="img" aria-labelledby="ff-t">
+          <title id="ff-t">First floor plan with room names and dimensions</title>
+          <!-- overall dimensions -->
+          <line x1="50" y1="22" x2="530" y2="22" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="50" y1="17" x2="50" y2="27" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="530" y1="17" x2="530" y2="27" stroke="#6e675d" stroke-width="0.8"/>
+          <text class="dim" x="290" y="14" text-anchor="middle">12.0 m</text>
+          <line x1="28" y1="40" x2="28" y2="400" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="23" y1="40" x2="33" y2="40" stroke="#6e675d" stroke-width="0.8"/>
+          <line x1="23" y1="400" x2="33" y2="400" stroke="#6e675d" stroke-width="0.8"/>
+          <text class="dim" x="18" y="224" text-anchor="middle" transform="rotate(-90 18 224)">9.0 m</text>
+
+          <rect x="50" y="40" width="480" height="360" fill="#f5f2ec"/>
+          <!-- void over living -->
+          <rect x="50" y="40" width="248" height="104" fill="url(#hatch)" opacity="0.35"/>
+          <line x1="50" y1="144" x2="298" y2="144" stroke="#1f1c18" stroke-width="1.6"/>
+          <line x1="50" y1="148" x2="298" y2="148" stroke="#1f1c18" stroke-width="0.8"/>
+          <!-- internal walls: the corridor runs along y 256 to 292 -->
+          <g stroke="#1f1c18" stroke-width="3" stroke-linecap="square">
+            <line x1="298" y1="40" x2="298" y2="256"/>
+            <line x1="298" y1="176" x2="530" y2="176"/>
+            <line x1="394" y1="176" x2="394" y2="256"/>
+            <line x1="146" y1="256" x2="530" y2="256"/>
+            <line x1="146" y1="292" x2="530" y2="292"/>
+            <line x1="146" y1="292" x2="146" y2="400"/>
+            <line x1="282" y1="292" x2="282" y2="400"/>
+            <line x1="410" y1="292" x2="410" y2="400"/>
+          </g>
+          <!-- door openings -->
+          <g stroke="#f5f2ec" stroke-width="5">
+            <line x1="298" y1="200" x2="298" y2="236"/>
+            <line x1="330" y1="176" x2="366" y2="176"/>
+            <line x1="470" y1="256" x2="506" y2="256"/>
+            <line x1="200" y1="292" x2="236" y2="292"/>
+            <line x1="320" y1="292" x2="356" y2="292"/>
+            <line x1="420" y1="292" x2="456" y2="292"/>
+          </g>
+          <g stroke="#1f1c18" stroke-width="0.9" fill="none">
+            <path d="M298 236 L334 236 A36 36 0 0 0 298 200"/>
+            <path d="M330 176 L330 140 A36 36 0 0 1 366 176"/>
+            <path d="M470 256 L470 220 A36 36 0 0 1 506 256"/>
+            <path d="M236 292 L236 328 A36 36 0 0 0 200 292"/>
+            <path d="M356 292 L356 328 A36 36 0 0 0 320 292"/>
+            <path d="M456 292 L456 328 A36 36 0 0 0 420 292"/>
+          </g>
+          <!-- outer wall -->
+          <rect x="50" y="40" width="480" height="360" fill="none" stroke="#1f1c18" stroke-width="6"/>
+          <!-- glazing -->
+          <g stroke="#cfd6c2" stroke-width="6">
+            <line x1="70" y1="40" x2="250" y2="40"/>
+            <line x1="330" y1="40" x2="450" y2="40"/>
+            <line x1="50" y1="80" x2="50" y2="130"/>
+            <line x1="180" y1="400" x2="240" y2="400"/>
+            <line x1="320" y1="400" x2="380" y2="400"/>
+            <line x1="440" y1="400" x2="500" y2="400"/>
+          </g>
+          <g stroke="#1f1c18" stroke-width="0.8">
+            <line x1="70" y1="37" x2="250" y2="37"/>
+            <line x1="70" y1="43" x2="250" y2="43"/>
+            <line x1="330" y1="37" x2="450" y2="37"/>
+            <line x1="330" y1="43" x2="450" y2="43"/>
+          </g>
+          <!-- stair arriving -->
+          <rect x="104" y="268" width="36" height="120" fill="url(#stair)" stroke="#1f1c18" stroke-width="1"/>
+          <line x1="122" y1="272" x2="122" y2="388" stroke="#1f1c18" stroke-width="0.8"/>
+          <polygon points="118,380 122,388 126,380" fill="#1f1c18"/>
+          <text class="dim" x="122" y="402" text-anchor="middle">down</text>
+          <!-- bath and shower -->
+          <rect x="404" y="184" width="56" height="26" rx="6" fill="none" stroke="#1f1c18" stroke-width="1"/>
+          <rect x="306" y="184" width="28" height="28" fill="none" stroke="#1f1c18" stroke-width="1"/>
+          <line x1="306" y1="184" x2="334" y2="212" stroke="#1f1c18" stroke-width="0.6"/>
+          <!-- beds -->
+          <rect x="360" y="52" width="80" height="60" fill="none" stroke="#1f1c18" stroke-width="1"/>
+          <line x1="360" y1="66" x2="440" y2="66" stroke="#1f1c18" stroke-width="0.7"/>
+          <!-- labels -->
+          <g text-anchor="middle">
+            <text class="room" x="174" y="92">Void over living room</text>
+            <text class="dim" x="174" y="108">6.2 × 2.6 m · glazed balustrade</text>
+            <text class="room" x="174" y="200">Gallery and library</text>
+            <text class="dim" x="174" y="216">6.2 × 2.8 m</text>
+            <text class="room" x="414" y="140">Bedroom 1</text>
+            <text class="dim" x="414" y="156">5.8 × 3.4 m</text>
+            <text class="room" x="346" y="232">En suite</text>
+            <text class="dim" x="346" y="246">2.4 × 2.0</text>
+            <text class="room" x="462" y="232">Bathroom</text>
+            <text class="dim" x="462" y="246">3.4 × 2.0 m</text>
+            <text class="room" x="80" y="330">Landing</text>
+            <text class="dim" x="80" y="346">2.4 × 3.6</text>
+            <text class="dim" x="338" y="278">Corridor · 9.6 × 0.9 m</text>
+            <text class="room" x="214" y="344">Bedroom 2</text>
+            <text class="dim" x="214" y="360">3.4 × 2.7 m</text>
+            <text class="room" x="346" y="344">Bedroom 3</text>
+            <text class="dim" x="346" y="360">3.2 × 2.7 m</text>
+            <text class="room" x="470" y="344">Bedroom 4</text>
+            <text class="dim" x="470" y="360">3.0 × 2.7 m</text>
+          </g>
+          <text class="note" x="50" y="422">Ceilings follow the roof: 2.6 m at the bedroom wall rising to 3.4 m at the gallery.</text>
+        </svg>
+      </figure>
+    </div>
+
+    <div class="schedule">
+      <p class="meta">Room schedule<br>Measured wall to wall from the drawings</p>
+      <table>
+        <thead><tr><th>Room</th><th>Metres</th><th>Area</th></tr></thead>
+        <tbody>
+          <tr><td>Living room, double height</td><td>6.2 × 5.4</td><td>33.5 sq m</td></tr>
+          <tr><td>Kitchen and dining</td><td>5.8 × 5.4</td><td>31.3 sq m</td></tr>
+          <tr><td>Study</td><td>3.4 × 3.6</td><td>12.2 sq m</td></tr>
+          <tr><td>Hall, utility, cloakroom, plant and boot room</td><td>various</td><td>31.0 sq m</td></tr>
+          <tr><td>Bedroom 1</td><td>5.8 × 3.4</td><td>19.7 sq m</td></tr>
+          <tr><td>En suite and bathroom</td><td>various</td><td>11.6 sq m</td></tr>
+          <tr><td>Bedrooms 2, 3 and 4</td><td>3.0 to 3.4 × 2.7</td><td>25.9 sq m</td></tr>
+          <tr><td>Gallery, landing and corridor</td><td>various</td><td>34.6 sq m</td></tr>
+          <tr><td>Garden studio, insulated, with power</td><td>4.0 × 3.55</td><td>14.2 sq m</td></tr>
+          <tr class="total"><td>Gross internal area, house and studio</td><td></td><td>214.0 sq m</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Materials -->
+<section id="materials">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">03 · Materials</p>
+      <h2>Six materials, left to <em>weather honestly</em>. Nothing on the house needs painting.</h2>
+    </div>
+    <div class="materials">
+      <div class="mat">
+        <div class="sw sw-larch" role="img" aria-label="Vertical larch boards, silvering"></div>
+        <h3>Siberian larch rainscreen</h3>
+        <p>Vertical boards, 145 mm, on a ventilated cavity. Untreated, silvering evenly on the south face after six summers.</p>
+      </div>
+      <div class="mat">
+        <div class="sw sw-zinc" role="img" aria-label="Standing-seam zinc"></div>
+        <h3>Standing-seam zinc roof</h3>
+        <p>Pre-weathered zinc on a warm roof, 430 mm seams, concealed gutters. Rainwater runs to a 3,000 litre tank for the garden.</p>
+      </div>
+      <div class="mat">
+        <div class="sw sw-lime" role="img" aria-label="Lime plaster"></div>
+        <h3>Lime plaster, unpainted</h3>
+        <p>Three coats of lime on woodwool board throughout. Breathable, soft under raking light, and repaired with a trowel not a tin.</p>
+      </div>
+      <div class="mat">
+        <div class="sw sw-concrete" role="img" aria-label="Polished concrete"></div>
+        <h3>Polished concrete ground floor</h3>
+        <p>Power-floated raft, ground and sealed, with underfloor heating cast in. Same surface continues out onto the south terrace.</p>
+      </div>
+      <div class="mat">
+        <div class="sw sw-fir" role="img" aria-label="Douglas fir joinery"></div>
+        <h3>Douglas fir joinery</h3>
+        <p>Stair, gallery balustrade rail, kitchen fronts and every internal door, made in Suffolk and oiled, never lacquered.</p>
+      </div>
+      <div class="mat">
+        <div class="sw sw-glass" role="img" aria-label="Triple glazing in dark frames"></div>
+        <h3>Triple glazing, aluminium-clad timber</h3>
+        <p>Whole-window value 0.8 W/m²K. The living room screen is one fixed pane and two sliders, 5.9 m high, 2.6 m wide each.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Energy -->
+<section id="energy">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">04 · Energy</p>
+      <h2>Warm in January with the heat pump idling; the figures below are the last twelve months' meter readings, not a model.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat"><p class="n">85<small>band B</small></p><p class="l">Energy performance certificate, issued March 2024, valid to 2034.</p></div>
+      <div class="stat"><p class="n">£1,140</p><p class="l">Total electricity cost for the year to August 2026, after export credits. There is no gas.</p></div>
+      <div class="stat"><p class="n">6.4<small>kWp</small></p><p class="l">Solar array on the south roof slope, sixteen panels, with a 10 kWh battery in the plant room.</p></div>
+      <div class="stat"><p class="n">8<small>kW</small></p><p class="l">Air-source heat pump feeding underfloor heating and a 300 litre cylinder.</p></div>
+      <div class="stat"><p class="n">0.15<small>W/m²K</small></p><p class="l">Wall value: 300 mm of cellulose in the frame. Roof 0.11, floor 0.12.</p></div>
+      <div class="stat"><p class="n">1.4<small>m³/h·m²</small></p><p class="l">Air permeability at 50 pascals, tested at completion. Heat-recovery ventilation to every room.</p></div>
+      <div class="stat"><p class="n">4,900<small>kWh</small></p><p class="l">Total annual consumption including the car charger. The array generated 5,700 kWh.</p></div>
+      <div class="stat"><p class="n">3,000<small>litres</small></p><p class="l">Rainwater storage under the terrace, plumbed to the garden and the utility.</p></div>
+    </div>
+    <div class="band" aria-label="Energy rating bands">
+      <p class="meta">Rating bands<br>A is best, G is worst</p>
+      <div class="bars">
+        <div class="bar"><span>A</span></div>
+        <div class="bar on"><span>B · 85, this house</span></div>
+        <div class="bar"><span>C</span></div>
+        <div class="bar"><span>D · typical, 60</span></div>
+        <div class="bar"><span>E</span></div>
+        <div class="bar"><span>F</span></div>
+        <div class="bar"><span>G</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Location -->
+<section id="location">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">05 · Location</p>
+      <h2>Wivenhoe: a quay, a university, a railway station, and an estuary that empties twice a day.</h2>
+    </div>
+    <div class="grid">
+      <div class="loc-copy">
+        <div class="prose">
+          <p>The house is on Anglesea Lane at the eastern edge of the town, where the last houses give way to the marsh footpath. It is a quiet, unmade lane with six other houses; the estuary path runs along the bottom of the garden to the quay in one direction and to the Alresford creek in the other.</p>
+          <p class="muted">Wivenhoe has two pubs on the water, a bookshop, a good baker, a primary school rated outstanding and the University of Essex campus on foot. Colchester, with its market and the mainline, is fourteen minutes by train.</p>
+        </div>
+        <ul class="dist">
+          <li><span>Wivenhoe station</span><span>8 min walk</span></li>
+          <li><span>The quay and the Rose and Crown</span><span>12 min walk</span></li>
+          <li><span>University of Essex</span><span>25 min walk, 6 by bike</span></li>
+          <li><span>Colchester, by train</span><span>14 min</span></li>
+          <li><span>London Liverpool Street, by train</span><span>62 min</span></li>
+          <li><span>Mersea Island and the beach</span><span>25 min by car</span></li>
+        </ul>
+      </div>
+      <figure class="loc-map" style="margin:0">
+        <svg class="dr" viewBox="0 0 640 420" role="img" aria-labelledby="map-t">
+          <title id="map-t">Sketch map of Wivenhoe showing the station, the quay, the river Colne and the house</title>
+          <!-- water -->
+          <path d="M0 420 L0 330 C90 322 150 350 210 360 S330 340 400 350 S540 372 640 330 L640 420 Z" fill="#cfd6c2"/>
+          <path d="M0 350 C90 342 150 370 210 380 S330 360 400 370 S540 392 640 350" fill="none" stroke="#a9b39f" stroke-width="1"/>
+          <text class="room" x="300" y="402" fill="#5f6b58">River Colne</text>
+          <!-- marsh -->
+          <path d="M470 330 C520 322 580 318 640 306 L640 330 C560 342 520 348 470 330 Z" fill="#dfe3d2"/>
+          <!-- railway -->
+          <line x1="0" y1="120" x2="640" y2="86" stroke="#1f1c18" stroke-width="2"/>
+          <line x1="0" y1="120" x2="640" y2="86" stroke="#f5f2ec" stroke-width="1" stroke-dasharray="6 6"/>
+          <!-- roads -->
+          <path d="M60 0 C90 80 120 160 130 240 C136 290 160 320 200 336" fill="none" stroke="#1f1c18" stroke-width="1.2"/>
+          <path d="M130 240 C220 230 300 236 380 220 S520 190 640 160" fill="none" stroke="#1f1c18" stroke-width="1.2"/>
+          <path d="M380 220 C400 250 420 280 470 300" fill="none" stroke="#1f1c18" stroke-width="1"/>
+          <path d="M470 300 C520 292 560 280 610 262" fill="none" stroke="#1f1c18" stroke-width="0.9" stroke-dasharray="3 3"/>
+          <!-- footpath along the water -->
+          <path d="M200 336 C280 326 360 340 440 328 S560 306 640 300" fill="none" stroke="#6e675d" stroke-width="0.9" stroke-dasharray="2 4"/>
+          <!-- town blocks -->
+          <g fill="#e6e0d2" stroke="#b9b1a2" stroke-width="0.6">
+            <rect x="150" y="140" width="40" height="26"/>
+            <rect x="200" y="150" width="34" height="30"/>
+            <rect x="160" y="190" width="46" height="24"/>
+            <rect x="220" y="196" width="40" height="22"/>
+            <rect x="150" y="260" width="30" height="40"/>
+            <rect x="196" y="270" width="36" height="34"/>
+            <rect x="250" y="262" width="44" height="30"/>
+            <rect x="300" y="250" width="34" height="28"/>
+            <rect x="70" y="150" width="30" height="30"/>
+            <rect x="90" y="200" width="28" height="28"/>
+          </g>
+          <!-- station -->
+          <rect x="248" y="96" width="24" height="12" fill="#1f1c18"/>
+          <text x="280" y="106">Wivenhoe station</text>
+          <!-- quay -->
+          <text x="150" y="322" >The quay</text>
+          <rect x="150" y="326" width="60" height="6" fill="#1f1c18"/>
+          <!-- university -->
+          <text x="24" y="60">University of Essex</text>
+          <text class="dim" x="24" y="74">along the Colne path</text>
+          <!-- the house -->
+          <rect x="474" y="236" width="14" height="10" fill="#1f1c18" transform="rotate(-12 481 241)"/>
+          <circle cx="481" cy="241" r="16" fill="none" stroke="#a45c1e" stroke-width="1.6"/>
+          <text class="room" x="504" y="238" fill="#a45c1e">Larch House</text>
+          <text class="dim" x="504" y="252">Anglesea Lane</text>
+          <!-- labels for roads -->
+          <text class="dim" x="330" y="214" transform="rotate(-8 330 214)">High Street</text>
+          <text class="dim" x="500" y="176" transform="rotate(-13 500 176)">to Alresford</text>
+          <text class="dim" x="20" y="132" transform="rotate(-3 20 132)">Colchester 14 min</text>
+          <text class="dim" x="560" y="86" transform="rotate(-3 560 86)">to Clacton</text>
+          <!-- north arrow and scale -->
+          <g transform="translate(596 40)">
+            <line x1="0" y1="18" x2="0" y2="-14" stroke="#1f1c18" stroke-width="1"/>
+            <polygon points="-5,-8 0,-18 5,-8" fill="#1f1c18"/>
+            <text x="0" y="32" text-anchor="middle" class="dim">north</text>
+          </g>
+          <g transform="translate(20 392)">
+            <line x1="0" y1="0" x2="80" y2="0" stroke="#1f1c18" stroke-width="1.4"/>
+            <line x1="0" y1="-4" x2="0" y2="4" stroke="#1f1c18" stroke-width="1"/>
+            <line x1="80" y1="-4" x2="80" y2="4" stroke="#1f1c18" stroke-width="1"/>
+            <text x="40" y="14" text-anchor="middle" class="dim">400 m</text>
+          </g>
+        </svg>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Viewings -->
+<section id="viewings">
+  <div class="wrap">
+    <div class="head">
+      <p class="meta">06 · Viewings</p>
+      <h2>By appointment, in daylight, with time to walk the garden down to the water.</h2>
+    </div>
+    <div class="viewing">
+      <p class="big">Viewings run on Thursday afternoons and Saturday mornings from 12 September. Allow an hour: the house takes twenty minutes and <em>the garden takes the rest</em>. The owners will be out; Ellen will meet you at the gate on Anglesea Lane.</p>
+      <div class="who">
+        <p><strong>Ellen Sedge</strong>Sedge &amp; Hollis, sole agent</p>
+        <p><strong>01206 570 114</strong>Weekdays 9 to 6, Saturdays 9 to 1</p>
+        <p><strong>larch@sedgeandhollis.co.uk</strong>Say which slot suits and how many are coming</p>
+      </div>
+      <div class="cta">
+        <a class="pill" href="mailto:larch@sedgeandhollis.co.uk?subject=Larch%20House%20viewing">Ask for a slot by email <span aria-hidden="true">→</span></a>
+        <a class="pill ghost" href="tel:+441206570114">Call the office</a>
+        <p class="meta">Particulars, drawings and the energy certificate are sent the same day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <p class="meta">Sedge &amp; Hollis</p>
+        <p>14 Trinity Street<br>Colchester, Essex<br>Architect-designed houses only, since 2011.</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:hello@sedgeandhollis.co.uk">hello@sedgeandhollis.co.uk</a><br><span class="muted">Replies inside one working day.</span></p>
+      </div>
+      <div>
+        <p class="meta">This listing</p>
+        <p>Larch House, Anglesea Lane, Wivenhoe<br><span class="muted">Reference 2026-041 · listed 9 September 2026</span></p>
+      </div>
+      <div>
+        <p class="meta">Also for sale</p>
+        <p><a href="#top">The Boat Shed, Rowhedge</a><br><a href="#top">Two Fields, Dedham Vale</a></p>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© <span id="yr">2026</span> Sedge &amp; Hollis. Registered in England, number 07718402.</span>
+      <span>Measurements are taken from the architect's drawings and are approximate. These particulars do not form part of any contract.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    var buttons = document.querySelectorAll('[data-units]');
+    var values = document.querySelectorAll('.u');
+    function setUnits(kind){
+      values.forEach(function(el){ el.textContent = el.getAttribute('data-' + kind); });
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-units') === kind)); });
+    }
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ setUnits(b.getAttribute('data-units')); });
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        var id = a.getAttribute('href').slice(1);
+        var target = document.getElementById(id);
+        if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
+  })();
+</script>
+</body>
+</html>

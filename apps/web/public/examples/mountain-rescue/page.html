@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harrowdale Mountain Rescue Team</title>
+<meta name="description" content="Harrowdale Mountain Rescue Team: 38 unpaid volunteers covering 420 square kilometres of fell, crag and water. Callout log, year to date figures, how to donate and how to call for help.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-1: 0.8125rem;                      /* meta, mono labels */
+    --t-2: 1rem;                           /* body */
+    --t-3: 1.375rem;                       /* lead, card titles */
+    --t-4: clamp(1.75rem, 3vw, 2.5rem);    /* section headings */
+    --t-5: clamp(2.75rem, 5.2vw, 4.25rem); /* display, hero numbers */
+
+    --font-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+
+    --paper: #E9E5DC;
+    --paper-2: #DDD8CB;
+    --ink: #16150F;
+    --muted: #6A665C;
+    --rule: #C6C0B1;
+    --orange: #FF5A00;
+    --orange-deep: #B83C00;
+    --night: #1C1B18;
+    --night-2: #262521;
+    --water: #9FB0B3;
+
+    --gap: clamp(72px, 10vw, 128px);
+    --wrap: 1200px;
+    --radius: 6px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    font-size:var(--t-2);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p,ul,ol,figure{margin:0}
+  a{color:inherit;text-decoration:none}
+  ul,ol{padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  svg{display:block}
+
+  .wrap{
+    width:100%;
+    max-width:var(--wrap);
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 48px);
+  }
+  section{padding-block:var(--gap)}
+
+  .meta{
+    font-family:var(--font-mono);
+    font-size:var(--t-1);
+    letter-spacing:0;
+    color:var(--muted);
+  }
+  .eyebrow{
+    display:flex;align-items:center;gap:12px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+  }
+  .eyebrow::before{
+    content:"";width:28px;height:2px;background:var(--orange);flex:none;
+  }
+  .section-head{
+    display:grid;
+    grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);
+    gap:24px 48px;
+    align-items:end;
+    margin-bottom:clamp(36px, 5vw, 56px);
+  }
+  .section-head h2{
+    font-size:var(--t-4);
+    font-weight:600;
+    line-height:1.08;
+    letter-spacing:-0.02em;
+    text-wrap:balance;
+    margin-top:16px;
+  }
+  .section-head p{color:var(--muted);max-width:44ch}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 22px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:var(--t-2);
+    line-height:1;
+    border:1.5px solid transparent;
+    transition:background .18s, color .18s, border-color .18s;
+  }
+  .btn-orange{background:var(--orange);color:#fff}
+  .btn-orange:hover{background:var(--orange-deep)}
+  .btn-ghost{border-color:var(--ink);color:var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper)}
+  .btn-paper{background:var(--paper);color:var(--ink)}
+  .btn-paper:hover{background:#fff}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    border-bottom:1px solid var(--rule);
+    background:var(--paper);
+    position:relative;z-index:2;
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;gap:32px;
+    padding-block:18px;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-mark{width:34px;height:34px;flex:none}
+  .brand-name{display:flex;flex-direction:column;line-height:1.05}
+  .brand-name strong{font-weight:700;letter-spacing:-0.01em;font-size:var(--t-2)}
+  .brand-name span{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+  .nav-links{display:flex;gap:26px;font-size:var(--t-1);font-family:var(--font-mono)}
+  .nav-links a{color:var(--muted);transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-right{display:flex;align-items:center;gap:20px}
+  .nav-emergency{font-family:var(--font-mono);font-size:var(--t-1);color:var(--ink);white-space:nowrap}
+  .nav-emergency b{color:var(--orange-deep);font-weight:500}
+  .nav .btn{padding:11px 18px;font-size:var(--t-1)}
+
+  .hero{
+    flex:1;
+    position:relative;
+    display:grid;
+    align-items:center;
+    padding-block:24px 176px;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 7fr) minmax(0, 4fr);
+    gap:48px;
+    align-items:end;
+    position:relative;z-index:1;
+  }
+  .hero h1{
+    font-size:var(--t-5);
+    font-weight:650;
+    line-height:1.0;
+    letter-spacing:-0.03em;
+    text-wrap:balance;
+    max-width:18ch;
+    margin-top:22px;
+    font-variation-settings:"wdth" 92;
+  }
+  .hero-lead{
+    font-size:var(--t-3);
+    line-height:1.4;
+    color:var(--muted);
+    max-width:46ch;
+    margin-top:24px;
+  }
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+
+  .hero-stats{
+    border-top:1px solid var(--ink);
+  }
+  .hero-stats li{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:baseline;
+    gap:16px;
+    padding-block:16px;
+    border-bottom:1px solid var(--rule);
+  }
+  .hero-stats .num{
+    font-size:var(--t-4);
+    font-weight:600;
+    letter-spacing:-0.03em;
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .hero-stats .num.orange{color:var(--orange-deep)}
+  .hero-stats .label{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);text-align:right;max-width:18ch}
+
+  .ridge{
+    position:absolute;inset-inline:0;bottom:0;
+    height:168px;
+    width:100%;
+    pointer-events:none;
+  }
+
+  /* ---------- callout log ---------- */
+  .log{background:var(--night);color:#F1EDE3}
+  .log .section-head p{color:#A9A497}
+  .log .eyebrow{color:#A9A497}
+  .log-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:var(--t-1);
+  }
+  .log-table th{
+    text-align:left;
+    font-family:var(--font-mono);
+    font-weight:500;
+    color:#A9A497;
+    padding:0 16px 14px 0;
+    border-bottom:1px solid #3C3A34;
+  }
+  .log-table td{
+    padding:18px 16px 18px 0;
+    border-bottom:1px solid #2F2E29;
+    vertical-align:top;
+  }
+  .log-table tr:hover td{background:var(--night-2)}
+  .log-table .mono{font-family:var(--font-mono);color:#CFC9BA;white-space:nowrap}
+  .log-table .id{color:var(--orange);font-family:var(--font-mono)}
+  .log-table .place{font-weight:600;font-size:var(--t-2);color:#F1EDE3}
+  .log-table .place small{display:block;font-weight:400;color:#A9A497;font-size:var(--t-1);margin-top:2px}
+  .log-table .outcome{max-width:34ch}
+  .tag{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:var(--t-1);
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid #4A4841;
+    color:#E4DFD2;
+    white-space:nowrap;
+  }
+  .tag.air{border-color:var(--orange);color:var(--orange)}
+  .log-foot{
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
+    margin-top:28px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:#A9A497;
+  }
+  .log-foot a{color:#F1EDE3;border-bottom:1px solid #4A4841}
+  .log-foot a:hover{color:var(--orange);border-color:var(--orange)}
+
+  /* ---------- figures ---------- */
+  .figures-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .figure{
+    background:var(--paper);
+    padding:32px 28px 28px;
+  }
+  .figure .num{
+    font-size:var(--t-5);
+    font-weight:600;
+    letter-spacing:-0.035em;
+    line-height:0.95;
+    font-variant-numeric:tabular-nums;
+    font-variation-settings:"wdth" 90;
+  }
+  .figure .num sup{
+    font-family:var(--font-mono);
+    font-size:var(--t-1);
+    color:var(--orange-deep);
+    vertical-align:top;
+    margin-left:4px;
+    font-weight:500;
+  }
+  .figure .label{margin-top:14px;font-weight:600}
+  .figure .note{margin-top:4px;color:var(--muted);font-size:var(--t-1)}
+
+  .figures-lower{
+    display:grid;
+    grid-template-columns:minmax(0, 6fr) minmax(0, 6fr);
+    gap:48px;
+    margin-top:56px;
+  }
+  .bars li{margin-bottom:14px}
+  .bars .row{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--t-1)}
+  .bars .row b{font-weight:500}
+  .bars .row span{font-family:var(--font-mono);color:var(--muted)}
+  .bars .track{height:6px;background:var(--paper-2);margin-top:6px}
+  .bars .fill{height:100%;background:var(--ink)}
+  .bars li:first-child .fill{background:var(--orange)}
+  .footnotes{
+    border-top:1px solid var(--rule);
+    padding-top:20px;
+    font-family:var(--font-mono);
+    font-size:var(--t-1);
+    color:var(--muted);
+    display:grid;gap:8px;
+  }
+  .footnotes b{color:var(--orange-deep);font-weight:500;margin-right:6px}
+
+  /* ---------- donate ---------- */
+  .donate{background:var(--orange);color:#fff}
+  .donate .eyebrow{color:#FFD9C2}
+  .donate .eyebrow::before{background:#fff}
+  .donate .section-head p{color:#FFE3D3}
+  .donate-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);
+    gap:48px;
+    align-items:start;
+  }
+  .amounts{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+  }
+  .amount{
+    border:1.5px solid rgba(255,255,255,.55);
+    border-radius:var(--radius);
+    padding:18px 14px 14px;
+    text-align:left;
+    color:#fff;
+    transition:background .15s, border-color .15s;
+  }
+  .amount:hover{border-color:#fff}
+  .amount[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:#fff}
+  .amount .v{font-size:var(--t-3);font-weight:700;letter-spacing:-0.02em;line-height:1;display:block}
+  .amount .k{display:block;margin-top:10px;font-family:var(--font-mono);font-size:var(--t-1);opacity:.85;line-height:1.35}
+  .amount[aria-pressed="true"] .k{opacity:.7}
+
+  .freq{
+    display:inline-flex;
+    border:1.5px solid rgba(255,255,255,.55);
+    border-radius:999px;
+    padding:3px;
+    margin-bottom:22px;
+  }
+  .freq button{
+    padding:8px 16px;border-radius:999px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:#fff;
+  }
+  .freq button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+
+  .buys{
+    background:rgba(0,0,0,.18);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+  .buys .meta{color:#FFD9C2}
+  .buys .big{
+    font-size:var(--t-5);
+    font-weight:650;
+    letter-spacing:-0.035em;
+    line-height:1;
+    margin-top:10px;
+    font-variant-numeric:tabular-nums;
+    font-variation-settings:"wdth" 90;
+  }
+  .buys .big small{font-size:var(--t-3);font-weight:500;letter-spacing:0;margin-left:6px;color:#FFD9C2}
+  .buys .what{font-size:var(--t-3);line-height:1.35;margin-top:18px;text-wrap:balance;min-height:3.9em}
+  .buys .detail{margin-top:14px;color:#FFE3D3;font-size:var(--t-1)}
+  .buys .btn{margin-top:24px;width:100%;justify-content:center}
+  .donate-notes{
+    margin-top:28px;
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;
+    font-size:var(--t-1);color:#FFE3D3;
+    border-top:1px solid rgba(255,255,255,.4);
+    padding-top:20px;
+  }
+  .donate-notes b{color:#fff;font-weight:600;display:block;margin-bottom:4px}
+
+  /* ---------- get help ---------- */
+  .help-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 4fr) minmax(0, 8fr);
+    gap:48px;
+    align-items:start;
+  }
+  .nines{
+    font-size:clamp(6rem, 16vw, 13rem);
+    font-weight:700;
+    letter-spacing:-0.06em;
+    line-height:0.85;
+    color:var(--orange);
+    font-variation-settings:"wdth" 80;
+    font-variant-numeric:tabular-nums;
+  }
+  .nines-sub{margin-top:16px;font-size:var(--t-3);font-weight:600;line-height:1.3;max-width:22ch}
+  .nines-note{margin-top:12px;color:var(--muted);max-width:36ch}
+  .steps{border-top:1px solid var(--ink)}
+  .steps li{
+    display:grid;
+    grid-template-columns:56px minmax(0, 5fr) minmax(0, 7fr);
+    gap:24px;
+    padding-block:22px;
+    border-bottom:1px solid var(--rule);
+  }
+  .steps .n{font-family:var(--font-mono);color:var(--orange-deep);font-size:var(--t-1);padding-top:6px}
+  .steps h3{font-size:var(--t-3);font-weight:600;line-height:1.2;letter-spacing:-0.015em}
+  .steps p{color:var(--muted)}
+  .steps p + p{margin-top:8px}
+  .steps code{
+    font-family:var(--font-mono);font-size:var(--t-1);
+    background:var(--paper-2);padding:2px 6px;border-radius:4px;color:var(--ink);
+  }
+
+  /* ---------- map ---------- */
+  .patch{background:var(--paper-2)}
+  .patch .figures-grid{background:var(--rule);border-color:var(--rule)}
+  .map-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 8fr) minmax(0, 4fr);
+    gap:40px;
+    align-items:stretch;
+  }
+  .map-frame{
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:12px;
+  }
+  .map-frame svg{width:100%;height:auto}
+  .map-side{display:flex;flex-direction:column;gap:20px}
+  .legend{
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:20px 22px;
+    font-size:var(--t-1);
+  }
+  .legend li{display:flex;align-items:center;gap:12px;padding-block:7px}
+  .legend .sw{width:22px;height:14px;flex:none}
+  .places{
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:20px 22px;
+    flex:1;
+  }
+  .places li{
+    display:grid;grid-template-columns:1fr auto;gap:12px;
+    padding-block:9px;border-bottom:1px solid var(--rule);font-size:var(--t-1);
+  }
+  .places li:last-child{border-bottom:0}
+  .places b{font-weight:600}
+  .places span{font-family:var(--font-mono);color:var(--muted)}
+  .map-text{font-family:var(--font-sans);font-size:11px;fill:var(--ink)}
+  .map-text.sm{font-size:9.5px;fill:var(--muted);font-family:var(--font-mono)}
+  .map-text.b{font-weight:600}
+  .callout-dot{fill:var(--orange);opacity:.85}
+  .callout-dot:hover{opacity:1}
+
+  /* ---------- training ---------- */
+  .train-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 8fr) minmax(0, 4fr);
+    gap:48px;
+    align-items:start;
+  }
+  .modules{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .module{
+    background:var(--paper);
+    padding:26px 26px 24px;
+    display:grid;
+    gap:10px;
+    align-content:start;
+  }
+  .module .top{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted)}
+  .module .top b{color:var(--orange-deep);font-weight:500}
+  .module h3{font-size:var(--t-3);font-weight:600;line-height:1.2;letter-spacing:-0.015em}
+  .module p{color:var(--muted);font-size:var(--t-1);line-height:1.55}
+  .ask{
+    border:1px solid var(--ink);
+    padding:26px;
+  }
+  .ask h3{font-size:var(--t-3);font-weight:600;letter-spacing:-0.015em;line-height:1.2}
+  .ask ul{margin-top:16px;border-top:1px solid var(--rule)}
+  .ask li{padding-block:11px;border-bottom:1px solid var(--rule);font-size:var(--t-1);display:flex;gap:12px}
+  .ask li::before{content:"";width:8px;height:8px;background:var(--orange);flex:none;margin-top:6px}
+  .intake{
+    margin-top:20px;
+    background:var(--ink);color:var(--paper);
+    padding:24px 26px;
+  }
+  .intake .meta{color:#A9A497}
+  .intake .date{font-size:var(--t-3);font-weight:600;margin-top:6px;letter-spacing:-0.015em}
+  .intake p{color:#CFC9BA;font-size:var(--t-1);margin-top:10px}
+  .intake a{display:inline-block;margin-top:14px;color:var(--orange);font-family:var(--font-mono);font-size:var(--t-1);border-bottom:1px solid var(--orange)}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--ink);
+    padding-block:56px 32px;
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:32px;
+  }
+  .foot-grid p{margin-top:12px;font-size:var(--t-1);line-height:1.6}
+  .foot-grid a{border-bottom:1px solid var(--rule)}
+  .foot-grid a:hover{color:var(--orange-deep);border-color:var(--orange-deep)}
+  .foot-grid .muted{color:var(--muted)}
+  .foot-warn{
+    margin-top:40px;
+    padding:16px 20px;
+    border:1.5px solid var(--orange);
+    color:var(--orange-deep);
+    font-family:var(--font-mono);font-size:var(--t-1);
+    display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  }
+  .foot-warn span{color:var(--ink)}
+  .foot-bottom{
+    margin-top:28px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 980px){
+    .nav-links{display:none}
+    .nav-emergency{display:none}
+    .hero-grid{grid-template-columns:1fr}
+    .hero h1{max-width:16ch}
+    .section-head{grid-template-columns:1fr}
+    .figures-grid{grid-template-columns:1fr 1fr}
+    .figures-lower{grid-template-columns:1fr}
+    .donate-grid{grid-template-columns:1fr}
+    .amounts{grid-template-columns:repeat(2, 1fr)}
+    .help-grid{grid-template-columns:1fr}
+    .steps li{grid-template-columns:40px 1fr}
+    .steps li > div:last-child{grid-column:2}
+    .map-grid{grid-template-columns:1fr}
+    .train-grid{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 640px){
+    .figures-grid{grid-template-columns:1fr}
+    .modules{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .log-table .hide-sm{display:none}
+    .hero{padding-bottom:140px}
+    .ridge{height:120px}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Harrowdale Mountain Rescue Team, home">
+        <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
+          <rect width="34" height="34" rx="4" fill="#FF5A00"/>
+          <path d="M0 24 L34 6 L34 14 L0 32 Z" fill="#F1EDE3"/>
+          <path d="M6 30 L17 12 L28 30 Z" fill="#16150F"/>
+        </svg>
+        <span class="brand-name">
+          <strong>Harrowdale</strong>
+          <span>Mountain rescue team</span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#callouts">Callouts</a>
+        <a href="#figures">Figures</a>
+        <a href="#help">Get help</a>
+        <a href="#patch">Our patch</a>
+        <a href="#training">Training</a>
+      </nav>
+      <div class="nav-right">
+        <span class="nav-emergency">Emergency: dial <b>999</b></span>
+        <a class="btn btn-orange" href="#donate">Donate</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Registered charity 1134872 · On call every day of the year</p>
+        <h1>When someone is hurt on the fell, we are the ones who go up.</h1>
+        <p class="hero-lead">38 unpaid volunteers covering 420 square kilometres of fell, crag and water. Around seventy callouts a year, every one of them paid for by donations.</p>
+        <div class="hero-cta">
+          <a class="btn btn-orange" href="#donate">Donate to the team</a>
+          <a class="btn btn-ghost" href="#callouts">Read the callout log</a>
+        </div>
+      </div>
+      <ul class="hero-stats" aria-label="Year to date figures">
+        <li><span class="num">71</span><span class="label">callouts so far in 2026</span></li>
+        <li><span class="num">4,912</span><span class="label">volunteer hours on the hill</span></li>
+        <li><span class="num orange">£0</span><span class="label">of government funding</span></li>
+      </ul>
+    </div>
+    <svg class="ridge" viewBox="0 0 1440 180" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 180 L0 128 L110 104 L180 118 L260 72 L330 96 L410 54 L470 78 L540 38 L610 66 L680 50 L760 92 L830 70 L900 110 L980 84 L1060 118 L1130 96 L1210 132 L1300 112 L1370 140 L1440 126 L1440 180 Z" fill="#DDD8CB"/>
+      <path d="M0 180 L0 150 L140 136 L220 146 L300 118 L380 134 L450 112 L520 128 L600 104 L680 122 L760 110 L840 138 L920 124 L1000 148 L1080 132 L1160 156 L1250 140 L1340 160 L1440 150 L1440 180 Z" fill="#CFC9BA"/>
+      <path d="M0 128 L110 104 L180 118 L260 72 L330 96 L410 54 L470 78 L540 38 L610 66 L680 50 L760 92 L830 70 L900 110 L980 84 L1060 118 L1130 96 L1210 132 L1300 112 L1370 140 L1440 126" fill="none" stroke="#16150F" stroke-width="1.5"/>
+    </svg>
+  </section>
+</div>
+
+<!-- ---------- callout log ---------- -->
+<section class="log" id="callouts">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Callout log · updated 7 September 2026</p>
+        <h2>Every callout, as it happened. The most recent eight.</h2>
+      </div>
+      <p>We publish each incident within 48 hours of standing down. Names are never given and locations are rounded to the nearest feature so casualties cannot be identified.</p>
+    </div>
+
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th class="hide-sm">Incident</th>
+          <th>Outcome</th>
+          <th class="hide-sm">Duration</th>
+          <th class="hide-sm">Team</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="id">071</td>
+          <td class="mono">6 Sep</td>
+          <td class="place">Scarth Crag<small>north face, second pitch</small></td>
+          <td class="hide-sm">Climber fell 8 m, lower leg injury</td>
+          <td class="outcome">Lowered from crag, stretcher to the road, helicopter to hospital <span class="tag air">air</span></td>
+          <td class="mono hide-sm">6h 20m</td>
+          <td class="mono hide-sm">19</td>
+        </tr>
+        <tr>
+          <td class="id">070</td>
+          <td class="mono">4 Sep</td>
+          <td class="place">Blea Tarn path<small>above the boathouse</small></td>
+          <td class="hide-sm">Walker with chest pain</td>
+          <td class="outcome">Assessed and monitored, walked off slowly with the team, ambulance at the road <span class="tag">walked</span></td>
+          <td class="mono hide-sm">2h 05m</td>
+          <td class="mono hide-sm">11</td>
+        </tr>
+        <tr>
+          <td class="id">069</td>
+          <td class="mono">30 Aug</td>
+          <td class="place">Ravens Edge<small>east gully</small></td>
+          <td class="hide-sm">Two walkers cragfast in cloud</td>
+          <td class="outcome">Located by voice and torch, roped down the gully, both uninjured <span class="tag">rope</span></td>
+          <td class="mono hide-sm">4h 40m</td>
+          <td class="mono hide-sm">14</td>
+        </tr>
+        <tr>
+          <td class="id">068</td>
+          <td class="mono">29 Aug</td>
+          <td class="place">Harrowdale Beck<small>lower woods to the tarn</small></td>
+          <td class="hide-sm">Missing 14-year-old, overdue by four hours</td>
+          <td class="outcome">Found safe and cold by a search dog at 01:10, reunited with family <span class="tag">search</span></td>
+          <td class="mono hide-sm">3h 15m</td>
+          <td class="mono hide-sm">22</td>
+        </tr>
+        <tr>
+          <td class="id">067</td>
+          <td class="mono">24 Aug</td>
+          <td class="place">Kettle Pike<small>summit plateau</small></td>
+          <td class="hide-sm">Ankle fracture on wet rock</td>
+          <td class="outcome">Splinted, pain relief, stretcher carry of 3 km to the vehicle <span class="tag">stretcher</span></td>
+          <td class="mono hide-sm">5h 10m</td>
+          <td class="mono hide-sm">17</td>
+        </tr>
+        <tr>
+          <td class="id">066</td>
+          <td class="mono">21 Aug</td>
+          <td class="place">Fellside road<small>hairpin below the pass</small></td>
+          <td class="hide-sm">Mountain biker, head injury</td>
+          <td class="outcome">Stabilised on scene, handed to the road ambulance <span class="tag">handover</span></td>
+          <td class="mono hide-sm">1h 45m</td>
+          <td class="mono hide-sm">9</td>
+        </tr>
+        <tr>
+          <td class="id">065</td>
+          <td class="mono">17 Aug</td>
+          <td class="place">High Stile ridge<small>west shoulder</small></td>
+          <td class="hide-sm">Paraglider crash landing</td>
+          <td class="outcome">Site secured and casualty packaged, air ambulance lift from the ridge <span class="tag air">air</span></td>
+          <td class="mono hide-sm">3h 50m</td>
+          <td class="mono hide-sm">15</td>
+        </tr>
+        <tr>
+          <td class="id">064</td>
+          <td class="mono">15 Aug</td>
+          <td class="place">Lower Grisedale<small>bridleway junction</small></td>
+          <td class="hide-sm">Elderly walker exhausted, no injuries</td>
+          <td class="outcome">Warmed, fed and walked off with two members, no hospital needed <span class="tag">walked</span></td>
+          <td class="mono hide-sm">2h 30m</td>
+          <td class="mono hide-sm">8</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="log-foot">
+      <span>Duration is from pager to stand-down. Team is the number of members who attended.</span>
+      <a href="#figures">Full 2026 log and the year to date figures</a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- figures ---------- -->
+<section id="figures">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Year to date · 1 January to 6 September 2026</p>
+        <h2>Seventy-one callouts, and not one of them paid for by anyone but you.</h2>
+      </div>
+      <p>Every figure here is taken from the incident reports we file with the regional search and rescue association. The footnotes say how each number is counted.</p>
+    </div>
+
+    <div class="figures-grid">
+      <div class="figure">
+        <p class="num">71<sup>1</sup></p>
+        <p class="label">Callouts</p>
+        <p class="note">Up from 58 at the same point in 2025</p>
+      </div>
+      <div class="figure">
+        <p class="num">84<sup>2</sup></p>
+        <p class="label">People assisted</p>
+        <p class="note">Including 6 dogs, counted separately</p>
+      </div>
+      <div class="figure">
+        <p class="num">4,912<sup>3</sup></p>
+        <p class="label">Volunteer hours</p>
+        <p class="note">Callouts only, training not included</p>
+      </div>
+      <div class="figure">
+        <p class="num">38%<sup>4</sup></p>
+        <p class="label">Called out after dark</p>
+        <p class="note">27 of 71 pages between dusk and dawn</p>
+      </div>
+      <div class="figure">
+        <p class="num">23 min<sup>5</sup></p>
+        <p class="label">Median time to leave base</p>
+        <p class="note">From the pager going off to the vehicle rolling</p>
+      </div>
+      <div class="figure">
+        <p class="num">£1,352<sup>6</sup></p>
+        <p class="label">Cost of an average callout</p>
+        <p class="note">Running costs divided by callouts, 2025 accounts</p>
+      </div>
+    </div>
+
+    <div class="figures-lower">
+      <div>
+        <p class="meta" style="margin-bottom:18px">Callouts by type, 2026</p>
+        <ul class="bars">
+          <li><div class="row"><b>Injured walker</b><span>29</span></div><div class="track"><div class="fill" style="width:100%"></div></div></li>
+          <li><div class="row"><b>Lost or overdue</b><span>17</span></div><div class="track"><div class="fill" style="width:59%"></div></div></li>
+          <li><div class="row"><b>Cragfast</b><span>9</span></div><div class="track"><div class="fill" style="width:31%"></div></div></li>
+          <li><div class="row"><b>Medical, not injury</b><span>8</span></div><div class="track"><div class="fill" style="width:28%"></div></div></li>
+          <li><div class="row"><b>Climbing and paragliding</b><span>5</span></div><div class="track"><div class="fill" style="width:17%"></div></div></li>
+          <li><div class="row"><b>Water and other agencies</b><span>3</span></div><div class="track"><div class="fill" style="width:10%"></div></div></li>
+        </ul>
+      </div>
+      <ol class="footnotes">
+        <li><b>1</b>A callout is any page that results in at least one member leaving base. Stand-downs on the road count.</li>
+        <li><b>2</b>People who received care, escort or evacuation. Companions who walked off unaided are not counted.</li>
+        <li><b>3</b>Members attending multiplied by hours from pager to stand-down, summed across the year.</li>
+        <li><b>4</b>Dusk and dawn taken from the almanac for the base's grid reference on the day.</li>
+        <li><b>5</b>Median of the 71 callouts. The slowest was 51 minutes, on a weekday at 2 in the afternoon.</li>
+        <li><b>6</b>2025 total running cost of £96,000 divided by 71 callouts that year. Includes vehicles, insurance, kit and the base.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- donate ---------- -->
+<section class="donate" id="donate">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Donate · the team costs £96,000 a year to keep on call</p>
+        <h2>Pick an amount. We will tell you exactly what it buys.</h2>
+      </div>
+      <p>No salaries, no office. Every pound goes on kit, vehicles, training and the base. Gift Aid adds 25p to every pound if you pay tax in Britain.</p>
+    </div>
+
+    <div class="donate-grid">
+      <div>
+        <div class="freq" role="group" aria-label="Donation frequency">
+          <button type="button" data-freq="once" aria-pressed="true">One-off</button>
+          <button type="button" data-freq="month" aria-pressed="false">Monthly</button>
+        </div>
+        <div class="amounts" role="group" aria-label="Donation amount">
+          <button class="amount" type="button" data-i="0" aria-pressed="false"><span class="v">£15</span><span class="k">a laminated map sheet for a new member</span></button>
+          <button class="amount" type="button" data-i="1" aria-pressed="true"><span class="v">£40</span><span class="k">a headtorch and spare cells</span></button>
+          <button class="amount" type="button" data-i="2" aria-pressed="false"><span class="v">£90</span><span class="k">a casualty warming bag</span></button>
+          <button class="amount" type="button" data-i="3" aria-pressed="false"><span class="v">£250</span><span class="k">one rope on the crag rescue rack</span></button>
+          <button class="amount" type="button" data-i="4" aria-pressed="false"><span class="v">£600</span><span class="k">a year of radio licences and batteries</span></button>
+          <button class="amount" type="button" data-i="5" aria-pressed="false"><span class="v">£1,400</span><span class="k">a complete casualty care kit</span></button>
+          <button class="amount" type="button" data-i="6" aria-pressed="false"><span class="v">£4,800</span><span class="k">a search dog for one year</span></button>
+          <button class="amount" type="button" data-i="7" aria-pressed="false"><span class="v">£38,000</span><span class="k">a replacement response vehicle</span></button>
+        </div>
+        <div class="donate-notes">
+          <div><b>Other ways to give</b>Bank transfer, cheque to the base, a collection tin in your shop, or leaving a gift in your will. Write to us and we will send the details.</div>
+          <div><b>Where it goes</b>In 2025: vehicles 31%, casualty care and kit 27%, training 18%, base and insurance 16%, fundraising 8%.</div>
+        </div>
+      </div>
+
+      <div class="buys" aria-live="polite">
+        <p class="meta">Your donation</p>
+        <p class="big"><span id="buys-amount">£40</span><small id="buys-freq"></small></p>
+        <p class="what" id="buys-what">buys a headtorch and spare cells for one probationer.</p>
+        <p class="detail" id="buys-detail">Every member carries two. A torch is the difference between a night search and a wait until morning.</p>
+        <a class="btn btn-paper" id="buys-btn" href="#donate">Give £40</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- get help ---------- -->
+<section id="help">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">How to call for help</p>
+        <h2>Do not walk to us. Do not message us. Ring 999 and we will come to you.</h2>
+      </div>
+      <p>The police hold our pagers. Calling them is the only way to reach the team on the hill, and it is free from any phone, even one with no credit.</p>
+    </div>
+
+    <div class="help-grid">
+      <div>
+        <p class="nines">999</p>
+        <p class="nines-sub">Ask for the police, then ask for mountain rescue.</p>
+        <p class="nines-note">112 works the same way. If you are abroad or your phone shows no network, either number will still try every mast it can reach.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span class="n">01</span>
+          <div><h3>Stop, get warm, and stay with the casualty</h3></div>
+          <div>
+            <p>Put on every layer you have and get off the wind. Sit the casualty on a rucksack. A cold casualty deteriorates faster than an injured one.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">02</span>
+          <div><h3>Dial 999, ask for police, then mountain rescue</h3></div>
+          <div>
+            <p>The operator will connect you to the police control room, and they page us. If the first call drops, ring again. Do not rely on a text.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">03</span>
+          <div><h3>Tell them where you are, as precisely as you can</h3></div>
+          <div>
+            <p>A six-figure grid reference is best. A what3words address or a named feature is fine. Say the fell, the path and the last thing you passed.</p>
+            <p>If you have signal, the police will send a text with a link. Open it. It sends us your phone's position. Say <code>yes</code> when they ask if you will accept it.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">04</span>
+          <div><h3>Tell them what happened and who is with you</h3></div>
+          <div>
+            <p>Number in the party, the injury, whether the casualty is conscious and breathing, and what kit you have. Your phone number, said slowly.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">05</span>
+          <div><h3>Keep the phone free and stay where you are</h3></div>
+          <div>
+            <p>We will ring you back, possibly more than once. Turn the screen brightness down to save the battery. When you hear us, shout or flash a torch, six flashes then a pause.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">06</span>
+          <div><h3>No signal at all</h3></div>
+          <div>
+            <p>Register your phone for emergency texts before you go: text <code>register</code> to <code>999</code> and follow the reply. Then a text to 999 gets through on a signal too weak for a call.</p>
+            <p>Failing that, send the strongest two people to the nearest road or house with a written note of the location, the time and the injury.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- patch map ---------- -->
+<section class="patch" id="patch">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Our patch · 420 square kilometres</p>
+        <h2>From the Fellside road in the west to the county line on High Stile.</h2>
+      </div>
+      <p>Base is in Harrowdale village at the head of the valley. Anywhere on this map is between fifteen minutes and three hours on foot from the vehicle.</p>
+    </div>
+
+    <div class="map-grid">
+      <figure class="map-frame">
+        <svg viewBox="0 0 900 620" role="img" aria-labelledby="map-title">
+          <title id="map-title">Map of the Harrowdale Mountain Rescue patch area showing the three main hill groups, Blea Tarn, the Fellside road, the base and this year's callout locations</title>
+          <defs>
+            <pattern id="water" width="8" height="8" patternUnits="userSpaceOnUse">
+              <path d="M0 4 H8" stroke="#8FA1A5" stroke-width="1" opacity=".6"/>
+            </pattern>
+          </defs>
+          <rect width="900" height="620" fill="#E9E5DC"/>
+
+          <!-- grid -->
+          <g stroke="#D8D2C4" stroke-width="0.8">
+            <path d="M100 0 V620 M200 0 V620 M300 0 V620 M400 0 V620 M500 0 V620 M600 0 V620 M700 0 V620 M800 0 V620"/>
+            <path d="M0 100 H900 M0 200 H900 M0 300 H900 M0 400 H900 M0 500 H900 M0 600 H900"/>
+          </g>
+
+          <!-- Scarth Crag massif -->
+          <g fill="none" stroke="#B3AC9B" stroke-width="1">
+            <ellipse cx="250" cy="215" rx="170" ry="110" transform="rotate(-18 250 215)"/>
+            <ellipse cx="252" cy="212" rx="140" ry="88" transform="rotate(-18 252 212)"/>
+            <ellipse cx="255" cy="208" rx="110" ry="66" transform="rotate(-18 255 208)"/>
+            <ellipse cx="258" cy="204" rx="80" ry="46" transform="rotate(-18 258 204)"/>
+            <ellipse cx="260" cy="200" rx="50" ry="28" transform="rotate(-18 260 200)"/>
+            <ellipse cx="262" cy="197" rx="24" ry="13" transform="rotate(-18 262 197)"/>
+          </g>
+          <!-- crag hatching on the north face -->
+          <g stroke="#16150F" stroke-width="1.2">
+            <path d="M228 168 l6 -9 M238 165 l6 -9 M248 163 l6 -9 M258 162 l6 -9 M268 162 l6 -9 M278 164 l6 -9"/>
+          </g>
+
+          <!-- Kettle Pike -->
+          <g fill="none" stroke="#B3AC9B" stroke-width="1">
+            <ellipse cx="640" cy="170" rx="150" ry="100" transform="rotate(12 640 170)"/>
+            <ellipse cx="642" cy="168" rx="120" ry="78" transform="rotate(12 642 168)"/>
+            <ellipse cx="644" cy="166" rx="92" ry="58" transform="rotate(12 644 166)"/>
+            <ellipse cx="646" cy="164" rx="64" ry="40" transform="rotate(12 646 164)"/>
+            <ellipse cx="648" cy="162" rx="36" ry="22" transform="rotate(12 648 162)"/>
+          </g>
+
+          <!-- High Stile ridge -->
+          <g fill="none" stroke="#B3AC9B" stroke-width="1">
+            <ellipse cx="600" cy="440" rx="200" ry="80" transform="rotate(-28 600 440)"/>
+            <ellipse cx="602" cy="438" rx="165" ry="62" transform="rotate(-28 602 438)"/>
+            <ellipse cx="604" cy="436" rx="130" ry="46" transform="rotate(-28 604 436)"/>
+            <ellipse cx="606" cy="434" rx="95" ry="32" transform="rotate(-28 606 434)"/>
+            <ellipse cx="608" cy="432" rx="58" ry="19" transform="rotate(-28 608 432)"/>
+          </g>
+
+          <!-- Ravens Edge -->
+          <g fill="none" stroke="#B3AC9B" stroke-width="1">
+            <ellipse cx="150" cy="450" rx="110" ry="70" transform="rotate(30 150 450)"/>
+            <ellipse cx="152" cy="448" rx="82" ry="50" transform="rotate(30 152 448)"/>
+            <ellipse cx="154" cy="446" rx="54" ry="32" transform="rotate(30 154 446)"/>
+            <ellipse cx="156" cy="444" rx="26" ry="15" transform="rotate(30 156 444)"/>
+          </g>
+
+          <!-- Blea Tarn -->
+          <path d="M395 330 C 420 310, 470 318, 478 345 C 486 372, 455 392, 425 388 C 395 384, 378 352, 395 330 Z" fill="#9FB0B3"/>
+          <path d="M395 330 C 420 310, 470 318, 478 345 C 486 372, 455 392, 425 388 C 395 384, 378 352, 395 330 Z" fill="url(#water)"/>
+          <text x="436" y="355" class="map-text" text-anchor="middle" fill="#16150F">Blea Tarn</text>
+
+          <!-- becks -->
+          <g fill="none" stroke="#8FA1A5" stroke-width="1.3">
+            <path d="M420 388 C 415 420, 400 450, 405 490 C 408 515, 415 540, 412 570"/>
+            <path d="M300 140 C 320 190, 360 250, 395 335"/>
+            <path d="M560 250 C 520 280, 490 300, 478 345"/>
+          </g>
+          <text x="470" y="470" class="map-text sm" transform="rotate(82 470 470)">Harrowdale Beck</text>
+
+          <!-- Fellside road -->
+          <path d="M40 600 C 60 520, 40 440, 80 380 C 120 320, 60 260, 120 200 C 150 170, 130 110, 150 40" fill="none" stroke="#16150F" stroke-width="2"/>
+          <path d="M40 600 C 60 520, 40 440, 80 380 C 120 320, 60 260, 120 200 C 150 170, 130 110, 150 40" fill="none" stroke="#E9E5DC" stroke-width="0.8" stroke-dasharray="6 6"/>
+          <text x="66" y="300" class="map-text sm" transform="rotate(-72 66 300)">Fellside road</text>
+
+          <!-- valley road to base -->
+          <path d="M80 380 C 200 400, 300 480, 412 540 C 500 585, 700 580, 880 560" fill="none" stroke="#16150F" stroke-width="1.6"/>
+
+          <!-- patch boundary -->
+          <path d="M40 30 L 220 20 L 420 60 L 640 30 L 870 70 L 880 300 L 850 560 L 700 600 L 430 605 L 200 590 L 40 600 Z" fill="none" stroke="#FF5A00" stroke-width="1.8" stroke-dasharray="10 6"/>
+          <text x="720" y="600" class="map-text sm" fill="#B83C00">county line</text>
+
+          <!-- summits -->
+          <g fill="#16150F">
+            <path d="M262 190 l6 11 h-12 z"/>
+            <path d="M648 155 l6 11 h-12 z"/>
+            <path d="M608 425 l6 11 h-12 z"/>
+            <path d="M156 437 l6 11 h-12 z"/>
+          </g>
+          <text x="276" y="196" class="map-text b">Scarth Crag</text>
+          <text x="276" y="209" class="map-text sm">812 m</text>
+          <text x="662" y="160" class="map-text b">Kettle Pike</text>
+          <text x="662" y="173" class="map-text sm">903 m</text>
+          <text x="622" y="430" class="map-text b">High Stile</text>
+          <text x="622" y="443" class="map-text sm">867 m</text>
+          <text x="170" y="442" class="map-text b">Ravens Edge</text>
+          <text x="170" y="455" class="map-text sm">641 m</text>
+          <text x="470" y="290" class="map-text sm">Lower Grisedale</text>
+
+          <!-- callouts 2026 -->
+          <g class="callouts">
+            <circle class="callout-dot" cx="240" cy="172" r="4.5"><title>071 Scarth Crag north face</title></circle>
+            <circle class="callout-dot" cx="255" cy="180" r="4.5"><title>Scarth Crag, 3 callouts</title></circle>
+            <circle class="callout-dot" cx="268" cy="176" r="4.5"><title>Scarth Crag</title></circle>
+            <circle class="callout-dot" cx="300" cy="230" r="4.5"><title>Scarth Crag descent path</title></circle>
+            <circle class="callout-dot" cx="410" cy="322" r="4.5"><title>070 Blea Tarn path</title></circle>
+            <circle class="callout-dot" cx="452" cy="395" r="4.5"><title>Blea Tarn outflow</title></circle>
+            <circle class="callout-dot" cx="410" cy="430" r="4.5"><title>068 Harrowdale Beck</title></circle>
+            <circle class="callout-dot" cx="402" cy="470" r="4.5"><title>Harrowdale Beck woods</title></circle>
+            <circle class="callout-dot" cx="640" cy="150" r="4.5"><title>067 Kettle Pike summit</title></circle>
+            <circle class="callout-dot" cx="660" cy="185" r="4.5"><title>Kettle Pike plateau</title></circle>
+            <circle class="callout-dot" cx="612" cy="205" r="4.5"><title>Kettle Pike west path</title></circle>
+            <circle class="callout-dot" cx="690" cy="140" r="4.5"><title>Kettle Pike east ridge</title></circle>
+            <circle class="callout-dot" cx="560" cy="460" r="4.5"><title>065 High Stile west shoulder</title></circle>
+            <circle class="callout-dot" cx="640" cy="415" r="4.5"><title>High Stile ridge</title></circle>
+            <circle class="callout-dot" cx="700" cy="390" r="4.5"><title>High Stile east end</title></circle>
+            <circle class="callout-dot" cx="132" cy="470" r="4.5"><title>069 Ravens Edge east gully</title></circle>
+            <circle class="callout-dot" cx="170" cy="425" r="4.5"><title>Ravens Edge top</title></circle>
+            <circle class="callout-dot" cx="82" cy="372" r="4.5"><title>066 Fellside road hairpin</title></circle>
+            <circle class="callout-dot" cx="470" cy="275" r="4.5"><title>064 Lower Grisedale</title></circle>
+            <circle class="callout-dot" cx="520" cy="300" r="4.5"><title>Lower Grisedale bridleway</title></circle>
+            <circle class="callout-dot" cx="350" cy="120" r="4.5"><title>Scarth Crag northern approach</title></circle>
+            <circle class="callout-dot" cx="780" cy="260" r="4.5"><title>Kettle Pike far side</title></circle>
+            <circle class="callout-dot" cx="820" cy="480" r="4.5"><title>High Stile county line</title></circle>
+            <circle class="callout-dot" cx="230" cy="560" r="4.5"><title>Valley road</title></circle>
+          </g>
+
+          <!-- base -->
+          <rect x="404" y="532" width="16" height="16" fill="#FF5A00" stroke="#16150F" stroke-width="1.5"/>
+          <path d="M406 544 L420 536 L420 540 L406 548 Z" fill="#F1EDE3"/>
+          <text x="428" y="545" class="map-text b">Base, Harrowdale village</text>
+
+          <!-- scale and north -->
+          <g transform="translate(700 40)">
+            <path d="M0 0 H120" stroke="#16150F" stroke-width="2"/>
+            <path d="M0 -4 V4 M60 -4 V4 M120 -4 V4" stroke="#16150F" stroke-width="1.5"/>
+            <text x="0" y="18" class="map-text sm">0</text>
+            <text x="52" y="18" class="map-text sm">2.5</text>
+            <text x="106" y="18" class="map-text sm">5 km</text>
+          </g>
+          <g transform="translate(850 100)">
+            <path d="M0 -18 L6 8 L0 4 L-6 8 Z" fill="#16150F"/>
+            <text x="0" y="24" class="map-text sm" text-anchor="middle">north</text>
+          </g>
+        </svg>
+      </figure>
+
+      <div class="map-side">
+        <ul class="legend" aria-label="Map key">
+          <li><span class="sw" style="background:#FF5A00;border-radius:50%;width:14px"></span>One callout in 2026, rounded to the nearest feature</li>
+          <li><span class="sw" style="border-top:2px dashed #FF5A00"></span>Patch boundary. Beyond it, the neighbouring teams</li>
+          <li><span class="sw" style="border-top:2px solid #16150F"></span>Public road. Vehicles get no closer than this</li>
+          <li><span class="sw" style="border-top:1px solid #B3AC9B"></span>Contour, every 100 m</li>
+          <li><span class="sw" style="background:#9FB0B3"></span>Open water. The tarn has a boat at the boathouse</li>
+        </ul>
+        <div class="places">
+          <p class="meta" style="margin-bottom:8px">Where we go most</p>
+          <ul>
+            <li><b>Scarth Crag</b><span>19 callouts</span></li>
+            <li><b>Kettle Pike</b><span>14 callouts</span></li>
+            <li><b>High Stile ridge</b><span>11 callouts</span></li>
+            <li><b>Blea Tarn and the beck</b><span>10 callouts</span></li>
+            <li><b>Ravens Edge</b><span>7 callouts</span></li>
+            <li><b>Roads and valley</b><span>10 callouts</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- training ---------- -->
+<section id="training">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Volunteer training · a year to the callout list</p>
+        <h2>Nobody joins the team and goes on the hill the same month.</h2>
+      </div>
+      <p>Probationers train with the full team every Tuesday evening and one weekend a month. Twelve months and a pass at each stage earns a pager.</p>
+    </div>
+
+    <div class="train-grid">
+      <div class="modules">
+        <div class="module">
+          <div class="top"><b>01</b><span>January</span></div>
+          <h3>Application and hill day</h3>
+          <p>A written application, a chat at the base, then a day on Kettle Pike in whatever the weather is doing. We are looking for fitness, judgement and whether you are still cheerful at 4 in the afternoon.</p>
+        </div>
+        <div class="module">
+          <div class="top"><b>02</b><span>February to April</span></div>
+          <h3>Navigation, day and night</h3>
+          <p>Map, compass and pacing to a grid reference in cloud, then the same in the dark. Assessed on a night exercise across Ravens Edge with no head torch for the last leg.</p>
+        </div>
+        <div class="module">
+          <div class="top"><b>03</b><span>May</span></div>
+          <h3>Casualty care</h3>
+          <p>A four-day course and written exam covering fractures, head injuries, hypothermia, pain relief and the drugs we carry. Renewed every three years for the whole team.</p>
+        </div>
+        <div class="module">
+          <div class="top"><b>04</b><span>June to August</span></div>
+          <h3>Rope and stretcher</h3>
+          <p>Lowering systems, crag rescue and the stretcher over rough ground. Most of the summer is spent on Scarth Crag learning to be the one on the end of the rope.</p>
+        </div>
+        <div class="module">
+          <div class="top"><b>05</b><span>September to October</span></div>
+          <h3>Search, radios and dogs</h3>
+          <p>How a search is planned, how to run a line and what to say on a radio so the control vehicle can hear you. Working with the search dogs and their handlers on live exercises.</p>
+        </div>
+        <div class="module">
+          <div class="top"><b>06</b><span>November</span></div>
+          <h3>Assessment and the pager</h3>
+          <p>A full-day exercise with a scripted casualty, watched by the training officer and a member from a neighbouring team. Pass, and you are on the callout list from December.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="ask">
+          <h3>What we ask of you</h3>
+          <ul>
+            <li>Live or work within 30 minutes of Harrowdale village</li>
+            <li>Be able to carry a 15 kg pack over the fell for a full day</li>
+            <li>Tuesday evenings and one weekend a month, all year</li>
+            <li>Turn out to callouts when you can, and not feel guilty when you cannot</li>
+            <li>Be over 18 and hold a full driving licence</li>
+            <li>No mountaineering experience required. Hill sense is</li>
+          </ul>
+        </div>
+        <div class="intake">
+          <p class="meta">Next intake</p>
+          <p class="date">Applications open 1 October 2026</p>
+          <p>Closing 14 November. Up to six places. Hill day on Saturday 10 January 2027, meeting at the base at 8 in the morning.</p>
+          <a href="mailto:training@harrowdalemrt.org.uk">Write to the training officer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- footer ---------- -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Base</p>
+        <p>The Old Fire Station<br>Fell Road<br>Harrowdale village</p>
+        <p class="muted">Open Tuesday evenings from 7. Visitors welcome, boots off at the door.</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:team@harrowdalemrt.org.uk">team@harrowdalemrt.org.uk</a><br><a href="mailto:treasurer@harrowdalemrt.org.uk">treasurer@harrowdalemrt.org.uk</a></p>
+        <p class="muted">Replies within a week. The inbox is not watched on callouts.</p>
+      </div>
+      <div>
+        <p class="meta">The team</p>
+        <p>38 volunteer members<br>4 search dogs<br>2 response vehicles<br>Founded 1961</p>
+      </div>
+      <div>
+        <p class="meta">Money</p>
+        <p>Registered charity 1134872<br>Accounts published each April<br><a href="#donate">Donate to the team</a></p>
+      </div>
+    </div>
+
+    <div class="foot-warn">
+      <span>In an emergency on the hill, do not use anything on this page.</span>
+      <span>Dial 999, ask for police, then mountain rescue.</span>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 Harrowdale Mountain Rescue Team. Affiliated to the regional search and rescue association.</span>
+      <span>Every callout on this page is real to the people who were on it.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var tiers = [
+      { amount: 15,    label: "£15",     what: "buys a laminated 1:25,000 map sheet for a new member's kit.", detail: "Paper maps go in the bag next to the phone. Batteries die, laminate does not." },
+      { amount: 40,    label: "£40",     what: "buys a headtorch and spare cells for one probationer.", detail: "Every member carries two. A torch is the difference between a night search and a wait until morning." },
+      { amount: 90,    label: "£90",     what: "buys a casualty warming bag, used once and then binned.", detail: "The bag, a vapour barrier and three chemical heat pads. We used 31 of them last year." },
+      { amount: 250,   label: "£250",    what: "buys one 60 m rope for the crag rescue rack.", detail: "Ropes are retired after five years or one hard fall, whichever comes first. We keep eight in service." },
+      { amount: 600,   label: "£600",    what: "keeps the team's radios licensed and powered for a year.", detail: "Forty handsets, two vehicle sets and the repeater on Kettle Pike. Without them, a search is just people shouting." },
+      { amount: 1400,  label: "£1,400",  what: "buys a complete casualty care kit for one vehicle.", detail: "Splints, a vacuum mattress, oxygen, pain relief, monitoring and the drugs bag. Each vehicle carries one and the base holds a spare." },
+      { amount: 4800,  label: "£4,800",  what: "keeps one search dog trained, fed, insured and on the hill for a year.", detail: "A dog searches an area in an hour that takes twenty people a night. We have four, and the youngest is two years from grading." },
+      { amount: 38000, label: "£38,000", what: "replaces one of the two response vehicles.", detail: "The current vehicle has 180,000 miles on it and a gearbox we no longer trust on the pass in winter. It goes in 2027 whether we can afford it or not." }
+    ];
+    var freq = "once";
+    var current = 1;
+    var amountBtns = document.querySelectorAll(".amount");
+    var freqBtns = document.querySelectorAll(".freq button");
+    var elAmount = document.getElementById("buys-amount");
+    var elFreq = document.getElementById("buys-freq");
+    var elWhat = document.getElementById("buys-what");
+    var elDetail = document.getElementById("buys-detail");
+    var elBtn = document.getElementById("buys-btn");
+
+    function render(){
+      var t = tiers[current];
+      elAmount.textContent = t.label;
+      elFreq.textContent = freq === "month" ? "a month" : "";
+      if (freq === "month") {
+        var yearly = t.amount * 12;
+        elWhat.textContent = t.what.replace(/\.$/, "") + ", every month.";
+        elDetail.textContent = "That is £" + yearly.toLocaleString("en-GB") + " a year, and it is the money we can plan around. " + t.detail;
+      } else {
+        elWhat.textContent = t.what;
+        elDetail.textContent = t.detail;
+      }
+      elBtn.textContent = "Give " + t.label + (freq === "month" ? " a month" : "");
+      amountBtns.forEach(function(b, i){ b.setAttribute("aria-pressed", i === current ? "true" : "false"); });
+      freqBtns.forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.freq === freq ? "true" : "false"); });
+    }
+    amountBtns.forEach(function(b){
+      b.addEventListener("click", function(){ current = parseInt(b.dataset.i, 10); render(); });
+    });
+    freqBtns.forEach(function(b){
+      b.addEventListener("click", function(){ freq = b.dataset.freq; render(); });
+    });
+    render();
+  })();
+</script>
+</body>
+</html>

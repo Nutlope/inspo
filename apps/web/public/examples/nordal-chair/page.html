@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Holmgren Ek 01, a flat-pack oak dining chair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, two typefaces */
+  :root{
+    --t-meta: 0.8125rem;
+    --t-body: 1rem;
+    --t-lead: 1.3125rem;
+    --t-title: clamp(1.875rem, 2.8vw, 2.5rem);
+    --t-display: clamp(2.75rem, 4.8vw, 4rem);
+
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+
+    --paper: #f5f1e9;
+    --paper-deep: #ebe4d6;
+    --ink: #1f1a14;
+    --muted: #6b6259;
+    --rule: #d7cdbd;
+    --accent: #b5482c;
+    --accent-soft: #f3d9cf;
+    --oak-base: #d6b384;
+    --oak: var(--oak-base);
+    --oak-edge: #3a2d20;
+
+    --space: clamp(72px, 9vw, 128px);
+    --gutter: clamp(20px, 4vw, 48px);
+    --radius: 14px;
+  }
+  [data-timber="smoked"]{ --oak-base: #8c6646; }
+  [data-timber="ash"]{ --oak-base: #e7dbc0; }
+  [data-finish="white"]{ --oak: color-mix(in oklab, var(--oak-base) 62%, #fffdf7); }
+  [data-finish="soap"]{ --oak: color-mix(in oklab, var(--oak-base) 82%, #f2ede2); }
+  [data-finish="black"]{ --oak: #2a2420; }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    --oak: var(--oak-base);
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--t-body);
+    line-height:1.55;
+    font-feature-settings:"tnum" 1;
+  }
+  h1,h2,h3{ margin:0; font-weight:400; }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font:inherit; color:inherit; cursor:pointer; }
+  ul,ol{ margin:0; padding:0; list-style:none; }
+
+  .wrap{ max-width:1200px; margin-inline:auto; padding-inline:var(--gutter); }
+
+  .meta{
+    font-size:var(--t-meta);
+    color:var(--muted);
+    letter-spacing:0.01em;
+  }
+  .lead{ font-size:var(--t-lead); line-height:1.4; }
+  .title{
+    font-family:var(--display);
+    font-size:var(--t-title);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    font-variation-settings:"opsz" 72;
+  }
+  .display{
+    font-family:var(--display);
+    font-size:var(--t-display);
+    line-height:1.02;
+    letter-spacing:-0.015em;
+    font-variation-settings:"opsz" 120;
+  }
+  em{ font-style:italic; }
+
+  /* Fold */
+  .fold{ min-height:100svh; display:flex; flex-direction:column; }
+  .nav{
+    border-bottom:1px solid var(--rule);
+  }
+  .nav .wrap{
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    padding-block:18px;
+  }
+  .wordmark{
+    font-family:var(--display);
+    font-size:1.5rem;
+    letter-spacing:-0.01em;
+    font-variation-settings:"opsz" 40;
+  }
+  .nav-links{ display:flex; gap:28px; font-size:var(--t-meta); }
+  .nav-links a{ padding-block:4px; border-bottom:1px solid transparent; }
+  .nav-links a:hover{ border-color:var(--ink); }
+  .nav-cart{
+    display:flex; align-items:center; gap:10px;
+    font-size:var(--t-meta);
+    border:1px solid var(--rule); border-radius:999px;
+    padding:8px 14px 8px 10px;
+    background:#fff;
+  }
+  .nav-cart .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); }
+
+  .hero{ flex:1; display:flex; align-items:center; padding-block:28px; }
+  .hero .wrap{
+    width:100%;
+    display:grid; grid-template-columns: 1.05fr 1fr; gap:48px; align-items:center;
+  }
+  .hero-copy{ max-width:34rem; }
+  .hero-copy .meta{ display:flex; gap:14px; align-items:center; }
+  .hero-copy .meta span+span::before{ content:"·"; margin-right:14px; color:var(--rule); }
+  .hero-copy h1{ margin-top:22px; max-width:15ch; text-wrap:balance; }
+  .hero-copy .lead{ margin-top:22px; max-width:30rem; color:#3a332b; }
+  .cta-row{ display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; align-items:center; }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 22px; border-radius:999px;
+    border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+    font-weight:500; font-size:var(--t-body); line-height:1;
+    transition:background .2s, color .2s, transform .2s;
+  }
+  .btn:hover{ background:var(--accent); border-color:var(--accent); }
+  .btn.ghost{ background:transparent; color:var(--ink); border-color:var(--rule); }
+  .btn.ghost:hover{ background:#fff; border-color:var(--ink); }
+  .btn.accent{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.accent:hover{ background:#963a22; border-color:#963a22; }
+  .hero-trust{ margin-top:22px; display:flex; gap:22px; flex-wrap:wrap; }
+  .hero-trust li{ font-size:var(--t-meta); color:var(--muted); display:flex; gap:8px; align-items:center; }
+  .hero-trust li::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--oak-base); }
+
+  .hero-panel{
+    position:relative;
+    border-radius:var(--radius);
+    background:
+      radial-gradient(110% 80% at 0% 0%, color-mix(in oklab, var(--accent) 18%, var(--paper-deep)), transparent 62%),
+      linear-gradient(180deg, color-mix(in oklab, var(--oak-base) 22%, var(--paper-deep)), var(--paper-deep));
+    height:min(600px, 76svh);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .hero-panel svg{ height:88%; width:auto; max-width:92%; }
+  .hero-panel .panel-note{
+    position:absolute; left:20px; bottom:18px;
+    font-size:var(--t-meta); color:var(--muted);
+  }
+  .hero-panel .panel-toggle{
+    position:absolute; right:16px; bottom:14px;
+    border:1px solid var(--ink); background:var(--paper); border-radius:999px;
+    padding:9px 14px; font-size:var(--t-meta); line-height:1;
+  }
+  .hero-panel .panel-toggle:hover{ background:#fff; }
+
+  /* Chair parts: fills come from the use element */
+  .p-done{ fill:var(--oak); stroke:var(--oak-edge); stroke-width:2.5; stroke-linejoin:round; transition:fill .3s; }
+  .p-hidden{ fill:none; stroke:var(--oak-edge); stroke-width:2; stroke-dasharray:8 7; opacity:.55; }
+  .p-todo{ fill:none; stroke:var(--muted); stroke-width:2.5; stroke-dasharray:7 7; stroke-linejoin:round; opacity:.55; }
+  .p-new{ fill:var(--accent-soft); stroke:var(--accent); stroke-width:3; stroke-linejoin:round; }
+  .p-faint{ fill:var(--oak); stroke:var(--oak-edge); stroke-width:2.5; opacity:.35; }
+  .bolt{ fill:var(--ink); stroke:var(--ink); stroke-width:4; stroke-linecap:round; }
+  .floor{ stroke:var(--oak-edge); stroke-width:2; opacity:.5; }
+  .callout circle{ fill:var(--paper); stroke:var(--ink); stroke-width:2; }
+  .callout text{ font-family:var(--body); font-size:22px; font-weight:500; fill:var(--ink); text-anchor:middle; dominant-baseline:central; }
+  .callout line{ stroke:var(--ink); stroke-width:1.5; }
+  .callout .end{ fill:var(--ink); stroke:none; }
+  .dim line{ stroke:var(--muted); stroke-width:1.5; }
+  .dim text{ font-family:var(--body); font-size:20px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; }
+  .dim rect{ fill:var(--paper); }
+  .drawing-label{ font-family:var(--body); font-size:22px; fill:var(--muted); }
+
+  /* Hero chair explode states */
+  .chair g{ transition: transform .8s cubic-bezier(.2,.75,.2,1); }
+  .chair.exploded .g-back{ transform:translate(60px,-120px); }
+  .chair.exploded .g-rear{ transform:translate(130px,0); }
+  .chair.exploded .g-front{ transform:translate(-120px,0); }
+  .chair.exploded .g-seat{ transform:translate(0,-170px); }
+  .chair.exploded .g-stretch{ transform:translate(0,110px); }
+  .chair.exploded .g-hidden{ opacity:0; }
+  .chair .g-hidden{ transition:opacity .4s; }
+
+  /* Sections */
+  section{ padding-block:var(--space); }
+  section + section, main > section:first-child{ border-top:1px solid var(--rule); }
+  .section-head{
+    display:grid; grid-template-columns: 1fr 1.6fr; gap:40px; align-items:end;
+    margin-bottom:clamp(36px, 5vw, 64px);
+  }
+  .section-head .title{ margin-top:14px; max-width:16ch; text-wrap:balance; }
+  .section-head .lead{ color:#3a332b; max-width:44rem; }
+
+  /* Exploded */
+  .exploded-grid{ display:grid; grid-template-columns: 1.35fr 1fr; gap:48px; align-items:start; }
+  .exploded-figure{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius);
+    padding:24px;
+  }
+  .exploded-figure svg{ width:100%; height:auto; display:block; }
+  .parts-table{ width:100%; border-collapse:collapse; font-size:var(--t-meta); }
+  .parts-table th, .parts-table td{ text-align:left; padding:12px 10px 12px 0; border-bottom:1px solid var(--rule); vertical-align:top; }
+  .parts-table th{ font-weight:500; color:var(--muted); }
+  .parts-table td:first-child{ width:34px; }
+  .parts-table .num{
+    display:inline-flex; width:24px; height:24px; border-radius:50%;
+    border:1.5px solid var(--ink); align-items:center; justify-content:center;
+    font-weight:500; font-size:12px;
+  }
+  .parts-table .name{ font-size:var(--t-body); color:var(--ink); }
+  .parts-table .dims{ white-space:nowrap; }
+  .parts-note{ margin-top:18px; font-size:var(--t-meta); color:var(--muted); max-width:40rem; }
+
+  /* Dimensions */
+  .drawings{ display:grid; grid-template-columns: 1fr 1fr; gap:32px; }
+  .drawing{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius);
+    padding:28px; display:flex; flex-direction:column; gap:18px;
+  }
+  .drawing svg{ width:100%; height:auto; }
+  .drawing .cap{ display:flex; justify-content:space-between; font-size:var(--t-meta); color:var(--muted); }
+  .spec-strip{
+    margin-top:32px;
+    display:grid; grid-template-columns:repeat(4, 1fr);
+    border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; background:#fff;
+  }
+  .spec-strip div{ padding:22px 24px; border-left:1px solid var(--rule); }
+  .spec-strip div:first-child{ border-left:0; }
+  .spec-strip .val{ font-family:var(--display); font-size:1.75rem; line-height:1.1; font-variation-settings:"opsz" 48; }
+  .spec-strip .val small{ font-family:var(--body); font-size:var(--t-meta); color:var(--muted); margin-left:6px; }
+  .spec-strip .lbl{ font-size:var(--t-meta); color:var(--muted); margin-top:6px; }
+
+  /* Materials */
+  .materials{ display:grid; grid-template-columns: 1fr 1fr; gap:48px; align-items:start; }
+  .option-group + .option-group{ margin-top:36px; }
+  .option-group h3{ font-size:var(--t-body); font-weight:500; display:flex; justify-content:space-between; }
+  .option-group h3 span{ color:var(--muted); font-weight:400; font-size:var(--t-meta); }
+  .swatches{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:14px; }
+  .swatches.four{ grid-template-columns:repeat(4, 1fr); }
+  .swatch{ position:relative; }
+  .swatch input{ position:absolute; opacity:0; inset:0; margin:0; }
+  .swatch label{
+    display:block; border:1px solid var(--rule); border-radius:12px; background:#fff;
+    padding:10px; cursor:pointer; transition:border-color .2s, box-shadow .2s;
+  }
+  .swatch label:hover{ border-color:var(--ink); }
+  .swatch input:checked + label{ border-color:var(--ink); box-shadow:0 0 0 2px var(--ink) inset; }
+  .swatch input:focus-visible + label{ outline:2px solid var(--accent); outline-offset:2px; }
+  .swatch .chip{
+    height:64px; border-radius:8px;
+    background-image:
+      repeating-linear-gradient(97deg, rgba(60,40,20,.10) 0 2px, transparent 2px 9px, rgba(60,40,20,.06) 9px 11px, transparent 11px 23px),
+      linear-gradient(var(--chip), var(--chip));
+  }
+  .swatch .chip.plain{ background-image:linear-gradient(var(--chip), var(--chip)); }
+  .swatch .name{ margin-top:10px; font-size:var(--t-meta); display:flex; justify-content:space-between; gap:8px; }
+  .swatch .name span{ color:var(--muted); }
+  .material-copy{ display:flex; flex-direction:column; gap:20px; max-width:34rem; }
+  .material-copy p{ color:#3a332b; }
+  .material-facts{ display:grid; grid-template-columns:1fr 1fr; gap:14px 28px; margin-top:8px; }
+  .material-facts dt{ font-size:var(--t-meta); color:var(--muted); }
+  .material-facts dd{ margin:2px 0 0; }
+  .oak-preview{
+    margin-top:28px; border:1px solid var(--rule); border-radius:var(--radius); background:#fff;
+    padding:20px 24px; display:flex; align-items:center; gap:20px;
+  }
+  .oak-preview svg{ height:110px; width:auto; }
+  .oak-preview .read{ font-size:var(--t-meta); color:var(--muted); }
+  .oak-preview .read strong{ display:block; color:var(--ink); font-weight:500; font-size:var(--t-body); }
+
+  /* Assembly */
+  .steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; counter-reset:step; }
+  .step{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius);
+    padding:22px; display:flex; flex-direction:column; gap:14px;
+  }
+  .step .fig{ background:var(--paper); border-radius:10px; padding:12px; }
+  .step .fig svg{ width:100%; height:170px; display:block; }
+  .step .row{ display:flex; justify-content:space-between; align-items:baseline; }
+  .step .n{
+    font-family:var(--display); font-size:1.6rem; line-height:1; font-variation-settings:"opsz" 48;
+  }
+  .step .time{ font-size:var(--t-meta); color:var(--muted); }
+  .step h3{ font-size:var(--t-lead); font-family:var(--display); line-height:1.15; font-variation-settings:"opsz" 48; }
+  .step p{ font-size:var(--t-meta); color:#3a332b; line-height:1.5; }
+  .assembly-foot{
+    margin-top:28px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px;
+    padding:20px 24px; border:1px solid var(--rule); border-radius:var(--radius); background:#fff;
+  }
+  .assembly-foot p{ font-size:var(--t-meta); color:var(--muted); }
+  .assembly-foot strong{ color:var(--ink); font-weight:500; }
+
+  /* Ships flat */
+  .flat-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:48px; align-items:center; }
+  .stat-list{ display:grid; gap:0; border-top:1px solid var(--rule); }
+  .stat-list li{
+    display:grid; grid-template-columns: 1fr auto; gap:24px; align-items:baseline;
+    padding:18px 0; border-bottom:1px solid var(--rule);
+  }
+  .stat-list .k{ font-size:var(--t-meta); color:var(--muted); }
+  .stat-list .v{ font-family:var(--display); font-size:1.75rem; line-height:1; font-variation-settings:"opsz" 48; }
+  .stat-list .v small{ font-family:var(--body); font-size:var(--t-meta); color:var(--muted); margin-left:6px; }
+  .box-figure{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius); padding:28px;
+  }
+  .box-figure svg{ width:100%; height:auto; display:block; }
+  .box-figure .cap{ margin-top:14px; font-size:var(--t-meta); color:var(--muted); display:flex; justify-content:space-between; }
+
+  /* Buy */
+  .buy{ display:grid; grid-template-columns: 1.1fr 1fr; gap:32px; align-items:start; }
+  .buy-card{
+    background:#fff; border:1px solid var(--rule); border-radius:var(--radius); padding:32px;
+  }
+  .buy-card .price-row{ display:flex; justify-content:space-between; align-items:baseline; gap:20px; }
+  .buy-card .price{ font-family:var(--display); font-size:2.5rem; line-height:1; font-variation-settings:"opsz" 72; }
+  .buy-card .price small{ font-family:var(--body); font-size:var(--t-meta); color:var(--muted); margin-left:8px; }
+  .buy-card .stock{ font-size:var(--t-meta); color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .buy-card .stock::before{ content:""; width:8px; height:8px; border-radius:50%; background:#3f7a4f; }
+  .config{ margin-top:24px; border-top:1px solid var(--rule); }
+  .config li{ display:flex; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid var(--rule); font-size:var(--t-meta); }
+  .config li span:first-child{ color:var(--muted); }
+  .config li a{ color:var(--accent); }
+  .qty-row{ margin-top:22px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .qty{ display:inline-flex; align-items:center; border:1px solid var(--rule); border-radius:999px; overflow:hidden; }
+  .qty button{ width:40px; height:40px; border:0; background:transparent; font-size:1.1rem; }
+  .qty button:hover{ background:var(--paper); }
+  .qty output{ min-width:36px; text-align:center; font-weight:500; }
+  .buy-card .btn{ width:100%; justify-content:center; margin-top:18px; padding-block:17px; }
+  .buy-card .fine{ margin-top:14px; font-size:var(--t-meta); color:var(--muted); text-align:center; }
+  .delivery{ display:flex; flex-direction:column; gap:14px; }
+  .delivery-item{
+    border:1px solid var(--rule); border-radius:var(--radius); padding:20px 24px;
+    display:grid; grid-template-columns: 1fr auto; gap:20px; align-items:start; background:var(--paper);
+  }
+  .delivery-item h3{ font-size:var(--t-body); font-weight:500; }
+  .delivery-item p{ margin-top:4px; font-size:var(--t-meta); color:#3a332b; }
+  .delivery-item .tag{ font-size:var(--t-meta); white-space:nowrap; color:var(--ink); border:1px solid var(--rule); border-radius:999px; padding:5px 11px; background:#fff; }
+
+  /* Footer */
+  footer{ border-top:1px solid var(--rule); padding-block:56px 40px; }
+  .foot-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:32px; }
+  .foot-grid p{ margin-top:12px; font-size:var(--t-meta); line-height:1.6; }
+  .foot-grid a:hover{ color:var(--accent); }
+  .foot-grid .muted{ color:var(--muted); }
+  .foot-bottom{
+    margin-top:44px; padding-top:20px; border-top:1px solid var(--rule);
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    font-size:var(--t-meta); color:var(--muted);
+  }
+
+  @media (max-width: 960px){
+    .hero .wrap{ grid-template-columns:1fr; }
+    .hero-panel{ height:min(420px, 55svh); }
+    .section-head, .exploded-grid, .drawings, .materials, .flat-grid, .buy{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr 1fr; }
+    .spec-strip{ grid-template-columns:1fr 1fr; }
+    .spec-strip div:nth-child(3){ border-left:0; }
+    .spec-strip div:nth-child(n+3){ border-top:1px solid var(--rule); }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+    .nav-links{ display:none; }
+  }
+  @media (max-width: 600px){
+    .steps{ grid-template-columns:1fr; }
+    .swatches, .swatches.four{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body data-timber="oak" data-finish="natural">
+
+<!-- Shared chair geometry, side elevation, 1 unit = 1 mm -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <polygon id="pt-rearleg" points="470,780 510,780 510,330 546,30 508,30 472,330"/>
+    <rect id="pt-frontleg" x="40" y="330" width="38" height="450"/>
+    <rect id="pt-seat" x="18" y="306" width="490" height="24" rx="5"/>
+    <rect id="pt-rail" x="78" y="334" width="394" height="56" rx="2"/>
+    <path id="pt-back" d="M512,56 C480,80 474,124 494,148 L516,148 L516,56 Z"/>
+    <rect id="pt-fstretch" x="44" y="590" width="30" height="44" rx="3"/>
+    <rect id="pt-rstretch" x="476" y="590" width="30" height="44" rx="3"/>
+    <g id="pt-bolt"><line x1="0" y1="0" x2="44" y2="0"/><rect x="-9" y="-7" width="11" height="14" rx="2"/></g>
+  </defs>
+</svg>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#">Holmgren</a>
+      <nav class="nav-links" aria-label="Site">
+        <a href="#parts">Parts</a>
+        <a href="#dimensions">Dimensions</a>
+        <a href="#materials">Timber and finish</a>
+        <a href="#assembly">Assembly</a>
+        <a href="#buy">Buy</a>
+      </nav>
+      <a class="nav-cart" href="#buy"><span class="dot"></span> Ek 01 · <span id="nav-price">3&nbsp;900 kr</span></a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="meta"><span>Ek 01</span><span>Flat-pack dining chair</span><span>Made in Malmö</span></p>
+        <h1 class="display">Seven parts of oak. One key. Twelve minutes.</h1>
+        <p class="lead">A solid oak dining chair that ships flat in a box the size of a drawing board, bolts together at your kitchen table and is built to be taken apart again in thirty years.</p>
+        <div class="cta-row">
+          <a class="btn accent" href="#buy">Buy the Ek 01, from 3&nbsp;900 kr</a>
+          <a class="btn ghost" href="#parts">See every part</a>
+        </div>
+        <ul class="hero-trust">
+          <li>Leaves the workshop in 2 working days</li>
+          <li>25-year frame guarantee</li>
+          <li>Every part sold as a spare</li>
+        </ul>
+      </div>
+
+      <div class="hero-panel">
+        <svg class="chair" id="hero-chair" viewBox="-160 -160 960 1010" role="img" aria-label="Side elevation of the Ek 01 chair">
+          <line class="floor" x1="-120" y1="782" x2="760" y2="782"/>
+          <g class="g-hidden">
+            <use href="#pt-fstretch" class="p-hidden"/>
+            <use href="#pt-rstretch" class="p-hidden"/>
+          </g>
+          <g class="g-stretch">
+            <use href="#pt-fstretch" class="p-done g-stretch-part"/>
+            <use href="#pt-rstretch" class="p-done g-stretch-part"/>
+          </g>
+          <g class="g-rail"><use href="#pt-rail" class="p-done"/></g>
+          <g class="g-rear"><use href="#pt-rearleg" class="p-done"/></g>
+          <g class="g-front"><use href="#pt-frontleg" class="p-done"/></g>
+          <g class="g-seat"><use href="#pt-seat" class="p-done"/></g>
+          <g class="g-back"><use href="#pt-back" class="p-done"/></g>
+        </svg>
+        <p class="panel-note">Side elevation, 1:1 proportions</p>
+        <button class="panel-toggle" type="button" id="explode-toggle" aria-pressed="false">Take it apart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- Exploded diagram -->
+  <section id="parts">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">01 · Exploded view</p>
+          <h2 class="title">Everything in the box, pulled apart</h2>
+        </div>
+        <p class="lead">Nine oak components, eight bolts, one key. Nothing is glued, so any part can be swapped by the person who owns the chair, not the person who made it. Numbers on the drawing match the parts list and the printed sheet in the box.</p>
+      </div>
+
+      <div class="exploded-grid">
+        <figure class="exploded-figure">
+          <svg viewBox="-160 -160 960 1010" role="img" aria-label="Exploded side elevation of the Ek 01 with numbered parts">
+            <line class="floor" x1="-120" y1="782" x2="760" y2="782"/>
+            <g transform="translate(0,110)">
+              <use href="#pt-fstretch" class="p-done"/>
+              <use href="#pt-rstretch" class="p-done"/>
+            </g>
+            <use href="#pt-rail" class="p-done"/>
+            <g transform="translate(130,0)"><use href="#pt-rearleg" class="p-done"/></g>
+            <g transform="translate(-120,0)"><use href="#pt-frontleg" class="p-done"/></g>
+            <g transform="translate(0,-170)"><use href="#pt-seat" class="p-done"/></g>
+            <g transform="translate(60,-120)"><use href="#pt-back" class="p-done"/></g>
+
+            <!-- bolts -->
+            <g class="bolt">
+              <use href="#pt-bolt" transform="translate(508,348)"/>
+              <use href="#pt-bolt" transform="translate(508,376)"/>
+              <use href="#pt-bolt" transform="translate(42,348) rotate(180)"/>
+              <use href="#pt-bolt" transform="translate(42,376) rotate(180)"/>
+              <use href="#pt-bolt" transform="translate(110,262) rotate(-90)"/>
+              <use href="#pt-bolt" transform="translate(430,262) rotate(-90)"/>
+              <use href="#pt-bolt" transform="translate(660,-20) rotate(180)"/>
+              <use href="#pt-bolt" transform="translate(660,10) rotate(180)"/>
+            </g>
+
+            <!-- callouts -->
+            <g class="callout">
+              <line x1="586" y1="-40" x2="690" y2="-100"/><circle cx="706" cy="-108" r="17"/><text x="706" y="-108">1</text>
+              <line x1="642" y1="560" x2="716" y2="560"/><circle cx="734" cy="560" r="17"/><text x="734" y="560">2</text>
+              <line x1="18" y1="148" x2="-60" y2="120"/><circle cx="-78" cy="114" r="17"/><text x="-78" y="114">3</text>
+              <line x1="275" y1="392" x2="275" y2="440"/><circle cx="275" cy="458" r="17"/><text x="275" y="458">4</text>
+              <line x1="-82" y1="640" x2="-120" y2="640"/><circle cx="-138" cy="640" r="17"/><text x="-138" y="640">5</text>
+              <line x1="59" y1="746" x2="59" y2="800"/><circle cx="59" cy="818" r="17"/><text x="59" y="818">6</text>
+              <line x1="491" y1="746" x2="491" y2="800"/><circle cx="491" cy="818" r="17"/><text x="491" y="818">7</text>
+              <line x1="440" y1="236" x2="520" y2="200"/><circle cx="538" cy="192" r="17"/><text x="538" y="192">8</text>
+            </g>
+          </svg>
+        </figure>
+
+        <div>
+          <table class="parts-table">
+            <thead>
+              <tr><th></th><th>Part</th><th>Qty</th><th>Size, mm</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="num">1</span></td><td><span class="name">Backrest</span><br>Steam-bent from one board</td><td>1</td><td class="dims">440 × 92 × 22</td></tr>
+              <tr><td><span class="num">2</span></td><td><span class="name">Rear leg</span><br>Upright and leg in one piece</td><td>2</td><td class="dims">780 × 40 × 38</td></tr>
+              <tr><td><span class="num">3</span></td><td><span class="name">Seat</span><br>Five staves, edge-glued, 4 mm dish</td><td>1</td><td class="dims">490 × 470 × 24</td></tr>
+              <tr><td><span class="num">4</span></td><td><span class="name">Side rail</span><br>Carries the seat and both legs</td><td>2</td><td class="dims">394 × 56 × 24</td></tr>
+              <tr><td><span class="num">5</span></td><td><span class="name">Front leg</span><br>Square section, chamfered foot</td><td>2</td><td class="dims">450 × 40 × 38</td></tr>
+              <tr><td><span class="num">6</span></td><td><span class="name">Front stretcher</span></td><td>1</td><td class="dims">410 × 44 × 30</td></tr>
+              <tr><td><span class="num">7</span></td><td><span class="name">Rear stretcher</span></td><td>1</td><td class="dims">396 × 44 × 30</td></tr>
+              <tr><td><span class="num">8</span></td><td><span class="name">Hardware</span><br>8 bolts 6 × 50 mm, 8 barrel nuts, 1 hex key 4 mm, 4 felt glides</td><td>1 bag</td><td class="dims">Steel, zinc plated</td></tr>
+            </tbody>
+          </table>
+          <p class="parts-note">Bolts pull into brass-lined barrel nuts sunk into the legs, so the joint tightens against metal, not end grain. Re-tighten once after the first month; after that, once a year.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dimensions -->
+  <section id="dimensions">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">02 · Measured drawings</p>
+          <h2 class="title">Dimensions in millimetres</h2>
+        </div>
+        <p class="lead">Seat height 450 mm suits tables from 720 to 760 mm. The back leans 7 degrees, the seat is dished 4 mm at its centre, and the whole chair weighs less than a full watering can.</p>
+      </div>
+
+      <div class="drawings">
+        <div class="drawing">
+          <svg viewBox="-130 -60 780 990" role="img" aria-label="Front elevation with dimensions">
+            <!-- rear uprights -->
+            <polygon class="p-done" points="12,306 50,306 44,56 8,56"/>
+            <polygon class="p-done" points="440,306 478,306 482,56 446,56"/>
+            <!-- backrest -->
+            <path class="p-done" d="M44,64 Q245,44 446,64 L446,150 Q245,132 44,150 Z"/>
+            <!-- front legs -->
+            <rect class="p-done" x="0" y="330" width="40" height="450"/>
+            <rect class="p-done" x="450" y="330" width="40" height="450"/>
+            <!-- front stretcher -->
+            <rect class="p-done" x="40" y="590" width="410" height="44"/>
+            <!-- seat -->
+            <rect class="p-done" x="0" y="306" width="490" height="24" rx="4"/>
+            <line class="floor" x1="-60" y1="782" x2="550" y2="782"/>
+
+            <!-- width -->
+            <g class="dim">
+              <line x1="0" y1="840" x2="490" y2="840"/>
+              <line x1="0" y1="830" x2="0" y2="850"/><line x1="490" y1="830" x2="490" y2="850"/>
+              <rect x="205" y="826" width="80" height="28"/><text x="245" y="840">490</text>
+            </g>
+            <!-- backrest width -->
+            <g class="dim">
+              <line x1="44" y1="0" x2="446" y2="0"/>
+              <line x1="44" y1="-10" x2="44" y2="10"/><line x1="446" y1="-10" x2="446" y2="10"/>
+              <rect x="205" y="-14" width="80" height="28"/><text x="245" y="0">402</text>
+            </g>
+            <!-- overall height -->
+            <g class="dim">
+              <line x1="560" y1="56" x2="560" y2="780"/>
+              <line x1="550" y1="56" x2="570" y2="56"/><line x1="550" y1="780" x2="570" y2="780"/>
+              <rect x="520" y="404" width="80" height="28"/><text x="560" y="418">780</text>
+            </g>
+            <!-- seat height -->
+            <g class="dim">
+              <line x1="-70" y1="330" x2="-70" y2="780"/>
+              <line x1="-80" y1="330" x2="-60" y2="330"/><line x1="-80" y1="780" x2="-60" y2="780"/>
+              <rect x="-110" y="541" width="80" height="28"/><text x="-70" y="555">450</text>
+            </g>
+            <text class="drawing-label" x="0" y="900">Front elevation</text>
+          </svg>
+          <div class="cap"><span>Seat width 490, between legs 410</span><span>Scale 1:10 on a 1280 px screen</span></div>
+        </div>
+
+        <div class="drawing">
+          <svg viewBox="-130 -60 780 990" role="img" aria-label="Side elevation with dimensions">
+            <use href="#pt-fstretch" class="p-hidden"/>
+            <use href="#pt-rstretch" class="p-hidden"/>
+            <use href="#pt-rail" class="p-done"/>
+            <use href="#pt-rearleg" class="p-done"/>
+            <use href="#pt-frontleg" class="p-done"/>
+            <use href="#pt-seat" class="p-done"/>
+            <use href="#pt-back" class="p-done"/>
+            <line class="floor" x1="-60" y1="782" x2="620" y2="782"/>
+
+            <!-- depth -->
+            <g class="dim">
+              <line x1="18" y1="840" x2="546" y2="840"/>
+              <line x1="18" y1="830" x2="18" y2="850"/><line x1="546" y1="830" x2="546" y2="850"/>
+              <rect x="242" y="826" width="80" height="28"/><text x="282" y="840">528</text>
+            </g>
+            <!-- seat depth -->
+            <g class="dim">
+              <line x1="18" y1="0" x2="508" y2="0"/>
+              <line x1="18" y1="-10" x2="18" y2="10"/><line x1="508" y1="-10" x2="508" y2="10"/>
+              <rect x="223" y="-14" width="80" height="28"/><text x="263" y="0">470</text>
+            </g>
+            <!-- overall height -->
+            <g class="dim">
+              <line x1="600" y1="30" x2="600" y2="780"/>
+              <line x1="590" y1="30" x2="610" y2="30"/><line x1="590" y1="780" x2="610" y2="780"/>
+              <rect x="560" y="391" width="80" height="28"/><text x="600" y="405">780</text>
+            </g>
+            <!-- seat height -->
+            <g class="dim">
+              <line x1="-70" y1="306" x2="-70" y2="780"/>
+              <line x1="-80" y1="306" x2="-60" y2="306"/><line x1="-80" y1="780" x2="-60" y2="780"/>
+              <rect x="-110" y="529" width="80" height="28"/><text x="-70" y="543">450</text>
+            </g>
+            <text class="drawing-label" x="0" y="900">Side elevation</text>
+          </svg>
+          <div class="cap"><span>Back angle 7°, seat dish 4 mm</span><span>Hidden stretchers dashed</span></div>
+        </div>
+      </div>
+
+      <div class="spec-strip">
+        <div><p class="val">4.6<small>kg</small></p><p class="lbl">Weight, assembled</p></div>
+        <div><p class="val">450<small>mm</small></p><p class="lbl">Seat height, suits tables 720 to 760</p></div>
+        <div><p class="val">920 × 480 × 120<small>mm</small></p><p class="lbl">Shipping box, outer</p></div>
+        <div><p class="val">150<small>kg</small></p><p class="lbl">Tested static load, seat centre</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Materials -->
+  <section id="materials">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">03 · Timber and finish</p>
+          <h2 class="title">Three timbers, four finishes</h2>
+        </div>
+        <p class="lead">Choose here and the price follows you to the buy module. Every option is oiled or soaped by hand in the workshop; nothing is lacquered, so scratches sand out and the surface can be renewed at home.</p>
+      </div>
+
+      <div class="materials">
+        <div>
+          <form id="config-form">
+            <div class="option-group">
+              <h3>Timber <span>All from certified forests within 600 km of the workshop</span></h3>
+              <div class="swatches">
+                <div class="swatch">
+                  <input type="radio" name="timber" id="t-oak" value="oak" data-price="0" checked>
+                  <label for="t-oak"><div class="chip" style="--chip:#d6b384"></div><div class="name">European oak <span>included</span></div></label>
+                </div>
+                <div class="swatch">
+                  <input type="radio" name="timber" id="t-smoked" value="smoked" data-price="450">
+                  <label for="t-smoked"><div class="chip" style="--chip:#8c6646"></div><div class="name">Smoked oak <span>+ 450 kr</span></div></label>
+                </div>
+                <div class="swatch">
+                  <input type="radio" name="timber" id="t-ash" value="ash" data-price="0">
+                  <label for="t-ash"><div class="chip" style="--chip:#e7dbc0"></div><div class="name">Ash <span>included</span></div></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="option-group">
+              <h3>Finish <span>Hand applied, two coats</span></h3>
+              <div class="swatches four">
+                <div class="swatch">
+                  <input type="radio" name="finish" id="f-natural" value="natural" data-price="0" checked>
+                  <label for="f-natural"><div class="chip plain" style="--chip:#d6b384"></div><div class="name">Natural oil <span>included</span></div></label>
+                </div>
+                <div class="swatch">
+                  <input type="radio" name="finish" id="f-white" value="white" data-price="150">
+                  <label for="f-white"><div class="chip plain" style="--chip:#e9d9bf"></div><div class="name">White oil <span>+ 150 kr</span></div></label>
+                </div>
+                <div class="swatch">
+                  <input type="radio" name="finish" id="f-soap" value="soap" data-price="0">
+                  <label for="f-soap"><div class="chip plain" style="--chip:#ded0b3"></div><div class="name">Soap <span>included</span></div></label>
+                </div>
+                <div class="swatch">
+                  <input type="radio" name="finish" id="f-black" value="black" data-price="250">
+                  <label for="f-black"><div class="chip plain" style="--chip:#2a2420"></div><div class="name">Black stain <span>+ 250 kr</span></div></label>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="oak-preview">
+            <svg viewBox="-40 0 600 800" aria-hidden="true">
+              <use href="#pt-rail" class="p-done"/>
+              <use href="#pt-rearleg" class="p-done"/>
+              <use href="#pt-frontleg" class="p-done"/>
+              <use href="#pt-seat" class="p-done"/>
+              <use href="#pt-back" class="p-done"/>
+            </svg>
+            <p class="read"><strong id="config-read">European oak, natural oil</strong>Drawings on this page update as you choose. Colour on screen is a guide; sample blocks are 40 kr, refunded with the chair.</p>
+          </div>
+        </div>
+
+        <div class="material-copy">
+          <p>Oak is the reason this chair can be bolted rather than glued. It holds a barrel nut without crushing, it takes a 4 mm dish in the seat without cupping, and a 22 mm board steam-bends to the 180 mm radius of the backrest without a single failure in the last four hundred we have made.</p>
+          <p>The smoked oak is the same timber, kiln-fumed with ammonia for eleven days so the colour goes right through the board rather than sitting on the surface. Ash is lighter in weight and colour and takes the soap finish best.</p>
+          <dl class="material-facts">
+            <div><dt>Moisture at dispatch</dt><dd>8 percent, for heated homes</dd></div>
+            <div><dt>Grain</dt><dd>Quarter-sawn legs, flat-sawn seat</dd></div>
+            <div><dt>Oil</dt><dd>Linseed and carnauba, no solvents</dd></div>
+            <div><dt>Care</dt><dd>Re-oil once a year, 15 minutes</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Assembly -->
+  <section id="assembly">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">04 · Assembly</p>
+          <h2 class="title">Six steps, twelve minutes, one key</h2>
+        </div>
+        <p class="lead">The order matters: rails first, seat last. Do every bolt finger tight, then go round once with the key. The printed sheet in the box shows the same six drawings at the same scale.</p>
+      </div>
+
+      <div class="steps">
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <g transform="translate(0,110)"><use href="#pt-fstretch" class="p-faint"/><use href="#pt-rstretch" class="p-faint"/></g>
+              <use href="#pt-rail" class="p-faint"/>
+              <g transform="translate(130,0)"><use href="#pt-rearleg" class="p-faint"/></g>
+              <g transform="translate(-120,0)"><use href="#pt-frontleg" class="p-faint"/></g>
+              <g transform="translate(0,-170)"><use href="#pt-seat" class="p-faint"/></g>
+              <g transform="translate(60,-120)"><use href="#pt-back" class="p-faint"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">1</span><span class="time">1 min</span></div>
+          <h3>Unpack and lay out</h3>
+          <p>Lay the seat face down on the box lid so the top never touches the floor. Sort the eight bolts and eight barrel nuts. Find the key; it is taped inside the lid.</p>
+        </article>
+
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <g transform="translate(0,110)"><use href="#pt-fstretch" class="p-todo"/><use href="#pt-rstretch" class="p-todo"/></g>
+              <use href="#pt-rail" class="p-new"/>
+              <use href="#pt-rearleg" class="p-new"/>
+              <g transform="translate(-120,0)"><use href="#pt-frontleg" class="p-todo"/></g>
+              <g transform="translate(0,-170)"><use href="#pt-seat" class="p-todo"/></g>
+              <g transform="translate(60,-120)"><use href="#pt-back" class="p-todo"/></g>
+              <g class="bolt"><use href="#pt-bolt" transform="translate(440,348)"/><use href="#pt-bolt" transform="translate(440,376)"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">2</span><span class="time">3 min</span></div>
+          <h3>Side rails to rear legs</h3>
+          <p>Drop a barrel nut into each rear leg, slot facing out. Offer up a side rail and drive two bolts through it into the nut. Finger tight only. Repeat for the other side.</p>
+        </article>
+
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <g transform="translate(0,110)"><use href="#pt-fstretch" class="p-todo"/><use href="#pt-rstretch" class="p-todo"/></g>
+              <use href="#pt-rail" class="p-done"/>
+              <use href="#pt-rearleg" class="p-done"/>
+              <use href="#pt-frontleg" class="p-new"/>
+              <g transform="translate(0,-170)"><use href="#pt-seat" class="p-todo"/></g>
+              <g transform="translate(60,-120)"><use href="#pt-back" class="p-todo"/></g>
+              <g class="bolt"><use href="#pt-bolt" transform="translate(112,348) rotate(180)"/><use href="#pt-bolt" transform="translate(112,376) rotate(180)"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">3</span><span class="time">2 min</span></div>
+          <h3>Front legs</h3>
+          <p>Same again at the front: nut into the leg, two bolts through the rail. The chamfer on the foot faces outward. You now have two complete sides.</p>
+        </article>
+
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <use href="#pt-fstretch" class="p-new"/>
+              <use href="#pt-rstretch" class="p-new"/>
+              <use href="#pt-rail" class="p-done"/>
+              <use href="#pt-rearleg" class="p-done"/>
+              <use href="#pt-frontleg" class="p-done"/>
+              <g transform="translate(0,-170)"><use href="#pt-seat" class="p-todo"/></g>
+              <g transform="translate(60,-120)"><use href="#pt-back" class="p-todo"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">4</span><span class="time">2 min</span></div>
+          <h3>Stretchers between the sides</h3>
+          <p>Stand both sides up and push the front and rear stretchers into their housings. They are a firm fit and need no bolts. The frame now stands on its own.</p>
+        </article>
+
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <use href="#pt-fstretch" class="p-hidden"/>
+              <use href="#pt-rstretch" class="p-hidden"/>
+              <use href="#pt-rail" class="p-done"/>
+              <use href="#pt-rearleg" class="p-done"/>
+              <use href="#pt-frontleg" class="p-done"/>
+              <g transform="translate(0,-60)"><use href="#pt-seat" class="p-new"/></g>
+              <g transform="translate(60,-120)"><use href="#pt-back" class="p-todo"/></g>
+              <g class="bolt"><use href="#pt-bolt" transform="translate(110,332) rotate(-90)"/><use href="#pt-bolt" transform="translate(430,332) rotate(-90)"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">5</span><span class="time">2 min</span></div>
+          <h3>Seat</h3>
+          <p>Lower the frame onto the upturned seat. Four bolts go up through the corner blocks in the rails into nuts already set in the seat. Dish faces up when you turn it over.</p>
+        </article>
+
+        <article class="step">
+          <div class="fig">
+            <svg viewBox="-140 -90 840 890" aria-hidden="true">
+              <use href="#pt-fstretch" class="p-hidden"/>
+              <use href="#pt-rstretch" class="p-hidden"/>
+              <use href="#pt-rail" class="p-done"/>
+              <use href="#pt-rearleg" class="p-done"/>
+              <use href="#pt-frontleg" class="p-done"/>
+              <use href="#pt-seat" class="p-done"/>
+              <use href="#pt-back" class="p-new"/>
+              <g class="bolt"><use href="#pt-bolt" transform="translate(600,86) rotate(180)"/><use href="#pt-bolt" transform="translate(600,116) rotate(180)"/></g>
+            </svg>
+          </div>
+          <div class="row"><span class="n">6</span><span class="time">2 min</span></div>
+          <h3>Backrest, then tighten</h3>
+          <p>Slide the backrest into its housings from the front. Two bolts from behind. Stand the chair up, press the felt glides on, then go round all eight bolts once with the key.</p>
+        </article>
+      </div>
+
+      <div class="assembly-foot">
+        <p><strong>Nothing to glue, no second person needed.</strong> Timed on 40 first-time assemblers: fastest 8 minutes, slowest 19, median 12.</p>
+        <p><strong>Taking it apart</strong> is the same list in reverse and takes about five minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ships flat -->
+  <section id="flat">
+    <div class="wrap">
+      <div class="flat-grid">
+        <div>
+          <p class="meta">05 · Why it ships flat</p>
+          <h2 class="title" style="margin-top:14px">A chair that travels as a board</h2>
+          <p class="lead" style="margin-top:22px; color:#3a332b">An assembled chair is mostly air. Ours leaves Malmö in a box one fifth of the volume, so the freight is a fraction of the cost and the carbon, and the box is stiff enough to come back to us if anything is wrong.</p>
+          <ul class="stat-list" style="margin-top:32px">
+            <li><span class="k">Box volume, flat</span><span class="v">0.053<small>m³</small></span></li>
+            <li><span class="k">Crate volume, assembled chair</span><span class="v">0.28<small>m³</small></span></li>
+            <li><span class="k">Chairs on one pallet, flat</span><span class="v">36<small>vs 6</small></span></li>
+            <li><span class="k">Freight to Berlin, one chair</span><span class="v">190<small>kr, vs 890 assembled</small></span></li>
+          </ul>
+        </div>
+        <figure class="box-figure">
+          <svg viewBox="0 0 640 400" role="img" aria-label="Plan of the packed box showing how the parts nest">
+            <rect x="20" y="40" width="600" height="320" rx="8" fill="#fff" stroke="var(--oak-edge)" stroke-width="2.5"/>
+            <!-- rear legs -->
+            <polygon class="p-done" points="40,60 560,60 560,86 40,86"/>
+            <polygon class="p-done" points="40,96 560,96 560,122 40,122"/>
+            <!-- seat -->
+            <rect class="p-done" x="40" y="134" width="330" height="210" rx="4"/>
+            <!-- front legs -->
+            <rect class="p-done" x="384" y="134" width="300" height="26" transform="translate(-92,0)"/>
+            <rect class="p-done" x="384" y="170" width="300" height="26" transform="translate(-92,0)"/>
+            <!-- rails -->
+            <rect class="p-done" x="384" y="206" width="262" height="30" transform="translate(-92,0)"/>
+            <rect class="p-done" x="384" y="246" width="262" height="30" transform="translate(-92,0)"/>
+            <!-- backrest -->
+            <path class="p-done" d="M292,290 Q420,272 548,290 L548,320 Q420,338 292,320 Z"/>
+            <!-- hardware bag -->
+            <rect x="562" y="296" width="46" height="48" rx="6" fill="var(--paper)" stroke="var(--oak-edge)" stroke-width="2" stroke-dasharray="5 4"/>
+            <g class="dim">
+              <line x1="20" y1="380" x2="620" y2="380"/><line x1="20" y1="372" x2="20" y2="388"/><line x1="620" y1="372" x2="620" y2="388"/>
+              <rect x="290" y="368" width="60" height="24"/><text x="320" y="380" style="font-size:16px">920</text>
+              <line x1="632" y1="40" x2="632" y2="360"/><line x1="626" y1="40" x2="638" y2="40"/><line x1="626" y1="360" x2="638" y2="360"/>
+              <rect x="614" y="188" width="36" height="24"/><text x="632" y="200" style="font-size:16px">480</text>
+            </g>
+          </svg>
+          <figcaption class="cap"><span>Plan of the packed box, parts nested in one layer</span><span>120 mm deep, 6.1 kg gross</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buy -->
+  <section id="buy">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="meta">06 · Buy</p>
+          <h2 class="title">Ek 01, configured and priced</h2>
+        </div>
+        <p class="lead">Prices in Swedish kronor including 25 percent tax. Two chairs or more ship free within Sweden. Trade customers write to us for quantities of twelve and up.</p>
+      </div>
+
+      <div class="buy">
+        <div class="buy-card">
+          <div class="price-row">
+            <p class="price"><span id="price-total">3&nbsp;900</span> kr<small>per chair</small></p>
+            <p class="stock">In stock in Malmö</p>
+          </div>
+          <ul class="config">
+            <li><span>Timber</span><span id="sum-timber">European oak</span></li>
+            <li><span>Finish</span><span id="sum-finish">Natural oil</span></li>
+            <li><span>Change options</span><a href="#materials">Timber and finish</a></li>
+            <li><span>In the box</span><span>9 oak parts, 8 bolts, 1 key, 4 glides, printed sheet</span></li>
+          </ul>
+          <div class="qty-row">
+            <span class="meta">Quantity</span>
+            <div class="qty">
+              <button type="button" id="qty-minus" aria-label="One fewer">-</button>
+              <output id="qty-out" for="qty-minus qty-plus">1</output>
+              <button type="button" id="qty-plus" aria-label="One more">+</button>
+            </div>
+          </div>
+          <button class="btn accent" type="button" id="add-btn">Add to basket · <span id="price-line">3&nbsp;900 kr</span></button>
+          <p class="fine" id="delivery-line">Delivery 89 kr in Sweden, free from two chairs.</p>
+        </div>
+
+        <div class="delivery">
+          <div class="delivery-item">
+            <div><h3>Leaves the workshop in 2 working days</h3><p>Every chair is oiled to order, so allow two days before it ships. Delivery is 3 to 5 working days in Sweden, 6 to 9 across the rest of Europe.</p></div>
+            <span class="tag">Delivery time</span>
+          </div>
+          <div class="delivery-item">
+            <div><h3>Sixty days to change your mind</h3><p>Keep the box. If the chair is not right, take it apart, pack it, and we send a courier. The refund is in full; we only ask that you tell us why.</p></div>
+            <span class="tag">Returns</span>
+          </div>
+          <div class="delivery-item">
+            <div><h3>Twenty-five years on the frame</h3><p>Legs, rails and stretchers are guaranteed for 25 years, the seat and backrest for 10. Any part is sold separately from 120 kr for as long as we make the chair.</p></div>
+            <span class="tag">Guarantee</span>
+          </div>
+          <div class="delivery-item">
+            <div><h3>Sample blocks, 40 kr</h3><p>Three timbers, four finishes, 60 × 60 mm each. Order the set and the 40 kr comes off your chair.</p></div>
+            <span class="tag">Try first</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Workshop</p>
+        <p>Holmgren Möbelsnickeri<br>Sofielundsvägen 27<br>214 34 Malmö, Sweden</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:hej@holmgren.se">hej@holmgren.se</a><br><span class="muted">Answered by a person, within a working day.</span></p>
+      </div>
+      <div>
+        <p class="meta">Visit</p>
+        <p>Tuesday to Friday<br><span class="muted">10:00 to 17:00, the chair is on the floor</span></p>
+      </div>
+      <div>
+        <p class="meta">Also made here</p>
+        <p><a href="#">Ek 02, the armchair</a><br><a href="#">Bord 01, the table it was drawn for</a><br><a href="#">Spare parts</a></p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Holmgren Möbelsnickeri. Drawn, sawn and oiled in Malmö.</span>
+      <span>Org. nr 559012-4481 · Prices include 25 percent moms</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var body = document.body;
+  var form = document.getElementById('config-form');
+  var basePrice = 3900;
+  var qty = 1;
+  var timberNames = { oak:'European oak', smoked:'Smoked oak', ash:'Ash' };
+  var finishNames = { natural:'Natural oil', white:'White oil', soap:'Soap', black:'Black stain' };
+
+  function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+
+  function update(){
+    var t = form.querySelector('input[name="timber"]:checked');
+    var f = form.querySelector('input[name="finish"]:checked');
+    body.setAttribute('data-timber', t.value);
+    body.setAttribute('data-finish', f.value);
+    var unit = basePrice + Number(t.dataset.price) + Number(f.dataset.price);
+    var total = unit * qty;
+    document.getElementById('price-total').textContent = fmt(unit);
+    document.getElementById('price-line').textContent = fmt(total) + ' kr';
+    document.getElementById('nav-price').textContent = fmt(unit) + ' kr';
+    document.getElementById('sum-timber').textContent = timberNames[t.value];
+    document.getElementById('sum-finish').textContent = finishNames[f.value];
+    document.getElementById('config-read').textContent = timberNames[t.value] + ', ' + finishNames[f.value].toLowerCase();
+    document.getElementById('qty-out').textContent = qty;
+    document.getElementById('delivery-line').textContent = qty >= 2
+      ? 'Delivery free within Sweden for ' + qty + ' chairs.'
+      : 'Delivery 89 kr in Sweden, free from two chairs.';
+  }
+
+  form.addEventListener('change', update);
+  document.getElementById('qty-minus').addEventListener('click', function(){ qty = Math.max(1, qty - 1); update(); });
+  document.getElementById('qty-plus').addEventListener('click', function(){ qty = Math.min(24, qty + 1); update(); });
+
+  var addBtn = document.getElementById('add-btn');
+  addBtn.addEventListener('click', function(){
+    var label = addBtn.innerHTML;
+    addBtn.textContent = 'Added, ' + qty + (qty === 1 ? ' chair' : ' chairs') + ' in the basket';
+    setTimeout(function(){ addBtn.innerHTML = label; update(); }, 1800);
+  });
+
+  var chair = document.getElementById('hero-chair');
+  var toggle = document.getElementById('explode-toggle');
+  toggle.addEventListener('click', function(){
+    var on = chair.classList.toggle('exploded');
+    toggle.textContent = on ? 'Put it back together' : 'Take it apart';
+    toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Larkspur Branch Library, Halden Public Libraries</title>
+<meta name="description" content="Halden's newest library opens Saturday 3 October 2026 on Larkspur Street. Open until 9 pm four nights a week, free membership, events every week.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-1: clamp(2.5rem, 4.4vw, 3.5rem);   /* display */
+    --t-2: clamp(1.7rem, 2.7vw, 2.35rem);  /* section heading */
+    --t-3: 1.3rem;                         /* card heading */
+    --t-4: 1.0625rem;                      /* body */
+    --t-5: 0.8125rem;                      /* meta */
+
+    --paper: #F5F1E8;
+    --ink: #1B1915;
+    --muted: #6A6459;
+    --rule: #D9D2C4;
+    --card: #ECE6D9;
+    --accent: #CF3A1E;
+    --dusk: #1E2B45;
+    --glow: #F2C14E;
+
+    --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --body: "Inter", "Helvetica Neue", Arial, sans-serif;
+
+    --rhythm: clamp(72px, 9vw, 128px);
+    --gutter: 24px;
+    --max: 1180px;
+    --radius: 6px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--t-4);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-0.015em;margin:0}
+  p{margin:0}
+  a{color:inherit;text-decoration:none}
+  ul{list-style:none;margin:0;padding:0}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  svg{display:block}
+
+  /* container owns the gutter with padding-inline only */
+  .wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+
+  .meta{font-size:var(--t-5);color:var(--muted);letter-spacing:0.01em}
+  .eyebrow{font-size:var(--t-5);font-weight:600;color:var(--accent);letter-spacing:0.02em}
+  .lede{font-size:var(--t-3);line-height:1.45;max-width:46ch;color:var(--ink)}
+  .h2{font-size:var(--t-2);line-height:1.08;max-width:22ch;text-wrap:balance}
+  .h3{font-size:var(--t-3);line-height:1.25}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.8rem 1.25rem;border-radius:var(--radius);
+    font-family:var(--display);font-weight:600;font-size:1rem;line-height:1;
+    border:1.5px solid var(--ink);color:var(--ink);
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:#B22F16;border-color:#B22F16;color:#fff}
+  .btn.light{border-color:var(--paper);color:var(--paper)}
+  .btn.light:hover{background:var(--paper);color:var(--dusk)}
+  .arrow{font-family:var(--body);font-weight:500}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{border-bottom:1px solid var(--rule);background:var(--paper)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;min-height:68px}
+  .brand{display:flex;align-items:center;gap:.7rem}
+  .brand svg{width:34px;height:34px}
+  .brand-name{font-family:var(--display);font-weight:700;font-size:1.25rem;line-height:1;letter-spacing:-0.02em}
+  .brand-sys{display:block;font-family:var(--body);font-weight:500;font-size:var(--t-5);color:var(--muted);margin-top:.2rem}
+  .nav-links{display:flex;gap:1.6rem;font-weight:500;font-size:.95rem}
+  .nav-links a{padding:.3rem 0;border-bottom:1.5px solid transparent}
+  .nav-links a:hover{border-bottom-color:var(--accent)}
+  .nav-right{display:flex;align-items:center;gap:1rem}
+  .status{display:flex;align-items:center;gap:.5rem;font-size:var(--t-5);font-weight:500;color:var(--ink)}
+  .status .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(207,58,30,.18)}
+  .status.open .dot{background:#2C8A5A;box-shadow:0 0 0 3px rgba(44,138,90,.18)}
+  .status.closed .dot{background:var(--muted);box-shadow:0 0 0 3px rgba(106,100,89,.18)}
+
+  .hero{flex:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+  .hero-copy{
+    display:flex;flex-direction:column;justify-content:center;
+    padding-block:clamp(24px, 4vh, 56px);
+    padding-inline-start:calc(max(0px, (100vw - var(--max)) / 2) + var(--gutter));
+    padding-inline-end:clamp(32px, 4vw, 64px);
+  }
+  .hero h1{font-size:var(--t-1);line-height:1.02;letter-spacing:-0.025em;max-width:16ch;margin-top:1rem;text-wrap:balance}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .lede{margin-top:1.4rem}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+  .hero-facts{display:flex;gap:1.5rem;margin-top:2rem;padding-top:1.1rem;border-top:1px solid var(--rule);flex-wrap:wrap}
+  .hero-facts div{min-width:8rem}
+  .hero-facts strong{display:block;font-family:var(--display);font-weight:600;font-size:1.05rem;line-height:1.2}
+  .hero-facts span{font-size:var(--t-5);color:var(--muted)}
+
+  .hero-panel{position:relative;background:var(--dusk);overflow:hidden;min-height:360px}
+  .hero-panel svg{position:absolute;inset:0;width:100%;height:100%}
+  .hero-caption{position:absolute;left:1.5rem;bottom:1.25rem;color:rgba(245,241,232,.7);font-size:var(--t-5)}
+
+  /* ---------- sections ---------- */
+  section{padding-block:var(--rhythm)}
+  .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2rem 4rem;align-items:end;margin-bottom:clamp(32px,4vw,56px)}
+  .section-head .eyebrow{display:block;margin-bottom:.8rem}
+  .section-head p.side{max-width:44ch;color:var(--muted);justify-self:end}
+
+  /* opening day */
+  .day-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.5rem}
+  .slot{border-top:2px solid var(--ink);padding-top:1rem}
+  .slot time{display:block;font-family:var(--display);font-weight:600;font-size:var(--t-2);line-height:1;letter-spacing:-0.02em}
+  .slot h3{font-size:1.05rem;margin-top:.7rem;line-height:1.3}
+  .slot p{font-size:var(--t-5);color:var(--muted);margin-top:.4rem}
+  .slot.late{border-top-color:var(--accent)}
+  .slot.late time{color:var(--accent)}
+  .day-note{margin-top:2.5rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+  .day-note p{max-width:60ch;color:var(--muted)}
+
+  /* hours */
+  .hours{background:var(--dusk);color:var(--paper)}
+  .hours .eyebrow{color:var(--glow)}
+  .hours-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:3rem 5rem;align-items:start}
+  .hours .h2{max-width:16ch}
+  .hours .lede{color:rgba(245,241,232,.78);margin-top:1.2rem}
+  .hours-list li{display:grid;grid-template-columns:8rem 1fr auto;align-items:baseline;gap:1rem;padding:.9rem 0;border-bottom:1px solid rgba(245,241,232,.18);font-family:var(--display);font-size:1.2rem;font-weight:500}
+  .hours-list li:first-child{border-top:1px solid rgba(245,241,232,.18)}
+  .hours-list .late{color:var(--glow)}
+  .hours-list .tag{font-family:var(--body);font-size:var(--t-5);font-weight:500;color:rgba(245,241,232,.6)}
+  .hours-list li.today{position:relative}
+  .hours-list li.today::before{content:"";position:absolute;left:-1.25rem;top:50%;width:8px;height:8px;border-radius:50%;background:var(--glow);transform:translateY(-50%)}
+  .hours-list li.today .tag{color:var(--glow)}
+  .hours-foot{margin-top:1.5rem;font-size:var(--t-5);color:rgba(245,241,232,.6);max-width:52ch;line-height:1.6}
+  .late-list{margin-top:2rem;display:grid;gap:.9rem}
+  .late-list li{display:grid;grid-template-columns:2.2rem 1fr;gap:.6rem;align-items:start;color:rgba(245,241,232,.85)}
+  .late-list svg{width:1.6rem;height:1.6rem;margin-top:.1rem}
+
+  /* events */
+  .filters{display:flex;gap:.5rem;flex-wrap:wrap;justify-self:end}
+  .chip{padding:.45rem .9rem;border:1px solid var(--rule);border-radius:999px;font-size:var(--t-5);font-weight:500;background:transparent}
+  .chip:hover{border-color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .events{border-top:1px solid var(--ink)}
+  .event{display:grid;grid-template-columns:6.5rem 7rem minmax(0,1fr) 11rem 7rem;gap:1.5rem;align-items:start;padding:1.35rem 0;border-bottom:1px solid var(--rule);transition:opacity .2s}
+  .event[hidden]{display:none}
+  .event .date{font-family:var(--display);line-height:1}
+  .event .date b{display:block;font-size:2rem;font-weight:600;letter-spacing:-0.02em}
+  .event .date span{font-size:var(--t-5);color:var(--muted);font-family:var(--body)}
+  .event .time{font-weight:500;padding-top:.25rem}
+  .event h3{font-size:var(--t-3);line-height:1.2}
+  .event h3 span{color:var(--accent)}
+  .event p{margin-top:.35rem;color:var(--muted);max-width:52ch;font-size:.95rem}
+  .event .room{padding-top:.25rem;color:var(--muted);font-size:.95rem}
+  .event .kind{padding-top:.2rem;font-size:var(--t-5);font-weight:500;color:var(--ink)}
+  .event .kind::before{content:"";display:inline-block;width:.55rem;height:.55rem;border-radius:50%;margin-right:.45rem;background:var(--ink);vertical-align:middle}
+  .event[data-kind="families"] .kind::before{background:#E08A2E}
+  .event[data-kind="adults"] .kind::before{background:#2C8A5A}
+  .event[data-kind="teens"] .kind::before{background:#4A66C9}
+  .event[data-kind="talks"] .kind::before{background:var(--accent)}
+  .events-foot{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-top:1.75rem;align-items:center}
+  .events-foot p{color:var(--muted);max-width:52ch;font-size:.95rem}
+  .empty{padding:2rem 0;color:var(--muted);display:none}
+
+  /* rooms */
+  .rooms{background:var(--card)}
+  .rooms-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:3rem 5rem;align-items:start}
+  .index li{display:grid;grid-template-columns:2.8rem minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:1rem 0;border-bottom:1px solid rgba(27,25,21,.18)}
+  .index li:first-child{border-top:1px solid var(--ink)}
+  .index .num{font-size:var(--t-5);color:var(--muted);font-variant-numeric:tabular-nums}
+  .index .name{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.2}
+  .index .name small{display:block;font-family:var(--body);font-weight:400;font-size:.95rem;color:var(--muted);margin-top:.25rem}
+  .index .floor{font-size:var(--t-5);color:var(--muted);white-space:nowrap}
+  .services{margin-top:.2rem}
+  .services li{display:grid;grid-template-columns:1.5rem 1fr;gap:.9rem;padding:.75rem 0;border-bottom:1px solid rgba(27,25,21,.12);align-items:start}
+  .services svg{width:1.3rem;height:1.3rem;margin-top:.2rem;color:var(--accent)}
+  .services b{font-weight:600}
+  .services span{display:block;color:var(--muted);font-size:.95rem}
+
+  /* membership */
+  .join-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:3rem 5rem;align-items:center}
+  .join h2{font-size:var(--t-1);line-height:1.02;letter-spacing:-0.025em;max-width:14ch;text-wrap:balance}
+  .join h2 em{font-style:normal;color:var(--accent)}
+  .join .lede{margin-top:1.4rem;color:var(--muted)}
+  .join-cta{display:flex;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+  .steps{counter-reset:step}
+  .steps li{display:grid;grid-template-columns:3rem 1fr;gap:1rem;padding:1.25rem 0;border-top:1px solid var(--rule)}
+  .steps li:last-child{border-bottom:1px solid var(--rule)}
+  .steps li::before{counter-increment:step;content:counter(step, decimal-leading-zero);font-family:var(--display);font-size:var(--t-2);font-weight:600;line-height:1;color:var(--accent)}
+  .steps h3{font-size:1.1rem}
+  .steps p{color:var(--muted);margin-top:.35rem;font-size:.95rem}
+
+  /* getting here */
+  .visit-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3rem 4rem;align-items:start}
+  .map{background:var(--card);border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3}
+  .map svg{width:100%;height:100%}
+  .address{font-family:var(--display);font-size:var(--t-2);line-height:1.15;font-weight:600;letter-spacing:-0.02em;margin-top:.6rem}
+  .address small{display:block;font-family:var(--body);font-weight:400;font-size:var(--t-4);color:var(--muted);letter-spacing:0;margin-top:.5rem}
+  .ways{margin-top:1.75rem}
+  .ways li{display:grid;grid-template-columns:5.5rem 1fr;gap:1rem;padding:.9rem 0;border-top:1px solid var(--rule)}
+  .ways li:last-child{border-bottom:1px solid var(--rule)}
+  .ways b{font-family:var(--display);font-weight:600}
+  .ways span{color:var(--muted);font-size:.95rem;display:block}
+  .ways p{font-size:.98rem}
+
+  /* footer */
+  footer{border-top:1px solid var(--ink);padding-block:clamp(48px,6vw,80px) 2rem}
+  .foot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2.5rem}
+  .foot-grid .meta{display:block;margin-bottom:.9rem;font-weight:600;color:var(--ink)}
+  .foot-grid p, .foot-grid li{font-size:.95rem;line-height:1.6}
+  .foot-grid a:hover{color:var(--accent)}
+  .foot-grid .dim{color:var(--muted)}
+  .foot-bottom{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--rule);font-size:var(--t-5);color:var(--muted)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1000px){
+    .day-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .event{grid-template-columns:5rem 6rem minmax(0,1fr)}
+    .event .room,.event .kind{grid-column:3;padding-top:0}
+    .foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width: 860px){
+    .nav-links{display:none}
+    .hero{grid-template-columns:1fr}
+    .hero-copy{padding-inline-end:var(--gutter)}
+    .hero-panel{min-height:300px}
+    .section-head,.hours-grid,.rooms-grid,.join-grid,.visit-grid{grid-template-columns:1fr}
+    .section-head p.side,.filters{justify-self:start}
+  }
+  @media (max-width: 600px){
+    .day-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .foot-grid{grid-template-columns:1fr}
+    .status span.txt{display:none}
+    .event{grid-template-columns:4.5rem minmax(0,1fr)}
+    .event .time{grid-column:2}
+    .event .room,.event .kind{grid-column:2}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .glow-anim{animation:none}
+  }
+  @keyframes glow{0%,100%{opacity:.92}50%{opacity:1}}
+  .glow-anim{animation:glow 4s ease-in-out infinite}
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Larkspur Branch Library home">
+        <svg viewBox="0 0 34 34" aria-hidden="true">
+          <rect x="1" y="1" width="32" height="32" rx="4" fill="#CF3A1E"/>
+          <rect x="7" y="8" width="5" height="18" rx="1" fill="#F5F1E8"/>
+          <rect x="14.5" y="8" width="5" height="18" rx="1" fill="#F5F1E8"/>
+          <rect x="22" y="9.5" width="5" height="16.5" rx="1" fill="#F5F1E8" transform="rotate(-12 24.5 18)"/>
+        </svg>
+        <span>
+          <span class="brand-name">Larkspur Branch</span>
+          <span class="brand-sys">Halden Public Libraries</span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Page sections">
+        <a href="#hours">Hours</a>
+        <a href="#events">What's on</a>
+        <a href="#rooms">Rooms</a>
+        <a href="#join">Join</a>
+        <a href="#visit">Getting here</a>
+      </nav>
+      <div class="nav-right">
+        <div class="status" id="status"><span class="dot"></span><span class="txt" id="status-text">Opens Sat 3 Oct</span></div>
+        <a class="btn" href="#visit">Plan a visit</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="hero" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">Opening Saturday 3 October 2026</span>
+      <h1>A library for the whole street, <em>open until 9</em> four nights a week.</h1>
+      <p class="lede">Larkspur Branch is Halden's first new library in twenty-two years: two floors of books, quiet rooms, a makerspace and a hall, on the corner where the old tram depot stood. Membership is free, and everyone is welcome.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#opening-day">See the opening day plan <span class="arrow">&rarr;</span></a>
+        <a class="btn" href="#join">Join for free</a>
+      </div>
+      <div class="hero-facts">
+        <div><strong>Sat 3 Oct, 10 am</strong><span>Doors open, all day</span></div>
+        <div><strong>Mon to Thu until 9 pm</strong><span>Late opening every week</span></div>
+        <div><strong>14 Larkspur Street</strong><span>Two minutes from the tram</span></div>
+      </div>
+    </div>
+    <div class="hero-panel" aria-hidden="true">
+      <svg viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#16213A"/>
+            <stop offset="1" stop-color="#2B3B5E"/>
+          </linearGradient>
+          <linearGradient id="win" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FBD979"/>
+            <stop offset="1" stop-color="#F2C14E"/>
+          </linearGradient>
+          <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#F2C14E" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#F2C14E" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="800" height="800" fill="url(#sky)"/>
+        <!-- moon -->
+        <circle cx="640" cy="130" r="34" fill="#F5F1E8" opacity=".9"/>
+        <circle cx="626" cy="118" r="30" fill="#1B2640"/>
+        <!-- distant terraces -->
+        <g fill="#182440">
+          <rect x="0" y="430" width="90" height="230"/>
+          <rect x="700" y="400" width="100" height="260"/>
+          <rect x="720" y="380" width="30" height="20"/>
+        </g>
+        <!-- glow on pavement -->
+        <ellipse cx="400" cy="690" rx="360" ry="90" fill="url(#halo)"/>
+        <!-- building body -->
+        <rect x="100" y="250" width="600" height="410" fill="#2E3C5E"/>
+        <rect x="100" y="250" width="600" height="14" fill="#3A4A70"/>
+        <!-- rooftop sign -->
+        <rect x="118" y="200" width="264" height="50" rx="4" fill="#CF3A1E"/>
+        <text x="132" y="235" font-family="Bricolage Grotesque, Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" fill="#F5F1E8">Larkspur Library</text>
+        <!-- upper floor windows -->
+        <g class="glow-anim">
+          <rect x="128" y="290" width="70" height="96" fill="url(#win)"/>
+          <rect x="218" y="290" width="70" height="96" fill="url(#win)"/>
+          <rect x="308" y="290" width="70" height="96" fill="#3B4B72"/>
+          <rect x="398" y="290" width="70" height="96" fill="url(#win)"/>
+          <rect x="488" y="290" width="70" height="96" fill="url(#win)"/>
+          <rect x="578" y="290" width="94" height="96" fill="#3B4B72"/>
+        </g>
+        <!-- shelves seen through upper windows -->
+        <g stroke="#B58A2E" stroke-width="3" opacity=".7">
+          <line x1="128" y1="318" x2="198" y2="318"/><line x1="128" y1="346" x2="198" y2="346"/><line x1="128" y1="374" x2="198" y2="374"/>
+          <line x1="218" y1="318" x2="288" y2="318"/><line x1="218" y1="346" x2="288" y2="346"/><line x1="218" y1="374" x2="288" y2="374"/>
+          <line x1="398" y1="318" x2="468" y2="318"/><line x1="398" y1="346" x2="468" y2="346"/><line x1="398" y1="374" x2="468" y2="374"/>
+          <line x1="488" y1="318" x2="558" y2="318"/><line x1="488" y1="346" x2="558" y2="346"/><line x1="488" y1="374" x2="558" y2="374"/>
+        </g>
+        <!-- books on shelves, upper -->
+        <g>
+          <g fill="#CF3A1E"><rect x="134" y="304" width="6" height="14"/><rect x="230" y="332" width="7" height="14"/><rect x="412" y="360" width="6" height="14"/><rect x="522" y="304" width="7" height="14"/></g>
+          <g fill="#1E2B45"><rect x="142" y="306" width="8" height="12"/><rect x="152" y="302" width="6" height="16"/><rect x="240" y="334" width="6" height="12"/><rect x="420" y="358" width="8" height="16"/><rect x="500" y="332" width="7" height="14"/><rect x="510" y="334" width="6" height="12"/></g>
+          <g fill="#2C8A5A"><rect x="162" y="305" width="6" height="13"/><rect x="250" y="331" width="8" height="15"/><rect x="430" y="361" width="6" height="13"/><rect x="530" y="303" width="6" height="15"/></g>
+          <g fill="#F5F1E8"><rect x="170" y="307" width="7" height="11"/><rect x="260" y="333" width="6" height="13"/><rect x="440" y="359" width="7" height="15"/><rect x="540" y="305" width="8" height="13"/></g>
+        </g>
+        <!-- floor slab -->
+        <rect x="100" y="420" width="600" height="18" fill="#243252"/>
+        <!-- ground floor glass front -->
+        <rect x="118" y="438" width="564" height="222" fill="url(#win)"/>
+        <g fill="#2E3C5E">
+          <rect x="230" y="438" width="8" height="222"/>
+          <rect x="342" y="438" width="8" height="222"/>
+          <rect x="454" y="438" width="8" height="222"/>
+          <rect x="566" y="438" width="8" height="222"/>
+        </g>
+        <!-- reading room interior: long tables and lamps -->
+        <g fill="#B58A2E" opacity=".85">
+          <rect x="132" y="560" width="90" height="6"/>
+          <rect x="246" y="560" width="88" height="6"/>
+          <rect x="586" y="560" width="88" height="6"/>
+        </g>
+        <g fill="#1B1915" opacity=".75">
+          <rect x="150" y="566" width="4" height="40"/><rect x="200" y="566" width="4" height="40"/>
+          <rect x="264" y="566" width="4" height="40"/><rect x="314" y="566" width="4" height="40"/>
+          <rect x="604" y="566" width="4" height="40"/><rect x="654" y="566" width="4" height="40"/>
+        </g>
+        <!-- people silhouettes -->
+        <g fill="#1B1915" opacity=".8">
+          <circle cx="176" cy="536" r="9"/><rect x="166" y="546" width="20" height="18" rx="4"/>
+          <circle cx="290" cy="538" r="9"/><rect x="280" y="548" width="20" height="16" rx="4"/>
+          <circle cx="630" cy="534" r="9"/><rect x="620" y="544" width="20" height="20" rx="4"/>
+        </g>
+        <!-- entrance -->
+        <rect x="462" y="438" width="104" height="222" fill="#3B4B72"/>
+        <rect x="474" y="452" width="80" height="208" fill="url(#win)"/>
+        <rect x="512" y="452" width="4" height="208" fill="#2E3C5E"/>
+        <rect x="474" y="452" width="80" height="34" fill="#CF3A1E"/>
+        <text x="514" y="475" text-anchor="middle" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#F5F1E8">Welcome in</text>
+        <!-- ground floor shelves in far bays -->
+        <g stroke="#B58A2E" stroke-width="3" opacity=".7">
+          <line x1="132" y1="470" x2="222" y2="470"/><line x1="132" y1="500" x2="222" y2="500"/>
+          <line x1="246" y1="470" x2="334" y2="470"/><line x1="246" y1="500" x2="334" y2="500"/>
+          <line x1="358" y1="470" x2="446" y2="470"/><line x1="358" y1="500" x2="446" y2="500"/><line x1="358" y1="530" x2="446" y2="530"/>
+          <line x1="586" y1="470" x2="674" y2="470"/><line x1="586" y1="500" x2="674" y2="500"/>
+        </g>
+        <!-- pavement -->
+        <rect x="0" y="660" width="800" height="140" fill="#26334F"/>
+        <rect x="0" y="660" width="800" height="6" fill="#3A4A70"/>
+        <!-- cycle racks -->
+        <g stroke="#8B97B5" stroke-width="4" fill="none">
+          <path d="M40 700 v-26 a10 10 0 0 1 20 0 v26"/>
+          <path d="M72 700 v-26 a10 10 0 0 1 20 0 v26"/>
+        </g>
+        <!-- lamp post -->
+        <rect x="738" y="560" width="6" height="100" fill="#8B97B5"/>
+        <circle cx="741" cy="552" r="12" fill="#F2C14E"/>
+        <circle cx="741" cy="552" r="34" fill="url(#halo)"/>
+        <!-- tree -->
+        <rect x="26" y="600" width="8" height="60" fill="#3A4A70"/>
+        <circle cx="30" cy="580" r="42" fill="#2A4A46"/>
+        <circle cx="52" cy="560" r="30" fill="#2F5650"/>
+      </svg>
+      <p class="hero-caption">Larkspur Street, 8:40 pm on a Tuesday. The lights stay on.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- opening day ---------- -->
+<section id="opening-day">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Opening day</span>
+        <h2 class="h2">Saturday 3 October, from ten in the morning until nine at night.</h2>
+      </div>
+      <p class="side">No tickets, no queue-jumping, no speeches longer than four minutes. Come for the ribbon, stay for the band, or arrive at dusk and see why we call it the late library.</p>
+    </div>
+    <div class="day-grid">
+      <div class="slot">
+        <time datetime="2026-10-03T10:00">10 am</time>
+        <h3>Doors open</h3>
+        <p>First 300 through the door get a Larkspur tote and a library card printed on the spot.</p>
+      </div>
+      <div class="slot">
+        <time datetime="2026-10-03T10:30">10:30</time>
+        <h3>Ribbon on the forecourt</h3>
+        <p>Cut by the children of Larkspur Primary, with a short welcome from the city librarian.</p>
+      </div>
+      <div class="slot">
+        <time datetime="2026-10-03T11:00">11 am</time>
+        <h3>First storytime</h3>
+        <p>Under-fives on the story steps. Repeats at 2 pm and 4 pm.</p>
+      </div>
+      <div class="slot">
+        <time datetime="2026-10-03T12:00">12 to 4</time>
+        <h3>Building tours</h3>
+        <p>Every thirty minutes from the front desk, including the archive store and the roof garden.</p>
+      </div>
+      <div class="slot">
+        <time datetime="2026-10-03T15:00">3 pm</time>
+        <h3>Halden Silver Band</h3>
+        <p>Forty minutes on the forecourt, then hot cider from the cafe.</p>
+      </div>
+      <div class="slot late">
+        <time datetime="2026-10-03T19:00">7 to 9 pm</time>
+        <h3>The late shift</h3>
+        <p>Lamps on, quiet music in the reading room, cocoa at the desk. A preview of every weeknight to come.</p>
+      </div>
+    </div>
+    <div class="day-note">
+      <a class="btn" href="#events">See the rest of October <span class="arrow">&rarr;</span></a>
+      <p>The building is fully step-free with a hearing loop at every desk. A quiet hour runs from 9 to 10 am on the Sunday after, for anyone who would rather skip the crowds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- hours ---------- -->
+<section class="hours" id="hours">
+  <div class="wrap">
+    <div class="hours-grid">
+      <div>
+        <span class="eyebrow">Opening hours</span>
+        <h2 class="h2">Open late, because the day ends at six for most of us.</h2>
+        <p class="lede">Most libraries close as people leave work. Larkspur keeps the lights on until nine, Monday to Thursday, with staff on every floor and the cafe serving until eight.</p>
+        <ul class="late-list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F2C14E" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span>Return chute and holds lockers in the lobby work around the clock, every day of the year.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F2C14E" stroke-width="1.8" aria-hidden="true"><path d="M4 19h16M6 19V9l6-4 6 4v10"/><path d="M10 19v-5h4v5"/></svg>
+            <span>Study rooms can be booked up to 8:30 pm on late nights. The reading room goes silent after six.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F2C14E" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span>Public holidays: 10 am to 5 pm. Closed on 25 and 26 December and 1 January.</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="hours-list" id="hours-list">
+          <li data-day="1"><span>Monday</span><span class="late">9 am to 9 pm</span><span class="tag">Late night</span></li>
+          <li data-day="2"><span>Tuesday</span><span class="late">9 am to 9 pm</span><span class="tag">Late night</span></li>
+          <li data-day="3"><span>Wednesday</span><span class="late">9 am to 9 pm</span><span class="tag">Late night</span></li>
+          <li data-day="4"><span>Thursday</span><span class="late">9 am to 9 pm</span><span class="tag">Late night</span></li>
+          <li data-day="5"><span>Friday</span><span>9 am to 6 pm</span><span class="tag"></span></li>
+          <li data-day="6"><span>Saturday</span><span>10 am to 6 pm</span><span class="tag"></span></li>
+          <li data-day="0"><span>Sunday</span><span>12 pm to 5 pm</span><span class="tag">Quiet hour 9 to 10 am</span></li>
+        </ul>
+        <p class="hours-foot" id="hours-foot">These hours start on Sunday 4 October. Opening day itself runs 10 am to 9 pm.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- events ---------- -->
+<section id="events">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">What's on in October</span>
+        <h2 class="h2">The first month, from storytime to ghost stories after dark.</h2>
+      </div>
+      <div class="filters" role="group" aria-label="Filter events">
+        <button class="chip" aria-pressed="true" data-filter="all">All events</button>
+        <button class="chip" aria-pressed="false" data-filter="families">Families</button>
+        <button class="chip" aria-pressed="false" data-filter="adults">Adults</button>
+        <button class="chip" aria-pressed="false" data-filter="teens">Teens</button>
+        <button class="chip" aria-pressed="false" data-filter="talks">Talks and films</button>
+      </div>
+    </div>
+
+    <ul class="events" id="events-list">
+      <li class="event" data-kind="families">
+        <div class="date"><b>03</b><span>Saturday</span></div>
+        <div class="time">10 am to 9 pm</div>
+        <div><h3>Opening day</h3><p>Ribbon at 10:30, storytimes, tours, the silver band at three and the first late shift from seven.</p></div>
+        <div class="room">Whole building</div>
+        <div class="kind">Families</div>
+      </li>
+      <li class="event" data-kind="families">
+        <div class="date"><b>06</b><span>Tuesday</span></div>
+        <div class="time">10:30 am</div>
+        <div><h3>Baby rhyme time</h3><p>Songs and bounces for babies up to eighteen months. Buggies park by the story steps.</p></div>
+        <div class="room">Children's library</div>
+        <div class="kind">Families</div>
+      </li>
+      <li class="event" data-kind="talks">
+        <div class="date"><b>08</b><span>Thursday</span></div>
+        <div class="time">7 pm</div>
+        <div><h3>Late shift: <span>Nadia Okafor</span> on the city we forgot to build</h3><p>The architecture writer in conversation about Halden's unbuilt plans, with drawings from the local studies archive. Free, book a place.</p></div>
+        <div class="room">The hall</div>
+        <div class="kind">Talks and films</div>
+      </li>
+      <li class="event" data-kind="adults">
+        <div class="date"><b>10</b><span>Saturday</span></div>
+        <div class="time">11 am to 3 pm</div>
+        <div><h3>Repair cafe</h3><p>Bring a toaster, a lamp, a torn coat. Volunteers from Halden Menders fix it with you, not for you.</p></div>
+        <div class="room">Makerspace</div>
+        <div class="kind">Adults</div>
+      </li>
+      <li class="event" data-kind="teens">
+        <div class="date"><b>13</b><span>Tuesday</span></div>
+        <div class="time">4:30 pm</div>
+        <div><h3>Zine club</h3><p>Fold, staple, photocopy. Ages 13 to 18, paper and the risograph provided. Weekly from here on.</p></div>
+        <div class="room">Teen loft</div>
+        <div class="kind">Teens</div>
+      </li>
+      <li class="event" data-kind="adults">
+        <div class="date"><b>15</b><span>Thursday</span></div>
+        <div class="time">6:30 pm</div>
+        <div><h3>Knit and natter</h3><p>Needles, hooks and a big pot of tea. Beginners welcome, spare yarn on the trolley.</p></div>
+        <div class="room">Cafe</div>
+        <div class="kind">Adults</div>
+      </li>
+      <li class="event" data-kind="families">
+        <div class="date"><b>17</b><span>Saturday</span></div>
+        <div class="time">11 am</div>
+        <div><h3>Big brick build</h3><p>Ten thousand bricks, one table, a bridge to build across the whole children's library by three o'clock.</p></div>
+        <div class="room">Children's library</div>
+        <div class="kind">Families</div>
+      </li>
+      <li class="event" data-kind="adults">
+        <div class="date"><b>20</b><span>Tuesday</span></div>
+        <div class="time">2 to 4 pm</div>
+        <div><h3>Digital help drop-in</h3><p>Phones, passwords, council forms, video calls with grandchildren. Twenty minutes each, no booking.</p></div>
+        <div class="room">Study room 2</div>
+        <div class="kind">Adults</div>
+      </li>
+      <li class="event" data-kind="talks">
+        <div class="date"><b>22</b><span>Thursday</span></div>
+        <div class="time">7:30 pm</div>
+        <div><h3>Film night: <span>Paris, Texas</span></h3><p>Screened on the hall's new projector with the curtains drawn. Doors at seven, cafe open until eight.</p></div>
+        <div class="room">The hall</div>
+        <div class="kind">Talks and films</div>
+      </li>
+      <li class="event" data-kind="adults">
+        <div class="date"><b>24</b><span>Saturday</span></div>
+        <div class="time">10:30 am</div>
+        <div><h3>Seed library swap</h3><p>Bring saved seed in a labelled envelope, take home something you have never grown. Launches our seed library for good.</p></div>
+        <div class="room">Roof garden</div>
+        <div class="kind">Adults</div>
+      </li>
+      <li class="event" data-kind="teens">
+        <div class="date"><b>27</b><span>Tuesday</span></div>
+        <div class="time">5 pm</div>
+        <div><h3>Homework club</h3><p>Tutors from Halden College on hand every Tuesday until 7 pm. Snacks, laptops and printing on us.</p></div>
+        <div class="room">Teen loft</div>
+        <div class="kind">Teens</div>
+      </li>
+      <li class="event" data-kind="families">
+        <div class="date"><b>29</b><span>Thursday</span></div>
+        <div class="time">5 to 7 pm</div>
+        <div><h3>Lantern making</h3><p>Willow and tissue paper lanterns for the Saturday walk. All ages, younger children with an adult.</p></div>
+        <div class="room">Makerspace</div>
+        <div class="kind">Families</div>
+      </li>
+      <li class="event" data-kind="talks">
+        <div class="date"><b>31</b><span>Saturday</span></div>
+        <div class="time">7 pm</div>
+        <div><h3>Ghost stories <span>after dark</span></h3><p>A lantern walk from the forecourt to Mill Park and back, then readings by candlelight in the reading room. Ages 8 and up.</p></div>
+        <div class="room">Reading room</div>
+        <div class="kind">Talks and films</div>
+      </li>
+    </ul>
+    <p class="empty" id="events-empty">Nothing in this category yet this month. Check back, the programme grows every week.</p>
+
+    <div class="events-foot">
+      <p>Every event is free. Where a place needs booking, the front desk or the events line on 0400 220 114 will hold one for you. November's programme is published on 20 October.</p>
+      <a class="btn" href="#visit">Book at the desk from 3 October <span class="arrow">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- rooms and services ---------- -->
+<section class="rooms" id="rooms">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Rooms and services</span>
+        <h2 class="h2">Two floors, a roof garden, and eight rooms with a job to do.</h2>
+      </div>
+      <p class="side">Designed by Orme and Keel Architects inside the shell of the 1911 tram depot. The sawtooth roof and the iron columns stayed; everything under them is new.</p>
+    </div>
+    <div class="rooms-grid">
+      <ul class="index">
+        <li><span class="num">01</span><span class="name">The reading room<small>120 seats under the sawtooth roof, lamps on every table, silent after 6 pm.</small></span><span class="floor">First floor</span></li>
+        <li><span class="num">02</span><span class="name">Children's library<small>Story steps, a picture book pit, and a shelf low enough for a two-year-old.</small></span><span class="floor">Ground floor</span></li>
+        <li><span class="num">03</span><span class="name">Teen loft<small>Consoles, a risograph, beanbags, and no adults unless invited.</small></span><span class="floor">Mezzanine</span></li>
+        <li><span class="num">04</span><span class="name">Makerspace<small>Sewing machines, a laser cutter, filament printers and a wood bench. Free inductions weekly.</small></span><span class="floor">Ground floor</span></li>
+        <li><span class="num">05</span><span class="name">Study rooms<small>Six rooms for two to eight people, bookable in two-hour blocks up to a week ahead.</small></span><span class="floor">First floor</span></li>
+        <li><span class="num">06</span><span class="name">The hall<small>Seats 90 with a projector and a small stage. Free for community groups, hire for everyone else.</small></span><span class="floor">Ground floor</span></li>
+        <li><span class="num">07</span><span class="name">Local studies archive<small>Halden maps from 1790, the tram company ledgers, and forty thousand photographs.</small></span><span class="floor">First floor</span></li>
+        <li><span class="num">08</span><span class="name">Roof garden and cafe<small>Raised beds, the seed library, and coffee from Corner Bakehouse until 8 pm on late nights.</small></span><span class="floor">Roof</span></li>
+      </ul>
+      <div>
+        <h3 class="h3">Always on, always free</h3>
+        <ul class="services">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg><div><b>Wi-fi with no login</b><span>Same network across every Halden library, no password, no time limit.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg><div><b>Laptops and tablets to borrow</b><span>Forty devices at the desk, yours for the day inside the building.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9V4h12v5M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="6"/></svg><div><b>Printing and scanning</b><span>Scanning is free. Printing is ten cents a page in black, thirty in colour.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/></svg><div><b>Library of things</b><span>Drills, a projector, a carpet cleaner, a tent, a sewing machine. Borrow for a week on your card.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><div><b>Holds lockers, 24 hours</b><span>Reserve online, collect from the lobby lockers any time, day or night.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg><div><b>Hearing loops and quiet hours</b><span>Loops at every desk, large print and audio on every floor, quiet hour on Sunday mornings.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20l4-4M12 4l8 8-6 6-8-8z"/></svg><div><b>Home delivery</b><span>If getting here is hard, a volunteer brings books to your door every fortnight.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- membership ---------- -->
+<section class="join" id="join">
+  <div class="wrap">
+    <div class="join-grid">
+      <div>
+        <span class="eyebrow">Membership</span>
+        <h2>Membership is free. <em>It always has been.</em></h2>
+        <p class="lede">One card works at every Halden library, on the mobile library, and for ebooks, audiobooks and newspapers at home. There are no joining fees and, since 2022, no late fines at all.</p>
+        <div class="join-cta">
+          <a class="btn primary" href="#visit">Join at the desk on 3 October <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="#visit">Join online, collect in person</a>
+        </div>
+      </div>
+      <ol class="steps">
+        <li><div><h3>Bring something with your name and address</h3><p>A letter, a bill, a bank card, a phone with your address on it. Anything reasonable does.</p></div></li>
+        <li><div><h3>Borrow up to twenty things for three weeks</h3><p>Renew online up to five times as long as nobody else is waiting. Return to any branch, or the chute.</p></div></li>
+        <li><div><h3>Under sixteen? Join with a grown-up</h3><p>A parent or carer signs once. Children's cards never carry charges, even for a lost picture book.</p></div></li>
+        <li><div><h3>No address yet? Still welcome</h3><p>A temporary card gives you two items and full computer access while you settle in.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- getting here ---------- -->
+<section id="visit">
+  <div class="wrap">
+    <div class="visit-grid">
+      <div>
+        <span class="eyebrow">Getting here</span>
+        <p class="address">14 Larkspur Street, Halden 4021<small>On the corner of Larkspur Street and Depot Lane, opposite Mill Park. The entrance is on Larkspur Street, with a second door from the park after dark.</small></p>
+        <ul class="ways">
+          <li><b>Tram</b><div><p>Line 2 and Line 5 to Halden Central, two minutes on foot along Depot Lane.</p><span>Trams run until 12:40 am on late nights.</span></div></li>
+          <li><b>Bus</b><div><p>Routes 14, 27 and 41 stop outside the front door at the Larkspur Street stop.</p><span>The 14 runs every eight minutes until midnight.</span></div></li>
+          <li><b>Bike</b><div><p>Forty stands on the forecourt, covered, lit and in view of the desk.</p><span>A pump and a repair stand are fixed by the door.</span></div></li>
+          <li><b>Car</b><div><p>Six blue badge bays on Depot Lane. Mill Park car park is 300 metres away, free after 6 pm.</p><span>No general parking on Larkspur Street itself.</span></div></li>
+          <li><b>On foot</b><div><p>Step-free from every entrance, with a lift to each floor and the roof garden.</p><span>Changing places toilet on the ground floor.</span></div></li>
+        </ul>
+      </div>
+      <div class="map" aria-label="Map showing the library at the corner of Larkspur Street and Depot Lane, opposite Mill Park, near Halden Central tram stop" role="img">
+        <svg viewBox="0 0 600 450">
+          <rect width="600" height="450" fill="#ECE6D9"/>
+          <!-- park -->
+          <rect x="330" y="60" width="230" height="200" rx="6" fill="#CFD9BE"/>
+          <text x="445" y="165" text-anchor="middle" font-family="Bricolage Grotesque, Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="600" fill="#5B6B45">Mill Park</text>
+          <circle cx="380" cy="110" r="14" fill="#B9C9A4"/><circle cx="520" cy="230" r="18" fill="#B9C9A4"/><circle cx="500" cy="95" r="10" fill="#B9C9A4"/>
+          <!-- streets -->
+          <g stroke="#F5F1E8" stroke-width="22" stroke-linecap="round">
+            <line x1="0" y1="300" x2="600" y2="300"/>
+            <line x1="300" y1="0" x2="300" y2="450"/>
+            <line x1="0" y1="120" x2="300" y2="120"/>
+            <line x1="120" y1="120" x2="120" y2="450"/>
+          </g>
+          <!-- tram line -->
+          <g stroke="#1E2B45" stroke-width="3" stroke-dasharray="10 8">
+            <line x1="0" y1="392" x2="600" y2="392"/>
+          </g>
+          <!-- tram stop -->
+          <rect x="340" y="379" width="76" height="26" rx="13" fill="#1E2B45"/>
+          <text x="378" y="397" text-anchor="middle" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="600" fill="#F5F1E8">Tram stop</text>
+          <text x="340" y="424" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459">Halden Central, lines 2 and 5</text>
+          <!-- bus stop -->
+          <rect x="222" y="268" width="66" height="24" rx="12" fill="#2C8A5A"/>
+          <text x="255" y="285" text-anchor="middle" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="600" fill="#F5F1E8">Bus stop</text>
+          <text x="130" y="262" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459">Routes 14, 27 and 41</text>
+          <!-- library block -->
+          <rect x="150" y="150" width="130" height="130" rx="4" fill="#CF3A1E"/>
+          <g fill="#F5F1E8"><rect x="172" y="176" width="16" height="58" rx="2"/><rect x="198" y="176" width="16" height="58" rx="2"/><rect x="226" y="180" width="16" height="54" rx="2" transform="rotate(-12 234 207)"/></g>
+          <text x="215" y="262" text-anchor="middle" font-family="Bricolage Grotesque, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="700" fill="#F5F1E8">Larkspur Branch</text>
+          <!-- street labels -->
+          <text x="20" y="325" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459">Larkspur Street</text>
+          <text x="312" y="40" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459" transform="rotate(90 312 40)">Depot Lane</text>
+          <text x="20" y="145" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459">Station Road</text>
+          <text x="500" y="325" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" fill="#6A6459">Mill Park car park</text>
+          <rect x="500" y="332" width="72" height="36" rx="4" fill="#DAD3C4"/>
+          <text x="536" y="354" text-anchor="middle" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="600" fill="#6A6459">Parking</text>
+          <!-- scale -->
+          <line x1="20" y1="428" x2="100" y2="428" stroke="#1B1915" stroke-width="2"/>
+          <text x="20" y="418" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-size="11" fill="#6A6459">100 metres</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- footer ---------- -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <span class="meta">Find us</span>
+        <p>Larkspur Branch Library<br>14 Larkspur Street<br>Halden 4021</p>
+      </div>
+      <div>
+        <span class="meta">Ask</span>
+        <p><a href="mailto:larkspur@haldenlibraries.org">larkspur@haldenlibraries.org</a><br>0400 220 114<br><span class="dim">Staffed whenever the doors are open.</span></p>
+      </div>
+      <div>
+        <span class="meta">Hours from 4 October</span>
+        <p>Monday to Thursday, 9 am to 9 pm<br>Friday, 9 am to 6 pm<br>Saturday, 10 am to 6 pm<br>Sunday, 12 pm to 5 pm</p>
+      </div>
+      <div>
+        <span class="meta">Halden Public Libraries</span>
+        <ul>
+          <li><a href="#top">Central Library</a></li>
+          <li><a href="#top">Northgate</a></li>
+          <li><a href="#top">Riverside</a></li>
+          <li><a href="#top">The mobile library</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Halden City Council, Libraries and Archives. Larkspur Branch opens Saturday 3 October 2026.</span>
+      <span>Building by Orme and Keel Architects. Accessibility statement and privacy notice at the desk or online.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Opening status in the nav: counts down to opening day, then reflects live hours.
+  var opening = new Date(2026, 9, 3, 10, 0, 0); // Saturday 3 October 2026, 10 am
+  var hours = {1:[9,21],2:[9,21],3:[9,21],4:[9,21],5:[9,18],6:[10,18],0:[12,17]};
+  var now = new Date();
+  var status = document.getElementById('status');
+  var text = document.getElementById('status-text');
+  function clock(h){ var s = h % 12 || 12; return s + (h < 12 ? ' am' : ' pm'); }
+
+  if (now < opening) {
+    var days = Math.ceil((opening - now) / 86400000);
+    text.textContent = days > 1 ? 'Opens Sat 3 Oct, in ' + days + ' days' : 'Opens tomorrow at 10 am';
+  } else {
+    var d = now.getDay(), h = now.getHours() + now.getMinutes()/60, span = hours[d];
+    if (now.toDateString() === opening.toDateString()) span = [10,21];
+    if (h >= span[0] && h < span[1]) {
+      status.classList.add('open');
+      text.textContent = 'Open now until ' + clock(span[1]);
+    } else {
+      status.classList.add('closed');
+      var next = h < span[0] ? span[0] : hours[(d+1)%7][0];
+      text.textContent = 'Closed now, opens ' + (h < span[0] ? 'at ' : 'tomorrow at ') + clock(next);
+    }
+    // mark today's row in the hours table
+    var row = document.querySelector('.hours-list li[data-day="' + d + '"]');
+    if (row) {
+      row.classList.add('today');
+      var tag = row.querySelector('.tag');
+      tag.textContent = 'Today' + (tag.textContent ? ', ' + tag.textContent.toLowerCase() : '');
+    }
+    var foot = document.getElementById('hours-foot');
+    if (foot) foot.textContent = 'Opening day was Saturday 3 October 2026. The building is now on its regular hours.';
+  }
+
+  // Event filters
+  var chips = document.querySelectorAll('.chip');
+  var events = document.querySelectorAll('.event');
+  var empty = document.getElementById('events-empty');
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var f = chip.getAttribute('data-filter');
+      chips.forEach(function(c){ c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+      var shown = 0;
+      events.forEach(function(ev){
+        var show = f === 'all' || ev.getAttribute('data-kind') === f;
+        ev.hidden = !show;
+        if (show) shown++;
+      });
+      empty.style.display = shown ? 'none' : 'block';
+    });
+  });
+})();
+</script>
+</body>
+</html>
