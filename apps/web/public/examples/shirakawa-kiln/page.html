@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shirakawa Kiln - unglazed stoneware, wood-fired in Kyoto</title>
+<meta name="description" content="Shirakawa Kiln makes unglazed stoneware in Jōdoji, Kyoto, fired twice a year in an anagama kiln above Ōhara and sold at seasonal kiln openings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, used everywhere */
+  :root{
+    --t-xs: 0.8125rem;
+    --t-sm: 0.9375rem;
+    --t-md: 1.125rem;
+    --t-lg: clamp(1.625rem, 2.4vw, 2.125rem);
+    --t-xl: clamp(2.375rem, 4.4vw, 3.5rem);
+
+    /* Palette: bisque paper, iron ink, one fired-clay accent, one kiln-dark ground */
+    --paper: #ECE4D6;
+    --paper-deep: #DED2BF;
+    --ink: #2A211C;
+    --muted: #766758;
+    --rule: #CFC2AF;
+    --clay: #A9603B;
+    --kiln: #1F1714;
+
+    --font-display: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+    --font-body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+
+    --rhythm: clamp(72px, 9vw, 128px);
+    --wrap: 1200px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:var(--t-sm);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  p{margin:0}
+  h1,h2,h3{margin:0;font-weight:400}
+  ul{margin:0;padding:0;list-style:none}
+  svg{display:block}
+  [hidden]{display:none !important}
+
+  /* Container owns only the gutter, never block padding */
+  .wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:clamp(20px, 4vw, 48px)}
+
+  .section{padding-block:var(--rhythm)}
+  .rule-top{border-top:1px solid var(--rule)}
+
+  .meta{
+    font-size:var(--t-xs);
+    color:var(--muted);
+    letter-spacing:0.02em;
+  }
+  .display{font-family:var(--font-display);line-height:1.05;letter-spacing:-0.01em}
+  .display em{font-style:italic;font-weight:400}
+  .h2{font-size:var(--t-lg);max-width:22ch;text-wrap:balance}
+  .lede{font-size:var(--t-md);color:var(--muted);max-width:52ch;line-height:1.5}
+
+  .arrow-link{
+    display:inline-flex;align-items:baseline;gap:.5em;
+    font-size:var(--t-sm);
+    border-bottom:1px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .arrow-link:hover{color:var(--clay)}
+  .arrow-link span{transition:transform .2s ease;display:inline-block}
+  .arrow-link:hover span{transform:translateX(3px)}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:.6em;
+    background:var(--ink);color:var(--paper);
+    padding:14px 22px;
+    font-size:var(--t-sm);font-weight:500;
+    border-radius:999px;
+    transition:background .25s ease, transform .25s ease;
+  }
+  .btn:hover{background:var(--clay)}
+  .btn span{transition:transform .2s ease;display:inline-block}
+  .btn:hover span{transform:translateX(3px)}
+
+  /* ---------- Fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;
+    padding-block:22px;
+    border-bottom:1px solid var(--rule);
+  }
+  .wordmark{
+    font-family:var(--font-display);
+    font-size:var(--t-md);
+    font-weight:500;
+    letter-spacing:0.01em;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  .wordmark small{font-family:var(--font-body);font-size:var(--t-xs);color:var(--muted);font-weight:400}
+  .nav-links{display:flex;gap:28px;font-size:var(--t-sm)}
+  .nav-links a{transition:color .2s ease}
+  .nav-links a:hover{color:var(--clay)}
+  .nav-note{font-size:var(--t-xs);color:var(--muted);white-space:nowrap}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:28px}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:clamp(32px, 5vw, 72px);
+    align-items:center;
+    width:100%;
+  }
+  .hero h1{font-size:var(--t-xl);max-width:15ch;margin-top:20px;text-wrap:balance}
+  .hero .lede{margin-top:24px}
+  .hero-actions{display:flex;align-items:center;gap:28px;margin-top:36px;flex-wrap:wrap}
+
+  .hero-panel{
+    position:relative;
+    background:var(--paper-deep);
+    height:min(64svh, 560px);
+    display:flex;align-items:flex-end;justify-content:center;
+    overflow:hidden;
+    border-radius:4px;
+  }
+  .hero-panel::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(90% 60% at 30% 0%, rgba(255,255,255,.35), transparent 60%),
+      linear-gradient(180deg, transparent 55%, rgba(42,33,28,.08));
+    pointer-events:none;
+  }
+  .hero-panel svg{height:88%;width:auto;position:relative}
+  .hero-caption{
+    position:absolute;left:20px;bottom:16px;right:20px;
+    display:flex;justify-content:space-between;gap:16px;
+    font-size:var(--t-xs);color:var(--muted);
+  }
+
+  /* ---------- Opening band ---------- */
+  .band{
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    padding-block:36px;
+  }
+  .band-grid{
+    display:grid;
+    grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;
+    gap:32px;
+    align-items:start;
+  }
+  .band-title{font-family:var(--font-display);font-size:var(--t-lg);line-height:1.05}
+  .band-title small{display:block;font-family:var(--font-body);font-size:var(--t-xs);color:var(--muted);margin-top:8px;letter-spacing:.02em}
+  .band-cell p{margin-top:6px}
+  .band-count{color:var(--clay);font-weight:500}
+
+  /* ---------- Objects ---------- */
+  .section-head{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;
+    margin-bottom:56px;
+  }
+  .section-head .lede{margin-top:0}
+  .objects{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:32px 28px;
+  }
+  .object{display:block}
+  .object-panel{
+    aspect-ratio:4/5;
+    background:var(--paper-deep);
+    display:flex;align-items:flex-end;justify-content:center;
+    position:relative;overflow:hidden;
+    border-radius:4px;
+  }
+  .object-panel::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(80% 55% at 35% 0%, rgba(255,255,255,.3), transparent 60%);
+  }
+  .object-panel svg{height:76%;width:auto;position:relative;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .object:hover .object-panel svg{transform:translateY(-6px)}
+  .object-row{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    margin-top:14px;
+  }
+  .object-name{font-family:var(--font-display);font-size:var(--t-md);font-weight:500}
+  .object-sub{color:var(--muted);font-size:var(--t-xs);margin-top:2px}
+  .object-price{font-size:var(--t-sm);white-space:nowrap}
+  .objects-note{margin-top:44px;color:var(--muted);max-width:64ch;font-size:var(--t-xs);line-height:1.6}
+
+  /* ---------- Kiln (dark band) ---------- */
+  .kiln{background:var(--kiln);color:var(--paper)}
+  .kiln .meta{color:rgba(236,228,214,.6)}
+  .kiln .lede{color:rgba(236,228,214,.72)}
+  .kiln-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .kiln-copy{margin-top:24px;max-width:56ch;color:rgba(236,228,214,.85)}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 32px}
+  .stat b{display:block;font-family:var(--font-display);font-size:var(--t-xl);font-weight:400;line-height:1;letter-spacing:-0.01em}
+  .stat span{display:block;margin-top:8px;color:rgba(236,228,214,.62);font-size:var(--t-xs)}
+
+  .openings{margin-top:80px;border-top:1px solid rgba(236,228,214,.18)}
+  .opening{
+    display:grid;
+    grid-template-columns:1.1fr 1.3fr 1.6fr auto;
+    gap:32px;align-items:baseline;
+    padding-block:26px;
+    border-bottom:1px solid rgba(236,228,214,.18);
+  }
+  .opening-season{font-family:var(--font-display);font-size:var(--t-lg);line-height:1.05}
+  .opening-season small{display:block;font-family:var(--font-body);font-size:var(--t-xs);color:rgba(236,228,214,.6);margin-top:6px}
+  .opening-date{font-size:var(--t-md)}
+  .opening-note{color:rgba(236,228,214,.7);font-size:var(--t-sm)}
+  .kiln .arrow-link:hover{color:#D9A27F}
+
+  /* ---------- Clay ---------- */
+  .clays{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
+  .clay-swatch{
+    aspect-ratio:5/3;border-radius:4px;position:relative;overflow:hidden;
+  }
+  .clay-swatch::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(255,255,255,.14), transparent 40%, rgba(42,33,28,.16));
+  }
+  .swatch-shigaraki{
+    background-color:#D3B996;
+    background-image:
+      radial-gradient(circle at 12% 30%, rgba(255,255,255,.9) 0 2px, transparent 3px),
+      radial-gradient(circle at 44% 66%, rgba(255,255,255,.85) 0 1.6px, transparent 2.6px),
+      radial-gradient(circle at 70% 22%, rgba(255,255,255,.85) 0 1.4px, transparent 2.4px),
+      radial-gradient(circle at 86% 74%, rgba(255,255,255,.9) 0 2.2px, transparent 3.2px),
+      radial-gradient(circle at 28% 84%, rgba(255,255,255,.8) 0 1.2px, transparent 2.2px),
+      radial-gradient(circle at 58% 42%, rgba(120,90,60,.5) 0 1px, transparent 2px),
+      radial-gradient(circle at 20% 56%, rgba(120,90,60,.5) 0 1.2px, transparent 2.2px),
+      linear-gradient(135deg, #DCC4A3, #C7A882 60%, #B9976F);
+  }
+  .swatch-kyoto{
+    background-image:
+      radial-gradient(circle at 76% 30%, rgba(90,110,80,.35), transparent 45%),
+      linear-gradient(135deg, #B6674A, #94472F 55%, #7A3A27);
+  }
+  .swatch-iron{
+    background-image:
+      radial-gradient(circle at 18% 40%, rgba(0,0,0,.6) 0 1.4px, transparent 2.4px),
+      radial-gradient(circle at 52% 72%, rgba(0,0,0,.6) 0 1.8px, transparent 2.8px),
+      radial-gradient(circle at 80% 26%, rgba(0,0,0,.55) 0 1.2px, transparent 2.2px),
+      radial-gradient(circle at 36% 18%, rgba(0,0,0,.55) 0 1px, transparent 2px),
+      radial-gradient(circle at 66% 50%, rgba(0,0,0,.6) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 90% 82%, rgba(0,0,0,.5) 0 1.3px, transparent 2.3px),
+      linear-gradient(135deg, #7A5A46, #5B3F30 55%, #46302a);
+  }
+  .clay h3{font-family:var(--font-display);font-size:var(--t-md);font-weight:500;margin-top:18px}
+  .clay p{color:var(--muted);margin-top:8px;max-width:38ch}
+  .clay .meta{margin-top:10px;display:block}
+
+  /* ---------- Studio ---------- */
+  .quote{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:var(--t-xl);
+    line-height:1.12;
+    text-align:center;
+    max-width:24ch;
+    margin-inline:auto;
+    text-wrap:balance;
+  }
+  .quote-by{text-align:center;margin-top:20px}
+  .people{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;
+    margin-top:72px;padding-top:40px;border-top:1px solid var(--rule);
+  }
+  .person h3{font-family:var(--font-display);font-size:var(--t-lg);font-weight:400;line-height:1.1}
+  .person .meta{display:block;margin-top:6px}
+  .person p{margin-top:14px;color:var(--muted);max-width:44ch}
+
+  /* ---------- Visit ---------- */
+  .visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .visit-list{margin-top:36px;border-top:1px solid var(--rule)}
+  .visit-list li{
+    display:grid;grid-template-columns:120px 1fr;gap:24px;
+    padding-block:16px;border-bottom:1px solid var(--rule);
+  }
+  .visit-list .meta{padding-top:3px}
+  .map{
+    background:var(--paper-deep);
+    border-radius:4px;
+    aspect-ratio:5/4;
+    overflow:hidden;
+  }
+  .map svg{width:100%;height:100%}
+  .map text{font-family:var(--font-body);font-size:12px;fill:var(--muted)}
+  .map .map-label-strong{fill:var(--ink);font-weight:500}
+
+  /* ---------- Journal ---------- */
+  .journal{margin-top:48px;border-top:1px solid var(--rule)}
+  .journal li a{
+    display:grid;grid-template-columns:180px 1fr auto;gap:32px;align-items:baseline;
+    padding-block:22px;border-bottom:1px solid var(--rule);
+    transition:color .2s ease;
+  }
+  .journal li a:hover .journal-title{color:var(--clay)}
+  .journal-title{font-family:var(--font-display);font-size:var(--t-lg);line-height:1.1;transition:color .2s ease}
+  .journal-sub{display:block;font-family:var(--font-body);font-size:var(--t-sm);color:var(--muted);margin-top:6px;max-width:60ch}
+  .journal li a span:last-child{color:var(--muted)}
+
+  /* ---------- Letters (form-led CTA) ---------- */
+  .letters{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .letters-inner{max-width:640px}
+  .letters .h2{margin-top:14px;max-width:none}
+  .letters form{
+    margin-top:36px;
+    display:flex;align-items:center;gap:16px;
+    padding-block:12px;
+    border-bottom:1px solid var(--rule);
+    transition:border-color .2s ease;
+  }
+  .letters form:focus-within{border-color:var(--clay)}
+  .letters input{
+    flex:1;min-width:0;background:transparent;border:0;outline:0;
+    font:inherit;font-size:var(--t-md);color:var(--ink);
+  }
+  .letters input::placeholder{color:var(--muted)}
+  .letters button{
+    background:none;border:0;cursor:pointer;font:inherit;color:var(--ink);
+    font-size:var(--t-sm);padding:0;transition:color .2s ease;
+  }
+  .letters button:hover{color:var(--clay)}
+  .letters .fine{margin-top:14px}
+  .letters-done{
+    margin-top:36px;padding-left:16px;border-left:2px solid var(--clay);
+    font-size:var(--t-md);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{padding-block:64px 40px}
+  .foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .foot-grid p{margin-top:12px;line-height:1.6}
+  .foot-grid a:hover{color:var(--clay)}
+  .foot-line{
+    margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px){
+    .band-grid{grid-template-columns:1fr 1fr}
+    .objects{grid-template-columns:1fr 1fr}
+    .kiln-grid,.visit-grid,.people,.section-head{grid-template-columns:1fr;gap:32px}
+    .opening{grid-template-columns:1fr 1fr}
+    .clays{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 760px){
+    .nav-links,.nav-note{display:none}
+    .hero-grid{grid-template-columns:1fr}
+    .hero-panel{height:min(48svh, 420px)}
+    .hero h1{max-width:none}
+    .band-grid{grid-template-columns:1fr}
+    .objects{grid-template-columns:1fr}
+    .opening{grid-template-columns:1fr}
+    .journal li a{grid-template-columns:1fr}
+    .visit-list li{grid-template-columns:1fr;gap:6px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Shared gradients and grain filter for every drawn vessel -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="clayV" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D2B394"/>
+      <stop offset="0.45" stop-color="#B98B67"/>
+      <stop offset="1" stop-color="#8A5A3F"/>
+    </linearGradient>
+    <linearGradient id="kyotoV" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C4785A"/>
+      <stop offset="0.5" stop-color="#9E4F35"/>
+      <stop offset="1" stop-color="#6E3524"/>
+    </linearGradient>
+    <linearGradient id="ironV" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8E6C56"/>
+      <stop offset="0.5" stop-color="#63463A"/>
+      <stop offset="1" stop-color="#3E2A24"/>
+    </linearGradient>
+    <linearGradient id="ashV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8FA08A" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8FA08A" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadowR" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2A211C" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#2A211C" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.22 0" result="specks"/>
+      <feComposite in="specks" in2="SourceGraphic" operator="in" result="clipped"/>
+      <feBlend in="SourceGraphic" in2="clipped" mode="multiply"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="fold">
+  <header class="wrap">
+    <nav class="nav" aria-label="Primary">
+      <a class="wordmark" href="#top">Shirakawa Kiln <small>Jōdoji, Kyoto</small></a>
+      <div class="nav-links">
+        <a href="#objects">Objects</a>
+        <a href="#kiln">Kiln openings</a>
+        <a href="#studio">Studio</a>
+        <a href="#visit">Visit</a>
+        <a href="#journal">Journal</a>
+      </div>
+      <p class="nav-note">Autumn opening · 24 and 25 October</p>
+    </nav>
+  </header>
+
+  <section class="hero wrap" id="top">
+    <div class="hero-grid">
+      <div>
+        <p class="meta">Unglazed stoneware, wood-fired twice a year</p>
+        <h1 class="display">Clay dug from the hills, fired once, and left as the fire <em>made it</em>.</h1>
+        <p class="lede">Bare pots for the table and the tokonoma, fired once in the anagama above Ōhara and sold only at our kiln openings, and here in the weeks after.</p>
+        <div class="hero-actions">
+          <a class="btn" href="mailto:studio@shirakawa-kiln.jp?subject=First%20hour%2C%2024%20October">Reserve the first hour, 24 October <span>→</span></a>
+          <a class="arrow-link" href="#objects">See the autumn objects <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="hero-panel" role="img" aria-label="A tall unglazed storage jar from the spring 2026 firing">
+        <svg viewBox="0 0 240 320" aria-hidden="true">
+          <ellipse cx="120" cy="293" rx="96" ry="14" fill="url(#shadowR)"/>
+          <path filter="url(#grain)" fill="url(#ironV)"
+            d="M120 44 C104 44 96 52 96 62 L96 72 C72 88 50 118 46 162 C42 212 62 258 100 278 C108 282 132 282 140 278 C178 258 198 212 194 162 C190 118 168 88 144 72 L144 62 C144 52 136 44 120 44 Z"/>
+          <path fill="url(#ashV)" opacity="0.9"
+            d="M60 120 C66 100 80 86 96 76 L100 78 C84 96 74 116 70 142 C66 170 70 206 86 236 L82 240 C62 212 54 160 60 120 Z"/>
+          <path fill="#ffffff" opacity="0.12"
+            d="M78 100 C86 88 96 80 106 76 C98 92 88 116 84 150 C80 186 86 222 98 256 C84 232 74 196 74 160 C74 136 76 114 78 100 Z"/>
+          <ellipse cx="120" cy="62" rx="24" ry="8" fill="#2A1C16"/>
+          <ellipse cx="120" cy="61" rx="24" ry="8" fill="none" stroke="#B48B6E" stroke-width="1.5" opacity="0.7"/>
+        </svg>
+        <p class="hero-caption"><span>Tsubo, iron-flecked stoneware, spring 2026 firing</span><span>34 cm · ¥68,000</span></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Next opening -->
+<section class="band">
+  <div class="wrap band-grid">
+    <div class="band-title">Next opening: autumn 2026<small>The doors open <span class="band-count" id="days-until">in 45 days</span></small></div>
+    <div class="band-cell"><p class="meta">When</p><p>Saturday 24 and Sunday 25 October 2026</p></div>
+    <div class="band-cell"><p class="meta">Hours</p><p>10:00 to 17:00, last entry 16:30</p></div>
+    <div class="band-cell"><p class="meta">Where</p><p>The studio, Jōdoji Baba-chō 12, Sakyō-ku</p></div>
+    <div class="band-cell"><p class="meta">Entry</p><p>Free. The first hour is by reservation, forty places each day</p></div>
+  </div>
+</section>
+
+<!-- Objects -->
+<section class="section" id="objects">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="meta">The autumn shelves</p>
+        <h2 class="display h2" style="margin-top:14px">What comes out of the kiln</h2>
+      </div>
+      <p class="lede">Around 380 pieces go in. About 260 come out sound. No two are alike, so what you see here is the type, not the piece: you choose your own at the opening, or from what remains afterwards.</p>
+    </div>
+
+    <ul class="objects">
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Yunomi">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="222" rx="56" ry="9" fill="url(#shadowR)"/>
+              <path filter="url(#grain)" fill="url(#clayV)" d="M60 66 C58 60 66 54 100 54 C134 54 142 60 140 66 L132 196 C130 206 116 212 100 212 C84 212 70 206 68 196 Z"/>
+              <path fill="url(#ashV)" d="M66 70 L134 70 L132 96 C112 102 88 102 68 96 Z" opacity="0.7"/>
+              <ellipse cx="100" cy="60" rx="40" ry="7" fill="#5B3D2E"/>
+              <path fill="#ffffff" opacity="0.14" d="M72 76 C74 72 80 70 84 70 L80 196 C78 198 74 196 74 194 Z"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Yunomi</div><div class="object-sub">Shigaraki blend · 8.5 cm tall</div></div><div class="object-price">¥4,800</div></div>
+        </a>
+      </li>
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Chawan">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="212" rx="70" ry="10" fill="url(#shadowR)"/>
+              <rect x="82" y="182" width="36" height="14" rx="3" fill="#6E3524"/>
+              <path filter="url(#grain)" fill="url(#kyotoV)" d="M32 84 C32 74 60 66 100 66 C140 66 168 74 168 84 C166 140 140 182 100 186 C60 182 34 140 32 84 Z"/>
+              <path fill="url(#ashV)" d="M40 90 C60 100 140 100 160 90 L156 118 C130 128 70 128 44 118 Z" opacity="0.8"/>
+              <ellipse cx="100" cy="78" rx="68" ry="11" fill="#4A2419"/>
+              <ellipse cx="100" cy="78" rx="68" ry="11" fill="none" stroke="#D69C82" stroke-width="1.2" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Chawan</div><div class="object-sub">Kyoto red clay · 12 cm across</div></div><div class="object-price">¥18,000</div></div>
+        </a>
+      </li>
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Rim%20plate">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="176" rx="94" ry="14" fill="url(#shadowR)"/>
+              <ellipse filter="url(#grain)" cx="100" cy="150" rx="92" ry="34" fill="url(#ironV)"/>
+              <ellipse cx="100" cy="148" rx="70" ry="23" fill="#4E362C" opacity="0.7"/>
+              <ellipse cx="100" cy="148" rx="70" ry="23" fill="url(#ashV)" opacity="0.6"/>
+              <ellipse cx="100" cy="150" rx="92" ry="34" fill="none" stroke="#B48B6E" stroke-width="1.2" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Rim plate</div><div class="object-sub">Iron-flecked stoneware · 24 cm</div></div><div class="object-price">¥6,500</div></div>
+        </a>
+      </li>
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Tokkuri">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="226" rx="56" ry="9" fill="url(#shadowR)"/>
+              <path filter="url(#grain)" fill="url(#clayV)" d="M100 40 C92 40 90 46 90 52 L90 78 C62 92 50 118 50 150 C50 190 70 214 100 218 C130 214 150 190 150 150 C150 118 138 92 110 78 L110 52 C110 46 108 40 100 40 Z"/>
+              <path fill="url(#ashV)" d="M70 96 C80 86 92 82 100 82 L100 90 C86 94 74 104 66 118 Z" opacity="0.9"/>
+              <path fill="#ffffff" opacity="0.14" d="M64 120 C68 106 78 96 88 90 C78 108 72 132 72 156 C72 180 78 198 88 210 C72 200 62 176 62 150 C62 138 63 128 64 120 Z"/>
+              <ellipse cx="100" cy="48" rx="10" ry="4" fill="#5B3D2E"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Tokkuri</div><div class="object-sub">Shigaraki blend · 14 cm tall</div></div><div class="object-price">¥9,200</div></div>
+        </a>
+      </li>
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Hanaire">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="226" rx="50" ry="8" fill="url(#shadowR)"/>
+              <path filter="url(#grain)" fill="url(#ironV)" d="M68 52 C68 46 84 42 100 42 C116 42 132 46 132 52 L128 206 C128 212 114 216 100 216 C86 216 72 212 72 206 Z"/>
+              <path fill="url(#ashV)" d="M70 56 L130 56 L129 100 C110 106 90 106 71 100 Z" opacity="0.8"/>
+              <g stroke="#2A1C16" stroke-width="1" opacity="0.25">
+                <path d="M80 60 L82 208"/><path d="M92 58 L92 212"/><path d="M108 58 L108 212"/><path d="M120 60 L118 208"/>
+              </g>
+              <ellipse cx="100" cy="52" rx="32" ry="8" fill="#2A1C16"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Hanaire</div><div class="object-sub">Iron-flecked stoneware · 26 cm tall</div></div><div class="object-price">¥24,000</div></div>
+        </a>
+      </li>
+      <li>
+        <a class="object" href="mailto:studio@shirakawa-kiln.jp?subject=Faceted%20bowl">
+          <div class="object-panel">
+            <svg viewBox="0 0 200 240" aria-hidden="true">
+              <ellipse cx="100" cy="206" rx="62" ry="9" fill="url(#shadowR)"/>
+              <rect x="86" y="178" width="28" height="12" rx="3" fill="#6E3524"/>
+              <path filter="url(#grain)" fill="url(#kyotoV)" d="M40 92 C40 80 66 72 100 72 C134 72 160 80 160 92 C158 138 136 178 100 182 C64 178 42 138 40 92 Z"/>
+              <g stroke="#3E1C12" stroke-width="1.2" opacity="0.35">
+                <path d="M54 96 L66 168"/><path d="M72 100 L80 176"/><path d="M90 102 L92 180"/><path d="M110 102 L108 180"/><path d="M128 100 L120 176"/><path d="M146 96 L134 168"/>
+              </g>
+              <ellipse cx="100" cy="84" rx="58" ry="10" fill="#4A2419"/>
+              <ellipse cx="100" cy="84" rx="58" ry="10" fill="none" stroke="#D69C82" stroke-width="1.2" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="object-row"><div><div class="object-name">Faceted bowl</div><div class="object-sub">Kyoto red clay · 15 cm across</div></div><div class="object-price">¥7,400</div></div>
+        </a>
+      </li>
+    </ul>
+
+    <p class="objects-note">Prices include tax. Pieces bought after the opening are posted within Japan for a flat ¥1,200; international post is quoted by weight. We keep about a third of every firing back for exhibitions and for our own table, and we do not take orders for specific pieces before a kiln is opened.</p>
+  </div>
+</section>
+
+<!-- The kiln, dark band -->
+<section class="section kiln" id="kiln">
+  <div class="wrap">
+    <div class="kiln-grid">
+      <div>
+        <p class="meta">The kiln</p>
+        <h2 class="display h2" style="margin-top:14px">Five days of fire, <em>twice a year</em>.</h2>
+        <p class="kiln-copy">The anagama at Ōhara is a single-chamber tunnel kiln built into the slope in 2016. We stoke it with red pine for about 110 hours, then leave it sealed for a week to cool. Nothing is glazed: the colour is ash from the fire settling on bare clay, and the side of a pot that faced the flame will never match the side that did not.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>110</b><span>hours of stoking, in shifts of four</span></div>
+        <div class="stat"><b>1,300</b><span>degrees at the front of the chamber</span></div>
+        <div class="stat"><b>380</b><span>pieces loaded, front to back, in firing order</span></div>
+        <div class="stat"><b>2</b><span>firings a year: one in early spring, one in early autumn</span></div>
+      </div>
+    </div>
+
+    <ul class="openings">
+      <li class="opening">
+        <div class="opening-season">Autumn 2026<small>Fired 3 to 8 September, opened 16 September</small></div>
+        <div class="opening-date">24 and 25 October<br>10:00 to 17:00</div>
+        <div class="opening-note">The full firing on the shelves, about 260 pieces. First-hour entry by reservation, forty places each day; after 11:00 the doors are open to all.</div>
+        <a class="arrow-link" href="mailto:studio@shirakawa-kiln.jp?subject=First%20hour%2C%2024%20October">Reserve the first hour <span>→</span></a>
+      </li>
+      <li class="opening">
+        <div class="opening-season">Spring 2027<small>Firing planned for the last week of March</small></div>
+        <div class="opening-date">17 and 18 April<br>10:00 to 17:00</div>
+        <div class="opening-note">Larger pieces this time: jars, hanaire and a run of serving plates for a restaurant in Gion, with the remainder on sale. Reservation opens in the March letter.</div>
+        <a class="arrow-link" href="#letters">Join the letter <span>→</span></a>
+      </li>
+      <li class="opening">
+        <div class="opening-season">Between openings<small>Thursday to Saturday, by appointment</small></div>
+        <div class="opening-date">Studio visits<br>11:00 to 17:00</div>
+        <div class="opening-note">What remains after an opening stays on the studio shelves. Write to us with a day and we will keep the kettle on.</div>
+        <a class="arrow-link" href="#visit">Plan a visit <span>→</span></a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Clay bodies -->
+<section class="section" id="clay">
+  <div class="wrap">
+    <p class="meta">Clay bodies</p>
+    <h2 class="display h2" style="margin-top:14px">Three clays, no glaze.</h2>
+    <ul class="clays">
+      <li class="clay">
+        <div class="clay-swatch swatch-shigaraki" role="img" aria-label="Pale coarse clay with white feldspar specks"></div>
+        <h3>Shigaraki blend</h3>
+        <p>Coarse and pale, with feldspar that bursts white through the surface in the fire. The clay for cups and flasks, because it is kind to the lips and light in the hand.</p>
+        <span class="meta">Yunomi, tokkuri, small plates</span>
+      </li>
+      <li class="clay">
+        <div class="clay-swatch swatch-kyoto" role="img" aria-label="Fine red clay fired to a deep brick colour with a green ash flash"></div>
+        <h3>Kyoto red</h3>
+        <p>A fine, iron-rich clay from the Fushimi side of the city, fired to a deep brick. At the front of the kiln it takes a green ash flash that we cannot plan for and would not want to.</p>
+        <span class="meta">Chawan, faceted bowls</span>
+      </li>
+      <li class="clay">
+        <div class="clay-swatch swatch-iron" role="img" aria-label="Dark brown clay flecked with black iron"></div>
+        <h3>Iron-flecked stoneware</h3>
+        <p>Our own mix, with crushed iron sand from the Kamo river bed. Dark, heavy and flecked where the iron melts out. It holds the largest forms without slumping.</p>
+        <span class="meta">Jars, hanaire, rim plates</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Studio -->
+<section class="section rule-top" id="studio">
+  <div class="wrap">
+    <blockquote class="quote" style="margin:0 auto">A glaze is a decision made before the fire. We would rather let the fire decide.</blockquote>
+    <p class="quote-by meta">Mio Tanabe, on why the studio stopped glazing in 2019</p>
+
+    <div class="people">
+      <div class="person">
+        <h3 class="display">Mio Tanabe</h3>
+        <span class="meta">Potter, founder</span>
+        <p>Trained at the prefectural ceramics school in Kiyomizu and apprenticed for six years in Shigaraki before opening the Jōdoji studio in 2014. Throws every piece that goes into the kiln, and rejects more of them than she keeps.</p>
+      </div>
+      <div class="person">
+        <h3 class="display">Kenji Arai</h3>
+        <span class="meta">Kiln, wood, accounts</span>
+        <p>Built the Ōhara anagama by hand over two summers with a borrowed excavator and a great deal of advice. Splits and stacks the pine a year ahead, runs the firing schedule, and keeps the studio cat, Sumi, fed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Visit -->
+<section class="section rule-top" id="visit">
+  <div class="wrap visit-grid">
+    <div>
+      <p class="meta">Visit</p>
+      <h2 class="display h2" style="margin-top:14px">The studio is open three days a week, and the kiln two days a year.</h2>
+      <ul class="visit-list">
+        <li><span class="meta">Address</span><span>Jōdoji Baba-chō 12, Sakyō-ku, Kyoto 606-8404<br>Two streets east of the canal, a white gate with a persimmon tree</span></li>
+        <li><span class="meta">Hours</span><span>Thursday to Saturday, 11:00 to 17:00, by appointment<br>Opening weekends: 10:00 to 17:00, no appointment needed</span></li>
+        <li><span class="meta">Getting here</span><span>From Keage station, twenty minutes on foot north along the canal. From Kyoto station, city bus 5 to the Jōdoji stop, then four minutes uphill.</span></li>
+        <li><span class="meta">Write</span><span><a class="arrow-link" href="mailto:studio@shirakawa-kiln.jp">studio@shirakawa-kiln.jp <span>→</span></a><br><span class="meta">We answer within two days, in Japanese or English</span></span></li>
+      </ul>
+    </div>
+    <div class="map" role="img" aria-label="A hand-drawn map showing the studio two streets east of the canal, between Ginkaku-ji and Nanzen-ji">
+      <svg viewBox="0 0 500 400" aria-hidden="true">
+        <!-- Hills -->
+        <path d="M330 0 C360 60 420 90 500 80 L500 0 Z" fill="#CFC2AF" opacity="0.6"/>
+        <path d="M380 400 C400 320 450 280 500 270 L500 400 Z" fill="#CFC2AF" opacity="0.6"/>
+        <!-- Canal, the Philosopher's Path -->
+        <path d="M190 -10 C200 80 205 160 215 240 C222 300 232 350 250 410" fill="none" stroke="#8FA0A6" stroke-width="10" opacity="0.7"/>
+        <path d="M190 -10 C200 80 205 160 215 240 C222 300 232 350 250 410" fill="none" stroke="#DED2BF" stroke-width="2" stroke-dasharray="6 10" opacity="0.9"/>
+        <!-- Roads -->
+        <path d="M90 -10 C96 120 100 260 110 410" fill="none" stroke="#B9AB95" stroke-width="3"/>
+        <path d="M0 150 L500 130" fill="none" stroke="#B9AB95" stroke-width="3"/>
+        <path d="M0 300 L500 290" fill="none" stroke="#B9AB95" stroke-width="3"/>
+        <path d="M290 -10 C296 120 300 260 306 410" fill="none" stroke="#B9AB95" stroke-width="2"/>
+        <!-- Labels -->
+        <text x="60" y="30">Shirakawa-dōri</text>
+        <text x="20" y="140">Imadegawa-dōri</text>
+        <text x="20" y="320">Marutamachi-dōri</text>
+        <text x="228" y="60">Philosopher's Path</text>
+        <text x="392" y="52" class="map-label-strong">Ginkaku-ji</text>
+        <text x="400" y="372" class="map-label-strong">Nanzen-ji</text>
+        <text x="118" y="386">Bus 5, Jōdoji stop</text>
+        <circle cx="108" cy="372" r="4" fill="none" stroke="#766758" stroke-width="1.5"/>
+        <!-- Studio -->
+        <circle cx="330" cy="212" r="18" fill="#A9603B" opacity="0.18"/>
+        <circle cx="330" cy="212" r="7" fill="#A9603B"/>
+        <text x="348" y="216" class="map-label-strong">Shirakawa Kiln</text>
+        <text x="348" y="232">Jōdoji Baba-chō 12</text>
+        <!-- Persimmon tree -->
+        <circle cx="312" cy="196" r="5" fill="#8FA08A" opacity="0.8"/>
+        <path d="M312 201 L312 210" stroke="#766758" stroke-width="1.5"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Journal -->
+<section class="section rule-top" id="journal">
+  <div class="wrap">
+    <p class="meta">Journal</p>
+    <h2 class="display h2" style="margin-top:14px">Notes from the studio and the slope.</h2>
+    <ul class="journal">
+      <li><a href="#journal">
+        <span class="meta">2 September 2026</span>
+        <span><span class="journal-title">Loading the autumn kiln</span><span class="journal-sub">Three hundred and eighty pieces, packed front to back in the order the fire will reach them. What goes where, and why the best spot is not the hottest one.</span></span>
+        <span>→</span>
+      </a></li>
+      <li><a href="#journal">
+        <span class="meta">14 July 2026</span>
+        <span><span class="journal-title">On not glazing</span><span class="journal-sub">Why we stopped in 2019, what we lost, and what the surfaces have taught us since. With some pieces we would never have made otherwise.</span></span>
+        <span>→</span>
+      </a></li>
+      <li><a href="#journal">
+        <span class="meta">22 April 2026</span>
+        <span><span class="journal-title">Spring opening, counted</span><span class="journal-sub">Two days, 412 visitors, 231 pieces to new homes, one broken chawan, no regrets. Thank you for coming up the hill.</span></span>
+        <span>→</span>
+      </a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Letters, form-led -->
+<section class="section letters" id="letters">
+  <div class="wrap">
+    <div class="letters-inner">
+      <p class="meta">Kiln letters</p>
+      <h2 class="display h2">One letter before each opening. <em>Nothing in between.</em></h2>
+      <form id="letters-form" novalidate>
+        <input type="email" name="email" id="letters-email" placeholder="your@address.jp" autocomplete="email" required aria-label="Email address">
+        <button type="submit">Subscribe ↵</button>
+      </form>
+      <p class="letters-done" id="letters-done" hidden>You are on the list. The autumn letter goes out on 10 October with the shelves listed.</p>
+      <p class="fine meta">Two letters a year. Each lists what is on the shelves before the doors open, and how to reserve the first hour.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Find us</p>
+        <p>Shirakawa Kiln<br>Jōdoji Baba-chō 12<br>Sakyō-ku, Kyoto 606-8404</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:studio@shirakawa-kiln.jp">studio@shirakawa-kiln.jp</a><br><span class="meta">Replies inside two days.</span></p>
+      </div>
+      <div>
+        <p class="meta">Hours</p>
+        <p>Thursday to Saturday<br><span class="meta">11:00 to 17:00, by appointment</span></p>
+      </div>
+      <div>
+        <p class="meta">Openings</p>
+        <p>Autumn 2026: 24 and 25 October<br>Spring 2027: 17 and 18 April</p>
+      </div>
+    </div>
+    <div class="foot-line meta">
+      <span>© 2026 Shirakawa Kiln · Jōdoji, Kyoto</span>
+      <span>Made by hand, fired by wood, never glazed.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    // Days until the autumn opening, computed from today's date
+    var target = new Date(2026, 9, 24); // 24 October 2026, local time
+    var now = new Date();
+    var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var days = Math.round((target - start) / 86400000);
+    var el = document.getElementById('days-until');
+    if (el) {
+      if (days > 1) el.textContent = 'in ' + days + ' days';
+      else if (days === 1) el.textContent = 'tomorrow';
+      else if (days === 0 || days === -1) el.textContent = 'today, 10:00 to 17:00';
+      else el.textContent = 'on 24 October';
+    }
+
+    // Letters form: success state in place of the input
+    var form = document.getElementById('letters-form');
+    var done = document.getElementById('letters-done');
+    var email = document.getElementById('letters-email');
+    if (form) {
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var v = (email.value || '').trim();
+        if (!v || v.indexOf('@') < 1) { email.focus(); return; }
+        form.hidden = true;
+        done.hidden = false;
+      });
+    }
+  })();
+</script>
+</body>
+</html>

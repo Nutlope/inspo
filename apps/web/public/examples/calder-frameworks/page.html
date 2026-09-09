@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calder Frameworks - steel frames made to measure in Sheffield</title>
+<meta name="description" content="Calder Frameworks builds lugged, silver-brazed steel bicycle frames to your measurements in Sheffield. Geometry chart, lead times and prices on one page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, used everywhere below */
+  :root{
+    --t-meta: 0.8125rem;
+    --t-body: 1.0625rem;
+    --t-lead: 1.375rem;
+    --t-h2: clamp(2rem, 3.4vw, 2.75rem);
+    --t-h1: clamp(2.75rem, 5vw, 4.25rem);
+
+    --paper: #f3ede3;
+    --paper-2: #e9e1d3;
+    --ink: #1d1915;
+    --muted: #6f655a;
+    --rule: #d5cbbc;
+    --accent: #b4471f;
+    --brass: #b57f49;
+
+    --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+    --text: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+
+    --gap: clamp(72px, 10vw, 128px);
+    --radius: 999px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--text);
+    font-size:var(--t-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{margin:0;font-weight:400}
+  p{margin:0}
+  ul{margin:0;padding:0;list-style:none}
+
+  /* Containers own the gutter with padding-inline only */
+  .wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(20px, 4vw, 48px)}
+  section{padding-block:var(--gap)}
+  section + section, .fold + section{border-top:1px solid var(--rule)}
+
+  .meta{
+    font-size:var(--t-meta);
+    color:var(--muted);
+    letter-spacing:0.01em;
+  }
+  .meta b{color:var(--ink);font-weight:500}
+  .display{font-family:var(--display);line-height:1.02;letter-spacing:-0.01em}
+  .h2{font-size:var(--t-h2);max-width:20ch;text-wrap:balance}
+  .lead{font-size:var(--t-lead);line-height:1.35;max-width:44ch}
+  em{font-style:italic}
+  .accent{color:var(--accent)}
+  .underline{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:0.12em;text-decoration-color:var(--brass)}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    height:46px;padding-inline:22px;border-radius:var(--radius);
+    font-size:var(--t-meta);font-weight:500;letter-spacing:0.01em;
+    border:1px solid var(--ink);color:var(--ink);background:transparent;
+    transition:background .2s, color .2s, border-color .2s;
+    cursor:pointer;white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn .arrow{font-family:var(--display);font-size:1.15em;line-height:1}
+
+  /* Fold */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{border-bottom:1px solid var(--rule)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px}
+  .wordmark{display:flex;align-items:center;gap:12px;font-family:var(--display);font-size:1.5rem;letter-spacing:-0.01em}
+  .wordmark svg{width:30px;height:30px}
+  .nav ul{display:flex;gap:28px;font-size:var(--t-meta)}
+  .nav ul a{color:var(--muted);transition:color .2s}
+  .nav ul a:hover{color:var(--ink)}
+  .hero{flex:1;display:flex;align-items:center;padding-block:28px}
+  .hero .wrap{display:grid;grid-template-columns:1.02fr 1fr;gap:clamp(32px, 4vw, 56px);align-items:center;width:100%}
+  .hero h1{font-size:var(--t-h1);max-width:15ch;margin-top:20px}
+  .hero .lead{margin-top:22px;color:var(--muted)}
+  .hero .ctas{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+  .hero .sub{margin-top:26px;display:flex;gap:26px;flex-wrap:wrap}
+  .hero .sub span{display:block}
+
+  .panel{
+    position:relative;
+    height:min(62vh, 580px);
+    border:1px solid var(--rule);
+    background-color:var(--paper-2);
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px),
+      radial-gradient(120% 90% at 100% 0%, rgba(180,71,31,.12), transparent 60%);
+    background-size:24px 24px, 24px 24px, 100% 100%;
+    background-position:-1px -1px, -1px -1px, 0 0;
+    padding:18px;
+  }
+  .panel svg{width:100%;height:100%;display:block}
+  .panel .corner{position:absolute;font-size:0.72rem;color:var(--muted);letter-spacing:0.02em}
+  .panel .corner.tl{top:12px;left:16px}
+  .panel .corner.br{bottom:10px;right:16px}
+  .panel .corner b{color:var(--ink);font-weight:500}
+
+  /* Drawing styles */
+  .tube{stroke:var(--ink);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;fill:none}
+  .thin{stroke:var(--ink);stroke-width:3.5;stroke-linecap:round;fill:none}
+  .wheel{stroke:var(--ink);fill:none;opacity:.5}
+  .lug{stroke:var(--brass);stroke-width:9;stroke-linecap:round;fill:none}
+  .ann{stroke:var(--ink);stroke-width:.9;fill:none}
+  .ann-sq{fill:var(--ink)}
+  .lbl{font-family:var(--text);font-size:11px;fill:var(--muted)}
+  .lbl .v{fill:var(--ink);font-weight:500}
+  .lbl .a{fill:var(--accent);font-weight:500}
+  .axis{stroke:var(--muted);stroke-width:.6;stroke-dasharray:6 5}
+
+  /* Frames */
+  .models{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule);margin-top:44px}
+  .model{padding:32px 28px 30px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:14px;transition:background .2s}
+  .model:last-child{border-right:0}
+  .model:hover{background:rgba(29,25,21,.03)}
+  .model h3{font-family:var(--display);font-size:var(--t-h2);line-height:1.05}
+  .model .price{font-size:var(--t-lead);margin-top:auto;padding-top:18px;border-top:1px solid var(--rule)}
+  .model .price small{display:block;font-size:var(--t-meta);color:var(--muted);margin-top:2px}
+  .model ul{display:grid;gap:6px;font-size:var(--t-meta);color:var(--muted)}
+  .model ul li::before{content:"·";color:var(--accent);margin-right:8px}
+  .model p{color:var(--muted);font-size:var(--t-meta);line-height:1.5}
+  .section-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end}
+  .section-head .lead{color:var(--muted);font-size:var(--t-body);max-width:52ch;justify-self:end}
+
+  /* Geometry */
+  .sizes{display:flex;gap:8px;flex-wrap:wrap;margin-top:36px;align-items:center}
+  .sizes .meta{margin-right:10px}
+  .size{
+    height:38px;min-width:54px;padding-inline:16px;border-radius:var(--radius);
+    border:1px solid var(--rule);background:transparent;color:var(--ink);
+    font:500 var(--t-meta) var(--text);cursor:pointer;transition:all .2s;
+  }
+  .size:hover{border-color:var(--ink)}
+  .size[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .table-wrap{overflow-x:auto;margin-top:28px;border-top:1px solid var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:var(--t-meta);min-width:760px}
+  th,td{text-align:right;padding:13px 14px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  th{font-weight:500;color:var(--muted)}
+  thead th{color:var(--ink);padding-top:16px}
+  th[scope="row"]{text-align:left;color:var(--ink);padding-left:0}
+  td:last-child,th:last-child{padding-right:0}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:rgba(29,25,21,.035)}
+  .col-on{background:rgba(180,71,31,.09);color:var(--ink)}
+  thead .col-on{color:var(--accent)}
+  .geo-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:40px;font-size:var(--t-meta);color:var(--muted)}
+  .geo-notes b{display:block;color:var(--ink);font-weight:500;margin-bottom:6px}
+
+  /* Process */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:48px;border-top:1px solid var(--ink)}
+  .step{padding:22px 22px 8px 0;border-right:1px solid var(--rule);margin-right:22px}
+  .step:last-child{border-right:0;margin-right:0}
+  .step .n{font-family:var(--display);font-size:var(--t-h2);line-height:1;color:var(--brass)}
+  .step h3{font-size:var(--t-body);font-weight:500;margin-top:14px}
+  .step .when{font-size:var(--t-meta);color:var(--accent);margin-top:4px;font-weight:500}
+  .step p{font-size:var(--t-meta);color:var(--muted);margin-top:10px;line-height:1.5}
+  .book{
+    margin-top:56px;background:var(--ink);color:var(--paper);
+    display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px;padding:40px 44px;align-items:center;
+  }
+  .book .display{font-size:var(--t-h2);line-height:1.05}
+  .book .display em{color:#e8b48c}
+  .book .meta{color:#b8ad9e}
+  .book .big{font-family:var(--display);font-size:var(--t-h2);line-height:1;margin-top:6px}
+  .book .btn{border-color:var(--paper);color:var(--paper);margin-top:8px}
+  .book .btn:hover{background:var(--paper);color:var(--ink)}
+
+  /* Construction */
+  .build{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;margin-top:48px}
+  .build .cols{display:grid;gap:28px}
+  .build h3{font-size:var(--t-lead);font-family:var(--display);line-height:1.1}
+  .build p{color:var(--muted);margin-top:8px;font-size:var(--t-body)}
+  .build figure{margin:0;border:1px solid var(--rule);background:var(--paper-2);padding:24px;position:sticky;top:24px}
+  .build figcaption{font-size:var(--t-meta);color:var(--muted);margin-top:14px;display:flex;justify-content:space-between;gap:16px}
+  .tubes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  .tube-card{border:1px solid var(--rule);padding:20px 22px}
+  .tube-card .meta{display:block;margin-bottom:8px}
+  .tube-card b{font-weight:500}
+  .tube-card p{font-size:var(--t-meta);color:var(--muted);margin-top:6px}
+
+  /* Pricing */
+  .pricing{display:grid;grid-template-columns:5fr 7fr;gap:56px;margin-top:8px}
+  .pricing .side p{color:var(--muted);margin-top:16px;max-width:38ch}
+  .lines li{
+    display:grid;grid-template-columns:1fr auto;gap:8px 24px;align-items:baseline;
+    padding:18px 0;border-bottom:1px solid var(--rule);transition:color .2s;
+  }
+  .lines li:first-child{border-top:1px solid var(--ink)}
+  .lines li:hover{color:var(--accent)}
+  .lines .name{font-family:var(--display);font-size:var(--t-lead);line-height:1.1}
+  .lines .note{font-size:var(--t-meta);color:var(--muted);grid-column:1}
+  .lines .amt{font-size:var(--t-body);font-weight:500;grid-row:1 / span 2;align-self:baseline}
+  .lines .amt small{color:var(--muted);font-weight:400;font-size:var(--t-meta);margin-left:6px}
+  .deposit{margin-top:28px;font-size:var(--t-meta);color:var(--muted);display:grid;gap:6px}
+
+  /* Questions */
+  .qa{margin-top:40px;border-top:1px solid var(--ink)}
+  details{border-bottom:1px solid var(--rule)}
+  summary{
+    list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:24px;
+    padding:20px 0;font-family:var(--display);font-size:var(--t-lead);line-height:1.2;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:var(--text);color:var(--brass);font-size:1.4rem;transition:transform .2s;flex:none}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{padding:0 0 22px;color:var(--muted);max-width:66ch}
+  .qa-grid{display:grid;grid-template-columns:1fr 2fr;gap:56px}
+
+  /* Visit + footer */
+  .visit{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .visit .map{border:1px solid var(--rule);background:var(--paper-2);aspect-ratio:16/9}
+  .visit .map svg{width:100%;height:100%;display:block}
+  footer{border-top:1px solid var(--ink);padding-block:56px 36px}
+  .foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .foot-grid p{font-size:var(--t-meta);margin-top:12px;line-height:1.6}
+  .foot-grid a:hover{color:var(--accent)}
+  .foot-grid .muted{color:var(--muted)}
+  .foot-bottom{margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:var(--t-meta);color:var(--muted)}
+
+  @media (max-width: 960px){
+    .hero .wrap{grid-template-columns:1fr}
+    .panel{height:min(52vh, 460px)}
+    .nav ul{display:none}
+    .models,.steps,.geo-notes,.tubes,.foot-grid{grid-template-columns:1fr 1fr}
+    .build,.pricing,.qa-grid,.visit,.section-head,.book{grid-template-columns:1fr}
+    .section-head .lead{justify-self:start}
+    .step{border-right:0;margin-right:0;border-bottom:1px solid var(--rule);padding-bottom:20px}
+  }
+  @media (max-width: 600px){
+    .models,.steps,.geo-notes,.tubes,.foot-grid{grid-template-columns:1fr}
+    .model{border-right:0;border-bottom:1px solid var(--rule)}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top" aria-label="Calder Frameworks, home">
+        <svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="none" stroke="#1d1915" stroke-width="1.6"/><path d="M15 3.5v23M4 15h22" stroke="#1d1915" stroke-width="1.2"/><circle cx="15" cy="15" r="3.4" fill="#b57f49"/></svg>
+        Calder Frameworks
+      </a>
+      <nav aria-label="Sections">
+        <ul>
+          <li><a href="#frames">Frames</a></li>
+          <li><a href="#geometry">Geometry</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#construction">Construction</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#questions">Questions</a></li>
+        </ul>
+      </nav>
+      <a class="btn solid" href="#book">Book a fitting <span class="arrow">&rarr;</span></a>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <p class="meta"><b>Sheffield, since 2011</b> &middot; Reynolds 853 and Columbus Spirit &middot; silver-brazed lugs</p>
+        <h1 class="display">Drawn to <span class="underline">your</span> measurements, <em>brazed one lug at a time.</em></h1>
+        <p class="lead">A geometry chart with your name on it, hand-mitred steel, cast lugs and silver. Twenty-two weeks from fitting to first ride.</p>
+        <div class="ctas">
+          <a class="btn solid" href="#book">Book a fitting <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="#geometry">Read the geometry chart</a>
+        </div>
+        <div class="sub meta">
+          <span><b>Frame and fork</b> from &pound;2,650</span>
+          <span><b>Lead time</b> 22 weeks</span>
+          <span><b>Next open slot</b> February 2027</span>
+        </div>
+      </div>
+
+      <div class="panel" aria-label="Side drawing of a lugged steel road frame with geometry callouts">
+        <span class="corner tl">Drawing <b>R-<span data-v="size">56</span></b> &middot; Ridgeway &middot; drive side</span>
+        <span class="corner br">Millimetres &middot; scale 1:3 &middot; sheet 1 of 3</span>
+        <svg viewBox="0 0 680 480" role="img" aria-labelledby="frameTitle">
+          <title id="frameTitle">Lugged steel road frame, side view, with head angle, seat tube, top tube, chainstay, bottom bracket drop, fork rake and wheelbase called out</title>
+
+          <!-- axle centre line -->
+          <line class="axis" x1="120" y1="322" x2="560" y2="322"/>
+
+          <!-- wheels -->
+          <circle class="wheel" cx="160" cy="322" r="121" stroke-width="1.4"/>
+          <circle class="wheel" cx="160" cy="322" r="110" stroke-width=".8"/>
+          <circle class="wheel" cx="518" cy="322" r="121" stroke-width="1.4"/>
+          <circle class="wheel" cx="518" cy="322" r="110" stroke-width=".8"/>
+          <g class="wheel" stroke-width=".6">
+            <path d="M160 212v220M50 322h220M82 244l156 156M238 244L82 400"/>
+            <path d="M518 212v220M408 322h220M440 244l156 156M596 244L440 400"/>
+          </g>
+
+          <!-- frame tubes -->
+          <path class="tube" d="M300 347 L243 153"/>
+          <path class="tube" d="M243 153 L450 153"/>
+          <path class="tube" d="M466 205 L300 347"/>
+          <path class="tube" d="M450 153 L466 205" stroke-width="9"/>
+          <path class="tube" d="M243 153 L160 322" stroke-width="5"/>
+          <path class="tube" d="M300 347 L160 322" stroke-width="5.5"/>
+          <!-- fork -->
+          <path class="tube" d="M466 205 C 484 252, 502 292, 518 322" stroke-width="5"/>
+          <!-- seat post, saddle -->
+          <path class="thin" d="M243 153 L234 122"/>
+          <path d="M204 118 Q 236 106 268 115 L 266 121 Q 236 114 206 125 Z" fill="#1d1915"/>
+          <!-- stem and bars -->
+          <path class="thin" d="M450 153 L445 138 L480 132" stroke-width="4"/>
+          <path class="thin" d="M480 132 C 504 132, 508 152, 498 170 C 492 181, 481 183, 475 177" stroke-width="3.2"/>
+
+          <!-- lugs and shells, brass -->
+          <path class="lug" d="M450 153 L428 153 M450 153 L455 169"/>
+          <path class="lug" d="M466 205 L452 217 M466 205 L461 189"/>
+          <path class="lug" d="M243 153 L265 153 M243 153 L248 170 M243 153 L240 143"/>
+          <path class="lug" d="M300 347 L314 335 M300 347 L295 330 M300 347 L282 344"/>
+          <circle cx="300" cy="347" r="9" fill="#f3ede3" stroke="#b57f49" stroke-width="4"/>
+          <circle cx="160" cy="322" r="4.5" fill="#1d1915"/>
+          <circle cx="518" cy="322" r="4.5" fill="#1d1915"/>
+
+          <!-- annotations -->
+          <g>
+            <path class="ann" d="M540 178 L471 198"/>
+            <rect class="ann-sq" x="469" y="196" width="4" height="4"/>
+            <text class="lbl" x="544" y="175">Head angle</text>
+            <text class="lbl" x="544" y="189"><tspan class="a" data-v="head">73.0</tspan><tspan class="v">&deg;</tspan></text>
+          </g>
+          <g>
+            <path class="ann" d="M214 250 L271 250"/>
+            <rect class="ann-sq" x="269" y="248" width="4" height="4"/>
+            <text class="lbl" x="208" y="246" text-anchor="end">Seat tube, centre to top</text>
+            <text class="lbl" x="208" y="260" text-anchor="end"><tspan class="v" data-v="seat">560</tspan> mm</text>
+          </g>
+          <g>
+            <path class="ann" d="M243 138 L243 144 M450 138 L450 144 M243 141 L450 141"/>
+            <text class="lbl" x="346" y="132" text-anchor="middle">Effective top tube <tspan class="v" data-v="top">560</tspan> mm</text>
+          </g>
+          <g>
+            <path class="ann" d="M226 384 L230 336"/>
+            <rect class="ann-sq" x="228" y="334" width="4" height="4"/>
+            <text class="lbl" x="226" y="400" text-anchor="middle">Chainstay <tspan class="v" data-v="chain">410</tspan> mm</text>
+          </g>
+          <g>
+            <path class="ann" d="M338 322 L338 347 M334 322 L342 322 M334 347 L342 347"/>
+            <text class="lbl" x="348" y="339">Drop <tspan class="v" data-v="drop">70</tspan> mm</text>
+          </g>
+          <g>
+            <path class="ann" d="M578 262 L506 300"/>
+            <rect class="ann-sq" x="504" y="298" width="4" height="4"/>
+            <text class="lbl" x="582" y="258">Fork rake</text>
+            <text class="lbl" x="582" y="272"><tspan class="v" data-v="rake">45</tspan> mm</text>
+          </g>
+          <g>
+            <path class="ann" d="M160 456 L160 470 M518 456 L518 470 M160 463 L518 463"/>
+            <text class="lbl" x="339" y="452" text-anchor="middle">Wheelbase <tspan class="v" data-v="wb">992</tspan> mm</text>
+          </g>
+          <g>
+            <text class="lbl" x="40" y="60">Stack <tspan class="v" data-v="stack">566</tspan></text>
+            <text class="lbl" x="40" y="75">Reach <tspan class="v" data-v="reach">388</tspan></text>
+            <text class="lbl" x="40" y="90">Trail <tspan class="v" data-v="trail">58</tspan></text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Frames -->
+<section id="frames">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="meta">Three frames, one drawing board</p>
+        <h2 class="display h2" style="margin-top:14px">The models are starting points. The chart is yours.</h2>
+      </div>
+      <p class="lead">Each model fixes the things that should not move: tube set, tyre clearance, brake standard, where the racks go. Everything else in the chart is moved to fit the rider.</p>
+    </div>
+    <div class="models">
+      <article class="model">
+        <p class="meta">01 &middot; Road</p>
+        <h3>Ridgeway</h3>
+        <p>The classic lugged road frame. Level top tube, short chainstays, 28 mm tyres under rim or flat-mount disc brakes. Drawn for long days in the Peak.</p>
+        <ul>
+          <li>Reynolds 853 main triangle</li>
+          <li>Pacenti cast lugs, hand-filed</li>
+          <li>Clearance for 28 mm tyres</li>
+          <li>Matching lugged steel fork</li>
+        </ul>
+        <p class="price">&pound;2,650 <small>frame and fork, painted</small></p>
+      </article>
+      <article class="model">
+        <p class="meta">02 &middot; All-road</p>
+        <h3>Holme</h3>
+        <p>A slacker head angle, longer stays and room for 40 mm tyres. Flat-mount disc, hidden mudguard mounts, the same lugs re-cut for the wider angles.</p>
+        <ul>
+          <li>Columbus Spirit, oversize</li>
+          <li>Bilaminate lugs for wide tyres</li>
+          <li>Clearance for 40 mm tyres</li>
+          <li>Thru-axle fork, 12 mm</li>
+        </ul>
+        <p class="price">&pound;2,850 <small>frame and fork, painted</small></p>
+      </article>
+      <article class="model">
+        <p class="meta">03 &middot; Randonneur</p>
+        <h3>Loxley</h3>
+        <p>Low-trail front end for a handlebar bag, dynamo wiring routed through the fork, and braze-ons for every rack you will ever own.</p>
+        <ul>
+          <li>Reynolds 725 heat-treated</li>
+          <li>Low trail, 30 to 35 mm</li>
+          <li>Internal dynamo routing</li>
+          <li>Front and rear rack mounts</li>
+        </ul>
+        <p class="price">&pound;3,100 <small>frame and fork, painted</small></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Geometry -->
+<section id="geometry">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="meta">Geometry chart &middot; Ridgeway stock sizes</p>
+        <h2 class="display h2" style="margin-top:14px">Read the numbers before you read the copy.</h2>
+      </div>
+      <p class="lead">Six stock sizes are the reference. A made-to-measure frame begins at the nearest one and moves every value the fitting says to move. Pick a size and the drawing above follows it.</p>
+    </div>
+
+    <div class="sizes" role="group" aria-label="Choose a size">
+      <span class="meta">Size</span>
+      <button class="size" data-size="50" aria-pressed="false">50</button>
+      <button class="size" data-size="52" aria-pressed="false">52</button>
+      <button class="size" data-size="54" aria-pressed="false">54</button>
+      <button class="size" data-size="56" aria-pressed="true">56</button>
+      <button class="size" data-size="58" aria-pressed="false">58</button>
+      <button class="size" data-size="60" aria-pressed="false">60</button>
+      <span class="meta" id="riderGuide" style="margin-left:14px">Rider height guide: 177 to 184 cm</span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="geoTable">
+        <thead>
+          <tr>
+            <th scope="col" style="text-align:left;padding-left:0">Measurement (mm unless noted)</th>
+            <th scope="col" data-col="50">50</th>
+            <th scope="col" data-col="52">52</th>
+            <th scope="col" data-col="54">54</th>
+            <th scope="col" data-col="56">56</th>
+            <th scope="col" data-col="58">58</th>
+            <th scope="col" data-col="60">60</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Seat tube, centre to top</th><td>500</td><td>520</td><td>540</td><td>560</td><td>580</td><td>600</td></tr>
+          <tr><th scope="row">Effective top tube</th><td>525</td><td>535</td><td>545</td><td>560</td><td>575</td><td>590</td></tr>
+          <tr><th scope="row">Head tube</th><td>110</td><td>125</td><td>140</td><td>155</td><td>172</td><td>190</td></tr>
+          <tr><th scope="row">Head angle (degrees)</th><td>71.5</td><td>72.0</td><td>72.5</td><td>73.0</td><td>73.0</td><td>73.5</td></tr>
+          <tr><th scope="row">Seat angle (degrees)</th><td>74.5</td><td>74.0</td><td>73.5</td><td>73.0</td><td>72.5</td><td>72.5</td></tr>
+          <tr><th scope="row">Chainstay</th><td>410</td><td>410</td><td>410</td><td>410</td><td>412</td><td>415</td></tr>
+          <tr><th scope="row">Bottom bracket drop</th><td>72</td><td>72</td><td>70</td><td>70</td><td>70</td><td>68</td></tr>
+          <tr><th scope="row">Fork rake</th><td>50</td><td>48</td><td>45</td><td>45</td><td>45</td><td>43</td></tr>
+          <tr><th scope="row">Trail</th><td>61</td><td>60</td><td>60</td><td>58</td><td>58</td><td>57</td></tr>
+          <tr><th scope="row">Stack</th><td>520</td><td>535</td><td>550</td><td>566</td><td>583</td><td>601</td></tr>
+          <tr><th scope="row">Reach</th><td>371</td><td>377</td><td>382</td><td>388</td><td>394</td><td>400</td></tr>
+          <tr><th scope="row">Wheelbase</th><td>978</td><td>981</td><td>985</td><td>992</td><td>1003</td><td>1012</td></tr>
+          <tr><th scope="row">Standover</th><td>745</td><td>765</td><td>785</td><td>805</td><td>825</td><td>845</td></tr>
+          <tr><th scope="row">Rider height guide (cm)</th><td>160 to 168</td><td>166 to 174</td><td>172 to 179</td><td>177 to 184</td><td>182 to 189</td><td>187 to 195</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="geo-notes">
+      <div><b>How we measure</b>Seat tube is centre of the bottom bracket to the top of the seat lug. Stack and reach are taken to the top centre of the head tube with the frame level on the axles.</div>
+      <div><b>What moves for you</b>Head tube, top tube, seat angle and stem length move first. Head angle and rake move together so the trail stays where the model wants it.</div>
+      <div><b>What does not</b>Chainstay length, bottom bracket drop and tyre clearance are fixed per model. If you need them changed, it is a different model.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="meta">From fitting to first ride</p>
+        <h2 class="display h2" style="margin-top:14px">Twenty-two weeks, five stages, one pair of hands.</h2>
+      </div>
+      <p class="lead">One builder does every frame start to finish. That is why the book is short and the lead time is honest.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Fitting</h3>
+        <div class="when">Week 0 &middot; two hours</div>
+        <p>On the jig in the workshop, or from a fit sheet and video if you are far away. We measure you, then measure the bike you like best.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Drawing</h3>
+        <div class="when">Week 2 &middot; you sign it</div>
+        <p>A full-size drawing and a chart like the one above. Nothing is cut until you have signed the sheet.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Mitre and braze</h3>
+        <div class="when">Weeks 14 to 16</div>
+        <p>Tubes mitred by hand to the drawing, tacked in the jig, then brazed with 56 percent silver. Lugs are filed and the shorelines thinned.</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <h3>Alignment and paint</h3>
+        <div class="when">Weeks 17 to 20</div>
+        <p>Checked on the surface table to a quarter of a millimetre, faced and chased, then painted two arches down at Wren Coachworks.</p>
+      </div>
+      <div class="step">
+        <div class="n">5</div>
+        <h3>Build and collect</h3>
+        <div class="when">Week 22</div>
+        <p>Assembled as a frameset or a full bike, with the geometry chart, a lug rubbing and the drawing rolled in a tube.</p>
+      </div>
+    </div>
+
+    <div class="book" id="book">
+      <p class="display">The book is open. <em>Next slot starts February 2027.</em></p>
+      <div>
+        <p class="meta">Current lead time</p>
+        <p class="big">22 weeks</p>
+      </div>
+      <div>
+        <p class="meta">Hold a slot</p>
+        <p class="big">&pound;750</p>
+        <a class="btn" href="mailto:hello@calderframeworks.co.uk?subject=Fitting%20request">Ask for a fitting date <span class="arrow">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Construction -->
+<section id="construction">
+  <div class="wrap">
+    <p class="meta">Construction</p>
+    <h2 class="display h2" style="margin-top:14px">Why lugs, why silver, why steel.</h2>
+
+    <div class="build">
+      <div class="cols">
+        <div>
+          <h3>Lugs carry the joint</h3>
+          <p>A lug is a cast steel sleeve that holds two tubes at a fixed angle. The braze fills the gap between sleeve and tube, so the joint is a long overlap in shear, not a bead of weld in tension. It is the reason a lugged frame from the seventies still rides.</p>
+        </div>
+        <div>
+          <h3>Silver, not brass, at the tubes</h3>
+          <p>We braze the main triangle with 56 percent silver at around 650 degrees, well below the point where heat-treated steel loses its temper. Brass is reserved for the dropouts and braze-ons, where its strength matters more than the heat.</p>
+        </div>
+        <div>
+          <h3>Steel you can repair</h3>
+          <p>A bent dropout is straightened. A dented tube is replaced by unbrazing the lug and sliding a new one in. We have re-tubed frames we built a decade ago and frames other people built forty years ago.</p>
+        </div>
+        <div>
+          <h3>Filed by hand, then thinned</h3>
+          <p>Every lug edge is filed to a knife line and the shoreline of braze taken back until the tube seems to grow out of the lug. Under paint it shows; under polish it is the whole point.</p>
+        </div>
+      </div>
+
+      <figure>
+        <svg viewBox="0 0 520 380" role="img" aria-labelledby="lugTitle">
+          <title id="lugTitle">Section through a lugged joint showing the head tube, top tube, lug sleeve and the silver braze fillet</title>
+          <!-- head tube, vertical-ish -->
+          <path d="M330 30 L360 350" stroke="#1d1915" stroke-width="30" stroke-linecap="butt" fill="none"/>
+          <path d="M330 30 L360 350" stroke="#f3ede3" stroke-width="22" fill="none"/>
+          <!-- top tube -->
+          <path d="M40 150 L340 172" stroke="#1d1915" stroke-width="28" fill="none"/>
+          <path d="M40 150 L340 172" stroke="#f3ede3" stroke-width="20" fill="none"/>
+          <!-- lug sleeve -->
+          <path d="M200 132 L344 142 L352 205 L208 197 Q 176 186 200 132 Z" fill="none" stroke="#b57f49" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M330 100 L346 120 L352 205 L360 300 L378 300 L360 100 Z" fill="none" stroke="#b57f49" stroke-width="6" stroke-linejoin="round"/>
+          <!-- lug points -->
+          <path d="M200 132 L168 128 L200 148" fill="#b57f49"/>
+          <path d="M208 197 L176 205 L204 180" fill="#b57f49"/>
+          <!-- silver fillet dots -->
+          <g fill="#b4471f">
+            <circle cx="206" cy="140" r="2.2"/><circle cx="214" cy="190" r="2.2"/><circle cx="340" cy="112" r="2.2"/><circle cx="366" cy="292" r="2.2"/>
+          </g>
+          <!-- annotations -->
+          <g stroke="#1d1915" stroke-width=".9" fill="none">
+            <path d="M120 82 L206 138"/>
+            <path d="M110 268 L212 192"/>
+            <path d="M440 72 L372 104"/>
+            <path d="M440 330 L372 296"/>
+          </g>
+          <g fill="#1d1915"><rect x="204" y="136" width="4" height="4"/><rect x="210" y="190" width="4" height="4"/><rect x="370" y="102" width="4" height="4"/><rect x="370" y="294" width="4" height="4"/></g>
+          <g class="lbl" font-size="11" font-family="IBM Plex Sans, sans-serif">
+            <text x="40" y="70" fill="#6f655a">Lug point, filed to 0.4 mm</text>
+            <text x="40" y="288" fill="#6f655a">Silver shoreline, thinned</text>
+            <text x="446" y="68" fill="#6f655a">Head lug, cast</text>
+            <text x="446" y="82" fill="#1d1915" font-weight="500">73 degree</text>
+            <text x="446" y="334" fill="#6f655a">Head tube, 853</text>
+            <text x="446" y="348" fill="#1d1915" font-weight="500">0.9 / 0.6 wall</text>
+          </g>
+        </svg>
+        <figcaption><span>Upper head lug, section view</span><span>Silver 56 percent, 650 degrees</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="tubes">
+      <div class="tube-card"><span class="meta">Tube set 01</span><b>Reynolds 853</b><p>Air-hardening, gets stronger after brazing. Our default for the Ridgeway main triangle.</p></div>
+      <div class="tube-card"><span class="meta">Tube set 02</span><b>Columbus Spirit</b><p>Oversize, thin-walled and stiff. Used on the Holme where 40 mm tyres and disc loads ask more of the rear end.</p></div>
+      <div class="tube-card"><span class="meta">Tube set 03</span><b>Reynolds 725</b><p>Heat-treated chrome-moly, a little more forgiving. The Loxley and every frame that carries luggage.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="pricing">
+      <div class="side">
+        <p class="meta">Prices &middot; September 2026</p>
+        <h2 class="display h2" style="margin-top:14px">One price per frame. Options are listed, not hidden.</h2>
+        <p>All frame prices include the fitting, the drawing, a matching fork, a single colour paint and a lifetime guarantee on the brazing. Prices are in pounds sterling and include tax.</p>
+        <p>Full builds are quoted per bike; the figures below are typical with a mechanical groupset and hand-built wheels.</p>
+      </div>
+      <ul class="lines">
+        <li><span class="name">Ridgeway frame and fork</span><span class="amt">&pound;2,650</span><span class="note">Road &middot; lugged &middot; 22 weeks</span></li>
+        <li><span class="name">Holme frame and fork</span><span class="amt">&pound;2,850</span><span class="note">All-road &middot; disc &middot; 22 weeks</span></li>
+        <li><span class="name">Loxley frame and fork</span><span class="amt">&pound;3,100</span><span class="note">Randonneur &middot; racks and dynamo &middot; 24 weeks</span></li>
+        <li><span class="name">Two-tone paint with lined lugs</span><span class="amt">&pound;280</span><span class="note">Adds one week</span></li>
+        <li><span class="name">Hand-cut lug windows</span><span class="amt">&pound;420</span><span class="note">Three lugs, your pattern or ours</span></li>
+        <li><span class="name">Stainless dropouts, polished</span><span class="amt">&pound;190</span><span class="note">Left unpainted</span></li>
+        <li><span class="name">Engraved head badge</span><span class="amt">&pound;95</span><span class="note">Brass, your initials</span></li>
+        <li><span class="name">Full build</span><span class="amt">from &pound;5,400</span><span class="note">Frame, fork, groupset, wheels, finishing kit, first service</span></li>
+      </ul>
+    </div>
+    <div class="deposit">
+      <span>A deposit of &pound;750 holds a slot in the book and comes off the final invoice. The balance is due when the frame comes back from paint.</span>
+      <span>Refits within the first year are free. Bring the bike.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Questions -->
+<section id="questions">
+  <div class="wrap">
+    <div class="qa-grid">
+      <div>
+        <p class="meta">Questions we get in the workshop</p>
+        <h2 class="display h2" style="margin-top:14px">Asked at the bench, answered here.</h2>
+      </div>
+      <div class="qa">
+        <details open>
+          <summary>I have never been fitted. Where do I start?</summary>
+          <p>Bring the bike you ride most, even if you dislike it. We measure you and the bike, ride the jig for an hour, and the chart falls out of that. Most people leave knowing why their current bike hurts.</p>
+        </details>
+        <details>
+          <summary>Can you build for disc brakes and thru-axles?</summary>
+          <p>Yes. The Holme is flat-mount disc with 12 mm thru-axles front and rear. The Ridgeway can be built for disc, though the lugged fork becomes a segmented crown fork to take the load.</p>
+        </details>
+        <details>
+          <summary>Do you repair frames you did not build?</summary>
+          <p>Steel ones, yes: dents, bent dropouts, cracked stays, replacing a tube. We do not touch aluminium or carbon. Send photos first; most repairs are quoted within a day and take two to three weeks.</p>
+        </details>
+        <details>
+          <summary>What about a frame for a child, or a tandem?</summary>
+          <p>Children's frames are a joy and we build one or two a year at a reduced price. Tandems we refer to a friend in Yorkshire who has the jig for it.</p>
+        </details>
+        <details>
+          <summary>What does the guarantee actually cover?</summary>
+          <p>The brazed joints, for the life of the original owner. Paint is guaranteed for two years against lifting. Crashes and rust from a winter in the garden are not covered, but both are repairable.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Visit -->
+<section id="visit">
+  <div class="wrap">
+    <div class="visit">
+      <div>
+        <p class="meta">The workshop</p>
+        <h2 class="display h2" style="margin-top:14px">Kelham Island, under the old wheel.</h2>
+        <p class="lead" style="margin-top:18px;color:var(--muted);font-size:var(--t-body)">A railway arch with a surface table, two jigs and a kettle. Fittings are by appointment; visits are welcome on Friday afternoons when there is usually a frame on the stand and tea on the go.</p>
+        <div class="ctas" style="margin-top:28px;display:flex;gap:12px">
+          <a class="btn solid" href="mailto:hello@calderframeworks.co.uk">Write to us <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="#top">Back to the drawing</a>
+        </div>
+      </div>
+      <div class="map" aria-label="Sketch map of the workshop location on Kelham Island">
+        <svg viewBox="0 0 640 360">
+          <rect width="640" height="360" fill="#e9e1d3"/>
+          <path d="M0 210 C 120 190, 200 250, 330 230 S 560 180, 640 200" fill="none" stroke="#c9d3d0" stroke-width="26"/>
+          <path d="M0 210 C 120 190, 200 250, 330 230 S 560 180, 640 200" fill="none" stroke="#9fb3ae" stroke-width="1"/>
+          <g stroke="#f3ede3" stroke-width="10" fill="none">
+            <path d="M80 0 L120 360"/>
+            <path d="M0 110 L640 90"/>
+            <path d="M420 0 L470 360"/>
+            <path d="M0 300 L640 320"/>
+          </g>
+          <g stroke="#d5cbbc" stroke-width="1" fill="none">
+            <path d="M80 0 L120 360 M0 110 L640 90 M420 0 L470 360 M0 300 L640 320"/>
+          </g>
+          <g font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#6f655a">
+            <text x="300" y="248">River Don</text>
+            <text x="136" y="84">Alma Street</text>
+            <text x="490" y="84">Green Lane</text>
+          </g>
+          <circle cx="262" cy="160" r="22" fill="none" stroke="#b4471f" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <circle cx="262" cy="160" r="6" fill="#b4471f"/>
+          <text x="292" y="156" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="500" fill="#1d1915">Calder Frameworks</text>
+          <text x="292" y="171" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#6f655a">Arch 4, Kelham Island</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Find us</p>
+        <p>Arch 4, Alma Street<br>Kelham Island<br>Sheffield, South Yorkshire</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:hello@calderframeworks.co.uk">hello@calderframeworks.co.uk</a><br><span class="muted">Replies inside two working days.</span></p>
+      </div>
+      <div>
+        <p class="meta">Hours</p>
+        <p>Tuesday to Friday<br><span class="muted">9:00 to 17:30, fittings by appointment</span></p>
+      </div>
+      <div>
+        <p class="meta">Telephone</p>
+        <p><a href="tel:+441142750419">0114 275 0419</a><br><span class="muted">If nobody answers, a torch is lit.</span></p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Calder Frameworks. Built in Sheffield, one at a time.</span>
+      <span>Set in Instrument Serif and Plex Sans. Drawings are to scale.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var geo = {
+      "50": {seat:500, top:525, head:"71.5", chain:410, drop:72, rake:50, trail:61, stack:520, reach:371, wb:978, guide:"160 to 168 cm"},
+      "52": {seat:520, top:535, head:"72.0", chain:410, drop:72, rake:48, trail:60, stack:535, reach:377, wb:981, guide:"166 to 174 cm"},
+      "54": {seat:540, top:545, head:"72.5", chain:410, drop:70, rake:45, trail:60, stack:550, reach:382, wb:985, guide:"172 to 179 cm"},
+      "56": {seat:560, top:560, head:"73.0", chain:410, drop:70, rake:45, trail:58, stack:566, reach:388, wb:992, guide:"177 to 184 cm"},
+      "58": {seat:580, top:575, head:"73.0", chain:412, drop:70, rake:45, trail:58, stack:583, reach:394, wb:1003, guide:"182 to 189 cm"},
+      "60": {seat:600, top:590, head:"73.5", chain:415, drop:68, rake:43, trail:57, stack:601, reach:400, wb:1012, guide:"187 to 195 cm"}
+    };
+    var buttons = document.querySelectorAll('.size');
+    var table = document.getElementById('geoTable');
+    var guide = document.getElementById('riderGuide');
+
+    function highlight(size){
+      var cols = table.querySelectorAll('thead th[data-col]');
+      var idx = -1;
+      cols.forEach(function(th, i){
+        var on = th.getAttribute('data-col') === size;
+        th.classList.toggle('col-on', on);
+        if(on) idx = i + 1;
+      });
+      table.querySelectorAll('tbody tr').forEach(function(tr){
+        var cells = tr.querySelectorAll('td');
+        cells.forEach(function(td, i){ td.classList.toggle('col-on', (i + 1) === idx); });
+      });
+    }
+
+    function select(size){
+      var g = geo[size];
+      if(!g) return;
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-size') === size ? 'true' : 'false'); });
+      document.querySelectorAll('[data-v]').forEach(function(el){
+        var k = el.getAttribute('data-v');
+        if(k === 'size') el.textContent = size;
+        else if(g[k] !== undefined) el.textContent = g[k];
+      });
+      guide.textContent = 'Rider height guide: ' + g.guide;
+      highlight(size);
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){ select(b.getAttribute('data-size')); });
+    });
+    select('56');
+  })();
+</script>
+</body>
+</html>

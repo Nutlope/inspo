@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chalkline · Bouldering in Bristol, three gyms, one membership</title>
+<meta name="description" content="Chalkline is a bouldering gym with three Bristol locations: Bedminster, Easton and Harbourside. Colour-coded circuits, fresh sets every week, one membership for all three.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale: five steps plus body */
+  --t-xs: 0.8125rem;
+  --t-sm: 0.9375rem;
+  --t-md: 1.125rem;
+  --t-lg: clamp(1.5rem, 2.2vw, 1.95rem);
+  --t-xl: clamp(2.1rem, 3.6vw, 3.1rem);
+  --t-display: clamp(2.8rem, 5.4vw, 4.6rem);
+
+  --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
+  --font-body: "Inter Tight", system-ui, -apple-system, sans-serif;
+
+  --paper: #12110f;
+  --paper-2: #1b1916;
+  --ink: #f4f0e6;
+  --muted: #a69f91;
+  --rule: rgba(244,240,230,.14);
+  --accent: #ff4d1f;
+  --accent-ink: #12110f;
+
+  --g-green: #5fd36b;
+  --g-yellow: #ffd23f;
+  --g-orange: #ff7a1a;
+  --g-red: #ef3b3b;
+  --g-purple: #9b5de5;
+  --g-black: #2b2a28;
+
+  --seam: clamp(72px, 9vw, 128px);
+  --radius: 14px;
+}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:var(--t-md);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p{margin:0}
+a{color:inherit;text-decoration:none}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:clamp(20px,4vw,48px)}
+section{padding-block:var(--seam)}
+
+.display{font-family:var(--font-display);font-weight:800;letter-spacing:-0.02em;line-height:1;font-variation-settings:"opsz" 96}
+.h-xl{font-size:var(--t-xl);line-height:1.02}
+.h-lg{font-size:var(--t-lg);line-height:1.1;font-weight:700}
+.eyebrow{font-size:var(--t-xs);font-weight:600;letter-spacing:.02em;color:var(--accent)}
+.lede{color:var(--muted);font-size:var(--t-md);max-width:56ch}
+.section-head{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:clamp(36px,5vw,56px)}
+@media(min-width:860px){.section-head{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:end}}
+.section-head .lede{justify-self:start}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  height:52px;padding-inline:24px;border-radius:999px;
+  font-weight:600;font-size:var(--t-sm);white-space:nowrap;
+  border:1.5px solid transparent;transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-accent{background:var(--accent);color:var(--accent-ink)}
+.btn-accent:hover{background:#ff6a42}
+.btn-ghost{border-color:var(--rule);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn svg{width:16px;height:16px}
+
+/* ---------- fold ---------- */
+.fold{
+  min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size:64px 64px;
+  background-position:center top;
+}
+.fold::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 72% 55%, rgba(255,77,31,.18), transparent 60%),
+             linear-gradient(180deg, rgba(18,17,15,.2), var(--paper) 96%);
+}
+.fold > *{position:relative;z-index:1}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:20px}
+.wordmark{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:1.45rem;letter-spacing:-0.02em}
+.wordmark .mark{width:30px;height:30px;border-radius:50%;background:var(--accent);position:relative;flex:none}
+.wordmark .mark::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--paper)}
+.nav-links{display:none;gap:28px;font-size:var(--t-sm);font-weight:500;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+@media(min-width:900px){.nav-links{display:flex}}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.nav-cta .open-now{display:none;align-items:center;gap:8px;font-size:var(--t-xs);color:var(--muted)}
+.nav-cta .open-now i{width:8px;height:8px;border-radius:50%;background:var(--g-green);box-shadow:0 0 0 4px rgba(95,211,107,.18)}
+@media(min-width:700px){.nav-cta .open-now{display:inline-flex}}
+
+.hero{flex:1;display:flex;align-items:center;padding-block:24px 40px}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:center;width:100%}
+@media(min-width:900px){.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px}}
+.hero h1{font-size:var(--t-display);max-width:13ch;text-wrap:balance}
+.hero h1 .hot{color:var(--accent)}
+.hero .lede{margin-top:22px;max-width:44ch}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;font-size:var(--t-xs);color:var(--muted)}
+.hero-meta b{color:var(--ink);font-weight:600}
+
+.wall{width:min(100%,560px,60vh);height:auto;aspect-ratio:1/1;justify-self:center;display:block}
+@media(max-width:899px){.wall{width:min(100%,360px,40vh)}}
+.hold{transform-origin:center;animation:settle .7s cubic-bezier(.2,.8,.2,1) both}
+.hold:nth-child(2n){animation-delay:.08s}.hold:nth-child(3n){animation-delay:.16s}.hold:nth-child(5n){animation-delay:.24s}
+@keyframes settle{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.route{stroke-dasharray:6 8;animation:dash 6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-140}}
+@media(prefers-reduced-motion:reduce){.hold,.route,.ticker-track{animation:none}}
+
+/* ---------- ticker ---------- */
+.ticker{border-block:1px solid var(--rule);background:var(--paper-2);overflow:hidden;padding-block:14px;font-size:var(--t-sm);font-weight:500}
+.ticker-track{display:flex;gap:0;width:max-content;animation:ticker 42s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-track span{padding-inline:22px;white-space:nowrap;color:var(--muted)}
+.ticker-track span b{color:var(--ink);font-weight:600}
+.ticker-track span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:14px;vertical-align:1px;background:var(--dot,var(--accent))}
+@keyframes ticker{to{transform:translateX(-50%)}}
+
+/* ---------- grades ---------- */
+.grades{padding-bottom:0}
+.bands{margin-top:0}
+.band{padding-block:22px;transition:padding .25s ease}
+.band .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 24px;align-items:center}
+@media(min-width:760px){.band .wrap{grid-template-columns:minmax(0,4fr) minmax(0,2fr) minmax(0,6fr)}}
+.band:hover{padding-block:30px}
+.band-name{font-family:var(--font-display);font-weight:800;font-size:var(--t-xl);line-height:1;letter-spacing:-0.02em}
+.band-range{font-family:var(--font-display);font-weight:700;font-size:var(--t-lg);opacity:.85}
+.band-copy{font-size:var(--t-sm);max-width:52ch;opacity:.9}
+.band.green{background:var(--g-green);color:#0c2a10}
+.band.yellow{background:var(--g-yellow);color:#2d2200}
+.band.orange{background:var(--g-orange);color:#2c1200}
+.band.red{background:var(--g-red);color:#fff4f0}
+.band.purple{background:var(--g-purple);color:#f6efff}
+.band.black{background:var(--g-black);color:var(--ink);border-top:1px solid var(--rule)}
+
+/* ---------- gyms ---------- */
+.gym-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:860px){.gym-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.gym{
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:28px 26px 26px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden;
+  transition:transform .25s ease,border-color .25s ease;
+}
+.gym:hover{transform:translateY(-4px);border-color:rgba(244,240,230,.3)}
+.gym::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--stripe)}
+.gym-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.gym h3{font-size:var(--t-lg)}
+.gym .kind{font-size:var(--t-xs);color:var(--muted);margin-top:4px}
+.gym address{font-style:normal;font-size:var(--t-sm);color:var(--ink);line-height:1.5}
+.hours{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:var(--t-sm);border-top:1px solid var(--rule);padding-top:16px}
+.hours dt{color:var(--muted)}
+.hours dd{margin:0;font-variant-numeric:tabular-nums}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:var(--t-xs);font-weight:500;padding:5px 11px;border-radius:999px;border:1px solid var(--rule);color:var(--muted)}
+.gym-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:var(--t-sm)}
+.gym-foot a{font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.gym-foot a:hover{color:var(--accent)}
+.stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.1}
+.stat b{font-family:var(--font-display);font-size:var(--t-lg);font-weight:800}
+.stat span{font-size:var(--t-xs);color:var(--muted)}
+
+/* ---------- membership ---------- */
+.membership{background:var(--paper-2);border-block:1px solid var(--rule)}
+.toggle{display:inline-flex;padding:4px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);gap:2px}
+.toggle button{padding:9px 18px;border-radius:999px;font-size:var(--t-sm);font-weight:600;color:var(--muted);transition:background .18s ease,color .18s ease}
+.toggle button[aria-checked="true"]{background:var(--ink);color:var(--paper)}
+.toggle button small{font-weight:500;color:var(--accent);margin-left:6px}
+.toggle button[aria-checked="true"] small{color:#b6360f}
+.plans{display:grid;grid-template-columns:1fr;gap:18px;margin-top:8px}
+@media(min-width:860px){.plans{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}}
+.plan{
+  border:1.5px solid var(--rule);border-radius:var(--radius);padding:30px 28px;background:var(--paper);
+  display:flex;flex-direction:column;gap:22px;position:relative;
+}
+.plan.hot{border-color:var(--accent);box-shadow:0 0 0 6px rgba(255,77,31,.12)}
+.plan .name{display:flex;justify-content:space-between;align-items:baseline}
+.plan .name h3{font-size:var(--t-lg)}
+.plan .name .pill{font-size:var(--t-xs);font-weight:600;background:var(--accent);color:var(--accent-ink);padding:4px 10px;border-radius:999px}
+.price{display:flex;align-items:baseline;gap:8px;font-family:var(--font-display);font-weight:800;letter-spacing:-0.03em}
+.price .amount{font-size:clamp(2.6rem,4.2vw,3.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.price .per{font-family:var(--font-body);font-weight:500;font-size:var(--t-sm);color:var(--muted);letter-spacing:0}
+.price-note{font-size:var(--t-xs);color:var(--muted);min-height:1.4em;margin-top:-12px}
+.plan p.blurb{color:var(--muted);font-size:var(--t-sm)}
+.plan ul{display:grid;gap:10px;font-size:var(--t-sm);border-top:1px solid var(--rule);padding-top:20px}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
+.plan .btn{margin-top:auto;justify-content:center}
+.payg{margin-top:28px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden}
+@media(min-width:760px){.payg{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.payg div{padding:20px 22px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.payg div:nth-child(2n){border-right:0}
+@media(min-width:760px){.payg div{border-bottom:0}.payg div:nth-child(2n){border-right:1px solid var(--rule)}.payg div:last-child{border-right:0}}
+.payg b{display:block;font-family:var(--font-display);font-weight:800;font-size:var(--t-lg);letter-spacing:-0.02em}
+.payg span{font-size:var(--t-xs);color:var(--muted)}
+
+/* ---------- setting ---------- */
+.set-table{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.set-table th{text-align:left;font-weight:500;color:var(--muted);font-size:var(--t-xs);padding:0 16px 14px 0;border-bottom:1px solid var(--rule)}
+.set-table td{padding:18px 16px 18px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+.set-table tr:hover td{background:rgba(244,240,230,.03)}
+.set-table .when{font-variant-numeric:tabular-nums;white-space:nowrap}
+.set-table .gym-name{font-weight:600}
+.dots{display:inline-flex;gap:5px;vertical-align:middle;margin-right:10px}
+.dots i{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.25)}
+.set-table .status{font-size:var(--t-xs);padding:4px 10px;border-radius:999px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
+.set-table .status.live{border-color:rgba(95,211,107,.5);color:var(--g-green)}
+.set-wrap{overflow-x:auto}
+.setting-grid{display:grid;grid-template-columns:1fr;gap:40px}
+@media(min-width:960px){.setting-grid{grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:56px}}
+.setting-aside p+p{margin-top:14px}
+.setting-aside .big{font-family:var(--font-display);font-weight:800;font-size:clamp(3rem,6vw,4.6rem);line-height:.95;letter-spacing:-0.03em;color:var(--accent)}
+
+/* ---------- faq ---------- */
+.faq-grid{display:grid;grid-template-columns:1fr;gap:40px}
+@media(min-width:960px){.faq-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px}}
+details{border-top:1px solid var(--rule)}
+details:last-of-type{border-bottom:1px solid var(--rule)}
+summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding-block:20px;font-weight:600;font-size:var(--t-md);
+}
+summary::-webkit-details-marker{display:none}
+summary .plus{width:28px;height:28px;border-radius:50%;border:1px solid var(--rule);flex:none;position:relative;transition:transform .25s ease,background .25s ease}
+summary .plus::before,summary .plus::after{content:"";position:absolute;background:var(--ink);inset:auto;left:50%;top:50%;transform:translate(-50%,-50%)}
+summary .plus::before{width:12px;height:1.5px}
+summary .plus::after{width:1.5px;height:12px}
+details[open] summary .plus{transform:rotate(45deg);background:var(--accent);border-color:var(--accent)}
+details[open] summary .plus::before,details[open] summary .plus::after{background:var(--accent-ink)}
+details p{padding-bottom:22px;color:var(--muted);font-size:var(--t-sm);max-width:60ch}
+
+/* ---------- cta ---------- */
+.taster{background:var(--accent);color:var(--accent-ink);position:relative;overflow:hidden}
+.taster::before{
+  content:"";position:absolute;inset:0;opacity:.35;pointer-events:none;
+  background-image:radial-gradient(rgba(18,17,15,.35) 1.4px, transparent 1.6px);background-size:22px 22px;
+}
+.taster .wrap{position:relative;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
+@media(min-width:900px){.taster .wrap{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.taster h2{font-size:var(--t-xl);max-width:16ch}
+.taster p{font-size:var(--t-md);max-width:46ch;margin-top:14px;color:#3b1608}
+.taster-card{background:var(--paper);color:var(--ink);border-radius:var(--radius);padding:26px 26px 24px;display:grid;gap:16px;justify-self:stretch}
+.taster-card .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--t-sm)}
+.taster-card .row+.row{border-top:1px solid var(--rule);padding-top:12px}
+.taster-card .row b{font-family:var(--font-display);font-weight:800;font-size:var(--t-lg);letter-spacing:-0.02em}
+.taster-card .row span{color:var(--muted)}
+.taster-card .btn{justify-content:center}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);padding-block:56px 32px;font-size:var(--t-sm)}
+.foot-grid{display:grid;grid-template-columns:1fr;gap:36px}
+@media(min-width:900px){.foot-grid{grid-template-columns:minmax(0,4fr) repeat(3,minmax(0,2.6fr))}}
+.foot-grid h4{font-size:var(--t-xs);color:var(--muted);font-weight:500;margin-bottom:14px}
+.foot-grid li+li{margin-top:8px}
+.foot-grid a:hover{color:var(--accent)}
+.foot-grid address{font-style:normal;color:var(--muted);line-height:1.5}
+.foot-grid address b{color:var(--ink);font-weight:600;display:block}
+.foot-brand p{color:var(--muted);max-width:32ch;margin-top:14px}
+.newsletter{display:flex;gap:8px;margin-top:18px;max-width:360px}
+.newsletter input{flex:1;min-width:0;height:46px;border-radius:999px;border:1px solid var(--rule);background:var(--paper-2);color:var(--ink);padding-inline:16px;font:inherit;font-size:var(--t-sm)}
+.newsletter input::placeholder{color:var(--muted)}
+.newsletter button{height:46px;padding-inline:18px;border-radius:999px;background:var(--ink);color:var(--paper);font-weight:600;font-size:var(--t-sm)}
+.small-print{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);font-size:var(--t-xs);color:var(--muted)}
+.small-print div{display:flex;gap:18px}
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap nav" role="banner">
+    <a class="wordmark" href="#top" aria-label="Chalkline home"><span class="mark" aria-hidden="true"></span>Chalkline</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#grades">Circuits</a>
+      <a href="#gyms">Gyms</a>
+      <a href="#membership">Membership</a>
+      <a href="#setting">Setting</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <div class="nav-cta">
+      <span class="open-now"><i aria-hidden="true"></i>All three gyms open till 22:30</span>
+      <a class="btn btn-accent" href="#membership">Join from £42 a month</a>
+    </div>
+  </header>
+
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Bouldering in Bristol · Bedminster, Easton, Harbourside</p>
+        <h1 id="hero-title" class="display" style="margin-top:18px">Climb hard. <span class="hot">Fall soft.</span> Go again.</h1>
+        <p class="lede">Three walls across the city, colour-coded circuits from your first session to your first V8, and a membership that works at all of them. No ropes, no harness, no fuss.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-accent" href="#membership">Become a member
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#taster">Book a £15 taster</a>
+        </div>
+        <div class="hero-meta">
+          <span><b>1,400</b> holds reset every week</span>
+          <span><b>6</b> colour circuits</span>
+          <span><b>Kids club</b> from age 6</span>
+        </div>
+      </div>
+
+      <svg class="wall" viewBox="0 0 520 520" role="img" aria-labelledby="wall-title">
+        <title id="wall-title">An illustrated bouldering wall with colour-coded holds and a highlighted orange route</title>
+        <defs>
+          <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2a2723"/><stop offset="1" stop-color="#1a1815"/>
+          </linearGradient>
+          <linearGradient id="vol" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3a352f"/><stop offset="1" stop-color="#26231f"/>
+          </linearGradient>
+        </defs>
+        <!-- wall panel -->
+        <polygon points="60,40 470,20 490,480 40,500" fill="url(#panel)" stroke="rgba(244,240,230,.18)" stroke-width="2"/>
+        <!-- t-nut grid -->
+        <g fill="rgba(244,240,230,.12)">
+          <circle cx="110" cy="90" r="2.5"/><circle cx="190" cy="86" r="2.5"/><circle cx="270" cy="82" r="2.5"/><circle cx="350" cy="78" r="2.5"/><circle cx="430" cy="74" r="2.5"/>
+          <circle cx="112" cy="170" r="2.5"/><circle cx="192" cy="166" r="2.5"/><circle cx="272" cy="162" r="2.5"/><circle cx="352" cy="158" r="2.5"/><circle cx="432" cy="154" r="2.5"/>
+          <circle cx="114" cy="250" r="2.5"/><circle cx="194" cy="246" r="2.5"/><circle cx="274" cy="242" r="2.5"/><circle cx="354" cy="238" r="2.5"/><circle cx="434" cy="234" r="2.5"/>
+          <circle cx="116" cy="330" r="2.5"/><circle cx="196" cy="326" r="2.5"/><circle cx="276" cy="322" r="2.5"/><circle cx="356" cy="318" r="2.5"/><circle cx="436" cy="314" r="2.5"/>
+          <circle cx="118" cy="410" r="2.5"/><circle cx="198" cy="406" r="2.5"/><circle cx="278" cy="402" r="2.5"/><circle cx="358" cy="398" r="2.5"/><circle cx="438" cy="394" r="2.5"/>
+        </g>
+        <!-- volumes -->
+        <polygon points="300,300 420,280 380,380" fill="url(#vol)" stroke="rgba(244,240,230,.14)" stroke-width="1.5"/>
+        <polygon points="90,380 200,360 150,450" fill="url(#vol)" stroke="rgba(244,240,230,.14)" stroke-width="1.5"/>
+        <!-- route line for the orange circuit -->
+        <path class="route" d="M150 440 C 200 400, 190 340, 240 300 S 330 220, 300 150 S 360 80, 390 70" fill="none" stroke="#ff7a1a" stroke-width="2" opacity=".7"/>
+        <!-- holds: orange circuit -->
+        <g class="hold"><ellipse cx="150" cy="440" rx="24" ry="16" fill="#ff7a1a"/><ellipse cx="146" cy="436" rx="10" ry="5" fill="rgba(255,255,255,.28)"/></g>
+        <g class="hold"><ellipse cx="240" cy="300" rx="18" ry="22" fill="#ff7a1a" transform="rotate(-20 240 300)"/><ellipse cx="236" cy="294" rx="6" ry="8" fill="rgba(255,255,255,.28)"/></g>
+        <g class="hold"><ellipse cx="300" cy="150" rx="26" ry="14" fill="#ff7a1a" transform="rotate(15 300 150)"/><ellipse cx="296" cy="146" rx="10" ry="4" fill="rgba(255,255,255,.28)"/></g>
+        <g class="hold"><circle cx="390" cy="70" r="22" fill="#ff7a1a"/><circle cx="390" cy="70" r="30" fill="none" stroke="#ff7a1a" stroke-width="2" opacity=".6"/><circle cx="384" cy="64" r="7" fill="rgba(255,255,255,.3)"/></g>
+        <!-- other circuits -->
+        <g class="hold"><ellipse cx="110" cy="130" rx="20" ry="13" fill="#5fd36b"/></g>
+        <g class="hold"><circle cx="190" cy="210" r="14" fill="#5fd36b"/></g>
+        <g class="hold"><ellipse cx="80" cy="300" rx="16" ry="20" fill="#ffd23f"/></g>
+        <g class="hold"><ellipse cx="350" cy="440" rx="22" ry="12" fill="#ffd23f" transform="rotate(-12 350 440)"/></g>
+        <g class="hold"><circle cx="440" cy="200" r="12" fill="#ffd23f"/></g>
+        <g class="hold"><ellipse cx="200" cy="120" rx="12" ry="18" fill="#ef3b3b" transform="rotate(30 200 120)"/></g>
+        <g class="hold"><circle cx="420" cy="360" r="16" fill="#ef3b3b"/></g>
+        <g class="hold"><ellipse cx="260" cy="400" rx="14" ry="10" fill="#9b5de5"/></g>
+        <g class="hold"><circle cx="460" cy="110" r="10" fill="#9b5de5"/></g>
+        <g class="hold"><ellipse cx="120" cy="230" rx="10" ry="7" fill="#9b5de5"/></g>
+        <g class="hold"><circle cx="330" cy="240" r="9" fill="#f4f0e6"/></g>
+        <g class="hold"><ellipse cx="230" cy="470" rx="16" ry="8" fill="#f4f0e6" opacity=".9"/></g>
+        <!-- chalk dust -->
+        <g fill="rgba(244,240,230,.10)">
+          <circle cx="140" cy="455" r="34"/><circle cx="255" cy="320" r="26"/><circle cx="395" cy="80" r="40"/>
+        </g>
+        <!-- grade tag -->
+        <g transform="translate(300 424)">
+          <rect x="0" y="0" width="132" height="44" rx="22" fill="#12110f" stroke="#ff7a1a" stroke-width="1.5"/>
+          <circle cx="22" cy="22" r="8" fill="#ff7a1a"/>
+          <text x="40" y="27" font-family="Inter Tight, system-ui, sans-serif" font-size="15" font-weight="600" fill="#f4f0e6">Orange · V4</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+</div>
+
+<div class="ticker" aria-label="This week at Chalkline">
+  <div class="ticker-track">
+    <span style="--dot:var(--g-orange)"><b>Easton</b> orange circuit resets Friday 12 September</span>
+    <span style="--dot:var(--g-red)"><b>Harbourside</b> comp wall stripped Saturday, new red and purple Sunday</span>
+    <span style="--dot:var(--g-green)"><b>Bedminster</b> beginners' hour every weekday 10:00 to 11:00</span>
+    <span style="--dot:var(--g-yellow)"><b>All gyms</b> yellow circuit now stays up for three weeks</span>
+    <span style="--dot:var(--g-purple)"><b>Autumn league</b> starts 6 October, sign up at the desk</span>
+    <span style="--dot:var(--g-orange)"><b>Easton</b> orange circuit resets Friday 12 September</span>
+    <span style="--dot:var(--g-red)"><b>Harbourside</b> comp wall stripped Saturday, new red and purple Sunday</span>
+    <span style="--dot:var(--g-green)"><b>Bedminster</b> beginners' hour every weekday 10:00 to 11:00</span>
+    <span style="--dot:var(--g-yellow)"><b>All gyms</b> yellow circuit now stays up for three weeks</span>
+    <span style="--dot:var(--g-purple)"><b>Autumn league</b> starts 6 October, sign up at the desk</span>
+  </div>
+</div>
+
+<section class="grades" id="grades" aria-labelledby="grades-title">
+  <div class="wrap section-head">
+    <div>
+      <p class="eyebrow">Circuits, not numbers</p>
+      <h2 id="grades-title" class="display h-xl" style="margin-top:12px">Six colours. Same on every wall, in every gym.</h2>
+    </div>
+    <p class="lede">Follow one colour from the floor to the top. Grades overlap on purpose, so a hard green can feel like an easy yellow. If you can flash most of a colour, it is time to move up.</p>
+  </div>
+  <div class="bands">
+    <div class="band green"><div class="wrap"><p class="band-name">Green</p><p class="band-range">V0 to V1</p><p class="band-copy">Big holds, straight lines, feet where you want them. Your first session lives here, and so do warm-ups for everyone else.</p></div></div>
+    <div class="band yellow"><div class="wrap"><p class="band-name">Yellow</p><p class="band-range">V1 to V3</p><p class="band-copy">The moves start to matter. Flag a foot, trust a smear, learn what a heel hook is for. Most members spend their first month here.</p></div></div>
+    <div class="band orange"><div class="wrap"><p class="band-name">Orange</p><p class="band-range">V3 to V5</p><p class="band-copy">Where projecting begins. Steeper terrain, worse holds, a few moves you will fall off ten times before they click.</p></div></div>
+    <div class="band red"><div class="wrap"><p class="band-name">Red</p><p class="band-range">V5 to V7</p><p class="band-copy">Real power and real footwork at the same time. Sessions become three or four problems, not thirty.</p></div></div>
+    <div class="band purple"><div class="wrap"><p class="band-name">Purple</p><p class="band-range">V7 to V9</p><p class="band-copy">Set by our comp team on the 45 and the Harbourside comp wall. Expect to tape your fingers and to book a rest day.</p></div></div>
+    <div class="band black"><div class="wrap"><p class="band-name">Black</p><p class="band-range">V9 and up</p><p class="band-copy">A handful at any one time, changed monthly, and each one has a name. Send it and it goes on the board by the front desk.</p></div></div>
+  </div>
+</section>
+
+<section id="gyms" aria-labelledby="gyms-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Three gyms, one card</p>
+        <h2 id="gyms-title" class="display h-xl" style="margin-top:12px">Pick the wall that matches your day.</h2>
+      </div>
+      <p class="lede">All three open at 06:30 on weekdays for the before-work crowd and stay open till 22:30. Each gym sets to its own personality, so a Wednesday at Easton feels nothing like a Wednesday at Harbourside.</p>
+    </div>
+    <div class="gym-grid">
+      <article class="gym" style="--stripe:var(--g-orange)">
+        <div class="gym-top">
+          <div><h3 class="display">Bedminster</h3><p class="kind">The original. Steep boards and a big slab.</p></div>
+          <div class="stat"><b>620</b><span>square metres</span></div>
+        </div>
+        <address>Unit 4, Malago Works<br>12 Sheene Road, Bristol BS3 4EG<br>0117 902 4410</address>
+        <dl class="hours">
+          <dt>Monday to Friday</dt><dd>06:30 to 22:30</dd>
+          <dt>Saturday and Sunday</dt><dd>09:00 to 20:00</dd>
+          <dt>Bank holidays</dt><dd>10:00 to 18:00</dd>
+        </dl>
+        <ul class="tags"><li class="tag">45 degree board</li><li class="tag">Kilter board</li><li class="tag">Training mezzanine</li><li class="tag">Cafe</li><li class="tag">Bike racks</li></ul>
+        <div class="gym-foot"><a href="#gyms">Get directions <span aria-hidden="true">→</span></a><span style="color:var(--muted)">Quiet before 16:00</span></div>
+      </article>
+      <article class="gym" style="--stripe:var(--g-green)">
+        <div class="gym-top">
+          <div><h3 class="display">Easton</h3><p class="kind">Friendliest walls in the city. Best for beginners and kids.</p></div>
+          <div class="stat"><b>480</b><span>square metres</span></div>
+        </div>
+        <address>The Old Bakery<br>88 Stapleton Road, Bristol BS5 0PP<br>0117 902 4420</address>
+        <dl class="hours">
+          <dt>Monday to Friday</dt><dd>06:30 to 22:30</dd>
+          <dt>Saturday and Sunday</dt><dd>09:00 to 20:00</dd>
+          <dt>Bank holidays</dt><dd>10:00 to 18:00</dd>
+        </dl>
+        <ul class="tags"><li class="tag">Dedicated kids' area</li><li class="tag">Long traverse wall</li><li class="tag">Yoga studio</li><li class="tag">Step-free access</li><li class="tag">Buggy park</li></ul>
+        <div class="gym-foot"><a href="#gyms">Get directions <span aria-hidden="true">→</span></a><span style="color:var(--muted)">Kids club Sat 09:30</span></div>
+      </article>
+      <article class="gym" style="--stripe:var(--g-purple)">
+        <div class="gym-top">
+          <div><h3 class="display">Harbourside</h3><p class="kind">The new one. Comp wall, tallest roof, longest bar.</p></div>
+          <div class="stat"><b>910</b><span>square metres</span></div>
+        </div>
+        <address>Shed 7, Museum Street<br>Bristol BS1 4RN<br>0117 902 4430</address>
+        <dl class="hours">
+          <dt>Monday to Friday</dt><dd>06:30 to 22:30</dd>
+          <dt>Saturday and Sunday</dt><dd>09:00 to 21:00</dd>
+          <dt>Bank holidays</dt><dd>10:00 to 18:00</dd>
+        </dl>
+        <ul class="tags"><li class="tag">Comp wall</li><li class="tag">Moon board</li><li class="tag">Sauna</li><li class="tag">Coworking desks</li><li class="tag">Harbour ferry stop</li></ul>
+        <div class="gym-foot"><a href="#gyms">Get directions <span aria-hidden="true">→</span></a><span style="color:var(--muted)">Busiest after 18:00</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="membership" id="membership" aria-labelledby="membership-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Membership</p>
+        <h2 id="membership-title" class="display h-xl" style="margin-top:12px">One membership. Every gym. Cancel any month.</h2>
+      </div>
+      <div>
+        <p class="lede" style="margin-bottom:18px">Prices include shoes for your first month, unlimited chalk and every social session. Direct debit, no joining fee, freeze for up to three months a year.</p>
+        <div class="toggle" role="radiogroup" aria-label="Billing period">
+          <button type="button" role="radio" aria-checked="true" data-period="monthly">Monthly</button>
+          <button type="button" role="radio" aria-checked="false" data-period="annual">Annual <small>two months free</small></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="plans">
+      <article class="plan">
+        <div class="name"><h3 class="display">Off-peak</h3></div>
+        <div class="price"><span class="amount" data-monthly="42" data-annual="420">£42</span><span class="per" data-per-monthly="a month" data-per-annual="a year">a month</span></div>
+        <p class="price-note" data-note-monthly="Rolling, cancel any time" data-note-annual="Works out at £35 a month">Rolling, cancel any time</p>
+        <p class="blurb">All three gyms before 16:00 on weekdays and all day at weekends. Made for shift workers, students and anyone who likes an empty wall.</p>
+        <ul>
+          <li>Weekdays 06:30 to 16:00, weekends all day</li>
+          <li>Shoes free for your first month</li>
+          <li>Two guest passes a year</li>
+          <li>10 percent off coaching and the cafe</li>
+        </ul>
+        <a class="btn btn-ghost" href="#taster">Choose off-peak</a>
+      </article>
+
+      <article class="plan hot">
+        <div class="name"><h3 class="display">Full</h3><span class="pill">Most members</span></div>
+        <div class="price"><span class="amount" data-monthly="58" data-annual="580">£58</span><span class="per" data-per-monthly="a month" data-per-annual="a year">a month</span></div>
+        <p class="price-note" data-note-monthly="Rolling, cancel any time" data-note-annual="Works out at £48 a month">Rolling, cancel any time</p>
+        <p class="blurb">Any gym, any hour we are open, as often as you like. Bring a friend on Fridays. This is the card most people end up with.</p>
+        <ul>
+          <li>Unlimited climbing at all three gyms</li>
+          <li>Shoes free for your first month</li>
+          <li>Six guest passes a year, plus free Friday guests</li>
+          <li>15 percent off coaching, the cafe and the shop</li>
+          <li>Autumn and spring league entry included</li>
+        </ul>
+        <a class="btn btn-accent" href="#taster">Choose full</a>
+      </article>
+
+      <article class="plan">
+        <div class="name"><h3 class="display">Household</h3></div>
+        <div class="price"><span class="amount" data-monthly="99" data-annual="990">£99</span><span class="per" data-per-monthly="a month" data-per-annual="a year">a month</span></div>
+        <p class="price-note" data-note-monthly="Two adults at one address" data-note-annual="Works out at £82 a month">Two adults at one address</p>
+        <p class="blurb">Two full memberships at one address, and kids under 16 climb free with you on weekend mornings. Add a third adult for £40.</p>
+        <ul>
+          <li>Two full memberships, one direct debit</li>
+          <li>Kids under 16 free at weekends before 12:00</li>
+          <li>Kids club at half price</li>
+          <li>Everything in Full, for both of you</li>
+        </ul>
+        <a class="btn btn-ghost" href="#taster">Choose household</a>
+      </article>
+    </div>
+
+    <div class="payg" aria-label="Pay as you go prices">
+      <div><b>£14</b><span>Day pass, any gym, any time</span></div>
+      <div><b>£120</b><span>Ten-visit card, valid a year, shareable</span></div>
+      <div><b>£4</b><span>Shoe hire, chalk is always free</span></div>
+      <div><b>£9</b><span>Under 18 day pass, with a signed form</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="setting" aria-labelledby="setting-title">
+  <div class="wrap setting-grid">
+    <div class="setting-aside">
+      <p class="eyebrow">Setting schedule</p>
+      <h2 id="setting-title" class="display h-xl" style="margin-top:12px">Something new every week.</h2>
+      <p class="big" style="margin-top:24px">1,400</p>
+      <p class="lede" style="margin-top:8px">holds come off and go back up across the three gyms every seven days. Each colour rotates on its own cycle, so there is always one circuit fresh and one you have nearly finished.</p>
+      <p class="lede">Setters strip the day before. If your project is on a wall listed below, this is your warning.</p>
+    </div>
+    <div class="set-wrap">
+      <table class="set-table">
+        <thead>
+          <tr><th scope="col">Gym</th><th scope="col">Wall</th><th scope="col">Circuits</th><th scope="col">Date</th><th scope="col">Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="gym-name">Bedminster</td><td>45 degree board</td><td><span class="dots"><i style="background:var(--g-orange)"></i><i style="background:var(--g-red)"></i></span>Orange, red</td><td class="when">Wed 10 Sep</td><td><span class="status live">Up now</span></td></tr>
+          <tr><td class="gym-name">Easton</td><td>Main arch</td><td><span class="dots"><i style="background:var(--g-green)"></i><i style="background:var(--g-yellow)"></i><i style="background:var(--g-orange)"></i></span>Green, yellow, orange</td><td class="when">Fri 12 Sep</td><td><span class="status">Stripping Thu</span></td></tr>
+          <tr><td class="gym-name">Harbourside</td><td>Comp wall</td><td><span class="dots"><i style="background:var(--g-red)"></i><i style="background:var(--g-purple)"></i></span>Red, purple</td><td class="when">Sun 14 Sep</td><td><span class="status">Stripping Sat</span></td></tr>
+          <tr><td class="gym-name">Bedminster</td><td>Big slab</td><td><span class="dots"><i style="background:var(--g-green)"></i><i style="background:var(--g-yellow)"></i><i style="background:var(--g-purple)"></i></span>Green, yellow, purple</td><td class="when">Tue 16 Sep</td><td><span class="status">Scheduled</span></td></tr>
+          <tr><td class="gym-name">Harbourside</td><td>Roof and cave</td><td><span class="dots"><i style="background:var(--g-orange)"></i><i style="background:var(--g-black)"></i></span>Orange, black</td><td class="when">Thu 18 Sep</td><td><span class="status">Scheduled</span></td></tr>
+          <tr><td class="gym-name">Easton</td><td>Traverse wall</td><td><span class="dots"><i style="background:var(--g-green)"></i><i style="background:var(--g-yellow)"></i></span>Green, yellow</td><td class="when">Sat 20 Sep</td><td><span class="status">Scheduled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="questions" aria-labelledby="questions-title" style="padding-top:0">
+  <div class="wrap faq-grid">
+    <div>
+      <p class="eyebrow">Before you come in</p>
+      <h2 id="questions-title" class="display h-xl" style="margin-top:12px">The questions we answer at the desk every day.</h2>
+      <p class="lede" style="margin-top:18px">Anything else, ring the gym nearest you. A human answers between 09:00 and 21:00.</p>
+    </div>
+    <div>
+      <details open>
+        <summary>I have never climbed. Can I just turn up?<span class="plus" aria-hidden="true"></span></summary>
+        <p>Yes. Book a £15 taster or buy a day pass at the desk, watch the four-minute safety video, and you are on the wall. Start on green, stay on the mats' side of the marked line, and climb down rather than jumping when you can.</p>
+      </details>
+      <details>
+        <summary>Do I need my own shoes and chalk?<span class="plus" aria-hidden="true"></span></summary>
+        <p>No. Shoe hire is £4, and free for your whole first month as a member. Chalk is free at every gym, always. Trainers are fine for the first session if you would rather.</p>
+      </details>
+      <details>
+        <summary>Can I use all three gyms on one membership?<span class="plus" aria-hidden="true"></span></summary>
+        <p>Every membership works at Bedminster, Easton and Harbourside. Off-peak follows the same hours at each gym. Your card, or the app, gets you through the gate at any of them.</p>
+      </details>
+      <details>
+        <summary>Can I freeze or cancel?<span class="plus" aria-hidden="true"></span></summary>
+        <p>Freeze for up to three months in any twelve, from the app, for free. Monthly memberships cancel with one month's notice. Annual memberships run for the year and can be transferred to someone else if you move away.</p>
+      </details>
+      <details>
+        <summary>What about kids?<span class="plus" aria-hidden="true"></span></summary>
+        <p>Under 18s can climb with a signed form from a parent or guardian. Under 14s need a supervising adult on the mats. Kids club runs at Easton on Saturday mornings and Bedminster on Sunday mornings for ages 6 to 12, £11 a session or £38 a month.</p>
+      </details>
+      <details>
+        <summary>Is there parking?<span class="plus" aria-hidden="true"></span></summary>
+        <p>Bedminster has 30 spaces and 40 bike racks. Easton is street parking only, with a big bike shelter. Harbourside is best reached on foot, by bike or on the harbour ferry, which stops outside the door.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="taster" id="taster" aria-labelledby="taster-title">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow" style="color:#3b1608">First time here</p>
+      <h2 id="taster-title" class="display" style="margin-top:12px">Your first hour costs £15 and it includes everything.</h2>
+      <p>Shoes, chalk, a 30-minute intro with a coach, and the rest of the day to climb. If you join within a week, we take the £15 off your first month.</p>
+    </div>
+    <div class="taster-card">
+      <div class="row"><b>£15</b><span>Taster, any gym, any day</span></div>
+      <div class="row"><b>60 min</b><span>Intro plus free climbing after</span></div>
+      <div class="row"><b>Age 6+</b><span>Kids' tasters at Easton and Bedminster</span></div>
+      <a class="btn btn-accent" href="#gyms">Book a taster</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="wordmark" href="#top"><span class="mark" aria-hidden="true"></span>Chalkline</a>
+        <p>Bouldering gyms in Bristol since 2017. Owned by the people who set the problems.</p>
+        <form class="newsletter" onsubmit="event.preventDefault(); this.querySelector('input').value=''; this.querySelector('button').textContent='Done';">
+          <input type="email" placeholder="Email for the weekly set list" aria-label="Email address">
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div>
+        <h4>Gyms</h4>
+        <ul>
+          <li><address><b>Bedminster</b>Unit 4, Malago Works, 12 Sheene Road, BS3 4EG<br>0117 902 4410</address></li>
+          <li><address><b>Easton</b>The Old Bakery, 88 Stapleton Road, BS5 0PP<br>0117 902 4420</address></li>
+          <li><address><b>Harbourside</b>Shed 7, Museum Street, BS1 4RN<br>0117 902 4430</address></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Climb</h4>
+        <ul>
+          <li><a href="#membership">Membership</a></li>
+          <li><a href="#taster">Taster sessions</a></li>
+          <li><a href="#grades">Circuits and grades</a></li>
+          <li><a href="#setting">Setting schedule</a></li>
+          <li><a href="#questions">Coaching</a></li>
+          <li><a href="#questions">Kids club</a></li>
+          <li><a href="#questions">Autumn league</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Chalkline</h4>
+        <ul>
+          <li><a href="#top">About us</a></li>
+          <li><a href="#top">Jobs, we are hiring setters</a></li>
+          <li><a href="#top">Gift cards</a></li>
+          <li><a href="#top">Group bookings</a></li>
+          <li><a href="#top">Accessibility</a></li>
+          <li><a href="#top">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="small-print">
+      <span>© 2026 Chalkline Climbing Ltd. Registered in England, company 10893471.</span>
+      <div><a href="#top">Privacy</a><a href="#top">Terms</a><a href="#top">Cookies</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var buttons = document.querySelectorAll('.toggle [data-period]');
+  function apply(period){
+    buttons.forEach(function(b){ b.setAttribute('aria-checked', String(b.dataset.period === period)); });
+    document.querySelectorAll('.plan').forEach(function(plan){
+      var amount = plan.querySelector('.amount');
+      var per = plan.querySelector('.per');
+      var note = plan.querySelector('.price-note');
+      amount.textContent = '£' + amount.dataset[period];
+      per.textContent = per.dataset[period === 'monthly' ? 'perMonthly' : 'perAnnual'];
+      note.textContent = note.dataset[period === 'monthly' ? 'noteMonthly' : 'noteAnnual'];
+    });
+  }
+  buttons.forEach(function(b){ b.addEventListener('click', function(){ apply(b.dataset.period); }); });
+
+  var items = document.querySelectorAll('#questions details');
+  items.forEach(function(d){
+    d.addEventListener('toggle', function(){
+      if (d.open) items.forEach(function(o){ if (o !== d) o.removeAttribute('open'); });
+    });
+  });
+})();
+</script>
+</body>
+</html>

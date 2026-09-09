@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ravensgate Opera House - Winter season 2026-27</title>
+<meta name="description" content="Five productions, forty-five nights, one house lit red. The Ravensgate Opera House winter season runs 4 December to 8 March. Tickets from £12.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-1: clamp(2.75rem, 5.2vw, 4.5rem);   /* display */
+    --t-2: clamp(1.9rem, 3.2vw, 2.75rem);   /* section heads */
+    --t-3: 1.375rem;                         /* production titles, pull copy */
+    --t-4: 1.0625rem;                        /* body */
+    --t-5: 0.8125rem;                        /* meta, labels */
+
+    /* palette */
+    --ink: #0C0A0B;
+    --ink-2: #171316;
+    --crimson: #B3121F;
+    --crimson-deep: #6A0A12;
+    --cream: #F3EADB;
+    --muted: #A2969A;
+    --rule: rgba(243,234,219,0.14);
+
+    --display: "Playfair Display", "Iowan Old Style", Georgia, serif;
+    --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+
+    --seam: clamp(72px, 10vw, 140px);
+    --wrap: 1200px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--cream);
+    font-family:var(--sans);
+    font-size:var(--t-4);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,p,ul,ol{margin:0}
+  ul,ol{padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+
+  .wrap{
+    max-width:var(--wrap);
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 48px);
+  }
+
+  .meta{
+    font-size:var(--t-5);
+    letter-spacing:0.01em;
+    color:var(--muted);
+  }
+  .meta strong{color:var(--cream);font-weight:500}
+
+  .display{font-family:var(--display);font-weight:400;letter-spacing:-0.01em}
+  em{font-style:italic}
+
+  section{padding-block:var(--seam)}
+  section + section{border-top:1px solid var(--rule)}
+
+  .section-head{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:end;
+    gap:24px;
+    margin-bottom:48px;
+  }
+  .section-head h2{font-size:var(--t-2);line-height:1.05;max-width:20ch}
+  .section-head .meta{padding-bottom:6px}
+
+  .arrow-link{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:var(--t-5);color:var(--cream);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:4px;
+    transition:border-color .2s, color .2s;
+  }
+  .arrow-link:hover{color:var(--crimson);border-color:var(--crimson)}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    height:48px;padding-inline:24px;
+    border-radius:999px;
+    font-size:var(--t-5);font-weight:500;
+    transition:background .2s,color .2s,border-color .2s,transform .2s;
+  }
+  .btn-solid{background:var(--crimson);color:var(--cream)}
+  .btn-solid:hover{background:#C8172A}
+  .btn-ghost{border:1px solid var(--rule);color:var(--cream)}
+  .btn-ghost:hover{border-color:var(--cream)}
+
+  /* ---------- Fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    border-bottom:1px solid var(--rule);
+    background:var(--ink);
+    position:relative;z-index:5;
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:72px;gap:24px;
+  }
+  .wordmark{
+    font-family:var(--display);font-size:1.5rem;letter-spacing:-0.01em;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  .wordmark span{font-family:var(--sans);font-size:var(--t-5);color:var(--muted);letter-spacing:0.02em}
+  .nav-links{display:flex;gap:28px;font-size:var(--t-5)}
+  .nav-links a{color:var(--muted);transition:color .2s}
+  .nav-links a:hover{color:var(--cream)}
+  .nav-cta{display:flex;align-items:center;gap:18px}
+  .nav-cta .btn{height:40px;padding-inline:18px}
+
+  .hero{flex:1;position:relative;display:flex;align-items:center;overflow:hidden}
+
+  /* the curtain: pure CSS folds + SVG pelmet, sitting under the last word of the headline */
+  .curtain{
+    position:absolute;top:0;bottom:0;right:0;width:54%;
+    background:
+      linear-gradient(180deg, rgba(12,10,11,0) 55%, rgba(12,10,11,0.55) 100%),
+      repeating-linear-gradient(90deg,
+        var(--crimson-deep) 0px, var(--crimson-deep) 10px,
+        #8B0F1A 10px, #8B0F1A 26px,
+        var(--crimson) 26px, var(--crimson) 44px,
+        #9E1120 44px, #9E1120 58px,
+        #7A0C16 58px, #7A0C16 70px);
+  }
+  .curtain::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 70% at 50% 100%, rgba(0,0,0,0.5), transparent 60%);
+  }
+  .pelmet{position:absolute;top:0;left:0;width:100%;height:96px;display:block}
+  .stage-lip{
+    position:absolute;left:0;right:0;bottom:0;height:10px;
+    background:linear-gradient(180deg, rgba(243,234,219,0.35), rgba(243,234,219,0.05));
+  }
+  .curtain-note{
+    position:absolute;left:28px;bottom:28px;
+    font-size:var(--t-5);color:rgba(243,234,219,0.7);
+    max-width:22ch;line-height:1.4;
+  }
+
+  .hero .wrap{position:relative;z-index:2;width:100%;padding-block:40px}
+  .hero-grid{display:grid;grid-template-columns:1fr}
+  .dateline{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  .dateline .dot{width:8px;height:8px;border-radius:50%;background:var(--crimson);box-shadow:0 0 0 4px rgba(179,18,31,0.25)}
+  .hero h1{
+    font-size:var(--t-1);line-height:1.02;
+    max-width:10em;text-wrap:balance;
+  }
+  .hero h1 em{color:var(--cream)}
+  .hero-sub{
+    margin-top:28px;max-width:44ch;
+    color:var(--muted);font-size:var(--t-4);
+  }
+  .hero-sub strong{color:var(--cream);font-weight:500}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px;align-items:center}
+  .hero-actions .meta{flex-basis:100%;margin-top:6px}
+
+  /* ---------- Marquee strip ---------- */
+  .strip{
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    background:var(--ink-2);
+    overflow:hidden;white-space:nowrap;
+    padding-block:14px;
+    font-size:var(--t-5);
+  }
+  .strip-track{display:inline-flex;gap:0;animation:slide 48s linear infinite}
+  .strip:hover .strip-track{animation-play-state:paused}
+  .strip-track span{padding-inline:28px;color:var(--muted)}
+  .strip-track span b{color:var(--cream);font-weight:500}
+  .strip-track span::after{content:"·";margin-left:28px;color:var(--crimson)}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion: reduce){.strip-track{animation:none}}
+
+  /* ---------- Programme rows ---------- */
+  .programme li{border-top:1px solid var(--rule)}
+  .programme li:last-child{border-bottom:1px solid var(--rule)}
+  .row{
+    width:100%;text-align:left;
+    display:grid;
+    grid-template-columns:56px minmax(0,1.6fr) minmax(0,1fr) minmax(0,0.9fr) auto 24px;
+    align-items:baseline;gap:24px;
+    padding-block:26px;
+    transition:color .2s;
+  }
+  .row:hover .title{color:var(--crimson)}
+  .row .num{font-family:var(--display);font-size:var(--t-3);color:var(--muted)}
+  .row .title{font-family:var(--display);font-size:var(--t-3);line-height:1.15;transition:color .2s}
+  .row .title small{display:block;font-family:var(--sans);font-size:var(--t-5);color:var(--muted);margin-top:6px}
+  .row .col{font-size:var(--t-5);color:var(--muted);line-height:1.5}
+  .row .col b{display:block;color:var(--cream);font-weight:500}
+  .row .price{font-size:var(--t-5);color:var(--cream);white-space:nowrap}
+  .row .chev{
+    width:24px;height:24px;border-radius:50%;border:1px solid var(--rule);
+    display:grid;place-items:center;font-size:12px;color:var(--muted);
+    transition:transform .25s, border-color .2s, color .2s;
+  }
+  .row[aria-expanded="true"] .chev{transform:rotate(45deg);border-color:var(--crimson);color:var(--crimson)}
+  .row-detail{
+    display:none;
+    grid-template-columns:56px minmax(0,1.6fr) minmax(0,1fr);
+    gap:24px;
+    padding-bottom:32px;
+  }
+  .row-detail.open{display:grid}
+  .row-detail .synopsis{color:var(--muted);max-width:56ch}
+  .row-detail .credits{font-size:var(--t-5);color:var(--muted);display:grid;gap:8px}
+  .row-detail .credits b{color:var(--cream);font-weight:500}
+  .row-detail .credits div{display:grid;grid-template-columns:110px 1fr;gap:12px}
+  .tag{
+    display:inline-block;font-size:var(--t-5);color:var(--crimson);
+    border:1px solid rgba(179,18,31,0.5);border-radius:999px;
+    padding:2px 10px;margin-bottom:12px;
+  }
+
+  /* ---------- Spotlight ---------- */
+  .spot{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .spot-visual{
+    position:relative;aspect-ratio:4/5;overflow:hidden;
+    background:
+      radial-gradient(60% 45% at 50% 62%, rgba(179,18,31,0.55), transparent 70%),
+      linear-gradient(180deg, #0C0A0B 0%, #1E0F12 45%, #4A0B12 100%);
+    border:1px solid var(--rule);
+  }
+  .spot-visual svg{position:absolute;inset:0;width:100%;height:100%}
+  .spot-caption{
+    position:absolute;left:24px;bottom:22px;right:24px;
+    display:flex;justify-content:space-between;gap:16px;
+    font-size:var(--t-5);color:rgba(243,234,219,0.7);
+  }
+  .spot h2{font-size:var(--t-2);line-height:1.05;margin-top:14px}
+  .spot .lede{margin-top:22px;color:var(--muted);max-width:48ch}
+  .quote{
+    margin-top:36px;padding-left:22px;border-left:2px solid var(--crimson);
+    font-family:var(--display);font-size:var(--t-3);line-height:1.35;font-style:italic;
+  }
+  .quote-by{margin-top:12px;padding-left:24px}
+  .spot-facts{
+    margin-top:36px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    border-top:1px solid var(--rule);padding-top:22px;
+  }
+  .spot-facts b{display:block;font-family:var(--display);font-size:var(--t-3);font-weight:400;margin-bottom:4px}
+
+  /* ---------- Calendar ---------- */
+  .months{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .month{background:var(--ink);padding:28px 24px 32px}
+  .month h3{font-family:var(--display);font-size:var(--t-3);font-weight:400;margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline}
+  .month h3 span{font-family:var(--sans);font-size:var(--t-5);color:var(--muted)}
+  .month .show{padding-block:12px;border-top:1px solid var(--rule)}
+  .month .show:first-of-type{border-top:0;padding-top:0}
+  .month .show b{display:block;font-weight:500;font-size:var(--t-5);margin-bottom:8px}
+  .dates{display:flex;flex-wrap:wrap;gap:6px}
+  .dates i{
+    font-style:normal;font-size:var(--t-5);
+    min-width:30px;height:30px;padding-inline:8px;
+    display:grid;place-items:center;
+    border:1px solid var(--rule);border-radius:999px;color:var(--muted);
+    transition:border-color .2s,color .2s,background .2s;
+  }
+  .dates i.prem{background:var(--crimson);border-color:var(--crimson);color:var(--cream)}
+  .dates i.mat{border-style:dashed}
+  .dates i:hover{border-color:var(--cream);color:var(--cream)}
+  .legend{display:flex;gap:28px;margin-top:22px;font-size:var(--t-5);color:var(--muted);align-items:center}
+  .legend i{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid var(--rule);vertical-align:-2px;margin-right:8px}
+  .legend i.prem{background:var(--crimson);border-color:var(--crimson)}
+  .legend i.mat{border-style:dashed}
+
+  /* ---------- Tickets ---------- */
+  .tickets{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start}
+  .tabs{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:4px;margin-bottom:28px}
+  .tabs button{
+    padding:8px 16px;border-radius:999px;font-size:var(--t-5);color:var(--muted);
+    transition:background .2s,color .2s;
+  }
+  .tabs button[aria-selected="true"]{background:var(--cream);color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:var(--t-4)}
+  th,td{text-align:left;padding:16px 0;border-bottom:1px solid var(--rule);vertical-align:baseline}
+  th{font-weight:400;font-size:var(--t-5);color:var(--muted)}
+  td:last-child,th:last-child{text-align:right}
+  td.band{font-family:var(--display);font-size:var(--t-3)}
+  td.band small{display:block;font-family:var(--sans);font-size:var(--t-5);color:var(--muted);margin-top:4px}
+  td.amt{font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr:hover td{color:var(--cream)}
+  .ticket-note{margin-top:18px;font-size:var(--t-5);color:var(--muted);max-width:60ch}
+  .offers{margin-top:32px;display:grid;gap:0;border-top:1px solid var(--rule)}
+  .offers div{display:grid;grid-template-columns:1fr auto;gap:20px;padding-block:18px;border-bottom:1px solid var(--rule);align-items:baseline}
+  .offers b{font-weight:500;display:block}
+  .offers span{color:var(--muted);font-size:var(--t-5)}
+  .offers .amt{font-family:var(--display);font-size:var(--t-3);white-space:nowrap}
+
+  /* ---------- Season pass band ---------- */
+  .pass{background:var(--crimson);color:var(--cream);border-top:0 !important}
+  .pass .wrap{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px;align-items:end}
+  .pass h2{font-size:var(--t-2);line-height:1.05;max-width:18ch}
+  .pass p{margin-top:20px;max-width:46ch;color:rgba(243,234,219,0.85)}
+  .pass .meta{color:rgba(243,234,219,0.7)}
+  .pass ul{display:grid;gap:12px;border-top:1px solid rgba(243,234,219,0.3);padding-top:22px}
+  .pass li{display:grid;grid-template-columns:1fr auto;gap:16px;font-size:var(--t-4)}
+  .pass li span{color:rgba(243,234,219,0.7);font-size:var(--t-5)}
+  .pass .btn-solid{background:var(--ink);color:var(--cream);margin-top:28px}
+  .pass .btn-solid:hover{background:#000}
+
+  /* ---------- Visit ---------- */
+  .visit{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .visit h3{font-size:var(--t-5);color:var(--muted);font-weight:400;margin-bottom:14px}
+  .visit p{font-size:var(--t-4);line-height:1.6}
+  .visit p span{color:var(--muted)}
+  .plan{
+    margin-top:56px;border:1px solid var(--rule);
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .plan svg{width:100%;height:auto;display:block}
+  .plan-copy{padding:36px;border-left:1px solid var(--rule);display:flex;flex-direction:column;justify-content:center}
+  .plan-copy h3{font-family:var(--display);font-size:var(--t-3);font-weight:400;margin-bottom:12px}
+  .plan-copy p{color:var(--muted);max-width:44ch}
+  .plan-copy ul{margin-top:22px;display:grid;gap:8px;font-size:var(--t-5)}
+  .plan-copy li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:center}
+  .plan-copy li i{width:12px;height:12px;border-radius:2px;display:inline-block}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--rule);padding-block:64px 40px;background:var(--ink-2)}
+  .foot-grid{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));gap:40px}
+  .foot-grid h3{font-size:var(--t-5);color:var(--muted);font-weight:400;margin-bottom:14px}
+  .foot-grid ul{display:grid;gap:8px;font-size:var(--t-5)}
+  .foot-grid a:hover{color:var(--crimson)}
+  .foot-brand p{color:var(--muted);font-size:var(--t-5);max-width:34ch;margin-top:12px}
+  .news{margin-top:22px;display:flex;border-bottom:1px solid var(--rule);max-width:360px}
+  .news input{flex:1;min-width:0;background:none;border:0;color:var(--cream);font:inherit;font-size:var(--t-5);padding:10px 0;outline:none}
+  .news input::placeholder{color:var(--muted)}
+  .news button{font-size:var(--t-5);color:var(--cream)}
+  .news button:hover{color:var(--crimson)}
+  .foot-bottom{
+    margin-top:48px;padding-top:22px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-size:var(--t-5);color:var(--muted);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px){
+    .hero-grid{grid-template-columns:1fr}
+    .curtain{width:40%}
+    .spot,.tickets,.pass .wrap{grid-template-columns:1fr}
+    .months{grid-template-columns:repeat(2,1fr)}
+    .visit{grid-template-columns:repeat(2,1fr)}
+    .plan{grid-template-columns:1fr}
+    .plan-copy{border-left:0;border-top:1px solid var(--rule)}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .row{grid-template-columns:40px minmax(0,1.6fr) minmax(0,1fr) auto 24px}
+    .row .col:nth-of-type(2){display:none}
+    .row-detail{grid-template-columns:40px 1fr}
+  }
+  @media (max-width: 640px){
+    .nav-links{display:none}
+    .curtain{display:none}
+    .row{grid-template-columns:1fr auto;gap:12px}
+    .row .num,.row .col{display:none}
+    .row-detail{grid-template-columns:1fr}
+    .months,.visit,.foot-grid{grid-template-columns:1fr}
+    .spot-facts{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Fold ===== -->
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top">Ravensgate <span>Opera House</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#programme">What's on</a>
+        <a href="#calendar">Calendar</a>
+        <a href="#tickets">Tickets</a>
+        <a href="#pass">Season pass</a>
+        <a href="#visit">Visit</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="meta" href="#visit"><strong>Box office</strong> 020 7946 0310</a>
+        <a class="btn btn-solid" href="#tickets">Book tickets</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top" style="padding-block:0;border-top:0">
+    <div class="curtain" aria-hidden="true">
+      <svg class="pelmet" viewBox="0 0 800 96" preserveAspectRatio="none">
+        <path d="M0 0 H800 V54 C760 54 760 90 720 90 C680 90 680 54 640 54 C600 54 600 90 560 90 C520 90 520 54 480 54 C440 54 440 90 400 90 C360 90 360 54 320 54 C280 54 280 90 240 90 C200 90 200 54 160 54 C120 54 120 90 80 90 C40 90 40 54 0 54 Z" fill="#4E070F"/>
+        <path d="M0 54 C40 54 40 90 80 90 C120 90 120 54 160 54 C200 54 200 90 240 90 C280 90 280 54 320 54 C360 54 360 90 400 90 C440 90 440 54 480 54 C520 54 520 90 560 90 C600 90 600 54 640 54 C680 54 680 90 720 90 C760 90 760 54 800 54" fill="none" stroke="rgba(243,234,219,0.35)" stroke-width="1.5"/>
+      </svg>
+      <div class="stage-lip"></div>
+      <p class="curtain-note">The house curtain, rehung in Venetian velvet for the season. Rise at 7.30pm.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="dateline meta"><span class="dot"></span><strong>Winter season 2026-27</strong> &nbsp;·&nbsp; 4 December to 8 March</p>
+          <h1 class="display">Five productions. Forty-five nights. One house, <em>lit red.</em></h1>
+          <p class="hero-sub">A world premiere from Mireille Ashdown opens the season; a family opera about the last lamplighter in the city closes it. <strong>Tickets from £12</strong>, and every seat in the house under £30 on Tuesdays.</p>
+          <div class="hero-actions">
+            <a class="btn btn-solid" href="#programme">See the programme</a>
+            <a class="btn btn-ghost" href="#pass">Season pass, from £96</a>
+            <span class="meta">Public booking opens Monday 14 September, 10am</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== Strip ===== -->
+<div class="strip" aria-hidden="true">
+  <div class="strip-track">
+    <span><b>Opening night</b> Isolde at Dawn, Thursday 4 December</span>
+    <span><b>New staging</b> The Glass Duchess, from 9 January</span>
+    <span><b>Concert staging</b> Nine Frozen Rivers, five nights only</span>
+    <span><b>Company revival</b> Salt and Iron, from 6 February</span>
+    <span><b>Family opera</b> The Last Lamplighter, matinees from 20 February</span>
+    <span><b>Tuesday nights</b> every seat under £30</span>
+    <span><b>Opening night</b> Isolde at Dawn, Thursday 4 December</span>
+    <span><b>New staging</b> The Glass Duchess, from 9 January</span>
+    <span><b>Concert staging</b> Nine Frozen Rivers, five nights only</span>
+    <span><b>Company revival</b> Salt and Iron, from 6 February</span>
+    <span><b>Family opera</b> The Last Lamplighter, matinees from 20 February</span>
+    <span><b>Tuesday nights</b> every seat under £30</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ===== Programme ===== -->
+<section id="programme">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="display">The programme</h2>
+      <p class="meta">Select a production for the synopsis and creative team</p>
+    </div>
+
+    <ol class="programme">
+      <li>
+        <button class="row" aria-expanded="false" aria-controls="d1">
+          <span class="num">01</span>
+          <span class="title">Isolde at Dawn<small>Mireille Ashdown · sung in English with surtitles</small></span>
+          <span class="col"><b>4 to 21 December</b>9 performances · 2h 40m with one interval</span>
+          <span class="col"><b>World premiere</b>Main stage</span>
+          <span class="price">From £24</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="row-detail" id="d1">
+          <span></span>
+          <div>
+            <span class="tag">Opening night, Thursday 4 December</span>
+            <p class="synopsis">Ashdown's first full-length opera takes the last hour of the Tristan legend and turns it around: Isolde wakes before the ship lands, alone on the headland, and the whole score is what she decides to do with the morning. A chamber chorus of twelve stands in for the sea. Commissioned by Ravensgate with the Harlow Trust.</p>
+          </div>
+          <div class="credits">
+            <div><span>Conductor</span><b>Teodora Vasić</b></div>
+            <div><span>Director</span><b>Callum Ferrier</b></div>
+            <div><span>Isolde</span><b>Nkechi Adeyemi</b></div>
+            <div><span>Brangäne</span><b>Lise Hallström</b></div>
+            <div><span>Design</span><b>Studio Morrow</b></div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <button class="row" aria-expanded="false" aria-controls="d2">
+          <span class="num">02</span>
+          <span class="title">The Glass Duchess<small>Ferrante Loredan, 1871 · sung in Italian with surtitles</small></span>
+          <span class="col"><b>9 January to 2 February</b>11 performances · 3h 05m with two intervals</span>
+          <span class="col"><b>New staging</b>Main stage</span>
+          <span class="price">From £18</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="row-detail" id="d2">
+          <span></span>
+          <div>
+            <span class="tag">First Ravensgate staging since 1994</span>
+            <p class="synopsis">Loredan's grand melodrama of a Venetian widow who marries a glassblower to keep her title, then learns his furnace is heating the city's rumours. Anja Solberg's production moves the action into a single hall of mirrors that slowly fills with smoke across the three acts. The famous second-act sextet is sung unamplified from the stalls.</p>
+          </div>
+          <div class="credits">
+            <div><span>Conductor</span><b>Marcus Oyelaran</b></div>
+            <div><span>Director</span><b>Anja Solberg</b></div>
+            <div><span>The Duchess</span><b>Rosalind Achterberg</b></div>
+            <div><span>Piero</span><b>Dmitri Kalashnik</b></div>
+            <div><span>Chorus master</span><b>Helen Bray</b></div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <button class="row" aria-expanded="false" aria-controls="d3">
+          <span class="num">03</span>
+          <span class="title">Nine Frozen Rivers<small>Tobiasz Rell · song cycle for baritone, choir and orchestra</small></span>
+          <span class="col"><b>15 to 24 January</b>5 performances · 1h 20m, no interval</span>
+          <span class="col"><b>Concert staging</b>Main stage</span>
+          <span class="price">From £15</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="row-detail" id="d3">
+          <span></span>
+          <div>
+            <span class="tag">Five nights only</span>
+            <p class="synopsis">Nine songs, nine rivers, one winter walk across a country that no longer exists. Rell wrote the cycle for baritone Anders Lund in 2019; this is its first performance with the full Ravensgate Orchestra and a 60-voice chorus placed in the grand circle. Lighting by Ines Quiroga, no set, no costumes.</p>
+          </div>
+          <div class="credits">
+            <div><span>Conductor</span><b>Teodora Vasić</b></div>
+            <div><span>Baritone</span><b>Anders Lund</b></div>
+            <div><span>Lighting</span><b>Ines Quiroga</b></div>
+            <div><span>Chorus</span><b>Ravensgate Chorus</b></div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <button class="row" aria-expanded="false" aria-controls="d4">
+          <span class="num">04</span>
+          <span class="title">Salt and Iron<small>Anouk Verheyen, 2008 · sung in Dutch and English with surtitles</small></span>
+          <span class="col"><b>6 to 22 February</b>8 performances · 2h 15m with one interval</span>
+          <span class="col"><b>Company revival</b>Main stage</span>
+          <span class="price">From £22</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="row-detail" id="d4">
+          <span></span>
+          <div>
+            <span class="tag">Returning after a sold-out 2022 run</span>
+            <p class="synopsis">A shipyard on the Scheldt, a strike that lasts a winter, and two sisters on opposite sides of the gate. Verheyen's score sets a brass band against a string quartet and lets neither win. Revived with the original cast and Tomasz Wróbel's steel-plate set, which the company has kept in storage for four years for exactly this.</p>
+          </div>
+          <div class="credits">
+            <div><span>Conductor</span><b>Marcus Oyelaran</b></div>
+            <div><span>Director</span><b>Femke de Ruiter</b></div>
+            <div><span>Marthe</span><b>Saskia Vermeulen</b></div>
+            <div><span>Lien</span><b>Nkechi Adeyemi</b></div>
+            <div><span>Set</span><b>Tomasz Wróbel</b></div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <button class="row" aria-expanded="false" aria-controls="d5">
+          <span class="num">05</span>
+          <span class="title">The Last Lamplighter<small>Idris Kane, libretto by Hana Sato · sung in English · ages 6 and up</small></span>
+          <span class="col"><b>20 February to 8 March</b>12 performances · 1h 30m with one interval</span>
+          <span class="col"><b>Family opera</b>Main stage, matinees</span>
+          <span class="price">From £12</span>
+          <span class="chev" aria-hidden="true">+</span>
+        </button>
+        <div class="row-detail" id="d5">
+          <span></span>
+          <div>
+            <span class="tag">Under 16s £12 in every seat</span>
+            <p class="synopsis">The night the city switches to electric light, one lamplighter refuses to go home. Kane's score borrows from music hall and brass-band hymns; Sato's libretto gives the streetlamps their own chorus. Ninety minutes, one interval, and a children's chorus of forty drawn from the Ravensgate Saturday school.</p>
+          </div>
+          <div class="credits">
+            <div><span>Conductor</span><b>Helen Bray</b></div>
+            <div><span>Director</span><b>Callum Ferrier</b></div>
+            <div><span>The Lamplighter</span><b>Owen Pryce</b></div>
+            <div><span>The Mayor</span><b>Lise Hallström</b></div>
+            <div><span>Puppetry</span><b>Little Iron Theatre</b></div>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== Spotlight ===== -->
+<section id="spotlight">
+  <div class="wrap">
+    <div class="spot">
+      <div class="spot-visual" aria-hidden="true">
+        <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#F3EADB" stop-opacity="1"/>
+              <stop offset="55%" stop-color="#F3EADB" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#B3121F" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0C0A0B" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#0C0A0B" stop-opacity="0.9"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="300" r="78" fill="url(#sun)"/>
+          <g stroke="rgba(243,234,219,0.28)" stroke-width="1">
+            <line x1="0" y1="330" x2="400" y2="330"/>
+            <line x1="0" y1="352" x2="400" y2="352"/>
+            <line x1="0" y1="378" x2="400" y2="378"/>
+            <line x1="0" y1="410" x2="400" y2="410"/>
+            <line x1="0" y1="448" x2="400" y2="448"/>
+          </g>
+          <rect x="0" y="310" width="400" height="190" fill="url(#sea)"/>
+          <path d="M0 500 L0 400 C60 396 90 380 120 386 C150 392 170 410 200 404 C240 396 260 372 300 380 C340 388 370 400 400 396 L400 500 Z" fill="#0C0A0B"/>
+          <g fill="rgba(243,234,219,0.9)">
+            <path d="M212 402 L216 402 L216 336 L212 336 Z"/>
+            <path d="M206 404 L222 404 L228 412 L200 412 Z"/>
+          </g>
+        </svg>
+        <div class="spot-caption"><span>Studio Morrow, set model for the first act</span><span>Headland, first light</span></div>
+      </div>
+
+      <div>
+        <p class="meta"><strong>Opening the season</strong> · world premiere</p>
+        <h2 class="display">Isolde at Dawn</h2>
+        <p class="lede">Mireille Ashdown has spent four years on a score that lasts one morning. There is no Tristan on stage. There is a woman, a headland, and the question of whether to go down to the harbour at all.</p>
+        <p class="quote">"Every other version of this story ends with her dying beautifully. I wanted to know what she would do with a cup of coffee and a decision."</p>
+        <p class="quote-by meta">Mireille Ashdown, composer</p>
+        <div class="spot-facts">
+          <div><b>9</b><span class="meta">Performances, 4 to 21 December</span></div>
+          <div><b>12</b><span class="meta">Chamber chorus standing in for the sea</span></div>
+          <div><b>£24</b><span class="meta">Lowest priced seat, amphitheatre</span></div>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#tickets">Book Isolde at Dawn</a>
+          <a class="arrow-link" href="#calendar">All nine dates <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Calendar ===== -->
+<section id="calendar">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="display">Season at a glance</h2>
+      <p class="meta">Evenings at 7.30pm · matinees at 2.30pm · doors one hour before</p>
+    </div>
+
+    <div class="months">
+      <div class="month">
+        <h3>December <span>9 performances</span></h3>
+        <div class="show">
+          <b>Isolde at Dawn</b>
+          <div class="dates"><i class="prem" title="Opening night">4</i><i>6</i><i>9</i><i>11</i><i>13</i><i>16</i><i>18</i><i>20</i><i class="mat" title="Matinee">21</i></div>
+        </div>
+      </div>
+      <div class="month">
+        <h3>January <span>15 performances</span></h3>
+        <div class="show">
+          <b>The Glass Duchess</b>
+          <div class="dates"><i class="prem" title="First night">9</i><i>11</i><i>14</i><i>16</i><i>18</i><i>21</i><i>23</i><i>25</i><i>28</i><i>30</i></div>
+        </div>
+        <div class="show">
+          <b>Nine Frozen Rivers</b>
+          <div class="dates"><i class="prem" title="First night">15</i><i>17</i><i>19</i><i>22</i><i>24</i></div>
+        </div>
+      </div>
+      <div class="month">
+        <h3>February <span>16 performances</span></h3>
+        <div class="show">
+          <b>The Glass Duchess</b>
+          <div class="dates"><i class="mat" title="Matinee">2</i></div>
+        </div>
+        <div class="show">
+          <b>Salt and Iron</b>
+          <div class="dates"><i class="prem" title="First night">6</i><i>8</i><i>11</i><i>13</i><i>15</i><i>18</i><i>20</i><i>22</i></div>
+        </div>
+        <div class="show">
+          <b>The Last Lamplighter</b>
+          <div class="dates"><i class="prem mat" title="First matinee">20</i><i class="mat">21</i><i class="mat">22</i><i class="mat">25</i><i class="mat">26</i><i class="mat">27</i><i class="mat">28</i></div>
+        </div>
+      </div>
+      <div class="month">
+        <h3>March <span>5 performances</span></h3>
+        <div class="show">
+          <b>The Last Lamplighter</b>
+          <div class="dates"><i class="mat">1</i><i class="mat">4</i><i class="mat">6</i><i class="mat">7</i><i class="mat" title="Last performance of the season">8</i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="prem"></i>First night</span>
+      <span><i class="mat"></i>Matinee, 2.30pm</span>
+      <span><i></i>Evening, 7.30pm</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Tickets ===== -->
+<section id="tickets">
+  <div class="wrap">
+    <div class="tickets">
+      <div>
+        <p class="meta"><strong>Tickets and prices</strong></p>
+        <h2 class="display" style="font-size:var(--t-2);line-height:1.05;margin-top:14px;max-width:16ch">Five price bands, no booking fee, no surprises.</h2>
+        <p class="lede" style="margin-top:22px;color:var(--muted);max-width:44ch">Prices are set by the night, not by demand. What you see in the table is what you pay, whether you book on 14 September or at the door. Exchanges are free up to 48 hours before curtain.</p>
+
+        <div class="offers">
+          <div><div><b>Tuesday nights</b><span>Every seat in the house, any production</span></div><span class="amt">£29</span></div>
+          <div><div><b>Under 30s</b><span>Stalls and grand circle, released ten days ahead</span></div><span class="amt">£15</span></div>
+          <div><div><b>Under 16s at The Last Lamplighter</b><span>Any seat, any matinee</span></div><span class="amt">£12</span></div>
+          <div><div><b>Standing places</b><span>Forty per night at the back of the amphitheatre</span></div><span class="amt">£8</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="tabs" role="tablist" aria-label="Choose a night type">
+          <button role="tab" aria-selected="true" data-tab="premiere">First nights</button>
+          <button role="tab" aria-selected="false" data-tab="standard">Standard nights</button>
+          <button role="tab" aria-selected="false" data-tab="family">Family matinees</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Seating band</th><th>Seats</th><th>Price</th></tr>
+          </thead>
+          <tbody id="price-body"></tbody>
+        </table>
+        <p class="ticket-note" id="price-note"></p>
+        <div class="hero-actions" style="margin-top:28px">
+          <a class="btn btn-solid" href="#visit">Book at the box office</a>
+          <span class="meta">Booking opens Monday 14 September, 10am · members from 7 September</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Season pass ===== -->
+<section id="pass" class="pass">
+  <div class="wrap">
+    <div>
+      <p class="meta">Season pass</p>
+      <h2 class="display">All five productions for the price of four.</h2>
+      <p>Choose one night for each production, in any band, and the fifth is on the house. Pass holders book a week before the public and can move any date free of charge until the day before.</p>
+      <a class="btn btn-solid" href="#visit">Build a season pass</a>
+    </div>
+    <ul>
+      <li><span>Amphitheatre pass</span><b>£96</b></li>
+      <li><span>Upper circle pass</span><b>£168</b></li>
+      <li><span>Grand circle pass</span><b>£292</b></li>
+      <li><span>Stalls pass</span><b>£396</b></li>
+      <li><span>Includes programme booklets and pre-performance talks</span><b>&nbsp;</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== Visit ===== -->
+<section id="visit">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="display">Plan your visit</h2>
+      <a class="arrow-link" href="#top">Access guide and seating plan <span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="visit">
+      <div>
+        <h3>Find us</h3>
+        <p>Ravensgate Opera House<br>14 Corvin Street<br>London, by the river<br><span>Blackfriars station, 4 minutes on foot</span></p>
+      </div>
+      <div>
+        <h3>Box office</h3>
+        <p>020 7946 0310<br>boxoffice@ravensgate.org.uk<br><span>Monday to Saturday, 10am to 8pm<br>Sundays on performance days, 12pm to 6pm</span></p>
+      </div>
+      <div>
+        <h3>On the night</h3>
+        <p>Doors open one hour before curtain.<br><span>Latecomers are seated at the first suitable break. The foyer bar serves from 6pm; pre-order interval drinks at the cloakroom.</span></p>
+      </div>
+      <div>
+        <h3>Talks and tours</h3>
+        <p>Pre-performance talks at 6.30pm, free with any ticket.<br><span>Backstage tours on Saturdays at 11am, £9. The Ashdown open rehearsal is on Sunday 30 November.</span></p>
+      </div>
+    </div>
+
+    <div class="plan">
+      <svg viewBox="0 0 600 420" aria-labelledby="plan-title" role="img">
+        <title id="plan-title">Seating plan of the main auditorium, stage at the top</title>
+        <rect x="0" y="0" width="600" height="420" fill="#171316"/>
+        <rect x="150" y="24" width="300" height="34" fill="#B3121F"/>
+        <text x="300" y="47" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#F3EADB">Stage</text>
+        <path d="M120 90 L480 90 L500 190 L100 190 Z" fill="#B3121F" opacity="0.85"/>
+        <text x="300" y="146" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#F3EADB">Stalls</text>
+        <path d="M70 210 L530 210 L555 270 L45 270 Z" fill="#8B0F1A"/>
+        <text x="300" y="246" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#F3EADB">Grand circle</text>
+        <path d="M45 290 L555 290 L575 340 L25 340 Z" fill="#4E070F"/>
+        <text x="300" y="321" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#F3EADB">Upper circle</text>
+        <path d="M25 358 L575 358 L590 400 L10 400 Z" fill="none" stroke="#F3EADB" stroke-opacity="0.5"/>
+        <text x="300" y="384" text-anchor="middle" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#F3EADB">Amphitheatre and standing</text>
+        <g stroke="#F3EADB" stroke-opacity="0.35" stroke-dasharray="3 4">
+          <line x1="300" y1="90" x2="300" y2="400"/>
+        </g>
+      </svg>
+      <div class="plan-copy">
+        <h3>1,140 seats, four levels, one central aisle</h3>
+        <p>The auditorium was rebuilt in 1931 as a horseshoe, so even the back of the upper circle sits within thirty metres of the conductor. Sightlines in the amphitheatre are full for everything except the far corners of the stalls-level set.</p>
+        <ul>
+          <li><i style="background:#B3121F"></i>Stalls, 412 seats</li>
+          <li><i style="background:#8B0F1A"></i>Grand circle, 286 seats</li>
+          <li><i style="background:#4E070F"></i>Upper circle, 262 seats</li>
+          <li><i style="border:1px solid rgba(243,234,219,0.5)"></i>Amphitheatre 140 seats, plus 40 standing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="wordmark" href="#top">Ravensgate <span>Opera House</span></a>
+        <p>A producing house since 1887. Registered charity 1104432. Supported by Arts Council England, the Harlow Trust and 3,200 Friends of Ravensgate.</p>
+        <form class="news" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Thank you';">
+          <input type="email" placeholder="Season news by email" aria-label="Email address" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div>
+        <h3>This season</h3>
+        <ul>
+          <li><a href="#programme">Isolde at Dawn</a></li>
+          <li><a href="#programme">The Glass Duchess</a></li>
+          <li><a href="#programme">Nine Frozen Rivers</a></li>
+          <li><a href="#programme">Salt and Iron</a></li>
+          <li><a href="#programme">The Last Lamplighter</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Visit</h3>
+        <ul>
+          <li><a href="#visit">Getting here</a></li>
+          <li><a href="#visit">Access</a></li>
+          <li><a href="#visit">Eating and drinking</a></li>
+          <li><a href="#visit">Seating plan</a></li>
+          <li><a href="#visit">Backstage tours</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Support</h3>
+        <ul>
+          <li><a href="#pass">Season pass</a></li>
+          <li><a href="#pass">Friends of Ravensgate</a></li>
+          <li><a href="#pass">Saturday school</a></li>
+          <li><a href="#pass">Corporate partners</a></li>
+          <li><a href="#pass">Leave a gift in your will</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Ravensgate Opera House. Set in Playfair Display and Inter Tight.</span>
+      <span>Privacy · Terms of sale · Cookies · Modern slavery statement</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Programme rows: expand one at a time
+  document.querySelectorAll('.row').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      document.querySelectorAll('.row').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+      document.querySelectorAll('.row-detail').forEach(function(d){ d.classList.remove('open'); });
+      if(!open){
+        btn.setAttribute('aria-expanded','true');
+        document.getElementById(btn.getAttribute('aria-controls')).classList.add('open');
+      }
+    });
+  });
+  // Open the first production by default so the programme reads as a programme
+  document.querySelector('.row').click();
+
+  // Price bands per night type
+  var prices = {
+    premiere: {
+      note: 'First nights: 4 December, 9 January, 15 January, 6 February and the 20 February matinee. Includes a programme booklet and a glass of something at the interval.',
+      rows: [
+        ['Stalls', 'Rows A to R', 412, '£118'],
+        ['Grand circle', 'Rows A to H', 286, '£92'],
+        ['Upper circle', 'Rows A to G', 262, '£58'],
+        ['Amphitheatre', 'Rows A to D', 140, '£24'],
+        ['Standing', 'Back of the amphitheatre', 40, '£8']
+      ]
+    },
+    standard: {
+      note: 'Every evening performance after the first night. Tuesdays are £29 in every band, first come first served.',
+      rows: [
+        ['Stalls', 'Rows A to R', 412, '£96'],
+        ['Grand circle', 'Rows A to H', 286, '£72'],
+        ['Upper circle', 'Rows A to G', 262, '£42'],
+        ['Amphitheatre', 'Rows A to D', 140, '£18'],
+        ['Standing', 'Back of the amphitheatre', 40, '£8']
+      ]
+    },
+    family: {
+      note: 'The Last Lamplighter, all matinees, and the 21 December and 2 February matinees. Under 16s pay £12 in any band; every child must be accompanied by a ticket-holding adult.',
+      rows: [
+        ['Stalls', 'Rows A to R', 412, '£48'],
+        ['Grand circle', 'Rows A to H', 286, '£36'],
+        ['Upper circle', 'Rows A to G', 262, '£24'],
+        ['Amphitheatre', 'Rows A to D', 140, '£12'],
+        ['Standing', 'Not sold at matinees', 0, 'n/a']
+      ]
+    }
+  };
+  var body = document.getElementById('price-body');
+  var note = document.getElementById('price-note');
+  function render(key){
+    var p = prices[key];
+    body.innerHTML = p.rows.map(function(r){
+      return '<tr><td class="band">' + r[0] + '<small>' + r[1] + '</small></td><td class="amt">' + (r[2] ? r[2] : '-') + '</td><td class="amt">' + r[3] + '</td></tr>';
+    }).join('');
+    note.textContent = p.note;
+  }
+  document.querySelectorAll('.tabs [role="tab"]').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.tabs [role="tab"]').forEach(function(t){ t.setAttribute('aria-selected','false'); });
+      tab.setAttribute('aria-selected','true');
+      render(tab.dataset.tab);
+    });
+  });
+  render('premiere');
+</script>
+</body>
+</html>

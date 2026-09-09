@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brenna, a small alpine house at 1,842 metres</title>
+<meta name="description" content="Eleven rooms of snow and larch in the Dolomites. Rooms, rates, season dates and direct booking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Type scale: five tokens, two faces */
+:root{
+  --t-display: clamp(2.75rem, 4.6vw, 3.75rem);
+  --t-h2: clamp(1.9rem, 3vw, 2.5rem);
+  --t-h3: 1.375rem;
+  --t-body: 1.0625rem;
+  --t-meta: 0.8125rem;
+
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Palette: snow paper, larch wood */
+  --paper: #F4F3EF;
+  --snow: #E6EBEE;
+  --ink: #1F1D1A;
+  --muted: #6B655E;
+  --rule: #D9D4CC;
+  --larch: #A9683C;
+  --larch-deep: #6E4024;
+
+  --s-section: clamp(72px, 10vw, 128px);
+  --radius: 14px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:var(--t-body);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;letter-spacing:-0.01em}
+h1{font-size:var(--t-display);line-height:1.02}
+h2{font-size:var(--t-h2);line-height:1.08}
+h3{font-size:var(--t-h3);line-height:1.2}
+p{margin:0}
+a{color:inherit}
+em{font-style:italic;color:var(--larch-deep)}
+.meta{font-size:var(--t-meta);color:var(--muted);letter-spacing:0.01em}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(20px, 4vw, 48px)}
+section{padding-block:var(--s-section)}
+.lede{max-width:52ch;color:var(--muted)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:var(--t-meta);color:var(--larch-deep)}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--larch)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 22px;border-radius:999px;border:1px solid var(--larch-deep);
+  background:var(--larch-deep);color:#fff;font:500 0.95rem var(--font-body);
+  text-decoration:none;cursor:pointer;white-space:nowrap;
+  transition:background .2s ease, color .2s ease;
+}
+.btn:hover{background:var(--larch)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{background:#fff;border-color:var(--ink)}
+
+/* Fold */
+.fold{min-height:100svh;display:flex;flex-direction:column}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding-block:20px;border-bottom:1px solid var(--rule);
+}
+.wordmark{font-family:var(--font-display);font-size:1.75rem;line-height:1;text-decoration:none;display:flex;align-items:baseline;gap:10px}
+.wordmark span{font-family:var(--font-body);font-size:var(--t-meta);color:var(--muted);letter-spacing:0.01em}
+.nav-links{display:flex;gap:28px;list-style:none;margin:0;padding:0}
+.nav-links a{text-decoration:none;font-size:0.95rem;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+.nav .btn{padding:10px 18px}
+
+.hero{flex:1;display:grid;grid-template-columns:1.15fr 0.85fr;min-height:0}
+.hero-copy{
+  display:flex;flex-direction:column;justify-content:center;gap:22px;
+  padding-block:clamp(28px, 5vh, 56px);padding-right:clamp(24px, 4vw, 64px);
+}
+.hero-copy h1{max-width:15ch}
+.hero-copy .lede{max-width:44ch}
+
+/* Booking module */
+.book{
+  background:#fff;border:1px solid var(--rule);border-radius:var(--radius);
+  padding:10px;display:grid;grid-template-columns:1.1fr 1.1fr 1.2fr 0.7fr;gap:6px;
+  box-shadow:0 12px 40px rgba(31,29,26,0.06);
+}
+.book label{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-right:1px solid var(--rule);min-width:0}
+.book label:nth-child(4){border-right:0}
+.book .btn{grid-column:1 / -1}
+.book label span{font-size:var(--t-meta);color:var(--muted)}
+.book input,.book select{
+  border:0;background:transparent;font:500 0.95rem var(--font-body);color:var(--ink);
+  padding:0;outline:none;min-width:0;width:100%;
+}
+.book .btn{align-self:stretch;border-radius:10px}
+.estimate{font-size:var(--t-meta);color:var(--muted)}
+.estimate strong{color:var(--ink);font-weight:500}
+
+/* Hero panel: snow and larch drawn in code */
+.panel{
+  position:relative;overflow:hidden;border-radius:var(--radius) 0 0 var(--radius);
+  background:linear-gradient(180deg,#F7F8F8 0%,#E6EBEE 45%,#D8DFE3 100%);
+  margin-block:clamp(16px, 3vh, 32px);
+}
+.panel svg{position:absolute;inset:0;width:100%;height:100%}
+.panel .caption{
+  position:absolute;left:24px;bottom:22px;display:flex;flex-direction:column;gap:4px;
+  color:var(--muted);font-size:var(--t-meta);
+}
+.panel .caption b{font:400 1.375rem var(--font-display);color:var(--ink)}
+
+/* Stats */
+.stats{border-block:1px solid var(--rule)}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding-block:36px;padding-right:24px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font:400 2.25rem var(--font-display);line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:var(--t-meta)}
+
+/* Section headers */
+.head{display:grid;grid-template-columns:1fr 2fr;gap:40px;align-items:end;margin-bottom:56px}
+.head h2{max-width:20ch}
+
+/* Rooms */
+.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.room{
+  background:#fff;border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;transition:transform .25s ease, box-shadow .25s ease;
+}
+.room:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(31,29,26,0.08)}
+.window{
+  aspect-ratio:4/3;position:relative;
+  background:linear-gradient(180deg,#EEF2F4 0%,#DDE4E8 70%,#CBD3D8 100%);
+  border-bottom:1px solid var(--rule);
+}
+.window::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(to right, var(--larch-deep) 0 6%, transparent 6% 94%, var(--larch-deep) 94%),
+    linear-gradient(to bottom, var(--larch-deep) 0 8%, transparent 8% 92%, var(--larch-deep) 92%);
+  opacity:.92;
+}
+.window svg{position:absolute;inset:0;width:100%;height:100%}
+.room-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.room-body h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.room-body .price{font-family:var(--font-body);font-size:0.95rem;font-weight:500;white-space:nowrap}
+.room-body ul{margin:0;padding:0;list-style:none;color:var(--muted);font-size:var(--t-meta);display:flex;flex-wrap:wrap;gap:6px 14px}
+.room-body p{color:var(--muted);font-size:0.95rem;flex:1}
+.room-body a{font-size:var(--t-meta);color:var(--larch-deep);text-decoration:none;border-bottom:1px solid var(--rule);align-self:flex-start;padding-bottom:2px}
+.room-body a:hover{border-color:var(--larch-deep)}
+
+/* Rates */
+.rates{background:#fff;border-block:1px solid var(--rule)}
+.rates-grid{display:grid;grid-template-columns:1fr 2fr;gap:56px}
+.rates-note{display:flex;flex-direction:column;gap:18px}
+.rates-note ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;font-size:0.95rem;color:var(--muted)}
+.rates-note li{display:flex;gap:10px;align-items:baseline}
+.rates-note li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--larch);flex:none;transform:translateY(-2px)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:16px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;font-size:var(--t-meta);color:var(--muted)}
+th:not(:first-child),td:not(:first-child){text-align:right}
+td:first-child b{display:block;font:400 1.2rem var(--font-display)}
+td:first-child span{display:block;font-size:var(--t-meta);color:var(--muted);margin-top:2px}
+tr.closed td{color:var(--muted)}
+tr.closed td:not(:first-child){font-style:italic;font-family:var(--font-display);font-size:1.05rem}
+tbody tr:hover td{background:var(--paper)}
+.table-wrap{overflow-x:auto}
+
+/* House */
+.house{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.house-art{
+  aspect-ratio:1/1;border-radius:var(--radius);overflow:hidden;position:relative;
+  background:linear-gradient(180deg,#F1F4F6 0%,#DFE6EA 60%,#CFD8DE 100%);
+}
+.house-art svg{position:absolute;inset:0;width:100%;height:100%}
+.house-copy{display:flex;flex-direction:column;gap:22px}
+.house-copy p{color:var(--muted)}
+.facts{display:grid;gap:0;border-top:1px solid var(--rule);margin-top:8px}
+.facts div{display:grid;grid-template-columns:120px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.facts dt{font-size:var(--t-meta);color:var(--muted);margin:0}
+.facts dd{margin:0;font-size:0.95rem}
+
+/* Day */
+.day{background:var(--snow)}
+.timeline{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-top:1px solid rgba(31,29,26,0.14)}
+.moment{padding:26px 20px 0 0;border-right:1px solid rgba(31,29,26,0.14);margin-right:20px;display:flex;flex-direction:column;gap:10px}
+.moment:last-child{border-right:0;margin-right:0}
+.moment time{font:400 1.75rem var(--font-display);font-variant-numeric:tabular-nums;line-height:1}
+.moment h3{font-size:1.15rem}
+.moment p{font-size:var(--t-meta);color:var(--muted)}
+
+/* Getting here */
+.travel{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.routes{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule)}
+.routes li{display:grid;grid-template-columns:1fr auto;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.routes li b{font-weight:500}
+.routes li span{display:block;font-size:var(--t-meta);color:var(--muted);margin-top:2px}
+.routes li em{font:400 1.2rem var(--font-display);color:var(--ink);white-space:nowrap}
+.map{
+  border-radius:var(--radius);border:1px solid var(--rule);background:#fff;
+  aspect-ratio:5/4;position:relative;overflow:hidden;
+}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* Questions */
+.qa{border-top:1px solid var(--rule);margin:0;padding:0;list-style:none}
+.qa details{border-bottom:1px solid var(--rule)}
+.qa summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:24px;
+  padding:20px 0;font:400 var(--t-h3) var(--font-display);
+}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";font:400 1.4rem var(--font-body);color:var(--muted);transition:transform .2s ease}
+.qa details[open] summary::after{transform:rotate(45deg)}
+.qa summary:hover{color:var(--larch-deep)}
+.qa details p{max-width:62ch;padding:0 0 22px;color:var(--muted);font-size:0.95rem}
+
+/* Closing */
+.close{text-align:center;border-top:1px solid var(--rule)}
+.close h2{max-width:22ch;margin-inline:auto;font-size:var(--t-display)}
+.close p{margin:18px auto 30px}
+.close .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+/* Footer */
+footer{border-top:1px solid var(--rule);background:#fff;padding-block:56px 36px}
+.foot{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.foot p{font-size:0.95rem;line-height:1.6;margin-top:10px}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--larch-deep)}
+.foot .muted{color:var(--muted)}
+.legal{margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+@media (max-width: 980px){
+  .hero{grid-template-columns:1fr}
+  .panel{min-height:280px;border-radius:var(--radius)}
+  .hero-copy{padding-right:0}
+  .book{grid-template-columns:1fr 1fr}
+  .book label{border-right:0;border-bottom:1px solid var(--rule)}
+  .book .btn{grid-column:1 / -1}
+  .stats .wrap{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2){border-right:0}
+  .head,.rates-grid,.house,.travel{grid-template-columns:1fr;gap:32px}
+  .rooms{grid-template-columns:1fr 1fr}
+  .timeline{grid-template-columns:1fr 1fr 1fr}
+  .moment{border-right:0}
+  .foot{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+@media (max-width: 600px){
+  .rooms,.timeline,.foot,.stats .wrap{grid-template-columns:1fr}
+  .stat{border-right:0}
+}
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap nav">
+    <a class="wordmark" href="#top">Brenna <span>1,842 m</span></a>
+    <ul class="nav-links">
+      <li><a href="#rooms">Rooms</a></li>
+      <li><a href="#rates">Rates and seasons</a></li>
+      <li><a href="#house">The house</a></li>
+      <li><a href="#day">A day here</a></li>
+      <li><a href="#travel">Getting here</a></li>
+    </ul>
+    <a class="btn" href="#book">Book a room</a>
+  </header>
+
+  <main class="wrap hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow">Valtura, Dolomites. Winter opens 4 December 2026</p>
+      <h1>Eleven rooms of snow and larch, <em>1,842 metres up.</em></h1>
+      <p class="lede">A small house on the south slope, built from the trees that stood here. Book directly and the best rate, breakfast and the sauna are already in.</p>
+
+      <form class="book" id="book" onsubmit="return false">
+        <label><span>Arrive</span><input type="date" id="in" value="2027-01-15" min="2026-12-04"></label>
+        <label><span>Leave</span><input type="date" id="out" value="2027-01-18" min="2026-12-05"></label>
+        <label><span>Room</span>
+          <select id="room">
+            <option value="larch">Larch Room</option>
+            <option value="snow">Snow Room</option>
+            <option value="loft">Loft Suite</option>
+            <option value="ridge">Ridge House</option>
+          </select>
+        </label>
+        <label><span>Guests</span>
+          <select id="guests">
+            <option>1</option><option selected>2</option><option>3</option><option>4</option>
+          </select>
+        </label>
+        <button class="btn" type="submit" id="check">Check availability</button>
+      </form>
+      <p class="estimate" id="estimate"></p>
+    </div>
+
+    <div class="panel" aria-hidden="true">
+      <svg viewBox="0 0 600 720" preserveAspectRatio="xMidYMax slice">
+        <defs>
+          <linearGradient id="sun" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#FBE9D6"/><stop offset="1" stop-color="#F3D9BD"/>
+          </linearGradient>
+          <linearGradient id="wood" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#8A5330"/><stop offset=".5" stop-color="#A9683C"/><stop offset="1" stop-color="#7A4728"/>
+          </linearGradient>
+          <pattern id="slats" width="14" height="10" patternUnits="userSpaceOnUse">
+            <rect width="14" height="10" fill="url(#wood)"/>
+            <rect x="12" width="2" height="10" fill="#5E3620" opacity=".7"/>
+          </pattern>
+        </defs>
+        <circle cx="440" cy="150" r="58" fill="url(#sun)"/>
+        <path d="M0 330 L90 250 L160 300 L250 190 L330 270 L420 210 L500 290 L600 240 L600 720 L0 720Z" fill="#CAD3D9"/>
+        <path d="M0 400 L70 340 L150 380 L240 300 L330 360 L410 320 L480 380 L600 330 L600 720 L0 720Z" fill="#DCE3E7"/>
+        <path d="M0 470 L120 420 L220 460 L320 410 L420 450 L520 420 L600 440 L600 720 L0 720Z" fill="#F1F4F6"/>
+        <path d="M0 720 L0 560 Q150 520 300 545 T600 540 L600 720Z" fill="#FAFBFB"/>
+        <g transform="translate(190 470)">
+          <path d="M0 110 L0 40 L110 -30 L220 40 L220 110Z" fill="url(#slats)"/>
+          <path d="M-14 46 L110 -40 L234 46 L222 56 L110 -20 L-2 56Z" fill="#F7F7F5"/>
+          <rect x="30" y="56" width="30" height="34" fill="#F6E2C1"/>
+          <rect x="95" y="56" width="30" height="34" fill="#F3D8AE"/>
+          <rect x="160" y="56" width="30" height="34" fill="#F6E2C1"/>
+          <rect x="0" y="110" width="220" height="14" fill="#E9EDF0"/>
+        </g>
+        <g fill="#5A6C5B" opacity=".85">
+          <path d="M60 640 L75 560 L90 640Z"/><path d="M92 650 L104 585 L116 650Z"/>
+          <path d="M470 640 L486 555 L502 640Z"/><path d="M510 650 L522 590 L534 650Z"/><path d="M545 640 L556 600 L567 640Z"/>
+        </g>
+      </svg>
+      <div class="caption"><b>The house, seen from the lift path</b><span>South slope, first light at 07:40 in January</span></div>
+    </div>
+  </main>
+</div>
+
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><b>1,842 m</b><span>Altitude of the front door</span></div>
+    <div class="stat"><b>11</b><span>Rooms, never more</span></div>
+    <div class="stat"><b>4 Dec to 12 Apr</b><span>Winter season 2026/27</span></div>
+    <div class="stat"><b>6 min</b><span>On foot to the Valtura cable car</span></div>
+  </div>
+</div>
+
+<section id="rooms">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Rooms</p>
+      <h2>Every room faces the snow. Every wall is larch.</h2>
+    </div>
+    <div class="rooms">
+      <article class="room">
+        <div class="window" aria-hidden="true">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M0 200 L80 140 L150 180 L240 110 L320 170 L400 130 L400 300 L0 300Z" fill="#D3DBE0"/><path d="M0 300 L0 240 Q200 200 400 235 L400 300Z" fill="#F7F8F8"/></svg>
+        </div>
+        <div class="room-body">
+          <h3>Larch Room <span class="price">from €290</span></h3>
+          <ul><li>24 m²</li><li>2 guests</li><li>South balcony</li></ul>
+          <p>The plain one. A bed in a larch box, a bench under the window and the ridge in the glass.</p>
+          <a href="#book" data-room="larch">Book the Larch Room</a>
+        </div>
+      </article>
+      <article class="room">
+        <div class="window" aria-hidden="true">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M0 170 L100 100 L180 150 L260 80 L340 150 L400 120 L400 300 L0 300Z" fill="#C9D2D8"/><path d="M0 300 L0 230 Q200 190 400 225 L400 300Z" fill="#F4F6F7"/><circle cx="300" cy="70" r="26" fill="#F6E4CE"/></svg>
+        </div>
+        <div class="room-body">
+          <h3>Snow Room <span class="price">from €340</span></h3>
+          <ul><li>32 m²</li><li>2 guests</li><li>Corner, two windows</li></ul>
+          <p>On the corner of the house, so the morning arrives twice. A deep bath by the east window.</p>
+          <a href="#book" data-room="snow">Book the Snow Room</a>
+        </div>
+      </article>
+      <article class="room">
+        <div class="window" aria-hidden="true">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M0 150 L120 60 L200 120 L300 40 L400 110 L400 300 L0 300Z" fill="#C2CCD3"/><path d="M0 300 L0 220 Q200 180 400 215 L400 300Z" fill="#F2F4F6"/><path d="M40 300 L52 240 L64 300Z" fill="#5A6C5B"/><path d="M70 300 L80 255 L90 300Z" fill="#5A6C5B"/></svg>
+        </div>
+        <div class="room-body">
+          <h3>Loft Suite <span class="price">from €460</span></h3>
+          <ul><li>46 m²</li><li>2 to 3 guests</li><li>Under the roof</li></ul>
+          <p>The top floor, open to the rafters. A wood stove, a reading corner and a skylight for the snowfall.</p>
+          <a href="#book" data-room="loft">Book the Loft Suite</a>
+        </div>
+      </article>
+      <article class="room">
+        <div class="window" aria-hidden="true">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M0 190 L90 120 L170 170 L250 90 L330 160 L400 140 L400 300 L0 300Z" fill="#CFD8DD"/><path d="M0 300 L0 250 Q200 210 400 245 L400 300Z" fill="#F6F7F8"/><g transform="translate(150 190)"><path d="M0 60 L0 25 L50 -8 L100 25 L100 60Z" fill="#8A5330"/><rect x="18" y="32" width="14" height="16" fill="#F6E2C1"/><rect x="68" y="32" width="14" height="16" fill="#F6E2C1"/></g></svg>
+        </div>
+        <div class="room-body">
+          <h3>Ridge House <span class="price">from €640</span></h3>
+          <ul><li>68 m²</li><li>Up to 4 guests</li><li>Own stube</li></ul>
+          <p>A separate house forty steps up the slope, with its own stove room, two bedrooms and a terrace in the snow.</p>
+          <a href="#book" data-room="ridge">Book the Ridge House</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="rates" id="rates">
+  <div class="wrap rates-grid">
+    <div class="rates-note">
+      <p class="eyebrow">Rates and seasons</p>
+      <h2>One rate per season, per room, per night.</h2>
+      <p class="lede">No dynamic pricing. The number you see in October is the number you pay in February. Two guests included; a third guest in the Loft or Ridge House is €60 a night.</p>
+      <ul>
+        <li>Breakfast from the wood oven and afternoon bread and soup</li>
+        <li>Sauna, steam room and the snow bath on the terrace</li>
+        <li>Shuttle to the cable car and the valley station on request</li>
+        <li>Local tourist tax billed separately at €3.50 per person per night</li>
+        <li>Free cancellation until 21 days before arrival, then one night</li>
+      </ul>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Season</th><th>Larch Room</th><th>Snow Room</th><th>Loft Suite</th><th>Ridge House</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Early winter</b><span>4 Dec to 19 Dec 2026</span></td><td>€290</td><td>€340</td><td>€460</td><td>€640</td></tr>
+          <tr><td><b>Festive weeks</b><span>20 Dec 2026 to 6 Jan 2027, five nights minimum</span></td><td>€380</td><td>€440</td><td>€590</td><td>€820</td></tr>
+          <tr><td><b>High winter</b><span>7 Jan to 28 Mar 2027</span></td><td>€320</td><td>€370</td><td>€510</td><td>€700</td></tr>
+          <tr><td><b>Spring snow</b><span>29 Mar to 12 Apr 2027</span></td><td>€270</td><td>€310</td><td>€420</td><td>€590</td></tr>
+          <tr class="closed"><td><b>The house rests</b><span>13 Apr to 11 Jun 2027</span></td><td colspan="4">closed for the thaw</td></tr>
+          <tr><td><b>Summer</b><span>12 Jun to 17 Oct 2027</span></td><td>€260</td><td>€300</td><td>€410</td><td>€560</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="house">
+  <div class="wrap house">
+    <div class="house-art" aria-hidden="true">
+      <svg viewBox="0 0 600 600">
+        <defs>
+          <pattern id="slats2" width="12" height="10" patternUnits="userSpaceOnUse">
+            <rect width="12" height="10" fill="#9C6038"/>
+            <rect x="10" width="2" height="10" fill="#5E3620" opacity=".7"/>
+          </pattern>
+        </defs>
+        <path d="M0 330 L110 240 L200 290 L310 190 L410 270 L500 230 L600 280 L600 600 L0 600Z" fill="#D5DDE2"/>
+        <path d="M0 600 L0 430 Q300 380 600 420 L600 600Z" fill="#F6F8F8"/>
+        <g transform="translate(150 300)">
+          <path d="M0 220 L0 90 L150 -10 L300 90 L300 220Z" fill="url(#slats2)"/>
+          <path d="M-20 100 L150 -24 L320 100 L306 112 L150 0 L-6 112Z" fill="#F7F7F5"/>
+          <rect x="34" y="110" width="44" height="52" fill="#F6E2C1"/>
+          <rect x="128" y="110" width="44" height="52" fill="#F3D8AE"/>
+          <rect x="222" y="110" width="44" height="52" fill="#F6E2C1"/>
+          <rect x="34" y="60" width="44" height="34" fill="#E9D5B5"/>
+          <rect x="222" y="60" width="44" height="34" fill="#E9D5B5"/>
+          <rect x="128" y="176" width="44" height="44" fill="#4A2C19"/>
+          <rect x="-10" y="220" width="320" height="12" fill="#E4E9EC"/>
+        </g>
+        <g fill="#5A6C5B" opacity=".85">
+          <path d="M40 520 L58 420 L76 520Z"/><path d="M84 530 L98 455 L112 530Z"/>
+          <path d="M500 520 L518 415 L536 520Z"/><path d="M545 530 L558 460 L571 530Z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="house-copy">
+      <p class="eyebrow">The house</p>
+      <h2>Larch from the north slope, snow from the sky.</h2>
+      <p>Brenna was a hay barn until 2019. When we rebuilt it, we cut the larch from our own stand above the tree line, stacked it for four winters and let it silver where it faces the weather. Inside it stays honey coloured, and it smells faintly of resin when the stove is lit.</p>
+      <p>There is no lobby, no bar and no spa menu. There is a stube with a long table, a sauna that opens onto the snow, and eleven rooms that were designed from the bed outward.</p>
+      <dl class="facts">
+        <div><dt>Built</dt><dd>1912 as a barn, rebuilt 2019 to 2021 by Studio Prader, Bolzano</dd></div>
+        <div><dt>Timber</dt><dd>Larch, 212 trees, felled on the north slope, air dried four years</dd></div>
+        <div><dt>Heat</dt><dd>Wood pellet boiler and three tiled stoves, fed from our own forest</dd></div>
+        <div><dt>Owners</dt><dd>Lena and Tobias Rier, who live in the small house behind the barn</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="day" id="day">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">A day here</p>
+      <h2>Nothing is scheduled. Everything happens at about the same time.</h2>
+    </div>
+    <div class="timeline">
+      <div class="moment"><time>07:30</time><h3>Bread</h3><p>The wood oven has been going since six. Breakfast is on the long table until eleven.</p></div>
+      <div class="moment"><time>09:10</time><h3>First cabin</h3><p>Six minutes on foot to the cable car. Skins and boards live in the drying room by the door.</p></div>
+      <div class="moment"><time>13:00</time><h3>Soup</h3><p>Barley soup and a slice of speck in the stube for anyone who comes down for it.</p></div>
+      <div class="moment"><time>15:30</time><h3>Sauna</h3><p>The sauna opens onto the terrace. The snow bath is exactly as cold as it sounds.</p></div>
+      <div class="moment"><time>18:30</time><h3>Dinner</h3><p>Four courses from the valley, one sitting, wine from Terlano and the Adige.</p></div>
+      <div class="moment"><time>22:00</time><h3>Lights out</h3><p>The ridge lights go off. On clear nights we lend blankets for the terrace.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="travel">
+  <div class="wrap travel">
+    <div>
+      <p class="eyebrow">Getting here</p>
+      <h2 style="margin:18px 0 22px">The last six kilometres are the slow part.</h2>
+      <p class="lede" style="margin-bottom:28px">The road to Valtura is cleared every morning and closed to cars above the village in winter. Leave yours in our covered garage at the valley station and we bring you up in the house car.</p>
+      <ul class="routes">
+        <li><div><b>Bolzano station</b><span>House shuttle at 11:00 and 16:00 daily, €45 per car, book with your room</span></div><em>55 min</em></li>
+        <li><div><b>Innsbruck airport</b><span>Over the Brenner by train or car</span></div><em>1 h 50</em></li>
+        <li><div><b>Verona airport</b><span>Train to Bolzano, then the shuttle</span></div><em>2 h 30</em></li>
+        <li><div><b>Munich airport</b><span>Direct train to Bolzano five times a day</span></div><em>3 h 40</em></li>
+      </ul>
+    </div>
+    <div class="map" aria-hidden="true">
+      <svg viewBox="0 0 500 400">
+        <path d="M0 400 L0 300 L120 200 L200 260 L300 150 L400 220 L500 170 L500 400Z" fill="#E6EBEE"/>
+        <path d="M60 400 C 120 340, 160 360, 200 300 S 300 250, 330 220" fill="none" stroke="#A9683C" stroke-width="3" stroke-dasharray="8 7"/>
+        <circle cx="60" cy="400" r="6" fill="#6B655E"/>
+        <text x="74" y="386" font-family="Inter, sans-serif" font-size="13" fill="#6B655E">Valley station, 1,240 m</text>
+        <circle cx="330" cy="220" r="8" fill="#6E4024"/>
+        <text x="345" y="215" font-family="Instrument Serif, serif" font-size="22" fill="#1F1D1A">Brenna</text>
+        <text x="345" y="234" font-family="Inter, sans-serif" font-size="13" fill="#6B655E">1,842 m</text>
+        <line x1="330" y1="220" x2="410" y2="120" stroke="#6B655E" stroke-width="1.5"/>
+        <circle cx="410" cy="120" r="5" fill="#6B655E"/>
+        <text x="300" y="104" font-family="Inter, sans-serif" font-size="13" fill="#6B655E">Cable car top, 2,410 m</text>
+        <path d="M410 120 L430 100 L450 120 L470 96 L490 118" fill="none" stroke="#C6CFD5" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="questions">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Questions</p>
+      <h2>What people ask before they book.</h2>
+    </div>
+    <ul class="qa" id="qa">
+      <li><details open><summary>Is there a minimum stay?</summary><p>Two nights in every season except the festive weeks, when it is five. We are happy to hold a single night if one appears between two bookings; write to us.</p></details></li>
+      <li><details><summary>Do the rates include breakfast?</summary><p>Yes. Breakfast, the afternoon bread and soup, the sauna and the shuttle to the cable car are in the room rate. Dinner is €78 per person for four courses and is booked by noon the same day.</p></details></li>
+      <li><details><summary>Can we bring children or a dog?</summary><p>Children of any age are welcome; a cot is free and a third bed in the Loft or Ridge House is €60 a night. Dogs stay in the Ridge House only, at €25 a night, and are welcome in the stube but not in the sauna.</p></details></li>
+      <li><details><summary>What is the cancellation policy?</summary><p>Free until 21 days before arrival. Inside 21 days we charge the first night; inside 7 days, half the stay. If the road is closed by snow on your arrival day, we refund everything.</p></details></li>
+      <li><details><summary>Is there parking and ski storage?</summary><p>Nine covered spaces at the valley station, €12 a night, and a heated drying room at the front door with a boot warmer for every room.</p></details></li>
+    </ul>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap">
+    <h2>The house is small. Winter usually fills by the end of October.</h2>
+    <p class="lede" style="max-width:48ch">Book direct for the rate on this page, breakfast and the sauna included. Or call: we still answer the telephone.</p>
+    <div class="actions">
+      <a class="btn" href="#book">Check dates</a>
+      <a class="btn ghost" href="tel:+390471700842">+39 0471 700 842</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><span class="meta">Find us</span><p>Brenna<br>Via Larice 7<br>39040 Valtura, Bolzano<br>South Tyrol, Italy</p></div>
+      <div><span class="meta">Write</span><p><a href="mailto:stay@brenna.house">stay@brenna.house</a><br><span class="muted">We reply within a day, usually by Lena.</span></p></div>
+      <div><span class="meta">Call</span><p><a href="tel:+390471700842">+39 0471 700 842</a><br><span class="muted">08:00 to 20:00, every day of the season</span></p></div>
+      <div><span class="meta">Seasons</span><p>Winter 4 Dec 2026 to 12 Apr 2027<br>Summer 12 Jun to 17 Oct 2027<br><span class="muted">Closed for the thaw in between</span></p></div>
+    </div>
+    <div class="legal meta">
+      <span>Brenna Alpine House, Rier and Rier Snc. Company registration Bolzano 02948120219.</span>
+      <span>Rates in euros, per room per night, tourist tax excluded.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var rates = {
+    larch:[290,380,320,270,0,260],
+    snow:[340,440,370,310,0,300],
+    loft:[460,590,510,420,0,410],
+    ridge:[640,820,700,590,0,560]
+  };
+  var names = {larch:"Larch Room", snow:"Snow Room", loft:"Loft Suite", ridge:"Ridge House"};
+  var seasons = [
+    ["2026-12-04","2026-12-19"],
+    ["2026-12-20","2027-01-06"],
+    ["2027-01-07","2027-03-28"],
+    ["2027-03-29","2027-04-12"],
+    ["2027-04-13","2027-06-11"],
+    ["2027-06-12","2027-10-17"]
+  ];
+  function seasonOf(d){
+    for (var i=0;i<seasons.length;i++){
+      if (d >= seasons[i][0] && d <= seasons[i][1]) return i;
+    }
+    return -1;
+  }
+  function fmt(n){ return "€" + n.toLocaleString("en-GB"); }
+  function iso(date){ return date.toISOString().slice(0,10); }
+
+  var inEl = document.getElementById("in"), outEl = document.getElementById("out");
+  var roomEl = document.getElementById("room"), guestsEl = document.getElementById("guests");
+  var est = document.getElementById("estimate");
+
+  function update(){
+    var a = new Date(inEl.value), b = new Date(outEl.value);
+    if (isNaN(a) || isNaN(b) || b <= a){ est.textContent = "Choose a departure after your arrival."; return; }
+    var nights = Math.round((b - a) / 86400000);
+    var total = 0, closed = false, festive = false, cur = new Date(a);
+    for (var i=0;i<nights;i++){
+      var s = seasonOf(iso(cur));
+      if (s < 0 || rates[roomEl.value][s] === 0){ closed = true; break; }
+      if (s === 1) festive = true;
+      total += rates[roomEl.value][s];
+      cur.setDate(cur.getDate()+1);
+    }
+    var guests = parseInt(guestsEl.value,10);
+    var room = roomEl.value;
+    if (closed){ est.textContent = "The house is closed on some of those dates. Winter runs 4 December to 12 April, summer 12 June to 17 October."; return; }
+    if (guests > 2 && (room === "larch" || room === "snow")){ est.textContent = "The " + names[room] + " sleeps two. The Loft Suite takes three and the Ridge House four."; return; }
+    if (guests > 3 && room === "loft"){ est.textContent = "The Loft Suite sleeps three. The Ridge House takes four."; return; }
+    if (guests === 3) total += 60 * nights;
+    if (guests === 4) total += 120 * nights;
+    var line = nights + (nights === 1 ? " night" : " nights") + " in the " + names[room] + " for " + guests + (guests === 1 ? " guest" : " guests") + ": ";
+    est.innerHTML = line + "<strong>" + fmt(total) + "</strong>, breakfast and sauna included.";
+    if (festive && nights < 5) est.innerHTML += " Festive weeks need five nights.";
+  }
+  [inEl,outEl,roomEl,guestsEl].forEach(function(el){ el.addEventListener("change", update); el.addEventListener("input", update); });
+  document.getElementById("check").addEventListener("click", function(){
+    update();
+    est.innerHTML += " <strong>Lena will confirm within the hour during opening hours.</strong>";
+  });
+  update();
+
+  document.querySelectorAll("[data-room]").forEach(function(a){
+    a.addEventListener("click", function(){ roomEl.value = a.getAttribute("data-room"); update(); });
+  });
+
+  var qa = document.getElementById("qa");
+  qa.addEventListener("toggle", function(e){
+    if (!e.target.open) return;
+    qa.querySelectorAll("details[open]").forEach(function(d){ if (d !== e.target) d.open = false; });
+  }, true);
+})();
+</script>
+</body>
+</html>

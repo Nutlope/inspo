@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halden Robotics - Autonomous pallet and tote handling for warehouses</title>
+<meta name="description" content="Halden builds autonomous mobile robots for warehouses: HX-600 tote, HX-1400 pallet and HX-2500 forklift AMRs, certified to ISO 3691-4, run by one fleet manager.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-meta: 0.75rem;
+    --t-body: 1rem;
+    --t-lead: 1.25rem;
+    --t-h2: clamp(1.75rem, 2.6vw, 2.5rem);
+    --t-display: clamp(2.5rem, 4.4vw, 3.6rem);
+
+    /* palette */
+    --paper: #ECEBE6;
+    --paper-2: #E1E0DA;
+    --ink: #141413;
+    --muted: #66655F;
+    --rule: #C6C5BE;
+    --yellow: #F5C400;
+    --yellow-deep: #B58F00;
+    --dark: #1C1C1A;
+
+    --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+
+    --section: clamp(72px, 9vw, 128px);
+    --wrap: 1200px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:var(--t-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,p{margin:0}
+  ul{margin:0;padding:0;list-style:none}
+  table{border-collapse:collapse;width:100%}
+  button,input{font:inherit;color:inherit}
+
+  .wrap{
+    width:min(var(--wrap), 100%);
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 48px);
+  }
+  .meta{
+    font-family:var(--mono);
+    font-size:var(--t-meta);
+    letter-spacing:0.01em;
+    color:var(--muted);
+  }
+  .meta strong{color:var(--ink);font-weight:500}
+  .num{font-variant-numeric:tabular-nums}
+
+  .h2{
+    font-size:var(--t-h2);
+    font-weight:600;
+    font-stretch:105%;
+    letter-spacing:-0.02em;
+    line-height:1.08;
+    max-width:22ch;
+    text-wrap:balance;
+  }
+  .lead{font-size:var(--t-lead);line-height:1.45;max-width:52ch;color:var(--ink)}
+  .body-muted{color:var(--muted);max-width:56ch}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 22px;
+    border:1.5px solid var(--ink);
+    border-radius:4px;
+    font-weight:600;
+    font-size:var(--t-body);
+    line-height:1;
+    cursor:pointer;
+    background:transparent;
+    transition:background .15s, color .15s, border-color .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn-yellow{background:var(--yellow);border-color:var(--yellow)}
+  .btn-yellow:hover{background:var(--ink);border-color:var(--ink);color:var(--yellow)}
+  .btn-sm{padding:10px 16px;font-size:var(--t-meta);font-family:var(--mono);font-weight:500}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    border-bottom:1px solid var(--rule);
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    height:64px;
+  }
+  .wordmark{display:flex;align-items:center;gap:10px;font-weight:700;font-stretch:112%;letter-spacing:-0.01em;font-size:1.125rem}
+  .wordmark .mark{width:22px;height:22px;background:var(--yellow);border-radius:3px;position:relative;overflow:hidden}
+  .wordmark .mark::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg, var(--ink) 0 4px, transparent 4px 9px);opacity:.9;clip-path:polygon(0 100%, 100% 0, 100% 100%)}
+  .nav-links{display:flex;gap:28px}
+  .nav-links a{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-right{display:flex;align-items:center;gap:20px}
+  .status{display:flex;align-items:center;gap:8px}
+  .status i{width:7px;height:7px;border-radius:50%;background:#2E9B4F;box-shadow:0 0 0 3px rgba(46,155,79,.18)}
+
+  .hero{flex:1;display:flex;align-items:center}
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:minmax(0, 5fr) minmax(0, 6fr);
+    gap:clamp(24px, 4vw, 64px);
+    align-items:center;
+    padding-block:28px 36px;
+    width:100%;
+  }
+  .hero-copy{position:relative;padding-left:22px}
+  .hero-copy::before{
+    content:"";position:absolute;left:0;top:6px;width:5px;height:84px;background:var(--yellow);
+  }
+  .eyebrow{display:flex;flex-wrap:wrap;gap:0 14px;margin-bottom:22px}
+  .eyebrow span + span::before{content:"·";margin-right:14px;color:var(--rule)}
+  .display{
+    font-size:var(--t-display);
+    font-weight:700;
+    font-stretch:108%;
+    letter-spacing:-0.03em;
+    line-height:1.02;
+    text-wrap:balance;
+    max-width:18ch;
+  }
+  .display .dot{color:var(--yellow-deep)}
+  .hero-sub{margin-top:22px;max-width:44ch;font-size:var(--t-lead);line-height:1.45;color:var(--muted)}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .hero-foot{display:flex;gap:28px;margin-top:34px}
+  .hero-foot div{display:grid;gap:2px}
+  .hero-foot b{font-weight:600;font-size:var(--t-body)}
+
+  .hero-visual{
+    position:relative;
+    border:1px solid var(--rule);
+    border-radius:6px;
+    background:
+      linear-gradient(var(--rule) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px) 0 0/40px 40px,
+      var(--paper-2);
+    background-blend-mode:normal;
+    overflow:hidden;
+  }
+  .hero-visual svg{display:block;width:100%;height:auto}
+  .hero-visual .plate{
+    position:absolute;left:14px;top:12px;
+    display:flex;gap:14px;
+  }
+  .hero-visual .plate span{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted)}
+  .hero-visual .plate span b{color:var(--ink);font-weight:500}
+
+  /* ---------- sections ---------- */
+  section{padding-block:var(--section)}
+  .section-head{display:grid;grid-template-columns:auto 1fr;gap:20px 40px;align-items:start;margin-bottom:clamp(36px, 5vw, 56px)}
+  .section-head .idx{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);padding-top:10px}
+  .section-head .idx b{color:var(--yellow-deep);font-weight:500}
+  .section-head .body-muted{margin-top:16px}
+
+  /* stats */
+  .stats{padding-block:0;border-block:1px solid var(--rule);background:var(--paper-2)}
+  .stats ul{display:grid;grid-template-columns:repeat(4, 1fr)}
+  .stats li{padding:34px 28px 30px;border-left:1px solid var(--rule)}
+  .stats li:first-child{border-left:0;padding-left:0}
+  .stats .value{font-size:var(--t-h2);font-weight:700;font-stretch:108%;letter-spacing:-0.03em;line-height:1}
+  .stats .value small{font-size:0.5em;font-weight:500;letter-spacing:0;margin-left:4px;color:var(--muted)}
+  .stats .meta{margin-top:12px}
+
+  /* lineup */
+  .lineup{display:grid;grid-template-columns:repeat(3, 1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .model{background:var(--paper);padding:28px;display:flex;flex-direction:column;gap:18px;transition:background .15s}
+  .model:hover{background:var(--paper-2)}
+  .model .top{display:flex;justify-content:space-between;align-items:baseline}
+  .model .code{font-family:var(--mono);font-size:var(--t-lead);font-weight:500;letter-spacing:-0.01em}
+  .model .fig{background:var(--paper-2);border:1px solid var(--rule);border-radius:4px;aspect-ratio:4/2.4;display:grid;place-items:center;padding:16px}
+  .model .fig svg{width:100%;height:100%}
+  .model h3{font-size:var(--t-lead);font-weight:600;letter-spacing:-0.01em}
+  .model p{color:var(--muted);font-size:0.9375rem}
+  .kv{display:grid;gap:8px;margin-top:auto;padding-top:16px;border-top:1px solid var(--rule)}
+  .kv div{display:flex;justify-content:space-between;gap:12px;font-size:0.9375rem}
+  .kv div span:first-child{color:var(--muted)}
+  .kv div span:last-child{font-family:var(--mono);font-size:var(--t-meta);font-weight:500}
+
+  /* spec table */
+  .specs .toolbar{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+  .seg{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+  .seg button{background:transparent;border:0;padding:8px 14px;font-family:var(--mono);font-size:var(--t-meta);cursor:pointer;color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--paper)}
+  .spec-table th,.spec-table td{padding:13px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule);font-size:0.9375rem}
+  .spec-table thead th{background:var(--paper-2);font-family:var(--mono);font-weight:500;font-size:var(--t-meta);color:var(--ink)}
+  .spec-table thead th small{display:block;color:var(--muted);font-weight:400;margin-top:2px}
+  .spec-table th:first-child,.spec-table td:first-child{width:26%;color:var(--muted);font-weight:400}
+  .spec-table td{font-family:var(--mono);font-size:var(--t-meta);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .spec-table td.txt{font-family:var(--sans);font-size:0.9375rem;font-weight:400;white-space:normal}
+  .spec-table tr.group td{background:var(--paper-2);font-family:var(--sans);font-weight:600;font-size:0.9375rem;color:var(--ink);padding-block:10px}
+  .spec-table tbody tr:last-child td{border-bottom:0}
+  .spec-table td.hi,.spec-table th.hi{background:rgba(245,196,0,.16)}
+  .spec-table tr.group td.hi{background:var(--paper-2)}
+  .spec-note{margin-top:14px}
+
+  /* safety (dark) */
+  .safety{background:var(--dark);color:var(--paper)}
+  .safety .meta{color:#A2A19A}
+  .safety .meta strong{color:var(--paper)}
+  .safety .section-head .idx b{color:var(--yellow)}
+  .safety .body-muted{color:#B6B5AE}
+  .safety-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,4vw,56px);align-items:start}
+  .safety-fig{border:1px solid #3A3A36;border-radius:6px;background:
+      linear-gradient(#2A2A27 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, #2A2A27 1px, transparent 1px) 0 0/40px 40px,
+      #222220;overflow:hidden}
+  .safety-fig svg{display:block;width:100%;height:auto}
+  .std{border-top:1px solid #3A3A36}
+  .std li{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #3A3A36;font-size:0.9375rem}
+  .std li span:first-child{font-family:var(--mono);font-size:var(--t-meta);color:var(--yellow);padding-top:3px}
+  .std li span:last-child{color:#D9D8D1}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#3A3A36;border:1px solid #3A3A36;margin-top:28px}
+  .fields div{background:#222220;padding:18px}
+  .fields .value{font-size:var(--t-h2);font-weight:700;font-stretch:108%;letter-spacing:-0.03em;line-height:1}
+  .fields .value small{font-size:.5em;color:#A2A19A;font-weight:500;margin-left:4px}
+  .fields .meta{margin-top:8px}
+
+  /* fleet software */
+  .fleet-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);align-items:start}
+  .feature-list{border-top:1px solid var(--rule);margin-top:28px}
+  .feature-list li{padding:18px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:44px 1fr;gap:12px}
+  .feature-list .n{font-family:var(--mono);font-size:var(--t-meta);color:var(--yellow-deep);padding-top:4px}
+  .feature-list h3{font-size:var(--t-body);font-weight:600}
+  .feature-list p{color:var(--muted);font-size:0.9375rem;margin-top:4px}
+  .console{border:1px solid var(--rule);border-radius:6px;background:var(--paper);overflow:hidden;font-family:var(--mono);font-size:var(--t-meta)}
+  .console .bar{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--rule);background:var(--paper-2);color:var(--muted)}
+  .console .bar b{color:var(--ink);font-weight:500}
+  .console .rows{display:grid}
+  .console .row{display:grid;grid-template-columns:90px 1fr 110px 90px 70px;gap:12px;padding:10px 14px;border-bottom:1px solid var(--rule);align-items:center}
+  .console .row:last-child{border-bottom:0}
+  .console .row.head{color:var(--muted);background:var(--paper)}
+  .console .pill{display:inline-block;padding:2px 7px;border-radius:3px;background:var(--paper-2);color:var(--ink)}
+  .console .pill.go{background:var(--yellow);color:var(--ink)}
+  .console .pill.chg{background:#DCE8DF;color:#1F5C33}
+  .console .bat{display:flex;align-items:center;gap:6px}
+  .console .bat i{display:block;width:44px;height:6px;background:var(--paper-2);border-radius:2px;position:relative;overflow:hidden}
+  .console .bat i::after{content:"";position:absolute;inset:0;width:var(--p);background:var(--ink)}
+  .console .foot{display:flex;gap:20px;padding:10px 14px;border-top:1px solid var(--rule);background:var(--paper-2);color:var(--muted)}
+
+  /* deployment */
+  .timeline{display:grid;grid-template-columns:repeat(4, 1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .step{background:var(--paper);padding:24px;min-height:220px;display:flex;flex-direction:column;gap:12px}
+  .step .when{font-family:var(--mono);font-size:var(--t-meta);color:var(--yellow-deep);font-weight:500}
+  .step h3{font-size:var(--t-lead);font-weight:600;letter-spacing:-0.01em}
+  .step p{color:var(--muted);font-size:0.9375rem}
+  .step .out{margin-top:auto;padding-top:12px;border-top:1px solid var(--rule)}
+  .sites{min-width:640px}
+  .sites th,.sites td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--rule);font-size:0.9375rem}
+  .sites thead th{background:var(--paper-2);font-family:var(--mono);font-size:var(--t-meta);font-weight:500;color:var(--muted)}
+  .sites td.n{font-family:var(--mono);font-size:var(--t-meta);font-weight:500;font-variant-numeric:tabular-nums}
+  .sites tbody tr:last-child td{border-bottom:0}
+
+  /* cta */
+  .cta{background:var(--yellow);color:var(--ink)}
+  .cta .meta{color:rgba(20,20,19,.65)}
+  .cta .meta strong{color:var(--ink)}
+  .cta-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,4vw,56px);align-items:end}
+  .cta .h2{max-width:20ch}
+  .cta form{display:grid;gap:10px}
+  .cta .field{display:flex;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden;background:rgba(255,255,255,.35)}
+  .cta input{flex:1;min-width:0;border:0;background:transparent;padding:14px 16px;outline:none}
+  .cta input::placeholder{color:rgba(20,20,19,.55)}
+  .cta .field button{border:0;background:var(--ink);color:var(--yellow);padding:0 20px;font-weight:600;cursor:pointer}
+  .cta .ok{display:none;font-family:var(--mono);font-size:var(--t-meta);padding:12px 0}
+  .cta form.done .field{display:none}
+  .cta form.done .ok{display:block}
+  .cta .checks{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px}
+  .cta .checks span::before{content:"";display:inline-block;width:8px;height:8px;background:var(--ink);margin-right:8px;transform:rotate(45deg)}
+
+  /* footer */
+  footer{border-top:1px solid var(--rule);padding-block:56px 32px}
+  .foot-grid{display:grid;grid-template-columns:minmax(0,6fr) repeat(3, minmax(0,2fr));gap:32px}
+  .index li{display:grid;grid-template-columns:36px 1fr auto;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--rule)}
+  .index li:first-child{border-top:1px solid var(--rule)}
+  .index li a{font-size:var(--t-lead);font-weight:600;letter-spacing:-0.01em;transition:color .15s}
+  .index li a:hover{color:var(--yellow-deep)}
+  .foot-col p{font-size:0.9375rem;line-height:1.6;margin-top:12px}
+  .foot-col a:hover{color:var(--yellow-deep)}
+  .legal{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:48px;padding-top:20px;border-top:1px solid var(--rule)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1024px){
+    .nav-links{display:none}
+    .hero .wrap{grid-template-columns:1fr;padding-block:24px 40px}
+    .display{max-width:16ch}
+    .stats ul{grid-template-columns:repeat(2,1fr)}
+    .stats li:nth-child(3){border-left:0;padding-left:0}
+    .stats li{border-top:1px solid var(--rule)}
+    .stats li:nth-child(-n+2){border-top:0}
+    .lineup{grid-template-columns:1fr}
+    .safety-grid,.fleet-grid,.cta-grid{grid-template-columns:1fr}
+    .timeline{grid-template-columns:repeat(2,1fr)}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 640px){
+    .section-head{grid-template-columns:1fr}
+    .timeline{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .console .row{grid-template-columns:80px 1fr 90px;gap:8px}
+    .console .row > :nth-child(4),.console .row > :nth-child(5){display:none}
+    .hero-foot{flex-wrap:wrap;gap:16px}
+    .status{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ fold ============ -->
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top"><span class="mark" aria-hidden="true"></span>Halden</a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#lineup">Fleet</a>
+        <a href="#specs">Specifications</a>
+        <a href="#safety">Safety</a>
+        <a href="#yard">Yard software</a>
+        <a href="#deploy">Deployment</a>
+      </nav>
+      <div class="nav-right">
+        <span class="status meta"><i aria-hidden="true"></i>Fleet status: 1,942 robots online</span>
+        <a class="btn btn-yellow btn-sm" href="#quote">Request a site survey</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top" style="padding-block:0">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow meta"><span><strong>HX-1400</strong></span><span>Pallet AMR</span><span>ISO 3691-4 certified</span><span>Rev 3.2</span></p>
+        <h1 class="display">Moves 1,400 kg at 2.0 m/s<span class="dot">.</span> Stops inside 480 mm<span class="dot">.</span></h1>
+        <p class="hero-sub">Autonomous pallet and tote robots for warehouses that run three shifts. No floor tape, no beacons, no forklift driver shortage.</p>
+        <div class="hero-cta">
+          <a class="btn btn-yellow" href="#specs">Read the spec sheet</a>
+          <a class="btn" href="#quote">Book a site survey</a>
+        </div>
+        <div class="hero-foot meta">
+          <div><b class="num">±5 mm</b><span>Positioning repeatability</span></div>
+          <div><b class="num">12 h</b><span>Runtime, mixed duty</span></div>
+          <div><b class="num">31</b><span>Sites live in 9 countries</span></div>
+        </div>
+      </div>
+
+      <figure class="hero-visual" aria-label="Side elevation of the HX-1400 pallet AMR with dimension callouts">
+        <div class="plate"><span>Drawing <b>HX-1400-SE</b></span><span>Scale <b>1:20</b></span><span>Sheet <b>1 of 4</b></span></div>
+        <svg viewBox="0 0 640 430" xmlns="http://www.w3.org/2000/svg" role="img">
+          <defs>
+            <pattern id="hz" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="6" height="12" fill="#141413"/>
+              <rect x="6" width="6" height="12" fill="#F5C400"/>
+            </pattern>
+          </defs>
+          <!-- ground -->
+          <line x1="40" y1="352" x2="600" y2="352" stroke="#141413" stroke-width="1.5"/>
+          <g stroke="#141413" stroke-width="1" opacity=".55">
+            <line x1="60" y1="352" x2="52" y2="362"/><line x1="90" y1="352" x2="82" y2="362"/><line x1="120" y1="352" x2="112" y2="362"/>
+            <line x1="520" y1="352" x2="512" y2="362"/><line x1="550" y1="352" x2="542" y2="362"/><line x1="580" y1="352" x2="572" y2="362"/>
+          </g>
+
+          <!-- load: boxes on pallet -->
+          <g>
+            <rect x="214" y="150" width="120" height="112" fill="#D9D8D1" stroke="#141413" stroke-width="1.2"/>
+            <rect x="334" y="150" width="110" height="112" fill="#CFCEC6" stroke="#141413" stroke-width="1.2"/>
+            <rect x="444" y="196" width="86" height="66" fill="#D9D8D1" stroke="#141413" stroke-width="1.2"/>
+            <rect x="214" y="106" width="140" height="44" fill="#CFCEC6" stroke="#141413" stroke-width="1.2"/>
+            <line x1="214" y1="206" x2="334" y2="206" stroke="#141413" stroke-width=".8" opacity=".5"/>
+            <line x1="334" y1="206" x2="444" y2="206" stroke="#141413" stroke-width=".8" opacity=".5"/>
+          </g>
+          <!-- pallet -->
+          <g stroke="#141413" stroke-width="1.2" fill="#B9A886">
+            <rect x="206" y="262" width="330" height="8"/>
+            <rect x="210" y="270" width="26" height="20"/>
+            <rect x="358" y="270" width="26" height="20"/>
+            <rect x="506" y="270" width="26" height="20"/>
+            <rect x="206" y="290" width="330" height="6"/>
+          </g>
+
+          <!-- forks -->
+          <rect x="176" y="296" width="380" height="18" rx="3" fill="#2B2B28" stroke="#141413" stroke-width="1.2"/>
+          <rect x="540" y="298" width="16" height="14" fill="#141413"/>
+          <!-- load wheels -->
+          <circle cx="500" cy="338" r="12" fill="#2B2B28" stroke="#141413" stroke-width="1.5"/>
+          <circle cx="500" cy="338" r="4" fill="#ECEBE6"/>
+          <rect x="488" y="314" width="24" height="14" fill="#2B2B28"/>
+
+          <!-- drive unit / tower -->
+          <rect x="80" y="196" width="112" height="132" rx="10" fill="#F5C400" stroke="#141413" stroke-width="1.5"/>
+          <rect x="80" y="304" width="112" height="24" fill="url(#hz)" stroke="#141413" stroke-width="1.5"/>
+          <rect x="94" y="214" width="84" height="30" rx="3" fill="#141413"/>
+          <text x="136" y="234" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="500" fill="#F5C400" text-anchor="middle">HX-1400</text>
+          <text x="136" y="264" font-family="Archivo, Arial, sans-serif" font-size="11" font-weight="700" fill="#141413" text-anchor="middle">Halden</text>
+          <!-- e-stop -->
+          <circle cx="176" cy="284" r="7" fill="#D0342C" stroke="#141413" stroke-width="1.2"/>
+          <!-- lidar puck -->
+          <rect x="102" y="176" width="44" height="20" rx="4" fill="#2B2B28" stroke="#141413" stroke-width="1.2"/>
+          <rect x="106" y="182" width="36" height="5" fill="#F5C400"/>
+          <!-- drive wheel -->
+          <circle cx="136" cy="334" r="20" fill="#2B2B28" stroke="#141413" stroke-width="1.5"/>
+          <circle cx="136" cy="334" r="7" fill="#ECEBE6"/>
+          <!-- caster -->
+          <circle cx="204" cy="340" r="9" fill="#2B2B28" stroke="#141413" stroke-width="1.2"/>
+
+          <!-- dimension: overall length -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="80" y1="386" x2="556" y2="386"/>
+            <line x1="80" y1="378" x2="80" y2="394"/><line x1="556" y1="378" x2="556" y2="394"/>
+            <line x1="80" y1="330" x2="80" y2="372" stroke-dasharray="3 3"/>
+            <line x1="556" y1="316" x2="556" y2="372" stroke-dasharray="3 3"/>
+          </g>
+          <rect x="278" y="376" width="82" height="20" fill="#E1E0DA"/>
+          <text x="319" y="390" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413" text-anchor="middle">1,640 mm</text>
+
+          <!-- dimension: tower height -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="56" y1="176" x2="56" y2="352"/>
+            <line x1="48" y1="176" x2="64" y2="176"/><line x1="48" y1="352" x2="64" y2="352"/>
+            <line x1="62" y1="176" x2="100" y2="176" stroke-dasharray="3 3"/>
+          </g>
+          <text x="52" y="270" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413" text-anchor="middle" transform="rotate(-90 52 270)">380 mm</text>
+
+          <!-- dimension: fork height -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="588" y1="296" x2="588" y2="352"/>
+            <line x1="582" y1="296" x2="594" y2="296"/><line x1="582" y1="352" x2="594" y2="352"/>
+            <line x1="556" y1="296" x2="586" y2="296" stroke-dasharray="3 3"/>
+          </g>
+          <text x="600" y="328" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413" text-anchor="start">85 mm</text>
+
+          <!-- callout: lidar -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="124" y1="176" x2="124" y2="108"/>
+          </g>
+          <circle cx="124" cy="176" r="2.5" fill="#66655F"/>
+          <text x="70" y="86" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413">Safety lidar, 270°</text>
+          <text x="70" y="100" font-family="IBM Plex Mono, monospace" font-size="11" fill="#66655F">PL d, Cat 3</text>
+
+          <!-- callout: load -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="500" y1="176" x2="540" y2="150"/><line x1="540" y1="150" x2="600" y2="150"/>
+          </g>
+          <circle cx="500" cy="176" r="2.5" fill="#66655F"/>
+          <text x="600" y="146" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413" text-anchor="end">Rated load</text>
+          <text x="600" y="160" font-family="IBM Plex Mono, monospace" font-size="11" fill="#66655F" text-anchor="end">1,400 kg, EUR 1</text>
+
+          <!-- callout: speed arrow -->
+          <g stroke="#141413" stroke-width="1.5" fill="none">
+            <line x1="300" y1="60" x2="380" y2="60"/><polyline points="372,54 380,60 372,66"/>
+          </g>
+          <text x="300" y="80" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413">2.0 m/s laden</text>
+          <text x="300" y="94" font-family="IBM Plex Mono, monospace" font-size="11" fill="#66655F">braking 480 mm</text>
+
+          <!-- callout: e-stop -->
+          <g stroke="#66655F" stroke-width="1" fill="none">
+            <line x1="181" y1="290" x2="230" y2="326"/>
+          </g>
+          <text x="236" y="330" font-family="IBM Plex Mono, monospace" font-size="11" fill="#141413">Emergency stop, <tspan fill="#66655F">both sides, Cat 0</tspan></text>
+        </svg>
+      </figure>
+    </div>
+  </section>
+</div>
+
+<!-- ============ stats ============ -->
+<section class="stats" aria-label="Key figures">
+  <div class="wrap">
+    <ul>
+      <li><p class="value num">1,400<small>kg</small></p><p class="meta">Rated payload, HX-1400, on the forks</p></li>
+      <li><p class="value num">2.0<small>m/s</small></p><p class="meta">Top speed laden, limited by field size</p></li>
+      <li><p class="value num">±5<small>mm</small></p><p class="meta">Docking repeatability, measured at the fork tips</p></li>
+      <li><p class="value num">99.4<small>%</small></p><p class="meta">Fleet availability, trailing 12 months, 31 sites</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ lineup ============ -->
+<section id="lineup">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="idx"><b>01</b> Fleet</p>
+      <div>
+        <h2 class="h2">Three chassis. One navigation stack. One fleet manager.</h2>
+        <p class="body-muted">Every Halden robot runs the same localisation, the same safety controller and the same Yard interface, so mixing tote, pallet and forklift units on one floor is a configuration, not a project.</p>
+      </div>
+    </div>
+
+    <div class="lineup">
+      <article class="model">
+        <div class="top"><span class="code">HX-600</span><span class="meta">Tote and case</span></div>
+        <div class="fig" aria-hidden="true">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="104" x2="190" y2="104" stroke="#141413" stroke-width="1.2"/>
+            <rect x="40" y="66" width="120" height="30" rx="6" fill="#F5C400" stroke="#141413" stroke-width="1.2"/>
+            <rect x="40" y="88" width="120" height="8" fill="#141413" opacity=".85"/>
+            <rect x="48" y="28" width="104" height="38" fill="#D9D8D1" stroke="#141413" stroke-width="1.2"/>
+            <rect x="48" y="58" width="104" height="8" fill="#2B2B28"/>
+            <rect x="46" y="54" width="20" height="12" rx="2" fill="#2B2B28"/>
+            <circle cx="62" cy="100" r="8" fill="#2B2B28" stroke="#141413"/><circle cx="138" cy="100" r="8" fill="#2B2B28" stroke="#141413"/>
+            <text x="100" y="20" font-family="IBM Plex Mono, monospace" font-size="9" fill="#66655F" text-anchor="middle">1,120 x 720 mm</text>
+          </svg>
+        </div>
+        <h3>Under-tote lifter for goods-to-person picking</h3>
+        <p>Drives under a tote rack or roller cart, lifts 60 mm and carries it to a pick station. Turns in place, fits a 900 mm aisle.</p>
+        <div class="kv">
+          <div><span>Payload</span><span>600 kg</span></div>
+          <div><span>Top speed</span><span>2.0 m/s</span></div>
+          <div><span>Footprint</span><span>1,120 x 720 mm</span></div>
+          <div><span>Runtime</span><span>10 h</span></div>
+        </div>
+      </article>
+
+      <article class="model">
+        <div class="top"><span class="code">HX-1400</span><span class="meta">Pallet</span></div>
+        <div class="fig" aria-hidden="true">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="104" x2="190" y2="104" stroke="#141413" stroke-width="1.2"/>
+            <rect x="72" y="30" width="96" height="44" fill="#D9D8D1" stroke="#141413" stroke-width="1.2"/>
+            <rect x="72" y="74" width="100" height="6" fill="#B9A886" stroke="#141413" stroke-width="1"/>
+            <rect x="64" y="84" width="112" height="7" rx="2" fill="#2B2B28"/>
+            <rect x="26" y="40" width="40" height="52" rx="5" fill="#F5C400" stroke="#141413" stroke-width="1.2"/>
+            <rect x="26" y="84" width="40" height="8" fill="#141413" opacity=".85"/>
+            <rect x="34" y="32" width="18" height="8" rx="2" fill="#2B2B28"/>
+            <circle cx="46" cy="98" r="7" fill="#2B2B28" stroke="#141413"/><circle cx="160" cy="99" r="5" fill="#2B2B28" stroke="#141413"/>
+            <text x="100" y="20" font-family="IBM Plex Mono, monospace" font-size="9" fill="#66655F" text-anchor="middle">1,640 x 900 mm</text>
+          </svg>
+        </div>
+        <h3>Low-lift pallet mover for dock to rack and line-side feed</h3>
+        <p>Picks EUR 1 and 40 x 48 pallets from floor, conveyor or stand. Runs on the same aisles as manual pallet jacks.</p>
+        <div class="kv">
+          <div><span>Payload</span><span>1,400 kg</span></div>
+          <div><span>Top speed</span><span>2.0 m/s</span></div>
+          <div><span>Footprint</span><span>1,640 x 900 mm</span></div>
+          <div><span>Runtime</span><span>12 h</span></div>
+        </div>
+      </article>
+
+      <article class="model">
+        <div class="top"><span class="code">HX-2500</span><span class="meta">Forklift</span></div>
+        <div class="fig" aria-hidden="true">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="104" x2="190" y2="104" stroke="#141413" stroke-width="1.2"/>
+            <rect x="40" y="54" width="86" height="40" rx="6" fill="#F5C400" stroke="#141413" stroke-width="1.2"/>
+            <rect x="40" y="86" width="86" height="8" fill="#141413" opacity=".85"/>
+            <rect x="126" y="14" width="8" height="80" fill="#2B2B28"/><rect x="138" y="14" width="8" height="80" fill="#2B2B28"/>
+            <rect x="120" y="10" width="30" height="5" fill="#2B2B28"/>
+            <rect x="134" y="60" width="52" height="5" fill="#2B2B28"/>
+            <rect x="140" y="26" width="42" height="30" fill="#D9D8D1" stroke="#141413" stroke-width="1.2"/>
+            <rect x="140" y="56" width="44" height="4" fill="#B9A886"/>
+            <rect x="50" y="40" width="30" height="14" rx="2" fill="#2B2B28"/>
+            <circle cx="60" cy="98" r="9" fill="#2B2B28" stroke="#141413"/><circle cx="118" cy="98" r="9" fill="#2B2B28" stroke="#141413"/>
+            <text x="80" y="24" font-family="IBM Plex Mono, monospace" font-size="9" fill="#66655F" text-anchor="middle">lift 3,600 mm</text>
+          </svg>
+        </div>
+        <h3>Counterbalance forklift for racking up to three levels</h3>
+        <p>Puts pallets away at 3.6 m and pulls them again, with a mast-mounted scanner covering the raised load. Outdoor-rated to the yard.</p>
+        <div class="kv">
+          <div><span>Payload</span><span>2,500 kg</span></div>
+          <div><span>Top speed</span><span>1.6 m/s</span></div>
+          <div><span>Footprint</span><span>2,410 x 1,120 mm</span></div>
+          <div><span>Runtime</span><span>8 h</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ specs ============ -->
+<section id="specs" class="specs" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="idx"><b>02</b> Specifications</p>
+      <div>
+        <h2 class="h2">The sheet we hand to your safety officer.</h2>
+        <p class="body-muted">Values below are measured on production units on sealed concrete at 20 °C, laden to rated payload unless stated. Tolerances and test methods are in the full datasheet.</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <p class="meta">Datasheet <strong>HDS-3.2</strong> · issued 2026-07 · click a column to highlight it</p>
+      <div class="seg" role="group" aria-label="Units">
+        <button type="button" data-units="metric" aria-pressed="true">Metric</button>
+        <button type="button" data-units="imperial" aria-pressed="false">Imperial</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="spec-table" id="specTable">
+        <thead>
+          <tr>
+            <th scope="col">Specification</th>
+            <th scope="col" data-col="1">HX-600<small>Tote and case</small></th>
+            <th scope="col" data-col="2">HX-1400<small>Pallet</small></th>
+            <th scope="col" data-col="3">HX-2500<small>Forklift</small></th>
+          </tr>
+        </thead>
+        <tbody id="specBody"></tbody>
+      </table>
+    </div>
+    <p class="meta spec-note">Braking distance is measured from top laden speed on dry sealed concrete, protective field triggered, to standstill. Repeatability is 3 sigma over 500 dock cycles.</p>
+  </div>
+</section>
+
+<!-- ============ safety ============ -->
+<section id="safety" class="safety">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="idx"><b>03</b> Safety</p>
+      <div>
+        <h2 class="h2">The robot slows before it needs to stop.</h2>
+        <p class="body-muted">Two 270 degree safety scanners cover every side of the chassis. Field sets are switched by speed and load, so the protective field is always longer than the braking distance, with margin.</p>
+      </div>
+    </div>
+
+    <div class="safety-grid">
+      <figure class="safety-fig" aria-label="Plan view of an HX-1400 with its protective and warning fields">
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" role="img">
+          <!-- warning field -->
+          <path d="M250 60 L640 60 L640 320 L250 320 Z" fill="#F5C400" fill-opacity=".08" stroke="#F5C400" stroke-width="1" stroke-dasharray="6 5"/>
+          <!-- protective field -->
+          <path d="M250 110 L455 110 L455 270 L250 270 Z" fill="#F5C400" fill-opacity=".28" stroke="#F5C400" stroke-width="1.5"/>
+          <!-- side fields -->
+          <rect x="70" y="118" width="180" height="22" fill="#F5C400" fill-opacity=".18" stroke="#F5C400" stroke-width="1" stroke-dasharray="3 3"/>
+          <rect x="70" y="240" width="180" height="22" fill="#F5C400" fill-opacity=".18" stroke="#F5C400" stroke-width="1" stroke-dasharray="3 3"/>
+          <!-- robot -->
+          <rect x="70" y="140" width="180" height="100" rx="8" fill="#141413" stroke="#F5C400" stroke-width="1.5"/>
+          <rect x="130" y="150" width="112" height="80" rx="3" fill="#2B2B28"/>
+          <text x="100" y="196" font-family="IBM Plex Mono, monospace" font-size="12" fill="#F5C400" text-anchor="middle" transform="rotate(-90 100 196)">HX-1400</text>
+          <!-- scanners -->
+          <circle cx="250" cy="140" r="7" fill="#F5C400"/>
+          <circle cx="70" cy="240" r="7" fill="#F5C400"/>
+          <path d="M250 140 L262 118 A 26 26 0 0 1 272 140 Z" fill="#F5C400" fill-opacity=".5"/>
+          <path d="M70 240 L58 262 A 26 26 0 0 1 48 240 Z" fill="#F5C400" fill-opacity=".5"/>
+          <!-- direction arrow -->
+          <g stroke="#ECEBE6" stroke-width="1.5" fill="none"><line x1="150" y1="190" x2="222" y2="190"/><polyline points="214,184 222,190 214,196"/></g>
+          <!-- dimension: protective -->
+          <g stroke="#A2A19A" stroke-width="1" fill="none">
+            <line x1="250" y1="300" x2="455" y2="300"/><line x1="250" y1="294" x2="250" y2="306"/><line x1="455" y1="294" x2="455" y2="306"/>
+          </g>
+          <text x="352" y="316" font-family="IBM Plex Mono, monospace" font-size="11" fill="#ECEBE6" text-anchor="middle">protective 0.9 m at 1.5 m/s</text>
+          <!-- dimension: warning -->
+          <g stroke="#A2A19A" stroke-width="1" fill="none">
+            <line x1="250" y1="346" x2="640" y2="346"/><line x1="250" y1="340" x2="250" y2="352"/><line x1="640" y1="340" x2="640" y2="352"/>
+          </g>
+          <text x="445" y="364" font-family="IBM Plex Mono, monospace" font-size="11" fill="#A2A19A" text-anchor="middle">warning 2.4 m, speed reduced to 0.3 m/s</text>
+          <!-- labels -->
+          <text x="262" y="100" font-family="IBM Plex Mono, monospace" font-size="11" fill="#F5C400">Field set 3 of 6, laden, 1.5 m/s</text>
+          <text x="262" y="48" font-family="IBM Plex Mono, monospace" font-size="11" fill="#A2A19A">Field set switches at 0.5, 1.0, 1.5, 2.0 m/s and on lift state</text>
+          <text x="70" y="108" font-family="IBM Plex Mono, monospace" font-size="11" fill="#A2A19A">Side fields 0.25 m</text>
+          <text x="264" y="150" font-family="IBM Plex Mono, monospace" font-size="10" fill="#ECEBE6">S1</text>
+          <text x="52" y="232" font-family="IBM Plex Mono, monospace" font-size="10" fill="#ECEBE6">S2</text>
+        </svg>
+      </figure>
+
+      <div>
+        <ul class="std">
+          <li><span>ISO 3691-4:2023</span><span>Driverless industrial trucks. Full type examination by TÜV SÜD, certificate on file for all three chassis.</span></li>
+          <li><span>ISO 13849-1</span><span>Safety functions rated PL d, Category 3: scanner fields, speed monitoring, emergency stop, lift interlock.</span></li>
+          <li><span>IEC 61496-3</span><span>Type 3 safety laser scanners, two per robot, 270 degree scan, 40 ms response.</span></li>
+          <li><span>UL 3100</span><span>Listed for North American sites. CE marked under the Machinery Regulation 2023/1230 for the EU.</span></li>
+          <li><span>ANSI/ITSDF B56.5</span><span>Compliant for US deployments including the audible and visual warning requirements.</span></li>
+        </ul>
+        <div class="fields">
+          <div><p class="value num">40<small>ms</small></p><p class="meta">Scanner to brake command</p></div>
+          <div><p class="value num">6</p><p class="meta">Field sets, speed and lift dependent</p></div>
+          <div><p class="value num">0<small>incidents</small></p><p class="meta">Recordable injuries, 2.1 million robot hours</p></div>
+          <div><p class="value num">2<small>x</small></p><p class="meta">Emergency stops, one each side, Cat 0</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ yard ============ -->
+<section id="yard">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="idx"><b>04</b> Yard software</p>
+      <div>
+        <h2 class="h2">Yard runs the floor. Your WMS still runs the warehouse.</h2>
+        <p class="body-muted">Yard is the fleet manager that ships with every robot. It takes transport orders from your WMS, assigns them, routes traffic, schedules charging and reports back. It runs on a single on-site server with a cloud mirror for support.</p>
+      </div>
+    </div>
+
+    <div class="fleet-grid">
+      <div>
+        <ul class="feature-list">
+          <li><span class="n">4.1</span><div><h3>Native integrations</h3><p>SAP EWM, Manhattan Active, Blue Yonder and Körber connectors maintained by Halden. Anything else over REST or MQTT.</p></div></li>
+          <li><span class="n">4.2</span><div><h3>VDA 5050 2.1 compliant</h3><p>Third-party AGVs from other vendors can share the floor under Yard traffic control, or Halden robots can run under yours.</p></div></li>
+          <li><span class="n">4.3</span><div><h3>Traffic management for 400 robots per site</h3><p>Time-window reservation on a lane graph, with deadlock detection and priority lanes for outbound waves.</p></div></li>
+          <li><span class="n">4.4</span><div><h3>Charging that never blocks a wave</h3><p>Opportunity charging between orders. Yard keeps every robot above 30% state of charge during the peak plan you give it.</p></div></li>
+          <li><span class="n">4.5</span><div><h3>Simulation before commissioning</h3><p>Load your layout and last month's order file. Yard tells you the fleet size and the throughput before a single robot arrives.</p></div></li>
+        </ul>
+      </div>
+
+      <div class="console" aria-label="Yard fleet console, sample view">
+        <div class="bar"><span><b>Yard</b> · Venlo, site 2 · shift 2</span><span>62 robots · 58 active · 4 charging</span></div>
+        <div class="rows">
+          <div class="row head"><span>Unit</span><span>Order</span><span>State</span><span>Battery</span><span>Due in</span></div>
+          <div class="row"><span>HX-1400-017</span><span>88213 · dock 4 to rack B-12-03</span><span><span class="pill go">Moving</span></span><span class="bat"><i style="--p:71%"></i>71%</span><span>1:42</span></div>
+          <div class="row"><span>HX-1400-022</span><span>88214 · line 3 empties return</span><span><span class="pill go">Moving</span></span><span class="bat"><i style="--p:58%"></i>58%</span><span>0:55</span></div>
+          <div class="row"><span>HX-600-104</span><span>88209 · tote 41-7716 to pick 6</span><span><span class="pill">Docking</span></span><span class="bat"><i style="--p:44%"></i>44%</span><span>0:08</span></div>
+          <div class="row"><span>HX-2500-003</span><span>88201 · put-away A-04-L3</span><span><span class="pill go">Lifting</span></span><span class="bat"><i style="--p:83%"></i>83%</span><span>0:31</span></div>
+          <div class="row"><span>HX-600-098</span><span>Opportunity charge, slot 7</span><span><span class="pill chg">Charging</span></span><span class="bat"><i style="--p:29%"></i>29%</span><span>12:00</span></div>
+          <div class="row"><span>HX-1400-009</span><span>88216 · dock 2 to staging</span><span><span class="pill">Queued</span></span><span class="bat"><i style="--p:66%"></i>66%</span><span>2:10</span></div>
+          <div class="row"><span>HX-1400-031</span><span>88208 · rack C-02-01 to line 1</span><span><span class="pill go">Moving</span></span><span class="bat"><i style="--p:52%"></i>52%</span><span>1:05</span></div>
+        </div>
+        <div class="foot"><span>Throughput 412 moves/h</span><span>Queue 14</span><span>Deadlocks 0</span><span>Uptime 99.6%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ deployment ============ -->
+<section id="deploy" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="idx"><b>05</b> Deployment</p>
+      <div>
+        <h2 class="h2">Eight weeks from survey to first shift, on a running warehouse.</h2>
+        <p class="body-muted">No floor modification, no downtime. We map your building while it operates and commission robots one aisle at a time.</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="step"><span class="when">Week 0</span><h3>Site survey</h3><p>One engineer, one day. Floor flatness, aisle widths, dock geometry, Wi-Fi coverage and the order profile from your WMS.</p><p class="meta out">Output: fleet size and throughput estimate</p></div>
+      <div class="step"><span class="when">Weeks 1 to 2</span><h3>Map and simulate</h3><p>A single HX-1400 maps the building during a normal shift. Yard simulates the last 30 days of orders on the real map.</p><p class="meta out">Output: signed layout and lane graph</p></div>
+      <div class="step"><span class="when">Weeks 3 to 6</span><h3>Pilot on one flow</h3><p>Five robots on dock-to-rack only, mixed with your existing traffic. Safety fields are validated on site with your officer present.</p><p class="meta out">Output: acceptance test report</p></div>
+      <div class="step"><span class="when">Week 8</span><h3>Go live and scale</h3><p>Full fleet arrives pre-configured. Adding a robot later is a serial number in Yard and a 45 minute charge.</p><p class="meta out">Output: production fleet, 24/7 support</p></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:56px">
+    <table class="sites">
+      <thead><tr><th>Reference site</th><th>Type</th><th>Fleet</th><th>Moves per hour</th><th>Live since</th></tr></thead>
+      <tbody>
+        <tr><td>Venlo, Netherlands</td><td>Third-party logistics, 48,000 m²</td><td class="n">62 robots</td><td class="n">412</td><td class="n">2024-03</td></tr>
+        <tr><td>Leeds, United Kingdom</td><td>Grocery distribution, chilled</td><td class="n">38 robots</td><td class="n">290</td><td class="n">2024-09</td></tr>
+        <tr><td>Győr, Hungary</td><td>Automotive line-side feed</td><td class="n">24 robots</td><td class="n">188</td><td class="n">2025-02</td></tr>
+        <tr><td>Reno, Nevada, United States</td><td>E-commerce fulfilment</td><td class="n">140 robots</td><td class="n">1,060</td><td class="n">2025-06</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ cta ============ -->
+<section id="quote" class="cta">
+  <div class="wrap cta-grid">
+    <div>
+      <p class="meta">Spec pack <strong>HDS-3.2</strong> · 38 pages · drawings and 3D models included</p>
+      <h2 class="h2" style="margin-top:16px">Get the full datasheet, the drawings and a fleet estimate for your floor.</h2>
+      <div class="checks meta">
+        <span>Dimensioned drawings, all three chassis</span>
+        <span>Safety field tables by speed</span>
+        <span>Yard API reference</span>
+      </div>
+    </div>
+    <form id="specForm" novalidate>
+      <label class="meta" for="email">Work email</label>
+      <div class="field">
+        <input id="email" type="email" placeholder="name@company.com" autocomplete="email" required>
+        <button type="submit">Send the pack</button>
+      </div>
+      <p class="ok" id="okMsg">Sent. Check your inbox for HDS-3.2, and an engineer will follow up within one working day.</p>
+      <p class="meta">No distribution list. One follow-up from a Halden engineer, not a sales sequence.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ footer ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Index</p>
+        <ul class="index" style="margin-top:12px">
+          <li><span class="meta">01</span><a href="#lineup">Fleet</a><span class="meta">HX-600, HX-1400, HX-2500</span></li>
+          <li><span class="meta">02</span><a href="#specs">Specifications</a><span class="meta">Datasheet HDS-3.2</span></li>
+          <li><span class="meta">03</span><a href="#safety">Safety</a><span class="meta">ISO 3691-4, PL d</span></li>
+          <li><span class="meta">04</span><a href="#yard">Yard software</a><span class="meta">VDA 5050 2.1</span></li>
+          <li><span class="meta">05</span><a href="#deploy">Deployment</a><span class="meta">Eight weeks</span></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <p class="meta">Head office</p>
+        <p>Halden Robotics B.V.<br>Kanaaldijk 220<br>5613 DN Eindhoven<br>Netherlands</p>
+      </div>
+      <div class="foot-col">
+        <p class="meta">Write</p>
+        <p><a href="mailto:engineering@halden-robotics.com">engineering@halden-robotics.com</a><br><a href="mailto:support@halden-robotics.com">support@halden-robotics.com</a><br><span class="meta">Support line answered 24/7</span></p>
+      </div>
+      <div class="foot-col">
+        <p class="meta">Also in</p>
+        <p>Leeds, United Kingdom<br>Reno, Nevada<br>Győr, Hungary</p>
+      </div>
+    </div>
+    <div class="legal meta">
+      <span>© 2026 Halden Robotics B.V. · Chamber of commerce 84019271</span>
+      <span>Specifications subject to change without notice. Datasheet HDS-3.2 governs.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---- spec sheet data (metric) ----
+  // kind: mm | kg | ms | c | text | dim (L x W mm) | min | h | pct | db
+  var groups = [
+    {name:"Mechanical", rows:[
+      {label:"Rated payload", kind:"kg", v:[600,1400,2500]},
+      {label:"Load centre", kind:"text", v:["n/a, under-tote","n/a, forks","500 mm"]},
+      {label:"Footprint, length x width", kind:"dim", v:[[1120,720],[1640,900],[2410,1120]]},
+      {label:"Overall height", kind:"mm", v:[320,380,2150]},
+      {label:"Lift stroke or lift height", kind:"mm", v:[60,120,3600]},
+      {label:"Unladen weight", kind:"kg", v:[310,640,3900]},
+      {label:"Drive", kind:"text", v:["Differential, 2 x 1.2 kW","Differential, 2 x 2.0 kW","Steer-drive, 6.5 kW"]}
+    ]},
+    {name:"Performance", rows:[
+      {label:"Top speed, laden", kind:"ms", v:[2.0,2.0,1.6]},
+      {label:"Braking distance from top speed", kind:"mm", v:[460,480,720]},
+      {label:"Positioning repeatability", kind:"pm", v:[5,5,8]},
+      {label:"Gradeability", kind:"text", v:["5%","5%","8%"]},
+      {label:"Turning radius", kind:"text", v:["0, turns in place","0, turns in place","1,850 mm outer"]}
+    ]},
+    {name:"Power", rows:[
+      {label:"Battery", kind:"text", v:["48 V LiFePO4, 30 Ah","48 V LiFePO4, 60 Ah","80 V LiFePO4, 200 Ah"]},
+      {label:"Runtime, mixed duty", kind:"h", v:[10,12,8]},
+      {label:"Charge, 0 to 80%", kind:"min", v:[40,45,60]},
+      {label:"Charging", kind:"text", v:["Automatic contact dock","Automatic contact dock","Automatic contact dock, 30 kW"]}
+    ]},
+    {name:"Navigation and safety", rows:[
+      {label:"Localisation", kind:"text", v:["Natural feature SLAM, no floor markers","Natural feature SLAM, no floor markers","Natural feature SLAM, no floor markers"]},
+      {label:"Safety scanners", kind:"text", v:["2 x 270°, Type 3, PL d","2 x 270°, Type 3, PL d","2 x 270° plus mast scanner, PL d"]},
+      {label:"3D perception", kind:"text", v:["2 x stereo cameras","2 x stereo cameras","4 x stereo cameras, fork tip camera"]},
+      {label:"Standards", kind:"text", v:["ISO 3691-4, ISO 13849-1 PL d Cat 3, CE, UL 3100","ISO 3691-4, ISO 13849-1 PL d Cat 3, CE, UL 3100","ISO 3691-4, ISO 13849-1 PL d Cat 3, CE, UL 3100, B56.5"]},
+      {label:"Fleet interface", kind:"text", v:["VDA 5050 2.1, REST, MQTT","VDA 5050 2.1, REST, MQTT","VDA 5050 2.1, REST, MQTT"]}
+    ]},
+    {name:"Environment", rows:[
+      {label:"Operating temperature", kind:"c", v:[[0,40],[0,40],[-10,40]]},
+      {label:"Ingress protection", kind:"text", v:["IP54","IP54","IP54"]},
+      {label:"Floor", kind:"text", v:["Concrete, 2 mm step, 20 mm gap","Concrete, 2 mm step, 20 mm gap","Concrete or asphalt, 5 mm step, 30 mm gap"]},
+      {label:"Noise at 1 m", kind:"db", v:[62,64,68]}
+    ]}
+  ];
+
+  var units = "metric";
+  var hiCol = 2; // highlight HX-1400 by default
+
+  function fmt(n, d){
+    var f = d ? n.toFixed(d) : Math.round(n).toString();
+    var parts = f.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
+  function cell(kind, v){
+    var imp = units === "imperial";
+    switch(kind){
+      case "kg": return imp ? fmt(v*2.20462) + " lb" : fmt(v) + " kg";
+      case "mm": return imp ? fmt(v/25.4, 1) + " in" : fmt(v) + " mm";
+      case "pm": return imp ? "±" + fmt(v/25.4, 2) + " in" : "±" + fmt(v) + " mm";
+      case "dim": return imp ? fmt(v[0]/25.4,1) + " x " + fmt(v[1]/25.4,1) + " in" : fmt(v[0]) + " x " + fmt(v[1]) + " mm";
+      case "ms": return imp ? fmt(v*2.23694, 1) + " mph" : v.toFixed(1) + " m/s";
+      case "c": return imp ? fmt(v[0]*9/5+32) + " to " + fmt(v[1]*9/5+32) + " °F" : v[0] + " to " + v[1] + " °C";
+      case "h": return v + " h";
+      case "min": return v + " min";
+      case "db": return v + " dB(A)";
+      default: return v;
+    }
+  }
+  function render(){
+    var html = "";
+    groups.forEach(function(g){
+      html += '<tr class="group"><td>' + g.name + '</td>';
+      for (var c=1;c<=3;c++) html += '<td class="' + (c===hiCol?'hi':'') + '"></td>';
+      html += '</tr>';
+      g.rows.forEach(function(r){
+        html += '<tr><td>' + r.label + '</td>';
+        r.v.forEach(function(v, i){
+          var c = i+1;
+          var cls = (r.kind === "text" ? "txt" : "") + (c===hiCol ? " hi" : "");
+          html += '<td class="' + cls.trim() + '" data-col="' + c + '">' + cell(r.kind, v) + '</td>';
+        });
+        html += '</tr>';
+      });
+    });
+    document.getElementById("specBody").innerHTML = html;
+    var ths = document.querySelectorAll("#specTable thead th[data-col]");
+    for (var i=0;i<ths.length;i++){
+      ths[i].classList.toggle("hi", Number(ths[i].getAttribute("data-col")) === hiCol);
+    }
+  }
+  render();
+
+  document.querySelectorAll(".seg button").forEach(function(b){
+    b.addEventListener("click", function(){
+      units = b.getAttribute("data-units");
+      document.querySelectorAll(".seg button").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true" : "false"); });
+      render();
+    });
+  });
+  document.getElementById("specTable").addEventListener("click", function(e){
+    var t = e.target.closest("[data-col]");
+    if (!t) return;
+    hiCol = Number(t.getAttribute("data-col"));
+    render();
+  });
+
+  // ---- spec pack form ----
+  var form = document.getElementById("specForm");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var email = document.getElementById("email");
+    if (!email.value || email.value.indexOf("@") < 1){ email.focus(); return; }
+    form.classList.add("done");
+  });
+})();
+</script>
+</body>
+</html>

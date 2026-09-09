@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rook Lane Recordings: sixties jazz, cut again from the original tapes</title>
+<meta name="description" content="Rook Lane reissues out-of-print jazz pressings from 1961 to 1968 in all-analogue editions of 1,500, with the original sleeves reset by hand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale, five steps */
+  --t-1: 0.8125rem;                       /* meta, catalogue numbers */
+  --t0:  1.0625rem;                       /* body */
+  --t1:  1.375rem;                        /* card titles, lead */
+  --t2:  2.125rem;                        /* section headings */
+  --t3:  clamp(2.5rem, 4.4vw, 3.75rem);   /* hero */
+
+  /* palette, monochrome on warm paper */
+  --paper: #f3f0ea;
+  --paper-2: #e6e2da;
+  --sleeve-white: #fbfaf7;
+  --ink: #141412;
+  --plate: #1c1b18;
+  --muted: #6b6862;
+  --rule: #cfcac0;
+
+  --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  --rhythm: clamp(72px, 9vw, 120px);
+  --gutter: clamp(20px, 4vw, 48px);
+  --measure: 62ch;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:var(--t0);
+  line-height:1.5;
+  font-stretch:100%;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p,ul,ol,dl,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* container owns the gutter with padding-inline only */
+.wrap{max-width:1200px;margin-inline:auto;padding-inline:var(--gutter)}
+
+.mono{font-family:var(--mono);font-size:var(--t-1);letter-spacing:.01em}
+.muted{color:var(--muted)}
+.meta{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);letter-spacing:.01em}
+
+/* ---------- fold: nav + hero ---------- */
+.fold{min-height:100svh;display:flex;flex-direction:column}
+
+.nav{border-bottom:1px solid var(--rule)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:32px;padding-block:18px}
+.wordmark{display:flex;align-items:baseline;gap:12px;font-weight:700;font-size:var(--t1);letter-spacing:-.02em;line-height:1}
+.wordmark .dot{display:inline-block;width:.5em;height:.5em;border-radius:50%;background:var(--ink);transform:translateY(-.05em)}
+.wordmark small{font-family:var(--mono);font-size:var(--t-1);font-weight:400;color:var(--muted);letter-spacing:.01em}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:var(--t-1);transition:color .15s}
+.nav-links a:hover{color:var(--muted)}
+.nav-util{display:flex;align-items:center;gap:14px}
+.nav-util .cart{font-family:var(--mono);font-size:var(--t-1);color:var(--muted)}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding-inline:20px;padding-block:12px;
+  border:1px solid var(--ink);
+  font-size:var(--t-1);font-weight:500;line-height:1;
+  transition:background .15s,color .15s;
+}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn-solid{background:var(--ink);color:var(--paper)}
+.btn-solid:hover{background:var(--plate)}
+.btn-sm{padding-inline:14px;padding-block:9px}
+
+.hero{flex:1;overflow-x:clip;display:flex}
+.hero .wrap{
+  flex:1;
+  display:grid;grid-template-columns:1.15fr .85fr;
+  align-items:center;gap:clamp(32px,5vw,72px);
+  padding-block:clamp(28px,4vh,56px);
+}
+.hero-copy .meta{display:block;margin-bottom:22px}
+.hero h1{
+  font-size:var(--t3);font-weight:600;line-height:1.02;letter-spacing:-.03em;
+  max-width:16ch;text-wrap:balance;
+}
+.hero .lead{margin-top:26px;max-width:46ch;font-size:var(--t0);color:var(--muted);line-height:1.55}
+.hero .lead strong{color:var(--ink);font-weight:500}
+.hero-cta{margin-top:34px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.link-arrow{font-size:var(--t-1);font-weight:500;border-bottom:1px solid var(--rule);padding-bottom:2px;transition:border-color .15s}
+.link-arrow:hover{border-color:var(--ink)}
+
+.hero-art{position:relative;width:min(100%,460px);margin-left:auto}
+.hero-art .disc{position:absolute;top:5%;right:-11%;width:90%;z-index:0}
+.hero-art .sleeve{position:relative;z-index:1}
+.hero-art .caption{position:absolute;left:0;right:0;bottom:-30px;display:flex;justify-content:space-between}
+
+/* ---------- sleeves ---------- */
+.sleeve{
+  display:block;width:100%;aspect-ratio:1;height:auto;
+  box-shadow:inset 0 0 0 1px rgba(20,20,18,.10), 0 1px 0 rgba(20,20,18,.06);
+  background:var(--sleeve-white);
+}
+.sleeve text{font-family:var(--sans);font-stretch:100%}
+.sleeve .sv-mono{font-family:var(--mono);font-size:11px;letter-spacing:.02em}
+.sleeve .sv-cond{font-stretch:72%;font-weight:500}
+.sleeve .sv-wide{font-stretch:118%;font-weight:800;letter-spacing:-.02em}
+.sleeve .sv-bold{font-weight:700;letter-spacing:-.025em}
+.sleeve .sv-light{font-weight:300}
+.disc{display:block;height:auto;filter:drop-shadow(0 8px 20px rgba(20,20,18,.18))}
+
+/* ---------- ticker ---------- */
+.ticker{
+  display:block;overflow:hidden;background:var(--ink);color:var(--paper);
+  padding-block:20px;border-block:1px solid var(--ink);
+  mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent);
+  -webkit-mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent);
+}
+.ticker-track{display:flex;width:max-content;gap:56px;white-space:nowrap;animation:ticker 32s linear infinite;will-change:transform}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker span{font-size:var(--t2);font-weight:600;letter-spacing:-.02em;line-height:1}
+.ticker span i{font-style:normal;font-family:var(--mono);font-weight:400;font-size:var(--t1);letter-spacing:0;margin-inline:.35em;opacity:.7}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-33.333%)}}
+@media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+
+/* ---------- sections ---------- */
+.section{padding-block:var(--rhythm)}
+.section + .section{border-top:1px solid var(--rule)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,56px)}
+.section-head h2{font-size:var(--t2);font-weight:600;letter-spacing:-.03em;line-height:1.05;max-width:22ch}
+.section-head .meta{padding-bottom:6px}
+.kicker{display:block;font-family:var(--mono);font-size:var(--t-1);color:var(--muted);margin-bottom:16px}
+
+/* catalogue */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px}
+.filters button{
+  padding-inline:14px;padding-block:8px;border:1px solid var(--rule);
+  font-size:var(--t-1);line-height:1;transition:border-color .15s,background .15s,color .15s;
+}
+.filters button:hover{border-color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.filters .count{margin-left:auto;align-self:center}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 40px}
+.record{display:flex;flex-direction:column;gap:16px}
+.record[hidden]{display:none}
+.record .sleeve{transition:transform .25s ease}
+.record:hover .sleeve{transform:translateY(-4px)}
+.record figcaption{display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:baseline}
+.record .title{grid-column:1 / -1;font-size:var(--t1);font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.record .artist{color:var(--muted)}
+.record .price{font-family:var(--mono);font-size:var(--t-1)}
+.record .cat{font-family:var(--mono);font-size:var(--t-1)}
+.record .fmt{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);text-align:right}
+.record .status{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);text-align:right}
+
+/* pressing notes ladder */
+.ladder{border-top:1px solid var(--rule)}
+.step{
+  display:grid;grid-template-columns:5rem 1fr 18rem;gap:24px 40px;align-items:start;
+  padding-block:32px;border-bottom:1px solid var(--rule);
+}
+.step .n{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);padding-top:.55em}
+.step h3{font-size:var(--t2);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.step p{margin-top:12px;max-width:var(--measure);color:var(--muted)}
+.step .spec{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);line-height:1.7;padding-top:.5em}
+.step .spec b{display:block;color:var(--ink);font-weight:500}
+.notes-intro{max-width:var(--measure);color:var(--muted);font-size:var(--t1);line-height:1.4;letter-spacing:-.01em;margin-bottom:clamp(32px,4vw,56px)}
+
+/* featured */
+.feature{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(40px,6vw,96px);align-items:start}
+.feature-copy h2{font-size:var(--t2);font-weight:600;letter-spacing:-.03em;line-height:1.05;max-width:18ch}
+.feature-copy p{margin-top:20px;max-width:var(--measure);color:var(--muted)}
+.feature-copy p:first-of-type{color:var(--ink);font-size:var(--t1);line-height:1.4;letter-spacing:-.01em}
+.specs{margin-top:36px;border-top:1px solid var(--rule)}
+.specs div{display:grid;grid-template-columns:11rem 1fr;gap:16px;padding-block:12px;border-bottom:1px solid var(--rule)}
+.specs dt{font-family:var(--mono);font-size:var(--t-1);color:var(--muted)}
+.specs dd{margin:0;font-size:var(--t-1)}
+.feature-cta{margin-top:32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.feature-art .caption{margin-top:14px;display:flex;justify-content:space-between}
+
+/* artists index */
+.index li a{
+  display:grid;grid-template-columns:3rem 1fr 12rem 9rem 6rem;gap:24px;align-items:baseline;
+  padding-block:18px;border-bottom:1px solid var(--rule);transition:color .15s;
+}
+.index li:first-child a{border-top:1px solid var(--rule)}
+.index li a:hover .name{transform:translateX(6px)}
+.index .num,.index .cat,.index .yr{font-family:var(--mono);font-size:var(--t-1);color:var(--muted)}
+.index .name{font-size:var(--t1);font-weight:600;letter-spacing:-.02em;display:inline-block;transition:transform .2s ease}
+.index .role{color:var(--muted);font-size:var(--t-1)}
+.index .cat{color:var(--ink);text-align:right}
+
+/* journal + subscribe */
+.journal{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.journal article{border-top:1px solid var(--ink);padding-top:18px}
+.journal h3{font-size:var(--t1);font-weight:600;letter-spacing:-.02em;line-height:1.2;margin-top:10px;max-width:22ch}
+.journal p{margin-top:12px;color:var(--muted);font-size:var(--t-1);line-height:1.6}
+.journal .read{display:inline-block;margin-top:16px}
+
+.subscribe{margin-top:var(--rhythm);padding-block:clamp(40px,5vw,64px);background:var(--paper-2);display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-inline:clamp(24px,4vw,56px)}
+.subscribe h2{font-size:var(--t2);font-weight:600;letter-spacing:-.03em;line-height:1.05;max-width:18ch;margin-top:12px}
+.subscribe p{margin-top:14px;color:var(--muted);max-width:40ch}
+.subscribe form{display:flex;gap:0;border-bottom:1px solid var(--ink);align-items:center}
+.subscribe input{
+  flex:1;min-width:0;background:transparent;border:0;outline:0;
+  font-family:var(--mono);font-size:var(--t0);padding-block:14px;color:var(--ink);
+}
+.subscribe input::placeholder{color:var(--muted)}
+.subscribe button[type="submit"]{font-family:var(--mono);font-size:var(--t-1);padding-inline:8px;padding-block:14px;transition:color .15s}
+.subscribe button[type="submit"]:hover{color:var(--muted)}
+.subscribe .done{font-family:var(--mono);font-size:var(--t-1);border-left:2px solid var(--ink);padding-left:14px}
+.subscribe .fine{margin-top:12px;font-family:var(--mono);font-size:var(--t-1);color:var(--muted)}
+
+/* footer */
+.footer{border-top:1px solid var(--ink);padding-block:clamp(48px,6vw,80px) 32px}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:40px}
+.footer .label{font-family:var(--mono);font-size:var(--t-1);color:var(--muted);margin-bottom:14px;display:block}
+.footer p,.footer li{font-size:var(--t-1);line-height:1.7}
+.footer a:hover{color:var(--muted)}
+.footer .big{font-size:var(--t2);font-weight:600;letter-spacing:-.03em;line-height:1.05;max-width:14ch}
+.footer-bottom{margin-top:clamp(40px,5vw,64px);padding-top:20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.footer-bottom span{font-family:var(--mono);font-size:var(--t-1);color:var(--muted)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1000px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .step{grid-template-columns:4rem 1fr}
+  .step .spec{grid-column:2}
+  .index li a{grid-template-columns:3rem 1fr 8rem}
+  .index .role,.index .yr{display:none}
+}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr;align-items:start;padding-block:32px 72px}
+  .hero-art{margin-left:0;width:min(100%,380px)}
+  .hero-art .disc{right:-8%}
+  .nav-links{display:none}
+  .feature{grid-template-columns:1fr}
+  .journal{grid-template-columns:1fr}
+  .subscribe{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .index li a{grid-template-columns:2.5rem 1fr auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= fold ======================= -->
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top" aria-label="Rook Lane Recordings, home">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Rook Lane</span>
+        <small>reissues, est. 2019</small>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#catalogue">Catalogue</a>
+        <a href="#pressing">Pressing notes</a>
+        <a href="#featured">RL-014</a>
+        <a href="#artists">Artists</a>
+        <a href="#journal">Journal</a>
+      </nav>
+      <div class="nav-util">
+        <a class="cart" href="#catalogue">Cart (0)</a>
+        <a class="btn btn-sm" href="#subscribe">Subscribe</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="meta">Series one · 1961 to 1968 · six records</span>
+        <h1>Sixties jazz, cut again from the original tapes.</h1>
+        <p class="lead">Rook Lane reissues out-of-print pressings in all-analogue editions of 1,500, with the original sleeves reset by hand. <strong>RL-014, Lionel Okafor's Northbound, ships 24 September.</strong></p>
+        <div class="hero-cta">
+          <a class="btn btn-solid" href="#catalogue">Browse the catalogue</a>
+          <a class="link-arrow" href="#pressing">Read the pressing notes →</a>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <!-- the disc, half out of the sleeve -->
+        <svg class="disc" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="200" cy="200" r="198" fill="#1c1b18"/>
+          <g fill="none" stroke="#2c2b27" stroke-width="1">
+            <circle cx="200" cy="200" r="188"/><circle cx="200" cy="200" r="176"/>
+            <circle cx="200" cy="200" r="164"/><circle cx="200" cy="200" r="152"/>
+            <circle cx="200" cy="200" r="140"/><circle cx="200" cy="200" r="128"/>
+            <circle cx="200" cy="200" r="116"/><circle cx="200" cy="200" r="104"/>
+            <circle cx="200" cy="200" r="92"/>
+          </g>
+          <g fill="none" stroke="#3a3934" stroke-width="2">
+            <circle cx="200" cy="200" r="170"/><circle cx="200" cy="200" r="134"/><circle cx="200" cy="200" r="98"/>
+          </g>
+          <circle cx="200" cy="200" r="68" fill="#f3f0ea"/>
+          <circle cx="200" cy="200" r="68" fill="none" stroke="#141412" stroke-width="1.5"/>
+          <circle cx="200" cy="200" r="4" fill="#141412"/>
+          <text x="200" y="166" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#141412">Rook Lane</text>
+          <text x="200" y="182" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11" font-weight="700" fill="#141412">Northbound</text>
+          <text x="200" y="228" text-anchor="middle" font-family="Archivo, sans-serif" font-size="9" fill="#141412">Lionel Okafor</text>
+          <text x="200" y="243" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#6b6862">RL-014 · side one · 33⅓</text>
+        </svg>
+
+        <!-- front sleeve, RL-014 -->
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Front sleeve of RL-014, Northbound by Lionel Okafor: white rules of uneven length on black, the title set wide along the foot">
+          <rect width="400" height="400" fill="#141412"/>
+          <g stroke="#f3f0ea" stroke-width="2.5" stroke-linecap="square">
+            <line x1="32" y1="84" x2="368" y2="84"/>
+            <line x1="32" y1="108" x2="296" y2="108"/>
+            <line x1="32" y1="132" x2="344" y2="132"/>
+            <line x1="32" y1="156" x2="214" y2="156"/>
+            <line x1="32" y1="180" x2="368" y2="180"/>
+            <line x1="32" y1="204" x2="258" y2="204"/>
+            <line x1="32" y1="228" x2="320" y2="228"/>
+          </g>
+          <text x="32" y="46" class="sv-mono" fill="#f3f0ea">RL-014</text>
+          <text x="368" y="46" text-anchor="end" class="sv-mono" fill="#f3f0ea">Rook Lane · mono</text>
+          <text x="32" y="300" class="sv-cond" font-size="28" fill="#f3f0ea">Lionel Okafor</text>
+          <text x="30" y="360" class="sv-wide" font-size="52" fill="#f3f0ea" textLength="338" lengthAdjust="spacingAndGlyphs">Northbound</text>
+        </svg>
+        <div class="caption">
+          <span class="meta">RL-014 · 180 g · edition of 1,500</span>
+          <span class="meta">£32</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ======================= ticker ======================= -->
+<a class="ticker" href="#featured" aria-label="Now pressing RL-014 Northbound, ships 24 September, go to the release">
+  <div class="ticker-track" aria-hidden="true">
+    <span>Now pressing<i>RL-014</i>Northbound<i>·</i>edition of 1,500<i>·</i>ships 24 September<i>·</i></span>
+    <span>Now pressing<i>RL-014</i>Northbound<i>·</i>edition of 1,500<i>·</i>ships 24 September<i>·</i></span>
+    <span>Now pressing<i>RL-014</i>Northbound<i>·</i>edition of 1,500<i>·</i>ships 24 September<i>·</i></span>
+  </div>
+</a>
+
+<!-- ======================= catalogue ======================= -->
+<section class="section" id="catalogue">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Catalogue</span>
+        <h2>Series one, six records from 1961 to 1968.</h2>
+      </div>
+      <span class="meta">Numbered RL-011 to RL-016 · 12-inch · 33⅓ rpm</span>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter the catalogue by format">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-filter="mono" aria-pressed="false">Mono</button>
+      <button type="button" data-filter="stereo" aria-pressed="false">Stereo</button>
+      <button type="button" data-filter="live" aria-pressed="false">Recorded live</button>
+      <span class="count meta" id="count">Showing 6 of 6</span>
+    </div>
+
+    <div class="grid" id="grid">
+
+      <figure class="record" data-format="mono">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-011, Late arrivals: a large black circle cropped by the top right corner on white">
+          <rect width="400" height="400" fill="#fbfaf7"/>
+          <circle cx="305" cy="105" r="160" fill="#141412"/>
+          <text x="32" y="46" class="sv-mono" fill="#141412">RL-011</text>
+          <text x="32" y="292" class="sv-cond" font-size="24" fill="#141412">Harlan Voss Quartet</text>
+          <text x="30" y="350" class="sv-bold" font-size="46" fill="#141412">Late arrivals</text>
+          <text x="368" y="368" text-anchor="end" class="sv-mono" fill="#6b6862">Rook Lane · mono</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-011</span>
+          <span class="fmt">1962 · mono</span>
+          <span class="title">Late arrivals</span>
+          <span class="artist">Harlan Voss Quartet</span>
+          <span class="price">£30</span>
+          <span class="status">In stock</span>
+        </figcaption>
+      </figure>
+
+      <figure class="record" data-format="live">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-012, Blue hour at the Colonnade: fine vertical stripes on the left half, the title stacked on the right">
+          <defs>
+            <pattern id="stripes" width="12" height="12" patternUnits="userSpaceOnUse">
+              <rect width="5" height="12" fill="#141412"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="400" fill="#e6e2da"/>
+          <rect x="0" y="0" width="184" height="400" fill="url(#stripes)"/>
+          <text x="208" y="46" class="sv-mono" fill="#141412">RL-012</text>
+          <text x="208" y="176" class="sv-bold" font-size="40" fill="#141412">Blue hour</text>
+          <text x="208" y="216" class="sv-light" font-size="40" fill="#141412">at the</text>
+          <text x="208" y="256" class="sv-bold" font-size="40" fill="#141412">Colonnade</text>
+          <text x="208" y="320" class="sv-cond" font-size="22" fill="#141412">Odette Marchand</text>
+          <text x="208" y="368" class="sv-mono" fill="#6b6862">Recorded live, 1964</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-012</span>
+          <span class="fmt">1964 · mono · live</span>
+          <span class="title">Blue hour at the Colonnade</span>
+          <span class="artist">Odette Marchand</span>
+          <span class="price">£30</span>
+          <span class="status">In stock</span>
+        </figcaption>
+      </figure>
+
+      <figure class="record" data-format="mono">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-013, Sixteen bars: sixteen black bars of uneven length stacked on white">
+          <rect width="400" height="400" fill="#fbfaf7"/>
+          <g fill="#141412">
+            <rect x="32" y="70" width="336" height="7"/>
+            <rect x="32" y="84" width="210" height="7"/>
+            <rect x="32" y="98" width="300" height="7"/>
+            <rect x="32" y="112" width="150" height="7"/>
+            <rect x="32" y="126" width="336" height="7"/>
+            <rect x="32" y="140" width="260" height="7"/>
+            <rect x="32" y="154" width="120" height="7"/>
+            <rect x="32" y="168" width="320" height="7"/>
+            <rect x="32" y="182" width="190" height="7"/>
+            <rect x="32" y="196" width="336" height="7"/>
+            <rect x="32" y="210" width="90" height="7"/>
+            <rect x="32" y="224" width="280" height="7"/>
+            <rect x="32" y="238" width="230" height="7"/>
+            <rect x="32" y="252" width="336" height="7"/>
+            <rect x="32" y="266" width="170" height="7"/>
+            <rect x="32" y="280" width="310" height="7"/>
+          </g>
+          <text x="32" y="46" class="sv-mono" fill="#141412">RL-013</text>
+          <text x="368" y="46" text-anchor="end" class="sv-mono" fill="#6b6862">Rook Lane · mono</text>
+          <text x="32" y="326" class="sv-cond" font-size="22" fill="#141412">The Cyril Bane Trio</text>
+          <text x="30" y="372" class="sv-wide" font-size="44" fill="#141412" textLength="338" lengthAdjust="spacingAndGlyphs">Sixteen bars</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-013</span>
+          <span class="fmt">1961 · mono</span>
+          <span class="title">Sixteen bars</span>
+          <span class="artist">The Cyril Bane Trio</span>
+          <span class="price">£30</span>
+          <span class="status">Low stock</span>
+        </figcaption>
+      </figure>
+
+      <figure class="record" data-format="mono">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-014, Northbound: white rules of uneven length on black, the title set wide along the foot">
+          <rect width="400" height="400" fill="#141412"/>
+          <g stroke="#f3f0ea" stroke-width="2.5" stroke-linecap="square">
+            <line x1="32" y1="84" x2="368" y2="84"/>
+            <line x1="32" y1="108" x2="296" y2="108"/>
+            <line x1="32" y1="132" x2="344" y2="132"/>
+            <line x1="32" y1="156" x2="214" y2="156"/>
+            <line x1="32" y1="180" x2="368" y2="180"/>
+            <line x1="32" y1="204" x2="258" y2="204"/>
+            <line x1="32" y1="228" x2="320" y2="228"/>
+          </g>
+          <text x="32" y="46" class="sv-mono" fill="#f3f0ea">RL-014</text>
+          <text x="368" y="46" text-anchor="end" class="sv-mono" fill="#f3f0ea">Rook Lane · mono</text>
+          <text x="32" y="300" class="sv-cond" font-size="28" fill="#f3f0ea">Lionel Okafor</text>
+          <text x="30" y="360" class="sv-wide" font-size="52" fill="#f3f0ea" textLength="338" lengthAdjust="spacingAndGlyphs">Northbound</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-014</span>
+          <span class="fmt">1966 · mono</span>
+          <span class="title">Northbound</span>
+          <span class="artist">Lionel Okafor</span>
+          <span class="price">£32</span>
+          <span class="status">Pre-order, ships 24 Sept</span>
+        </figcaption>
+      </figure>
+
+      <figure class="record" data-format="mono">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-015, Songs for a small room: a field of grey dots on black with the title in white">
+          <defs>
+            <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse">
+              <circle cx="9" cy="9" r="4.2" fill="#6b6862"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="400" fill="#141412"/>
+          <rect x="216" y="0" width="184" height="400" fill="url(#dots)"/>
+          <text x="32" y="46" class="sv-mono" fill="#f3f0ea">RL-015</text>
+          <text x="32" y="188" class="sv-bold" font-size="34" fill="#f3f0ea">Songs for</text>
+          <text x="32" y="224" class="sv-bold" font-size="34" fill="#f3f0ea">a small room</text>
+          <text x="32" y="270" class="sv-cond" font-size="22" fill="#f3f0ea">Marguerite Sallis</text>
+          <text x="32" y="368" class="sv-mono" fill="#f3f0ea">Rook Lane · mono · 1963</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-015</span>
+          <span class="fmt">1963 · mono</span>
+          <span class="title">Songs for a small room</span>
+          <span class="artist">Marguerite Sallis</span>
+          <span class="price">£30</span>
+          <span class="status">In stock</span>
+        </figcaption>
+      </figure>
+
+      <figure class="record" data-format="stereo">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Sleeve of RL-016, Ferry crossing: the square split by a diagonal into white and black, the title split across the two halves">
+          <rect width="400" height="400" fill="#fbfaf7"/>
+          <polygon points="0,400 400,0 400,400" fill="#141412"/>
+          <text x="32" y="46" class="sv-mono" fill="#141412">RL-016</text>
+          <text x="32" y="80" class="sv-cond" font-size="22" fill="#141412">Delmar Whitlock Sextet</text>
+          <text x="32" y="176" class="sv-bold" font-size="54" fill="#141412">Ferry</text>
+          <text x="368" y="330" text-anchor="end" class="sv-bold" font-size="54" fill="#fbfaf7">crossing</text>
+          <text x="368" y="368" text-anchor="end" class="sv-mono" fill="#f3f0ea">Rook Lane · stereo · 1968</text>
+        </svg>
+        <figcaption>
+          <span class="cat">RL-016</span>
+          <span class="fmt">1968 · stereo</span>
+          <span class="title">Ferry crossing</span>
+          <span class="artist">Delmar Whitlock Sextet</span>
+          <span class="price">£30</span>
+          <span class="status">In stock</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================= pressing notes ======================= -->
+<section class="section" id="pressing">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Pressing notes</span>
+        <h2>How a Rook Lane record is made.</h2>
+      </div>
+      <span class="meta">Five steps · no digital stage at any of them</span>
+    </div>
+    <p class="notes-intro">Every record in the series follows the same route from the vault to your turntable. It is slower and dearer than the usual way, which is rather the point.</p>
+
+    <div class="ladder">
+      <div class="step">
+        <span class="n">01</span>
+        <div>
+          <h3>Tape transfer</h3>
+          <p>We borrow the original master reels, never a digital copy. Each reel is baked, cleaned and played once, in the room where the cut will be made.</p>
+        </div>
+        <div class="spec"><b>Studer A80, 15 inches per second</b>Mono in, mono out. Stereo kept only where the session was recorded that way.</div>
+      </div>
+      <div class="step">
+        <span class="n">02</span>
+        <div>
+          <h3>Cutting</h3>
+          <p>The lacquer is cut straight from the tape. Sides are kept under twenty-two minutes so the grooves stay wide and the inner bands do not pinch.</p>
+        </div>
+        <div class="spec"><b>Neumann VMS-70 lathe, Kessel Mastering, Berlin</b>Cut by Anneliese Ruhl. Test acetates played against an original pressing.</div>
+      </div>
+      <div class="step">
+        <span class="n">03</span>
+        <div>
+          <h3>Plating</h3>
+          <p>Lacquers reach the plant within forty-eight hours of the cut. One father, one mother, and a fresh stamper for every five hundred copies.</p>
+        </div>
+        <div class="spec"><b>Three-step plating</b>Stampers retired at 500 pulls. Matrix numbers hand-scribed in the run-out.</div>
+      </div>
+      <div class="step">
+        <span class="n">04</span>
+        <div>
+          <h3>Pressing</h3>
+          <p>One hundred and eighty gram virgin vinyl, pressed slowly and cooled flat on the platter. Every hundredth copy is played end to end before it is sleeved.</p>
+        </div>
+        <div class="spec"><b>180 g, edition of 1,500</b>One in a hundred test-played. Rejects are ground down, not sold as seconds.</div>
+      </div>
+      <div class="step">
+        <span class="n">05</span>
+        <div>
+          <h3>Sleeve</h3>
+          <p>The original artwork is reset in the same proportions and printed in two blacks on uncoated board with a tip-on finish. Nothing is laminated.</p>
+        </div>
+        <div class="spec"><b>Tip-on board, two blacks</b>Sleeve notes reprinted in full, plus a new four-page insert on the session.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= featured release ======================= -->
+<section class="section" id="featured">
+  <div class="wrap">
+    <div class="feature">
+      <div class="feature-art">
+        <svg class="sleeve" viewBox="0 0 400 400" role="img" aria-label="Back sleeve of RL-014 with the track listing for side one and side two">
+          <rect width="400" height="400" fill="#fbfaf7"/>
+          <text x="32" y="46" class="sv-mono" fill="#141412">RL-014</text>
+          <text x="368" y="46" text-anchor="end" class="sv-mono" fill="#6b6862">Rook Lane · mono</text>
+          <text x="32" y="92" class="sv-bold" font-size="30" fill="#141412">Northbound</text>
+          <text x="32" y="116" class="sv-cond" font-size="18" fill="#141412">Lionel Okafor</text>
+
+          <text x="32" y="156" class="sv-mono" fill="#6b6862">Side one</text>
+          <line x1="32" y1="164" x2="368" y2="164" stroke="#141412" stroke-width="1"/>
+          <text x="32" y="184" font-size="13" fill="#141412">Northbound</text>
+          <text x="368" y="184" text-anchor="end" class="sv-mono" fill="#141412">6:12</text>
+          <line x1="32" y1="191" x2="368" y2="191" stroke="#cfcac0" stroke-width="1"/>
+          <text x="32" y="210" font-size="13" fill="#141412">Pier nine</text>
+          <text x="368" y="210" text-anchor="end" class="sv-mono" fill="#141412">4:48</text>
+          <line x1="32" y1="217" x2="368" y2="217" stroke="#cfcac0" stroke-width="1"/>
+          <text x="32" y="236" font-size="13" fill="#141412">A letter from Ilse</text>
+          <text x="368" y="236" text-anchor="end" class="sv-mono" fill="#141412">7:03</text>
+          <line x1="32" y1="243" x2="368" y2="243" stroke="#cfcac0" stroke-width="1"/>
+          <text x="32" y="262" font-size="13" fill="#141412">Half past</text>
+          <text x="368" y="262" text-anchor="end" class="sv-mono" fill="#141412">5:20</text>
+
+          <text x="32" y="298" class="sv-mono" fill="#6b6862">Side two</text>
+          <line x1="32" y1="306" x2="368" y2="306" stroke="#141412" stroke-width="1"/>
+          <text x="32" y="326" font-size="13" fill="#141412">The long platform</text>
+          <text x="368" y="326" text-anchor="end" class="sv-mono" fill="#141412">8:41</text>
+          <line x1="32" y1="333" x2="368" y2="333" stroke="#cfcac0" stroke-width="1"/>
+          <text x="32" y="352" font-size="13" fill="#141412">Marigold</text>
+          <text x="368" y="352" text-anchor="end" class="sv-mono" fill="#141412">4:15</text>
+          <line x1="32" y1="359" x2="368" y2="359" stroke="#cfcac0" stroke-width="1"/>
+          <text x="32" y="378" font-size="13" fill="#141412">Ninety-fourth street</text>
+          <text x="368" y="378" text-anchor="end" class="sv-mono" fill="#141412">6:37</text>
+        </svg>
+        <div class="caption">
+          <span class="meta">Back sleeve, reset from the 1966 original</span>
+          <span class="meta">Marlowe Records, MR-2047</span>
+        </div>
+      </div>
+
+      <div class="feature-copy">
+        <span class="kicker">RL-014 · out 24 September</span>
+        <h2>Northbound, sixty years on.</h2>
+        <p>Recorded over two March days in 1966 at Van Doren Studio in Newark, Northbound was Lionel Okafor's only date as a leader. Marlowe Records pressed three thousand copies, the label folded the following spring, and the tapes went into a bank vault with the rest of the estate.</p>
+        <p>We found them in 2024, boxed and labelled in Okafor's own hand, with a note asking that the record be kept in mono. It has been. Ruhl's cut sits a touch quieter than the 1966 pressing so the bass has somewhere to go, and the fade on The long platform now runs its full twenty seconds instead of being lopped for the side length.</p>
+        <p>The sleeve is reset from the original mechanicals, with Okafor's name moved up so it no longer clips the rules. The insert carries session photographs by Ruth Alder, the alternate take sheets, and a new note by the trumpeter's daughter, Adaeze Okafor.</p>
+
+        <dl class="specs">
+          <div><dt>Catalogue number</dt><dd>RL-014</dd></div>
+          <div><dt>Original release</dt><dd>Marlowe Records MR-2047, June 1966</dd></div>
+          <div><dt>Recorded</dt><dd>4 and 5 March 1966, Van Doren Studio, Newark</dd></div>
+          <div><dt>Source</dt><dd>Original quarter-inch mono masters</dd></div>
+          <div><dt>Cut by</dt><dd>Anneliese Ruhl, Kessel Mastering, Berlin</dd></div>
+          <div><dt>Weight and edition</dt><dd>180 g, 1,500 numbered copies</dd></div>
+          <div><dt>Personnel</dt><dd>Lionel Okafor, trumpet · Wendell Price, tenor · Ada Kroll, piano · Sam Terrell, bass · Joe Hardaway, drums</dd></div>
+        </dl>
+
+        <div class="feature-cta">
+          <a class="btn btn-solid" href="#catalogue">Pre-order for £32</a>
+          <a class="link-arrow" href="#journal">Read the session notes →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= artists ======================= -->
+<section class="section" id="artists">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Artists</span>
+        <h2>Who is in series one.</h2>
+      </div>
+      <span class="meta">Six leaders · one record each, for now</span>
+    </div>
+    <ol class="index">
+      <li><a href="#catalogue"><span class="num">01</span><span class="name">Harlan Voss</span><span class="role">tenor saxophone, quartet</span><span class="yr">1962</span><span class="cat">RL-011</span></a></li>
+      <li><a href="#catalogue"><span class="num">02</span><span class="name">Odette Marchand</span><span class="role">voice and piano, live</span><span class="yr">1964</span><span class="cat">RL-012</span></a></li>
+      <li><a href="#catalogue"><span class="num">03</span><span class="name">Cyril Bane</span><span class="role">piano, trio</span><span class="yr">1961</span><span class="cat">RL-013</span></a></li>
+      <li><a href="#featured"><span class="num">04</span><span class="name">Lionel Okafor</span><span class="role">trumpet, quintet</span><span class="yr">1966</span><span class="cat">RL-014</span></a></li>
+      <li><a href="#catalogue"><span class="num">05</span><span class="name">Marguerite Sallis</span><span class="role">voice, with strings</span><span class="yr">1963</span><span class="cat">RL-015</span></a></li>
+      <li><a href="#catalogue"><span class="num">06</span><span class="name">Delmar Whitlock</span><span class="role">vibraphone, sextet</span><span class="yr">1968</span><span class="cat">RL-016</span></a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================= journal + subscribe ======================= -->
+<section class="section" id="journal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="kicker">Journal</span>
+        <h2>Notes from the vault and the plant.</h2>
+      </div>
+      <span class="meta">Written by the label, not a press office</span>
+    </div>
+    <div class="journal">
+      <article>
+        <span class="meta">2 September 2026</span>
+        <h3>Why Northbound stays in mono</h3>
+        <p>A two-track safety exists, and we listened to it. The room is wider but the trumpet loses its centre. Okafor's note settled it anyway.</p>
+        <a class="link-arrow read" href="#journal">Read →</a>
+      </article>
+      <article>
+        <span class="meta">14 August 2026</span>
+        <h3>Test pressing report, RL-014</h3>
+        <p>Five copies from the first stamper, played on three turntables. One hairline tick on side two, band three, traced to the lacquer and recut.</p>
+        <a class="link-arrow read" href="#journal">Read →</a>
+      </article>
+      <article>
+        <span class="meta">21 July 2026</span>
+        <h3>Setting a sleeve without the film</h3>
+        <p>Marlowe's mechanicals were lost with the label. How we rebuilt the rules on Northbound from a clean 1966 copy and a ruler.</p>
+        <a class="link-arrow read" href="#journal">Read →</a>
+      </article>
+    </div>
+
+    <div class="subscribe" id="subscribe">
+      <div>
+        <span class="kicker">The pressing sheet</span>
+        <h2>One letter a month, when a record moves.</h2>
+        <p>Pre-order windows, test pressing reports and vault finds. No discount codes, no countdowns.</p>
+      </div>
+      <div>
+        <form id="subform" novalidate>
+          <label for="email" class="meta" style="position:absolute;left:-9999px">Email address</label>
+          <input id="email" type="email" placeholder="you@somewhere.com" required autocomplete="email">
+          <button type="submit">Subscribe ↵</button>
+        </form>
+        <p class="fine">About 1,900 readers. Unsubscribe from any issue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= footer ======================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <p class="big">Records worth cutting twice.</p>
+      </div>
+      <div>
+        <span class="label">Find us</span>
+        <p>Rook Lane Recordings<br>Unit 4, Rook Lane<br>Bristol, by the harbour</p>
+      </div>
+      <div>
+        <span class="label">Write</span>
+        <p><a href="mailto:post@rooklane.co.uk">post@rooklane.co.uk</a><br><span class="muted">Trade and licensing enquiries welcome.</span></p>
+      </div>
+      <div>
+        <span class="label">Colophon</span>
+        <p>Archivo for the sleeves and the page.<br>JetBrains Mono for catalogue numbers.<br><span class="muted">Sleeves drawn in vector, not scanned.</span></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> Rook Lane Recordings · all recordings licensed from their owners</span>
+      <span>Cut in Berlin · pressed in Bristol · shipped worldwide</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // catalogue filter
+  var buttons = document.querySelectorAll('.filters button');
+  var records = document.querySelectorAll('#grid .record');
+  var count = document.getElementById('count');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var f = btn.getAttribute('data-filter');
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      var shown = 0;
+      records.forEach(function(r){
+        var match = f === 'all' || r.getAttribute('data-format') === f;
+        r.hidden = !match;
+        if (match) shown++;
+      });
+      count.textContent = 'Showing ' + shown + ' of ' + records.length;
+    });
+  });
+
+  // subscribe
+  var form = document.getElementById('subform');
+  if (form) {
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var input = form.querySelector('input');
+      if (!input.value || input.value.indexOf('@') < 0) { input.focus(); return; }
+      var done = document.createElement('p');
+      done.className = 'done';
+      done.textContent = 'You are on the sheet. First letter early October.';
+      form.replaceWith(done);
+    });
+  }
+
+  // year
+  var y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

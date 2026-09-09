@@ -23,6 +23,16 @@ export const metadata: Metadata = {
 /** Curated display order. Examples not listed are appended in source
  *  order, so the page stays correct as the set grows. */
 const ORDER = [
+  "halyard-marine",
+  "shirakawa-kiln",
+  "ravensgate-opera",
+  "calder-frameworks",
+  "ferrite-terminal",
+  "copo-torto",
+  "halden-robotics",
+  "rook-lane",
+  "chalkline-gym",
+  "brenna-alpine",
   "nocturne-festival",
   "spark-hall",
   "wavecast",

@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halyard - offshore marine weather</title>
+<meta name="description" content="Halyard blends three forecast models with live buoy and tide data into one board for offshore sailors. Wind, pressure, waves and tides, refreshed every six minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-meta: 12px;
+    --t-body: 15px;
+    --t-lead: 19px;
+    --t-title: clamp(26px, 2.6vw, 32px);
+    --t-display: clamp(36px, 3.6vw, 46px);
+    --t-readout: clamp(36px, 4vw, 52px);
+
+    --font-ui: "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
+    --font-data: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+    /* palette */
+    --paper: #071a22;
+    --panel: #0c2531;
+    --panel-2: #10303d;
+    --rule: rgba(181, 212, 220, 0.14);
+    --ink: #e7f1f4;
+    --muted: #8fb0ba;
+    --accent: #35c3d6;
+    --warn: #f2a25c;
+
+    --seam: clamp(72px, 9vw, 120px);
+    --radius: 10px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:var(--t-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,p{margin:0}
+  ul{margin:0;padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  svg{display:block}
+
+  .wrap{
+    max-width:1220px;
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 40px);
+  }
+
+  .meta{
+    font-family:var(--font-data);
+    font-size:var(--t-meta);
+    color:var(--muted);
+    letter-spacing:0.01em;
+  }
+  .num{font-family:var(--font-data);font-variant-numeric:tabular-nums}
+  .accent{color:var(--accent)}
+  .warn{color:var(--warn)}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    border-bottom:1px solid var(--rule);
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-block:16px;
+  }
+  .wordmark{
+    display:flex;align-items:center;gap:10px;
+    font-weight:700;font-size:var(--t-lead);letter-spacing:-0.01em;
+  }
+  .wordmark svg{width:22px;height:22px}
+  .nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-utils{display:flex;align-items:center;gap:14px}
+  .live{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-data);font-size:var(--t-meta);color:var(--muted);
+  }
+  .live i{
+    width:8px;height:8px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(53,195,214,0.6);
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(53,195,214,0.55)}
+    70%{box-shadow:0 0 0 9px rgba(53,195,214,0)}
+    100%{box-shadow:0 0 0 0 rgba(53,195,214,0)}
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 16px;border-radius:999px;
+    font-weight:600;font-size:14px;line-height:1;
+    border:1px solid var(--rule);
+    transition:border-color .2s, background .2s, color .2s;
+  }
+  .btn:hover{border-color:var(--muted)}
+  .btn.primary{background:var(--accent);color:#04202a;border-color:var(--accent)}
+  .btn.primary:hover{background:#5ad3e3}
+  .btn.ghost{color:var(--ink)}
+
+  .hero{flex:1;display:flex;flex-direction:column}
+  .hero .wrap{
+    flex:1;display:flex;flex-direction:column;
+    padding-block:22px 20px;
+  }
+  .hero-head{
+    display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+    gap:24px 48px;align-items:end;
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:var(--t-display);
+    line-height:1.06;letter-spacing:-0.025em;font-weight:600;
+    max-width:24ch;
+  }
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero-side p{color:var(--muted);max-width:44ch}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+
+  /* ---------- board ---------- */
+  .board{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-radius:14px;
+    display:grid;
+    grid-template-rows:auto auto 1fr;
+    overflow:hidden;
+  }
+  .board-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:12px 18px;border-bottom:1px solid var(--rule);
+    flex-wrap:wrap;
+  }
+  .board-bar .station{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .board-bar .station strong{font-weight:600;font-size:14px}
+  .board-bar .station .meta{white-space:nowrap}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px 9px;border-radius:999px;
+    border:1px solid var(--rule);
+    font-family:var(--font-data);font-size:var(--t-meta);color:var(--muted);
+  }
+  .chip.warnchip{border-color:rgba(242,162,92,0.5);color:var(--warn)}
+
+  .readouts{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .readout{
+    padding:16px 18px 14px;
+    border-right:1px solid var(--rule);
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .readout:last-child{border-right:0}
+  .readout .lbl{display:flex;justify-content:space-between;align-items:baseline}
+  .readout .val{
+    font-family:var(--font-data);font-size:var(--t-readout);
+    font-weight:500;line-height:1;letter-spacing:-0.03em;
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .readout .val small{font-size:var(--t-lead);color:var(--muted);letter-spacing:0;font-weight:400}
+  .readout .sub{display:flex;gap:14px;flex-wrap:wrap}
+  .readout .sub span{font-family:var(--font-data);font-size:var(--t-meta);color:var(--muted)}
+  .readout .sub b{color:var(--ink);font-weight:500}
+  .trend{color:var(--warn)}
+
+  .charts{
+    display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);
+    min-height:0;
+  }
+  .chart{
+    padding:14px 18px 12px;
+    display:flex;flex-direction:column;gap:8px;min-width:0;
+  }
+  .chart + .chart{border-left:1px solid var(--rule)}
+  .chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .chart-head strong{font-weight:600;font-size:14px}
+  .legend{display:flex;gap:14px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-data);font-size:var(--t-meta);color:var(--muted)}
+  .legend i{width:10px;height:3px;border-radius:2px;background:var(--accent)}
+  .legend i.g{background:var(--warn)}
+  .legend i.t{background:var(--muted)}
+  .plot{position:relative;flex:1;min-height:150px}
+  .plot svg{width:100%;height:100%;position:absolute;inset:0}
+  .axis{
+    display:flex;justify-content:space-between;
+    font-family:var(--font-data);font-size:11px;color:var(--muted);
+  }
+  .dirs{
+    display:grid;grid-template-columns:repeat(8,1fr);
+    font-family:var(--font-data);font-size:11px;color:var(--muted);
+  }
+  .dirs span{display:flex;align-items:center;gap:4px}
+  .dirs svg{width:10px;height:10px}
+
+  /* ---------- sections ---------- */
+  section{padding-block:var(--seam)}
+  .section-head{
+    display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+    gap:16px 48px;align-items:end;margin-bottom:36px;
+  }
+  .section-head h2{
+    font-size:var(--t-title);line-height:1.12;letter-spacing:-0.02em;font-weight:600;
+    max-width:22ch;
+  }
+  .section-head .meta{margin-bottom:10px;display:block}
+  .section-head p.lead{color:var(--muted);max-width:46ch}
+  .rule-top{border-top:1px solid var(--rule)}
+
+  /* outlook table */
+  .table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel)}
+  table{width:100%;border-collapse:collapse;min-width:860px}
+  th,td{padding:12px 16px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--rule)}
+  th{font-family:var(--font-data);font-size:var(--t-meta);font-weight:500;color:var(--muted)}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:rgba(53,195,214,0.04)}
+  td.day{font-weight:600}
+  td.day span{display:block;font-weight:400;color:var(--muted);font-size:13px}
+  td .num{font-size:14px}
+  .bar{
+    display:inline-block;height:6px;border-radius:3px;background:var(--accent);
+    vertical-align:middle;margin-right:8px;
+  }
+  .bar.g{background:var(--warn)}
+  .tag{
+    display:inline-block;padding:2px 8px;border-radius:999px;
+    font-family:var(--font-data);font-size:11px;
+    border:1px solid var(--rule);color:var(--muted);
+  }
+  .tag.ok{border-color:rgba(53,195,214,0.45);color:var(--accent)}
+  .tag.gale{border-color:rgba(242,162,92,0.55);color:var(--warn)}
+
+  /* two-col panels */
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .panel{
+    background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+    padding:22px 24px;display:flex;flex-direction:column;gap:14px;
+  }
+  .panel h3{font-size:var(--t-lead);font-weight:600;letter-spacing:-0.01em}
+  .panel .meta-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .tide-list{display:grid;grid-template-columns:repeat(2,1fr);gap:0 24px}
+  .tide-list li{
+    display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:baseline;
+    padding:9px 0;border-bottom:1px solid var(--rule);font-family:var(--font-data);font-size:13px;
+  }
+  .tide-list li:nth-last-child(-n+2){border-bottom:0}
+  .tide-list .k{color:var(--muted)}
+  .tide-list .h{font-weight:600}
+  .tide-plot{position:relative;height:150px}
+  .tide-plot svg{position:absolute;inset:0;width:100%;height:100%}
+
+  .forecast-text{
+    font-size:var(--t-body);line-height:1.6;color:var(--ink);
+  }
+  .forecast-text p + p{margin-top:10px}
+  .forecast-text b{font-weight:600;color:var(--warn)}
+  .window{display:flex;flex-direction:column;gap:8px}
+  .window-track{
+    display:grid;grid-template-columns:repeat(16,1fr);gap:3px;height:22px;
+  }
+  .window-track i{border-radius:3px;background:var(--panel-2)}
+  .window-track i.go{background:var(--accent)}
+  .window-track i.hold{background:var(--warn);opacity:.85}
+  .window-track i.no{background:#5c3a2e}
+  .window-labels{display:flex;justify-content:space-between;font-family:var(--font-data);font-size:11px;color:var(--muted)}
+  .window-note{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:baseline;font-size:14px}
+  .window-note .num{color:var(--accent);font-size:13px}
+
+  /* stats */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .stat{padding:28px 24px 26px;border-right:1px solid var(--rule)}
+  .stat:last-child{border-right:0}
+  .stat .big{
+    font-family:var(--font-data);font-size:var(--t-readout);line-height:1;
+    letter-spacing:-0.03em;font-weight:500;
+  }
+  .stat .big small{font-size:var(--t-lead);color:var(--muted);margin-left:6px}
+  .stat p{color:var(--muted);margin-top:12px;font-size:14px;max-width:26ch}
+  .sources{margin-top:36px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .source{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--rule)}
+  .source strong{font-weight:600}
+  .source p{color:var(--muted);font-size:14px}
+
+  /* satellite */
+  .sat{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+  .code{
+    background:#04141b;border:1px solid var(--rule);border-radius:var(--radius);
+    padding:18px 20px;font-family:var(--font-data);font-size:13px;line-height:1.7;
+    color:#c6dbe1;overflow-x:auto;white-space:pre;
+  }
+  .code .c{color:var(--muted)}
+  .code .a{color:var(--accent)}
+  .checks{display:grid;gap:12px;margin-top:8px}
+  .checks li{display:grid;grid-template-columns:18px 1fr;gap:12px;align-items:start;font-size:14px;color:var(--muted)}
+  .checks li b{color:var(--ink);font-weight:600}
+  .checks svg{width:18px;height:18px;margin-top:2px}
+
+  /* pricing */
+  .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .tier{
+    background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+    padding:26px 26px 24px;display:flex;flex-direction:column;gap:16px;
+  }
+  .tier.featured{border-color:rgba(53,195,214,0.55);background:linear-gradient(180deg, rgba(53,195,214,0.08), transparent 60%), var(--panel)}
+  .tier .price{font-family:var(--font-data);font-size:var(--t-title);font-weight:500;letter-spacing:-0.02em;line-height:1}
+  .tier .price small{font-size:var(--t-meta);color:var(--muted);margin-left:6px;letter-spacing:0}
+  .tier ul{display:grid;gap:8px;font-size:14px;color:var(--muted)}
+  .tier ul li{padding-left:16px;position:relative}
+  .tier ul li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .tier .btn{align-self:flex-start;margin-top:auto}
+
+  /* quote */
+  .quote{
+    display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:40px;align-items:end;
+  }
+  .quote blockquote{
+    margin:0;font-size:var(--t-title);line-height:1.25;letter-spacing:-0.015em;font-weight:500;
+  }
+  .quote blockquote em{font-style:normal;color:var(--accent)}
+  .quote figcaption{display:flex;flex-direction:column;gap:4px}
+  .quote figcaption b{font-weight:600}
+
+  /* footer */
+  footer{border-top:1px solid var(--rule);padding-block:56px 32px}
+  .foot{display:grid;grid-template-columns:minmax(0,5fr) repeat(3,minmax(0,2fr));gap:32px}
+  .foot p{color:var(--muted);font-size:14px;max-width:38ch;margin-top:12px}
+  .foot ul{display:grid;gap:8px;font-size:14px}
+  .foot ul li a{color:var(--muted)}
+  .foot ul li a:hover{color:var(--ink)}
+  .foot .meta{margin-bottom:12px;display:block}
+  .foot-bottom{
+    margin-top:44px;padding-top:20px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+
+  @media (max-width: 980px){
+    .hero-head,.section-head,.grid-2,.grid-3,.sat,.quote,.tiers{grid-template-columns:1fr}
+    .readouts{grid-template-columns:repeat(2,1fr)}
+    .readout:nth-child(2){border-right:0}
+    .readout:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+    .charts{grid-template-columns:1fr}
+    .chart + .chart{border-left:0;border-top:1px solid var(--rule)}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(2){border-right:0}
+    .stat:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+    .sources{grid-template-columns:1fr}
+    .foot{grid-template-columns:1fr 1fr}
+    .nav-links{display:none}
+  }
+  @media (max-width: 600px){
+    .readouts,.stats,.foot,.tide-list{grid-template-columns:1fr}
+    .readout,.stat{border-right:0;border-bottom:1px solid var(--rule)}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top" aria-label="Halyard home">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 17c2.2 0 2.2-2 4.5-2s2.3 2 4.5 2 2.3-2 4.5-2 2.3 2 4.5 2" stroke="#35c3d6" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 3v9M12 3l6 8H6l6-8z" stroke="#e7f1f4" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        Halyard
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#outlook">Outlook</a>
+        <a href="#tides">Tides</a>
+        <a href="#warnings">Warnings</a>
+        <a href="#sources">Data</a>
+        <a href="#offshore">Satellite</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <div class="nav-utils">
+        <span class="live"><i></i><span id="clock">11:42:08 UTC</span></span>
+        <a class="btn ghost" href="#pricing">Sign in</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-head">
+        <div>
+          <span class="meta" style="display:block;margin-bottom:10px">Sea area Biscay · waypoint 47°12.4'N 008°41.7'W · 118 nm west of Brest</span>
+          <h1>Offshore weather you can <em>steer by</em>, not just read.</h1>
+        </div>
+        <div class="hero-side">
+          <p>Three forecast models, live buoys and the tide table for your next port, blended into one board that refreshes every six minutes and still fits down a satellite link.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#pricing">Open the live board</a>
+            <a class="btn ghost" href="#offshore">Request by email at sea</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="board" aria-label="Live forecast board">
+        <div class="board-bar">
+          <div class="station">
+            <strong>Sable d'Argent, 42 ft cutter</strong>
+            <span class="meta">Model run 09 Sep 06Z · blend of GFS 0.25°, ECMWF 0.1°, Arome 0.025°</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="chip warnchip">Gale warning in force to 21:00 UTC</span>
+            <span class="chip">Buoy 62163 · 24 nm · reported 11:30</span>
+            <span class="chip">Next run 12Z · <span id="nextrun">in 0h 17m</span></span>
+          </div>
+        </div>
+
+        <div class="readouts">
+          <div class="readout">
+            <div class="lbl"><span class="meta">Wind at 10 m</span><span class="meta">248° · west-southwest</span></div>
+            <div class="val"><span class="num">24</span><small>kn</small></div>
+            <div class="sub">
+              <span>gusts <b>31 kn</b></span>
+              <span>1 h mean <b>22 kn</b></span>
+              <span>trend <b class="trend">+6 kn / 3 h</b></span>
+            </div>
+          </div>
+          <div class="readout">
+            <div class="lbl"><span class="meta">Pressure at sea level</span><span class="meta">buoy 1003.8</span></div>
+            <div class="val"><span class="num">1004.2</span><small>hPa</small></div>
+            <div class="sub">
+              <span>3 h <b class="trend">-2.1 hPa falling</b></span>
+              <span>low <b>988 hPa at 52°N 014°W</b></span>
+            </div>
+          </div>
+          <div class="readout">
+            <div class="lbl"><span class="meta">Significant wave</span><span class="meta">262° · swell 9 s</span></div>
+            <div class="val"><span class="num">2.8</span><small>m</small></div>
+            <div class="sub">
+              <span>peak period <b>9.4 s</b></span>
+              <span>wind sea <b>1.6 m</b></span>
+              <span>max 24 h <b>3.9 m</b></span>
+            </div>
+          </div>
+          <div class="readout">
+            <div class="lbl"><span class="meta">Tide at Brest</span><span class="meta">springs · coeff 94</span></div>
+            <div class="val"><span class="num">4.1</span><small>m rising</small></div>
+            <div class="sub">
+              <span>high water <b>14:37 UTC · 6.9 m</b></span>
+              <span>stream <b>1.4 kn setting 034°</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="chart">
+            <div class="chart-head">
+              <strong>Wind, next 48 hours</strong>
+              <div class="legend">
+                <span><i></i>mean kn</span>
+                <span><i class="g"></i>gust kn</span>
+                <span><i class="t"></i>40 kn line</span>
+              </div>
+            </div>
+            <div class="plot"><svg id="windplot" viewBox="0 0 960 160" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+            <div class="dirs" id="winddirs"></div>
+            <div class="axis"><span>12:00</span><span>18:00</span><span>Thu 00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>Fri 00:00</span><span>06:00</span><span>12:00</span></div>
+          </div>
+          <div class="chart">
+            <div class="chart-head">
+              <strong>Pressure and tide, 24 hours</strong>
+              <div class="legend">
+                <span><i></i>hPa</span>
+                <span><i class="t"></i>tide m</span>
+              </div>
+            </div>
+            <div class="plot"><svg id="presplot" viewBox="0 0 480 160" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+            <div class="axis"><span>1012</span><span class="accent">now 1004.2</span><span>996</span></div>
+            <div class="axis"><span>12:00</span><span>18:00</span><span>00:00</span><span>06:00</span><span>12:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ---------- outlook ---------- -->
+<section id="outlook" class="rule-top">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="meta">Seven day outlook · waypoint · updated 11:42 UTC</span>
+        <h2>The week ahead, one line per day, nothing hidden behind a tap.</h2>
+      </div>
+      <p class="lead">Daily values are the 06:00 to 18:00 window. Gusts are the 95th percentile across the three models, so a quiet number here is a number you can plan on.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th><th>Wind</th><th>Gust</th><th>Direction</th><th>Sig. wave</th><th>Period</th><th>Pressure</th><th>Rain</th><th>Visibility</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="day">Wed 9<span>today</span></td><td><i class="bar" style="width:48px"></i><span class="num">24 kn</span></td><td><i class="bar g" style="width:62px"></i><span class="num">31</span></td><td class="num">248°</td><td class="num">2.8 m</td><td class="num">9 s</td><td class="num">1004 falling</td><td class="num">3.2 mm</td><td class="num">4 nm</td><td><span class="tag gale">gale 8</span></td></tr>
+          <tr><td class="day">Thu 10</td><td><i class="bar" style="width:34px"></i><span class="num">17 kn</span></td><td><i class="bar g" style="width:46px"></i><span class="num">23</span></td><td class="num">301°</td><td class="num">2.1 m</td><td class="num">10 s</td><td class="num">1012 rising</td><td class="num">0.4 mm</td><td class="num">9 nm</td><td><span class="tag ok">moderating</span></td></tr>
+          <tr><td class="day">Fri 11</td><td><i class="bar" style="width:24px"></i><span class="num">12 kn</span></td><td><i class="bar g" style="width:32px"></i><span class="num">16</span></td><td class="num">318°</td><td class="num">1.6 m</td><td class="num">11 s</td><td class="num">1019 steady</td><td class="num">0.0 mm</td><td class="num">12 nm</td><td><span class="tag ok">fair</span></td></tr>
+          <tr><td class="day">Sat 12</td><td><i class="bar" style="width:18px"></i><span class="num">9 kn</span></td><td><i class="bar g" style="width:26px"></i><span class="num">13</span></td><td class="num">352°</td><td class="num">1.2 m</td><td class="num">12 s</td><td class="num">1023 steady</td><td class="num">0.0 mm</td><td class="num">15 nm</td><td><span class="tag ok">fair</span></td></tr>
+          <tr><td class="day">Sun 13</td><td><i class="bar" style="width:26px"></i><span class="num">13 kn</span></td><td><i class="bar g" style="width:36px"></i><span class="num">18</span></td><td class="num">216°</td><td class="num">1.4 m</td><td class="num">8 s</td><td class="num">1018 falling</td><td class="num">1.1 mm</td><td class="num">10 nm</td><td><span class="tag">backing</span></td></tr>
+          <tr><td class="day">Mon 14</td><td><i class="bar" style="width:40px"></i><span class="num">20 kn</span></td><td><i class="bar g" style="width:54px"></i><span class="num">27</span></td><td class="num">231°</td><td class="num">2.4 m</td><td class="num">8 s</td><td class="num">1008 falling</td><td class="num">6.8 mm</td><td class="num">5 nm</td><td><span class="tag">strong 6</span></td></tr>
+          <tr><td class="day">Tue 15</td><td><i class="bar" style="width:44px"></i><span class="num">22 kn</span></td><td><i class="bar g" style="width:58px"></i><span class="num">29</span></td><td class="num">265°</td><td class="num">2.9 m</td><td class="num">9 s</td><td class="num">1003 falling</td><td class="num">4.5 mm</td><td class="num">4 nm</td><td><span class="tag gale">near gale 7</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- tides + warnings ---------- -->
+<section id="tides" class="rule-top">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="meta">Tides and the area forecast</span>
+        <h2>The tide table for the port you are actually heading to.</h2>
+      </div>
+      <p class="lead">Set a destination and Halyard pulls the harmonic prediction for the nearest standard port, then corrects it with the pressure you are seeing on deck.</p>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="meta-row">
+          <h3>Brest, standard port</h3>
+          <span class="meta">Wed 09 Sep · coefficient 94 · datum chart datum</span>
+        </div>
+        <div class="tide-plot"><svg id="tideplot" viewBox="0 0 520 150" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+        <div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+        <ul class="tide-list">
+          <li><span class="k">high water</span><span class="num">02:14 UTC</span><span class="h num">6.6 m</span></li>
+          <li><span class="k">low water</span><span class="num">08:29 UTC</span><span class="h num">1.2 m</span></li>
+          <li><span class="k">high water</span><span class="num">14:37 UTC</span><span class="h num">6.9 m</span></li>
+          <li><span class="k">low water</span><span class="num">20:53 UTC</span><span class="h num">0.9 m</span></li>
+          <li><span class="k">Thu high water</span><span class="num">02:58 UTC</span><span class="h num">6.7 m</span></li>
+          <li><span class="k">Thu low water</span><span class="num">09:12 UTC</span><span class="h num">1.1 m</span></li>
+        </ul>
+        <p class="meta">Surge correction applied: -0.18 m for 1004 hPa. Chenal du Four stream turns north-going at 12:05 UTC, peak 3.1 kn at 15:10.</p>
+      </div>
+
+      <div class="panel" id="warnings">
+        <div class="meta-row">
+          <h3>Area forecast, Biscay and Fitzroy</h3>
+          <span class="meta">Issued 09:00 UTC · valid to Wed 21:00 UTC</span>
+        </div>
+        <div class="forecast-text">
+          <p><b>Gale warning.</b> Southwesterly 6 to gale 8, veering northwesterly and decreasing 4 or 5 by early Thursday. Sea state rough, occasionally very rough in the west at first, becoming moderate. Rain then showers. Visibility moderate or poor, becoming good.</p>
+          <p>Low 988 hPa near 52°N 014°W moving northeast and filling slowly. Ridge 1024 hPa building from the southwest by Friday and holding through the weekend. Next depression expected Sunday night, deepening to 1003 hPa by Tuesday.</p>
+        </div>
+        <div class="window">
+          <div class="meta-row">
+            <strong style="font-size:14px">Departure window from Camaret, next 48 h</strong>
+            <span class="meta">3 h blocks</span>
+          </div>
+          <div class="window-track" aria-hidden="true">
+            <i class="no"></i><i class="no"></i><i class="no"></i><i class="hold"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="go"></i><i class="hold"></i><i class="go"></i><i class="go"></i><i class="go"></i>
+          </div>
+          <div class="window-labels"><span>Wed 12:00</span><span>Thu 00:00</span><span>Thu 12:00</span><span>Fri 00:00</span><span>Fri 12:00</span></div>
+          <div class="window-note">
+            <span class="num">Thu 00:00</span><span>Wind northwest 18 kn falling to 12 kn, seas 2.1 m easing to 1.6 m by 06:00. Stream fair through the Raz de Sein from 04:40 UTC.</span>
+            <span class="num">Thu 12:00</span><span>Brief freshening to 22 kn on the back edge of the front, then the ridge. Best long window opens after 15:00.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- data sources ---------- -->
+<section id="sources" class="rule-top">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="meta">Where the numbers come from</span>
+        <h2>Three models, one hundred and twenty seven sensors, and no averaging that hides a gust.</h2>
+      </div>
+      <p class="lead">When the models disagree we show you the disagreement. The board carries the spread, not just the mean, so you can see when a forecast is confident and when it is guessing.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="big num">6<small>min</small></div><p>Refresh cadence for wind, pressure and wave once a new run is ingested.</p></div>
+      <div class="stat"><div class="big num">0.1<small>deg</small></div><p>Ocean grid from ECMWF, sharpened to 0.025° within 30 nm of the coast.</p></div>
+      <div class="stat"><div class="big num">127</div><p>Buoys, lightships and coastal stations feeding the nowcast layer.</p></div>
+      <div class="stat"><div class="big num">14<small>days</small></div><p>Forecast horizon, with spread shown from day four onwards.</p></div>
+    </div>
+    <div class="sources">
+      <div class="source">
+        <span class="meta">Global</span>
+        <strong>GFS 0.25° and ECMWF IFS 0.1°</strong>
+        <p>Four runs a day. Pressure fields drive the low and ridge tracking on the board; wind is bias-corrected against the buoy network every cycle.</p>
+      </div>
+      <div class="source">
+        <span class="meta">Coastal</span>
+        <strong>Arome 0.025° and Harmonie</strong>
+        <p>High-resolution layers for the Channel, Biscay, the Irish Sea and the Baltic. These catch the land breeze and headland acceleration the globals smooth away.</p>
+      </div>
+      <div class="source">
+        <span class="meta">Observed</span>
+        <strong>Buoys, satellite scatterometer, AIS weather reports</strong>
+        <p>Every reading within 60 nm of your waypoint is plotted with its age. A number older than 90 minutes is greyed, never quietly dropped.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- satellite ---------- -->
+<section id="offshore" class="rule-top">
+  <div class="wrap">
+    <div class="sat">
+      <div>
+        <span class="meta" style="display:block;margin-bottom:10px">Beyond phone signal</span>
+        <h2 style="font-size:var(--t-title);line-height:1.12;letter-spacing:-0.02em;font-weight:600;max-width:20ch">The whole board in an 18 kB email, built for Iridium.</h2>
+        <p style="color:var(--muted);margin-top:16px;max-width:46ch">Send a one-line request from any satellite mailer and Halyard replies with a compressed packet: a 48 hour wind and wave grid around your position, the tide table for your destination, and the area forecast as text. The app renders it offline.</p>
+        <ul class="checks">
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#35c3d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Works with Iridium Go, Starlink and Inmarsat mailers.</b> Plain text in, plain text out, no attachment blocking.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#35c3d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Choose your resolution.</b> 0.5° for a quick look at 6 kB, 0.1° for a routing decision at 18 kB.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#35c3d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Positions from your log.</b> Reply to a packet and the next one is centred on where you are now.</span></li>
+        </ul>
+      </div>
+      <div class="code"><span class="c">// to: board@halyard.sea  · subject: any</span>
+<span class="a">grib</span> 47.2N 8.7W  <span class="a">radius</span> 120nm  <span class="a">res</span> 0.1  <span class="a">hours</span> 48  <span class="a">step</span> 3
+<span class="a">layers</span> wind,gust,press,wave
+<span class="a">tide</span> brest  <span class="a">days</span> 3
+<span class="a">text</span> biscay,fitzroy
+
+<span class="c">// reply, 11:44 UTC, 17.6 kB</span>
+<span class="c">// run 09 Sep 06Z · 17 x 17 cells · 17 steps · 4 layers</span>
+<span class="c">// tide brest 3 days · text 2 areas · next run 12Z at 14:05</span>
+<span class="c">// wind max in packet: 33 kn at 12Z +09 h, 47.6N 9.4W</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- pricing ---------- -->
+<section id="pricing" class="rule-top">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="meta">Plans</span>
+        <h2>Free at the pontoon. Paid where it matters.</h2>
+      </div>
+      <p class="lead">Coastal covers day sailing and the tide table. Offshore adds the satellite packet and the model spread. Race adds polars and routing for a whole crew.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <span class="meta">Coastal</span>
+        <div class="price">0<small>EUR / month</small></div>
+        <ul>
+          <li>Live board for one waypoint</li>
+          <li>Tide tables for 1,400 ports</li>
+          <li>Three day outlook</li>
+          <li>Area forecasts and warnings</li>
+        </ul>
+        <a class="btn ghost" href="#top">Start with Coastal</a>
+      </div>
+      <div class="tier featured">
+        <span class="meta accent">Offshore · most skippers</span>
+        <div class="price">12<small>EUR / month</small></div>
+        <ul>
+          <li>Everything in Coastal</li>
+          <li>Satellite email packets, unlimited</li>
+          <li>Fourteen day outlook with model spread</li>
+          <li>Departure windows and stream timing</li>
+          <li>Offline rendering on two devices</li>
+        </ul>
+        <a class="btn primary" href="#top">Start Offshore</a>
+      </div>
+      <div class="tier">
+        <span class="meta">Race</span>
+        <div class="price">39<small>EUR / month</small></div>
+        <ul>
+          <li>Everything in Offshore</li>
+          <li>Polar upload and isochrone routing</li>
+          <li>Ensemble tracks, 51 members</li>
+          <li>Crew seats, up to eight</li>
+          <li>Shore team shared board</li>
+        </ul>
+        <a class="btn ghost" href="#top">Talk to us about Race</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- quote ---------- -->
+<section class="rule-top">
+  <div class="wrap">
+    <figure class="quote" style="margin:0">
+      <blockquote>"We left Camaret on the window Halyard drew, four hours after the harbour office told us to wait a day. <em>The pressure trend was right and the office was cautious.</em> We had the Raz with the stream and a flat sea by dawn."</blockquote>
+      <figcaption>
+        <b>Maren Kjeldsen</b>
+        <span class="meta">Skipper, Ondine, 40 ft · Brest to Baiona, September 2025</span>
+        <span class="meta">Logged 612 nm on Offshore, 11 satellite packets</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="wordmark" href="#top">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 17c2.2 0 2.2-2 4.5-2s2.3 2 4.5 2 2.3-2 4.5-2 2.3 2 4.5 2" stroke="#35c3d6" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 3v9M12 3l6 8H6l6-8z" stroke="#e7f1f4" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+          Halyard
+        </a>
+        <p>Marine weather for people who sleep in three hour watches. Built in Brest and Lymington by sailors and one meteorologist who never stopped checking the buoy.</p>
+      </div>
+      <div>
+        <span class="meta">Product</span>
+        <ul><li><a href="#top">Live board</a></li><li><a href="#outlook">Seven day outlook</a></li><li><a href="#tides">Tides and streams</a></li><li><a href="#offshore">Satellite packets</a></li><li><a href="#pricing">Pricing</a></li></ul>
+      </div>
+      <div>
+        <span class="meta">Data</span>
+        <ul><li><a href="#sources">Models and sensors</a></li><li><a href="#sources">Bias correction notes</a></li><li><a href="#warnings">Warning areas</a></li><li><a href="#sources">Status and ingest log</a></li></ul>
+      </div>
+      <div>
+        <span class="meta">Company</span>
+        <ul><li><a href="#top">About</a></li><li><a href="#top">Journal</a></li><li><a href="#top">Contact</a></li><li><a href="#top">Privacy</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="meta">© 2026 Halyard Weather · forecasts are guidance, the skipper decides</span>
+      <span class="live"><i></i>All feeds nominal · 06Z ingest complete 08:12 UTC</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---------- wind chart, 48 hourly values from 12:00 UTC Wed ----------
+  var mean = [24,25,26,27,28,29,29,28,27,25,23,21,19,18,17,17,16,16,15,14,13,13,12,12,12,13,14,16,19,21,22,22,21,19,17,15,14,13,12,12,11,11,10,10,10,10,9,9];
+  var gust = [31,32,33,35,36,38,38,37,35,33,30,28,25,24,23,22,21,21,20,19,18,17,16,16,16,17,19,21,25,27,29,29,27,25,22,20,19,17,16,16,15,14,13,13,13,13,12,12];
+  var dirs = [248,254,262,278,296,304,312,318]; // every 6 h
+
+  var W = 960, H = 160, max = 44;
+  var svg = document.getElementById('windplot');
+  var out = '';
+  // grid lines at 10, 20, 30, 40 kn
+  [10,20,30,40].forEach(function(v){
+    var y = H - (v/max)*H;
+    out += '<line x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+(v===40?'#8fb0ba':'rgba(181,212,220,0.12)')+'" stroke-width="1" '+(v===40?'stroke-dasharray="6 6"':'')+' />';
+  });
+  var n = mean.length, bw = W/n;
+  // gust area
+  var gp = 'M0 '+H;
+  gust.forEach(function(g,i){ gp += ' L'+(i*bw + bw/2).toFixed(1)+' '+(H - (g/max)*H).toFixed(1); });
+  gp += ' L'+W+' '+H+' Z';
+  out += '<path d="'+gp+'" fill="rgba(242,162,92,0.14)" />';
+  var gl = '';
+  gust.forEach(function(g,i){ gl += (i?' L':'M')+(i*bw + bw/2).toFixed(1)+' '+(H - (g/max)*H).toFixed(1); });
+  out += '<path d="'+gl+'" fill="none" stroke="#f2a25c" stroke-width="1.5" vector-effect="non-scaling-stroke" />';
+  // mean bars
+  mean.forEach(function(m,i){
+    var h = (m/max)*H;
+    out += '<rect x="'+(i*bw+2).toFixed(1)+'" y="'+(H-h).toFixed(1)+'" width="'+(bw-4).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="#35c3d6" opacity="'+(i===0?1:0.75)+'" rx="1" />';
+  });
+  // now marker
+  out += '<line x1="1" x2="1" y1="0" y2="'+H+'" stroke="#e7f1f4" stroke-width="2" vector-effect="non-scaling-stroke" />';
+  svg.innerHTML = out;
+
+  // direction arrows
+  var dd = document.getElementById('winddirs');
+  dd.innerHTML = dirs.map(function(d){
+    return '<span><svg viewBox="0 0 10 10" style="transform:rotate('+(d+180)+'deg)"><path d="M5 0.5v9M5 0.5L2.4 3.6M5 0.5l2.6 3.1" stroke="#8fb0ba" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>'+d+'°</span>';
+  }).join('');
+
+  // ---------- pressure + tide, 24 h from 12:00 UTC ----------
+  var pres = [1004.2,1003.6,1003.1,1002.9,1003.0,1003.4,1004.1,1005.0,1006.2,1007.5,1008.6,1009.5,1010.3,1011.0,1011.6,1012.0,1012.4,1012.7,1012.9,1013.1,1013.3,1013.5,1013.6,1013.8,1014.0];
+  var P = document.getElementById('presplot');
+  var PW = 480, PH = 160;
+  var pmin = 996, pmax = 1016;
+  var pl = '';
+  pres.forEach(function(p,i){
+    var x = (i/(pres.length-1))*PW, y = PH - ((p-pmin)/(pmax-pmin))*PH;
+    pl += (i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+  });
+  // tide curve for Brest in same 24 h: high 14:37 6.9, low 20:53 0.9, high 02:58 6.7, low 09:12 1.1
+  function tideAt(h){ // h hours after 12:00
+    var pts = [[-3.52,1.2],[2.62,6.9],[8.88,0.9],[14.97,6.7],[21.2,1.1],[27.4,6.8]];
+    for(var i=0;i<pts.length-1;i++){
+      if(h>=pts[i][0] && h<=pts[i+1][0]){
+        var t=(h-pts[i][0])/(pts[i+1][0]-pts[i][0]);
+        var k=(1-Math.cos(Math.PI*t))/2;
+        return pts[i][1]+(pts[i+1][1]-pts[i][1])*k;
+      }
+    }
+    return 3.5;
+  }
+  var tl = '';
+  for(var i=0;i<=48;i++){
+    var h=i/2, x=(h/24)*PW, y=PH-((tideAt(h)-0)/7.5)*PH;
+    tl += (i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+  }
+  var pout = '';
+  [1000,1004,1008,1012].forEach(function(v){
+    var y = PH-((v-pmin)/(pmax-pmin))*PH;
+    pout += '<line x1="0" x2="'+PW+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="rgba(181,212,220,0.12)" stroke-width="1" />';
+  });
+  pout += '<path d="'+tl+'" fill="none" stroke="#8fb0ba" stroke-width="1.5" stroke-dasharray="4 4" vector-effect="non-scaling-stroke" />';
+  pout += '<path d="'+pl+' L'+PW+' '+PH+' L0 '+PH+' Z" fill="rgba(53,195,214,0.12)" />';
+  pout += '<path d="'+pl+'" fill="none" stroke="#35c3d6" stroke-width="2" vector-effect="non-scaling-stroke" />';
+  var y0 = PH-((pres[0]-pmin)/(pmax-pmin))*PH;
+  pout += '<circle cx="2" cy="'+y0.toFixed(1)+'" r="4" fill="#e7f1f4" />';
+  P.innerHTML = pout;
+
+  // ---------- Brest tide, full day 00:00 to 24:00 ----------
+  var T = document.getElementById('tideplot');
+  var TW = 520, TH = 150;
+  function tideDay(h){ // h from 00:00 Wed
+    var pts = [[-3.6,0.8],[2.23,6.6],[8.48,1.2],[14.62,6.9],[20.88,0.9],[26.97,6.7]];
+    for(var i=0;i<pts.length-1;i++){
+      if(h>=pts[i][0] && h<=pts[i+1][0]){
+        var t=(h-pts[i][0])/(pts[i+1][0]-pts[i][0]);
+        var k=(1-Math.cos(Math.PI*t))/2;
+        return pts[i][1]+(pts[i+1][1]-pts[i][1])*k;
+      }
+    }
+    return 3.5;
+  }
+  var td = '', tfill = 'M0 '+TH;
+  for(var j=0;j<=96;j++){
+    var hh=j/4, x=(hh/24)*TW, y=TH-(tideDay(hh)/7.6)*TH;
+    td += (j?' L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+    tfill += ' L'+x.toFixed(1)+' '+y.toFixed(1);
+  }
+  tfill += ' L'+TW+' '+TH+' Z';
+  var tout = '';
+  [2,4,6].forEach(function(v){
+    var y = TH-(v/7.6)*TH;
+    tout += '<line x1="0" x2="'+TW+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="rgba(181,212,220,0.12)" stroke-width="1" />';
+  });
+  tout += '<path d="'+tfill+'" fill="rgba(53,195,214,0.10)" />';
+  tout += '<path d="'+td+'" fill="none" stroke="#35c3d6" stroke-width="2" vector-effect="non-scaling-stroke" />';
+  // now marker at 11:42
+  var nx = (11.7/24)*TW, ny = TH-(tideDay(11.7)/7.6)*TH;
+  tout += '<line x1="'+nx.toFixed(1)+'" x2="'+nx.toFixed(1)+'" y1="0" y2="'+TH+'" stroke="rgba(231,241,244,0.35)" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="3 3" />';
+  tout += '<circle cx="'+nx.toFixed(1)+'" cy="'+ny.toFixed(1)+'" r="4" fill="#e7f1f4" />';
+  T.innerHTML = tout;
+
+  // ---------- live clock ----------
+  var clock = document.getElementById('clock');
+  var nextrun = document.getElementById('nextrun');
+  function pad(n){ return (n<10?'0':'')+n; }
+  function tick(){
+    var d = new Date();
+    clock.textContent = pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+' UTC';
+    // 12Z products land at 14:05 UTC; show time until the next 6 hourly run publishes
+    var mins = d.getUTCHours()*60 + d.getUTCMinutes();
+    var pubs = [2*60+5, 8*60+5, 14*60+5, 20*60+5];
+    var next = null;
+    for(var i=0;i<pubs.length;i++){ if(pubs[i] > mins){ next = pubs[i]; break; } }
+    if(next === null) next = pubs[0] + 24*60;
+    var diff = next - mins;
+    nextrun.textContent = 'in '+Math.floor(diff/60)+'h '+pad(diff%60)+'m';
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
