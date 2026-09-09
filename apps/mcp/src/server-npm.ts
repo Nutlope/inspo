@@ -55,7 +55,7 @@ const HELP = `
 
   Prefer to wire it yourself? Every client takes one of these:
 
-    url:      https://inspo-three.vercel.app/api/mcp
+    url:      https://inspomcp.dev/api/mcp
     command:  npx -y inspo-mcp
 
   Optional env: TOGETHER_API_KEY (query-embedding semantic search),

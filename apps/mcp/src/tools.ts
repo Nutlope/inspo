@@ -1127,7 +1127,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         return true;
       });
       const base =
-        process.env.INSPO_BASE_URL?.trim() || "https://inspo-three.vercel.app";
+        process.env.INSPO_BASE_URL?.trim() || "https://inspomcp.dev";
       const anyFallback = filtered.some((h) => h.fallback);
       const components = filtered.map((h) => ({
         siteSlug: h.screen.siteSlug,

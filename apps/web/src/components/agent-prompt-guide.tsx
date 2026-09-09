@@ -36,7 +36,7 @@ export function AgentPromptGuide({
     `Use the dominant colour for surfaces, the accent sparingly,`,
     `and lean on type weight + scale rather than colour for hierarchy.`,
     ``,
-    `Full DESIGN.md: https://inspo.dev/api/design/${slug}`,
+    `Full DESIGN.md: https://inspomcp.dev/api/design/${slug}`,
   ].filter(Boolean);
   const prompt = promptLines.join("\n");
 

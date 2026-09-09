@@ -139,7 +139,7 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
   },
 ];
 
-const HOSTED_URL = "https://inspo-three.vercel.app/api/mcp";
+const HOSTED_URL = "https://inspomcp.dev/api/mcp";
 // base64 of {"url": HOSTED_URL} - Cursor's documented deeplink payload.
 // Keep in sync with HOSTED_URL: a stale payload silently installs a dead
 // server (it pointed at the retired Cloudflare Worker until 2026-09-03).

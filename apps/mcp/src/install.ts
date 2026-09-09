@@ -30,7 +30,7 @@ import { createInterface } from "node:readline/promises";
 import { homedir, platform } from "node:os";
 import { dirname, join } from "node:path";
 
-export const HOSTED_URL = "https://inspo-three.vercel.app/api/mcp";
+export const HOSTED_URL = "https://inspomcp.dev/api/mcp";
 const SERVER_NAME = "inspo";
 
 /** How the client should reach the server. */
@@ -296,7 +296,7 @@ export async function install(argv: string[], version: string): Promise<number> 
     console.log(`    url:      ${HOSTED_URL}`);
     console.log("    command:  npx -y inspo-mcp");
     console.log("  or force one with --client <id>. Full setup:");
-    console.log("  https://inspo-three.vercel.app/mcp\n");
+    console.log("  https://inspomcp.dev/mcp\n");
     return 0;
   }
 

@@ -45,7 +45,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://inspo-three.vercel.app/api/mcp"
+      "url": "https://inspomcp.dev/api/mcp"
     }
   ]
 }

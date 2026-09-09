@@ -182,7 +182,7 @@ export function CommandPalette() {
     if (name === "copy-install") {
       navigator.clipboard
         .writeText(
-          "claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp",
+          "claude mcp add --transport http inspo https://inspomcp.dev/api/mcp",
         )
         .catch(() => {});
     } else if (name === "toggle-theme") {

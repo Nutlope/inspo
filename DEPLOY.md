@@ -48,7 +48,7 @@ npx vercel deploy --prod
 | Variable | Notes |
 |---|---|
 | `DATABASE_URL` | Neon pooled URL |
-| `INSPO_BASE_URL` | Your Vercel domain (used by `metadataBase`, sitemap, MCP image URLs) |
+| `INSPO_BASE_URL` | Optional override. Defaults to `https://inspomcp.dev` on Vercel (used by `metadataBase`, sitemap, MCP image URLs) |
 | `TOGETHER_API_KEY` | Only needed if `/api/extract` is enabled |
 | `BETTER_AUTH_SECRET` | Optional — only if you re-enable the curator/admin auth flow |
 

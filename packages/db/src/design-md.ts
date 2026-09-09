@@ -67,7 +67,7 @@ export function renderDesignMd(s: ScreenSummary): string {
   /* ── Header ─────────────────────────────────────────────────── */
   const base =
     (typeof process !== "undefined" && process.env?.INSPO_BASE_URL?.trim()) ||
-    "https://inspo-three.vercel.app";
+    "https://inspomcp.dev";
   lines.push(`# ${s.title} design system`);
   lines.push("");
   lines.push("> Extracted by [Inspo](https://github.com/Nutlope/inspo) (open source, MIT, powered by Together AI). Reference material for *intentional* design decisions: adapt, don't copy.");

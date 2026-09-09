@@ -4,7 +4,7 @@
  * Mirrors the internal `/api/design/<slug>` route at a curl-friendly
  * URL that any coding agent can pipe straight into a prompt:
  *
- *   curl https://inspo.design/d/linear-app/DESIGN.md | claude code
+ *   curl https://inspomcp.dev/d/linear-app/DESIGN.md | claude code
  *
  * Same payload, same caching headers. We intentionally keep the
  * `/api/design/<slug>` route for in-app fetches (the CopyDesignMd +

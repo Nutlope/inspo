@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://inspo-three.vercel.app"><img alt="Inspo" src="docs/img/og.png"></a>
+  <a href="https://inspomcp.dev"><img alt="Inspo" src="docs/img/og.png"></a>
 </p>
 
 <h1 align="center">Inspo</h1>
 
-<p align="center">Real production websites your coding agent can study, over MCP, before it writes UI. <a href="https://inspo-three.vercel.app">inspo-three.vercel.app</a></p>
+<p align="center">Real production websites your coding agent can study, over MCP, before it writes UI. <a href="https://inspomcp.dev">inspomcp.dev</a></p>
 
 ## With and without
 
@@ -36,12 +36,12 @@ Sixteen tools expose all of it; `recommend(brief)` composes most of them into on
 ## Cloning & running
 
 1. One command, any client: `npx -y inspo-mcp install` (detects Claude Code, Cursor, Codex, VS Code, Windsurf, Zed, Claude Desktop and writes the config; `--dry-run` shows the plan)
-2. Or point a client at the hosted endpoint yourself: `claude mcp add --transport http inspo https://inspo-three.vercel.app/api/mcp`
+2. Or point a client at the hosted endpoint yourself: `claude mcp add --transport http inspo https://inspomcp.dev/api/mcp`
 3. Or clone: `git clone https://github.com/Nutlope/inspo.git && cd inspo && pnpm install`
 4. Gallery: `pnpm dev`, then open `localhost:3737`
 5. Dev loop: `pnpm --filter @inspo/mcp test`
 
-Per-client snippets (Cursor, Windsurf, Zed, Claude Desktop) are on [the MCP page](https://inspo-three.vercel.app/mcp); the self-host runbook is [DEPLOY.md](DEPLOY.md).
+Per-client snippets (Cursor, Windsurf, Zed, Claude Desktop) are on [the MCP page](https://inspomcp.dev/mcp); the self-host runbook is [DEPLOY.md](DEPLOY.md).
 
 ## Roadmap
 
@@ -57,4 +57,4 @@ Want a site in the archive? Append it to [apps/worker/src/seed-urls.ts](apps/wor
 
 Every tool is read-only. The one path that touches the outside world - `get_design_system(live:true)`, which supplements thin captured tokens from the screen's own source - passes each URL and redirect through an SSRF guard: public named hosts only, ports 80 and 443, byte-capped body, no JS execution. The hosted endpoint records per-tool counters only, never IPs or query text.
 
-MIT, copyright Together AI and contributors. The screenshots remain the work of their designers: every screen credits and links its source, and takedowns are honoured at [/dmca](https://inspo-three.vercel.app/dmca).
+MIT, copyright Together AI and contributors. The screenshots remain the work of their designers: every screen credits and links its source, and takedowns are honoured at [/dmca](https://inspomcp.dev/dmca).

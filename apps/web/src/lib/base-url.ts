@@ -2,19 +2,22 @@
  * Canonical production origin - single source of truth for metadataBase,
  * the sitemap, robots, the OG image, and the public DESIGN.md route.
  *
- * Resolution order:
- *   1. INSPO_BASE_URL                - set in Vercel once the domain is final.
- *   2. VERCEL_PROJECT_PRODUCTION_URL - Vercel auto-injects the *production*
- *      domain on every deploy, so canonical / OG / sitemap URLs are correct
- *      even before INSPO_BASE_URL is set. (Deliberately NOT VERCEL_URL, which
- *      is the per-deploy preview URL and changes on every push.)
- *   3. localhost                     - dev fallback only.
+ * The domain is settled, so it is a constant here rather than something
+ * every deploy has to be told. Vercel's own injected production URL is
+ * deliberately NOT used any more: it is the project's *.vercel.app host,
+ * which is now the old address.
  *
- * This replaces the old inlined `?? "http://localhost:3737"` defaults that
- * would otherwise poison every absolute URL if INSPO_BASE_URL were unset.
+ * Resolution order:
+ *   1. INSPO_BASE_URL - escape hatch; set it to point a deploy elsewhere.
+ *   2. CANONICAL      - on Vercel, the domain Inspo actually lives at.
+ *   3. localhost      - dev fallback only.
  */
+
+/** Where Inspo lives. */
+export const CANONICAL_ORIGIN = "https://inspomcp.dev";
+
 export const BASE_URL =
   process.env.INSPO_BASE_URL?.trim() ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    ? CANONICAL_ORIGIN
     : "http://localhost:3737");
