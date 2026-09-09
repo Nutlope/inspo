@@ -5,8 +5,8 @@ import {
   Img,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import {
   CARD,
   PICKS,
@@ -80,7 +80,7 @@ const RESULT = MONTAGE[0];
 const scrollDist = heroScroll(RESULT.img);
 
 export const ArchiveScene: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   /* The scan: already at speed when we arrive, then a long settle. */
   const wallY = interpolate(

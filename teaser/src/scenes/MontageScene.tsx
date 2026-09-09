@@ -5,8 +5,8 @@ import {
   Img,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import {
   BRIEF,
   FRAME,
@@ -40,7 +40,7 @@ const expo = {
 };
 
 export const MontageScene: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   /* How many pages the track has advanced, fractional mid-move. */
   const progress = MONTAGE.slice(1).reduce(

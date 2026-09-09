@@ -9,16 +9,16 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="InspoLaunch"
         component={InspoLaunch}
-        durationInFrames={622}
-        fps={30}
+        durationInFrames={1244}
+        fps={60}
         width={1920}
         height={1080}
       />
       <Composition
         id="InspoTeaser"
         component={InspoTeaser}
-        durationInFrames={300}
-        fps={30}
+        durationInFrames={600}
+        fps={60}
         width={1920}
         height={1080}
       />

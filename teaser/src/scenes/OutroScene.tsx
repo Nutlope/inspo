@@ -4,8 +4,8 @@ import {
   Easing,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import { colors, EXPO, fonts } from "../theme";
 
 /* The end card. Local timeline (the launch film starts it at 507):
@@ -43,7 +43,7 @@ export const OutroScene: React.FC<{ caption?: string; url?: string }> = ({
   caption = "MCP · Coming soon",
   url,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   const markIn = interpolate(frame, [8, 22], [0, 1], expo);
   const captionIn = interpolate(frame, [32, 44], [0, 1], expo);

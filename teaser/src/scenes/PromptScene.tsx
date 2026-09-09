@@ -4,8 +4,8 @@ import {
   Easing,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import { colors, EXPO, fonts } from "../theme";
 
 const PROMPT = "build a landing page for Overpass, crop maps for farmers";
@@ -25,7 +25,7 @@ const PROMPT = "build a landing page for Overpass, crop maps for farmers";
 /* Fast enough to read as a fast typist, not as a wipe. */
 const CHARS_PER_FRAME = 2.2;
 export const PromptScene: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   const typed = PROMPT.slice(0, Math.floor(frame * CHARS_PER_FRAME));
   const doneTyping = typed.length >= PROMPT.length;

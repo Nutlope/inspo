@@ -4,8 +4,8 @@ import {
   Easing,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import { colors, EXPO, fonts } from "../theme";
 
 /* The one line the whole film has been arguing.
@@ -28,7 +28,7 @@ const line = (frame: number, from: number) => ({
 });
 
 export const TaglineScene: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   const out = interpolate(frame, [50, 60], [1, 0], expo);
   const one = line(frame, 6);

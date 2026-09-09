@@ -5,8 +5,8 @@ import {
   Img,
   Interactive,
   interpolate,
-  useCurrentFrame,
 } from "remotion";
+import { useAuthoredFrame } from "../timing";
 import {
   CARD,
   FINAL,
@@ -64,7 +64,7 @@ const scrollImgH = RESULT_IMG.h * (FINAL.w / RESULT_IMG.w);
 const scrollDist = scrollImgH - FINAL.h;
 
 export const SearchScene: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame = useAuthoredFrame();
 
   /* The scan: already at speed when we arrive, then a long settle. */
   const wallY = interpolate(
