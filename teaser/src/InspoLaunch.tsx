@@ -16,7 +16,7 @@ import { colors } from "./theme";
             (it starts on the exact frame the archive leaves, and runs
             on under the tagline's wash)
    469-531  The line: your agent doesn't have taste, lend it some
-   525-591  The mark, and that it is out now */
+   525-591  The mark, and that it is free and open source */
 export const InspoLaunch: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: colors.paper }}>
@@ -48,7 +48,7 @@ export const InspoLaunch: React.FC = () => {
         <TaglineScene />
       </Sequence>
       <Sequence from={525} layout="absolute-fill" name="Outro">
-        <OutroScene caption="MCP · Out now" />
+        <OutroScene caption="MCP · Free and open source" />
       </Sequence>
       <LaunchSoundtrack />
     </AbsoluteFill>

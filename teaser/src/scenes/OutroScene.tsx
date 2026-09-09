@@ -13,7 +13,10 @@ import { colors, EXPO, fonts } from "../theme";
    8-22    the wordmark, dead centre and nothing else
    22-34   the accent period lands
    32-44   the caption ("MCP · Coming soon" unless told otherwise)
-           hangs beneath it, then it all holds */
+           hangs beneath it, then it all holds
+
+   The caption hangs absolutely off the wordmark, so its width never
+   shifts the mark off centre however long the line gets. */
 export const OutroScene: React.FC<{ caption?: string }> = ({
   caption = "MCP · Coming soon",
 }) => {
@@ -45,7 +48,16 @@ export const OutroScene: React.FC<{ caption?: string }> = ({
             fontFamily: fonts.display,
             fontWeight: 400,
             fontSize: 220,
-            letterSpacing: "-0.025em",
+            /* Tighter than the site masthead's -0.025em, on purpose:
+               at 220px the mark wants to read as one word, not six
+               letters. Do not "correct" this back to the site value. */
+            letterSpacing: "-0.045em",
+            /* CSS puts the letter-space AFTER the last glyph too, so a
+               negative value leaves the box narrower than the ink and
+               centring the box pushes the mark right. This gives the
+               trailing space back, which centres the ink itself - and
+               the caption, which resolves against this padding box. */
+            paddingRight: "0.045em",
             lineHeight: 1,
             color: colors.ink,
             opacity: interpolate(frame, [8, 22], [0, 1], {
