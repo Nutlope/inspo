@@ -12,8 +12,11 @@ import { colors, EXPO, fonts } from "../theme";
    0-10    paper washes over the page, which is still running below
    8-22    the wordmark, dead centre and nothing else
    22-34   the accent period lands
-   32-44   "MCP · Coming soon" hangs beneath it, then it all holds */
-export const OutroScene: React.FC = () => {
+   32-44   the caption ("MCP · Coming soon" unless told otherwise)
+           hangs beneath it, then it all holds */
+export const OutroScene: React.FC<{ caption?: string }> = ({
+  caption = "MCP · Coming soon",
+}) => {
   const frame = useCurrentFrame();
 
   return (
@@ -78,7 +81,7 @@ export const OutroScene: React.FC = () => {
           </span>
 
           <Interactive.Div
-            name="ComingSoon"
+            name="Caption"
             style={{
               position: "absolute",
               top: "100%",
@@ -103,7 +106,7 @@ export const OutroScene: React.FC = () => {
               }),
             }}
           >
-            MCP · Coming soon
+            {caption}
           </Interactive.Div>
         </Interactive.Div>
       </AbsoluteFill>
