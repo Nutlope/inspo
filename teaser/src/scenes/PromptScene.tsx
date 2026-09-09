@@ -13,11 +13,17 @@ const PROMPT = "build a landing page for Overpass, crop maps for farmers";
 /* The film opens mid-keystroke on purpose. There is no fly-in and no
    wait: frame 0 is the pill with a caret in it, already typing.
 
-   Frame math: typing 0-22, send fills 22 and pulses 23-29, press dip
-   26-32, handoff zoom 32-40. Scene is 40 frames long. */
+   The line then has to be readable, which is a different problem from
+   opening fast. It is solved by holding on the finished sentence, not
+   by typing slowly: the reveal stays quick, and the prompt sits
+   complete for 28 frames before the camera moves. Roughly a second of
+   the whole line, on top of the read-along while it types.
+
+   Frame math: typing 0-26, hold 26-48, send pulses 44-50, press dip
+   48-54, handoff zoom 54-62. Scene is 62 frames long. */
 
 /* Fast enough to read as a fast typist, not as a wipe. */
-const CHARS_PER_FRAME = 2.6;
+const CHARS_PER_FRAME = 2.2;
 export const PromptScene: React.FC = () => {
   const frame = useCurrentFrame();
 
@@ -28,7 +34,7 @@ export const PromptScene: React.FC = () => {
   const caretOn = doneTyping ? Math.floor(frame / 7) % 2 === 0 : true;
 
   /* The send press: a quick dip and release on the whole pill. */
-  const press = interpolate(frame, [26, 29, 32], [1, 0.965, 1], {
+  const press = interpolate(frame, [48, 51, 54], [1, 0.965, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.4, 0, 0.2, 1),
@@ -42,13 +48,13 @@ export const PromptScene: React.FC = () => {
         alignItems: "center",
         /* Handoff: the camera pushes through the pill into the archive. */
         scale: String(
-          interpolate(frame, [32, 40], [1, 2.4], {
+          interpolate(frame, [54, 62], [1, 2.4], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(0.5, 0, 0.9, 0.4),
           }),
         ),
-        opacity: interpolate(frame, [34, 40], [1, 0], {
+        opacity: interpolate(frame, [56, 62], [1, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.linear,
@@ -127,7 +133,7 @@ export const PromptScene: React.FC = () => {
             fontFamily: fonts.sans,
             fontSize: 36,
             scale: String(
-              interpolate(frame, [23, 26, 30], [1, 1.14, 1], {
+              interpolate(frame, [44, 47, 51], [1, 1.14, 1], {
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp",
                 easing: Easing.bezier(...EXPO),

@@ -197,7 +197,11 @@ export const ArchiveScene: React.FC = () => {
         </AbsoluteFill>
       )}
 
-      {/* ── The search, counting ────────────────────────────── */}
+      {/* ── The search, counting ─────────────────────────────
+           Sat on a wall of screenshots, so it is glass rather than a
+           flat lozenge: the archive shows through it. The count is
+           the point of the whole shot, so it is the loud thing here
+           and the label is deliberately quiet under it. */}
       <Interactive.Div
         name="SearchChip"
         style={{
@@ -209,50 +213,76 @@ export const ArchiveScene: React.FC = () => {
           width: "fit-content",
           display: "flex",
           alignItems: "center",
-          gap: 18,
-          height: 66,
-          paddingLeft: 28,
-          paddingRight: 30,
+          gap: 22,
+          height: 78,
+          paddingLeft: 30,
+          paddingRight: 34,
           borderRadius: 9999,
-          backgroundColor: colors.accentInk,
-          border: `1.5px solid ${colors.rule}`,
-          boxShadow: "0 18px 44px rgba(26, 26, 26, 0.16)",
+          backgroundColor: "rgba(253, 253, 251, 0.82)",
+          backdropFilter: "blur(16px)",
+          border: "1.5px solid rgba(216, 211, 200, 0.85)",
+          boxShadow: "0 6px 22px rgba(26, 26, 26, 0.10)",
           opacity: chipIn * chipOut,
           translate: interpolate(chipIn, [0, 1], ["0px -18px", "0px 0px"]),
         }}
       >
+        {/* A live signal, not a blinking bullet: the halo breathes
+            and the dot itself stays put. */}
         <div
           style={{
-            width: 13,
-            height: 13,
+            width: 11,
+            height: 11,
             borderRadius: 9999,
             backgroundColor: colors.accent,
-            opacity: 0.55 + 0.45 * Math.sin(frame / 2.4),
+            boxShadow: `0 0 0 ${5 + 2.5 * Math.sin(frame / 3.2)}px rgba(199, 64, 47, 0.16)`,
           }}
         />
+
         <span
           style={{
             fontFamily: fonts.sans,
-            fontWeight: 500,
-            fontSize: 27,
-            letterSpacing: "-0.01em",
-            color: colors.ink,
-          }}
-        >
-          inspo · searching the archive
-        </span>
-        <span style={{ width: 1, height: 26, backgroundColor: colors.rule }} />
-        <span
-          style={{
-            fontFamily: fonts.sans,
-            fontWeight: 400,
-            fontSize: 27,
-            letterSpacing: "0.01em",
+            fontSize: 25,
+            letterSpacing: "-0.005em",
             color: colors.inkMuted,
-            fontVariantNumeric: "tabular-nums",
+            fontWeight: 400,
           }}
         >
-          {searched.toLocaleString("en-US")} screens
+          <span style={{ fontWeight: 500, color: colors.ink }}>inspo</span>
+          {" searching the archive"}
+        </span>
+
+        <span
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 9,
+            marginLeft: 8,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: fonts.sans,
+              fontWeight: 500,
+              fontSize: 36,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              color: colors.ink,
+              fontVariantNumeric: "tabular-nums",
+            }}
+          >
+            {searched.toLocaleString("en-US")}
+          </span>
+          <span
+            style={{
+              fontFamily: fonts.sans,
+              fontWeight: 400,
+              fontSize: 25,
+              lineHeight: 1,
+              color: colors.inkMuted,
+            }}
+          >
+            screens
+          </span>
         </span>
       </Interactive.Div>
 
@@ -497,6 +527,12 @@ export const ArchiveScene: React.FC = () => {
             ),
             overflow: "hidden",
             boxShadow: "0 30px 90px rgba(26, 26, 26, 0.22)",
+            /* The montage composites this same page inside a CSS
+               scale, and a scale layer rasterises edges a hair
+               differently. Matching it here - even at 1 - keeps the
+               cut between the two scenes truly identical instead of
+               flickering every thin rule on the page for one frame. */
+            scale: "1",
           }}
         >
           {/* The front reference, still there for a beat... */}
