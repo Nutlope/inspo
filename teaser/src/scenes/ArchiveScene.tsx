@@ -24,8 +24,8 @@ import {
 } from "../shots";
 import {
   FRAME,
+  heroScroll,
   MONTAGE,
-  pageScrollDist,
   pageSrc,
   REF_META,
   ROW,
@@ -77,7 +77,7 @@ const expo = {
 };
 
 const RESULT = MONTAGE[0];
-const scrollDist = pageScrollDist(RESULT.img);
+const scrollDist = heroScroll(RESULT.img);
 
 export const ArchiveScene: React.FC = () => {
   const frame = useCurrentFrame();

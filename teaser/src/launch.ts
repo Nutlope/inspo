@@ -46,9 +46,16 @@ export const REF_META: Record<
 };
 
 /* ── The montage ─────────────────────────────────────────────
-   Pages Inspo built, each with the brief that produced it. The first
-   is the page the film just built; the rest are from the examples
-   gallery (apps/web/public/examples), shot full-page at 2x. */
+   Pages Inspo built, each with the brief that produced it. All ten
+   Fable 5.1 generations, from apps/web/public/examples, shot full-page
+   at 2x and cropped to what the frame actually reaches.
+
+   The first is the page the film just built; the four after it are
+   cast for range, not just for looks - a frame builder, a marine
+   forecast board, a ceramics studio and a terminal emulator say
+   "any register, any page type" in a way five landing pages cannot.
+   They alternate light and dark, starting light against the dark
+   opera page they follow. */
 export type MontagePage = {
   slug: string;
   brief: string;
@@ -57,29 +64,29 @@ export type MontagePage = {
 
 export const MONTAGE: MontagePage[] = [
   {
-    slug: "northline-full",
+    slug: "ravensgate-opera-full",
     brief: "build me a landing page that actually looks good",
-    img: { w: 2560, h: 4802 },
+    img: { w: 2560, h: 5600 },
   },
   {
-    slug: "sable-patisserie-full",
-    brief: "a website for my patisserie",
-    img: { w: 2560, h: 4696 },
+    slug: "calder-frameworks-full",
+    brief: "a site for my bike workshop",
+    img: { w: 2560, h: 1950 },
   },
   {
-    slug: "wavecast-full",
-    brief: "an analytics dashboard for our podcast app",
-    img: { w: 2560, h: 2676 },
+    slug: "halyard-marine-full",
+    brief: "a weather dashboard for sailors",
+    img: { w: 2560, h: 1950 },
   },
   {
-    slug: "meridian-review-full",
-    brief: "a homepage for an architecture magazine",
-    img: { w: 2560, h: 7224 },
+    slug: "shirakawa-kiln-full",
+    brief: "a shop page for our ceramics studio",
+    img: { w: 2560, h: 1950 },
   },
   {
-    slug: "studio-volta-full",
-    brief: "a portfolio for our motion design studio",
-    img: { w: 2560, h: 9228 },
+    slug: "ferrite-terminal-full",
+    brief: "a page for our open source terminal",
+    img: { w: 2560, h: 1950 },
   },
 ];
 
@@ -89,6 +96,22 @@ export const pageSrc = (slug: string) => staticFile(`real/${slug}.jpg`);
    its footer. */
 export const pageScrollDist = (img: { w: number; h: number }) =>
   Math.max(0, img.h * (FRAME.w / img.w) - FRAME.h);
+
+/* Where the built page's scroll stops. A cap rather than the true
+   footer: these pages run five to eight screens deep, and racing one
+   end to end in forty frames is a smear, not a read.
+
+   The value is chosen for the page that is cast, not picked round:
+   2300 parks the opera page on its set-model section, the lit
+   headland and the quote beside it, which is both the best frame in
+   the page and a composition worth holding on while the montage
+   brings its brief back. Recast the result page and re-choose it.
+
+   Both the archive scene and the montage read the scroll from here,
+   so the page sits at exactly the same offset either side of the cut. */
+export const HERO_SCROLL_MAX = 2300;
+export const heroScroll = (img: { w: number; h: number }) =>
+  Math.min(pageScrollDist(img), HERO_SCROLL_MAX);
 
 /* Spacing between pages on the montage track: wide enough that a
    settled page's neighbours sit fully outside the frame. */

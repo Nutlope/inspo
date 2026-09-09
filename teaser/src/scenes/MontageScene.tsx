@@ -10,6 +10,7 @@ import {
 import {
   BRIEF,
   FRAME,
+  heroScroll,
   MONTAGE,
   pageScrollDist,
   pageSrc,
@@ -77,7 +78,7 @@ export const MontageScene: React.FC = () => {
           const settled = FIRST + (i - 1) * STEP + MOVE;
           const drift =
             i === 0
-              ? pageScrollDist(page.img)
+              ? heroScroll(page.img)
               : interpolate(
                   frame,
                   [settled, settled + STEP + 6],

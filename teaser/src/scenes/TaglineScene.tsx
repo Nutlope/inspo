@@ -12,7 +12,7 @@ import { colors, EXPO, fonts } from "../theme";
 
    Local timeline (scene starts at global frame 469):
    0-10    paper washes over the last page, still running below
-   6-24    "Your agent doesn't have taste." rises in
+   6-24    "Your agent doesn’t have taste." rises in
    16-34   "Lend it some." follows, its period in accent
    50-60   both lift away for the mark */
 
@@ -69,7 +69,7 @@ export const TaglineScene: React.FC = () => {
             textAlign: "center",
           }}
         >
-          <div style={one}>Your agent doesn't have taste.</div>
+          <div style={one}>Your agent doesn’t have taste.</div>
           <div style={two}>
             Lend it some<span style={{ color: colors.accent }}>.</span>
           </div>
