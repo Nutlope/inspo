@@ -51,11 +51,10 @@ export const REF_META: Record<
    at 2x and cropped to what the frame actually reaches.
 
    The first is the page the film just built; the four after it are
-   cast for range, not just for looks - a frame builder, a marine
-   forecast board, a ceramics studio and a terminal emulator say
-   "any register, any page type" in a way five landing pages cannot.
-   They alternate light and dark, starting light against the dark
-   opera page they follow. */
+   cast for range, not just for looks - a satellite service for
+   farmers, a frame builder, a tattoo studio, a ramen shop and a
+   terminal emulator say "any register, any page type" in a way five
+   landing pages cannot. They alternate light and dark. */
 export type MontagePage = {
   slug: string;
   brief: string;
@@ -64,7 +63,7 @@ export type MontagePage = {
 
 export const MONTAGE: MontagePage[] = [
   {
-    slug: "ravensgate-opera-full",
+    slug: "fieldsat-full",
     brief: "build me a landing page that actually looks good",
     img: { w: 2560, h: 5600 },
   },
@@ -74,13 +73,13 @@ export const MONTAGE: MontagePage[] = [
     img: { w: 2560, h: 1950 },
   },
   {
-    slug: "halyard-marine-full",
-    brief: "a weather dashboard for sailors",
+    slug: "tattoo-studio-full",
+    brief: "a booking page for our tattoo studio",
     img: { w: 2560, h: 1950 },
   },
   {
-    slug: "shirakawa-kiln-full",
-    brief: "a shop page for our ceramics studio",
+    slug: "ramen-shop-full",
+    brief: "a menu site for my ramen shop",
     img: { w: 2560, h: 1950 },
   },
   {
@@ -102,14 +101,14 @@ export const pageScrollDist = (img: { w: number; h: number }) =>
    end to end in forty frames is a smear, not a read.
 
    The value is chosen for the page that is cast, not picked round:
-   2300 parks the opera page on its set-model section, the lit
-   headland and the quote beside it, which is both the best frame in
-   the page and a composition worth holding on while the montage
-   brings its brief back. Recast the result page and re-choose it.
+   2270 sweeps the satellite page past its yield chart and parks it on
+   the crop-index cards, which is a composition worth holding on while
+   the montage brings its brief back. Recast the result page and
+   re-choose it.
 
    Both the archive scene and the montage read the scroll from here,
    so the page sits at exactly the same offset either side of the cut. */
-export const HERO_SCROLL_MAX = 2300;
+export const HERO_SCROLL_MAX = 2270;
 export const heroScroll = (img: { w: number; h: number }) =>
   Math.min(pageScrollDist(img), HERO_SCROLL_MAX);
 
