@@ -64,7 +64,7 @@ export type MontagePage = {
 export const MONTAGE: MontagePage[] = [
   {
     slug: "fieldsat-full",
-    brief: "build me a landing page that actually looks good",
+    brief: "build a landing page for Overpass, crop maps for farmers",
     img: { w: 2560, h: 5600 },
   },
   {

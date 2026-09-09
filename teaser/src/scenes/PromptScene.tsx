@@ -8,21 +8,27 @@ import {
 } from "remotion";
 import { colors, EXPO, fonts } from "../theme";
 
-const PROMPT = "build me a landing page that actually looks good";
+const PROMPT = "build a landing page for Overpass, crop maps for farmers";
 
-/* Frame math: pill lands 0-12, typing 8-42, send press 44-50,
-   handoff zoom 50-58. Scene is 58 frames long. */
+/* The film opens mid-keystroke on purpose. There is no fly-in and no
+   wait: frame 0 is the pill with a caret in it, already typing.
+
+   Frame math: typing 0-22, send fills 22 and pulses 23-29, press dip
+   26-32, handoff zoom 32-40. Scene is 40 frames long. */
+
+/* Fast enough to read as a fast typist, not as a wipe. */
+const CHARS_PER_FRAME = 2.6;
 export const PromptScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const typed = PROMPT.slice(0, Math.max(0, Math.floor((frame - 8) * 1.5)));
+  const typed = PROMPT.slice(0, Math.floor(frame * CHARS_PER_FRAME));
   const doneTyping = typed.length >= PROMPT.length;
 
   /* Caret blinks only once typing is done; solid while typing. */
-  const caretOn = doneTyping ? Math.floor(frame / 9) % 2 === 0 : true;
+  const caretOn = doneTyping ? Math.floor(frame / 7) % 2 === 0 : true;
 
   /* The send press: a quick dip and release on the whole pill. */
-  const press = interpolate(frame, [44, 47, 50], [1, 0.965, 1], {
+  const press = interpolate(frame, [26, 29, 32], [1, 0.965, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.4, 0, 0.2, 1),
@@ -36,13 +42,13 @@ export const PromptScene: React.FC = () => {
         alignItems: "center",
         /* Handoff: the camera pushes through the pill into the archive. */
         scale: String(
-          interpolate(frame, [50, 58], [1, 2.4], {
+          interpolate(frame, [32, 40], [1, 2.4], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(0.5, 0, 0.9, 0.4),
           }),
         ),
-        opacity: interpolate(frame, [52, 58], [1, 0], {
+        opacity: interpolate(frame, [34, 40], [1, 0], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.linear,
@@ -55,7 +61,7 @@ export const PromptScene: React.FC = () => {
           display: "flex",
           alignItems: "center",
           gap: 24,
-          width: 1080,
+          width: 1280,
           height: 104,
           paddingLeft: 44,
           paddingRight: 16,
@@ -63,20 +69,18 @@ export const PromptScene: React.FC = () => {
           backgroundColor: colors.accentInk,
           border: `1.5px solid ${colors.rule}`,
           boxShadow: "0 24px 60px rgba(26, 26, 26, 0.07)",
+          /* No entrance fade: the very first frame is already the
+             pill with a caret in it. Just a hair of settle so it is
+             not dead still while the line types. */
           scale: String(
             press *
-              interpolate(frame, [0, 14], [0.92, 1], {
+              interpolate(frame, [0, 10], [0.985, 1], {
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp",
                 easing: Easing.bezier(...EXPO),
               }),
           ),
-          translate: interpolate(frame, [0, 14], ["0px 26px", "0px 0px"], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: Easing.bezier(...EXPO),
-          }),
-          opacity: interpolate(frame, [0, 10], [0, 1], {
+          translate: interpolate(frame, [0, 10], ["0px 6px", "0px 0px"], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: Easing.bezier(...EXPO),
@@ -123,7 +127,7 @@ export const PromptScene: React.FC = () => {
             fontFamily: fonts.sans,
             fontSize: 36,
             scale: String(
-              interpolate(frame, [42, 46, 50], [1, 1.14, 1], {
+              interpolate(frame, [23, 26, 30], [1, 1.14, 1], {
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp",
                 easing: Easing.bezier(...EXPO),

@@ -8,23 +8,25 @@ import { PromptScene } from "./scenes/PromptScene";
 import { TaglineScene } from "./scenes/TaglineScene";
 import { colors } from "./theme";
 
-/* The launch film. 19.7 seconds at 30fps.
-   0-58     Prompt: a real one, typed to a coding agent
-   55-323   Inspo searches the archive, keeps three, reads them,
+/* The launch film. 20 seconds at 30fps.
+   0-40     Prompt: a real brief, typed from the very first frame
+   37-305   Inspo searches the archive, keeps three, reads them,
             builds the page and scrolls it
-   321-486  The montage: that page and four more, each under its brief
+   303-468  The montage: that page and four more, each under its brief
             (it starts on the exact frame the archive leaves, and runs
             on under the tagline's wash)
-   469-531  The line: your agent doesn't have taste, lend it some
-   525-591  The mark, and that it is free and open source */
+   451-513  The line: your agent doesn't have taste, lend it some
+   507-600  The mark, that it is free and open source, and where it
+            lives - the address gets a long hold, it is the one thing
+            a viewer has to leave with */
 export const InspoLaunch: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: colors.paper }}>
-      <Sequence durationInFrames={58} layout="absolute-fill" name="Prompt">
+      <Sequence durationInFrames={40} layout="absolute-fill" name="Prompt">
         <PromptScene />
       </Sequence>
       <Sequence
-        from={55}
+        from={37}
         durationInFrames={268}
         layout="absolute-fill"
         name="Archive"
@@ -32,7 +34,7 @@ export const InspoLaunch: React.FC = () => {
         <ArchiveScene />
       </Sequence>
       <Sequence
-        from={321}
+        from={303}
         durationInFrames={165}
         layout="absolute-fill"
         name="Montage"
@@ -40,15 +42,15 @@ export const InspoLaunch: React.FC = () => {
         <MontageScene />
       </Sequence>
       <Sequence
-        from={469}
+        from={451}
         durationInFrames={62}
         layout="absolute-fill"
         name="Tagline"
       >
         <TaglineScene />
       </Sequence>
-      <Sequence from={525} layout="absolute-fill" name="Outro">
-        <OutroScene caption="MCP · Free and open source" />
+      <Sequence from={507} layout="absolute-fill" name="Outro">
+        <OutroScene caption="MCP · Free and open source" url="inspomcp.dev" />
       </Sequence>
       <LaunchSoundtrack />
     </AbsoluteFill>
