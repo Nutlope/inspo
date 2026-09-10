@@ -69,7 +69,7 @@ export const ZOOM_ANCHOR = { x: centroid.x, y: centroid.y };
 export const ZOOM_MAX = 2.1;
 
 /* How far the archive is searched, and how far it got. */
-export const SCREEN_COUNT = 2141;
+export const SCREEN_COUNT = 2320;
 
 /* ── The result ──────────────────────────────────────────────
    The converge target: one card in the middle of the frame that the
