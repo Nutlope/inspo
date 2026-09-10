@@ -249,6 +249,44 @@ const FRONT_PAGE_DEMOTED = new Set<string>([
 ]);
 
 /**
+ * Placed on the front page by hand.
+ *
+ * The 2026-09 additions are mostly studio, portfolio and product sites
+ * led by type and image. The score reads them as thinner pages than the
+ * SaaS landings it was tuned on (fewer tagged sections, shorter
+ * descriptions), so even the strongest sat 150 to 800 places down the
+ * featured order. These six were chosen by looking at the tiles.
+ *
+ * Each goes to a fixed zero-based slot, spread so no two sit side by
+ * side or directly above one another on a three or four column grid.
+ * Everything else keeps its order around them, and a pick that a filter
+ * removed is skipped.
+ */
+const FRONT_PAGE_PICKS: ReadonlyArray<readonly [slot: number, siteSlug: string]> = [
+  [1, "aspensearch-com"],
+  [7, "overmindlab-ai"],
+  [9, "northmail-app"],
+  [14, "agentcard-sh"],
+  [16, "stateofaidesign-com"],
+  [23, "sanity-io"],
+];
+
+function placeFrontPagePicks(list: ScreenSummary[]): ScreenSummary[] {
+  const picks: Array<readonly [number, ScreenSummary]> = [];
+  for (const [slot, siteSlug] of FRONT_PAGE_PICKS) {
+    const row = list.find(
+      (r) => r.siteSlug === siteSlug && (r.pageType ?? "landing") === "landing",
+    );
+    if (row) picks.push([slot, row]);
+  }
+  if (picks.length === 0) return list;
+  const placed = new Set(picks.map(([, row]) => row));
+  const rest = list.filter((r) => !placed.has(r));
+  for (const [slot, row] of picks) rest.splice(Math.min(slot, rest.length), 0, row);
+  return rest;
+}
+
+/**
  * Score first, then break up the run.
  *
  * Ranking on page-ness alone returns a wall of the same page: 18 of the
@@ -295,7 +333,7 @@ function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
   // Anything still held (a macrostructure with very few peers) tails on
   // in score order rather than being lost, and the hand-demoted rows
   // tail that - present, just never on the front page.
-  return [...out, ...held, ...demoted];
+  return placeFrontPagePicks([...out, ...held, ...demoted]);
 }
 
 function variedOrder(list: ScreenSummary[]): ScreenSummary[] {
