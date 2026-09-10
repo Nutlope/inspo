@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calder &amp; Rowe, solicitors for startups</title>
+<meta name="description" content="Calder & Rowe is a London law firm for early-stage companies. Every matter is quoted as a fixed fee before work starts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,300;1,8..60,400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: six steps, one serif for reading and display, one sans for margins */
+  :root{
+    --t-xs: 0.8125rem;
+    --t-sm: 0.9375rem;
+    --t-md: 1.125rem;
+    --t-lg: 1.5rem;
+    --t-xl: 2.5rem;
+    --t-2xl: clamp(2.75rem, 5.2vw, 4.25rem);
+
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+    --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+
+    --paper: #f3efe7;
+    --paper-deep: #eae4d8;
+    --ink: #1e1a16;
+    --muted: #6f665c;
+    --rule: #d6cec0;
+    --accent: #6b2a21;
+    --accent-ink: #f7f1e8;
+
+    --seam: clamp(80px, 9vw, 128px);
+    --measure: 62ch;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:var(--t-md);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-optical-sizing:auto;
+  }
+  h1,h2,h3,p,ul,ol,figure{margin:0}
+  ul,ol{padding:0;list-style:none}
+  a{color:inherit;text-decoration:none}
+  a:hover{color:var(--accent)}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{
+    max-width:1200px;
+    margin-inline:auto;
+    padding-inline:clamp(24px, 4vw, 48px);
+  }
+
+  .meta{
+    font-family:var(--sans);
+    font-size:var(--t-xs);
+    font-weight:500;
+    letter-spacing:0.01em;
+    color:var(--muted);
+  }
+  .meta strong{color:var(--ink);font-weight:500}
+
+  /* Fold */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{border-bottom:1px solid var(--rule)}
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;gap:32px;
+    padding-block:20px;
+  }
+  .wordmark{
+    font-family:var(--serif);
+    font-size:var(--t-lg);
+    font-weight:500;
+    letter-spacing:-0.01em;
+    line-height:1;
+  }
+  .wordmark span{color:var(--accent)}
+  .nav-links{display:flex;align-items:center;gap:28px}
+  .nav-links a{font-family:var(--sans);font-size:var(--t-sm);color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:var(--sans);font-size:var(--t-sm);font-weight:500;
+    padding:12px 20px;
+    border:1px solid var(--ink);
+    color:var(--ink);
+    background:transparent;
+    cursor:pointer;
+    transition:background .2s ease,color .2s ease,border-color .2s ease;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn.small{padding:9px 16px;font-size:var(--t-xs)}
+
+  .hero{flex:1;display:flex;align-items:center}
+  .hero .wrap{width:100%;padding-block:clamp(40px, 6vh, 72px)}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:repeat(12, 1fr);
+    column-gap:32px;
+    row-gap:24px;
+    align-items:start;
+  }
+  .hero-meta{grid-column:1 / span 2;padding-top:14px;line-height:1.7}
+  .hero-body{grid-column:3 / span 10}
+  .hero h1{
+    font-size:var(--t-2xl);
+    font-weight:300;
+    line-height:1.04;
+    letter-spacing:-0.015em;
+    max-width:17ch;
+    text-wrap:balance;
+  }
+  .hero h1 em{font-style:italic;font-weight:300;color:var(--accent)}
+  .hero .lede{
+    margin-top:28px;
+    font-size:var(--t-lg);
+    font-weight:300;
+    line-height:1.4;
+    max-width:44ch;
+    color:var(--muted);
+  }
+  .hero .actions{margin-top:36px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .arrow-link{font-family:var(--sans);font-size:var(--t-sm);color:var(--ink)}
+  .arrow-link::after{content:" \2192";color:var(--accent)}
+  .hero-facts{
+    grid-column:1 / -1;
+    margin-top:32px;
+    border-top:1px solid var(--rule);
+    padding-top:20px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:32px;
+  }
+  .hero-facts p{font-size:var(--t-sm);color:var(--muted)}
+  .hero-facts p b{display:block;font-weight:500;color:var(--ink);font-size:var(--t-md)}
+
+  /* Sections */
+  section{padding-block:var(--seam)}
+  section + section{border-top:1px solid var(--rule)}
+  .band{background:var(--paper-deep)}
+  .sec-head{
+    display:grid;
+    grid-template-columns:repeat(12, 1fr);
+    column-gap:32px;
+    row-gap:16px;
+    margin-bottom:clamp(40px, 5vw, 64px);
+  }
+  .sec-head .meta{grid-column:1 / span 2;padding-top:10px}
+  .sec-head h2{
+    grid-column:3 / span 7;
+    font-size:var(--t-xl);
+    font-weight:300;
+    line-height:1.12;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+  }
+  .sec-head .intro{
+    grid-column:3 / span 7;
+    font-size:var(--t-md);
+    color:var(--muted);
+    max-width:var(--measure);
+  }
+
+  /* Practice areas */
+  .areas{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    border-top:1px solid var(--rule);
+    border-left:1px solid var(--rule);
+  }
+  .area{
+    border-right:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    padding:28px 28px 32px;
+    display:flex;flex-direction:column;gap:14px;
+    min-height:240px;
+    transition:background .25s ease;
+  }
+  .area:hover{background:rgba(255,255,255,.35)}
+  .area .n{font-family:var(--sans);font-size:var(--t-xs);color:var(--accent)}
+  .area h3{font-size:var(--t-lg);font-weight:400;line-height:1.2;letter-spacing:-0.005em}
+  .area p{font-size:var(--t-sm);color:var(--muted);flex:1}
+  .area .from{font-family:var(--sans);font-size:var(--t-xs);color:var(--ink)}
+
+  /* Fees */
+  .fees{
+    display:grid;
+    grid-template-columns:repeat(12, 1fr);
+    column-gap:32px;
+    row-gap:40px;
+  }
+  .fees-side{grid-column:1 / span 4}
+  .fees-side h2{
+    font-size:var(--t-xl);
+    font-weight:300;
+    line-height:1.12;
+    letter-spacing:-0.01em;
+    margin-top:14px;
+  }
+  .fees-side p{margin-top:20px;font-size:var(--t-sm);color:var(--muted);max-width:36ch}
+  .estimate{
+    margin-top:36px;
+    border:1px solid var(--rule);
+    background:var(--paper);
+    padding:20px 22px;
+    max-width:340px;
+  }
+  .estimate .meta{display:flex;justify-content:space-between}
+  .estimate .total{
+    margin-top:8px;
+    font-size:var(--t-xl);
+    font-weight:300;
+    line-height:1;
+    letter-spacing:-0.01em;
+    font-variant-numeric:tabular-nums;
+  }
+  .estimate .note{margin-top:10px;font-size:var(--t-xs);color:var(--muted);font-family:var(--sans)}
+  .fee-list{grid-column:5 / span 8;border-left:1px solid var(--rule);padding-left:40px}
+  .fee-list li{border-bottom:1px solid var(--rule)}
+  .fee-list li:first-child{border-top:1px solid var(--rule)}
+  .fee-list label{
+    display:grid;
+    grid-template-columns:24px 1fr auto;
+    column-gap:18px;
+    align-items:baseline;
+    padding:20px 4px;
+    cursor:pointer;
+    transition:color .2s ease;
+  }
+  .fee-list label:hover{color:var(--accent)}
+  .fee-list input{
+    appearance:none;
+    width:14px;height:14px;
+    border:1px solid var(--ink);
+    border-radius:50%;
+    margin:0;
+    position:relative;top:1px;
+    cursor:pointer;
+  }
+  .fee-list input:checked{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--paper)}
+  .fee-list .what{font-size:var(--t-lg);font-weight:400;line-height:1.2}
+  .fee-list .what small{
+    display:block;
+    font-family:var(--sans);
+    font-size:var(--t-xs);
+    font-weight:400;
+    color:var(--muted);
+    margin-top:6px;
+    line-height:1.5;
+  }
+  .fee-list .price{
+    font-size:var(--t-lg);
+    font-weight:300;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+    text-align:right;
+  }
+  .fee-list .price small{display:block;font-family:var(--sans);font-size:var(--t-xs);color:var(--muted);margin-top:4px}
+  .fees-foot{grid-column:5 / span 8;padding-left:40px;font-size:var(--t-sm);color:var(--muted);max-width:var(--measure)}
+
+  /* Statement */
+  .statement{text-align:center}
+  .statement blockquote{margin:0 auto;max-width:26ch}
+  .statement p{
+    font-size:var(--t-xl);
+    font-style:italic;
+    font-weight:300;
+    line-height:1.25;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+  }
+  .statement cite{display:block;margin-top:24px;font-style:normal}
+
+  /* Partners */
+  .partners{display:grid;grid-template-columns:repeat(3, 1fr);gap:40px 32px}
+  .partner figure{aspect-ratio:4 / 5;background:var(--paper-deep);border:1px solid var(--rule);overflow:hidden;position:relative}
+  .band .partner figure{background:var(--paper)}
+  .partner figure svg{width:100%;height:100%;display:block}
+  .partner h3{margin-top:22px;font-size:var(--t-lg);font-weight:400;line-height:1.2}
+  .partner .role{margin-top:4px}
+  .partner p.bio{margin-top:14px;font-size:var(--t-sm);color:var(--muted)}
+  .partner .prev{margin-top:14px;font-size:var(--t-xs);font-family:var(--sans);color:var(--ink);line-height:1.6}
+  .partner .prev span{color:var(--muted)}
+
+  /* Engagement steps */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:32px;
+    border-top:1px solid var(--rule);
+    padding-top:32px;
+  }
+  .step .n{font-family:var(--serif);font-size:var(--t-xl);font-weight:300;line-height:1;color:var(--accent);letter-spacing:-0.02em}
+  .step h3{margin-top:18px;font-size:var(--t-lg);font-weight:400;line-height:1.2}
+  .step p{margin-top:12px;font-size:var(--t-sm);color:var(--muted)}
+  .step .when{margin-top:14px}
+
+  /* Not covered */
+  .scope{display:grid;grid-template-columns:repeat(12, 1fr);column-gap:32px;row-gap:32px}
+  .scope-copy{grid-column:1 / span 5}
+  .scope-copy h2{font-size:var(--t-xl);font-weight:300;line-height:1.12;letter-spacing:-0.01em;margin-top:14px}
+  .scope-copy p{margin-top:20px;font-size:var(--t-sm);color:var(--muted);max-width:40ch}
+  .scope-list{grid-column:7 / span 6}
+  .scope-list li{
+    display:grid;grid-template-columns:1fr auto;column-gap:24px;align-items:baseline;
+    padding:16px 0;border-bottom:1px solid var(--rule);
+  }
+  .scope-list li:first-child{border-top:1px solid var(--rule)}
+  .scope-list .what{font-size:var(--t-md)}
+  .scope-list .who{font-family:var(--sans);font-size:var(--t-xs);color:var(--muted);text-align:right}
+
+  /* Closing call */
+  .close .wrap{display:grid;grid-template-columns:repeat(12, 1fr);column-gap:32px;row-gap:24px;align-items:end}
+  .close h2{grid-column:1 / span 8;font-size:var(--t-2xl);font-weight:300;line-height:1.04;letter-spacing:-0.015em;text-wrap:balance;max-width:16ch}
+  .close h2 em{font-style:italic;color:var(--accent)}
+  .close .side{grid-column:9 / span 4}
+  .close .side p{font-size:var(--t-sm);color:var(--muted);max-width:32ch}
+  .close .side .btn{margin-top:20px}
+
+  /* Footer */
+  footer{border-top:1px solid var(--rule);padding-block:64px 40px;background:var(--paper-deep)}
+  .foot-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:40px 32px}
+  .foot-grid p{margin-top:12px;font-size:var(--t-sm);line-height:1.6}
+  .foot-grid p span{color:var(--muted)}
+  .foot-reg{margin-top:56px;border-top:1px solid var(--rule);padding-top:20px;display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start}
+  .foot-reg p{font-size:var(--t-xs);font-family:var(--sans);color:var(--muted);line-height:1.6;max-width:72ch}
+  .foot-reg .right{text-align:right}
+
+  @media (max-width: 900px){
+    .hero-meta{grid-column:1 / -1;padding-top:0}
+    .hero-body{grid-column:1 / -1}
+    .hero-facts{grid-template-columns:1fr}
+    .sec-head .meta,.sec-head h2,.sec-head .intro{grid-column:1 / -1}
+    .areas{grid-template-columns:1fr 1fr}
+    .fees-side,.fee-list,.fees-foot{grid-column:1 / -1;border-left:0;padding-left:0}
+    .partners{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .scope-copy,.scope-list{grid-column:1 / -1}
+    .close h2,.close .side{grid-column:1 / -1}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .foot-reg{grid-template-columns:1fr}
+    .foot-reg .right{text-align:left}
+    .nav-links a:not(.btn){display:none}
+  }
+  @media (max-width: 600px){
+    .areas{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr}
+    .fee-list label{grid-template-columns:24px 1fr;row-gap:8px}
+    .fee-list .price{grid-column:2;text-align:left}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top">Calder <span>&amp;</span> Rowe</a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#practice">Practice</a>
+        <a href="#fees">Fees</a>
+        <a href="#partners">Partners</a>
+        <a href="#engagement">How we work</a>
+        <a class="btn small" href="#contact">Book a first call</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <p class="hero-meta meta">
+          <strong>Solicitors, London</strong><br>
+          Founded 2019<br>
+          Startups only
+        </p>
+        <div class="hero-body">
+          <h1>Startup law at a price you know <em>before</em> we start.</h1>
+          <p class="lede">We act for founders from incorporation to Series A. Every matter is quoted as a fixed fee in writing, and the fee does not move once you accept it.</p>
+          <div class="actions">
+            <a class="btn solid" href="#contact">Book a first call, free</a>
+            <a class="arrow-link" href="#fees">See the fee list</a>
+          </div>
+        </div>
+        <div class="hero-facts">
+          <p><b>One fixed fee per matter</b>No hourly clock, no surprise invoices, no minimum spend.</p>
+          <p><b>A scope note in two working days</b>What we will do, what we will not, and the price, on one page.</p>
+          <p><b>One named lawyer</b>The partner you meet is the partner who does the work.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<section id="practice">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="meta">Practice areas</p>
+      <h2>Six things an early company needs a lawyer for. We do those, and only those.</h2>
+      <p class="intro">Narrow on purpose. A firm that does everything cannot quote a fixed fee for anything, because it has never done the same job twice.</p>
+    </div>
+    <ul class="areas">
+      <li class="area">
+        <span class="n">01</span>
+        <h3>Formation and founder agreements</h3>
+        <p>Incorporation, articles, a founders' agreement with vesting and leaver terms, and the cap table set up correctly the first time.</p>
+        <span class="from">From £1,800</span>
+      </li>
+      <li class="area">
+        <span class="n">02</span>
+        <h3>Fundraising</h3>
+        <p>SAFEs and advance subscription agreements, priced seed rounds, term sheet review, and the investor disclosure that goes with them.</p>
+        <span class="from">From £2,400</span>
+      </li>
+      <li class="area">
+        <span class="n">03</span>
+        <h3>Employment and equity</h3>
+        <p>Contracts for your first hires, contractor agreements, an EMI option scheme with HMRC valuation, and grants done on time.</p>
+        <span class="from">From £1,600</span>
+      </li>
+      <li class="area">
+        <span class="n">04</span>
+        <h3>Commercial contracts</h3>
+        <p>Customer terms, SaaS agreements, a master services agreement you can send without reading it again, and the negotiation when a buyer marks it up.</p>
+        <span class="from">From £2,900</span>
+      </li>
+      <li class="area">
+        <span class="n">05</span>
+        <h3>Data protection and privacy</h3>
+        <p>Privacy policy, records of processing, data processing agreements with your vendors, and a plain answer on whether you need a data protection officer.</p>
+        <span class="from">From £1,400</span>
+      </li>
+      <li class="area">
+        <span class="n">06</span>
+        <h3>Intellectual property</h3>
+        <p>Trade mark searches and filings in the UK and EU, assignment of intellectual property from founders and contractors, and licensing when you sell what you built.</p>
+        <span class="from">From £950</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="fees" class="band">
+  <div class="wrap">
+    <div class="fees">
+      <div class="fees-side">
+        <p class="meta">Fixed fees</p>
+        <h2>The price list.</h2>
+        <p>These are the matters we quote most often, at the fee we quote them. Tick the ones you need and the total is what you would pay, excluding VAT and any government filing fees.</p>
+        <p>Anything not listed still gets a fixed quote. It just takes us the two working days to write it.</p>
+        <div class="estimate" aria-live="polite">
+          <p class="meta"><span>Your estimate</span><span id="est-count">0 matters</span></p>
+          <p class="total" id="est-total">£0</p>
+          <p class="note">Excludes VAT at 20% and third-party fees. Not an engagement until a scope note is signed.</p>
+        </div>
+      </div>
+      <ul class="fee-list" id="fee-list">
+        <li><label><input type="checkbox" value="1800"><span class="what">Incorporation and founders' agreement<small>Company formation, bespoke articles, founders' agreement with four-year vesting, cap table.</small></span><span class="price">£1,800</span></label></li>
+        <li><label><input type="checkbox" value="2400"><span class="what">SAFE or advance subscription round<small>Instrument drafting, board and shareholder approvals, up to ten investors.</small></span><span class="price">£2,400</span></label></li>
+        <li><label><input type="checkbox" value="9500"><span class="what">Priced seed round, company side<small>Term sheet, subscription and shareholders' agreement, new articles, closing. Up to £3m raised.</small></span><span class="price">£9,500</span></label></li>
+        <li><label><input type="checkbox" value="3500"><span class="what">EMI option scheme<small>Scheme rules, HMRC valuation agreement, board approvals, first ten grants.</small></span><span class="price">£3,500</span></label></li>
+        <li><label><input type="checkbox" value="1600"><span class="what">Employment contract set<small>Employee contract, contractor agreement, intellectual property assignment and confidentiality terms, offer letter template.</small></span><span class="price">£1,600</span></label></li>
+        <li><label><input type="checkbox" value="2900"><span class="what">Customer terms and privacy policy<small>SaaS terms of service, privacy policy, cookie notice, data processing agreement.</small></span><span class="price">£2,900</span></label></li>
+        <li><label><input type="checkbox" value="950"><span class="what">Trade mark filing, UK<small>Clearance search, one mark in up to three classes, filing and prosecution to registration.</small><small>Government fees of £170 plus £50 per extra class are charged at cost.</small></span><span class="price">£950<small>plus filing fees</small></span></label></li>
+        <li><label><input type="checkbox" value="2500"><span class="what">Counsel retainer<small>A named partner on call, contract review within two working days, monthly cap table and compliance check.</small></span><span class="price">£2,500<small>per month, cancel any time</small></span></label></li>
+      </ul>
+      <p class="fees-foot">If a matter turns out to be larger than the scope note described, we tell you before doing the extra work and quote it separately. We have never sent an invoice for more than the number on the scope note, and we do not intend to start.</p>
+    </div>
+  </div>
+</section>
+
+<section class="statement">
+  <div class="wrap">
+    <blockquote>
+      <p>A fee you learn about after the work is done is not a fee. It is a surprise, and founders have enough of those.</p>
+      <cite class="meta">Eleanor Calder, founding partner</cite>
+    </blockquote>
+  </div>
+</section>
+
+<section id="partners" class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="meta">Partners</p>
+      <h2>Three partners, no associates, no leverage model.</h2>
+      <p class="intro">Each of us spent a decade or more at large firms before deciding that the way those firms bill is the wrong way to serve a company with eighteen months of runway.</p>
+    </div>
+    <ul class="partners">
+      <li class="partner">
+        <figure aria-hidden="true">
+          <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="500" fill="#f3efe7"/>
+            <circle cx="200" cy="190" r="86" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <path d="M80 470 C 90 330, 310 330, 320 470" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <line x1="40" y1="60" x2="360" y2="60" stroke="#d6cec0"/>
+            <line x1="40" y1="440" x2="360" y2="440" stroke="#d6cec0"/>
+            <text x="200" y="212" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="64" font-weight="300" fill="#6b2a21">ec</text>
+          </svg>
+        </figure>
+        <h3>Eleanor Calder</h3>
+        <p class="role meta">Founding partner, corporate and fundraising</p>
+        <p class="bio">Eleanor spent twelve years in the corporate group of a large City firm, the last four as a partner, acting for venture funds on their investments. She founded the firm to sit on the other side of the table, at a price the other side can afford.</p>
+        <p class="prev">Admitted 2007 <span>· Previously a partner at a Magic Circle firm · Read law at Durham</span></p>
+      </li>
+      <li class="partner">
+        <figure aria-hidden="true">
+          <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="500" fill="#f3efe7"/>
+            <rect x="120" y="110" width="160" height="160" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <path d="M80 470 C 90 330, 310 330, 320 470" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <line x1="40" y1="60" x2="360" y2="60" stroke="#d6cec0"/>
+            <line x1="40" y1="440" x2="360" y2="440" stroke="#d6cec0"/>
+            <text x="200" y="212" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="64" font-weight="300" fill="#6b2a21">tr</text>
+          </svg>
+        </figure>
+        <h3>Tomas Rowe</h3>
+        <p class="role meta">Partner, commercial and data</p>
+        <p class="bio">Tomas was general counsel at a payments company from its seed round to its acquisition, and before that a commercial lawyer in-house at a broadcaster. He writes the contracts that get signed without a second round of comments.</p>
+        <p class="prev">Admitted 2009 <span>· Previously general counsel, Series A to exit · Read law at Edinburgh</span></p>
+      </li>
+      <li class="partner">
+        <figure aria-hidden="true">
+          <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="500" fill="#f3efe7"/>
+            <polygon points="200,100 290,270 110,270" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <path d="M80 470 C 90 330, 310 330, 320 470" fill="none" stroke="#1e1a16" stroke-width="1.5"/>
+            <line x1="40" y1="60" x2="360" y2="60" stroke="#d6cec0"/>
+            <line x1="40" y1="440" x2="360" y2="440" stroke="#d6cec0"/>
+            <text x="200" y="236" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="64" font-weight="300" fill="#6b2a21">pn</text>
+          </svg>
+        </figure>
+        <h3>Priya Nandakumar</h3>
+        <p class="role meta">Partner, employment and equity</p>
+        <p class="bio">Priya ran the share schemes practice at a national firm and has set up more than two hundred EMI schemes. She is the reason our option grants go out the week the offer is accepted, not the quarter after.</p>
+        <p class="prev">Admitted 2011 <span>· Previously head of share schemes at a national firm · Read law at King's College London</span></p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="engagement">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="meta">How engagement works</p>
+      <h2>Four steps, and the price is fixed at the second one.</h2>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="n">1</span>
+        <h3>A first call</h3>
+        <p>Thirty minutes with a partner. You describe what you need; we tell you whether it is something we do, and roughly what it costs. No charge, no follow-up sequence.</p>
+        <p class="when meta">Free · usually within three days</p>
+      </li>
+      <li class="step">
+        <span class="n">2</span>
+        <h3>A scope note</h3>
+        <p>One page. What we will deliver, what is excluded, the fixed fee, and when it will be done. You sign it or you do not; either way, nothing is owed until you do.</p>
+        <p class="when meta">Within two working days of the call</p>
+      </li>
+      <li class="step">
+        <span class="n">3</span>
+        <h3>The work</h3>
+        <p>The partner you spoke to does the work. You get a short written note every Friday it is in progress, and a draft you can read without a glossary.</p>
+        <p class="when meta">Timeline stated on the scope note</p>
+      </li>
+      <li class="step">
+        <span class="n">4</span>
+        <h3>One invoice</h3>
+        <p>Sent when the matter closes, for the number on the scope note. Thirty-day terms. If something changed along the way, you already knew about it and agreed the price.</p>
+        <p class="when meta">On completion · 30 days to pay</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="scope">
+      <div class="scope-copy">
+        <p class="meta">What is not covered</p>
+        <h2>The things we do not do, and who we send you to instead.</h2>
+        <p>A fixed fee only works when we have done the job many times. For the matters below we have not, so we will not pretend. We keep a short list of firms we trust and make the introduction ourselves.</p>
+      </div>
+      <ul class="scope-list">
+        <li><span class="what">Litigation and disputes</span><span class="who">Referred to a disputes boutique</span></li>
+        <li><span class="what">Tax structuring and research credit claims</span><span class="who">Referred to a chartered tax adviser</span></li>
+        <li><span class="what">American securities law and Delaware flips</span><span class="who">Referred to an American firm we work with</span></li>
+        <li><span class="what">FCA authorisation and regulated activities</span><span class="who">Referred to a financial regulation specialist</span></li>
+        <li><span class="what">Immigration and sponsor licences</span><span class="who">Referred to an immigration practice</span></li>
+        <li><span class="what">Insolvency and restructuring</span><span class="who">Referred to a licensed insolvency practitioner</span></li>
+        <li><span class="what">Property, leases and fit-outs</span><span class="who">Referred to a commercial property firm</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="close" id="contact">
+  <div class="wrap">
+    <h2>Tell us what you are building. We will tell you what it costs, <em>in writing.</em></h2>
+    <div class="side">
+      <p>The first call is thirty minutes with a partner and it is free. Write to us or pick a slot; either way you hear back within one working day.</p>
+      <a class="btn solid" href="mailto:hello@calderrowe.law">hello@calderrowe.law</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Find us</p>
+        <p>Calder &amp; Rowe LLP<br>Second floor, 14 Charterhouse Square<br>London EC1M 6AX</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:hello@calderrowe.law">hello@calderrowe.law</a><br><span>Replies within one working day.</span></p>
+      </div>
+      <div>
+        <p class="meta">Hours</p>
+        <p>Monday to Friday<br><span>9:00 to 18:00, London time</span></p>
+      </div>
+      <div>
+        <p class="meta">Telephone</p>
+        <p><a href="tel:+442071234400">020 7123 4400</a><br><span>Ask for the partner named on your scope note.</span></p>
+      </div>
+    </div>
+    <div class="foot-reg">
+      <p>Calder &amp; Rowe LLP is a limited liability partnership registered in England and Wales with registered number OC441921, and is authorised and regulated by the Solicitors Regulation Authority under SRA number 8127743. A list of members is available for inspection at the registered office above. We use the word partner to refer to a member of the LLP. VAT registration 342 8811 07. Our complaints procedure and details of the Legal Ombudsman are available on request.</p>
+      <p class="right">Copyright Calder &amp; Rowe LLP <span id="year">2026</span><br>Set in Source Serif and Inter Tight</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var list = document.getElementById('fee-list');
+    var total = document.getElementById('est-total');
+    var count = document.getElementById('est-count');
+    var gbp = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 });
+    function update(){
+      var boxes = list.querySelectorAll('input:checked');
+      var sum = 0;
+      for (var i = 0; i < boxes.length; i++) sum += parseInt(boxes[i].value, 10);
+      total.textContent = gbp.format(sum);
+      count.textContent = boxes.length + (boxes.length === 1 ? ' matter' : ' matters');
+    }
+    list.addEventListener('change', update);
+    update();
+    var y = document.getElementById('year');
+    if (y) y.textContent = String(new Date().getFullYear());
+  })();
+</script>
+
+</body>
+</html>

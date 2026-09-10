@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Havlinje - electric ferries across the Sølvøy islands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens */
+  :root{
+    --t-xs: 0.8125rem;
+    --t-s: 0.9375rem;
+    --t-m: 1.125rem;
+    --t-l: clamp(1.5rem, 2.4vw, 2rem);
+    --t-xl: clamp(2.5rem, 4.8vw, 3.75rem);
+
+    --paper: #f3f6f8;
+    --ink: #142a3f;
+    --sea: #2f7fb8;
+    --sea-tint: #cfe2ee;
+    --muted: #5d7285;
+    --rule: #d5dee5;
+    --signal: #2e8b57;
+
+    --font-sans: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+
+    --rhythm: clamp(72px, 9vw, 120px);
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:var(--font-sans);
+    font-size:var(--t-s);
+    line-height:1.55;
+    color:var(--ink);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,p{margin:0}
+  ul{margin:0;padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .wrap{
+    max-width:1180px;
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 48px);
+  }
+
+  .meta{
+    font-family:var(--font-mono);
+    font-size:var(--t-xs);
+    color:var(--muted);
+    letter-spacing:0;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--font-mono);font-size:var(--t-xs);color:var(--sea);
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--sea)}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 20px;border-radius:999px;
+    font-weight:600;font-size:var(--t-s);line-height:1;
+    border:1px solid transparent;transition:background .2s,color .2s,border-color .2s;
+  }
+  .pill-solid{background:var(--ink);color:#fff}
+  .pill-solid:hover{background:var(--sea)}
+  .pill-ghost{border-color:var(--rule);color:var(--ink);background:rgba(255,255,255,.6)}
+  .pill-ghost:hover{border-color:var(--ink)}
+
+  /* Fold */
+  .fold{min-height:100svh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .fold::before{
+    content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(90% 60% at 100% 100%, rgba(47,127,184,.28), transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, var(--paper) 42%, var(--sea-tint) 100%);
+  }
+  .fold > *{position:relative;z-index:1}
+
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-block:22px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:var(--t-m);letter-spacing:-.01em}
+  .brand svg{width:28px;height:28px}
+  .nav-links{display:flex;gap:28px;font-size:var(--t-s);color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .clock{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--muted)}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:32px 48px}
+  .hero-grid{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px, 5vw, 72px);align-items:center;width:100%;
+  }
+  .hero h1{
+    font-size:var(--t-xl);line-height:1.02;letter-spacing:-.025em;font-weight:600;
+    max-width:16ch;margin-top:22px;text-wrap:balance;
+  }
+  .hero h1 em{font-style:italic;font-weight:400;color:var(--sea)}
+  .hero .lede{font-size:var(--t-m);color:var(--muted);max-width:44ch;margin-top:22px;line-height:1.5}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+  .hero-proof{display:flex;gap:28px;margin-top:36px;padding-top:22px;border-top:1px solid var(--rule)}
+  .hero-proof div strong{display:block;font-size:var(--t-m);font-weight:600;letter-spacing:-.01em}
+  .hero-proof div span{font-size:var(--t-xs);color:var(--muted)}
+
+  /* Next sailing card: the tool-as-hero card */
+  .sailing{
+    background:#fff;border-radius:22px;padding:26px 28px 24px;
+    box-shadow:0 30px 60px -30px rgba(20,42,63,.35), 0 1px 0 rgba(20,42,63,.06);
+    border:1px solid rgba(20,42,63,.06);
+  }
+  .sailing-head{display:flex;justify-content:space-between;align-items:center}
+  .live{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:var(--t-xs);color:var(--signal)}
+  .live i{width:8px;height:8px;border-radius:50%;background:var(--signal);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,139,87,.5)}70%{box-shadow:0 0 0 8px rgba(46,139,87,0)}}
+  .sailing-route{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:16px;margin-top:22px}
+  .sailing-route .port{font-size:var(--t-l);font-weight:600;letter-spacing:-.02em;line-height:1.05}
+  .sailing-route .port small{display:block;font-size:var(--t-xs);color:var(--muted);font-weight:400;font-family:var(--font-mono);margin-bottom:6px}
+  .sailing-route .arrow{color:var(--sea);padding-bottom:6px}
+  .sailing-times{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--rule)}
+  .sailing-times div span{display:block;font-family:var(--font-mono);font-size:var(--t-xs);color:var(--muted)}
+  .sailing-times div strong{display:block;font-size:var(--t-m);font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+  .sailing-times div strong.count{color:var(--sea)}
+  .sailing-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+  .sailing-foot .meta{max-width:26ch}
+
+  /* Sections */
+  section{padding-block:var(--rhythm)}
+  .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:end;margin-bottom:clamp(32px,4vw,56px)}
+  .section-head h2{font-size:var(--t-l);letter-spacing:-.02em;font-weight:600;line-height:1.1;margin-top:14px;max-width:20ch;text-wrap:balance}
+  .section-head p{color:var(--muted);max-width:52ch;font-size:var(--t-s)}
+  .section-head p + p{margin-top:10px}
+
+  /* Route map */
+  .map-frame{
+    background:#fff;border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;
+    display:grid;grid-template-columns:minmax(0,1fr) 300px;
+  }
+  .map-frame svg{display:block;width:100%;height:auto}
+  .map-legend{border-left:1px solid var(--rule);padding:28px 26px;display:flex;flex-direction:column;gap:6px;background:var(--paper)}
+  .map-legend h3{font-size:var(--t-s);font-weight:600;margin-bottom:10px}
+  .leg{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule);font-size:var(--t-xs)}
+  .leg:last-of-type{border-bottom:0}
+  .leg i{height:0;border-top:2px solid var(--sea);display:block}
+  .leg i.b{border-top-style:dashed;border-color:#7ba7c9}
+  .leg span{font-family:var(--font-mono);color:var(--muted)}
+  .map-legend .meta{margin-top:auto;padding-top:14px;line-height:1.5}
+
+  /* Departure board */
+  .board{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden}
+  .board-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border-bottom:1px solid var(--rule);background:var(--paper)}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px}
+  .tab{padding:8px 14px;border-radius:999px;font-size:var(--t-xs);font-weight:500;color:var(--muted);border:1px solid transparent}
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th{font-family:var(--font-mono);font-weight:400;font-size:var(--t-xs);color:var(--muted);text-align:left;padding:14px 22px;border-bottom:1px solid var(--rule)}
+  td{padding:16px 22px;border-bottom:1px solid var(--rule);vertical-align:middle;font-size:var(--t-s)}
+  tr:last-child td{border-bottom:0}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:rgba(47,127,184,.05)}
+  td.time{font-family:var(--font-mono);font-size:var(--t-m);font-weight:500;width:110px}
+  td.dest strong{font-weight:600}
+  td.dest span{display:block;font-size:var(--t-xs);color:var(--muted)}
+  td.berth b{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:30px;padding:0 10px;border-radius:8px;background:var(--sea-tint);color:var(--ink);font-family:var(--font-mono);font-weight:500;font-size:var(--t-xs)}
+  .status{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-xs);font-weight:500}
+  .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--signal)}
+  .status.boarding{color:var(--sea)}
+  .status.boarding::before{background:var(--sea)}
+  .status.delayed{color:#b0641c}
+  .status.delayed::before{background:#b0641c}
+  .status.charging{color:var(--muted)}
+  .status.charging::before{background:var(--muted)}
+  .board-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--rule)}
+
+  /* Fares */
+  .fares{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(32px,5vw,72px)}
+  .fares-intro p{color:var(--muted);margin-top:12px;max-width:40ch}
+  .fares-intro .note{margin-top:22px;padding:16px 18px;border-radius:12px;background:#fff;border:1px solid var(--rule);font-size:var(--t-xs);color:var(--ink)}
+  .fares-intro .note strong{display:block;font-family:var(--font-mono);font-weight:500;color:var(--sea);margin-bottom:4px}
+  .fare{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:20px;padding:18px 0;border-bottom:1px solid var(--rule)}
+  .fare:first-child{border-top:1px solid var(--rule)}
+  .fare h3{font-size:var(--t-m);font-weight:600;letter-spacing:-.01em}
+  .fare p{font-size:var(--t-xs);color:var(--muted);margin-top:2px}
+  .fare .price{font-family:var(--font-mono);font-size:var(--t-m);font-weight:500;white-space:nowrap}
+  .fare .price small{font-size:var(--t-xs);color:var(--muted);margin-left:6px}
+
+  /* Vessels */
+  .vessels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .vessel{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:22px 22px 20px;display:flex;flex-direction:column;gap:14px;transition:transform .25s ease}
+  .vessel:hover{transform:translateY(-3px)}
+  .vessel svg{width:100%;height:auto;display:block;border-radius:10px;background:linear-gradient(180deg,#e9f1f6 0%,var(--sea-tint) 100%)}
+  .vessel h3{font-size:var(--t-m);font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:baseline}
+  .vessel h3 span{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400;color:var(--muted)}
+  .vessel dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
+  .vessel dt{font-family:var(--font-mono);font-size:var(--t-xs);color:var(--muted)}
+  .vessel dd{margin:2px 0 0;font-weight:600;font-size:var(--t-s)}
+  .charge{margin-top:2px}
+  .charge .meta{display:flex;justify-content:space-between;margin-bottom:6px}
+  .bar{height:8px;border-radius:999px;background:var(--sea-tint);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px;background:var(--sea)}
+
+  /* Weather + policy */
+  .weather-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+  .panel{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:26px 26px 24px}
+  .panel h3{font-size:var(--t-m);font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:baseline}
+  .panel h3 span{font-family:var(--font-mono);font-size:var(--t-xs);font-weight:400;color:var(--muted)}
+  .wx{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px}
+  .wx div{padding:14px 16px;border-radius:12px;background:var(--paper)}
+  .wx span{display:block;font-family:var(--font-mono);font-size:var(--t-xs);color:var(--muted)}
+  .wx strong{display:block;font-size:var(--t-l);font-weight:600;letter-spacing:-.02em;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+  .wx strong small{font-size:var(--t-xs);font-weight:400;color:var(--muted);margin-left:4px;letter-spacing:0}
+  .wx-verdict{display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 16px;border-radius:12px;background:rgba(46,139,87,.08);color:var(--signal);font-weight:500;font-size:var(--t-s)}
+  .wx-verdict i{width:10px;height:10px;border-radius:50%;background:var(--signal);flex:none}
+  .limits{margin-top:18px;display:grid;gap:8px;font-size:var(--t-xs);color:var(--muted)}
+  .limits li{display:grid;grid-template-columns:auto 1fr;gap:10px}
+  .limits li b{font-family:var(--font-mono);font-weight:500;color:var(--ink)}
+  .policy{margin-top:18px;display:grid;gap:0}
+  .policy li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--rule);font-size:var(--t-s)}
+  .policy li:first-child{border-top:0;padding-top:4px}
+  .policy li i{font-family:var(--font-mono);font-style:normal;font-size:var(--t-xs);color:var(--sea);padding-top:3px}
+  .policy li strong{display:block;font-weight:600}
+  .policy li span{color:var(--muted);font-size:var(--t-xs)}
+
+  /* Footer */
+  footer{border-top:1px solid var(--rule);background:#fff;padding-block:56px 32px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+  .foot-grid p{font-size:var(--t-s);line-height:1.6;margin-top:12px}
+  .foot-grid .muted{color:var(--muted)}
+  .foot-grid a:hover{color:var(--sea)}
+  .foot-links li{margin-top:8px}
+  .foot-base{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:44px;padding-top:20px;border-top:1px solid var(--rule)}
+
+  @media (max-width: 960px){
+    .hero-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .map-frame{grid-template-columns:1fr}
+    .map-legend{border-left:0;border-top:1px solid var(--rule)}
+    .vessels{grid-template-columns:1fr}
+    .fares,.weather-grid,.section-head{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 640px){
+    th:nth-child(3),td:nth-child(3){display:none}
+    .foot-grid{grid-template-columns:1fr}
+    .hero-proof{flex-wrap:wrap;gap:18px}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap nav">
+    <a href="#" class="brand" aria-label="Havlinje home">
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <circle cx="14" cy="14" r="13" stroke="#142a3f" stroke-width="1.5"/>
+        <path d="M5 16.5c2.2 0 2.2-1.6 4.5-1.6s2.3 1.6 4.5 1.6 2.3-1.6 4.5-1.6 2.3 1.6 4.5 1.6" stroke="#2f7fb8" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M7 20.5c2.2 0 2.2-1.6 4.5-1.6s2.3 1.6 4.5 1.6 2.3-1.6 4.5-1.6" stroke="#2f7fb8" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+        <path d="M9 12.5h10l-1.6-4H11.5z" fill="#142a3f"/>
+      </svg>
+      Havlinje
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#map">Route map</a>
+      <a href="#departures">Departures</a>
+      <a href="#fares">Fares</a>
+      <a href="#vessels">Vessels</a>
+      <a href="#weather">Weather</a>
+    </nav>
+    <div class="nav-cta">
+      <span class="clock" id="clock-nav">Sølvøy, 09:12</span>
+      <a href="#departures" class="pill pill-solid">Buy a ticket</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Sølvøy archipelago, all year round</span>
+        <h1>Five islands, one quiet crossing <em>at a time.</em></h1>
+        <p class="lede">Havlinje runs three fully electric ferries between Sølvøy, Kvitholm, Ravnøy, Lindøy and Utvær. Fixed timetable, live berths, and a crossing you can hear the gulls over.</p>
+        <div class="hero-actions">
+          <a href="#departures" class="pill pill-solid">See today's departures</a>
+          <a href="#map" class="pill pill-ghost">Open the route map</a>
+        </div>
+        <div class="hero-proof">
+          <div><strong>42</strong><span>sailings a day</span></div>
+          <div><strong>18 min</strong><span>longest crossing</span></div>
+          <div><strong>0 litres</strong><span>diesel since 2023</span></div>
+        </div>
+      </div>
+
+      <aside class="sailing" aria-label="Next sailing">
+        <div class="sailing-head">
+          <span class="live"><i></i>Live from the harbour</span>
+          <span class="meta">Next sailing</span>
+        </div>
+        <div class="sailing-route">
+          <div class="port"><small>From</small>Sølvøy</div>
+          <div class="arrow" aria-hidden="true">
+            <svg width="30" height="16" viewBox="0 0 30 16" fill="none"><path d="M1 8h26m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="port"><small>To</small><span id="next-dest">Kvitholm</span></div>
+        </div>
+        <div class="sailing-times">
+          <div><span>Departs</span><strong id="next-time">09:40</strong></div>
+          <div><span>Berth</span><strong id="next-berth">A</strong></div>
+          <div><span>Leaves in</span><strong class="count" id="next-count">28 min</strong></div>
+        </div>
+        <div class="sailing-foot">
+          <p class="meta" id="next-vessel">Sølvvind, charged and on time</p>
+          <a href="#departures" class="pill pill-ghost">All departures</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- Route map -->
+<section id="map">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">The network</span>
+        <h2>Sølvøy is the hub. Everything else is one hop away.</h2>
+      </div>
+      <div>
+        <p>Every route touches Sølvøy harbour, where the ferries charge between crossings. The dots on the map move with the timetable, so you can see roughly where each vessel is right now.</p>
+      </div>
+    </div>
+
+    <div class="map-frame">
+      <svg viewBox="0 0 880 520" role="img" aria-labelledby="map-title">
+        <title id="map-title">Route map of the five Sølvøy islands served by Havlinje</title>
+        <defs>
+          <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e6eff5"/>
+            <stop offset="1" stop-color="#cfe2ee"/>
+          </linearGradient>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M40 0H0v40" fill="none" stroke="#142a3f" stroke-opacity=".05"/>
+          </pattern>
+          <path id="r-kvit" d="M300 268 C 360 200, 430 150, 520 118"/>
+          <path id="r-ravn" d="M300 268 C 420 250, 560 240, 690 236"/>
+          <path id="r-lind" d="M300 268 C 400 330, 500 380, 600 412"/>
+          <path id="r-utv" d="M300 268 C 240 300, 180 350, 130 398"/>
+          <path id="r-kr" d="M520 118 C 590 140, 650 180, 690 236"/>
+        </defs>
+        <rect width="880" height="520" fill="url(#sea)"/>
+        <rect width="880" height="520" fill="url(#grid)"/>
+
+        <!-- depth contours -->
+        <g fill="none" stroke="#2f7fb8" stroke-opacity=".12" stroke-width="1">
+          <path d="M60 110 C 180 40, 330 60, 420 30 S 640 20, 860 70"/>
+          <path d="M20 230 C 120 190, 200 220, 260 170 S 420 160, 470 200 S 640 140, 860 190"/>
+          <path d="M40 470 C 160 430, 260 470, 360 440 S 560 480, 700 450 S 800 470, 860 440"/>
+        </g>
+
+        <!-- routes -->
+        <g fill="none" stroke="#2f7fb8" stroke-width="2" stroke-linecap="round">
+          <use href="#r-kvit"/><use href="#r-ravn"/><use href="#r-lind"/><use href="#r-utv"/>
+        </g>
+        <use href="#r-kr" fill="none" stroke="#7ba7c9" stroke-width="2" stroke-dasharray="6 7" stroke-linecap="round"/>
+
+        <!-- crossing time tags -->
+        <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#5d7285">
+          <rect x="386" y="170" width="52" height="20" rx="10" fill="#fff" stroke="#d5dee5"/><text x="412" y="184" text-anchor="middle">12 min</text>
+          <rect x="470" y="230" width="52" height="20" rx="10" fill="#fff" stroke="#d5dee5"/><text x="496" y="244" text-anchor="middle">18 min</text>
+          <rect x="426" y="328" width="52" height="20" rx="10" fill="#fff" stroke="#d5dee5"/><text x="452" y="342" text-anchor="middle">14 min</text>
+          <rect x="176" y="322" width="52" height="20" rx="10" fill="#fff" stroke="#d5dee5"/><text x="202" y="336" text-anchor="middle">11 min</text>
+          <rect x="590" y="140" width="52" height="20" rx="10" fill="#fff" stroke="#d5dee5"/><text x="616" y="154" text-anchor="middle">15 min</text>
+        </g>
+
+        <!-- islands -->
+        <g fill="#f7f4ec" stroke="#142a3f" stroke-width="1.5">
+          <!-- Sølvøy, hub -->
+          <path d="M238 232 c 12-30 44-44 76-40 s 52 18 62 44 c 8 22-6 44-30 54 s -58 12-84-2 c -22-12-32-32-24-56 z"/>
+          <!-- Kvitholm -->
+          <path d="M496 96 c 10-18 34-24 54-16 s 30 24 22 42 c -8 18-32 24-50 18 s -34-26-26-44 z"/>
+          <!-- Ravnøy -->
+          <path d="M660 214 c 14-22 48-30 72-18 s 34 36 22 56 c -10 18-38 22-60 14 s -46-32-34-52 z"/>
+          <!-- Lindøy -->
+        <path d="M570 392 c 8-20 36-30 60-24 s 40 26 34 46 c -6 20-34 26-56 20 s -46-24-38-42 z"/>
+          <!-- Utvær -->
+          <path d="M96 384 c 10-18 40-22 60-12 s 28 30 16 46 c -12 16-40 18-58 8 s -28-26-18-42 z"/>
+        </g>
+
+        <!-- island labels -->
+        <g font-family="Schibsted Grotesk, sans-serif" font-size="15" font-weight="600" fill="#142a3f">
+          <text x="300" y="256" text-anchor="middle">Sølvøy</text>
+          <text x="520" y="106" text-anchor="middle">Kvitholm</text>
+          <text x="708" y="240" text-anchor="middle">Ravnøy</text>
+          <text x="618" y="414" text-anchor="middle">Lindøy</text>
+          <text x="130" y="404" text-anchor="middle">Utvær</text>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#5d7285">
+          <text x="300" y="274" text-anchor="middle">hub · berths A, B, C</text>
+          <text x="520" y="124" text-anchor="middle">berth 1</text>
+          <text x="708" y="258" text-anchor="middle">berth 1</text>
+          <text x="618" y="432" text-anchor="middle">berth 1</text>
+          <text x="130" y="422" text-anchor="middle">berth 1</text>
+        </g>
+
+        <!-- charging mark at hub -->
+        <g transform="translate(262 232)">
+          <circle r="11" fill="#2f7fb8"/>
+          <path d="M1.5-6 -3 1h3.2l-1.2 5 4.5-7h-3.2z" fill="#fff"/>
+        </g>
+
+        <!-- vessels in motion -->
+        <g>
+          <circle r="6" fill="#142a3f" stroke="#fff" stroke-width="2">
+            <animateMotion dur="24s" repeatCount="indefinite" keyPoints="0;1;1;0;0" keyTimes="0;.42;.5;.92;1" calcMode="linear"><mpath href="#r-kvit"/></animateMotion>
+          </circle>
+          <circle r="6" fill="#142a3f" stroke="#fff" stroke-width="2">
+            <animateMotion dur="36s" repeatCount="indefinite" keyPoints="1;0;0;1;1" keyTimes="0;.42;.5;.92;1" calcMode="linear"><mpath href="#r-ravn"/></animateMotion>
+          </circle>
+          <circle r="6" fill="#142a3f" stroke="#fff" stroke-width="2">
+            <animateMotion dur="28s" repeatCount="indefinite" keyPoints="0;1;1;0;0" keyTimes="0;.42;.5;.92;1" calcMode="linear" begin="6s"><mpath href="#r-utv"/></animateMotion>
+          </circle>
+        </g>
+
+        <!-- compass + scale -->
+        <g transform="translate(818 52)" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5d7285">
+          <circle r="18" fill="#fff" stroke="#d5dee5"/>
+          <path d="M0-11 3 3 0 0-3 3z" fill="#142a3f"/>
+          <text y="34" text-anchor="middle">north</text>
+        </g>
+        <g transform="translate(40 484)" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5d7285">
+          <path d="M0 0h80" stroke="#142a3f" stroke-width="2"/>
+          <path d="M0-4v8M80-4v8" stroke="#142a3f" stroke-width="1.5"/>
+          <text x="40" y="-8" text-anchor="middle">2 nautical miles</text>
+        </g>
+      </svg>
+
+      <div class="map-legend">
+        <h3>Routes and crossings</h3>
+        <div class="leg"><i></i><div>Sølvøy to Kvitholm</div><span>12 min</span></div>
+        <div class="leg"><i></i><div>Sølvøy to Ravnøy</div><span>18 min</span></div>
+        <div class="leg"><i></i><div>Sølvøy to Lindøy</div><span>14 min</span></div>
+        <div class="leg"><i></i><div>Sølvøy to Utvær</div><span>11 min</span></div>
+        <div class="leg"><i class="b"></i><div>Kvitholm to Ravnøy, summer only</div><span>15 min</span></div>
+        <p class="meta">Dark dots are vessels under way. The bolt marks the shore-power berth at Sølvøy, fed by the island wind farm.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live departures -->
+<section id="departures">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Live departures</span>
+        <h2>Times, berths and status, straight from the harbour office.</h2>
+      </div>
+      <div>
+        <p>The board updates every minute. Boarding closes three minutes before departure; foot passengers walk on at the berth shown, vehicles queue in lane order.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-bar">
+        <div class="tabs" role="tablist" aria-label="Departing from">
+          <button class="tab" role="tab" aria-selected="true" data-from="Sølvøy">From Sølvøy</button>
+          <button class="tab" role="tab" aria-selected="false" data-from="Kvitholm">From Kvitholm</button>
+          <button class="tab" role="tab" aria-selected="false" data-from="Ravnøy">From Ravnøy</button>
+          <button class="tab" role="tab" aria-selected="false" data-from="Lindøy">From Lindøy</button>
+          <button class="tab" role="tab" aria-selected="false" data-from="Utvær">From Utvær</button>
+        </div>
+        <span class="clock" id="clock-board">Updated 09:12:00</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Departs</th>
+            <th>To</th>
+            <th>Vessel</th>
+            <th>Berth</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="board-body"></tbody>
+      </table>
+      <div class="board-foot">
+        <span class="meta">First sailing 06:10, last sailing 22:40. Sunday timetable starts at 08:10.</span>
+        <span class="meta">Winter timetable runs 1 October to 31 March.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fares -->
+<section id="fares">
+  <div class="wrap">
+    <div class="fares">
+      <div class="fares-intro">
+        <span class="eyebrow">Fares</span>
+        <h2 style="font-size:var(--t-l);letter-spacing:-.02em;font-weight:600;line-height:1.1;margin-top:14px;max-width:16ch;text-wrap:balance">One fare for every crossing, whichever island.</h2>
+        <p>No zones and no peak pricing. A single is a single, from any berth to any other. Tickets are sold on board, in the app, and at the Sølvøy harbour office. Card only on board.</p>
+        <div class="note">
+          <strong>Island residents</strong>
+          Registered residents of the four outer islands travel free on foot and pay half fare for a vehicle. Bring your island card to the berth.
+        </div>
+      </div>
+      <ul>
+        <li class="fare">
+          <div><h3>Adult single</h3><p>Any route, valid on the next sailing after purchase.</p></div>
+          <div class="price">58 kr</div>
+        </li>
+        <li class="fare">
+          <div><h3>Child single, 4 to 15</h3><p>Under fours travel free with an adult.</p></div>
+          <div class="price">29 kr</div>
+        </li>
+        <li class="fare">
+          <div><h3>Bicycle</h3><p>Added to any passenger ticket. Racks on the car deck.</p></div>
+          <div class="price">20 kr</div>
+        </li>
+        <li class="fare">
+          <div><h3>Car including driver</h3><p>Up to 6 metres. Longer vehicles and trailers book by phone.</p></div>
+          <div class="price">165 kr</div>
+        </li>
+        <li class="fare">
+          <div><h3>Ten-trip card</h3><p>Ten adult singles, shareable, no expiry.</p></div>
+          <div class="price">480 kr<small>48 kr a trip</small></div>
+        </li>
+        <li class="fare">
+          <div><h3>Island pass, 30 days</h3><p>Unlimited foot travel on all five routes.</p></div>
+          <div class="price">890 kr</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Vessels -->
+<section id="vessels">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">The fleet</span>
+        <h2>Three electric ferries, charged between crossings.</h2>
+      </div>
+      <div>
+        <p>Each vessel plugs into shore power at Sølvøy berth A and takes on enough charge for the next round trip while passengers board. Nothing idles, nothing burns.</p>
+      </div>
+    </div>
+
+    <div class="vessels">
+      <article class="vessel">
+        <svg viewBox="0 0 320 130" aria-hidden="true">
+          <path d="M0 108c20 0 20-8 40-8s20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8" fill="none" stroke="#2f7fb8" stroke-width="2" stroke-opacity=".5"/>
+          <path d="M40 96h240l-16 14H56z" fill="#142a3f"/>
+          <path d="M70 70h180v26H70z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <path d="M120 50h80v20h-80z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <g fill="#2f7fb8"><rect x="80" y="78" width="14" height="9" rx="2"/><rect x="102" y="78" width="14" height="9" rx="2"/><rect x="124" y="78" width="14" height="9" rx="2"/><rect x="146" y="78" width="14" height="9" rx="2"/><rect x="168" y="78" width="14" height="9" rx="2"/><rect x="190" y="78" width="14" height="9" rx="2"/><rect x="212" y="78" width="14" height="9" rx="2"/><rect x="234" y="78" width="14" height="9" rx="2"/></g>
+          <path d="M150 42h20v8h-20z" fill="#142a3f"/>
+        </svg>
+        <h3>Sølvvind <span>2023</span></h3>
+        <dl>
+          <div><dt>Passengers</dt><dd>199</dd></div>
+          <div><dt>Vehicles</dt><dd>24 cars</dd></div>
+          <div><dt>Battery</dt><dd>2,100 kWh</dd></div>
+          <div><dt>Charge at berth</dt><dd>9 min</dd></div>
+        </dl>
+        <div class="charge">
+          <div class="meta"><span>Charge needed per round trip</span><span>34%</span></div>
+          <div class="bar"><i style="width:34%"></i></div>
+        </div>
+      </article>
+
+      <article class="vessel">
+        <svg viewBox="0 0 320 130" aria-hidden="true">
+          <path d="M0 108c20 0 20-8 40-8s20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8" fill="none" stroke="#2f7fb8" stroke-width="2" stroke-opacity=".5"/>
+          <path d="M30 96h260l-18 14H48z" fill="#142a3f"/>
+          <path d="M60 68h200v28H60z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <path d="M100 46h120v22H100z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <g fill="#2f7fb8"><rect x="70" y="78" width="14" height="9" rx="2"/><rect x="92" y="78" width="14" height="9" rx="2"/><rect x="114" y="78" width="14" height="9" rx="2"/><rect x="136" y="78" width="14" height="9" rx="2"/><rect x="158" y="78" width="14" height="9" rx="2"/><rect x="180" y="78" width="14" height="9" rx="2"/><rect x="202" y="78" width="14" height="9" rx="2"/><rect x="224" y="78" width="14" height="9" rx="2"/><rect x="246" y="78" width="14" height="9" rx="2"/></g>
+          <path d="M150 38h20v8h-20z" fill="#142a3f"/>
+        </svg>
+        <h3>Kvitfugl <span>2024</span></h3>
+        <dl>
+          <div><dt>Passengers</dt><dd>249</dd></div>
+          <div><dt>Vehicles</dt><dd>32 cars</dd></div>
+          <div><dt>Battery</dt><dd>2,800 kWh</dd></div>
+          <div><dt>Charge at berth</dt><dd>11 min</dd></div>
+        </dl>
+        <div class="charge">
+          <div class="meta"><span>Charge needed per round trip</span><span>41%</span></div>
+          <div class="bar"><i style="width:41%"></i></div>
+        </div>
+      </article>
+
+      <article class="vessel">
+        <svg viewBox="0 0 320 130" aria-hidden="true">
+          <path d="M0 108c20 0 20-8 40-8s20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8 20-8 40-8 20 8 40 8" fill="none" stroke="#2f7fb8" stroke-width="2" stroke-opacity=".5"/>
+          <path d="M60 96h200l-14 14H74z" fill="#142a3f"/>
+          <path d="M84 72h152v24H84z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <path d="M130 54h60v18h-60z" fill="#fff" stroke="#142a3f" stroke-width="1.5"/>
+          <g fill="#2f7fb8"><rect x="94" y="80" width="14" height="9" rx="2"/><rect x="116" y="80" width="14" height="9" rx="2"/><rect x="138" y="80" width="14" height="9" rx="2"/><rect x="160" y="80" width="14" height="9" rx="2"/><rect x="182" y="80" width="14" height="9" rx="2"/><rect x="204" y="80" width="14" height="9" rx="2"/><rect x="226" y="80" width="14" height="9" rx="2"/></g>
+          <path d="M152 46h16v8h-16z" fill="#142a3f"/>
+        </svg>
+        <h3>Brisa <span>2025</span></h3>
+        <dl>
+          <div><dt>Passengers</dt><dd>120</dd></div>
+          <div><dt>Vehicles</dt><dd>Foot and bikes</dd></div>
+          <div><dt>Battery</dt><dd>1,200 kWh</dd></div>
+          <div><dt>Charge at berth</dt><dd>6 min</dd></div>
+        </dl>
+        <div class="charge">
+          <div class="meta"><span>Charge needed per round trip</span><span>27%</span></div>
+          <div class="bar"><i style="width:27%"></i></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Weather and cancellation -->
+<section id="weather">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Weather and cancellations</span>
+        <h2>We sail in most weather. Here is what stops us, and what happens then.</h2>
+      </div>
+      <div>
+        <p>Conditions come from the Sølvøy harbour mast and the Utvær buoy, read every ten minutes. The captain makes the final call, always before the timetable says the ferry should leave.</p>
+      </div>
+    </div>
+
+    <div class="weather-grid">
+      <div class="panel">
+        <h3>Sølvøy harbour now <span id="wx-time">09:10</span></h3>
+        <div class="wx">
+          <div><span>Wind</span><strong>6<small>m/s, south-west</small></strong></div>
+          <div><span>Wave height</span><strong>0.6<small>m</small></strong></div>
+          <div><span>Visibility</span><strong>Good<small>over 10 km</small></strong></div>
+          <div><span>Sea and air</span><strong>11° <small>sea</small> · 9°<small>air</small></strong></div>
+        </div>
+        <div class="wx-verdict"><i></i>All routes sailing to timetable</div>
+        <ul class="limits">
+          <li><b>17 m/s</b><span>Sustained wind at which crossings to Utvær pause; other routes follow at 20 m/s.</span></li>
+          <li><b>2.0 m</b><span>Significant wave height at which every vessel stays at berth.</span></li>
+          <li><b>300 m</b><span>Visibility below which the ferries wait for the fog to lift, radar or not.</span></li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Cancellation policy <span>valid from 1 January 2026</span></h3>
+        <ul class="policy">
+          <li><i>01</i><div><strong>If we cancel, you get everything back.</strong><span>Full refund to the original card within five days, or a free rebooking on any later sailing. No forms.</span></div></li>
+          <li><i>02</i><div><strong>Change your sailing free up to two hours before.</strong><span>Singles and vehicle tickets can be moved in the app. Inside two hours the ticket stays valid for the next two sailings on the same route.</span></div></li>
+          <li><i>03</i><div><strong>Weather disruptions are announced, not discovered.</strong><span>We text every ticket holder and update this board at least 45 minutes before a paused departure.</span></div></li>
+          <li><i>04</i><div><strong>Stranded overnight, we cover the bed.</strong><span>If the last sailing home is cancelled, Havlinje pays for a room at the island guesthouse on presentation of your ticket.</span></div></li>
+          <li><i>05</i><div><strong>Passes and ten-trip cards are extended.</strong><span>Any day on which a route is suspended for more than four hours is added to the end of your island pass.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#" class="brand">
+          <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="13" stroke="#142a3f" stroke-width="1.5"/>
+            <path d="M5 16.5c2.2 0 2.2-1.6 4.5-1.6s2.3 1.6 4.5 1.6 2.3-1.6 4.5-1.6 2.3 1.6 4.5 1.6" stroke="#2f7fb8" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M7 20.5c2.2 0 2.2-1.6 4.5-1.6s2.3 1.6 4.5 1.6 2.3-1.6 4.5-1.6" stroke="#2f7fb8" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+            <path d="M9 12.5h10l-1.6-4H11.5z" fill="#142a3f"/>
+          </svg>
+          Havlinje
+        </a>
+        <p class="muted">Electric ferries between the five Sølvøy islands, operated under contract with the county since 2023. Owned by the islands' own transport cooperative.</p>
+      </div>
+      <div>
+        <span class="meta">Harbour office</span>
+        <p>Havnegata 4<br>Sølvøy harbour, berth A<br><span class="muted">Open 06:00 to 22:30 daily</span></p>
+      </div>
+      <div>
+        <span class="meta">Talk to us</span>
+        <p><a href="mailto:hei@havlinje.no">hei@havlinje.no</a><br><a href="tel:+4757010040">+47 57 01 00 40</a><br><span class="muted">Vehicles over 6 m: book by phone</span></p>
+      </div>
+      <div>
+        <span class="meta">More</span>
+        <ul class="foot-links">
+          <li><a href="#departures">Printable timetable</a></li>
+          <li><a href="#fares">Freight and trailers</a></li>
+          <li><a href="#weather">Accessibility on board</a></li>
+          <li><a href="#map">Working at Havlinje</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span class="meta">© 2026 Havlinje · org. no. 931 448 210 · Sølvøy</span>
+      <span class="meta">Sailings shown are scheduled times. Status is refreshed each minute from the harbour office.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Timetable: minutes past midnight for each origin, patterned around the hub.
+  var routes = {
+    "Sølvøy": [
+      {to:"Kvitholm", vessel:"Sølvvind", berth:"A", mins:12, first:370, every:60},
+      {to:"Ravnøy",   vessel:"Kvitfugl", berth:"B", mins:18, first:390, every:90},
+      {to:"Lindøy",   vessel:"Kvitfugl", berth:"B", mins:14, first:420, every:90},
+      {to:"Utvær",    vessel:"Brisa",    berth:"C", mins:11, first:400, every:60}
+    ],
+    "Kvitholm": [{to:"Sølvøy", vessel:"Sølvvind", berth:"1", mins:12, first:400, every:60}],
+    "Ravnøy":   [{to:"Sølvøy", vessel:"Kvitfugl", berth:"1", mins:18, first:430, every:90}],
+    "Lindøy":   [{to:"Sølvøy", vessel:"Kvitfugl", berth:"1", mins:14, first:460, every:90}],
+    "Utvær":    [{to:"Sølvøy", vessel:"Brisa",    berth:"1", mins:11, first:430, every:60}]
+  };
+  var last = 22*60+40;
+
+  function pad(n){return (n<10?"0":"")+n}
+  function hhmm(m){m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+":"+pad(m%60)}
+  function nowMins(){var d=new Date();return d.getHours()*60+d.getMinutes()}
+
+  function listFrom(origin, from, count){
+    var out=[];
+    routes[origin].forEach(function(r){
+      for(var t=r.first;t<=last;t+=r.every){
+        if(t>=from) out.push({t:t,to:r.to,vessel:r.vessel,berth:r.berth,mins:r.mins});
+      }
+      // roll into tomorrow so the board never goes empty late at night
+      for(var t2=r.first;t2<=last;t2+=r.every){
+        out.push({t:t2+1440,to:r.to,vessel:r.vessel,berth:r.berth,mins:r.mins,tomorrow:true});
+      }
+    });
+    out.sort(function(a,b){return a.t-b.t});
+    return out.slice(0,count);
+  }
+
+  function status(dep, now, idx){
+    var lead=dep.t-now;
+    if(dep.tomorrow) return {cls:"", label:"Tomorrow"};
+    if(lead<=8) return {cls:"boarding", label:"Boarding, berth "+dep.berth};
+    if(idx===2) return {cls:"delayed", label:"Delayed 4 min, charging"};
+    if(idx===4) return {cls:"charging", label:"Charging at Sølvøy"};
+    return {cls:"", label:"On time"};
+  }
+
+  var body=document.getElementById("board-body");
+  var origin="Sølvøy";
+
+  function renderBoard(){
+    var now=nowMins();
+    var rows=listFrom(origin, now, 8);
+    var html="";
+    rows.forEach(function(d,i){
+      var s=status(d,now,i);
+      html+="<tr>"+
+        "<td class=\"time\">"+hhmm(d.t)+"</td>"+
+        "<td class=\"dest\"><strong>"+d.to+"</strong><span>"+d.mins+" min crossing, arrives "+hhmm(d.t+d.mins)+"</span></td>"+
+        "<td>"+d.vessel+"</td>"+
+        "<td class=\"berth\"><b>"+d.berth+"</b></td>"+
+        "<td><span class=\"status "+s.cls+"\">"+s.label+"</span></td>"+
+      "</tr>";
+    });
+    body.innerHTML=html;
+  }
+
+  function renderNext(){
+    var now=nowMins();
+    var n=listFrom("Sølvøy", now, 1)[0];
+    document.getElementById("next-dest").textContent=n.to;
+    document.getElementById("next-time").textContent=hhmm(n.t);
+    document.getElementById("next-berth").textContent=n.berth;
+    var lead=n.t-now;
+    var c=document.getElementById("next-count");
+    if(n.tomorrow) c.textContent="tomorrow";
+    else if(lead<=0) c.textContent="now";
+    else if(lead>=60) c.textContent=Math.floor(lead/60)+" h "+pad(lead%60)+" min";
+    else c.textContent=lead+" min";
+    document.getElementById("next-vessel").textContent=n.vessel+", "+(lead<=8?"boarding at berth "+n.berth:"charged and on time");
+  }
+
+  function tickClocks(){
+    var d=new Date();
+    var t=pad(d.getHours())+":"+pad(d.getMinutes());
+    document.getElementById("clock-nav").textContent="Sølvøy, "+t;
+    document.getElementById("clock-board").textContent="Updated "+t+":"+pad(d.getSeconds());
+    document.getElementById("wx-time").textContent=t;
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(tab){
+    tab.addEventListener("click",function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(x){x.setAttribute("aria-selected","false")});
+      tab.setAttribute("aria-selected","true");
+      origin=tab.getAttribute("data-from");
+      renderBoard();
+    });
+  });
+
+  renderBoard(); renderNext(); tickClocks();
+  setInterval(tickClocks,1000);
+  setInterval(function(){renderBoard();renderNext();},30000);
+})();
+</script>
+</body>
+</html>

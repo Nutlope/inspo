@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anemo Station S2</title>
+<meta name="description" content="Anemo Station S2: one sealed weather instrument with nine sensors, an ultrasonic wind head, two years on a set of cells and a 1.5 km link to the hub indoors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, used everywhere below */
+  :root {
+    --t-1: 0.8125rem;                        /* meta, labels, table body */
+    --t-2: 1rem;                             /* body */
+    --t-3: 1.25rem;                          /* lead paragraphs */
+    --t-4: clamp(1.75rem, 2.6vw, 2.5rem);    /* section headings */
+    --t-5: clamp(2.6rem, 4.6vw, 4rem);       /* display and hero figures */
+
+    --paper: #0b0e12;
+    --surface: #12161c;
+    --ink: #edf0f3;
+    --muted: #8b95a3;
+    --rule: #242b34;
+    --accent: #f0a93a;
+    --accent-ink: #1a1204;
+
+    --font-display: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --gap: clamp(72px, 9vw, 120px);
+    --radius: 24px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--t-2);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3, p { margin: 0; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  svg { display: block; }
+
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); }
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 48px);
+  }
+
+  /* Fold */
+  .fold { min-height: 100svh; display: flex; flex-direction: column; }
+
+  .nav { padding-block: 18px; border-bottom: 1px solid var(--rule); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: var(--t-3); letter-spacing: -0.01em; }
+  .brand svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; gap: 28px; font-size: var(--t-1); color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 46px; padding-inline: 22px; border-radius: 999px;
+    font-weight: 500; font-size: var(--t-1); white-space: nowrap;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { background: #f6b955; }
+  .btn-ghost { border: 1px solid var(--rule); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--muted); }
+  .btn-sm { height: 38px; padding-inline: 16px; }
+
+  .hero { flex: 1; display: flex; align-items: center; padding-block: 20px 28px; }
+  .hero .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+  }
+  .eyebrow { font-family: var(--font-mono); font-size: var(--t-1); color: var(--accent); }
+  .hero h1 {
+    margin-top: 18px;
+    font-size: var(--t-5);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+  .hero .lead { margin-top: 22px; font-size: var(--t-3); color: var(--muted); max-width: 44ch; line-height: 1.5; }
+  .hero .ctas { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .readout { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--rule); }
+  .readout .label { font-family: var(--font-mono); font-size: var(--t-1); color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(240,169,58,.18); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 3px rgba(240,169,58,.18);} 50% { box-shadow: 0 0 0 6px rgba(240,169,58,.08);} }
+  .readout .vals { margin-top: 12px; display: flex; gap: 36px; flex-wrap: wrap; }
+  .readout .vals b { display: block; font-family: var(--font-mono); font-weight: 500; font-size: var(--t-3); font-variant-numeric: tabular-nums; }
+  .readout .vals span { font-size: var(--t-1); color: var(--muted); }
+
+  .hero-art { position: relative; }
+  .hero-art svg { width: 100%; height: auto; max-height: calc(100svh - 170px); }
+  .callout { font-family: var(--font-mono); font-size: var(--t-1); }
+  .callout .k { fill: var(--ink); }
+  .callout .v { fill: var(--muted); }
+
+  /* Sections */
+  .section { padding-block: var(--gap); border-top: 1px solid var(--rule); }
+  .sh { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: end; margin-bottom: 52px; }
+  .sh h2 { margin-top: 14px; font-size: var(--t-4); font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; }
+  .sh p { color: var(--muted); max-width: 56ch; }
+
+  /* Stat strip */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .stat { border-left: 1px solid var(--rule); padding-left: 22px; }
+  .stat .fig { font-size: var(--t-5); font-weight: 500; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat .fig small { font-size: var(--t-3); font-weight: 400; color: var(--muted); margin-left: 4px; letter-spacing: 0; }
+  .stat .lbl { margin-top: 10px; font-weight: 500; }
+  .stat p { margin-top: 6px; color: var(--muted); font-size: var(--t-1); max-width: 26ch; }
+
+  /* Measures grid */
+  .grid-lines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; }
+  .cell { background: var(--paper); padding: 30px 26px 28px; transition: background .2s ease; }
+  .cell:hover { background: var(--surface); }
+  .cell .ico { width: 28px; height: 28px; color: var(--accent); }
+  .cell h3 { margin-top: 20px; font-size: var(--t-2); font-weight: 500; }
+  .cell p { margin-top: 6px; font-size: var(--t-1); color: var(--muted); }
+  .cell .n { margin-top: 14px; font-family: var(--font-mono); font-size: var(--t-1); color: var(--ink); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 500; font-size: var(--t-1); color: var(--muted); padding: 0 20px 14px 0; border-bottom: 1px solid var(--rule); }
+  td { padding: 17px 20px 17px 0; border-bottom: 1px solid var(--rule); vertical-align: top; font-size: var(--t-2); }
+  tbody tr { transition: background .15s ease; }
+  tbody tr:hover { background: rgba(237,240,243,.03); }
+  td.num, th.num { font-family: var(--font-mono); font-size: var(--t-1); font-variant-numeric: tabular-nums; }
+  td.num { color: var(--ink); }
+  td.dim { color: var(--muted); }
+  th.now { color: var(--accent); }
+  .tbl-note { margin-top: 18px; font-size: var(--t-1); color: var(--muted); max-width: 70ch; }
+
+  /* Panels */
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .panel { border: 1px solid var(--rule); border-radius: var(--radius); padding: 40px; background: var(--surface); display: flex; flex-direction: column; gap: 22px; }
+  .panel .fig { font-size: var(--t-5); font-weight: 500; letter-spacing: -0.03em; line-height: 1; }
+  .panel .fig small { font-size: var(--t-3); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 6px; }
+  .panel p { color: var(--muted); max-width: 46ch; }
+  .panel .viz { margin-top: auto; }
+  .viz-cap { font-family: var(--font-mono); font-size: var(--t-1); color: var(--muted); margin-top: 10px; display: flex; justify-content: space-between; }
+
+  /* App */
+  .app { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: center; }
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone { width: 300px; border-radius: 42px; background: #0f1319; border: 1px solid #2b333d; padding: 12px; box-shadow: 0 40px 80px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.03); }
+  .screen { border-radius: 32px; background: var(--paper); padding: 26px 22px 22px; min-height: 560px; display: flex; flex-direction: column; gap: 16px; }
+  .screen .top { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .screen .big { font-size: var(--t-5); font-weight: 500; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .screen .sub { font-size: var(--t-1); color: var(--muted); margin-top: -8px; }
+  .screen .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .screen .chip { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 10px; }
+  .screen .chip b { display: block; font-family: var(--font-mono); font-weight: 500; font-size: var(--t-1); }
+  .screen .chip span { font-size: 11px; color: var(--muted); }
+  .screen .spark { border: 1px solid var(--rule); border-radius: 14px; padding: 12px; background: var(--surface); }
+  .screen .spark .cap { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .screen .alerts { display: flex; flex-direction: column; gap: 8px; }
+  .screen .alert { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--muted); }
+  .screen .alert i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 6px; }
+  .screen .alert b { color: var(--ink); font-weight: 500; }
+
+  .feature-list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--rule); }
+  .feature-list li:last-child { border-bottom: 1px solid var(--rule); }
+  .feature-list .idx { font-family: var(--font-mono); font-size: var(--t-1); color: var(--accent); padding-top: 3px; }
+  .feature-list h3 { font-size: var(--t-2); font-weight: 500; }
+  .feature-list p { color: var(--muted); font-size: var(--t-1); margin-top: 4px; max-width: 54ch; }
+
+  /* Buy */
+  .buy { border: 1px solid var(--rule); border-radius: 28px; background: linear-gradient(180deg, #141a21, #0e1217); padding: clamp(32px, 5vw, 60px); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; }
+  .price { font-size: var(--t-5); font-weight: 500; letter-spacing: -0.03em; line-height: 1; margin-top: 14px; }
+  .price small { font-size: var(--t-3); font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 8px; }
+  .buy .lead { margin-top: 18px; color: var(--muted); max-width: 46ch; }
+  .buy .ctas { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .box-list li { display: flex; justify-content: space-between; gap: 20px; padding: 13px 0; border-top: 1px solid var(--rule); font-size: var(--t-1); }
+  .box-list li:last-child { border-bottom: 1px solid var(--rule); }
+  .box-list .r { color: var(--muted); font-family: var(--font-mono); white-space: nowrap; }
+  .ship { margin-top: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+  .ship div { font-size: var(--t-1); color: var(--muted); }
+  .ship b { display: block; color: var(--ink); font-weight: 500; margin-bottom: 2px; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--rule); padding-block: 56px 40px; }
+  .foot { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .foot p { color: var(--muted); font-size: var(--t-1); max-width: 36ch; margin-top: 14px; }
+  .foot h4 { margin: 0 0 14px; font-size: var(--t-1); font-weight: 500; color: var(--ink); }
+  .foot li { font-size: var(--t-1); color: var(--muted); padding: 5px 0; }
+  .foot li a:hover { color: var(--ink); }
+  .foot-bottom { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--t-1); color: var(--muted); }
+
+  @media (max-width: 960px) {
+    .nav-links { display: none; }
+    .hero .wrap { grid-template-columns: 1fr; gap: 24px; }
+    .hero-art { order: -1; }
+    .hero-art svg { max-height: 44svh; }
+    .hero h1 { max-width: 18ch; }
+    .sh, .stats, .panels, .app, .buy, .foot { grid-template-columns: 1fr; }
+    .stats { gap: 24px; }
+    .grid-lines { grid-template-columns: 1fr 1fr; }
+    .app { gap: 40px; }
+  }
+  @media (max-width: 600px) {
+    .grid-lines { grid-template-columns: 1fr; }
+    .ship { grid-template-columns: 1fr; }
+    .readout .vals { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="Anemo home">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="#f0a93a" stroke-width="1.6"/>
+          <path d="M12 4v4M12 16v4M4 12h4M16 12h4" stroke="#f0a93a" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 12l4-6" stroke="#edf0f3" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="1.6" fill="#edf0f3"/>
+        </svg>
+        Anemo
+      </a>
+      <div class="nav-links">
+        <a href="#measures">What it measures</a>
+        <a href="#accuracy">Accuracy</a>
+        <a href="#power">Power and range</a>
+        <a href="#app">App</a>
+        <a href="#compare">S1 vs S2</a>
+      </div>
+      <a class="btn btn-primary btn-sm" href="#buy">Order the S2</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Station S2, second generation</p>
+        <h1>The weather at your address, to a tenth of a degree.</h1>
+        <p class="lead">One sealed instrument on a pole. Nine sensors, an ultrasonic wind head with no moving parts, two years on a set of cells, and a 1.5 km link to the hub indoors.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#buy">Order the S2, $349</a>
+          <a class="btn btn-ghost" href="#accuracy">Read the spec sheet <span aria-hidden="true">&darr;</span></a>
+        </div>
+        <div class="readout">
+          <div class="label"><span class="dot"></span> Live from the roof of the workshop in Bergen</div>
+          <div class="vals">
+            <div><b id="rd-temp">11.4 °C</b><span>air temperature</span></div>
+            <div><b id="rd-wind">6.2 m/s</b><span>wind, north-west</span></div>
+            <div><b id="rd-press">1013.2 hPa</b><span>pressure, steady</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <svg viewBox="0 0 560 640" role="img" aria-labelledby="art-title">
+          <title id="art-title">Annotated drawing of the Anemo Station S2 on its mast</title>
+          <defs>
+            <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#222a34"/>
+              <stop offset="1" stop-color="#10151b"/>
+            </linearGradient>
+            <linearGradient id="gFunnel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2b333d"/>
+              <stop offset="1" stop-color="#161c23"/>
+            </linearGradient>
+            <linearGradient id="gPlate" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2a323c"/>
+              <stop offset="1" stop-color="#1a2028"/>
+            </linearGradient>
+            <linearGradient id="gPole" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#151a21"/>
+              <stop offset=".5" stop-color="#262e38"/>
+              <stop offset="1" stop-color="#12171d"/>
+            </linearGradient>
+            <filter id="glow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- depth rings -->
+          <g fill="none" stroke="#242b34">
+            <circle cx="280" cy="330" r="112"/>
+            <circle cx="280" cy="330" r="196" stroke-opacity=".7"/>
+            <circle cx="280" cy="330" r="280" stroke-opacity=".4"/>
+          </g>
+
+          <!-- gauge ticks on the right edge -->
+          <g stroke="#2e3640">
+            <line x1="548" y1="80" x2="556" y2="80"/>
+            <line x1="552" y1="120" x2="556" y2="120"/>
+            <line x1="548" y1="160" x2="556" y2="160"/>
+            <line x1="552" y1="200" x2="556" y2="200"/>
+            <line x1="548" y1="240" x2="556" y2="240"/>
+            <line x1="552" y1="280" x2="556" y2="280"/>
+            <line x1="548" y1="320" x2="556" y2="320"/>
+            <line x1="552" y1="360" x2="556" y2="360"/>
+            <line x1="548" y1="400" x2="556" y2="400"/>
+            <line x1="552" y1="440" x2="556" y2="440"/>
+            <line x1="548" y1="480" x2="556" y2="480"/>
+            <line x1="552" y1="520" x2="556" y2="520"/>
+            <line x1="548" y1="560" x2="556" y2="560"/>
+          </g>
+          <g class="callout" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" fill="#8b95a3">
+            <text x="540" y="84" text-anchor="end">2.0 m</text>
+            <text x="540" y="564" text-anchor="end">0.0 m</text>
+          </g>
+
+          <!-- ground shadow -->
+          <ellipse cx="280" cy="630" rx="150" ry="7" fill="#000" opacity=".55"/>
+
+          <!-- mast -->
+          <rect x="273" y="470" width="14" height="164" rx="2" fill="url(#gPole)"/>
+          <rect x="275" y="22" width="10" height="130" rx="2" fill="url(#gPole)"/>
+
+          <!-- ultrasonic wind head: two plates, four posts -->
+          <ellipse cx="280" cy="66" rx="60" ry="13" fill="url(#gPlate)" stroke="#3a444f"/>
+          <g fill="#262e38" stroke="#3a444f">
+            <rect x="226" y="34" width="9" height="34" rx="3"/>
+            <rect x="325" y="34" width="9" height="34" rx="3"/>
+            <rect x="275" y="26" width="9" height="30" rx="3"/>
+            <rect x="275" y="44" width="9" height="34" rx="3"/>
+          </g>
+          <ellipse cx="280" cy="30" rx="60" ry="13" fill="url(#gPlate)" stroke="#3a444f"/>
+          <ellipse cx="280" cy="30" rx="42" ry="7" fill="#161c23" stroke="#2b333d"/>
+
+          <!-- rain collector -->
+          <path d="M188 150 L372 150 L308 210 L252 210 Z" fill="url(#gFunnel)" stroke="#333c47"/>
+          <ellipse cx="280" cy="150" rx="92" ry="13" fill="#262e38" stroke="#3d4753"/>
+          <ellipse cx="280" cy="150" rx="76" ry="8" fill="#0b0e12"/>
+
+          <!-- collar with solar cell -->
+          <rect x="204" y="208" width="152" height="48" rx="12" fill="#11161c" stroke="#2b333d"/>
+          <rect x="216" y="216" width="128" height="32" rx="5" fill="#0e2234" stroke="#1f3d56"/>
+          <g stroke="#1a3550">
+            <line x1="237" y1="216" x2="237" y2="248"/>
+            <line x1="258" y1="216" x2="258" y2="248"/>
+            <line x1="280" y1="216" x2="280" y2="248"/>
+            <line x1="301" y1="216" x2="301" y2="248"/>
+            <line x1="322" y1="216" x2="322" y2="248"/>
+            <line x1="216" y1="232" x2="344" y2="232"/>
+          </g>
+
+          <!-- shield core -->
+          <rect x="216" y="252" width="128" height="150" fill="#141a21"/>
+
+          <!-- louvred radiation shield: seven plates -->
+          <g fill="url(#gPlate)" stroke="#3a444f">
+            <ellipse cx="280" cy="264" rx="76" ry="12"/>
+            <ellipse cx="280" cy="286" rx="76" ry="12"/>
+            <ellipse cx="280" cy="308" rx="76" ry="12"/>
+            <ellipse cx="280" cy="330" rx="76" ry="12"/>
+            <ellipse cx="280" cy="352" rx="76" ry="12"/>
+            <ellipse cx="280" cy="374" rx="76" ry="12"/>
+            <ellipse cx="280" cy="396" rx="76" ry="12"/>
+          </g>
+
+          <!-- lower housing: electronics, lightning sensor, battery bay -->
+          <rect x="218" y="404" width="124" height="70" rx="16" fill="url(#gBody)" stroke="#2b333d"/>
+          <line x1="232" y1="446" x2="328" y2="446" stroke="#2b333d"/>
+          <text x="280" y="432" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" fill="#5d6876">anemo s2</text>
+          <circle cx="280" cy="460" r="3.5" fill="#f0a93a" filter="url(#glow)"/>
+
+          <!-- pole clamp -->
+          <rect x="246" y="480" width="68" height="22" rx="5" fill="#222a34" stroke="#333d49"/>
+          <circle cx="256" cy="491" r="3" fill="#0b0e12" stroke="#3a444f"/>
+          <circle cx="304" cy="491" r="3" fill="#0b0e12" stroke="#3a444f"/>
+
+          <!-- callouts, left -->
+          <g class="callout" stroke="#4a5563">
+            <line x1="226" y1="50" x2="166" y2="50"/>
+            <line x1="204" y1="232" x2="166" y2="232"/>
+            <line x1="218" y1="440" x2="166" y2="440"/>
+          </g>
+          <g fill="#8b95a3">
+            <circle cx="226" cy="50" r="2.5"/>
+            <circle cx="204" cy="232" r="2.5"/>
+            <circle cx="218" cy="440" r="2.5"/>
+          </g>
+          <g class="callout" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" text-anchor="end">
+            <text x="156" y="46" class="k">Ultrasonic wind head</text>
+            <text x="156" y="62" class="v">no moving parts</text>
+            <text x="156" y="228" class="k">Solar collar cell</text>
+            <text x="156" y="244" class="v">tops the cells up</text>
+            <text x="156" y="436" class="k">Lightning sensor</text>
+            <text x="156" y="452" class="v">ranging to 40 km</text>
+          </g>
+
+          <!-- callouts, right -->
+          <g class="callout" stroke="#4a5563">
+            <line x1="364" y1="158" x2="404" y2="158"/>
+            <line x1="356" y1="330" x2="404" y2="330"/>
+            <line x1="314" y1="491" x2="404" y2="491"/>
+          </g>
+          <g fill="#8b95a3">
+            <circle cx="364" cy="158" r="2.5"/>
+            <circle cx="356" cy="330" r="2.5"/>
+            <circle cx="314" cy="491" r="2.5"/>
+          </g>
+          <g class="callout" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12">
+            <text x="412" y="154" class="k">Rain collector</text>
+            <text x="412" y="170" class="v">0.2 mm per tip</text>
+            <text x="412" y="326" class="k">Louvred shield</text>
+            <text x="412" y="342" class="v">fan aspirated</text>
+            <text x="412" y="487" class="k">Pole clamp</text>
+            <text x="412" y="503" class="v">25 to 50 mm masts</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Stat strip -->
+<section class="section">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat">
+        <div class="fig">&plusmn;0.1<small>&deg;C</small></div>
+        <div class="lbl">Temperature accuracy</div>
+        <p>Every unit calibrated on the line against a reference probe.</p>
+      </div>
+      <div class="stat">
+        <div class="fig">1.5<small>km</small></div>
+        <div class="lbl">Range to the hub</div>
+        <p>Line of sight on 868 or 915 MHz. About 300 m through two walls.</p>
+      </div>
+      <div class="stat">
+        <div class="fig">24<small>months</small></div>
+        <div class="lbl">Battery life</div>
+        <p>Four lithium cells, with the solar cell doing most of the work.</p>
+      </div>
+      <div class="stat">
+        <div class="fig">3<small>s</small></div>
+        <div class="lbl">Wind update interval</div>
+        <p>Gusts land in the app while they are still blowing. Everything else, every 60 s.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What it measures -->
+<section class="section" id="measures">
+  <div class="wrap">
+    <div class="sh">
+      <div>
+        <p class="eyebrow">What it measures</p>
+        <h2>Nine readings from one sealed housing.</h2>
+      </div>
+      <p>There is nothing to bolt on and nothing to spin. The wind head listens instead of turning, the rain collector self-drains, and the whole assembly weighs 1.9 kg with cells fitted.</p>
+    </div>
+
+    <div class="grid-lines">
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 5a3 3 0 0 1 6 0v11.2a5 5 0 1 1-6 0Z"/><path d="M14 11v8"/><circle cx="14" cy="20" r="1.6" fill="currentColor" stroke="none"/></svg>
+        <h3>Temperature</h3>
+        <p>Platinum resistance element inside the aspirated shield.</p>
+        <div class="n">-40 to 65 &deg;C</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 4s7 8 7 13a7 7 0 0 1-14 0c0-5 7-13 7-13Z"/><path d="M10 17a4 4 0 0 0 4 4"/></svg>
+        <h3>Humidity</h3>
+        <p>Capacitive polymer sensor, heated to shrug off condensation.</p>
+        <div class="n">0 to 100 % relative</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 19a10 10 0 0 1 18 0"/><path d="M14 19l5-6"/><circle cx="14" cy="19" r="1.6" fill="currentColor" stroke="none"/><path d="M5 23h18"/></svg>
+        <h3>Pressure</h3>
+        <p>Absolute barometer, corrected to sea level for your elevation.</p>
+        <div class="n">300 to 1100 hPa</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 10h13a3 3 0 1 0-3-3"/><path d="M4 15h17a3 3 0 1 1-3 3"/><path d="M4 20h8a2.5 2.5 0 1 1-2.5 2.5"/></svg>
+        <h3>Wind speed</h3>
+        <p>Ultrasonic time of flight across four transducers.</p>
+        <div class="n">0 to 70 m/s</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="14" cy="14" r="10"/><path d="M17.5 10.5l-2 5-5 2 2-5Z" fill="currentColor" stroke="none"/></svg>
+        <h3>Wind direction</h3>
+        <p>Derived from the same four transducers, so it never sticks.</p>
+        <div class="n">0 to 359&deg;, 1&deg; steps</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 12a6 6 0 0 1 12-1 4 4 0 0 1-1 8H9a4 4 0 0 1-1-7Z"/><path d="M10 22l-1 3M15 22l-1 3M20 22l-1 3"/></svg>
+        <h3>Rainfall</h3>
+        <p>Tipping bucket under a 200 cm&sup2; collector, with a debris guard.</p>
+        <div class="n">0.2 mm per tip</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="14" cy="14" r="5"/><path d="M14 3v3M14 22v3M3 14h3M22 14h3M6.2 6.2l2.1 2.1M19.7 19.7l2.1 2.1M6.2 21.8l2.1-2.1M19.7 8.3l2.1-2.1"/></svg>
+        <h3>Solar irradiance</h3>
+        <p>Silicon pyranometer under a diffusing dome.</p>
+        <div class="n">0 to 2000 W/m&sup2;</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 17a8 8 0 0 1 16 0"/><path d="M14 4v4M5 9l2.5 2.5M23 9l-2.5 2.5"/><path d="M4 22h20"/></svg>
+        <h3>Ultraviolet index</h3>
+        <p>Erythemal weighted photodiode, reported on the standard scale.</p>
+        <div class="n">0 to 16</div>
+      </div>
+      <div class="cell">
+        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3L6 16h7l-1 9 9-13h-7Z"/></svg>
+        <h3>Lightning</h3>
+        <p>Detects strikes and estimates distance from the radio signature.</p>
+        <div class="n">out to 40 km</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Accuracy -->
+<section class="section" id="accuracy">
+  <div class="wrap">
+    <div class="sh">
+      <div>
+        <p class="eyebrow">Sensors and accuracy</p>
+        <h2>The numbers we are prepared to be held to.</h2>
+      </div>
+      <p>Figures are stated across the full operating range, not at a single friendly point. Each station ships with its own calibration certificate, and you can re-run the check in the app against a reference of your choosing.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sensor</th>
+          <th class="num">Range</th>
+          <th class="num">Accuracy</th>
+          <th class="num">Resolution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Temperature</td><td class="num">-40 to 65 &deg;C</td><td class="num">&plusmn;0.1 &deg;C</td><td class="num">0.01 &deg;C</td></tr>
+        <tr><td>Relative humidity</td><td class="num">0 to 100 %</td><td class="num">&plusmn;1.5 %</td><td class="num">0.1 %</td></tr>
+        <tr><td>Barometric pressure</td><td class="num">300 to 1100 hPa</td><td class="num">&plusmn;0.3 hPa</td><td class="num">0.01 hPa</td></tr>
+        <tr><td>Wind speed</td><td class="num">0 to 70 m/s</td><td class="num">&plusmn;2 % or 0.1 m/s</td><td class="num">0.01 m/s</td></tr>
+        <tr><td>Wind direction</td><td class="num">0 to 359&deg;</td><td class="num">&plusmn;2&deg;</td><td class="num">1&deg;</td></tr>
+        <tr><td>Rainfall</td><td class="num">0 to 400 mm/h</td><td class="num">&plusmn;3 %</td><td class="num">0.2 mm</td></tr>
+        <tr><td>Solar irradiance</td><td class="num">0 to 2000 W/m&sup2;</td><td class="num">&plusmn;5 %</td><td class="num">1 W/m&sup2;</td></tr>
+        <tr><td>Ultraviolet index</td><td class="num">0 to 16</td><td class="num">&plusmn;0.5</td><td class="num">0.1</td></tr>
+        <tr><td>Lightning distance</td><td class="num">0 to 40 km</td><td class="num">&plusmn;1 km</td><td class="num">per strike</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-note">Wind accuracy is the larger of the two figures. Housing is sealed to one metre of submersion for 30 minutes and rated from -40 to 65 &deg;C, the same as the temperature sensor itself.</p>
+  </div>
+</section>
+
+<!-- Power and range -->
+<section class="section" id="power">
+  <div class="wrap">
+    <div class="sh">
+      <div>
+        <p class="eyebrow">Power and range</p>
+        <h2>Put it where the weather is, not where the socket is.</h2>
+      </div>
+      <p>The S2 needs no mains power and no Wi-Fi at the mast. It talks to a small hub indoors over a sub-gigahertz radio link, and the hub plugs into your router.</p>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="fig">24<small>months on a set of cells</small></div>
+        <p>Four lithium cells sit in a sealed bay at the base. The solar cell on the collar keeps the pack topped up, so most stations report a battery figure that barely moves in the first year. When it does start to drop, the app gives you six weeks of notice.</p>
+        <div class="viz">
+          <svg viewBox="0 0 480 96" width="100%" aria-label="Battery charge over 24 months, staying above 90 percent for the first 12">
+            <g fill="#f0a93a">
+              <rect x="0" y="6" width="14" height="90" rx="2"/><rect x="20" y="6" width="14" height="90" rx="2"/><rect x="40" y="6" width="14" height="90" rx="2"/><rect x="60" y="6" width="14" height="90" rx="2"/><rect x="80" y="7" width="14" height="89" rx="2"/><rect x="100" y="7" width="14" height="89" rx="2"/><rect x="120" y="8" width="14" height="88" rx="2"/><rect x="140" y="8" width="14" height="88" rx="2"/><rect x="160" y="9" width="14" height="87" rx="2"/><rect x="180" y="10" width="14" height="86" rx="2"/><rect x="200" y="11" width="14" height="85" rx="2"/><rect x="220" y="13" width="14" height="83" rx="2"/>
+            </g>
+            <g fill="#f0a93a" opacity=".55">
+              <rect x="240" y="16" width="14" height="80" rx="2"/><rect x="260" y="20" width="14" height="76" rx="2"/><rect x="280" y="25" width="14" height="71" rx="2"/><rect x="300" y="31" width="14" height="65" rx="2"/><rect x="320" y="38" width="14" height="58" rx="2"/><rect x="340" y="46" width="14" height="50" rx="2"/>
+            </g>
+            <g fill="#f0a93a" opacity=".3">
+              <rect x="360" y="55" width="14" height="41" rx="2"/><rect x="380" y="64" width="14" height="32" rx="2"/><rect x="400" y="72" width="14" height="24" rx="2"/><rect x="420" y="79" width="14" height="17" rx="2"/><rect x="440" y="85" width="14" height="11" rx="2"/><rect x="460" y="90" width="14" height="6" rx="2"/>
+            </g>
+          </svg>
+          <div class="viz-cap"><span>month 1, 100 %</span><span>month 12, 91 %</span><span>month 24, 6 %</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="fig">1.5<small>km line of sight</small></div>
+        <p>Long-range radio on 868 MHz in Europe and 915 MHz in North America. Far end of the garden, the roof of the barn, the top of the boathouse: if you can see the house, the hub can hear the station. Through two walls, plan on about 300 m.</p>
+        <div class="viz">
+          <svg viewBox="0 0 480 150" width="100%" aria-label="Diagram of the hub indoors and the station on a mast with range arcs between them">
+            <g fill="none" stroke="#2e3640">
+              <path d="M60 130a90 90 0 0 1 0-110"/>
+              <path d="M60 145a115 115 0 0 1 0-140" stroke-opacity=".6"/>
+              <path d="M180 140a140 140 0 0 1 0-130" stroke-opacity=".7"/>
+              <path d="M300 148a160 160 0 0 1 0-146" stroke-opacity=".45"/>
+            </g>
+            <line x1="40" y1="75" x2="440" y2="75" stroke="#f0a93a" stroke-dasharray="3 6" stroke-opacity=".7"/>
+            <!-- hub -->
+            <rect x="18" y="60" width="44" height="30" rx="7" fill="#1d242d" stroke="#3a444f"/>
+            <circle cx="40" cy="75" r="3" fill="#f0a93a"/>
+            <!-- station -->
+            <rect x="436" y="52" width="8" height="46" rx="1" fill="#262e38"/>
+            <ellipse cx="440" cy="52" rx="14" ry="4" fill="#2a323c" stroke="#3a444f"/>
+            <rect x="428" y="66" width="24" height="20" rx="5" fill="#1d242d" stroke="#3a444f"/>
+            <circle cx="440" cy="92" r="2.5" fill="#f0a93a"/>
+            <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" fill="#8b95a3">
+              <text x="18" y="112">hub, indoors</text>
+              <text x="462" y="112" text-anchor="end">station, on the mast</text>
+              <text x="130" y="30">300 m</text>
+              <text x="250" y="30">800 m</text>
+              <text x="372" y="30">1.5 km</text>
+            </g>
+          </svg>
+          <div class="viz-cap"><span>two walls</span><span>one wall</span><span>clear view</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- App -->
+<section class="section" id="app">
+  <div class="wrap">
+    <div class="app">
+      <div class="phone-wrap">
+        <div class="phone" aria-label="Anemo app showing current conditions">
+          <div class="screen">
+            <div class="top"><span>Home, Bergen</span><span id="ph-time">14:32</span></div>
+            <div class="big" id="ph-temp">11.4&deg;</div>
+            <div class="sub">Feels like 8.9&deg;, falling slowly</div>
+            <div class="row">
+              <div class="chip"><b id="ph-wind">6.2 m/s</b><span>wind, north-west</span></div>
+              <div class="chip"><b>78 %</b><span>humidity</span></div>
+              <div class="chip"><b id="ph-press">1013</b><span>hPa, steady</span></div>
+            </div>
+            <div class="spark">
+              <div class="cap"><span>temperature, 24 h</span><span>high 13.8, low 7.1</span></div>
+              <svg viewBox="0 0 220 60" width="100%" aria-hidden="true">
+                <path d="M0 40 C15 42 25 46 40 44 S65 30 80 26 S110 12 130 14 S160 22 180 28 S205 36 220 34" fill="none" stroke="#f0a93a" stroke-width="1.8"/>
+                <path d="M0 40 C15 42 25 46 40 44 S65 30 80 26 S110 12 130 14 S160 22 180 28 S205 36 220 34 V60 H0Z" fill="#f0a93a" opacity=".08"/>
+                <circle cx="220" cy="34" r="2.5" fill="#f0a93a"/>
+              </svg>
+            </div>
+            <div class="spark">
+              <div class="cap"><span>rain today</span><span>4.6 mm</span></div>
+              <svg viewBox="0 0 220 36" width="100%" aria-hidden="true">
+                <g fill="#3a4654">
+                  <rect x="0" y="34" width="7" height="2"/><rect x="9" y="34" width="7" height="2"/><rect x="18" y="34" width="7" height="2"/><rect x="27" y="34" width="7" height="2"/><rect x="36" y="30" width="7" height="6"/><rect x="45" y="22" width="7" height="14"/><rect x="54" y="10" width="7" height="26"/><rect x="63" y="4" width="7" height="32"/><rect x="72" y="14" width="7" height="22"/><rect x="81" y="26" width="7" height="10"/><rect x="90" y="32" width="7" height="4"/><rect x="99" y="34" width="7" height="2"/><rect x="108" y="34" width="7" height="2"/><rect x="117" y="34" width="7" height="2"/><rect x="126" y="34" width="7" height="2"/><rect x="135" y="30" width="7" height="6"/><rect x="144" y="28" width="7" height="8"/><rect x="153" y="34" width="7" height="2"/><rect x="162" y="34" width="7" height="2"/><rect x="171" y="34" width="7" height="2"/><rect x="180" y="34" width="7" height="2"/><rect x="189" y="34" width="7" height="2"/><rect x="198" y="34" width="7" height="2"/><rect x="207" y="34" width="7" height="2"/>
+                </g>
+              </svg>
+            </div>
+            <div class="alerts">
+              <div class="alert"><i></i><div><b>Gust alert armed</b> at 15 m/s, last tripped Tuesday 03:12</div></div>
+              <div class="alert"><i></i><div><b>Frost watch</b> tonight, 2 &deg;C forecast at the mast by 05:00</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="eyebrow">The companion app</p>
+        <h2 style="margin-top:14px;font-size:var(--t-4);font-weight:500;letter-spacing:-0.02em;line-height:1.1;text-wrap:balance">Every reading, every three seconds, on whatever you have in your hand.</h2>
+        <p class="muted" style="margin-top:16px;max-width:52ch">Phone, tablet and browser. The hub keeps the data, so the app works on your own network with no account and keeps working if we ever go away.</p>
+        <ul class="feature-list" style="margin-top:32px">
+          <li>
+            <span class="idx">01</span>
+            <div><h3>Ten years of history at full resolution</h3><p>Stored on the hub, not in a cloud you rent. Scrub back to any hour, any year, and see what the wind was doing.</p></div>
+          </li>
+          <li>
+            <span class="idx">02</span>
+            <div><h3>Alerts for the things that cost you money</h3><p>Frost at the mast, gusts over a threshold you set, rain rate, and lightning inside 10 km. Pushed to your phone, or to a relay in the greenhouse.</p></div>
+          </li>
+          <li>
+            <span class="idx">03</span>
+            <div><h3>Your data leaves as a spreadsheet, or on request</h3><p>Export any range as a table. Or let Home Assistant, Apple Home and Weather Underground read straight from the hub over the local network.</p></div>
+          </li>
+          <li>
+            <span class="idx">04</span>
+            <div><h3>No subscription, no sign-in</h3><p>The price of the station is the whole price. Firmware updates arrive through the hub for as long as we make the product.</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Compare -->
+<section class="section" id="compare">
+  <div class="wrap">
+    <div class="sh">
+      <div>
+        <p class="eyebrow">Compared with the S1</p>
+        <h2>What four years of field reports changed.</h2>
+      </div>
+      <p>The S1 shipped in 2022 with cups and a vane. Cups ice up, vanes stick, and both wear out. The S2 removes every moving part except the rain bucket, triples the accuracy of the barometer and reaches five times as far.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Specification</th>
+          <th class="num">Station S1, 2022</th>
+          <th class="num now">Station S2, new</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Wind sensing</td><td class="num dim">Cup anemometer and vane</td><td class="num">Ultrasonic, four transducers</td></tr>
+        <tr><td>Wind update interval</td><td class="num dim">30 s</td><td class="num">3 s</td></tr>
+        <tr><td>Temperature accuracy</td><td class="num dim">&plusmn;0.3 &deg;C</td><td class="num">&plusmn;0.1 &deg;C</td></tr>
+        <tr><td>Pressure accuracy</td><td class="num dim">&plusmn;1.0 hPa</td><td class="num">&plusmn;0.3 hPa</td></tr>
+        <tr><td>Rain resolution</td><td class="num dim">0.25 mm</td><td class="num">0.2 mm</td></tr>
+        <tr><td>Lightning detection</td><td class="num dim">None</td><td class="num">Strikes ranged to 40 km</td></tr>
+        <tr><td>Radio range to hub</td><td class="num dim">300 m</td><td class="num">1.5 km</td></tr>
+        <tr><td>Battery life</td><td class="num dim">8 months</td><td class="num">24 months, solar assisted</td></tr>
+        <tr><td>Shield aspiration</td><td class="num dim">Passive</td><td class="num">Fan, solar powered</td></tr>
+        <tr><td>Housing</td><td class="num dim">Moulded polymer</td><td class="num">Anodised aluminium</td></tr>
+        <tr><td>Weight with cells</td><td class="num dim">2.4 kg</td><td class="num">1.9 kg</td></tr>
+        <tr><td>Price at launch</td><td class="num dim">$249</td><td class="num">$349</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-note">Own an S1? The S2 pairs with the same hub, and the S1 goes on reporting alongside it as a second site. Trade one in at checkout for $60 off.</p>
+  </div>
+</section>
+
+<!-- Buy -->
+<section class="section" id="buy">
+  <div class="wrap">
+    <div class="buy">
+      <div>
+        <p class="eyebrow">Price and shipping</p>
+        <div class="price">$349<small>everything in the box</small></div>
+        <p class="lead">One price, no tiers, no plan on top. Order today and the station is on a mast by the weekend.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#top">Order the S2</a>
+          <a class="btn btn-ghost" href="#accuracy">Download the calibration sheet</a>
+        </div>
+        <div class="ship">
+          <div><b>Ships in 2 to 4 business days</b>from Bergen for Europe, from Rotterdam and Toronto for everywhere else.</div>
+          <div><b>Free shipping</b>to Norway, the European Union, the United Kingdom, the United States and Canada.</div>
+          <div><b>30 days to return it</b>for any reason, with the label paid.</div>
+          <div><b>Three-year warranty</b>on the station and the hub, including the cells.</div>
+        </div>
+      </div>
+      <div>
+        <ul class="box-list">
+          <li><span>Station S2</span><span class="r">1</span></li>
+          <li><span>Indoor hub with power adapter</span><span class="r">1</span></li>
+          <li><span>Pole clamp, 25 to 50 mm</span><span class="r">1</span></li>
+          <li><span>Lithium cells, fitted</span><span class="r">4</span></li>
+          <li><span>Bubble level and spanner</span><span class="r">1 each</span></li>
+          <li><span>Calibration certificate</span><span class="r">this unit</span></li>
+          <li><span>Mast, 2 m, aluminium</span><span class="r">optional, $59</span></li>
+        </ul>
+        <p class="tbl-note" style="margin-top:20px">Prices in United States dollars. Tax is worked out at checkout. Retail partners in 14 countries stock the S2 from October.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#top" aria-label="Anemo home">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="#f0a93a" stroke-width="1.6"/>
+            <path d="M12 4v4M12 16v4M4 12h4M16 12h4" stroke="#f0a93a" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M12 12l4-6" stroke="#edf0f3" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="1.6" fill="#edf0f3"/>
+          </svg>
+          Anemo
+        </a>
+        <p>Weather instruments built and calibrated in Bergen, Norway, where the weather gives them a proper test before they ship.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#top">Station S2</a></li>
+          <li><a href="#power">Indoor hub</a></li>
+          <li><a href="#buy">Spare parts</a></li>
+          <li><a href="#accuracy">Spec sheet</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#power">Siting guide</a></li>
+          <li><a href="#accuracy">Calibration</a></li>
+          <li><a href="#app">Firmware notes</a></li>
+          <li><a href="#buy">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#top">About</a></li>
+          <li><a href="#compare">Journal</a></li>
+          <li><a href="#buy">Retailers</a></li>
+          <li><a href="#top">Press kit</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Anemo Instruments, Bergen, Norway. 2026.</span>
+      <span>Station S2 is certified for radio use in the European Union, the United Kingdom, the United States and Canada.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Gentle drift on the live readout so the fold reads as a live instrument, not a screenshot.
+  (function () {
+    var temp = 11.4, wind = 6.2, press = 1013.2;
+    var rdT = document.getElementById('rd-temp');
+    var rdW = document.getElementById('rd-wind');
+    var rdP = document.getElementById('rd-press');
+    var phT = document.getElementById('ph-temp');
+    var phW = document.getElementById('ph-wind');
+    var phP = document.getElementById('ph-press');
+    var phTime = document.getElementById('ph-time');
+
+    function jitter(v, step, lo, hi) {
+      v += (Math.random() - 0.5) * step;
+      return Math.min(hi, Math.max(lo, v));
+    }
+    function paint() {
+      rdT.textContent = temp.toFixed(1) + ' °C';
+      rdW.textContent = wind.toFixed(1) + ' m/s';
+      rdP.textContent = press.toFixed(1) + ' hPa';
+      phT.textContent = temp.toFixed(1) + '°';
+      phW.textContent = wind.toFixed(1) + ' m/s';
+      phP.textContent = Math.round(press);
+    }
+    function clock() {
+      var d = new Date();
+      phTime.textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+    setInterval(function () {
+      temp = jitter(temp, 0.2, 10.8, 12.0);
+      wind = jitter(wind, 1.6, 3.5, 9.5);
+      press = jitter(press, 0.2, 1012.6, 1013.8);
+      paint();
+    }, 3000);
+    clock();
+    setInterval(clock, 30000);
+  })();
+</script>
+</body>
+</html>

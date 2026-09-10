@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tenner: the savings card for 13 to 17 year olds</title>
+<meta name="description" content="Tenner is a savings app and contactless card for teenagers. Parents set it up, approve what matters and see every payment. No fees, no overdraft, real goals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  /* type scale: five steps */
+  --t-xs: 0.8125rem;                       /* 13px meta */
+  --t-sm: 0.9375rem;                       /* 15px small body */
+  --t-md: 1.125rem;                        /* 18px body */
+  --t-lg: clamp(1.625rem, 2.4vw, 2.125rem);/* 26 to 34px section titles */
+  --t-xl: clamp(2.5rem, 4.9vw, 3.9rem);    /* 40 to 62px hero */
+
+  --display: "Fredoka", "Inter Tight", system-ui, sans-serif;
+  --body: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --paper: #FFF7E8;
+  --ink: #1B2A30;
+  --muted: #5C6B70;
+  --rule: rgba(27,42,48,0.12);
+  --sky: #7ED8F6;
+  --lime: #CDF25A;
+  --tangerine: #FF7A3D;
+  --grape: #7B5CD6;
+  --pink: #FFA6D9;
+  --white: #FFFFFF;
+
+  --gap: clamp(72px, 9vw, 120px);
+  --r-pill: 999px;
+  --r-lg: 28px;
+  --r-md: 18px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--body);
+  font-size:var(--t-md);
+  line-height:1.55;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p{margin:0}
+a{color:inherit;text-decoration:none}
+ul{list-style:none;margin:0;padding:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+strong{font-weight:600}
+
+/* container owns only the inline gutter */
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(20px,4vw,40px)}
+
+.section{padding-block:var(--gap)}
+.section-head{max-width:34ch;margin-bottom:clamp(36px,5vw,56px)}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--display);font-weight:600;font-size:var(--t-sm);
+  padding:6px 14px;border-radius:var(--r-pill);
+  background:var(--white);border:1.5px solid var(--ink);
+  margin-bottom:18px;
+}
+.kicker i{width:9px;height:9px;border-radius:50%;background:var(--tangerine);display:inline-block}
+h2{font-family:var(--display);font-weight:600;font-size:var(--t-lg);line-height:1.12;letter-spacing:-0.01em}
+h3{font-family:var(--display);font-weight:600;font-size:1.25rem;line-height:1.2}
+.lede{color:var(--muted);margin-top:14px;max-width:52ch}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--display);font-weight:600;font-size:var(--t-md);
+  padding:14px 24px;border-radius:var(--r-pill);
+  border:2px solid var(--ink);line-height:1;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 -2px rgba(27,42,48,.18)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-lime{background:var(--lime);color:var(--ink)}
+.btn-white{background:var(--white);color:var(--ink)}
+.btn svg{width:18px;height:18px}
+
+/* ---------- fold ---------- */
+.fold{min-height:100svh;display:flex;flex-direction:column;background:var(--sky);position:relative;overflow:hidden}
+.nav{position:relative;z-index:3}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:18px}
+.logo{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:-0.01em}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:var(--ink);display:grid;place-items:center}
+.logo-mark svg{width:22px;height:22px}
+.nav-links{display:flex;gap:28px;font-weight:500;font-size:var(--t-sm)}
+.nav-links a{padding:6px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{border-color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.nav-cta .btn{padding:10px 18px;font-size:var(--t-sm)}
+.nav-cta .link{font-weight:600;font-size:var(--t-sm);padding:10px 12px}
+
+.hero{flex:1;display:flex;align-items:center;position:relative;z-index:2}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,56px);align-items:center;width:100%;padding-block:24px}
+.hero h1{font-family:var(--display);font-weight:600;font-size:var(--t-xl);line-height:1.02;letter-spacing:-0.015em;max-width:13ch}
+.hl{
+  display:inline-block;background:var(--pink);color:var(--ink);
+  padding:0 .28em;border-radius:.45em;line-height:1.05;
+  transform:rotate(-2deg);
+}
+.hero .sub{font-size:var(--t-md);margin-top:20px;max-width:44ch;color:var(--ink)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-proof{display:flex;flex-wrap:wrap;gap:18px 26px;margin-top:26px;font-size:var(--t-sm);font-weight:500}
+.hero-proof li{display:flex;align-items:center;gap:8px}
+.hero-proof svg{width:18px;height:18px;flex:none}
+
+/* clouds */
+.cloud{position:absolute;background:var(--white);border-radius:999px;opacity:.9;z-index:1}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.c1{width:220px;height:64px;left:-40px;bottom:120px}
+.c1::before{width:90px;height:90px;left:40px;top:-46px}
+.c1::after{width:120px;height:120px;left:100px;top:-70px}
+.c2{width:160px;height:48px;right:8%;top:110px;opacity:.75}
+.c2::before{width:70px;height:70px;left:26px;top:-36px}
+.c2::after{width:90px;height:90px;left:70px;top:-50px}
+.sun{position:absolute;width:140px;height:140px;border-radius:50%;background:var(--lime);right:-30px;top:-30px;z-index:1}
+
+/* ---------- device stack ---------- */
+.stack{position:relative;height:600px;display:flex;justify-content:center;align-items:center}
+.phone{
+  position:relative;width:292px;height:588px;border-radius:44px;
+  background:var(--ink);padding:10px;
+  box-shadow:0 30px 60px -20px rgba(27,42,48,.45), 0 0 0 2px rgba(255,255,255,.35) inset;
+  z-index:2;
+}
+.screen{width:100%;height:100%;border-radius:36px;background:var(--paper);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:999px;background:var(--ink)}
+.status{display:flex;justify-content:space-between;padding:14px 22px 0;font-size:12px;font-weight:600}
+.app{padding:24px 18px 18px;display:flex;flex-direction:column;gap:14px;flex:1}
+.app .greet{font-size:12px;color:var(--muted);font-weight:500}
+.app .bal{font-family:var(--display);font-weight:600;font-size:34px;line-height:1;letter-spacing:-0.01em}
+.app .bal small{font-size:15px;font-weight:600;color:var(--muted);margin-left:6px}
+.app .row{display:flex;gap:8px}
+.app .chip{flex:1;text-align:center;font-size:12px;font-weight:600;padding:9px 6px;border-radius:12px;background:var(--white);border:1.5px solid var(--ink)}
+.app .chip.on{background:var(--ink);color:var(--paper)}
+.app .label{font-size:11px;font-weight:600;color:var(--muted);margin-top:4px}
+.goal{background:var(--white);border-radius:16px;padding:12px 12px 12px;border:1.5px solid var(--rule)}
+.goal .t{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.goal .t span:last-child{color:var(--muted);font-weight:500}
+.bar{height:9px;border-radius:999px;background:rgba(27,42,48,.08);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.tx{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:8px 0;border-top:1px solid var(--rule)}
+.tx:first-child{border-top:0}
+.tx b{font-weight:600}
+.tx .ic{width:26px;height:26px;border-radius:8px;display:inline-grid;place-items:center;margin-right:8px;font-size:12px}
+.tx .l{display:flex;align-items:center}
+.tx .plus{color:#2E8B57;font-weight:600}
+
+.card{
+  position:absolute;width:336px;height:212px;border-radius:22px;
+  background:linear-gradient(135deg,var(--tangerine) 0%,#FF9A5C 55%,var(--pink) 100%);
+  color:var(--ink);padding:22px;
+  box-shadow:0 24px 50px -18px rgba(27,42,48,.5);
+  display:flex;flex-direction:column;justify-content:space-between;
+  z-index:3;
+}
+.card.front{right:-24px;bottom:34px;transform:rotate(-9deg)}
+.card.back{left:-10px;top:34px;transform:rotate(7deg);z-index:1;background:linear-gradient(135deg,var(--grape),#A78BFF 60%,var(--sky))}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start}
+.card .wm{font-family:var(--display);font-weight:700;font-size:20px}
+.card .wave{width:26px;height:26px}
+.card .chipbox{width:44px;height:32px;border-radius:7px;background:linear-gradient(180deg,#F6E3A1,#D9B85E);position:relative;overflow:hidden}
+.card .chipbox::before,.card .chipbox::after{content:"";position:absolute;background:rgba(27,42,48,.35)}
+.card .chipbox::before{left:0;right:0;top:50%;height:1px}
+.card .chipbox::after{top:0;bottom:0;left:50%;width:1px}
+.card .num{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.14em}
+.card .bot{display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;font-weight:600}
+.card .bot .name{font-size:14px}
+.card .badge{font-family:var(--display);font-weight:700;font-size:15px;opacity:.85}
+
+/* ---------- proof strip ---------- */
+.strip{background:var(--ink);color:var(--paper)}
+.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-block:34px}
+.strip .stat{display:flex;flex-direction:column;gap:4px;border-left:1.5px solid rgba(255,247,232,.2);padding-left:18px}
+.strip .stat b{font-family:var(--display);font-weight:600;font-size:1.9rem;line-height:1;color:var(--lime)}
+.strip .stat span{font-size:var(--t-sm);color:rgba(255,247,232,.8)}
+
+/* ---------- goals bento ---------- */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.tile{border-radius:var(--r-lg);padding:28px;position:relative;overflow:hidden;border:2px solid var(--ink)}
+.tile h3{margin-bottom:10px}
+.tile p{font-size:var(--t-sm);max-width:36ch}
+.t-goal{grid-column:span 7;background:var(--white);display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.t-goal .goalbig{background:var(--paper);border:1.5px solid var(--rule);border-radius:20px;padding:18px}
+.t-goal .goalbig .name{font-family:var(--display);font-weight:600;font-size:1.1rem}
+.t-goal .goalbig .amt{display:flex;justify-content:space-between;font-size:var(--t-sm);margin-top:6px}
+.t-goal .goalbig .bar{height:14px;margin-top:10px}
+.t-goal .goalbig .eta{font-size:var(--t-xs);color:var(--muted);margin-top:10px}
+.t-pocket{grid-column:span 5;background:var(--lime)}
+.t-round{grid-column:span 4;background:var(--pink)}
+.t-chores{grid-column:span 4;background:var(--grape);color:var(--paper)}
+.t-jars{grid-column:span 4;background:var(--tangerine)}
+.mini{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.mini li{display:flex;justify-content:space-between;background:rgba(255,255,255,.7);border-radius:12px;padding:9px 12px;font-size:var(--t-sm);font-weight:500}
+.t-chores .mini li{background:rgba(255,247,232,.16)}
+.mini li b{font-weight:600}
+.coin{position:absolute;right:-18px;bottom:-18px;width:120px;height:120px;border-radius:50%;background:rgba(27,42,48,.08)}
+
+/* ---------- calculator ---------- */
+.calc{background:var(--white);border:2px solid var(--ink);border-radius:var(--r-lg);padding:clamp(24px,3vw,40px);display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center;margin-top:24px}
+.calc label{display:block;font-weight:600;font-size:var(--t-sm);margin-bottom:8px}
+.calc input[type=range]{width:100%;accent-color:var(--ink);margin:4px 0 18px}
+.calc .out{background:var(--paper);border-radius:20px;padding:22px 24px;border:1.5px solid var(--rule)}
+.calc .out .big{font-family:var(--display);font-weight:600;font-size:2.6rem;line-height:1;letter-spacing:-0.01em}
+.calc .out .big small{font-size:1rem;font-weight:600;color:var(--muted);margin-left:6px}
+.calc .out p{font-size:var(--t-sm);color:var(--muted);margin-top:8px}
+
+/* ---------- parents ---------- */
+.parents{background:var(--ink);color:var(--paper)}
+.parents .kicker{background:var(--ink);color:var(--paper);border-color:var(--paper)}
+.parents .kicker i{background:var(--lime)}
+.parents .lede{color:rgba(255,247,232,.75)}
+.parents .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
+.controls{display:grid;gap:12px;margin-top:8px}
+.ctl{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;background:rgba(255,247,232,.06);border:1.5px solid rgba(255,247,232,.14);border-radius:var(--r-md);padding:16px 18px}
+.ctl .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.ctl .ico svg{width:22px;height:22px}
+.ctl h3{font-size:1.05rem;color:var(--paper);margin-bottom:4px}
+.ctl p{font-size:var(--t-sm);color:rgba(255,247,232,.72)}
+.parent-phone{justify-self:center}
+.parent-phone .phone{background:#0E181C;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 2px rgba(255,255,255,.14) inset}
+.parent-phone .screen{background:var(--white)}
+.parent-phone .app .greet{color:var(--muted)}
+.approve{background:var(--paper);border:1.5px solid var(--rule);border-radius:16px;padding:12px}
+.approve .q{font-size:13px;font-weight:600}
+.approve .m{font-size:12px;color:var(--muted);margin-top:2px}
+.approve .acts{display:flex;gap:8px;margin-top:10px}
+.approve .acts span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:8px;border-radius:10px;border:1.5px solid var(--ink)}
+.approve .acts span:first-child{background:var(--lime)}
+.toggle{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:500;padding:10px 0;border-top:1px solid var(--rule)}
+.toggle:first-child{border-top:0}
+.sw{width:40px;height:22px;border-radius:999px;background:var(--ink);position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--white)}
+.sw.off{background:rgba(27,42,48,.18)}
+.sw.off::after{right:auto;left:3px}
+
+/* ---------- fees ---------- */
+.fees .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,5vw,72px);align-items:start}
+.fees .zero{font-family:var(--display);font-weight:600;font-size:clamp(5rem,12vw,9rem);line-height:.9;letter-spacing:-0.03em;color:var(--tangerine);margin-top:8px}
+.fees .zero small{display:block;font-size:var(--t-lg);color:var(--ink);letter-spacing:-0.01em;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+th{font-family:var(--display);font-weight:600;font-size:var(--t-sm);text-align:left;padding:12px 0;border-bottom:2px solid var(--ink)}
+td{padding:13px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td:last-child,th:last-child{text-align:right;white-space:nowrap}
+tr:hover td{background:rgba(27,42,48,.03)}
+td .n{color:var(--muted);font-size:var(--t-xs);display:block;margin-top:2px}
+.pill-zero{display:inline-block;font-family:var(--display);font-weight:600;background:var(--lime);border-radius:999px;padding:3px 12px;border:1.5px solid var(--ink)}
+.tblock{margin-top:36px}
+.tblock h3{margin-bottom:10px}
+
+/* ---------- open ---------- */
+.open{background:var(--white)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.step{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:26px 24px 28px;position:relative}
+.step .n{font-family:var(--display);font-weight:700;font-size:2.2rem;line-height:1;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;margin-bottom:22px}
+.step:nth-child(1) .n{background:var(--sky)}
+.step:nth-child(2) .n{background:var(--pink)}
+.step:nth-child(3) .n{background:var(--lime)}
+.step:nth-child(4) .n{background:var(--tangerine)}
+.step p{font-size:var(--t-sm);color:var(--muted);margin-top:8px}
+.step .who{position:absolute;top:22px;right:22px;font-size:var(--t-xs);font-weight:600;padding:4px 10px;border-radius:999px;background:var(--white);border:1.5px solid var(--ink)}
+.open-foot{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;margin-top:34px;font-size:var(--t-sm);color:var(--muted)}
+
+/* ---------- safety ---------- */
+.safety .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fact{background:var(--white);border:2px solid var(--ink);border-radius:var(--r-lg);padding:26px}
+.fact .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px}
+.fact .ico svg{width:24px;height:24px}
+.fact h3{font-size:1.1rem;margin-bottom:8px}
+.fact p{font-size:var(--t-sm);color:var(--muted)}
+.faq{margin-top:56px;max-width:760px}
+.faq h3{font-size:var(--t-lg);margin-bottom:18px}
+details{border-top:1.5px solid var(--ink)}
+details:last-of-type{border-bottom:1.5px solid var(--ink)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 0;font-family:var(--display);font-weight:600;font-size:1.1rem}
+summary::-webkit-details-marker{display:none}
+summary .pm{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;flex:none;font-size:20px;line-height:1;transition:transform .2s}
+details[open] summary .pm{transform:rotate(45deg);background:var(--lime)}
+details p{padding:0 0 20px;font-size:var(--t-sm);color:var(--muted);max-width:60ch}
+
+/* ---------- cta band ---------- */
+.band{padding-block:0 var(--gap)}
+.band .box{background:var(--sky);border:2px solid var(--ink);border-radius:36px;padding:clamp(36px,6vw,72px);display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;position:relative;overflow:hidden}
+.band h2{font-size:var(--t-xl);line-height:1.02;max-width:12ch}
+.band .box .cloud{opacity:.8}
+.band .actions{display:flex;flex-direction:column;gap:12px;align-items:flex-start;justify-self:end;position:relative;z-index:2}
+.band .actions small{font-size:var(--t-xs);color:var(--ink);opacity:.75}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink);color:var(--paper);padding-block:56px 32px}
+footer .cols{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
+footer h3{font-size:var(--t-sm);color:var(--paper);margin-bottom:14px}
+footer li{font-size:var(--t-sm);color:rgba(255,247,232,.72);padding:4px 0}
+footer li a:hover{color:var(--lime)}
+footer .brand p{font-size:var(--t-sm);color:rgba(255,247,232,.72);max-width:34ch;margin-top:14px}
+footer .legal{border-top:1px solid rgba(255,247,232,.15);margin-top:44px;padding-top:22px;font-size:var(--t-xs);color:rgba(255,247,232,.6);display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between}
+footer .legal p{max-width:78ch}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:1;transform:none;transition:opacity .6s ease, transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1040px){
+  .hero .wrap{grid-template-columns:1fr;text-align:left}
+  .stack{height:520px;transform:scale(.86);transform-origin:top center}
+  .strip .wrap{grid-template-columns:repeat(2,1fr)}
+  .t-goal,.t-pocket{grid-column:span 12}
+  .t-round,.t-chores,.t-jars{grid-column:span 12}
+  .calc,.parents .wrap,.fees .wrap,.band .box{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .safety .grid{grid-template-columns:repeat(2,1fr)}
+  footer .cols{grid-template-columns:1fr 1fr}
+  .band .actions{justify-self:start}
+}
+@media (max-width: 720px){
+  .nav-links{display:none}
+  .fold{min-height:auto}
+  .hero .wrap{padding-block:40px}
+  .stack{height:460px;transform:scale(.72)}
+  .t-goal{grid-template-columns:1fr}
+  .steps,.safety .grid,.strip .wrap,footer .cols{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= FOLD ================= -->
+<div class="fold" id="top">
+  <span class="sun" aria-hidden="true"></span>
+  <span class="cloud c1" aria-hidden="true"></span>
+  <span class="cloud c2" aria-hidden="true"></span>
+
+  <header class="nav">
+    <div class="wrap">
+      <a class="logo" href="#top" aria-label="Tenner home">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="3" stroke="#CDF25A" stroke-width="2"/><circle cx="12" cy="12" r="2.6" fill="#CDF25A"/></svg>
+        </span>
+        tenner
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#card">The card</a>
+        <a href="#goals">Goals</a>
+        <a href="#parents">Parents</a>
+        <a href="#fees">Fees</a>
+        <a href="#safety">Safety</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="link" href="#open">Log in</a>
+        <a class="btn btn-ink" href="#open">Get the app</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="card">
+    <div class="wrap">
+      <div>
+        <span class="kicker"><i></i>For 13 to 17 year olds, set up by a parent</span>
+        <h1>Pocket money that actually <span class="hl">grows.</span></h1>
+        <p class="sub">Tenner is a savings app and contactless card for teenagers. Teens set goals and spend what they choose. Parents top up, set the limits and see every payment.</p>
+        <div class="hero-cta">
+          <a class="btn btn-ink" href="#open">Open an account
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-white" href="#parents">See what parents control</a>
+        </div>
+        <ul class="hero-proof">
+          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#1B2A30"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="#CDF25A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>No monthly fee</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#1B2A30"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="#CDF25A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>No overdraft, ever</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#1B2A30"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="#CDF25A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Card in the post in 3 days</li>
+        </ul>
+      </div>
+
+      <div class="stack" aria-label="The Tenner card and app">
+        <div class="card back" aria-hidden="true">
+          <div class="top"><span class="wm">tenner</span></div>
+          <div class="chipbox"></div>
+          <div class="bot"><span class="name">Sam O.</span><span class="badge">debit</span></div>
+        </div>
+
+        <div class="phone">
+          <div class="screen">
+            <span class="notch" aria-hidden="true"></span>
+            <div class="status"><span>9:41</span><span>•••</span></div>
+            <div class="app">
+              <div>
+                <div class="greet">Hey Maya, Tuesday</div>
+                <div class="bal">£142.60<small>to spend</small></div>
+              </div>
+              <div class="row">
+                <span class="chip on">Spend</span><span class="chip">Goals</span><span class="chip">Jars</span>
+              </div>
+              <div class="label">Goals</div>
+              <div class="goal">
+                <div class="t"><span>Festival ticket</span><span>£112 of £180</span></div>
+                <div class="bar"><i data-w="62%" style="background:var(--tangerine)"></i></div>
+              </div>
+              <div class="goal">
+                <div class="t"><span>New trainers</span><span>£38 of £90</span></div>
+                <div class="bar"><i data-w="42%" style="background:var(--grape)"></i></div>
+              </div>
+              <div class="label">Recent</div>
+              <div>
+                <div class="tx"><span class="l"><span class="ic" style="background:var(--lime)">+</span><b>Pocket money</b></span><span class="plus">+£15.00</span></div>
+                <div class="tx"><span class="l"><span class="ic" style="background:var(--pink)">B</span><b>Bus fare</b></span><span>£2.10</span></div>
+                <div class="tx"><span class="l"><span class="ic" style="background:var(--sky)">C</span><b>Cinema</b></span><span>£7.50</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card front" aria-hidden="true">
+          <div class="top">
+            <span class="wm">tenner</span>
+            <svg class="wave" viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round"><path d="M6 8.5a6 6 0 0 1 0 7M9.5 6.5a9.5 9.5 0 0 1 0 11M13 4.5a13 13 0 0 1 0 15"/></svg>
+          </div>
+          <div class="chipbox"></div>
+          <div class="num">•••• 4821</div>
+          <div class="bot"><span class="name">Maya R.</span><span class="badge">debit</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= PROOF STRIP ================= -->
+<section class="strip" aria-label="Tenner at a glance">
+  <div class="wrap">
+    <div class="stat"><b>£0</b><span>Monthly fee, card fee, top-up fee</span></div>
+    <div class="stat"><b>13 to 17</b><span>Age range, one parent account per family</span></div>
+    <div class="stat"><b>£1</b><span>Minimum top up, instant to the card</span></div>
+    <div class="stat"><b>2 apps</b><span>One for the teen, one for the parent</span></div>
+  </div>
+</section>
+
+<!-- ================= GOALS AND POCKET MONEY ================= -->
+<section class="section" id="goals">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker"><i></i>Goals and pocket money</span>
+      <h2>Saving is easier when the money has somewhere to go.</h2>
+      <p class="lede">Every pound in Tenner lives in a goal, a jar or the spend balance. Nothing sits around waiting to be spent by accident.</p>
+    </div>
+
+    <div class="bento reveal">
+      <div class="tile t-goal">
+        <div>
+          <h3>Goals with a finish line</h3>
+          <p>Name it, set the amount, choose a date. Tenner works out how much a week gets you there and nudges when you are behind.</p>
+        </div>
+        <div class="goalbig">
+          <div class="name">Festival ticket</div>
+          <div class="amt"><span>£112 saved</span><span>£180 target</span></div>
+          <div class="bar"><i data-w="62%" style="background:var(--tangerine)"></i></div>
+          <div class="eta">£8.50 a week gets you there by 24 July.</div>
+        </div>
+      </div>
+
+      <div class="tile t-pocket">
+        <h3>Pocket money on a schedule</h3>
+        <p>Parents set the amount and the day. It lands automatically, and can be paused from the parent app if it needs to be.</p>
+        <ul class="mini">
+          <li><span>Every Friday</span><b>£15.00</b></li>
+          <li><span>Birthday top up from Nan</span><b>£30.00</b></li>
+        </ul>
+        <span class="coin" aria-hidden="true"></span>
+      </div>
+
+      <div class="tile t-round">
+        <h3>Round-ups</h3>
+        <p>Spend £2.10 on the bus and 90p rolls into a goal. Small, boring, and it adds up to about £11 a month for the average teen.</p>
+      </div>
+
+      <div class="tile t-chores">
+        <h3>Chores that pay</h3>
+        <p>Parents post a job with a price. The teen marks it done, the parent taps approve, the money moves.</p>
+        <ul class="mini">
+          <li><span>Wash the car</span><b>£5</b></li>
+          <li><span>Walk Biscuit, 5 days</span><b>£10</b></li>
+        </ul>
+      </div>
+
+      <div class="tile t-jars">
+        <h3>Jars for the everyday</h3>
+        <p>Lunch, bus, phone credit. Money in a jar is ring-fenced from the spend balance so the week's essentials are always covered.</p>
+      </div>
+    </div>
+
+    <div class="calc reveal">
+      <div>
+        <h3>Pocket money maths</h3>
+        <p class="lede" style="margin-top:8px;margin-bottom:22px">Drag the sliders to see what a weekly amount turns into when it lands in a goal instead of a pocket.</p>
+        <label for="perweek">Pocket money a week: <span id="perweekOut">£15</span></label>
+        <input type="range" id="perweek" min="2" max="40" step="1" value="15">
+        <label for="weeks">Saving for: <span id="weeksOut">20 weeks</span></label>
+        <input type="range" id="weeks" min="4" max="52" step="1" value="20">
+        <label for="share">Share sent to the goal: <span id="shareOut">50%</span></label>
+        <input type="range" id="share" min="10" max="100" step="5" value="50">
+      </div>
+      <div class="out">
+        <div class="big" id="total">£150<small>saved</small></div>
+        <p id="totalNote">Plus roughly £55 from round-ups over that time. Enough for a festival ticket with change.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARENTS ================= -->
+<section class="section parents" id="parents">
+  <div class="wrap">
+    <div>
+      <div class="section-head reveal">
+        <span class="kicker"><i></i>What parents control</span>
+        <h2>You set the rails. They learn to drive.</h2>
+        <p class="lede">The parent app is not a spying tool, it is a settings panel. Everything below can be changed in a tap and takes effect straight away.</p>
+      </div>
+      <div class="controls reveal">
+        <div class="ctl">
+          <span class="ico" style="background:var(--lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <div><h3>Spending limits</h3><p>A daily cap, a single-payment cap and an optional weekly budget. Defaults are £250 a day and £100 a payment, and you can go lower.</p></div>
+        </div>
+        <div class="ctl">
+          <span class="ico" style="background:var(--pink)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M3 10h18"/></svg></span>
+          <div><h3>Freeze and unfreeze</h3><p>Card left in a locker? Freeze it from your phone. Unfreeze when it turns up. The teen sees the same switch, and is told who flipped it.</p></div>
+        </div>
+        <div class="ctl">
+          <span class="ico" style="background:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16M4 12h10M4 16h7"/></svg></span>
+          <div><h3>Where it works</h3><p>Online payments, cash machines and spending abroad are each a switch. Gambling, alcohol and tobacco merchants are blocked for everyone and cannot be turned on.</p></div>
+        </div>
+        <div class="ctl">
+          <span class="ico" style="background:var(--tangerine)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V9a6 6 0 0 1 12 0v8l1.5 2h-15z"/><path d="M10 21h4"/></svg></span>
+          <div><h3>Alerts and a weekly summary</h3><p>A notification for every payment, or just the big ones. Sunday evening you get a one-screen summary of what was spent and saved.</p></div>
+        </div>
+        <div class="ctl">
+          <span class="ico" style="background:var(--grape)"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF7E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+          <div><h3>Approve requests</h3><p>Teens can ask for a top up, a higher limit for a day, or a new goal. You approve or decline in the app, with a note if you want.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="parent-phone reveal">
+      <div class="phone">
+        <div class="screen">
+          <span class="notch" aria-hidden="true"></span>
+          <div class="status"><span>9:41</span><span>•••</span></div>
+          <div class="app">
+            <div>
+              <div class="greet">Parent view, Maya's card</div>
+              <div class="bal">£142.60<small>balance</small></div>
+            </div>
+            <div class="approve">
+              <div class="q">Maya asked for £20 extra</div>
+              <div class="m">"School trip lunch money, back Thursday"</div>
+              <div class="acts"><span>Approve</span><span>Not now</span></div>
+            </div>
+            <div class="label">Controls</div>
+            <div>
+              <div class="toggle"><span>Card active</span><span class="sw"></span></div>
+              <div class="toggle"><span>Online payments</span><span class="sw"></span></div>
+              <div class="toggle"><span>Cash machines</span><span class="sw off"></span></div>
+              <div class="toggle"><span>Alert on every payment</span><span class="sw"></span></div>
+            </div>
+            <div class="label">Limits</div>
+            <div class="goal">
+              <div class="t"><span>Today: £9.60 of £60</span><span>Daily cap</span></div>
+              <div class="bar"><i data-w="16%" style="background:var(--lime)"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEES AND LIMITS ================= -->
+<section class="section fees" id="fees">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker"><i></i>Fees and limits</span>
+      <h2>What Tenner costs.</h2>
+      <div class="zero">£0<small>A month. A year. For the card, the app, the top ups, the lot.</small></div>
+      <p class="lede">We make money from a small fee the shop pays when the card is used, the same as any debit card. The teen and the parent never pay us anything. The limits are there for safety, not for profit.</p>
+    </div>
+
+    <div class="reveal">
+      <table>
+        <thead><tr><th>Fees</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Monthly or annual subscription</td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>First card, delivered<span class="n">Replacement cards are free the first time, then £3.</span></td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>Top ups by bank transfer, debit card or open banking</td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>Contactless and chip and pin payments in Britain</td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>Spending abroad<span class="n">We use the card scheme rate on the day, with nothing added.</span></td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>Cash withdrawals in Britain, up to 4 a month<span class="n">After that, £1 each. Some cash machine owners charge their own fee.</span></td><td><span class="pill-zero">£0</span></td></tr>
+          <tr><td>Overdraft or credit</td><td>Not available</td></tr>
+        </tbody>
+      </table>
+
+      <div class="tblock">
+        <h3>Default limits</h3>
+        <table>
+          <thead><tr><th>Limit</th><th>Default</th></tr></thead>
+          <tbody>
+            <tr><td>Balance on the card</td><td>£2,500</td></tr>
+            <tr><td>Spending a day</td><td>£250</td></tr>
+            <tr><td>Single payment</td><td>£100</td></tr>
+            <tr><td>Cash machine withdrawals a day</td><td>£50</td></tr>
+            <tr><td>Top up in one go</td><td>£1 to £500</td></tr>
+            <tr><td>Contactless without a pin<span class="n">Set by the card scheme, not by us.</span></td><td>£100</td></tr>
+          </tbody>
+        </table>
+        <p class="lede" style="font-size:var(--t-sm);margin-top:14px">Parents can lower any of these. The balance and daily caps cannot be raised above the defaults, whoever asks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OPEN AN ACCOUNT ================= -->
+<section class="section open" id="open">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker"><i></i>How to open an account</span>
+      <h2>Ten minutes on the sofa, card in the post by Thursday.</h2>
+      <p class="lede">A parent or legal guardian opens the account. The teen gets their own login and their own app the moment it is approved.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <span class="who">Parent</span>
+        <span class="n">1</span>
+        <h3>Download Tenner Parent</h3>
+        <p>Confirm your identity with a photo of your passport or driving licence and a short video selfie. This is a legal requirement and takes about three minutes.</p>
+      </div>
+      <div class="step">
+        <span class="who">Parent</span>
+        <span class="n">2</span>
+        <h3>Add your teen</h3>
+        <p>Their name, date of birth and the address the card should go to. You can add up to four teens to one parent account.</p>
+      </div>
+      <div class="step">
+        <span class="who">Teen</span>
+        <span class="n">3</span>
+        <h3>They set up their app</h3>
+        <p>A link goes to their phone. They pick a pin, a card colour, and set their first goal before the card even arrives.</p>
+      </div>
+      <div class="step">
+        <span class="who">Both</span>
+        <span class="n">4</span>
+        <h3>Top up and tap</h3>
+        <p>The card arrives in about three working days. Activate it in the teen app, and your first top up is on it in seconds.</p>
+      </div>
+    </div>
+    <div class="open-foot reveal">
+      <a class="btn btn-lime" href="#top">Start with the parent app</a>
+      <span>Available for iPhone and Android. British residents only for now.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SAFETY ================= -->
+<section class="section safety" id="safety">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker"><i></i>Safety facts</span>
+      <h2>The boring bits, said plainly.</h2>
+      <p class="lede">Money for a 14 year old should be at least as safe as money for a 40 year old. Here is how it is kept that way.</p>
+    </div>
+    <div class="grid reveal">
+      <div class="fact">
+        <span class="ico" style="background:var(--lime)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        <h3>Your money is safeguarded</h3>
+        <p>Tenner is not a bank. Balances are held by our regulated e-money partner in a safeguarded account at a high street bank, kept separate from any company money.</p>
+      </div>
+      <div class="fact">
+        <span class="ico" style="background:var(--pink)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></span>
+        <h3>Blocked categories, no exceptions</h3>
+        <p>Gambling, alcohol, tobacco and adult merchants are blocked at the card network level. Neither app has a switch for them.</p>
+      </div>
+      <div class="fact">
+        <span class="ico" style="background:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+        <h3>Card numbers stay hidden</h3>
+        <p>The full 16 digits only show in the teen app after face unlock or a pin, and the parent can turn online payments off entirely.</p>
+      </div>
+      <div class="fact">
+        <span class="ico" style="background:var(--tangerine)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <h3>Freeze in seconds, refund in days</h3>
+        <p>Lost cards are frozen instantly from either app. Payments the teen did not make are refunded under the card scheme's rules, usually within five working days.</p>
+      </div>
+      <div class="fact">
+        <span class="ico" style="background:var(--grape)"><svg viewBox="0 0 24 24" fill="none" stroke="#FFF7E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 10h16"/></svg></span>
+        <h3>No data sold, no ads</h3>
+        <p>We do not sell spending data or show ads in either app. The only marketing a teen ever sees from us is a birthday message.</p>
+      </div>
+      <div class="fact">
+        <span class="ico" style="background:var(--paper);border:2px solid var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="#1B2A30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg></span>
+        <h3>Nothing to borrow</h3>
+        <p>There is no overdraft, no credit and no buy now pay later. If the balance is £4.20, the card can spend £4.20.</p>
+      </div>
+    </div>
+
+    <div class="faq reveal">
+      <h3>Questions parents ask</h3>
+      <details open>
+        <summary>Can my teen move money out without me knowing?<span class="pm">+</span></summary>
+        <p>No. Money can only leave the card by paying at a shop, withdrawing cash where you have allowed it, or sending it back to the parent account. Every one of those shows up in your app at the moment it happens.</p>
+      </details>
+      <details>
+        <summary>What happens when they turn 18?<span class="pm">+</span></summary>
+        <p>The account keeps working for 90 days after their birthday with the same limits. In that window they can move the balance to any British bank account in their name. After that the card closes and any remaining balance goes back to the parent account.</p>
+      </details>
+      <details>
+        <summary>Does using Tenner affect their credit score?<span class="pm">+</span></summary>
+        <p>No. Tenner is a prepaid debit card, not credit. Nothing is reported to credit reference agencies, positively or negatively.</p>
+      </details>
+      <details>
+        <summary>Can both parents have access?<span class="pm">+</span></summary>
+        <p>Yes. One parent opens the account and can invite a second adult, who gets the same controls. Either can be removed by the account holder at any time.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA BAND ================= -->
+<section class="band">
+  <div class="wrap">
+    <div class="box reveal">
+      <span class="cloud c2" aria-hidden="true" style="right:36%;top:22px"></span>
+      <div style="position:relative;z-index:2">
+        <h2>Give them a card. Keep the say.</h2>
+        <p class="lede" style="color:var(--ink);opacity:.8">Free for the family, ready in about ten minutes, and the card is in the post by the end of the week.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-ink" href="#open">Open an account</a>
+        <a class="btn btn-white" href="#fees">Read the fees again, there are none</a>
+        <small>Parent or legal guardian, resident in Britain, 18 or over.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div class="brand">
+        <a class="logo" href="#top" aria-label="Tenner home" style="color:var(--paper)">
+          <span class="logo-mark" aria-hidden="true" style="background:var(--lime)">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="3" stroke="#1B2A30" stroke-width="2"/><circle cx="12" cy="12" r="2.6" fill="#1B2A30"/></svg>
+          </span>
+          tenner
+        </a>
+        <p>A savings app and contactless card for 13 to 17 year olds, set up and supervised by a parent. Made in Bristol.</p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <ul><li><a href="#card">The card</a></li><li><a href="#goals">Goals and jars</a></li><li><a href="#parents">Parent app</a></li><li><a href="#fees">Fees and limits</a></li></ul>
+      </div>
+      <div>
+        <h3>Help</h3>
+        <ul><li><a href="#safety">Safety</a></li><li><a href="#safety">Questions</a></li><li><a href="#open">Opening an account</a></li><li><a href="#top">Lost or stolen card</a></li></ul>
+      </div>
+      <div>
+        <h3>Company</h3>
+        <ul><li><a href="#top">About Tenner</a></li><li><a href="#top">Schools programme</a></li><li><a href="#top">Privacy</a></li><li><a href="#top">Terms</a></li></ul>
+      </div>
+    </div>
+    <div class="legal">
+      <p>Tenner Ltd is a company registered in England and Wales. Tenner is not a bank. The Tenner card is a prepaid debit card issued by our regulated e-money partner, and customer funds are safeguarded in accordance with the Electronic Money Regulations. Tenner does not offer credit.</p>
+      <p>© 2026 Tenner Ltd</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // reveal on scroll plus progress bars
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('.bar i').forEach(function(b){ b.style.width = b.getAttribute('data-w'); });
+      io.unobserve(e.target);
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.reveal, .stack, .parent-phone').forEach(function(el){ io.observe(el); });
+  document.querySelectorAll('.bar i').forEach(function(b){ b.style.width = b.getAttribute('data-w'); });
+
+  // hero bars animate immediately
+  window.addEventListener('load', function(){
+    document.querySelectorAll('.stack .bar i').forEach(function(b){ b.style.width = b.getAttribute('data-w'); });
+  });
+
+  // pocket money maths
+  var perweek = document.getElementById('perweek'),
+      weeks = document.getElementById('weeks'),
+      share = document.getElementById('share'),
+      total = document.getElementById('total'),
+      note = document.getElementById('totalNote');
+  function gbp(n){ return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function update(){
+    var p = +perweek.value, w = +weeks.value, s = +share.value;
+    document.getElementById('perweekOut').textContent = gbp(p);
+    document.getElementById('weeksOut').textContent = w + (w === 1 ? ' week' : ' weeks');
+    document.getElementById('shareOut').textContent = s + '%';
+    var saved = p * w * (s / 100);
+    var roundups = 2.6 * w; // about £11 a month, measured across current teens
+    total.innerHTML = gbp(saved) + '<small>saved</small>';
+    var buys = saved + roundups >= 180 ? 'Enough for a festival ticket with change.' :
+               saved + roundups >= 90 ? 'Enough for a decent pair of trainers.' :
+               saved + roundups >= 40 ? 'Enough for a game, or a very good day out.' :
+               'A start. Nudge the share up and watch it move.';
+    note.textContent = 'Plus roughly ' + gbp(roundups) + ' from round-ups over that time. ' + buys;
+  }
+  [perweek, weeks, share].forEach(function(r){ r.addEventListener('input', update); });
+  update();
+})();
+</script>
+</body>
+</html>

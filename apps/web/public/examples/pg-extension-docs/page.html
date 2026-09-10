@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pg_strata docs: tiered storage for Postgres</title>
+<meta name="description" content="pg_strata moves cold rows out of Postgres onto object storage and keeps them queryable with plain SQL. Install, quickstart, reference and changelog.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-1: 0.75rem;                       /* 12  meta, badges, table captions */
+    --t-2: 0.875rem;                      /* 14  ui, sidebar, code, small copy */
+    --t-3: 1rem;                          /* 16  body */
+    --t-4: 1.375rem;                      /* 22  section titles */
+    --t-5: clamp(2rem, 3.1vw, 2.5rem);    /* 32-40  page title */
+
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --paper: #fbfbf9;
+    --ink: #15201d;
+    --muted: #5f6b67;
+    --rule: #e3e6e2;
+    --panel: #f2f3f0;
+    --accent: #0f7b6c;
+    --accent-soft: #e3f1ed;
+    --code-bg: #101b18;
+    --code-fg: #d9e2de;
+    --code-kw: #f0c36a;
+    --code-str: #8fd3b8;
+    --code-fn: #9ec5ff;
+    --code-cm: #7c8a85;
+    --code-num: #f4a6a0;
+
+    --side-w: 252px;
+    --toc-w: 188px;
+    --gutter: clamp(24px, 3.5vw, 48px);
+    --rhythm: clamp(72px, 9vw, 120px);
+    --measure: 74ch;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:var(--font-sans);
+    font-size:var(--t-3);
+    line-height:1.6;
+    color:var(--ink);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  p{margin:0}
+  h1,h2,h3{margin:0;font-weight:600;letter-spacing:-0.01em;line-height:1.2}
+  h1{font-size:var(--t-5);letter-spacing:-0.025em;line-height:1.1;text-wrap:balance}
+  h2{font-size:var(--t-4)}
+  h3{font-size:var(--t-3)}
+  code,kbd,pre{font-family:var(--font-mono)}
+  code.inline{
+    font-size:0.9em;
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:0.05em 0.35em;
+  }
+  ::selection{background:var(--accent-soft)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .hero{flex:1}
+
+  /* ---------- top nav ---------- */
+  .top{
+    border-bottom:1px solid var(--rule);
+    background:var(--paper);
+  }
+  .top .row{
+    padding-inline:var(--gutter);
+    height:56px;
+    display:flex;align-items:center;gap:20px;
+  }
+  .wordmark{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--font-mono);font-size:var(--t-2);font-weight:500;
+    letter-spacing:-0.01em;
+    width:calc(var(--side-w) - var(--gutter));
+    flex:none;
+  }
+  .wordmark svg{width:22px;height:22px;flex:none}
+  .wordmark .tag{
+    font-family:var(--font-sans);font-weight:500;color:var(--muted);
+    border:1px solid var(--rule);border-radius:999px;padding:1px 8px;font-size:var(--t-1);
+  }
+  .search{
+    flex:1;max-width:460px;
+    display:flex;align-items:center;gap:10px;
+    height:34px;padding-inline:12px;
+    border:1px solid var(--rule);border-radius:8px;background:#fff;
+    color:var(--muted);font-size:var(--t-2);
+  }
+  .search svg{width:15px;height:15px;flex:none}
+  .search input{
+    flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);outline:none;
+  }
+  .search kbd{
+    font-size:var(--t-1);border:1px solid var(--rule);border-radius:4px;padding:1px 5px;background:var(--panel);color:var(--muted);
+  }
+  .top nav{margin-left:auto;display:flex;align-items:center;gap:22px;font-size:var(--t-2);font-weight:500}
+  .top nav a{color:var(--muted);transition:color .15s}
+  .top nav a:hover,.top nav a[aria-current]{color:var(--ink)}
+  .top nav a[aria-current]{position:relative}
+  .top nav a[aria-current]::after{
+    content:"";position:absolute;left:0;right:0;bottom:-19px;height:2px;background:var(--accent);
+  }
+  .version{
+    font-family:var(--font-mono);font-size:var(--t-1);
+    border:1px solid var(--rule);border-radius:999px;padding:3px 10px;background:var(--panel);color:var(--ink);
+  }
+  .gh{display:flex;align-items:center;gap:6px}
+  .gh svg{width:16px;height:16px}
+
+  /* ---------- shell grid ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:var(--side-w) minmax(0,1fr) var(--toc-w);
+    align-items:start;
+  }
+
+  /* sidebar */
+  .side{
+    position:sticky;top:0;
+    max-height:100svh;
+    overflow-y:auto;
+    border-right:1px solid var(--rule);
+    padding-inline:var(--gutter) 20px;
+    padding-block:28px 40px;
+    font-size:var(--t-2);
+    background:var(--paper);
+  }
+  .side .group{margin-bottom:26px}
+  .side .group > p{
+    font-weight:600;font-size:var(--t-2);margin-bottom:8px;color:var(--ink);
+  }
+  .side ul{list-style:none;margin:0;padding:0}
+  .side li a{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:5px 10px;margin-left:-10px;border-radius:6px;color:var(--muted);
+    transition:background .15s,color .15s;
+  }
+  .side li a:hover{background:var(--panel);color:var(--ink)}
+  .side li a.active{color:var(--accent);background:var(--accent-soft);font-weight:500}
+  .side .pill{
+    font-size:var(--t-1);font-weight:500;color:var(--accent);
+    border:1px solid currentColor;border-radius:999px;padding:0 6px;line-height:1.5;
+  }
+  .side .foot{
+    border-top:1px solid var(--rule);padding-top:16px;margin-top:8px;color:var(--muted);font-size:var(--t-1);line-height:1.7;
+  }
+  .side .foot a{color:var(--ink)}
+
+  /* main column */
+  .main{
+    padding-inline:clamp(28px, 4vw, 56px);
+    min-width:0;
+  }
+  .doc{max-width:var(--measure)}
+
+  /* right rail */
+  .toc{
+    position:sticky;top:0;
+    padding-inline:12px var(--gutter);
+    padding-block:34px;
+    font-size:var(--t-1);color:var(--muted);
+  }
+  .toc p{font-weight:600;color:var(--ink);margin-bottom:10px;font-size:var(--t-1)}
+  .toc ul{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+  .toc li a{
+    display:block;padding:4px 0 4px 12px;margin-left:-1px;border-left:1px solid transparent;
+    transition:color .15s,border-color .15s;line-height:1.5;
+  }
+  .toc li a:hover{color:var(--ink)}
+  .toc li a.active{color:var(--accent);border-left-color:var(--accent)}
+
+  /* ---------- hero intro ---------- */
+  .intro{padding-block:34px 0}
+  .crumbs{
+    display:flex;align-items:center;gap:8px;font-size:var(--t-2);color:var(--muted);margin-bottom:18px;
+  }
+  .crumbs span.sep{opacity:.5}
+  .crumbs b{font-weight:500;color:var(--ink)}
+  .intro h1{max-width:22ch}
+  .lede{
+    margin-top:16px;max-width:58ch;color:var(--muted);font-size:var(--t-3);line-height:1.55;
+  }
+  .lede strong{color:var(--ink);font-weight:500}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+  }
+  .meta span{display:flex;align-items:center;gap:6px}
+  .meta i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
+  .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    height:38px;padding-inline:16px;border-radius:8px;
+    font-size:var(--t-2);font-weight:500;border:1px solid var(--ink);
+    transition:transform .15s,background .15s,color .15s;
+  }
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.primary:hover{background:#243430;border-color:#243430}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+  .btn.ghost:hover{border-color:var(--ink)}
+  .btn svg{width:14px;height:14px}
+
+  /* ---------- code windows ---------- */
+  .code{
+    margin-top:28px;
+    border-radius:10px;
+    background:var(--code-bg);
+    color:var(--code-fg);
+    border:1px solid #1e2c28;
+    overflow:hidden;
+    font-size:var(--t-2);
+  }
+  .code .bar{
+    display:flex;align-items:center;gap:2px;
+    padding:6px 8px 0 8px;
+    border-bottom:1px solid #22322d;
+    background:#0b1412;
+  }
+  .code .bar .file{
+    font-family:var(--font-mono);font-size:var(--t-1);color:#93a39e;padding:6px 10px 10px;
+  }
+  .code .tab{
+    font:inherit;font-family:var(--font-mono);font-size:var(--t-1);
+    background:none;border:0;color:#93a39e;
+    padding:6px 10px 10px;cursor:pointer;
+    border-bottom:2px solid transparent;margin-bottom:-1px;
+    transition:color .15s,border-color .15s;
+  }
+  .code .tab:hover{color:#d9e2de}
+  .code .tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--accent)}
+  .code .copy{
+    margin-left:auto;margin-bottom:5px;
+    font:inherit;font-family:var(--font-mono);font-size:var(--t-1);
+    background:transparent;border:1px solid #2a3b36;color:#93a39e;
+    border-radius:6px;padding:3px 8px;cursor:pointer;transition:color .15s,border-color .15s;
+  }
+  .code .copy:hover{color:#fff;border-color:#4a5f59}
+  .code pre{
+    margin:0;padding:16px 18px;overflow-x:auto;
+    line-height:1.65;tab-size:2;
+  }
+  .code pre[hidden]{display:none}
+  .k{color:var(--code-kw)}
+  .s{color:var(--code-str)}
+  .f{color:var(--code-fn)}
+  .c{color:var(--code-cm);font-style:italic}
+  .n{color:var(--code-num)}
+  .p{color:#93a39e}       /* prompt */
+  .o{color:#d9e2de}       /* output */
+  .code.light{
+    background:var(--panel);color:var(--ink);border-color:var(--rule);
+  }
+  .code.light .bar{background:#eaece7;border-color:var(--rule)}
+  .code.light .bar .file{color:var(--muted)}
+
+  /* ---------- sections ---------- */
+  section.block{
+    padding-block:var(--rhythm) 0;
+    scroll-margin-top:24px;
+  }
+  section.block:last-of-type{padding-bottom:var(--rhythm)}
+  .block-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+    border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:22px;
+  }
+  .block-head a{font-size:var(--t-2);color:var(--muted);white-space:nowrap}
+  .block-head a:hover{color:var(--accent)}
+  .block p.body{max-width:60ch;color:var(--muted)}
+  .block p.body + p.body{margin-top:12px}
+  .block p.body strong{color:var(--ink);font-weight:500}
+
+  /* how it works diagram */
+  .flow{
+    margin-top:26px;
+    display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:0;
+  }
+  .node{
+    border:1px solid var(--rule);border-radius:10px;background:#fff;padding:14px 16px;
+  }
+  .node p.lbl{font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);margin-bottom:6px}
+  .node h3{font-size:var(--t-2);font-weight:600;overflow-wrap:anywhere;font-family:var(--font-mono);font-weight:500}
+  .node p.d{font-size:var(--t-2);color:var(--muted);margin-top:4px;line-height:1.5}
+  .node .rows{display:grid;gap:3px;margin-top:10px}
+  .node .rows i{display:block;height:6px;border-radius:3px;background:var(--rule)}
+  .node .rows i.hot{background:var(--accent);opacity:.9}
+  .node .rows i.cold{background:#b9c8c3}
+  .arrow{display:flex;align-items:center;padding-inline:8px;color:var(--muted)}
+  .arrow svg{width:28px;height:14px}
+
+  /* steps */
+  .steps{counter-reset:step;display:grid;gap:34px;margin-top:8px}
+  .step{display:grid;grid-template-columns:32px 1fr;gap:16px;align-items:start}
+  .step::before{
+    counter-increment:step;content:counter(step);
+    width:28px;height:28px;border-radius:50%;
+    border:1px solid var(--rule);background:#fff;
+    display:grid;place-items:center;
+    font-family:var(--font-mono);font-size:var(--t-1);color:var(--ink);
+    margin-top:2px;
+  }
+  .step h3{font-weight:600}
+  .step p{color:var(--muted);margin-top:4px;max-width:58ch;font-size:var(--t-2)}
+  .step .code{margin-top:14px}
+  .note{
+    margin-top:14px;
+    border-left:2px solid var(--accent);background:var(--accent-soft);
+    padding:10px 14px;border-radius:0 8px 8px 0;
+    font-size:var(--t-2);color:var(--ink);
+  }
+  .note b{font-weight:600}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:var(--t-2)}
+  th,td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:500;color:var(--muted);font-size:var(--t-1)}
+  td code{font-family:var(--font-mono);font-size:0.92em;white-space:nowrap}
+  td.desc{color:var(--muted)}
+  tr:hover td{background:color-mix(in oklab, var(--ink) 2.5%, transparent)}
+  .tbl-wrap{overflow-x:auto;margin-top:6px}
+  .tbl-wrap + h3{margin-top:30px}
+  .ok{color:var(--accent);font-weight:600}
+  .no{color:var(--muted);opacity:.6}
+
+  /* two-up */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:6px}
+  .card{
+    border:1px solid var(--rule);border-radius:10px;padding:18px 20px;background:#fff;
+  }
+  .card h3{font-size:var(--t-3)}
+  .card p{color:var(--muted);font-size:var(--t-2);margin-top:6px}
+  .card p + p{margin-top:8px}
+  .card .lic{
+    margin-top:12px;font-family:var(--font-mono);font-size:var(--t-1);
+    background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:10px 12px;
+    color:var(--ink);line-height:1.6;white-space:pre-wrap;
+  }
+
+  /* changelog */
+  .log{display:grid;gap:0;margin-top:6px}
+  .entry{
+    display:grid;grid-template-columns:150px 1fr;gap:24px;
+    padding-block:24px;border-bottom:1px solid var(--rule);
+  }
+  .entry:first-child{padding-top:4px}
+  .entry .stamp{position:sticky;top:24px;align-self:start}
+  .entry .ver{
+    display:inline-block;font-family:var(--font-mono);font-size:var(--t-1);font-weight:500;
+    background:var(--ink);color:var(--paper);border-radius:999px;padding:3px 10px;
+  }
+  .entry .ver.latest{background:var(--accent)}
+  .entry .date{display:block;margin-top:8px;font-size:var(--t-1);color:var(--muted)}
+  .entry h3{font-weight:600}
+  .entry ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:var(--t-2);display:grid;gap:6px}
+  .entry ul li::marker{color:var(--accent)}
+  .entry ul strong{color:var(--ink);font-weight:500}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--rule);
+    background:var(--panel);
+  }
+  footer .row{
+    padding-inline:var(--gutter);
+    padding-block:48px 40px;
+    display:grid;grid-template-columns:var(--side-w) 1fr 1fr 1fr;gap:28px;
+    font-size:var(--t-2);
+  }
+  footer .col p.h{font-weight:600;margin-bottom:10px;color:var(--ink)}
+  footer .col p{color:var(--muted);line-height:1.7}
+  footer .col a:hover{color:var(--accent)}
+  footer .col a{color:var(--ink)}
+  footer .brand{font-family:var(--font-mono);font-size:var(--t-2);display:flex;align-items:center;gap:10px}
+  footer .brand svg{width:20px;height:20px}
+  footer .bottom{
+    padding-inline:var(--gutter);padding-block:16px 22px;
+    border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-family:var(--font-mono);font-size:var(--t-1);color:var(--muted);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1180px){
+    .shell{grid-template-columns:var(--side-w) minmax(0,1fr)}
+    .toc{display:none}
+  }
+  @media (max-width: 900px){
+    .shell{grid-template-columns:1fr}
+    .side{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--rule)}
+    .side .groups{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+    .wordmark{width:auto}
+    .search{display:none}
+    .top nav{gap:14px}
+    .flow{grid-template-columns:1fr}
+    .arrow{transform:rotate(90deg);justify-content:center;padding:6px 0}
+    .two{grid-template-columns:1fr}
+    .entry{grid-template-columns:1fr;gap:10px}
+    .entry .stamp{position:static}
+    footer .row{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <!-- top nav -->
+  <header class="top">
+    <div class="row">
+      <a class="wordmark" href="#top" aria-label="pg_strata home">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="4" rx="1.2" fill="#0f7b6c"/>
+          <rect x="3" y="10" width="18" height="4" rx="1.2" fill="#0f7b6c" opacity=".6"/>
+          <rect x="3" y="16" width="18" height="4" rx="1.2" fill="#0f7b6c" opacity=".3"/>
+        </svg>
+        pg_strata <span class="tag">docs</span>
+      </a>
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search the docs" aria-label="Search the docs">
+        <kbd>⌘K</kbd>
+      </label>
+      <nav aria-label="Primary">
+        <a href="#top" aria-current="page">Docs</a>
+        <a href="#reference">Reference</a>
+        <a href="#changelog">Changelog</a>
+        <a class="gh" href="https://github.com/pgstrata/pg_strata">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <span class="version">v0.9.2</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- docs shell: sidebar, document, right rail -->
+  <div class="hero shell" id="top">
+
+    <aside class="side" aria-label="Documentation sections">
+      <div class="groups">
+        <div class="group">
+          <p>Getting started</p>
+          <ul>
+            <li><a href="#top" class="active" data-sec="overview">Overview</a></li>
+            <li><a href="#install" data-sec="install">Install</a></li>
+            <li><a href="#quickstart" data-sec="quickstart">Quickstart</a></li>
+            <li><a href="#how" data-sec="how">How tiering works</a></li>
+          </ul>
+        </div>
+        <div class="group">
+          <p>Guides</p>
+          <ul>
+            <li><a href="#quickstart">Writing a tier policy</a></li>
+            <li><a href="#config">Object storage backends</a></li>
+            <li><a href="#quickstart">Querying cold rows</a></li>
+            <li><a href="#config">Backups and restore</a></li>
+            <li><a href="#reference">Monitoring with catalog views</a></li>
+            <li><a href="#how">Recalling rows to hot storage <span class="pill">new</span></a></li>
+          </ul>
+        </div>
+        <div class="group">
+          <p>Reference</p>
+          <ul>
+            <li><a href="#reference" data-sec="reference">SQL functions</a></li>
+            <li><a href="#config" data-sec="config">Configuration</a></li>
+            <li><a href="#reference">Catalog views</a></li>
+            <li><a href="#reference">Error codes</a></li>
+          </ul>
+        </div>
+        <div class="group">
+          <p>Project</p>
+          <ul>
+            <li><a href="#compat" data-sec="compat">Compatibility and licence</a></li>
+            <li><a href="#changelog" data-sec="changelog">Changelog</a></li>
+            <li><a href="https://github.com/pgstrata/pg_strata/blob/main/docs/contributing.md">Contributing</a></li>
+            <li><a href="https://github.com/pgstrata/pg_strata/blob/main/docs/roadmap.md">Roadmap</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot">
+        Reading version <a href="#changelog">0.9.2</a>, released 2 September 2026.<br>
+        Older: <a href="#changelog">0.8.x</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="doc">
+
+        <!-- hero intro: everything here sits inside the first viewport -->
+        <div class="intro" id="overview">
+          <div class="crumbs">
+            <span>Getting started</span><span class="sep">/</span><b>Overview</b>
+          </div>
+          <h1>Move cold rows out of Postgres without leaving Postgres.</h1>
+          <p class="lede">
+            <strong>pg_strata</strong> is an open-source extension that ages rows out of hot tables into
+            columnar files on object storage, then answers ordinary SQL against both tiers as one table.
+            No forked server, no second database, no application changes.
+          </p>
+          <div class="meta">
+            <span><i></i>Postgres 15, 16 and 17</span>
+            <span><i></i>PostgreSQL licence</span>
+            <span><i></i>S3, Google Cloud Storage, Azure Blob and local disk</span>
+          </div>
+          <div class="ctas">
+            <a class="btn primary" href="#install">
+              Install in two minutes
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn ghost" href="#quickstart">Read the quickstart</a>
+          </div>
+
+          <div class="code" data-tabs>
+            <div class="bar" role="tablist" aria-label="Install method">
+              <button class="tab" role="tab" aria-selected="true" data-tab="apt">apt</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="pgxn">pgxn</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="docker">docker</button>
+              <button class="copy" type="button" data-copy>copy</button>
+            </div>
+<pre data-panel="apt"><span class="p">$</span> sudo apt install postgresql-17-pg-strata
+<span class="p">$</span> psql -c <span class="s">"create extension pg_strata; select strata.version();"</span>
+<span class="o"> version
+---------
+ 0.9.2</span></pre>
+<pre data-panel="pgxn" hidden><span class="p">$</span> pgxn install pg_strata
+<span class="p">$</span> psql -c <span class="s">"create extension pg_strata; select strata.version();"</span>
+<span class="o"> version
+---------
+ 0.9.2</span></pre>
+<pre data-panel="docker" hidden><span class="p">$</span> docker run -d -p 5432:5432 ghcr.io/pgstrata/postgres:17-strata0.9
+<span class="p">$</span> psql postgres://postgres@localhost -c <span class="s">"create extension pg_strata; select strata.version();"</span>
+<span class="o"> version
+---------
+ 0.9.2</span></pre>
+          </div>
+        </div>
+
+        <!-- ===== how it works ===== -->
+        <section class="block" id="how">
+          <div class="block-head">
+            <h2>How tiering works</h2>
+            <a href="#quickstart">Skip to the quickstart →</a>
+          </div>
+          <p class="body">
+            You attach a <strong>tier policy</strong> to a table. The policy names a predicate that
+            decides which rows are cold, usually an age on a timestamp column, and a storage target.
+            A background worker runs the policy on a schedule, writes matching rows to Parquet
+            files on the target, verifies the checksum, then deletes them from the heap in one
+            transaction.
+          </p>
+          <p class="body">
+            Reads never change. The planner sees a partitioned table with one hot partition backed by
+            the heap and one cold partition backed by a foreign scan. Predicates on the age column are
+            pushed down to file-level statistics, so a query for last week's rows never opens a file
+            from last year.
+          </p>
+
+          <div class="flow" aria-label="Diagram: hot heap, tier policy, cold object storage">
+            <div class="node">
+              <p class="lbl">hot tier: heap</p>
+              <h3>events</h3>
+              <p class="d">Row store. Indexes, updates, and everything you already do.</p>
+              <div class="rows"><i class="hot"></i><i class="hot"></i><i class="hot"></i><i class="hot"></i><i></i><i></i></div>
+            </div>
+            <div class="arrow" aria-hidden="true">
+              <svg viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 7h24M21 3l4 4-4 4"/></svg>
+            </div>
+            <div class="node">
+              <p class="lbl">policy: strata.attach</p>
+              <h3>occurred_at &lt; now() - 30 days</h3>
+              <p class="d">Runs every hour. Batches of 50,000 rows. Verified before delete.</p>
+              <div class="rows"><i class="hot"></i><i class="hot"></i><i class="cold"></i><i class="cold"></i><i class="cold"></i><i class="cold"></i></div>
+            </div>
+            <div class="arrow" aria-hidden="true">
+              <svg viewBox="0 0 28 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 7h24M21 3l4 4-4 4"/></svg>
+            </div>
+            <div class="node">
+              <p class="lbl">cold tier: s3://analytics/events/</p>
+              <h3>2026/08/events-0412.parquet</h3>
+              <p class="d">Columnar, zstd compressed, min/max stats per file. Still one table in SQL.</p>
+              <div class="rows"><i class="cold"></i><i class="cold"></i><i class="cold"></i><i class="cold"></i><i class="cold"></i><i class="cold"></i></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== install ===== -->
+        <section class="block" id="install">
+          <div class="block-head">
+            <h2>Install</h2>
+            <a href="#compat">Supported versions →</a>
+          </div>
+          <p class="body">
+            pg_strata ships as a native extension with one shared library. Install the package for
+            your Postgres major version, preload the library, restart, then create the extension in
+            each database that needs it.
+          </p>
+
+          <div class="steps" style="margin-top:26px">
+            <div class="step">
+              <div>
+                <h3>Install the package</h3>
+                <p>Debian and Ubuntu packages come from the community apt repository. The pgxn client builds from source on any platform with pg_config on the path.</p>
+                <div class="code" data-tabs>
+                  <div class="bar" role="tablist" aria-label="Package manager">
+                    <button class="tab" role="tab" aria-selected="true" data-tab="deb">Debian / Ubuntu</button>
+                    <button class="tab" role="tab" aria-selected="false" data-tab="brew">macOS</button>
+                    <button class="tab" role="tab" aria-selected="false" data-tab="src">From source</button>
+                    <button class="copy" type="button" data-copy>copy</button>
+                  </div>
+<pre data-panel="deb"><span class="p">$</span> sudo apt install postgresql-17-pg-strata</pre>
+<pre data-panel="brew" hidden><span class="p">$</span> brew install pgstrata/tap/pg_strata</pre>
+<pre data-panel="src" hidden><span class="p">$</span> git clone https://github.com/pgstrata/pg_strata.git &amp;&amp; cd pg_strata
+<span class="p">$</span> make &amp;&amp; sudo make install   <span class="c"># needs libarrow-dev and libcurl</span></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div>
+                <h3>Preload the library and restart</h3>
+                <p>The tiering worker starts with the server, so the library has to be in <code class="inline">shared_preload_libraries</code>.</p>
+                <div class="code light">
+                  <div class="bar"><span class="file">postgresql.conf</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre>shared_preload_libraries = <span class="s">'pg_strata'</span>
+strata.worker_interval   = <span class="s">'1h'</span>
+strata.batch_size        = <span class="n">50000</span></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div>
+                <h3>Create the extension</h3>
+                <p>Run once per database. It creates the <code class="inline">strata</code> schema, the catalog views, and the background worker registration.</p>
+                <div class="code">
+                  <div class="bar"><span class="file">psql</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre><span class="k">create extension</span> pg_strata;
+<span class="k">select</span> strata.version();
+<span class="o"> version
+---------
+ 0.9.2</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== quickstart ===== -->
+        <section class="block" id="quickstart">
+          <div class="block-head">
+            <h2>Quickstart</h2>
+            <a href="#reference">Full function reference →</a>
+          </div>
+          <p class="body">
+            Ten minutes from an empty database to a table that keeps its last thirty days on disk and
+            everything older in object storage. All of it is SQL.
+          </p>
+
+          <div class="steps" style="margin-top:26px">
+            <div class="step">
+              <div>
+                <h3>Register a storage target</h3>
+                <p>Targets are named once and reused across tables. Credentials come from the server environment or an instance role, never from SQL.</p>
+                <div class="code">
+                  <div class="bar"><span class="file">sql</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre><span class="k">select</span> strata.<span class="f">create_target</span>(
+  <span class="s">'analytics'</span>,
+  url    => <span class="s">'s3://acme-analytics/events/'</span>,
+  region => <span class="s">'eu-west-1'</span>,
+  codec  => <span class="s">'zstd'</span>
+);</pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div>
+                <h3>Attach a tier policy to a table</h3>
+                <p>The predicate is any boolean expression over the table's columns. Rows for which it is true are eligible to move. <code class="inline">partition_by</code> decides the file layout on the target.</p>
+                <div class="code">
+                  <div class="bar"><span class="file">sql</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre><span class="k">create table</span> events (
+  id           bigint <span class="k">generated always as identity primary key</span>,
+  account_id   bigint <span class="k">not null</span>,
+  kind         text   <span class="k">not null</span>,
+  payload      jsonb,
+  occurred_at  timestamptz <span class="k">not null default</span> <span class="f">now</span>()
+);
+
+<span class="k">select</span> strata.<span class="f">attach</span>(
+  <span class="s">'events'</span>,
+  target       => <span class="s">'analytics'</span>,
+  cold_when    => <span class="s">'occurred_at &lt; now() - interval ''30 days'''</span>,
+  partition_by => <span class="s">'date_trunc(''month'', occurred_at)'</span>
+);</pre>
+                </div>
+                <div class="note"><b>Tip.</b> Attach before the table grows. Moving a billion existing rows works, but the first run will take as long as a full table scan.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div>
+                <h3>Run the policy and check the result</h3>
+                <p>The worker runs on its own schedule. Call <code class="inline">strata.run</code> to move rows now and see what happened.</p>
+                <div class="code">
+                  <div class="bar"><span class="file">sql</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre><span class="k">select</span> * <span class="k">from</span> strata.<span class="f">run</span>(<span class="s">'events'</span>);
+<span class="o"> moved_rows | files_written | bytes_hot_freed | duration
+------------+---------------+-----------------+----------
+    2140533 |            43 |       1.8 GB    | 00:02:11</span>
+
+<span class="k">select</span> tier, <span class="f">count</span>(*) <span class="k">from</span> strata.<span class="f">explain</span>(<span class="s">'events'</span>) <span class="k">group by</span> 1;
+<span class="o"> tier | count
+------+---------
+ hot  |  912004
+ cold | 2140533</span></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div>
+                <h3>Query as if nothing moved</h3>
+                <p>Filters on the tiering column are pushed down to file statistics. This query touches the heap and exactly one Parquet file.</p>
+                <div class="code">
+                  <div class="bar"><span class="file">sql</span><button class="copy" type="button" data-copy>copy</button></div>
+<pre><span class="k">select</span> kind, <span class="f">count</span>(*)
+<span class="k">from</span>   events
+<span class="k">where</span>  occurred_at >= <span class="s">'2026-07-01'</span>
+<span class="k">and</span>    occurred_at &lt;  <span class="s">'2026-08-15'</span>
+<span class="k">group by</span> kind
+<span class="k">order by</span> 2 <span class="k">desc</span>;
+<span class="o">    kind    |  count
+------------+--------
+ page_view  | 401288
+ checkout   |  38127
+ signup     |   9410</span>
+
+<span class="c">-- explain shows both tiers in one plan</span>
+<span class="c">--   Append</span>
+<span class="c">--     Seq Scan on events_hot        (rows=912004)</span>
+<span class="c">--     Strata Scan on events_cold    (files=1 of 43, skipped=42)</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== reference ===== -->
+        <section class="block" id="reference">
+          <div class="block-head">
+            <h2>SQL functions</h2>
+            <a href="#config">Configuration →</a>
+          </div>
+          <p class="body">
+            Everything lives in the <code class="inline">strata</code> schema. Functions that change
+            state need the <code class="inline">strata_admin</code> role or table ownership; the
+            read-only ones need only <code class="inline">select</code> on the table.
+          </p>
+          <div class="tbl-wrap" style="margin-top:22px">
+            <table>
+              <thead>
+                <tr><th style="width:44%">Signature</th><th>What it does</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>strata.create_target(name, url, region, codec)</code></td><td class="desc">Registers an object storage location. Returns the target id.</td></tr>
+                <tr><td><code>strata.attach(table, target, cold_when, partition_by)</code></td><td class="desc">Attaches a tier policy. The table becomes a two-tier partitioned table in place, no rewrite.</td></tr>
+                <tr><td><code>strata.detach(table, recall boolean)</code></td><td class="desc">Removes the policy. With <code>recall => true</code> every cold row is read back into the heap first.</td></tr>
+                <tr><td><code>strata.run(table)</code></td><td class="desc">Runs the policy now instead of waiting for the worker. Returns a summary row.</td></tr>
+                <tr><td><code>strata.recall(table, where text)</code></td><td class="desc">Moves matching cold rows back to the heap, for backfills or a regulatory hold.</td></tr>
+                <tr><td><code>strata.explain(table)</code></td><td class="desc">One row per file and per hot partition with row counts, byte sizes and min/max of the tiering column.</td></tr>
+                <tr><td><code>strata.verify(table)</code></td><td class="desc">Re-reads every cold file and checks its footer checksum against the catalog.</td></tr>
+                <tr><td><code>strata.version()</code></td><td class="desc">Installed extension version as text.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Catalog views</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th style="width:44%">View</th><th>Columns of note</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>strata.policies</code></td><td class="desc"><code>table_name</code>, <code>target</code>, <code>cold_when</code>, <code>last_run_at</code>, <code>next_run_at</code></td></tr>
+                <tr><td><code>strata.files</code></td><td class="desc"><code>path</code>, <code>rows</code>, <code>bytes</code>, <code>min_key</code>, <code>max_key</code>, <code>checksum</code></td></tr>
+                <tr><td><code>strata.worker_activity</code></td><td class="desc"><code>state</code>, <code>table_name</code>, <code>rows_moved</code>, <code>started_at</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== configuration ===== -->
+        <section class="block" id="config">
+          <div class="block-head">
+            <h2>Configuration</h2>
+            <a href="#compat">Compatibility →</a>
+          </div>
+          <p class="body">
+            Server settings, set in <code class="inline">postgresql.conf</code> or with
+            <code class="inline">alter system</code>. Everything except the preload takes effect on
+            reload.
+          </p>
+          <div class="tbl-wrap" style="margin-top:22px">
+            <table>
+              <thead>
+                <tr><th style="width:34%">Setting</th><th style="width:16%">Default</th><th>Notes</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>strata.worker_interval</code></td><td><code>1h</code></td><td class="desc">How often the worker checks each policy. Minimum 1 minute.</td></tr>
+                <tr><td><code>strata.batch_size</code></td><td><code>50000</code></td><td class="desc">Rows per file write and delete transaction. Larger batches mean fewer files and longer locks on the hot partition.</td></tr>
+                <tr><td><code>strata.max_file_bytes</code></td><td><code>256MB</code></td><td class="desc">Files are closed and a new one opened past this size, regardless of batch.</td></tr>
+                <tr><td><code>strata.verify_before_delete</code></td><td><code>on</code></td><td class="desc">Read the written file back and compare checksums before removing rows from the heap. Turn off only on local disk targets.</td></tr>
+                <tr><td><code>strata.cold_scan_workers</code></td><td><code>4</code></td><td class="desc">Parallel file readers per cold scan. Bounded by <code>max_worker_processes</code>.</td></tr>
+                <tr><td><code>strata.cache_dir</code></td><td><code>pg_strata_cache</code></td><td class="desc">Local directory for recently read cold files. Relative paths are under the data directory.</td></tr>
+                <tr><td><code>strata.cache_max_bytes</code></td><td><code>4GB</code></td><td class="desc">Least recently used eviction once the cache passes this size.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== compatibility and licence ===== -->
+        <section class="block" id="compat">
+          <div class="block-head">
+            <h2>Compatibility and licence</h2>
+            <a href="#changelog">Changelog →</a>
+          </div>
+          <div class="two">
+            <div class="card">
+              <h3>Supported versions</h3>
+              <p>Each minor release is tested against the three most recent Postgres majors on Linux x86_64 and arm64, and on macOS for development.</p>
+              <div class="tbl-wrap" style="margin-top:12px">
+                <table>
+                  <thead><tr><th>pg_strata</th><th>Postgres 15</th><th>16</th><th>17</th><th>18</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>0.9.x</code></td><td class="ok">yes</td><td class="ok">yes</td><td class="ok">yes</td><td class="no">beta</td></tr>
+                    <tr><td><code>0.8.x</code></td><td class="ok">yes</td><td class="ok">yes</td><td class="ok">yes</td><td class="no">no</td></tr>
+                    <tr><td><code>0.7.x</code></td><td class="ok">yes</td><td class="ok">yes</td><td class="no">no</td><td class="no">no</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p style="margin-top:12px">Storage backends: Amazon S3 and any S3-compatible service, Google Cloud Storage, Azure Blob Storage, and a local directory for testing.</p>
+            </div>
+            <div class="card">
+              <h3>Licence</h3>
+              <p>pg_strata is released under the PostgreSQL licence, the same permissive licence as the server. You can use it, modify it and redistribute it, commercially or not, with attribution.</p>
+              <div class="lic">Copyright (c) 2024-2026, the pg_strata authors
+
+Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and this paragraph appear in all copies.</div>
+              <p>Trademark note: Postgres and PostgreSQL are trademarks of the PostgreSQL Community Association. pg_strata is a community project and not affiliated with the association.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== changelog ===== -->
+        <section class="block" id="changelog">
+          <div class="block-head">
+            <h2>Changelog</h2>
+            <a href="https://github.com/pgstrata/pg_strata/releases">All releases on GitHub →</a>
+          </div>
+          <div class="log">
+            <div class="entry">
+              <div class="stamp">
+                <span class="ver latest">v0.9.2</span>
+                <span class="date">2 September 2026</span>
+              </div>
+              <div>
+                <h3>Faster cold scans and a recall function</h3>
+                <ul>
+                  <li><strong>strata.recall</strong> moves cold rows back into the heap by predicate. Useful for backfills and legal holds.</li>
+                  <li>Cold scans now read Parquet row groups in parallel; <code class="inline">strata.cold_scan_workers</code> controls the fan-out. Typical wide scans are 2 to 3 times faster.</li>
+                  <li>Min/max statistics are kept for every column, not only the tiering column, so filters on <code class="inline">account_id</code> also skip files.</li>
+                  <li>Fixed a crash when a policy predicate referenced a dropped column.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="entry">
+              <div class="stamp">
+                <span class="ver">v0.9.0</span>
+                <span class="date">14 July 2026</span>
+              </div>
+              <div>
+                <h3>Postgres 17 support and Azure Blob backend</h3>
+                <ul>
+                  <li>Builds and passes the full suite on Postgres 17. Postgres 14 is no longer supported.</li>
+                  <li>New <code class="inline">az://</code> target scheme for Azure Blob Storage, authenticated with a managed identity or a connection string in the environment.</li>
+                  <li>The worker now writes files before it takes the delete lock, shrinking lock time on the hot partition to milliseconds.</li>
+                  <li><strong>Breaking:</strong> <code class="inline">strata.attach</code> arguments are keyword-only. Positional calls from 0.8 fail with a clear error.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="entry">
+              <div class="stamp">
+                <span class="ver">v0.8.4</span>
+                <span class="date">28 April 2026</span>
+              </div>
+              <div>
+                <h3>Verification on by default</h3>
+                <ul>
+                  <li><code class="inline">strata.verify_before_delete</code> now defaults to on. Every written file is read back and checksummed before rows leave the heap.</li>
+                  <li>Added <code class="inline">strata.verify(table)</code> for auditing existing cold files.</li>
+                  <li>Local disk targets accept relative paths under the data directory.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <aside class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ul>
+        <li><a href="#top" data-sec="overview" class="active">Overview</a></li>
+        <li><a href="#how" data-sec="how">How tiering works</a></li>
+        <li><a href="#install" data-sec="install">Install</a></li>
+        <li><a href="#quickstart" data-sec="quickstart">Quickstart</a></li>
+        <li><a href="#reference" data-sec="reference">SQL functions</a></li>
+        <li><a href="#config" data-sec="config">Configuration</a></li>
+        <li><a href="#compat" data-sec="compat">Compatibility and licence</a></li>
+        <li><a href="#changelog" data-sec="changelog">Changelog</a></li>
+      </ul>
+    </aside>
+
+  </div>
+</div>
+
+<footer>
+  <div class="row">
+    <div class="col">
+      <p class="brand">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="4" rx="1.2" fill="#0f7b6c"/>
+          <rect x="3" y="10" width="18" height="4" rx="1.2" fill="#0f7b6c" opacity=".6"/>
+          <rect x="3" y="16" width="18" height="4" rx="1.2" fill="#0f7b6c" opacity=".3"/>
+        </svg>
+        pg_strata
+      </p>
+      <p style="margin-top:10px">Tiered storage for Postgres.<br>Maintained by the pg_strata authors and 61 contributors.</p>
+    </div>
+    <div class="col">
+      <p class="h">Documentation</p>
+      <p><a href="#install">Install</a><br><a href="#quickstart">Quickstart</a><br><a href="#reference">SQL functions</a><br><a href="#config">Configuration</a></p>
+    </div>
+    <div class="col">
+      <p class="h">Project</p>
+      <p><a href="https://github.com/pgstrata/pg_strata">Source on GitHub</a><br><a href="https://github.com/pgstrata/pg_strata/issues">Issue tracker</a><br><a href="https://github.com/pgstrata/pg_strata/discussions">Discussions</a><br><a href="https://github.com/pgstrata/pg_strata/security">Security policy</a></p>
+    </div>
+    <div class="col">
+      <p class="h">Colophon</p>
+      <p>Docs built from the <code class="inline">docs/</code> directory in the main repository.<br>Set in Inter and JetBrains Mono.<br>Found a mistake? <a href="https://github.com/pgstrata/pg_strata/edit/main/docs/index.md">Edit this page</a>.</p>
+    </div>
+  </div>
+  <div class="bottom">
+    <span>pg_strata 0.9.2 · PostgreSQL licence · 2026</span>
+    <span>Postgres 15 to 17 · Linux and macOS</span>
+  </div>
+</footer>
+
+<script>
+  // Tabbed code windows
+  document.querySelectorAll('[data-tabs]').forEach(function (box) {
+    var tabs = box.querySelectorAll('[data-tab]');
+    var panels = box.querySelectorAll('[data-panel]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+        panels.forEach(function (p) { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+      });
+    });
+  });
+
+  // Copy buttons: copy the visible pre in the same window
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var box = btn.closest('.code');
+      var pre = Array.prototype.find.call(box.querySelectorAll('pre'), function (p) { return !p.hidden; });
+      if (!pre) return;
+      // strip prompt markers and output lines so the clipboard holds runnable text
+      var raw = Array.prototype.map.call(pre.childNodes, function (n) {
+        if (n.nodeType === 1 && (n.classList.contains('o') || n.classList.contains('p'))) return '';
+        return n.textContent;
+      }).join('');
+      var text = raw.split('\n')
+        .map(function (l) { return l.replace(/^ /, ''); })
+        .filter(function (l) { return l.trim().length; })
+        .join('\n');
+      var done = function () {
+        btn.textContent = 'copied';
+        setTimeout(function () { btn.textContent = 'copy'; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        done();
+      }
+    });
+  });
+
+  // Keyboard focus for search
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      var q = document.getElementById('q');
+      if (q) q.focus();
+    }
+  });
+
+  // Track the current section in the sidebar and right rail
+  (function () {
+    var links = document.querySelectorAll('a[data-sec]');
+    var targets = ['overview', 'how', 'install', 'quickstart', 'reference', 'config', 'compat', 'changelog']
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+    if (!('IntersectionObserver' in window) || !targets.length) return;
+    var current = 'overview';
+    function paint() {
+      links.forEach(function (a) { a.classList.toggle('active', a.dataset.sec === current); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { current = en.target.id; paint(); }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+</body>
+</html>

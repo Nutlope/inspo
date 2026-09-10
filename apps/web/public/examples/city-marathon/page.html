@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calder Bay Marathon 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens plus one display step for the countdown digits */
+  :root{
+    --t-xs: 0.8125rem;                       /* 13px meta, table labels */
+    --t-sm: 0.9375rem;                       /* 15px body */
+    --t-md: 1.1875rem;                       /* 19px lead copy */
+    --t-lg: clamp(2rem, 3.2vw, 2.75rem);     /* section headings */
+    --t-xl: clamp(3.25rem, 6.4vw, 5.5rem);   /* hero headline */
+    --t-num: clamp(2.75rem, 4.6vw, 4rem);    /* countdown digits, wave times */
+
+    --paper: #f5f0e6;
+    --ink: #12110f;
+    --accent: #ff4b1f;
+    --navy: #0f1f3d;
+    --lime: #d9f34f;
+    --muted: #6f6a60;
+    --rule: #d9d2c2;
+    --water: #c7dbe6;
+
+    --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --body: "Inter", system-ui, sans-serif;
+
+    --gap: clamp(72px, 9vw, 128px);
+    --radius: 999px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:var(--t-sm);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:800;line-height:.95;letter-spacing:-.01em}
+  p{margin:0}
+  a{color:inherit;text-decoration:none}
+  ul{margin:0;padding:0;list-style:none}
+  svg{display:block}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{
+    width:min(1200px, 100%);
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 40px);
+  }
+  section{padding-block:var(--gap)}
+
+  .meta{font-size:var(--t-xs);color:var(--muted);font-weight:500;letter-spacing:.01em}
+  .meta.accent{color:var(--accent)}
+  .meta::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:1px}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 24px;border-radius:var(--radius);
+    font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:.01em;
+    border:2px solid var(--ink);transition:transform .15s ease, background .15s ease;
+    line-height:1;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:#e63f14;border-color:#e63f14}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper)}
+  .btn.light{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+  /* ---------- Fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  nav{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-block:18px;border-bottom:1px solid var(--rule);
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1}
+  .brand .mark{width:34px;height:34px;border-radius:50%;background:var(--accent);position:relative;overflow:hidden}
+  .brand .mark::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg, transparent 48%, var(--ink) 48%, var(--ink) 62%, transparent 62%)}
+  .links{display:flex;gap:28px;font-weight:500;font-size:var(--t-sm)}
+  .links a{position:relative;padding-block:4px}
+  .links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--accent);transition:right .2s ease}
+  .links a:hover::after{right:0}
+  nav .btn{padding:10px 18px;font-size:1.05rem}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:clamp(24px, 4vh, 48px)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px, 5vw, 72px);align-items:center;width:100%}
+  .hero h1{font-size:var(--t-xl);max-width:16ch;margin-top:18px}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .lead{font-size:var(--t-md);color:var(--muted);max-width:44ch;margin-top:22px}
+  .hero .lead strong{color:var(--ink);font-weight:600}
+  .hero .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+
+  .count{
+    background:var(--navy);color:#fff;border-radius:24px;padding:clamp(22px, 3vw, 34px);
+    position:relative;overflow:hidden;
+  }
+  .count::before{
+    content:"";position:absolute;inset:-40% -20% auto auto;width:70%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle, rgba(217,243,79,.22), transparent 62%);
+  }
+  .count .meta{color:var(--lime)}
+  .digits{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr;gap:8px;margin-top:14px;position:relative}
+  .digit{border-left:1px solid rgba(255,255,255,.14);padding-left:12px}
+  .digit:first-child{border-left:0;padding-left:0}
+  .digit b{display:block;font-family:var(--display);font-weight:800;font-size:var(--t-num);line-height:.9;color:var(--lime);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .digit span{display:block;font-size:var(--t-xs);color:rgba(255,255,255,.7);margin-top:8px}
+  .count .foot{display:flex;justify-content:space-between;align-items:end;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.14);gap:16px;position:relative}
+  .count .foot p{font-size:var(--t-xs);color:rgba(255,255,255,.72);max-width:26ch}
+  .count .foot b{font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1;color:#fff;display:block}
+
+  .ticker{
+    border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+    background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;
+  }
+  .ticker-track{display:inline-flex;gap:0;animation:slide 32s linear infinite}
+  .ticker span{display:inline-block;padding:12px 28px;font-family:var(--display);font-size:1.15rem;font-weight:600}
+  .ticker span::before{content:"";display:inline-block;width:8px;height:8px;background:var(--accent);border-radius:50%;margin-right:20px;vertical-align:middle}
+  @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- Section heads ---------- */
+  .head{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:end;margin-bottom:clamp(36px, 4vw, 56px)}
+  .head h2{font-size:var(--t-lg);max-width:16ch;margin-top:12px}
+  .head p{color:var(--muted);font-size:var(--t-md);max-width:46ch}
+
+  /* ---------- Route ---------- */
+  .route{border-top:1px solid var(--rule)}
+  .route-grid{display:grid;grid-template-columns:1.6fr .8fr;gap:clamp(28px, 4vw, 56px);align-items:start}
+  .map{background:#fbf8f2;border:1px solid var(--rule);border-radius:20px;overflow:hidden}
+  .map svg{width:100%;height:auto}
+  .map-caption{display:flex;justify-content:space-between;gap:16px;padding:14px 20px;border-top:1px solid var(--rule);font-size:var(--t-xs);color:var(--muted)}
+  .legend{display:flex;gap:18px}
+  .legend i{display:inline-block;width:18px;height:4px;background:var(--accent);border-radius:2px;margin-right:6px;vertical-align:middle}
+  .legend i.sq{width:10px;height:10px;background:var(--ink);border-radius:2px}
+  .legend i.wt{width:18px;height:8px;background:var(--water);border-radius:2px}
+
+  .splits{border-top:2px solid var(--ink)}
+  .splits li{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--rule)}
+  .splits b{font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1;color:var(--accent)}
+  .splits b.ink{color:var(--ink)}
+  .splits span{font-size:var(--t-xs);color:var(--muted)}
+  .facts{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;margin-top:22px}
+  .facts div{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:14px 16px}
+  .facts b{display:block;font-family:var(--display);font-weight:800;font-size:2rem;line-height:1}
+  .facts span{font-size:var(--t-xs);color:var(--muted)}
+
+  /* ---------- Waves ---------- */
+  .waves{background:var(--ink);color:var(--paper)}
+  .waves .head p{color:rgba(245,240,230,.7)}
+  .waves .meta{color:var(--lime)}
+  .wave-list{border-top:1px solid rgba(245,240,230,.2)}
+  .wave{display:grid;grid-template-columns:120px 1.2fr 1fr 1fr;gap:24px;align-items:center;padding:22px 0;border-bottom:1px solid rgba(245,240,230,.2);transition:background .15s ease}
+  .wave:hover{background:rgba(245,240,230,.04)}
+  .wave .time{font-family:var(--display);font-weight:800;font-size:var(--t-num);line-height:1;color:var(--lime);font-variant-numeric:tabular-nums}
+  .wave h3{font-size:1.5rem;font-weight:700;line-height:1.05}
+  .wave h3 small{display:block;font-family:var(--body);font-size:var(--t-xs);color:rgba(245,240,230,.6);font-weight:400;margin-top:6px}
+  .wave p{font-size:var(--t-sm);color:rgba(245,240,230,.75)}
+  .pill{display:inline-block;padding:6px 12px;border-radius:var(--radius);border:1px solid rgba(245,240,230,.3);font-size:var(--t-xs);font-weight:500}
+  .pill.hot{background:var(--accent);border-color:var(--accent);color:#fff}
+  .cutoff{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;margin-top:36px}
+  .cutoff div{border:1px solid rgba(245,240,230,.2);border-radius:16px;padding:18px 20px}
+  .cutoff b{display:block;font-family:var(--display);font-size:2.2rem;font-weight:800;line-height:1;color:#fff}
+  .cutoff span{font-size:var(--t-xs);color:rgba(245,240,230,.65)}
+
+  /* ---------- Fees ---------- */
+  .fees-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:18px}
+  .fee{background:#fff;border:1px solid var(--rule);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:14px;position:relative;transition:transform .15s ease}
+  .fee:hover{transform:translateY(-4px)}
+  .fee.open{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,75,31,.15)}
+  .fee .tag{position:absolute;top:18px;right:18px;background:var(--accent);color:#fff;font-size:var(--t-xs);font-weight:600;padding:5px 11px;border-radius:var(--radius)}
+  .fee .tag.done{background:var(--rule);color:var(--muted)}
+  .fee h3{font-size:1.6rem;font-weight:700}
+  .fee .price{font-family:var(--display);font-weight:800;font-size:4rem;line-height:.9;letter-spacing:-.02em}
+  .fee .price sup{font-size:1.6rem;vertical-align:top;margin-right:2px;top:.55rem;position:relative}
+  .fee .close{font-size:var(--t-xs);color:var(--muted);border-top:1px solid var(--rule);padding-top:12px}
+  .fee .close b{color:var(--ink);font-weight:600}
+  .fee ul{display:grid;gap:6px;font-size:var(--t-sm);color:var(--muted)}
+  .fee li::before{content:"";display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:10px;vertical-align:middle}
+  .fee .btn{margin-top:auto;align-self:flex-start}
+  .fees-note{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .fees-note div{border:1px dashed var(--rule);border-radius:16px;padding:18px 20px;font-size:var(--t-sm);color:var(--muted)}
+  .fees-note b{color:var(--ink);font-weight:600}
+
+  /* ---------- Records ---------- */
+  .records{background:var(--accent);color:#fff}
+  .records .meta{color:#fff}
+  .records .head p{color:rgba(255,255,255,.85)}
+  .rec-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;border-top:2px solid rgba(255,255,255,.5)}
+  .rec{padding-top:22px;border-right:1px solid rgba(255,255,255,.35);padding-right:18px}
+  .rec:last-child{border-right:0}
+  .rec b{display:block;font-family:var(--display);font-weight:800;font-size:var(--t-xl);line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .rec h3{font-size:1.5rem;font-weight:700;margin-top:14px}
+  .rec p{font-size:var(--t-sm);color:rgba(255,255,255,.85);margin-top:8px}
+  .rec p strong{color:#fff;font-weight:600}
+  .rec-foot{margin-top:32px;font-size:var(--t-sm);color:rgba(255,255,255,.9);max-width:60ch}
+
+  /* ---------- Spectators + closures ---------- */
+  .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px, 5vw, 72px);align-items:start}
+  .spot{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:18px 0;border-bottom:1px solid var(--rule)}
+  .spot:first-child{border-top:2px solid var(--ink)}
+  .spot .n{width:44px;height:44px;border-radius:10px;background:var(--ink);color:var(--lime);font-family:var(--display);font-weight:800;font-size:1.4rem;display:grid;place-items:center}
+  .spot h3{font-size:1.4rem;font-weight:700}
+  .spot h3 small{font-family:var(--body);font-size:var(--t-xs);color:var(--accent);font-weight:600;margin-left:10px}
+  .spot p{color:var(--muted);margin-top:6px}
+  .closures{background:var(--navy);color:#fff;border-radius:20px;padding:26px}
+  .closures .meta{color:var(--lime)}
+  .closures h3{font-size:1.6rem;font-weight:700;margin-top:10px}
+  .closures table{width:100%;border-collapse:collapse;margin-top:18px;font-size:var(--t-sm)}
+  .closures th{text-align:left;font-weight:500;font-size:var(--t-xs);color:rgba(255,255,255,.6);padding:0 0 10px;border-bottom:1px solid rgba(255,255,255,.2)}
+  .closures td{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12);vertical-align:top}
+  .closures td:first-child{font-weight:600}
+  .closures td.t{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--lime);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .closures .note{font-size:var(--t-xs);color:rgba(255,255,255,.65);margin-top:16px}
+
+  /* ---------- Final CTA ---------- */
+  .final{border-top:1px solid var(--rule)}
+  .final-inner{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  .final h2{font-size:var(--t-xl);max-width:12ch;margin-top:14px}
+  .final h2 em{font-style:normal;color:var(--accent)}
+  .final p{color:var(--muted);font-size:var(--t-md);max-width:40ch}
+  .final .ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+
+  footer{background:var(--ink);color:var(--paper);padding-block:56px 32px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+  .foot-grid h4{margin:0 0 14px;font-family:var(--display);font-size:1.2rem;font-weight:700}
+  .foot-grid li{margin-bottom:8px;font-size:var(--t-sm);color:rgba(245,240,230,.72)}
+  .foot-grid li a:hover{color:var(--lime)}
+  .foot-grid .brand{color:var(--paper)}
+  .foot-grid p{font-size:var(--t-sm);color:rgba(245,240,230,.65);max-width:34ch;margin-top:14px}
+  .foot-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:48px;padding-top:20px;border-top:1px solid rgba(245,240,230,.18);font-size:var(--t-xs);color:rgba(245,240,230,.55)}
+
+  @media (max-width: 900px){
+    .hero-grid,.route-grid,.spec-grid,.final-inner,.head,.fees-note{grid-template-columns:1fr}
+    .fees-grid,.rec-grid,.cutoff,.facts{grid-template-columns:1fr 1fr}
+    .wave{grid-template-columns:90px 1fr;gap:12px}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .links{display:none}
+    .rec{border-right:0}
+  }
+  @media (max-width: 560px){
+    .fees-grid,.rec-grid,.cutoff,.facts,.foot-grid{grid-template-columns:1fr}
+    .digits{grid-template-columns:repeat(2, 1fr)}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#top"><span class="mark"></span>Calder Bay Marathon</a>
+      <div class="links">
+        <a href="#route">Route</a>
+        <a href="#waves">Start waves</a>
+        <a href="#fees">Entry</a>
+        <a href="#records">Records</a>
+        <a href="#spectate">Spectate</a>
+      </div>
+      <a class="btn primary" href="#fees">Enter now</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="meta accent">Sunday 18 April 2027, start 07:00</p>
+          <h1>The whole city, <em>closed</em> for you.</h1>
+          <p class="lead">42.195 km through Old Town, Kestrel Park, the university and the waterfront, on roads with no traffic. <strong>18,000 places, one flat and fast certified course.</strong></p>
+          <div class="ctas">
+            <a class="btn primary" href="#fees">Enter now, from £78</a>
+            <a class="btn ghost" href="#route">See the route</a>
+          </div>
+        </div>
+        <div class="count" aria-live="polite">
+          <p class="meta">Time to the start gun</p>
+          <div class="digits">
+            <div class="digit"><b id="d-days">000</b><span>days</span></div>
+            <div class="digit"><b id="d-hours">00</b><span>hours</span></div>
+            <div class="digit"><b id="d-mins">00</b><span>minutes</span></div>
+            <div class="digit"><b id="d-secs">00</b><span>seconds</span></div>
+          </div>
+          <div class="foot">
+            <p>Early entry is open now and closes on 30 November 2026.</p>
+            <div><b>11,240</b><p>places already taken</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Entries close 21 March 2027</span><span>18,000 places</span><span>Flat, fast, certified course</span><span>Course record 2:05:41</span><span>Five official cheer zones</span><span>Bag drop at Harbour Square from 05:00</span>
+      <span>Entries close 21 March 2027</span><span>18,000 places</span><span>Flat, fast, certified course</span><span>Course record 2:05:41</span><span>Five official cheer zones</span><span>Bag drop at Harbour Square from 05:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- Route ---------- -->
+<section class="route" id="route">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="meta accent">The route</p>
+        <h2>One loop, eight neighbourhoods, 214 m of climb.</h2>
+      </div>
+      <p>Start on Harbour Square, climb gently through Old Town to Northgate, cross Kestrel Park, swing round the university and come home along the River Calder and the waterfront to Cathedral Green.</p>
+    </div>
+
+    <div class="route-grid">
+      <div class="map">
+        <svg viewBox="0 0 820 600" role="img" aria-label="Map of the Calder Bay Marathon route with kilometre markers">
+          <defs>
+            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M50 0H0V50" fill="none" stroke="#e8e1d3" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="820" height="600" fill="#fbf8f2"/>
+          <rect width="820" height="600" fill="url(#grid)"/>
+
+          <!-- Bay -->
+          <path d="M0 548 C 160 520, 300 560, 440 545 C 600 528, 700 500, 820 470 L 820 600 L 0 600 Z" fill="#c7dbe6"/>
+          <text x="640" y="580" font-family="Inter, sans-serif" font-size="13" fill="#5a7a8c">Calder Bay</text>
+
+          <!-- River -->
+          <path d="M 830 392 C 740 380, 660 470, 430 452 C 380 448, 330 480, 300 540" fill="none" stroke="#c7dbe6" stroke-width="22" stroke-linecap="round"/>
+          <text x="735" y="378" font-family="Inter, sans-serif" font-size="13" fill="#5a7a8c">River Calder</text>
+
+          <!-- Park -->
+          <rect x="380" y="40" width="200" height="110" rx="18" fill="#dfe9cf"/>
+          <text x="404" y="130" font-family="Inter, sans-serif" font-size="13" fill="#5f7a45">Kestrel Park</text>
+
+          <!-- District labels -->
+          <text x="150" y="240" font-family="Inter, sans-serif" font-size="13" fill="#8a8377">Old Town</text>
+          <text x="250" y="140" font-family="Inter, sans-serif" font-size="13" fill="#8a8377">Northgate</text>
+          <text x="612" y="190" font-family="Inter, sans-serif" font-size="13" fill="#8a8377">University quarter</text>
+          <text x="300" y="530" font-family="Inter, sans-serif" font-size="13" fill="#8a8377">Waterfront Drive</text>
+          <text x="80" y="360" font-family="Inter, sans-serif" font-size="13" fill="#8a8377">Regent Street</text>
+
+          <!-- Route shadow and stroke -->
+          <path id="course" d="M130 430 L130 300 L220 300 L220 160 L400 160 L400 90 L560 90 L560 220 L700 220 L700 340 L600 340 L600 420 L460 420 L460 500 L250 500 L250 430 L200 430"
+                fill="none" stroke="#12110f" stroke-width="12" stroke-opacity=".08" stroke-linejoin="round" stroke-linecap="round" transform="translate(0,4)"/>
+          <path d="M130 430 L130 300 L220 300 L220 160 L400 160 L400 90 L560 90 L560 220 L700 220 L700 340 L600 340 L600 420 L460 420 L460 500 L250 500 L250 430 L200 430"
+                fill="none" stroke="#ff4b1f" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- Direction arrows -->
+          <g fill="#ff4b1f">
+            <path d="M126 365 l4 -8 l4 8 z"/>
+            <path d="M310 156 l8 4 l-8 4 z"/>
+            <path d="M696 280 l4 8 l4 -8 z"/>
+            <path d="M530 424 l-8 -4 l8 -4 z"/>
+            <path d="M360 504 l-8 -4 l8 -4 z"/>
+          </g>
+
+          <!-- Spectator points -->
+          <g font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="13" fill="#d9f34f" text-anchor="middle">
+            <rect x="300" y="174" width="22" height="22" rx="5" fill="#12110f"/><text x="311" y="190">1</text>
+            <rect x="712" y="292" width="22" height="22" rx="5" fill="#12110f"/><text x="723" y="308">2</text>
+            <rect x="519" y="392" width="22" height="22" rx="5" fill="#12110f"/><text x="530" y="408">3</text>
+            <rect x="339" y="472" width="22" height="22" rx="5" fill="#12110f"/><text x="350" y="488">4</text>
+            <rect x="160" y="444" width="22" height="22" rx="5" fill="#12110f"/><text x="171" y="460">5</text>
+          </g>
+
+          <!-- Kilometre markers -->
+          <g font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="14" text-anchor="middle" fill="#12110f">
+            <g><circle cx="220" cy="287" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="220" y="292">5</text></g>
+            <g><circle cx="315" cy="160" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="315" y="165">10</text></g>
+            <g><circle cx="468" cy="90" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="468" y="95">15</text></g>
+            <g><circle cx="561" cy="220" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="561" y="225">20</text></g>
+            <g><circle cx="700" cy="304" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="700" y="309">25</text></g>
+            <g><circle cx="594" cy="420" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="594" y="425">30</text></g>
+            <g><circle cx="451" cy="500" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="451" y="505">35</text></g>
+            <g><circle cx="250" cy="478" r="14" fill="#fbf8f2" stroke="#ff4b1f" stroke-width="3"/><text x="250" y="483">40</text></g>
+          </g>
+
+          <!-- Start and finish -->
+          <g>
+            <circle cx="130" cy="430" r="11" fill="#12110f"/>
+            <circle cx="130" cy="430" r="4" fill="#d9f34f"/>
+            <rect x="40" y="418" width="58" height="24" rx="12" fill="#12110f"/>
+            <text x="69" y="434" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#fbf8f2" text-anchor="middle">Start</text>
+          </g>
+          <g>
+            <rect x="192" y="422" width="16" height="16" fill="#12110f"/>
+            <rect x="196" y="426" width="4" height="4" fill="#fbf8f2"/><rect x="204" y="426" width="4" height="4" fill="#fbf8f2"/>
+            <rect x="200" y="430" width="4" height="4" fill="#fbf8f2"/><rect x="192" y="434" width="4" height="4" fill="#fbf8f2"/>
+            <rect x="182" y="392" width="72" height="24" rx="12" fill="#ff4b1f"/>
+            <text x="218" y="408" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#fff" text-anchor="middle">Finish 42.2</text>
+          </g>
+
+          <!-- Compass -->
+          <g transform="translate(770 40)" font-family="Inter, sans-serif" font-size="12" fill="#8a8377">
+            <circle r="16" fill="none" stroke="#d9d2c2"/>
+            <path d="M0 -12 L4 2 L0 0 L-4 2 Z" fill="#12110f"/>
+            <text y="32" text-anchor="middle">north</text>
+          </g>
+        </svg>
+        <div class="map-caption">
+          <div class="legend"><span><i></i>Course</span><span><i class="sq"></i>Cheer zone</span><span><i class="wt"></i>Water</span></div>
+          <span>Measured and certified, October 2025. Scale approximate.</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="meta">Kilometre markers and landmarks</p>
+        <ul class="splits" style="margin-top:12px">
+          <li><b class="ink">0</b>Harbour Square, start line<span>07:00</span></li>
+          <li><b>5</b>Regent Street into Old Town<span>+38 m</span></li>
+          <li><b>10</b>Northgate, cheer zone one<span>+72 m</span></li>
+          <li><b>15</b>Kestrel Park, north loop<span>high point, 96 m</span></li>
+          <li><b>20</b>University quarter<span>halfway at 21.1 km</span></li>
+          <li><b>25</b>University Bridge crossing<span>-40 m</span></li>
+          <li><b>30</b>River Calder, south bank<span>flat</span></li>
+          <li><b>35</b>Waterfront Drive<span>sea level</span></li>
+          <li><b>40</b>Cathedral Hill, last rise<span>+18 m</span></li>
+          <li><b class="ink">42.2</b>Cathedral Green, finish<span>cut-off 14:00</span></li>
+        </ul>
+        <div class="facts">
+          <div><b>214 m</b><span>total ascent</span></div>
+          <div><b>11</b><span>drink stations</span></div>
+          <div><b>4</b><span>gel points, 15 to 35 km</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Waves ---------- -->
+<section class="waves" id="waves">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="meta">Start waves and times</p>
+        <h2>Six waves, one minute of silence, then noise.</h2>
+      </div>
+      <p>Your wave is set by the predicted finish time you give at entry. Pens open at 06:15 on Harbour Square and close ten minutes before each start. You cannot move forward a wave on the day, but you can always drop back.</p>
+    </div>
+
+    <ul class="wave-list">
+      <li class="wave">
+        <div class="time">06:55</div>
+        <h3>Wheelchair and handcycle<small>Five minute head start on a cleared course</small></h3>
+        <p>Invited and open entries, sub 2:30 predicted.</p>
+        <div><span class="pill">Pen closes 06:45</span></div>
+      </li>
+      <li class="wave">
+        <div class="time">07:00</div>
+        <h3>Elite and championship<small>Invited athletes and national qualifiers</small></h3>
+        <p>Men sub 2:20, women sub 2:45, by federation standard.</p>
+        <div><span class="pill hot">By invitation</span></div>
+      </li>
+      <li class="wave">
+        <div class="time">07:05</div>
+        <h3>Wave A<small>Predicted finish under 3:15</small></h3>
+        <p>Pacers at 2:55, 3:00 and 3:10.</p>
+        <div><span class="pill">Pen closes 06:55</span></div>
+      </li>
+      <li class="wave">
+        <div class="time">07:20</div>
+        <h3>Wave B<small>Predicted finish 3:15 to 3:45</small></h3>
+        <p>Pacers at 3:20, 3:30 and 3:40.</p>
+        <div><span class="pill">Pen closes 07:10</span></div>
+      </li>
+      <li class="wave">
+        <div class="time">07:35</div>
+        <h3>Wave C<small>Predicted finish 3:45 to 4:30</small></h3>
+        <p>Pacers at 3:50, 4:00, 4:15 and 4:30. The largest wave, with 6,000 runners.</p>
+        <div><span class="pill">Pen closes 07:25</span></div>
+      </li>
+      <li class="wave">
+        <div class="time">07:50</div>
+        <h3>Wave D<small>Predicted finish over 4:30, plus charity places</small></h3>
+        <p>Pacers at 4:45, 5:00, 5:30 and 6:00. Walkers welcome inside the cut-off.</p>
+        <div><span class="pill">Pen closes 07:40</span></div>
+      </li>
+    </ul>
+
+    <div class="cutoff">
+      <div><b>06:15</b><span>Pens open, bag drop from 05:00 on Harbour Square</span></div>
+      <div><b>7 hours</b><span>Course cut-off from the last wave, sweep vehicle behind</span></div>
+      <div><b>14:00</b><span>Finish line closes, results live from 09:30</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Fees ---------- -->
+<section id="fees">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="meta accent">Entry fees and closing dates</p>
+        <h2>Enter early, pay less, sleep better.</h2>
+      </div>
+      <p>Every entry includes chip timing, the finisher medal and technical shirt, bag drop, drink stations, a free photo pack and free travel on Calder Bay buses and trams on race day.</p>
+    </div>
+
+    <div class="fees-grid">
+      <article class="fee" data-closes="2026-11-30">
+        <span class="tag">Open now</span>
+        <h3>Early entry</h3>
+        <div class="price"><sup>£</sup>78</div>
+        <ul>
+          <li>Guaranteed place in your chosen wave</li>
+          <li>Free name printing on your bib</li>
+          <li>Free transfer to another runner until 1 March</li>
+        </ul>
+        <p class="close">Closes <b>30 November 2026</b> at 23:59, or when 12,000 early places are gone.</p>
+        <a class="btn primary" href="#">Enter at £78</a>
+      </article>
+      <article class="fee" data-closes="2027-02-28">
+        <span class="tag">Opens 1 December</span>
+        <h3>Standard entry</h3>
+        <div class="price"><sup>£</sup>96</div>
+        <ul>
+          <li>Place in your wave, subject to space</li>
+          <li>Name printing for £4</li>
+          <li>Transfer to another runner until 1 March, £10 fee</li>
+        </ul>
+        <p class="close">Closes <b>28 February 2027</b> at 23:59.</p>
+        <a class="btn ghost" href="#">Enter at £96</a>
+      </article>
+      <article class="fee" data-closes="2027-03-21">
+        <span class="tag">Opens 1 March</span>
+        <h3>Late entry</h3>
+        <div class="price"><sup>£</sup>118</div>
+        <ul>
+          <li>Waves C and D only</li>
+          <li>No name printing, no transfers</li>
+          <li>Bib collection at the expo only, 16 and 17 April</li>
+        </ul>
+        <p class="close">Closes <b>21 March 2027</b> at 23:59, or when the last of 18,000 places is taken.</p>
+        <a class="btn ghost" href="#">Enter at £118</a>
+      </article>
+    </div>
+
+    <div class="fees-note">
+      <div><b>Charity places.</b> 1,500 places are held for 28 partner charities with a £350 minimum pledge. Charity entry stays open until 4 April 2027 or until each charity's allocation is full.</div>
+      <div><b>Refunds and deferrals.</b> Withdraw before 1 March 2027 for a 50 percent refund, or defer once to 2028 for £15. After 1 March, entries are non refundable and cannot be deferred.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Records ---------- -->
+<section class="records" id="records">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="meta">Course records</p>
+        <h2>Fast enough to chase, flat enough to catch.</h2>
+      </div>
+      <p>Three records have fallen in the last three editions. The course is certified for qualifying times, and the last 12 km are almost entirely at sea level with the wind behind you.</p>
+    </div>
+    <div class="rec-grid">
+      <div class="rec">
+        <b>2:05:41</b>
+        <h3>Men's course record</h3>
+        <p><strong>Tesfaye Alemu</strong>, 2024. Ran the second half in 62:08 and broke the mark by 51 seconds.</p>
+      </div>
+      <div class="rec">
+        <b>2:19:08</b>
+        <h3>Women's course record</h3>
+        <p><strong>Hanna Lindqvist</strong>, 2025. A national record, set alone from 30 km.</p>
+      </div>
+      <div class="rec">
+        <b>1:28:52</b>
+        <h3>Wheelchair course record</h3>
+        <p><strong>Marcus Okafor</strong>, 2025. Broke his own record from 2023 by over two minutes.</p>
+      </div>
+    </div>
+    <p class="rec-foot">Course record bonuses in 2027: £25,000 for a men's or women's record, £8,000 for the wheelchair record, on top of a £180,000 prize purse split equally across the three divisions.</p>
+  </div>
+</section>
+
+<!-- ---------- Spectators and closures ---------- -->
+<section id="spectate">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="meta accent">Spectator points and road closures</p>
+        <h2>Where to stand, and where not to drive.</h2>
+      </div>
+      <p>Five official cheer zones with music, toilets, coffee and a big screen. Each one is a short walk from a tram stop, and you can see the leaders and the last wave from the same spot within four hours.</p>
+    </div>
+
+    <div class="spec-grid">
+      <div>
+        <div class="spot">
+          <div class="n">1</div>
+          <div><h3>Northgate, 10 km<small>leaders from 07:30</small></h3><p>The first big crowd of the day. Runners come through twice within a minute on either side of the central reservation. Tram stop Northgate.</p></div>
+        </div>
+        <div class="spot">
+          <div class="n">2</div>
+          <div><h3>University Bridge, 25 km<small>leaders from 08:15</small></h3><p>Elevated views down onto the field as it turns for home. Students run the loudest zone on the course. Tram stop University.</p></div>
+        </div>
+        <div class="spot">
+          <div class="n">3</div>
+          <div><h3>River Calder south bank, 30 km<small>leaders from 08:30</small></h3><p>Where the race gets decided. Quiet enough to shout a name and be heard. Ten minutes on foot from Cathedral Green, so you can see two points.</p></div>
+        </div>
+        <div class="spot">
+          <div class="n">4</div>
+          <div><h3>Waterfront Drive, 35 km<small>leaders from 08:45</small></h3><p>Full sun, sea air and 800 metres of dead straight road. Bring a sign. Tram stop Marina.</p></div>
+        </div>
+        <div class="spot">
+          <div class="n">5</div>
+          <div><h3>Cathedral Green, finish<small>leaders from 09:05</small></h3><p>Grandstand seats are £12, standing is free along the last 300 metres. Family reunion area by letter behind the medal tent.</p></div>
+        </div>
+      </div>
+
+      <div class="closures">
+        <p class="meta">Road closures, Sunday 18 April</p>
+        <h3>Plan around the course, not through it.</h3>
+        <table>
+          <thead><tr><th>Road</th><th>Closed</th><th>Reopens</th></tr></thead>
+          <tbody>
+            <tr><td>Harbour Square and Quay Street</td><td class="t">Sat 20:00</td><td class="t">Sun 18:00</td></tr>
+            <tr><td>Regent Street and Old Town</td><td class="t">05:00</td><td class="t">09:30</td></tr>
+            <tr><td>Northgate, both carriageways</td><td class="t">06:30</td><td class="t">11:30</td></tr>
+            <tr><td>Park Road and the Kestrel Park loop</td><td class="t">06:30</td><td class="t">12:00</td></tr>
+            <tr><td>University Bridge</td><td class="t">07:30</td><td class="t">13:00</td></tr>
+            <tr><td>Riverside Way</td><td class="t">07:30</td><td class="t">13:30</td></tr>
+            <tr><td>Waterfront Drive</td><td class="t">04:00</td><td class="t">15:00</td></tr>
+            <tr><td>Cathedral Hill and Cathedral Green</td><td class="t">Sat 12:00</td><td class="t">Mon 06:00</td></tr>
+          </tbody>
+        </table>
+        <p class="note">The outer ring road, the hospital access route and all tram lines stay open all day. Residents inside the loop receive a permit letter and a marshal-escorted crossing at Park Road between 08:00 and 12:00.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Final CTA ---------- -->
+<section class="final">
+  <div class="wrap">
+    <div class="final-inner">
+      <div>
+        <p class="meta accent">Entries open</p>
+        <h2>Your name on a bib, <em>your city</em> at your feet.</h2>
+        <div class="ctas">
+          <a class="btn primary" href="#fees">Enter now, from £78</a>
+          <a class="btn ghost" href="#waves">Check your wave</a>
+        </div>
+      </div>
+      <p>Early entry saves £40 on the late price and guarantees your wave. Places went in 11 weeks last year. Entries close on 21 March 2027, and the count above says how long you have.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top"><span class="mark"></span>Calder Bay Marathon</a>
+        <p>Run by Calder Bay Athletics Trust, a registered charity. Every entry funds free running clubs in the city's schools.</p>
+      </div>
+      <div>
+        <h4>Race</h4>
+        <ul><li><a href="#route">Route and elevation</a></li><li><a href="#waves">Start waves</a></li><li><a href="#records">Results and records</a></li><li><a href="#">Expo and bib collection</a></li></ul>
+      </div>
+      <div>
+        <h4>Enter</h4>
+        <ul><li><a href="#fees">Fees and dates</a></li><li><a href="#">Charity places</a></li><li><a href="#">Transfers and deferrals</a></li><li><a href="#">Terms of entry</a></li></ul>
+      </div>
+      <div>
+        <h4>Race day</h4>
+        <ul><li><a href="#spectate">Spectator guide</a></li><li><a href="#spectate">Road closures</a></li><li><a href="#">Travel and parking</a></li><li><a href="#">Volunteer with us</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Calder Bay Athletics Trust, 14 Quay Street, Calder Bay. Registered charity 1187342.</span>
+      <span>Course certified by the national federation, measurement report 042 of 2025.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var target = new Date('2027-04-18T07:00:00+01:00').getTime();
+    var pad = function(n, w){ n = String(n); while(n.length < w) n = '0' + n; return n; };
+    var el = {
+      d: document.getElementById('d-days'),
+      h: document.getElementById('d-hours'),
+      m: document.getElementById('d-mins'),
+      s: document.getElementById('d-secs')
+    };
+    function tick(){
+      var diff = Math.max(0, target - Date.now());
+      var s = Math.floor(diff / 1000);
+      var days = Math.floor(s / 86400); s -= days * 86400;
+      var hours = Math.floor(s / 3600); s -= hours * 3600;
+      var mins = Math.floor(s / 60); s -= mins * 60;
+      el.d.textContent = pad(days, 3);
+      el.h.textContent = pad(hours, 2);
+      el.m.textContent = pad(mins, 2);
+      el.s.textContent = pad(s, 2);
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    // Mark which entry tier is open today
+    var now = Date.now();
+    var fees = document.querySelectorAll('.fee');
+    var marked = false;
+    fees.forEach(function(card){
+      var closes = new Date(card.getAttribute('data-closes') + 'T23:59:59').getTime();
+      var tag = card.querySelector('.tag');
+      if (closes < now){
+        tag.textContent = 'Closed';
+        tag.classList.add('done');
+        card.classList.remove('open');
+      } else if (!marked){
+        tag.textContent = 'Open now';
+        tag.classList.remove('done');
+        card.classList.add('open');
+        marked = true;
+      }
+    });
+  })();
+</script>
+</body>
+</html>

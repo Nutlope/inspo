@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coldharbour Dairy Co-operative</title>
+<meta name="description" content="Six Mendip farms, one limestone cave, cheese sold by the kilo from the shop in Priddy and delivered twice a week.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: six tokens (xs to 2xl), used everywhere */
+  :root{
+    --t-xs: 0.8125rem;
+    --t-sm: 0.9375rem;
+    --t-md: 1.125rem;
+    --t-lg: clamp(1.5rem, 2.4vw, 2.125rem);
+    --t-xl: clamp(2.5rem, 4.2vw, 3.5rem);
+    --t-2xl: clamp(5rem, 11vw, 9rem);
+
+    --paper: #F1EBE0;
+    --curd: #FAF6EC;
+    --ink: #1F1A14;
+    --muted: #6E6256;
+    --rule: #D9CFBF;
+    --rind: #B8641F;
+    --cave: #2B2622;
+
+    --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --font-body: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+
+    --space: clamp(48px, 6vw, 80px); /* per side, so every seam is 96 to 160px */
+    --pill: 999px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:var(--t-md);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p{margin:0}
+  a{color:inherit;text-decoration:none}
+  ul{list-style:none;margin:0;padding:0}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{
+    width:100%;
+    max-width:1200px;
+    margin-inline:auto;
+    padding-inline:clamp(20px, 4vw, 48px);
+  }
+
+  .section{padding-block:var(--space)}
+  .section.band{padding-block:clamp(72px, 9vw, 128px)}
+
+  .eyebrow{
+    font-size:var(--t-xs);
+    color:var(--muted);
+    letter-spacing:0.01em;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;height:1px;background:var(--rind);
+  }
+  .display{
+    font-family:var(--font-display);
+    font-weight:400;
+    letter-spacing:-0.015em;
+    line-height:1.05;
+    text-wrap:balance;
+  }
+  .display em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--rind);
+  }
+  .h-lg{font-size:var(--t-lg)}
+  .h-xl{font-size:var(--t-xl)}
+  .lede{
+    font-size:var(--t-md);
+    color:var(--muted);
+    max-width:52ch;
+  }
+  .small{font-size:var(--t-sm)}
+  .tiny{font-size:var(--t-xs);color:var(--muted)}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 24px;
+    border-radius:var(--pill);
+    font-size:var(--t-sm);
+    font-weight:500;
+    line-height:1;
+    border:1px solid var(--ink);
+    transition:background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:var(--rind);border-color:var(--rind)}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper)}
+  .btn.rind{background:var(--rind);border-color:var(--rind);color:#fff}
+  .btn.rind:hover{background:var(--ink);border-color:var(--ink)}
+
+  /* ---------- Fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding-block:20px;
+    border-bottom:1px solid var(--rule);
+  }
+  .wordmark{
+    font-family:var(--font-display);
+    font-size:var(--t-md);
+    font-weight:500;
+    letter-spacing:-0.01em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .wordmark svg{width:26px;height:26px}
+  .nav-links{display:flex;gap:28px;font-size:var(--t-sm)}
+  .nav-links a{color:var(--muted);transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .basket{
+    padding:10px 18px;
+    border:1px solid var(--ink);
+    border-radius:var(--pill);
+    font-size:var(--t-sm);
+    display:inline-flex;gap:8px;align-items:center;
+  }
+  .basket b{font-weight:600}
+
+  .hero{
+    flex:1;
+    display:grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items:stretch;
+  }
+  .hero-copy{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:26px;
+    padding-block:clamp(32px, 5vh, 64px);
+    padding-right:clamp(24px, 4vw, 64px);
+  }
+  .hero-copy .h-xl{max-width:16ch}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .hero-note{
+    display:flex;gap:18px;flex-wrap:wrap;
+    font-size:var(--t-xs);color:var(--muted);
+  }
+  .hero-note span::before{
+    content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--rind);margin-right:8px;vertical-align:2px;
+  }
+
+  /* Atmospheric panel: pure CSS plus one SVG wheel */
+  .hero-panel{
+    position:relative;
+    overflow:hidden;
+    border-radius:28px;
+    margin-block:clamp(16px, 3vh, 32px);
+    background:
+      radial-gradient(120% 90% at 20% 0%, #E9CFA5 0%, transparent 55%),
+      radial-gradient(90% 80% at 90% 100%, #7C5A3A 0%, transparent 60%),
+      linear-gradient(180deg, #D9B98A 0%, #B98C5B 100%);
+    min-height:360px;
+  }
+  .hero-panel::after{
+    content:"";
+    position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(31,26,20,.045) 0 1px, transparent 1px 7px);
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+  .hero-panel svg.wheel{
+    position:absolute;
+    left:50%;top:52%;
+    width:min(78%, 520px);
+    transform:translate(-50%,-50%);
+  }
+  .panel-tag{
+    position:absolute;
+    left:24px;bottom:24px;
+    background:var(--curd);
+    border-radius:14px;
+    padding:12px 16px;
+    font-size:var(--t-xs);
+    line-height:1.4;
+    box-shadow:0 8px 24px rgba(31,26,20,.18);
+    max-width:240px;
+  }
+  .panel-tag strong{font-family:var(--font-display);font-weight:500;font-size:var(--t-sm);display:block}
+  .panel-temp{
+    position:absolute;right:24px;top:24px;
+    font-family:var(--font-display);
+    font-size:var(--t-lg);
+    color:var(--curd);
+    line-height:1;
+    text-shadow:0 2px 12px rgba(31,26,20,.25);
+  }
+  .panel-temp small{display:block;font-family:var(--font-body);font-size:var(--t-xs);opacity:.85;margin-top:6px}
+
+  /* ---------- Proof strip ---------- */
+  .strip{
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+  }
+  .strip li{
+    padding:28px 24px;
+    border-right:1px solid var(--rule);
+  }
+  .strip li:first-child{padding-left:0}
+  .strip li:last-child{border-right:0}
+  .strip .num{
+    font-family:var(--font-display);
+    font-size:var(--t-lg);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .strip .lab{font-size:var(--t-xs);color:var(--muted);margin-top:8px}
+
+  /* ---------- Section heads ---------- */
+  .head{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:clamp(32px, 4vw, 56px);
+  }
+  .head .display{margin-top:14px}
+  .head .link{
+    font-size:var(--t-sm);
+    border-bottom:1px solid var(--ink);
+    padding-bottom:2px;
+    white-space:nowrap;
+  }
+  .head .link:hover{color:var(--rind);border-color:var(--rind)}
+
+  /* ---------- Cheese grid ---------- */
+  .cheeses{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  .cheese{
+    background:var(--curd);
+    border-radius:22px;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    border:1px solid transparent;
+    transition:border-color .18s;
+  }
+  .cheese:hover{border-color:var(--rule)}
+  .cheese-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .coin{
+    width:64px;height:64px;border-radius:50%;
+    flex:none;
+    box-shadow:inset 0 0 0 5px rgba(31,26,20,.08), 0 6px 14px rgba(31,26,20,.12);
+    position:relative;overflow:hidden;
+  }
+  .coin.blue::after{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 30% 40%, #5E6E8A 0 3px, transparent 4px),
+      radial-gradient(circle at 62% 28%, #5E6E8A 0 2px, transparent 3px),
+      radial-gradient(circle at 70% 66%, #5E6E8A 0 3px, transparent 4px),
+      radial-gradient(circle at 42% 72%, #5E6E8A 0 2px, transparent 3px);
+  }
+  .coin.ash{background:radial-gradient(circle at 50% 50%, #F4EEDD 0 58%, #4A4640 60%)}
+  .coin.reserve{background:radial-gradient(circle at 50% 50%, #E9C46A 0 58%, #8A5A2B 60%)}
+  .coin.tomme{background:radial-gradient(circle at 50% 50%, #F0DFAE 0 58%, #A88A63 60%)}
+  .coin.blue{background:radial-gradient(circle at 50% 50%, #F5EFDE 0 58%, #C9C3B6 60%)}
+  .coin.fresh{background:radial-gradient(circle at 50% 50%, #FBF7EC 0 58%, #E7DFC9 60%)}
+  .coin.smoke{background:radial-gradient(circle at 50% 50%, #EBCB86 0 58%, #5C3E26 60%)}
+  .pill{
+    font-size:var(--t-xs);
+    padding:6px 12px;
+    border-radius:var(--pill);
+    background:var(--paper);
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .cheese h3{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:var(--t-lg);
+    line-height:1.1;
+    letter-spacing:-0.01em;
+  }
+  .cheese p{font-size:var(--t-sm);color:var(--muted)}
+  .cheese-foot{
+    margin-top:auto;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding-top:14px;
+    border-top:1px solid var(--rule);
+  }
+  .price{font-family:var(--font-display);font-size:var(--t-md);font-weight:500}
+  .price small{font-family:var(--font-body);font-size:var(--t-xs);color:var(--muted);font-weight:400;margin-left:4px}
+  .add{
+    padding:10px 16px;border-radius:var(--pill);
+    border:1px solid var(--ink);font-size:var(--t-xs);font-weight:500;
+    transition:background .15s,color .15s;
+  }
+  .add:hover, .add.done{background:var(--ink);color:var(--paper)}
+  .cheese-note{
+    margin-top:28px;
+    display:flex;gap:28px;flex-wrap:wrap;
+    font-size:var(--t-xs);color:var(--muted);
+  }
+
+  /* ---------- Farms ---------- */
+  .farms{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+    border-radius:22px;
+    overflow:hidden;
+  }
+  .farm{
+    background:var(--paper);
+    padding:28px;
+    transition:background .18s;
+  }
+  .farm:hover{background:var(--curd)}
+  .farm .herd{
+    font-family:var(--font-display);
+    font-size:var(--t-xl);
+    line-height:.95;
+    letter-spacing:-0.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .farm .herd small{
+    font-family:var(--font-body);
+    font-size:var(--t-xs);
+    letter-spacing:0;
+    color:var(--muted);
+    display:block;margin-top:10px;
+  }
+  .farm h3{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:var(--t-md);
+    margin-top:22px;
+  }
+  .farm p{font-size:var(--t-sm);color:var(--muted);margin-top:6px}
+  .farm-total{
+    margin-top:24px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-size:var(--t-sm);color:var(--muted);
+  }
+
+  /* ---------- Cave ---------- */
+  .cave{
+    background:var(--cave);
+    color:var(--paper);
+    position:relative;
+    overflow:hidden;
+  }
+  .cave::before{
+    content:"";
+    position:absolute;inset:0;
+    background:
+      radial-gradient(60% 50% at 15% 20%, rgba(184,100,31,.22), transparent 70%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 90px);
+    pointer-events:none;
+  }
+  .cave .wrap{position:relative}
+  .cave .eyebrow{color:rgba(241,235,224,.7)}
+  .cave-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:clamp(32px, 5vw, 80px);
+    align-items:center;
+  }
+  .cave .display em{color:#E9C46A}
+  .cave .lede{color:rgba(241,235,224,.72)}
+  .cave-stat{
+    font-family:var(--font-display);
+    font-size:var(--t-2xl);
+    line-height:.9;
+    letter-spacing:-0.03em;
+    font-variant-numeric:tabular-nums;
+  }
+  .cave-stat sup{font-size:.35em;vertical-align:top;top:.35em;position:relative;color:#E9C46A}
+  .cave-facts{
+    margin-top:32px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    border-top:1px solid rgba(241,235,224,.18);padding-top:22px;
+  }
+  .cave-facts b{
+    display:block;
+    font-family:var(--font-display);font-weight:400;
+    font-size:var(--t-lg);line-height:1;
+  }
+  .cave-facts span{font-size:var(--t-xs);color:rgba(241,235,224,.65);display:block;margin-top:8px}
+  .cave-log{
+    margin-top:32px;
+    border:1px solid rgba(241,235,224,.18);
+    border-radius:18px;
+    padding:20px 22px;
+    font-size:var(--t-sm);
+  }
+  .cave-log li{
+    display:grid;grid-template-columns:110px 1fr;gap:16px;
+    padding-block:10px;
+    border-top:1px solid rgba(241,235,224,.12);
+  }
+  .cave-log li:first-child{border-top:0;padding-top:0}
+  .cave-log li:last-child{padding-bottom:0}
+  .cave-log li span:first-child{color:#E9C46A;font-variant-numeric:tabular-nums}
+
+  /* ---------- Ordering ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  .step{
+    background:var(--curd);
+    border-radius:22px;
+    padding:28px;
+    min-height:220px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .step .n{
+    font-family:var(--font-display);
+    font-size:var(--t-lg);
+    color:var(--rind);
+    line-height:1;
+  }
+  .step h3{
+    font-family:var(--font-display);
+    font-weight:500;font-size:var(--t-md);
+  }
+  .step p{font-size:var(--t-sm);color:var(--muted)}
+  .rates{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  .rate{
+    border:1px solid var(--rule);
+    border-radius:18px;
+    padding:20px 22px;
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    font-size:var(--t-sm);
+  }
+  .rate b{font-family:var(--font-display);font-weight:500;font-size:var(--t-md);white-space:nowrap}
+  .rate span{color:var(--muted)}
+
+  /* ---------- Seasons ---------- */
+  .seasons{
+    border-top:1px solid var(--rule);
+  }
+  .season{
+    display:grid;
+    grid-template-columns:180px minmax(0, 1fr) 260px;
+    gap:32px;
+    padding-block:28px;
+    border-bottom:1px solid var(--rule);
+    align-items:start;
+  }
+  .season h3{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:var(--t-lg);
+    line-height:1.05;
+  }
+  .season h3 small{
+    display:block;
+    font-family:var(--font-body);
+    font-size:var(--t-xs);
+    color:var(--muted);
+    margin-top:8px;
+    font-weight:400;
+  }
+  .season p{font-size:var(--t-sm);color:var(--muted);max-width:60ch}
+  .season .now{
+    font-size:var(--t-xs);
+    color:var(--rind);
+    display:inline-flex;align-items:center;gap:8px;
+    margin-bottom:10px;
+  }
+  .season .now::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--rind)}
+  .season .best{font-size:var(--t-xs);color:var(--muted)}
+  .season .best b{display:block;color:var(--ink);font-weight:500;font-size:var(--t-sm);margin-bottom:6px}
+  .season.current{background:linear-gradient(90deg, var(--curd), transparent 70%)}
+  .season.current .now{display:inline-flex}
+  .season .now{display:none}
+
+  /* ---------- Visit ---------- */
+  .visit-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+    gap:clamp(32px, 5vw, 80px);
+    align-items:start;
+  }
+  .hours{
+    background:var(--curd);
+    border-radius:22px;
+    padding:28px;
+  }
+  .hours h3{
+    font-family:var(--font-display);font-weight:500;font-size:var(--t-md);
+    margin-bottom:14px;
+  }
+  .hours ul + h3{margin-top:24px;padding-top:22px;border-top:1px solid var(--rule)}
+  .hours li{
+    display:flex;justify-content:space-between;gap:16px;
+    font-size:var(--t-sm);
+    padding-block:8px;
+    border-top:1px solid var(--rule);
+  }
+  .hours li:first-child{border-top:0;padding-top:0}
+  .hours li span:last-child{font-variant-numeric:tabular-nums;color:var(--muted)}
+  .hours li.closed span:last-child{color:var(--rind)}
+  .visit-copy{display:flex;flex-direction:column;gap:20px}
+  .visit-copy .lede{max-width:48ch}
+  .map{
+    margin-top:8px;
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid var(--rule);
+    background:var(--curd);
+  }
+  .map svg{display:block;width:100%;height:auto}
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--rule);
+    padding-block:56px 40px;
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:32px;
+  }
+  .foot-grid p{font-size:var(--t-sm);margin-top:12px;line-height:1.6}
+  .foot-grid .tiny{margin-top:6px}
+  .foot-grid a:hover{color:var(--rind)}
+  .foot-bottom{
+    margin-top:40px;
+    padding-top:20px;
+    border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-size:var(--t-xs);color:var(--muted);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr}
+    .hero-panel{min-height:300px;margin-top:0}
+    .hero-copy{padding-right:0}
+    .nav-links{display:none}
+    .cheeses, .farms, .steps, .rates{grid-template-columns:repeat(2,1fr)}
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .strip li:nth-child(2){border-right:0}
+    .strip li:nth-child(3){padding-left:0}
+    .cave-grid, .visit-grid{grid-template-columns:1fr}
+    .season{grid-template-columns:1fr;gap:12px}
+    .foot-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 600px){
+    .cheeses, .farms, .steps, .rates, .cave-facts{grid-template-columns:1fr}
+    .strip{grid-template-columns:1fr}
+    .strip li{border-right:0;padding-inline:0;border-bottom:1px solid var(--rule)}
+    .strip li:last-child{border-bottom:0}
+    .head{flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a class="wordmark" href="#top" aria-label="Coldharbour Dairy Co-operative, home">
+        <svg viewBox="0 0 26 26" aria-hidden="true">
+          <circle cx="13" cy="13" r="12" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M13 13 L13 1.6 A11.4 11.4 0 0 1 24.4 13 Z" fill="currentColor"/>
+        </svg>
+        Coldharbour
+      </a>
+      <div class="nav-links">
+        <a href="#shop">Shop</a>
+        <a href="#farms">Farms</a>
+        <a href="#cave">The cave</a>
+        <a href="#order">Ordering</a>
+        <a href="#seasons">Seasons</a>
+        <a href="#visit">Visit</a>
+      </div>
+      <a class="basket" href="#shop" id="basket">Basket <b id="basket-count">0</b></a>
+    </nav>
+  </header>
+
+  <section class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">Six farms on the Mendip Hills, Somerset · since 1987</span>
+      <h1 class="display h-xl">Cheese from six farms, aged in one <em>cold stone cave</em>.</h1>
+      <p class="lede">We are a dairy co-operative. Our members milk the herds, we make the cheese in Priddy, and every wheel matures in a former quarry tunnel that holds eleven degrees all year. It is sold by the kilo from our shop, or delivered on Tuesdays and Fridays.</p>
+      <div class="hero-ctas">
+        <a class="btn solid" href="#shop">Shop this month's cheeses</a>
+        <a class="btn ghost" href="#visit">Book a cave tour</a>
+      </div>
+      <div class="hero-note">
+        <span>Order by Sunday for Tuesday delivery</span>
+        <span>Free local van over £30</span>
+        <span>Shop open seven days</span>
+      </div>
+    </div>
+
+    <div class="hero-panel" aria-hidden="true">
+      <div class="panel-temp">11°C<small>in the cave, all year</small></div>
+      <svg class="wheel" viewBox="0 0 400 340">
+        <defs>
+          <linearGradient id="side" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8A5A2B"/>
+            <stop offset=".5" stop-color="#B27A3E"/>
+            <stop offset="1" stop-color="#7A4C24"/>
+          </linearGradient>
+          <radialGradient id="top" cx=".4" cy=".35" r=".8">
+            <stop offset="0" stop-color="#D9A75B"/>
+            <stop offset="1" stop-color="#A9713A"/>
+          </radialGradient>
+          <linearGradient id="paste" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#F3DE9B"/>
+            <stop offset="1" stop-color="#E4C271"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="200" cy="300" rx="175" ry="26" fill="rgba(31,26,20,.28)"/>
+        <path d="M50 180 A150 60 0 0 0 350 180 L350 250 A150 60 0 0 1 50 250 Z" fill="url(#side)"/>
+        <ellipse cx="200" cy="180" rx="150" ry="60" fill="url(#top)"/>
+        <path d="M200 180 L275 232 L275 302 L200 250 Z" fill="#E7C87C"/>
+        <path d="M200 180 L174 239 L174 309 L200 250 Z" fill="#D9B565"/>
+        <path d="M200 180 L275 232 A150 60 0 0 1 174 239 Z" fill="url(#paste)"/>
+        <path d="M275 232 L275 302 A150 60 0 0 1 174 309 L174 239 Z" fill="#C9A455" opacity=".9"/>
+        <ellipse cx="200" cy="180" rx="150" ry="60" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+        <g fill="none" stroke="rgba(31,26,20,.35)" stroke-width="1.2">
+          <circle cx="150" cy="170" r="22"/>
+          <text x="150" y="174" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="11" fill="rgba(31,26,20,.6)" stroke="none">1987</text>
+        </g>
+      </svg>
+      <div class="panel-tag">
+        <strong>Coldharbour Reserve, 18 months</strong>
+        Wheel 2114, turned on the third Monday. Cut to order from £38 a kilo.
+      </div>
+    </div>
+  </section>
+</div>
+
+<main>
+
+  <section class="section">
+    <div class="wrap">
+      <ul class="strip" aria-label="The co-operative in numbers">
+        <li><div class="num">6</div><div class="lab">member farms, 800 cows and 120 goats between them</div></li>
+        <li><div class="num">2,600</div><div class="lab">wheels resting in the cave at any one time</div></li>
+        <li><div class="num">340 m</div><div class="lab">of limestone tunnel, leased from the quarry since 1987</div></li>
+        <li><div class="num">2 days</div><div class="lab">a week our van goes out: Tuesday and Friday</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="shop">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">In the shop this month</span>
+          <h2 class="display h-lg">Six cheeses, cut and weighed <em>to order</em>.</h2>
+        </div>
+        <a class="link" href="#order">How ordering works</a>
+      </div>
+
+      <ul class="cheeses">
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin reserve"></div><span class="pill">Raw cow's milk · 18 months</span></div>
+          <h3>Coldharbour Reserve</h3>
+          <p>Our clothbound wheel. Dense, crystalline, with a long savoury finish and a faint sweetness from the summer pasture milk it was made with. Turned by hand every fortnight for eighteen months.</p>
+          <div class="cheese-foot"><span class="price">£38<small>per kg</small></span><button class="add" data-name="Coldharbour Reserve">Add 250 g</button></div>
+        </li>
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin tomme"></div><span class="pill">Cow's milk · 6 months</span></div>
+          <h3>Mendip Tomme</h3>
+          <p>A supple, nutty mountain-style wheel with a grey mottled rind from the cave's own moulds. The one our members take home. Melts well and keeps for weeks in paper.</p>
+          <div class="cheese-foot"><span class="price">£24<small>per kg</small></span><button class="add" data-name="Mendip Tomme">Add 250 g</button></div>
+        </li>
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin ash"></div><span class="pill">Goat's milk · 3 weeks</span></div>
+          <h3>Wellow Ash</h3>
+          <p>A small ash-rolled log from Sara Vine's Anglo-Nubian herd at Wellow Bottom. Bright and lemony when young, softening under the rind by week three. Sold whole, 180 g each.</p>
+          <div class="cheese-foot"><span class="price">£32<small>per kg</small></span><button class="add" data-name="Wellow Ash">Add one log</button></div>
+        </li>
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin blue"></div><span class="pill">Cow's milk · 4 months</span></div>
+          <h3>Priddy Blue</h3>
+          <p>Pierced at six weeks and left to blue in the wettest end of the tunnel. Creamy, salty, with a mineral edge that the cave seems to put into everything. Best in autumn and winter.</p>
+          <div class="cheese-foot"><span class="price">£29<small>per kg</small></span><button class="add" data-name="Priddy Blue">Add 250 g</button></div>
+        </li>
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin fresh"></div><span class="pill">Cow's milk · 8 weeks</span></div>
+          <h3>Hollow Wall</h3>
+          <p>A crumbly, lactic, Caerphilly-style wheel made to a recipe from the Pardoe family at Longacre. Fresh and clean, with a thin natural rind. The cheese to eat with bread and a pear.</p>
+          <div class="cheese-foot"><span class="price">£21<small>per kg</small></span><button class="add" data-name="Hollow Wall">Add 250 g</button></div>
+        </li>
+        <li class="cheese">
+          <div class="cheese-top"><div class="coin smoke"></div><span class="pill">Cow's milk · 10 months</span></div>
+          <h3>Ember</h3>
+          <p>Mendip Tomme, aged four months longer and then cold-smoked for two days over oak offcuts from the co-operative's own hedges. Bacon-sweet, not acrid. Made in small batches from October.</p>
+          <div class="cheese-foot"><span class="price">£30<small>per kg</small></span><button class="add" data-name="Ember">Add 250 g</button></div>
+        </li>
+      </ul>
+
+      <div class="cheese-note">
+        <span>Minimum cut 250 g; we cut in 250 g steps and charge by the weight on the scale.</span>
+        <span>Whole wheels of Reserve (about 9 kg) and Tomme (about 4 kg) at 10% off the kilo price.</span>
+        <span>Every piece is wrapped in waxed paper, never plastic.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="farms">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Member farms</span>
+          <h2 class="display h-lg">The milk arrives before seven, <em>every morning</em>.</h2>
+        </div>
+        <p class="tiny" style="max-width:34ch">Each farm owns an equal share of the co-operative and is paid on the price the cheese sells for, not the milk price.</p>
+      </div>
+
+      <ul class="farms">
+        <li class="farm">
+          <div class="herd">140<small>Holstein-Friesian cows</small></div>
+          <h3>Longacre Farm, Priddy</h3>
+          <p>The Pardoe family. A founding member in 1987 and the farm next door to the dairy. Their milk goes into Hollow Wall and most of the Tomme.</p>
+        </li>
+        <li class="farm">
+          <div class="herd">90<small>Jersey cows</small></div>
+          <h3>Ridgeway Farm, Westbury-sub-Mendip</h3>
+          <p>Ann and Tom Heal. High-fat Jersey milk that gives the Reserve its colour and its crystals. Grazed on the scarp, in view of the Levels.</p>
+        </li>
+        <li class="farm">
+          <div class="herd">120<small>Anglo-Nubian goats</small></div>
+          <h3>Wellow Bottom, Wells</h3>
+          <p>Sara Vine, who joined in 2009. The only goat herd in the co-operative and the source of every Wellow Ash log. The goats kid in February and dry off in November.</p>
+        </li>
+        <li class="farm">
+          <div class="herd">210<small>Montbéliarde cross cows</small></div>
+          <h3>Cheddar Head Farm, Charterhouse</h3>
+          <p>The Willis brothers. Our largest herd, on the old lead-mining ground above Cheddar Gorge. Hardy cows, protein-rich milk, the backbone of the Reserve.</p>
+        </li>
+        <li class="farm">
+          <div class="herd">60<small>Ayrshire cows</small></div>
+          <h3>Ebbor Farm, Wookey Hole</h3>
+          <p>Ruth Ebbor-Cox. Our smallest herd and our newest member, since 2021. Ayrshire milk with small fat globules that suit the Priddy Blue.</p>
+        </li>
+        <li class="farm">
+          <div class="herd">180<small>British Friesian cows</small></div>
+          <h3>Stoke Hill, Rodney Stoke</h3>
+          <p>The Marsh family, founding members. Cows out on pasture from April to late October, then on hay from their own meadows. Never silage, by co-operative rule.</p>
+        </li>
+      </ul>
+      <div class="farm-total">
+        <span>About 38,000 litres of milk a week across all six farms, roughly 3,800 kg of cheese.</span>
+        <span>Members' meeting on the first Thursday of the month, in the dairy kitchen.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band cave" id="cave">
+    <div class="wrap">
+      <div class="cave-grid">
+        <div>
+          <span class="eyebrow">The cave</span>
+          <h2 class="display h-lg" style="margin-top:14px">A quarry tunnel that has not changed <em>temperature</em> since the 1850s.</h2>
+          <p class="lede" style="margin-top:22px">Coldharbour was cut for Bath stone and abandoned in 1961. The four founding farms leased it in 1987 because it did the one thing a refrigerator cannot: it holds eleven degrees and ninety-two percent humidity through August heat and January frost, without a single fan. Every wheel we make spends its whole life on spruce boards down there, brushed, turned and tasted by two affineurs who walk the full length of the tunnel each morning.</p>
+          <ul class="cave-log" aria-label="Weekly cave routine">
+            <li><span>Monday</span><span>Every wheel under six months turned and brushed. Boards wiped with brine.</span></li>
+            <li><span>Wednesday</span><span>Reserve wheels over a year checked with an iron; any that are ready are marked for the shop.</span></li>
+            <li><span>Friday</span><span>Priddy Blue pierced or moved deeper into the wet end. New make brought down from the dairy.</span></li>
+            <li><span>Saturday</span><span>Tours at 11:00 and 14:00. The tunnel is closed to visitors the rest of the week.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="cave-stat">11<sup>°C</sup></div>
+          <div class="cave-facts">
+            <div><b>92%</b><span>relative humidity, measured at the midpoint</span></div>
+            <div><b>340 m</b><span>of tunnel, in four connected galleries</span></div>
+            <div><b>2,600</b><span>wheels resting on spruce boards today</span></div>
+          </div>
+          <p class="tiny" style="margin-top:22px;color:rgba(241,235,224,.6)">The cave is 40 metres below the road. Bring a jumper for the tour; it feels colder than eleven degrees when you have come in from the sun.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="order">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Ordering and delivery</span>
+          <h2 class="display h-lg">Order by Sunday night, eat it <em>on Tuesday</em>.</h2>
+        </div>
+        <a class="link" href="#shop">Back to the cheeses</a>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="n">1</span>
+          <h3>Choose your pieces</h3>
+          <p>Add cheeses in 250 g steps, or a whole wheel. You are charged on the weight we actually cut, so the final total can move by a few pence. Orders close at midnight on Sunday and Wednesday.</p>
+        </li>
+        <li class="step">
+          <span class="n">2</span>
+          <h3>We cut on the morning of dispatch</h3>
+          <p>Nothing is pre-cut. Each piece comes off the wheel in the cave on Monday or Thursday, is wrapped in waxed paper, labelled with the wheel number and the date, and packed with an ice pack in a wool liner.</p>
+        </li>
+        <li class="step">
+          <span class="n">3</span>
+          <h3>Van on Tuesday and Friday</h3>
+          <p>Our own van covers everything within 20 miles of Priddy: Wells, Cheddar, Frome, Glastonbury, Shepton Mallet and the villages between. Beyond that, a tracked overnight courier for the rest of England and Wales.</p>
+        </li>
+      </ol>
+
+      <div class="rates">
+        <div class="rate"><span>Local van, within 20 miles</span><b>£3.50, free over £30</b></div>
+        <div class="rate"><span>Courier, England and Wales</span><b>£6.50, free over £60</b></div>
+        <div class="rate"><span>Collect from the shop</span><b>Free, any day</b></div>
+      </div>
+      <p class="tiny" style="margin-top:22px;max-width:70ch">We do not ship to Scotland, Northern Ireland or overseas in summer, because the ice packs do not hold. From November to March we will, at the courier rate plus £4. Cheese that arrives warm or damaged is replaced on the next run without argument; ring the shop.</p>
+    </div>
+  </section>
+
+  <section class="section" id="seasons">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Seasonal notes</span>
+          <h2 class="display h-lg">The cheese follows the grass, and the grass <em>follows the year</em>.</h2>
+        </div>
+      </div>
+
+      <ul class="seasons">
+        <li class="season" data-months="3,4,5">
+          <h3>Spring<small>March to May</small></h3>
+          <div>
+            <span class="now">Now in season</span>
+            <p>The goats kid in February and Wellow Ash returns to the shop in the second week of March, after a winter without it. Cows go out on the new grass from mid-April and the milk changes almost overnight: thinner, greener, higher in yield. The Hollow Wall made from it is the freshest tasting of the year.</p>
+          </div>
+          <div class="best"><b>Best now</b>Wellow Ash, Hollow Wall, the last of the winter Reserve</div>
+        </li>
+        <li class="season" data-months="6,7,8">
+          <h3>Summer<small>June to August</small></h3>
+          <div>
+            <span class="now">Now in season</span>
+            <p>Full pasture milk, deep yellow from the buttercups and clover. This is the milk that becomes next year's Reserve, so the make room runs at capacity and the tunnel fills. We stop courier deliveries beyond the van radius when the forecast passes 26 degrees. Ember is not made in summer.</p>
+          </div>
+          <div class="best"><b>Best now</b>Mendip Tomme, Wellow Ash, Priddy Blue picnics</div>
+        </li>
+        <li class="season" data-months="9,10,11">
+          <h3>Autumn<small>September to November</small></h3>
+          <div>
+            <span class="now">Now in season</span>
+            <p>The Reserve release. Wheels made the summer before last are ironed in September and the best come up to the shop from the first Saturday in October. Smoking starts when the nights turn cold. The goats dry off in November and the Ash disappears until March; buy it while it lasts.</p>
+          </div>
+          <div class="best"><b>Best now</b>Coldharbour Reserve, Ember, Priddy Blue</div>
+        </li>
+        <li class="season" data-months="12,1,2">
+          <h3>Winter<small>December to February</small></h3>
+          <div>
+            <span class="now">Now in season</span>
+            <p>Hay milk: cows are in, feeding on meadow hay, and the milk is richer and slower to set. Whole Reserve wheels and half Tommes for Christmas must be ordered by the first Sunday in December; the van runs an extra day in the week before Christmas. The shop shuts for four days over the holiday.</p>
+          </div>
+          <div class="best"><b>Best now</b>Whole wheels, Ember, the Blue at its peak</div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="visit">
+    <div class="wrap">
+      <div class="visit-grid">
+        <div class="visit-copy">
+          <span class="eyebrow">Visiting</span>
+          <h2 class="display h-lg">The shop is the old milking parlour, next to the <em>make room</em>.</h2>
+          <p class="lede">You can watch the morning make through the window until about eleven, taste everything on the counter, and take a cave tour on Saturdays. There is a small café doing toasties, soup and our own whey-fed pork sausage rolls. Dogs on leads are welcome in the yard, not in the shop or the cave.</p>
+          <p class="small">Coldharbour Dairy Co-operative, Coldharbour Lane, Priddy, near Wells, Somerset. Follow the brown signs from the Priddy green; the lane is single track and the car park is on the left before the dairy.</p>
+          <div class="hero-ctas">
+            <a class="btn rind" href="#visit">Book a Saturday cave tour, £12</a>
+            <a class="btn ghost" href="#order">Order for delivery instead</a>
+          </div>
+          <div class="map" aria-hidden="true">
+            <svg viewBox="0 0 600 220">
+              <rect width="600" height="220" fill="#FAF6EC"/>
+              <path d="M0 150 C120 120, 200 170, 320 130 S520 100, 600 120" fill="none" stroke="#D9CFBF" stroke-width="10" stroke-linecap="round"/>
+              <path d="M0 150 C120 120, 200 170, 320 130 S520 100, 600 120" fill="none" stroke="#F1EBE0" stroke-width="3" stroke-dasharray="14 10"/>
+              <path d="M320 130 C340 90, 360 70, 380 40" fill="none" stroke="#D9CFBF" stroke-width="6" stroke-linecap="round"/>
+              <g fill="none" stroke="#C9BFA9" stroke-width="1.5">
+                <path d="M60 60 q20 -18 40 0 t40 0"/><path d="M420 180 q20 -18 40 0 t40 0"/><path d="M480 60 q20 -18 40 0 t40 0"/>
+              </g>
+              <circle cx="380" cy="40" r="7" fill="#B8641F"/>
+              <text x="396" y="45" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#1F1A14">The dairy and shop</text>
+              <circle cx="120" cy="140" r="5" fill="#1F1A14"/>
+              <text x="132" y="145" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#6E6256">Priddy green</text>
+              <circle cx="540" cy="115" r="5" fill="#1F1A14"/>
+              <text x="470" y="140" font-family="Inter Tight, Arial, sans-serif" font-size="13" fill="#6E6256">Towards Wells, 4 miles</text>
+              <text x="300" y="200" font-family="Fraunces, Georgia, serif" font-size="13" font-style="italic" fill="#6E6256" text-anchor="middle">Single track lane, 1.2 miles from the green</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="hours">
+          <h3>Shop and café</h3>
+          <ul>
+            <li><span>Monday to Friday</span><span>9:00 to 17:30</span></li>
+            <li><span>Saturday</span><span>9:00 to 18:00</span></li>
+            <li><span>Sunday</span><span>10:00 to 16:00</span></li>
+            <li class="closed"><span>Christmas Day to 28 December</span><span>Closed</span></li>
+          </ul>
+          <h3>Cave tours, Saturdays only</h3>
+          <ul>
+            <li><span>Morning tour</span><span>11:00, about 70 minutes</span></li>
+            <li><span>Afternoon tour</span><span>14:00, about 70 minutes</span></li>
+            <li><span>Price, tasting included</span><span>£12 adults, £5 under 16</span></li>
+            <li><span>Group size</span><span>12 people at most</span></li>
+          </ul>
+          <h3>Watching the make</h3>
+          <ul>
+            <li><span>Milk in</span><span>6:45</span></li>
+            <li><span>Curd cut, from the window</span><span>8:30 to 11:00</span></li>
+            <li><span>No make on</span><span>Sundays</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <span class="eyebrow">Find us</span>
+        <p>Coldharbour Lane<br>Priddy, near Wells<br>Somerset</p>
+      </div>
+      <div>
+        <span class="eyebrow">Write or ring</span>
+        <p><a href="mailto:shop@coldharbourdairy.coop">shop@coldharbourdairy.coop</a><br>01749 000 341</p>
+        <p class="tiny">The shop answers between 9:00 and 17:00. Delivery questions are quickest by phone.</p>
+      </div>
+      <div>
+        <span class="eyebrow">Hours</span>
+        <p>Monday to Saturday, 9:00 to 17:30 or 18:00<br>Sunday, 10:00 to 16:00</p>
+        <p class="tiny">Cave tours on Saturdays at 11:00 and 14:00.</p>
+      </div>
+      <div>
+        <span class="eyebrow">The co-operative</span>
+        <p>Six member farms, equal shares.<br>Registered as a co-operative society in 1987.<br>Milk price paid on cheese sold, not on volume.</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Coldharbour Dairy Co-operative Limited. Made and matured in Priddy, Somerset.</span>
+      <span>Set in Fraunces and Inter Tight. No photographs on purpose: the cheese looks better on the counter.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    // Basket count: a real shop would post to a cart; here it counts pieces added.
+    var count = 0;
+    var out = document.getElementById('basket-count');
+    var buttons = document.querySelectorAll('.add');
+    Array.prototype.forEach.call(buttons, function(btn){
+      btn.addEventListener('click', function(){
+        count += 1;
+        out.textContent = count;
+        var label = btn.textContent;
+        btn.classList.add('done');
+        btn.textContent = 'Added';
+        setTimeout(function(){
+          btn.classList.remove('done');
+          btn.textContent = label;
+        }, 1100);
+      });
+    });
+
+    // Highlight the current season from the visitor's clock.
+    var month = new Date().getMonth() + 1;
+    var seasons = document.querySelectorAll('.season');
+    Array.prototype.forEach.call(seasons, function(row){
+      var months = row.getAttribute('data-months').split(',').map(Number);
+      if (months.indexOf(month) !== -1) row.classList.add('current');
+    });
+  })();
+</script>
+</body>
+</html>

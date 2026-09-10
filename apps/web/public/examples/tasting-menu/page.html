@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vesper, Clerkenwell. One seating a night.</title>
+<meta name="description" content="Vesper is a fourteen-seat tasting-menu restaurant in a former bookbinder's workshop in Clerkenwell. One seating at 7:30, Wednesday to Saturday.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    /* type scale: five steps */
+    --t-xs: 0.8125rem;                       /* 13px meta */
+    --t-s:  0.9375rem;                       /* 15px small body */
+    --t-m:  1.125rem;                        /* 18px body */
+    --t-l:  clamp(1.75rem, 2.6vw, 2.375rem); /* 28 to 38px section titles */
+    --t-xl: clamp(2.5rem, 4.6vw, 3.75rem);   /* 40 to 60px display */
+
+    --serif: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+    --sans:  "Inter", "Helvetica Neue", Arial, sans-serif;
+
+    /* palette */
+    --ivory: #F3EFE6;
+    --bone:  #E9E3D6;
+    --ink:   #111110;
+    --smoke: #6B675F;
+    --rule:  #D6CFC1;
+    --brass: #9A7B4F;
+    --ivory-soft: #CFC9BC;
+
+    --paper: var(--ivory);
+    --fg: var(--ink);
+    --muted: var(--smoke);
+    --line: var(--rule);
+
+    --gutter: clamp(24px, 5vw, 64px);
+    --section: clamp(72px, 10vw, 140px);
+    --measure: 62ch;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--fg);
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:var(--t-m);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--serif);font-weight:300;margin:0;line-height:1.05;letter-spacing:-0.005em}
+  h1{font-size:var(--t-xl)}
+  h2{font-size:var(--t-l)}
+  h3{font-size:1.5rem;line-height:1.2}
+  p{margin:0}
+  a{color:inherit;text-decoration:none}
+  em{font-style:italic}
+  ul,ol{margin:0;padding:0;list-style:none}
+
+  .wrap{max-width:1200px;margin-inline:auto;padding-inline:var(--gutter)}
+  section{padding-block:var(--section)}
+  .meta{
+    font-family:var(--sans);
+    font-size:var(--t-xs);
+    font-weight:400;
+    letter-spacing:0.04em;
+    color:var(--muted);
+  }
+  .brass{color:var(--brass)}
+  .measure{max-width:var(--measure)}
+  .rule{border-top:1px solid var(--line)}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:.75rem;
+    height:3rem;padding-inline:1.5rem;
+    border-radius:999px;
+    background:var(--fg);color:var(--paper);
+    font-family:var(--sans);font-size:var(--t-s);font-weight:400;letter-spacing:0.01em;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .btn:hover{opacity:.86}
+  .btn:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--fg)}
+  .link{
+    font-family:var(--sans);font-size:var(--t-s);font-weight:400;
+    border-bottom:1px solid var(--line);padding-bottom:2px;
+    transition:border-color .2s ease;
+  }
+  .link:hover{border-color:var(--fg)}
+
+  /* ---------- fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;gap:2.5rem;
+    padding-block:1.375rem;
+    border-bottom:1px solid var(--line);
+  }
+  .wordmark{
+    font-family:var(--serif);font-size:1.75rem;font-weight:400;letter-spacing:0.02em;
+    line-height:1;
+  }
+  .wordmark{white-space:nowrap}
+  .wordmark span{color:var(--muted);font-style:italic;font-weight:300;font-size:1.05rem;margin-left:.6rem;letter-spacing:0}
+  .nav ul{display:flex;gap:2rem}
+  .nav ul a{font-family:var(--sans);font-size:var(--t-s);font-weight:400;color:var(--muted);transition:color .2s ease}
+  .nav ul a:hover{color:var(--fg)}
+  .nav .btn{height:2.5rem;padding-inline:1.25rem}
+
+  .hero{flex:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
+  .hero-copy{
+    display:flex;flex-direction:column;justify-content:center;
+    padding-block:clamp(40px,6vh,72px);
+    padding-inline:var(--gutter);
+    max-width:calc(600px + var(--gutter) * 2);
+    margin-left:max(0px, calc((100vw - 1200px) / 2));
+  }
+  .dateline{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;margin-bottom:1.75rem}
+  .dateline .meta{color:var(--fg)}
+  .dateline .meta + .meta::before{content:"·";color:var(--brass);margin-right:1.5rem}
+  .hero h1{max-width:18ch;text-wrap:balance}
+  .hero .lede{margin-top:1.5rem;max-width:44ch;color:var(--muted);font-size:var(--t-m)}
+  .hero .actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem 2rem;margin-top:2.25rem}
+  .hero-panel{
+    position:relative;background:var(--ink);color:var(--ivory);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:clamp(24px,3vw,40px);
+    overflow:hidden;
+  }
+  .hero-panel svg{position:absolute;inset:0;width:100%;height:100%}
+  .hero-panel .caption{position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1rem;color:var(--ivory-soft)}
+  .hero-panel .caption .meta{color:var(--ivory-soft)}
+
+  /* ---------- notes (the evening) ---------- */
+  .notes-head{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:2rem 4rem;align-items:end}
+  .notes{margin-top:4rem;display:grid;gap:3rem}
+  .note{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:.75rem 4rem;padding-top:2rem;border-top:1px solid var(--line)}
+  .note h3{font-family:var(--serif);font-size:1.625rem}
+  .note p{max-width:var(--measure)}
+
+  /* ---------- menu (dark specimen) ---------- */
+  .dark{--paper:var(--ink);--fg:var(--ivory);--muted:var(--ivory-soft);--line:#2C2B28;background:var(--paper);color:var(--fg)}
+  .menu-head{text-align:center;max-width:44ch;margin-inline:auto}
+  .menu-head h2{font-size:var(--t-xl)}
+  .menu-head .meta{margin-top:1rem}
+  .menu-head .season{margin-top:.5rem;font-family:var(--serif);font-style:italic;font-size:1.375rem;color:var(--muted)}
+  .courses{max-width:720px;margin:3.5rem auto 0;border-top:1px solid var(--line)}
+  .course{
+    display:grid;grid-template-columns:3rem minmax(0,1fr);gap:.25rem 1.5rem;
+    padding-block:1.125rem;border-bottom:1px solid var(--line);align-items:baseline;
+  }
+  .course .n{font-family:var(--serif);font-size:1.125rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .course .name{font-family:var(--serif);font-size:1.5rem;line-height:1.2}
+  .course .name .mark{color:var(--brass);margin-left:.35rem}
+  .course .desc{grid-column:2;font-size:var(--t-s);color:var(--muted)}
+  .menu-foot{max-width:720px;margin:2rem auto 0;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+  .menu-foot .meta{line-height:1.6}
+  .prices{max-width:720px;margin:3rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;padding-top:2rem;border-top:1px solid var(--line)}
+  .price .amount{font-family:var(--serif);font-size:2.25rem;line-height:1;margin-top:.5rem}
+  .price .note-l{margin-top:.5rem;font-size:var(--t-s);color:var(--muted)}
+
+  /* ---------- wine ---------- */
+  .wine{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:3rem 5rem;align-items:start}
+  .wine .intro p + p{margin-top:1rem}
+  .pours{border-top:1px solid var(--line)}
+  .pour{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.25rem 2rem;padding-block:1rem;border-bottom:1px solid var(--line);align-items:baseline}
+  .pour .w{font-family:var(--serif);font-size:1.375rem;line-height:1.2}
+  .pour .with{grid-column:1;font-size:var(--t-s);color:var(--muted)}
+  .pour .year{font-family:var(--serif);color:var(--muted);font-size:1.125rem;font-variant-numeric:tabular-nums}
+  .wine .aside{margin-top:1.5rem;padding:1.25rem 1.5rem;background:var(--bone);border-radius:14px;font-size:var(--t-s)}
+
+  /* ---------- reservations ---------- */
+  .res{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:3rem 5rem;align-items:start}
+  .res h2{max-width:16ch}
+  .steps{margin-top:2.5rem;border-top:1px solid var(--line)}
+  .step{display:grid;grid-template-columns:2.5rem minmax(0,1fr);gap:1.5rem;padding-block:1.25rem;border-bottom:1px solid var(--line)}
+  .step .n{font-family:var(--serif);font-size:1.5rem;color:var(--brass);line-height:1.2}
+  .step h3{font-size:1.375rem;margin-bottom:.35rem}
+  .step p{font-size:var(--t-s);color:var(--muted);max-width:52ch}
+  .card{
+    background:var(--ink);color:var(--ivory);border-radius:18px;
+    padding:clamp(28px,3.5vw,44px);
+    position:sticky;top:2rem;
+  }
+  .card .meta{color:var(--ivory-soft)}
+  .card .headline{font-family:var(--serif);font-size:2rem;line-height:1.1;margin-top:.5rem}
+  .card .headline em{color:var(--ivory-soft)}
+  .card form{margin-top:1.75rem;display:grid;gap:1rem}
+  .card .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .field{display:grid;gap:.4rem}
+  .field label{font-size:var(--t-xs);color:var(--ivory-soft);letter-spacing:.04em}
+  .field input,.field select{
+    height:2.75rem;border:1px solid #3A3934;background:#1B1A18;color:var(--ivory);
+    border-radius:10px;padding-inline:.85rem;font-family:var(--sans);font-size:var(--t-s);font-weight:300;
+    color-scheme:dark;
+  }
+  .field input:focus,.field select:focus{outline:1px solid var(--brass);border-color:var(--brass)}
+  .card .btn{background:var(--ivory);color:var(--ink);width:100%;justify-content:center;margin-top:.25rem}
+  .card .fine{font-size:var(--t-xs);color:var(--ivory-soft);line-height:1.5;margin-top:.25rem}
+  .card .done{display:none;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #2C2B28;font-family:var(--serif);font-size:1.25rem;line-height:1.35}
+  .card.sent form{display:none}
+  .card.sent .done{display:block}
+  .card .err{display:none;font-size:var(--t-xs);color:#D9B27C}
+  .card.invalid .err{display:block}
+
+  /* ---------- room ---------- */
+  .room{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:3rem 5rem;align-items:center}
+  .room .plan{background:var(--bone);border-radius:18px;padding:clamp(20px,3vw,36px)}
+  .room .plan svg{width:100%;height:auto;display:block}
+  .room .legend{display:flex;flex-wrap:wrap;gap:.75rem 1.75rem;margin-top:1rem}
+  .room .legend .meta::before{content:"";display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:var(--ink);margin-right:.5rem;vertical-align:middle}
+  .room .legend .meta.alt::before{background:transparent;border:1px solid var(--ink)}
+  .room .copy p + p{margin-top:1rem}
+  .seats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+  .seats .big{font-family:var(--serif);font-size:2.5rem;line-height:1}
+  .seats .meta{margin-top:.35rem}
+
+  /* ---------- visit ---------- */
+  .visit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3rem 4rem}
+  .visit h2{grid-column:1 / -1;max-width:20ch}
+  .visit .col h3{font-size:1.375rem;margin-bottom:.75rem}
+  .visit .col p{font-size:var(--t-s)}
+  .visit .col p + p{margin-top:.75rem}
+  .visit .col .muted{color:var(--muted)}
+  .hours{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.5rem;font-size:var(--t-s)}
+  .hours dt{color:var(--muted)}
+  .hours dd{margin:0}
+  .map{grid-column:1 / -1;background:var(--bone);border-radius:18px;padding:clamp(20px,3vw,36px);overflow:hidden}
+  .map svg{width:100%;height:auto;display:block}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding-block:4rem 2.5rem}
+  .foot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2.5rem}
+  .foot p{font-size:var(--t-s);margin-top:.75rem;line-height:1.6}
+  .foot .muted{color:var(--muted)}
+  .foot a:hover{color:var(--brass)}
+  .foot-end{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr}
+    .hero-copy{max-width:none;margin-left:0}
+    .hero-panel{min-height:280px}
+    .notes-head,.note,.wine,.res,.room{grid-template-columns:1fr}
+    .card{position:static}
+    .visit{grid-template-columns:1fr 1fr}
+    .foot{grid-template-columns:1fr 1fr}
+    .prices{grid-template-columns:1fr}
+    .menu-foot{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .nav ul{display:none}
+    .visit,.foot{grid-template-columns:1fr}
+    .seats{grid-template-columns:1fr 1fr}
+    .card .row{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap">
+    <nav class="nav" aria-label="Primary">
+      <a class="wordmark" href="#top">Vesper<span>Clerkenwell</span></a>
+      <ul>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#wine">Wine</a></li>
+        <li><a href="#room">The room</a></li>
+        <li><a href="#reservations">Reservations</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+      <a class="btn" href="#reservations">Reserve a seat</a>
+    </nav>
+  </header>
+
+  <main id="top" class="hero">
+    <div class="hero-copy">
+      <div class="dateline">
+        <span class="meta">One seating, 7:30 in the evening</span>
+        <span class="meta">Wednesday to Saturday</span>
+        <span class="meta" id="next-seating">Fourteen seats</span>
+      </div>
+      <h1>Fourteen seats, one evening, told in eleven courses.</h1>
+      <p class="lede">A small tasting menu in a former bookbinder's workshop off Sekforde Street. The whole room sits down together at half past seven and eats what the season gave us that morning.</p>
+      <div class="actions">
+        <a class="btn" href="#reservations">Reserve a seat</a>
+        <a class="link" href="#menu">Read the autumn menu</a>
+      </div>
+    </div>
+
+    <aside class="hero-panel" aria-label="Fourteen seats around one counter">
+      <svg viewBox="0 0 560 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="#F3EFE6" stroke-width="0.8" opacity="0.55">
+          <ellipse cx="300" cy="380" rx="330" ry="150"/>
+          <ellipse cx="300" cy="380" rx="270" ry="122"/>
+          <ellipse cx="300" cy="380" rx="210" ry="95"/>
+          <ellipse cx="300" cy="380" rx="150" ry="68"/>
+          <ellipse cx="300" cy="380" rx="90" ry="41"/>
+        </g>
+        <g fill="#F3EFE6">
+          <circle cx="300" cy="230" r="3"/>
+          <circle cx="418" cy="252" r="3"/>
+          <circle cx="510" cy="300" r="3"/>
+          <circle cx="560" cy="380" r="3"/>
+          <circle cx="510" cy="460" r="3"/>
+          <circle cx="418" cy="508" r="3"/>
+          <circle cx="300" cy="530" r="3"/>
+          <circle cx="182" cy="508" r="3"/>
+          <circle cx="90" cy="460" r="3"/>
+          <circle cx="40" cy="380" r="3"/>
+          <circle cx="90" cy="300" r="3"/>
+          <circle cx="182" cy="252" r="3"/>
+          <circle cx="240" cy="236" r="3"/>
+          <circle cx="360" cy="236" r="3"/>
+        </g>
+        <circle cx="300" cy="380" r="5" fill="#9A7B4F"/>
+        <line x1="300" y1="80" x2="300" y2="372" stroke="#9A7B4F" stroke-width="0.8" opacity="0.7"/>
+      </svg>
+      <div class="caption">
+        <span class="meta">Autumn menu, 9 September to 29 November 2026</span>
+        <span class="meta">£195 per person</span>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- ---------- the evening ---------- -->
+<section id="evening">
+  <div class="wrap">
+    <div class="notes-head">
+      <p class="meta">The evening</p>
+      <h2>Everyone arrives at the same time, and nobody is hurried out.</h2>
+    </div>
+    <div class="notes">
+      <article class="note">
+        <h3>On the single seating</h3>
+        <p>Doors open at quarter past seven. At half past, the first course goes to all fourteen seats at once, and from then on the room moves as one table would. There is no second sitting waiting for your chairs, so the evening ends when it ends, usually a little before eleven.</p>
+      </article>
+      <article class="note">
+        <h3>On the kitchen</h3>
+        <p>Three of us cook, and you can see all three from every seat. Ingredients come from a short list of people we have worked with for years: a grower in Kent, a day boat out of Newlyn, a dairy on the Somerset Levels. The menu is written for the season and adjusted on the morning of service to what actually arrived.</p>
+      </article>
+      <article class="note">
+        <h3>On quiet</h3>
+        <p>We do not play music. Plates are set down and described briefly, then left alone. Phones are welcome for a photograph, and we ask that they rest face down after that. Most guests tell us it is the first time in a while they have talked to the person they came with for three hours.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- the menu ---------- -->
+<section id="menu" class="dark">
+  <div class="wrap">
+    <div class="menu-head">
+      <p class="meta">The menu</p>
+      <h2>Autumn</h2>
+      <p class="season">9 September to 29 November 2026</p>
+      <p class="meta">Eleven courses, served to the whole room in order. Dishes marked with <span class="brass">*</span> follow the market and may change on the day.</p>
+    </div>
+
+    <ol class="courses">
+      <li class="course"><span class="n">1</span><span class="name">Warm broth of roasted onion</span><span class="desc">thyme oil, a little aged vinegar, served in the hand</span></li>
+      <li class="course"><span class="n">2</span><span class="name">Cornish crab<span class="mark">*</span></span><span class="desc">brown butter, sorrel, crab-shell cream</span></li>
+      <li class="course"><span class="n">3</span><span class="name">Bread from the evening's bake</span><span class="desc">sourdough, cultured butter, smoked salt</span></li>
+      <li class="course"><span class="n">4</span><span class="name">Beetroot cooked in its skin over embers</span><span class="desc">horseradish, blackcurrant leaf, whey</span></li>
+      <li class="course"><span class="n">5</span><span class="name">Hand-dived scallop<span class="mark">*</span></span><span class="desc">cider, lovage, roasted roe</span></li>
+      <li class="course"><span class="n">6</span><span class="name">Turbot on the bone</span><span class="desc">mussel cream, sea herbs, grilled leek</span></li>
+      <li class="course"><span class="n">7</span><span class="name">Roast grouse<span class="mark">*</span></span><span class="desc">bread sauce, damson, brassicas from the garden, a small pie of the legs</span></li>
+      <li class="course"><span class="n">8</span><span class="name">Aged Comté</span><span class="desc">quince, walnut bread, a spoon of honey from the roof</span></li>
+      <li class="course"><span class="n">9</span><span class="name">Bramley apple</span><span class="desc">hay ice cream, toasted oat, apple skin caramel</span></li>
+      <li class="course"><span class="n">10</span><span class="name">Chocolate and malt</span><span class="desc">fig leaf cream, buckwheat</span></li>
+      <li class="course"><span class="n">11</span><span class="name">Small things with coffee</span><span class="desc">a canelé, marzipan, a bitter caramel</span></li>
+    </ol>
+
+    <div class="prices">
+      <div class="price">
+        <p class="meta">The menu, per person</p>
+        <p class="amount">£195</p>
+        <p class="note-l">Eleven courses, bread, coffee. Service of 12.5% is added to the bill.</p>
+      </div>
+      <div class="price">
+        <p class="meta">Wine pairing</p>
+        <p class="amount">£120</p>
+        <p class="note-l">Six pours, chosen for this menu. A shorter pairing of four pours is £75.</p>
+      </div>
+      <div class="price">
+        <p class="meta">Without alcohol</p>
+        <p class="amount">£60</p>
+        <p class="note-l">Six pours of teas, pressed juices and ferments made in the kitchen.</p>
+      </div>
+    </div>
+
+    <div class="menu-foot">
+      <p class="meta">A vegetarian menu of the same length is available with five days' notice. Because the kitchen is small and shellfish and nuts are in constant use, we cannot promise a safe evening to guests with severe allergies to either.</p>
+      <p class="meta">The winter menu begins on Wednesday 2 December 2026 and will be published here on 16 November.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- wine ---------- -->
+<section id="wine">
+  <div class="wrap wine">
+    <div class="intro">
+      <p class="meta">Wine</p>
+      <h2 style="margin-top:.75rem">Six pours, poured when the plate they belong to arrives.</h2>
+      <p style="margin-top:1.5rem">The pairing is written after the menu, never before it. We favour producers who farm their own vines, and we pour smaller measures than most so that the last glass is still a pleasure. Bottles from the same list are available by the glass if you would rather choose your own.</p>
+      <p>The list itself runs to about a hundred and forty bottles, weighted towards the Loire, Burgundy, the Jura and the Mosel, with a short page of English sparkling wine that we are quietly proud of.</p>
+      <div class="aside">Bring a bottle if you like. Corkage is £30, waived when you also take the pairing.</div>
+    </div>
+
+    <ul class="pours">
+      <li class="pour"><span class="w">Blanc de blancs, extra brut, Côte des Blancs</span><span class="year">2018</span><span class="with">To open, and with the crab</span></li>
+      <li class="pour"><span class="w">Grüner Veltliner, Smaragd, Wachau</span><span class="year">2022</span><span class="with">With the scallop</span></li>
+      <li class="pour"><span class="w">Chenin blanc, Savennières</span><span class="year">2020</span><span class="with">With the turbot</span></li>
+      <li class="pour"><span class="w">Pinot noir, Côte de Nuits villages</span><span class="year">2019</span><span class="with">With the grouse</span></li>
+      <li class="pour"><span class="w">Vin jaune, Château-Chalon</span><span class="year">2015</span><span class="with">With the Comté</span></li>
+      <li class="pour"><span class="w">Tokaji aszú, five puttonyos</span><span class="year">2017</span><span class="with">With the apple, and then the chocolate</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ---------- reservations ---------- -->
+<section id="reservations" style="background:var(--bone)">
+  <div class="wrap res">
+    <div>
+      <p class="meta">Reservations</p>
+      <h2 style="margin-top:.75rem">How a seat is taken, and what we ask in return.</h2>
+      <p style="margin-top:1.5rem;max-width:52ch">We release seats two months ahead, and they usually go within the week. Everything below is the whole arrangement; there is no small print elsewhere.</p>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="n">1</span>
+          <div>
+            <h3>Seats are released on the first of the month</h3>
+            <p>At 10:00 on the first of each month we open every evening for the month after next. November evenings, for instance, were released on 1 September.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="n">2</span>
+          <div>
+            <h3>A deposit of £75 per person holds the seat</h3>
+            <p>Taken by card at the time of booking and deducted from your bill on the night. Tables are for one to four guests; the six-seat window table can be taken whole by writing to us.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="n">3</span>
+          <div>
+            <h3>Cancel seven days ahead for a full return</h3>
+            <p>Inside seven days the deposit is kept, unless we manage to fill your seat from the waiting list, in which case it comes back to you in full. We will always try.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="n">4</span>
+          <div>
+            <h3>Tell us what you cannot eat when you book</h3>
+            <p>Vegetarian menus need five days' notice. Guests must be twelve or over. If your party will be late, telephone: we can hold the first course for ten minutes, not longer, because the whole room waits with you.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="card" id="card">
+      <p class="meta">Request a seat</p>
+      <p class="headline">One evening, <em>half past seven.</em></p>
+      <form id="request" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="date">Evening</label>
+            <input id="date" name="date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="party">Guests</label>
+            <select id="party" name="party">
+              <option value="1">One</option>
+              <option value="2" selected>Two</option>
+              <option value="3">Three</option>
+              <option value="4">Four</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <p class="err" id="err">Please choose a Wednesday to Saturday, and give us a name and an email we can reply to.</p>
+        <button class="btn" type="submit">Request this evening</button>
+        <p class="fine">We reply within one working day with a link to pay the deposit. Nothing is charged now.</p>
+      </form>
+      <p class="done" id="done"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- the room ---------- -->
+<section id="room">
+  <div class="wrap room">
+    <div class="copy">
+      <p class="meta">The room</p>
+      <h2 style="margin-top:.75rem">A bookbinder's workshop, kept mostly as we found it.</h2>
+      <p style="margin-top:1.5rem">The building bound ledgers and hymnals from 1904 until 1987. We kept the north-light window, the cast-iron columns and the long ash bench that became the counter. Eight guests sit at the counter, facing the pass; six sit at the window table, which is shared unless a party takes it whole.</p>
+      <p>Walls are limewashed the colour of the original paper stock, and the only light after dark is from the pass and the candles on the counter. It is a warm room in winter and, thanks to the window, a cool one in September.</p>
+      <div class="seats">
+        <div><p class="big">14</p><p class="meta">seats in all</p></div>
+        <div><p class="big">8</p><p class="meta">at the counter</p></div>
+        <div><p class="big">6</p><p class="meta">at the window table</p></div>
+      </div>
+    </div>
+
+    <div class="plan" aria-label="Plan of the dining room">
+      <svg viewBox="0 0 640 400" role="img" aria-labelledby="plan-title">
+        <title id="plan-title">Floor plan: kitchen pass along the top, counter with eight seats, window table with six seats, door at the bottom left</title>
+        <rect x="20" y="20" width="600" height="360" fill="none" stroke="#111110" stroke-width="1.2"/>
+        <!-- kitchen -->
+        <rect x="20" y="20" width="600" height="80" fill="#F3EFE6" stroke="#111110" stroke-width="1"/>
+        <text x="40" y="66" font-family="Inter, Arial, sans-serif" font-size="13" fill="#6B675F">Kitchen</text>
+        <!-- pass -->
+        <rect x="120" y="100" width="400" height="14" fill="#111110"/>
+        <text x="120" y="134" font-family="Inter, Arial, sans-serif" font-size="12" fill="#6B675F">The pass</text>
+        <!-- counter -->
+        <path d="M110 160 H530 a18 18 0 0 1 18 18 V196 a18 18 0 0 1 -18 18 H110 a18 18 0 0 1 -18 -18 V178 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#111110" stroke-width="1.4"/>
+        <text x="300" y="192" font-family="Cormorant Garamond, Georgia, serif" font-size="16" fill="#6B675F" text-anchor="middle">Ash counter</text>
+        <!-- counter seats -->
+        <g fill="#111110">
+          <circle cx="140" cy="244" r="9"/>
+          <circle cx="192" cy="244" r="9"/>
+          <circle cx="244" cy="244" r="9"/>
+          <circle cx="296" cy="244" r="9"/>
+          <circle cx="348" cy="244" r="9"/>
+          <circle cx="400" cy="244" r="9"/>
+          <circle cx="452" cy="244" r="9"/>
+          <circle cx="504" cy="244" r="9"/>
+        </g>
+        <!-- window -->
+        <rect x="380" y="374" width="240" height="6" fill="#F3EFE6" stroke="#111110" stroke-width="1"/>
+        <text x="600" y="364" font-family="Inter, Arial, sans-serif" font-size="12" fill="#6B675F" text-anchor="end">North window</text>
+        <!-- window table -->
+        <rect x="392" y="300" width="200" height="40" rx="6" fill="none" stroke="#111110" stroke-width="1.4"/>
+        <g fill="none" stroke="#111110" stroke-width="1.2">
+          <circle cx="424" cy="286" r="8"/>
+          <circle cx="492" cy="286" r="8"/>
+          <circle cx="560" cy="286" r="8"/>
+          <circle cx="424" cy="354" r="8"/>
+          <circle cx="492" cy="354" r="8"/>
+          <circle cx="560" cy="354" r="8"/>
+        </g>
+        <!-- columns -->
+        <g fill="#111110">
+          <rect x="86" y="296" width="8" height="8"/>
+          <rect x="300" y="296" width="8" height="8"/>
+        </g>
+        <!-- door -->
+        <path d="M60 380 V320 A60 60 0 0 1 120 380" fill="none" stroke="#111110" stroke-width="1"/>
+        <text x="36" y="312" font-family="Inter, Arial, sans-serif" font-size="12" fill="#6B675F">Door</text>
+      </svg>
+      <div class="legend">
+        <span class="meta">Counter seats, facing the pass</span>
+        <span class="meta alt">Window table, shared</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- visit ---------- -->
+<section id="visit" class="dark">
+  <div class="wrap visit">
+    <h2>Off Sekforde Street, a short walk from Farringdon.</h2>
+
+    <div class="col">
+      <h3>Address</h3>
+      <p>Vesper<br>4 Bindery Yard, off Sekforde Street<br>Clerkenwell, London</p>
+      <p class="muted">The yard gate is unmarked and painted black. Ring once; we will come down.</p>
+    </div>
+
+    <div class="col">
+      <h3>Hours</h3>
+      <dl class="hours">
+        <dt>Wednesday to Saturday</dt><dd>Doors 7:15, seating 7:30</dd>
+        <dt>Sunday to Tuesday</dt><dd>Closed</dd>
+        <dt>Winter closure</dt><dd>21 December to 13 January</dd>
+        <dt>Telephone</dt><dd>Wednesday to Saturday, 2:00 to 6:00</dd>
+      </dl>
+    </div>
+
+    <div class="col">
+      <h3>Getting here</h3>
+      <p>Farringdon station is seven minutes on foot on the Elizabeth line, Thameslink and the Circle, Hammersmith and City and Metropolitan lines. Buses 55 and 243 stop on Clerkenwell Road.</p>
+      <p class="muted">There is no parking in the yard. Bicycles may be left inside the gate.</p>
+    </div>
+
+    <div class="map" aria-label="Simplified street map">
+      <svg viewBox="0 0 1100 300" role="img" aria-labelledby="map-title">
+        <title id="map-title">Simplified map: Clerkenwell Road running left to right, Sekforde Street rising from it, Bindery Yard marked with a dot, Farringdon station to the lower left</title>
+        <g fill="none" stroke="#111110" stroke-width="1.2" opacity="0.7">
+          <path d="M0 210 H1100"/>
+          <path d="M120 300 V40"/>
+          <path d="M120 210 L 470 60"/>
+          <path d="M470 60 H 1100"/>
+          <path d="M760 210 V 0"/>
+          <path d="M330 300 L 380 90"/>
+          <path d="M600 210 L 640 40"/>
+        </g>
+        <g font-family="Inter, Arial, sans-serif" font-size="13" fill="#6B675F">
+          <text x="20" y="232">Clerkenwell Road</text>
+          <text x="300" y="120" transform="rotate(-23 300 120)">Sekforde Street</text>
+          <text x="775" y="30">St John Street</text>
+          <text x="520" y="52">Corporation Row</text>
+          <text x="40" y="288">Farringdon Road</text>
+        </g>
+        <g>
+          <circle cx="60" cy="262" r="10" fill="none" stroke="#111110" stroke-width="1.2"/>
+          <circle cx="60" cy="262" r="3" fill="#111110"/>
+          <text x="80" y="266" font-family="Inter, Arial, sans-serif" font-size="13" fill="#111110">Farringdon station</text>
+        </g>
+        <g>
+          <circle cx="425" cy="80" r="16" fill="none" stroke="#9A7B4F" stroke-width="1"/>
+          <circle cx="425" cy="80" r="6" fill="#9A7B4F"/>
+          <text x="450" y="85" font-family="Cormorant Garamond, Georgia, serif" font-size="20" fill="#111110">Vesper, 4 Bindery Yard</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <p class="meta">Find us</p>
+        <p>4 Bindery Yard, off Sekforde Street<br>Clerkenwell, London</p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:table@vesper.london">table@vesper.london</a><br><span class="muted">We reply within one working day.</span></p>
+      </div>
+      <div>
+        <p class="meta">Telephone</p>
+        <p><a href="tel:+442079460342">020 7946 0342</a><br><span class="muted">Wednesday to Saturday, 2:00 to 6:00</span></p>
+      </div>
+      <div>
+        <p class="meta">Reservations</p>
+        <p><a href="#reservations">Request a seat</a><br><span class="muted">Released on the first of the month at 10:00</span></p>
+      </div>
+    </div>
+    <div class="foot-end">
+      <p class="meta">Vesper Restaurant Ltd, registered in England. Menus and prices current for autumn 2026.</p>
+      <p class="meta">Gift evenings can be bought by writing to us; they are valid for a year.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function isClosed(d){
+    var m = d.getMonth(), day = d.getDate();
+    if (m === 11 && day >= 21) return true;
+    if (m === 0 && day <= 13) return true;
+    return false;
+  }
+  function isServiceDay(d){
+    var w = d.getDay();
+    return w >= 3 && w <= 6 && !isClosed(d);
+  }
+  function nextSeating(from){
+    var d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    for (var i = 0; i < 60; i++){
+      if (isServiceDay(d)) return d;
+      d.setDate(d.getDate() + 1);
+    }
+    return null;
+  }
+  function fmt(d){
+    return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
+  }
+
+  var today = new Date();
+  var next = nextSeating(today);
+  var slot = document.getElementById('next-seating');
+  if (next && slot){
+    var same = next.toDateString() === today.toDateString();
+    slot.textContent = (same ? 'Tonight, ' : 'Next seating, ') + fmt(next);
+  }
+
+  var dateInput = document.getElementById('date');
+  if (dateInput){
+    var y = today.getFullYear(), mo = String(today.getMonth()+1).padStart(2,'0'), da = String(today.getDate()).padStart(2,'0');
+    dateInput.min = y + '-' + mo + '-' + da;
+    if (next){
+      dateInput.value = next.getFullYear() + '-' + String(next.getMonth()+1).padStart(2,'0') + '-' + String(next.getDate()).padStart(2,'0');
+    }
+  }
+
+  var form = document.getElementById('request');
+  var card = document.getElementById('card');
+  var done = document.getElementById('done');
+  if (form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      card.classList.remove('invalid');
+      var raw = dateInput.value;
+      var parts = raw ? raw.split('-') : [];
+      var chosen = parts.length === 3 ? new Date(+parts[0], +parts[1]-1, +parts[2]) : null;
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!chosen || !isServiceDay(chosen) || !name || !okEmail){
+        card.classList.add('invalid');
+        return;
+      }
+      var party = document.getElementById('party');
+      var label = party.options[party.selectedIndex].text.toLowerCase();
+      done.textContent = 'Thank you, ' + name + '. We have your request for ' + label + ' on ' + fmt(chosen) + ' at half past seven, and will write to ' + email + ' within one working day.';
+      card.classList.add('sent');
+    });
+  }
+})();
+</script>
+</body>
+</html>

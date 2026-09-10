@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ostrander Camera Works</title>
+<meta name="description" content="A two-bench workshop in Portland for mechanical cameras: leaf shutters, cloth curtains and brass helicoids. Fixed prices, quoted turnaround, a log of every job.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,300;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: five tokens, one serif for display and body, one mono for the ledger columns */
+  :root{
+    --t-meta: 0.8125rem;
+    --t-body: 1.0625rem;
+    --t-lead: 1.3125rem;
+    --t-head: clamp(1.75rem, 2.6vw, 2.25rem);
+    --t-display: clamp(2.5rem, 4.4vw, 3.5rem);
+
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+
+    --paper: #e8e1cf;
+    --paper-deep: #d9cfb6;
+    --ink: #3b2016;
+    --muted: #7b6853;
+    --rule: #bfb296;
+    --brass: #a87b2c;
+    --oxblood: #8a3826;
+
+    --seam: clamp(72px, 9vw, 128px);
+    --wrap: 1180px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:var(--t-body);
+    line-height:1.55;
+    font-optical-sizing:auto;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  a:hover{color:var(--oxblood)}
+  h1,h2,h3,p,figure{margin:0}
+  ul,ol{margin:0;padding:0;list-style:none}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+
+  /* Container owns the gutter with padding-inline only */
+  .wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:clamp(20px, 4vw, 48px)}
+
+  .mono{font-family:var(--mono);font-size:var(--t-meta);letter-spacing:0.01em}
+  .meta{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted)}
+  .dotrule{
+    border:0;height:1px;margin:0;
+    background-image:radial-gradient(circle, var(--rule) 1px, transparent 1.5px);
+    background-size:6px 1px;background-repeat:repeat-x;
+  }
+
+  /* ---------- Fold ---------- */
+  .fold{min-height:100svh;display:flex;flex-direction:column}
+  .nav{
+    border-bottom:1px solid var(--rule);
+    padding-block:18px;
+  }
+  .nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+  }
+  .wordmark{
+    display:flex;align-items:baseline;gap:10px;
+    font-size:var(--t-lead);font-weight:500;letter-spacing:-0.01em;
+  }
+  .wordmark .est{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);font-weight:400}
+  .nav-links{display:flex;align-items:center;gap:26px}
+  .nav-links a{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted)}
+  .nav-links a:hover{color:var(--oxblood)}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:11px 18px;border-radius:999px;
+    font-family:var(--mono);font-size:var(--t-meta);
+    border:1px solid var(--ink);
+    transition:background .2s, color .2s, border-color .2s;
+  }
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:var(--oxblood);border-color:var(--oxblood);color:var(--paper)}
+  .btn.ghost:hover{border-color:var(--oxblood);color:var(--oxblood)}
+  .btn .arrow{transition:transform .2s}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  .hero{flex:1;display:flex;align-items:center;padding-block:clamp(20px, 3vh, 40px)}
+  .hero .wrap{
+    width:100%;
+    display:grid;grid-template-columns:minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items:center;gap:clamp(24px, 4vw, 64px);
+  }
+  .hero-copy{display:flex;flex-direction:column;gap:clamp(18px, 2.4vh, 28px)}
+  .kicker{display:flex;align-items:center;gap:12px;color:var(--muted)}
+  .kicker::before{content:"";width:28px;height:1px;background:var(--brass)}
+  .hero h1{
+    font-size:var(--t-display);font-weight:300;line-height:1.02;letter-spacing:-0.015em;
+    max-width:20ch;text-wrap:balance;
+  }
+  .hero h1 em{font-style:italic;color:var(--oxblood)}
+  .hero .lead{font-size:var(--t-lead);line-height:1.4;max-width:44ch;color:var(--ink);font-weight:300}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .hero-facts{
+    display:grid;grid-template-columns:repeat(3, auto);gap:28px;
+    margin-top:6px;padding-top:18px;border-top:1px solid var(--rule);
+    width:fit-content;
+  }
+  .hero-facts div{display:flex;flex-direction:column;gap:2px}
+  .hero-facts strong{font-weight:500;font-size:var(--t-lead);line-height:1.1}
+  .hero-facts span{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted)}
+
+  /* Exploded shutter drawing, with corner brackets around it */
+  .plate{position:relative;justify-self:center;width:100%;max-width:520px}
+  .plate svg{display:block;width:100%;height:auto;max-height:min(62svh, 560px)}
+  .plate .corner{position:absolute;width:16px;height:16px;border-color:var(--ink);border-style:solid;border-width:0}
+  .plate .tl{top:-6px;left:-6px;border-top-width:1px;border-left-width:1px}
+  .plate .tr{top:-6px;right:-6px;border-top-width:1px;border-right-width:1px}
+  .plate .bl{bottom:-6px;left:-6px;border-bottom-width:1px;border-left-width:1px}
+  .plate .br{bottom:-6px;right:-6px;border-bottom-width:1px;border-right-width:1px}
+  .plate .caption{
+    position:absolute;left:0;bottom:-30px;
+    font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);
+  }
+  .part{transition:opacity .2s}
+  .plate.dim .part{opacity:.28}
+  .plate.dim .part.on{opacity:1}
+  .lbl{cursor:default}
+  .lbl text{fill:var(--muted);font-family:var(--mono);font-size:11px}
+  .lbl line{stroke:var(--rule)}
+  .lbl:hover text{fill:var(--oxblood)}
+  .lbl:hover line{stroke:var(--oxblood)}
+
+  /* ---------- Sections ---------- */
+  section{padding-block:var(--seam)}
+  section + section,.fold + section{border-top:1px solid var(--rule)}
+  .shop .num{display:block;margin-bottom:12px}
+  .sec-head{
+    display:grid;grid-template-columns:minmax(0, 3fr) minmax(0, 9fr);
+    gap:clamp(20px, 4vw, 56px);align-items:end;margin-bottom:clamp(36px, 5vw, 56px);
+  }
+  .sec-head h2{font-size:var(--t-head);font-weight:300;line-height:1.1;letter-spacing:-0.01em;text-wrap:balance}
+  .sec-head p{max-width:58ch;color:var(--muted);font-size:var(--t-body)}
+  .sec-head .num{display:block;margin-bottom:12px}
+
+  /* Service list */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+  .chip{
+    font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);
+    padding:8px 14px;border:1px solid var(--rule);border-radius:999px;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--ink);color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .services{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{
+    text-align:left;font-weight:400;font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);
+    padding:0 16px 14px 0;border-bottom:1px solid var(--ink);
+  }
+  tbody.group tr.group-head th{
+    padding:26px 0 10px;text-align:left;font-weight:500;font-size:var(--t-lead);
+    color:var(--ink);border-bottom:1px solid var(--rule);
+  }
+  tbody.group tr.group-head th span{font-family:var(--mono);font-size:var(--t-meta);color:var(--brass);font-weight:400;margin-left:12px}
+  tbody.group td{
+    padding:14px 16px 14px 0;vertical-align:top;border-bottom:1px solid var(--rule);
+  }
+  tbody.group tr.row{transition:background .15s}
+  tbody.group tr.row:hover{background:color-mix(in oklab, var(--ink) 4%, transparent)}
+  td.svc{width:52%}
+  td.svc small{display:block;color:var(--muted);font-size:var(--t-meta);margin-top:3px;font-family:var(--serif);font-size:0.95rem}
+  td.price,td.turn,th.price,th.turn{font-family:var(--mono);font-size:var(--t-meta);white-space:nowrap}
+  td.price{color:var(--ink)}
+  td.turn{color:var(--muted)}
+  .svc-note{margin-top:28px;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:clamp(20px,4vw,56px)}
+  .svc-note p{max-width:62ch;color:var(--muted)}
+  .svc-note p b{color:var(--ink);font-weight:500}
+
+  /* Makes */
+  .makes{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:0 32px}
+  .makes li{
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--rule);
+  }
+  .makes li b{font-weight:500}
+  .makes li span{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);text-align:right}
+  .not-taken{
+    margin-top:40px;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:clamp(20px,4vw,56px);
+  }
+  .not-taken p{max-width:62ch;color:var(--muted)}
+
+  /* CLA */
+  .cla{display:grid;grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);gap:clamp(32px, 5vw, 80px);align-items:start}
+  .cla-steps{counter-reset:step}
+  .cla-steps li{
+    display:grid;grid-template-columns:44px 1fr;gap:16px;
+    padding:18px 0;border-bottom:1px solid var(--rule);
+  }
+  .cla-steps li:first-child{border-top:1px solid var(--ink)}
+  .cla-steps li::before{
+    counter-increment:step;content:"0" counter(step);
+    font-family:var(--mono);font-size:var(--t-meta);color:var(--brass);padding-top:4px;
+  }
+  .cla-steps h3{font-size:var(--t-body);font-weight:500;margin-bottom:4px}
+  .cla-steps p{color:var(--muted);font-size:var(--t-body)}
+  .cla-aside{position:sticky;top:32px}
+  .cla-aside .lens{width:100%;height:auto;display:block;margin-bottom:20px}
+  .cla-aside p{color:var(--muted);max-width:44ch}
+  .warranty{
+    margin-top:22px;padding:18px 20px;border:1px solid var(--rule);
+    display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;
+  }
+  .warranty .seal{
+    width:44px;height:44px;border-radius:50%;border:1px solid var(--brass);
+    display:grid;place-items:center;font-family:var(--mono);font-size:var(--t-meta);color:var(--brass);
+  }
+  .warranty b{font-weight:500;display:block}
+  .warranty span{color:var(--muted)}
+
+  /* Repair log */
+  .log li{
+    display:grid;grid-template-columns:150px 110px minmax(0,1fr) 120px;gap:24px;
+    padding:20px 0;border-bottom:1px solid var(--rule);align-items:start;
+  }
+  .log li:first-child{border-top:1px solid var(--ink)}
+  .log .date,.log .job{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);padding-top:4px}
+  .log .cam{font-weight:500;font-size:var(--t-lead);line-height:1.2}
+  .log .fault{color:var(--muted);margin-top:4px}
+  .log .work{margin-top:8px;max-width:64ch}
+  .log .status{font-family:var(--mono);font-size:var(--t-meta);text-align:right;padding-top:4px}
+  .status.done::before,.status.bench::before,.status.wait::before{
+    content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:1px;
+  }
+  .status.done::before{background:var(--brass)}
+  .status.bench::before{background:var(--oxblood)}
+  .status.wait::before{border:1px solid var(--muted);width:6px;height:6px}
+  .log-foot{margin-top:28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  /* Send in */
+  .send{display:grid;grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);gap:clamp(32px, 5vw, 80px);align-items:start}
+  .steps li{
+    display:grid;grid-template-columns:44px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--rule);
+  }
+  .steps li:first-child{border-top:1px solid var(--ink)}
+  .steps .n{font-family:var(--mono);font-size:var(--t-meta);color:var(--brass);padding-top:4px}
+  .steps h3{font-size:var(--t-lead);font-weight:500;line-height:1.2;margin-bottom:6px}
+  .steps p{color:var(--muted)}
+  .steps ul{margin-top:10px;display:grid;gap:6px}
+  .steps ul li{
+    display:block;padding:0;border:0;padding-left:16px;position:relative;color:var(--ink);
+  }
+  .steps ul li::before{content:"";position:absolute;left:0;top:0.7em;width:8px;height:1px;background:var(--brass)}
+  .ticket{
+    border:1px solid var(--ink);padding:26px 28px;position:sticky;top:32px;
+    background:var(--paper-deep);
+  }
+  .ticket .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;padding-bottom:14px;border-bottom:1px dashed var(--rule)}
+  .ticket .head b{font-weight:500;font-size:var(--t-lead)}
+  .ticket dl{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:0}
+  .ticket dt{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);padding-top:3px}
+  .ticket dd{margin:0}
+  .ticket .cut{
+    margin-top:22px;padding-top:16px;border-top:1px dashed var(--rule);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .ticket .cut span{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted)}
+
+  /* Workshop */
+  .shop{display:grid;grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);gap:clamp(32px, 5vw, 80px);align-items:start}
+  .shop h2{font-size:var(--t-head);font-weight:300;line-height:1.1;letter-spacing:-0.01em;margin-bottom:20px}
+  .shop .addr{font-size:var(--t-lead);line-height:1.35;font-weight:300}
+  .shop .addr b{font-weight:500}
+  .hours{margin-top:28px}
+  .hours li{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:10px 0;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:var(--t-meta)}
+  .hours li:first-child{border-top:1px solid var(--ink)}
+  .hours li span:last-child{color:var(--muted)}
+  .hours li.today span:first-child{color:var(--oxblood)}
+  .bench{
+    display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:0 32px;
+  }
+  .bench div{padding:20px 0;border-bottom:1px solid var(--rule)}
+  .bench div:nth-child(-n+2){border-top:1px solid var(--ink)}
+  .bench h3{font-size:var(--t-body);font-weight:500;margin-bottom:6px}
+  .bench p{color:var(--muted)}
+  .people{margin-top:36px;display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:32px}
+  .people b{display:block;font-weight:500}
+  .people span{font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);display:block;margin-bottom:6px}
+  .people p{color:var(--muted)}
+
+  /* Footer */
+  footer{border-top:1px solid var(--ink);padding-block:56px 40px;background:var(--paper-deep)}
+  .foot-grid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:32px}
+  .foot-grid p{margin-top:12px;line-height:1.5}
+  .foot-grid p a:hover{color:var(--oxblood)}
+  .foot-grid .muted{color:var(--muted)}
+  .foot-line{
+    margin-top:48px;padding-top:18px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-family:var(--mono);font-size:var(--t-meta);color:var(--muted);
+  }
+
+  @media (max-width: 980px){
+    .hero .wrap{grid-template-columns:1fr}
+    .plate{max-width:440px}
+    .plate svg{max-height:none}
+    .sec-head,.svc-note,.not-taken{grid-template-columns:1fr}
+    .makes{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .cla,.send,.shop{grid-template-columns:1fr}
+    .cla-aside,.ticket{position:static}
+    .log li{grid-template-columns:120px minmax(0,1fr)}
+    .log .job{grid-column:1}
+    .log .status{grid-column:2;text-align:left}
+    .foot-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  }
+  @media (max-width: 640px){
+    .nav-links a:not(.btn){display:none}
+    .makes,.bench,.people{grid-template-columns:1fr}
+    .hero-facts{grid-template-columns:1fr 1fr}
+    .log li{grid-template-columns:1fr}
+    .log .status{grid-column:1}
+    .foot-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="nav">
+    <div class="wrap">
+      <a class="wordmark" href="#top">Ostrander Camera Works <span class="est">Portland, est. 1987</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#services">Services</a>
+        <a href="#makes">Makes</a>
+        <a href="#cla">The service</a>
+        <a href="#log">Repair log</a>
+        <a href="#workshop">Workshop</a>
+        <a class="btn ghost" href="#send">Send a camera in <span class="arrow">&rarr;</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="kicker mono">Mechanical camera repair, by post or in person</p>
+        <h1>Mechanical cameras, serviced the way <em>they were built.</em></h1>
+        <p class="lead">Leaf shutters, cloth curtains and brass helicoids, stripped to the last screw, cleaned, re-lubricated and timed on a bench tester. Fixed prices, a quoted turnaround, and a log of every job we take.</p>
+        <div class="hero-ctas">
+          <a class="btn solid" href="#services">See the service list <span class="arrow">&rarr;</span></a>
+          <a class="btn ghost" href="#send">How to send a camera in</a>
+        </div>
+        <div class="hero-facts">
+          <div><strong>4,180</strong><span>cameras serviced</span></div>
+          <div><strong>4 to 5 weeks</strong><span>typical turnaround</span></div>
+          <div><strong>12 months</strong><span>warranty on every job</span></div>
+        </div>
+      </div>
+
+      <figure class="plate" id="plate">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <svg viewBox="0 0 520 560" role="img" aria-labelledby="plate-title" xmlns="http://www.w3.org/2000/svg">
+          <title id="plate-title">Exploded drawing of a Compur leaf shutter, parts stacked along the optical axis</title>
+          <defs>
+            <g id="tooth"><rect x="-2" y="-124" width="4" height="8" /></g>
+          </defs>
+          <!-- optical axis -->
+          <line x1="230" y1="18" x2="230" y2="545" stroke="#bfb296" stroke-width="1" stroke-dasharray="2 5"/>
+
+          <!-- 1 front retaining ring -->
+          <g class="part" data-part="1">
+            <g transform="translate(230 62) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.4">
+              <circle r="112"/>
+              <circle r="86" stroke-width="1"/>
+              <circle r="92" stroke="#a87b2c" stroke-width="2.5"/>
+            </g>
+            <g transform="translate(230 62) scale(1 .3)" stroke="#3b2016" stroke-width="1">
+              <line x1="-112" y1="0" x2="-112" y2="26"/><line x1="112" y1="0" x2="112" y2="26"/>
+            </g>
+            <g transform="translate(230 70) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.4">
+              <path d="M-112 0 A112 112 0 0 0 112 0"/>
+            </g>
+          </g>
+
+          <!-- 2 iris diaphragm -->
+          <g class="part" data-part="2">
+            <g transform="translate(230 150) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.2">
+              <circle r="108"/>
+              <circle r="100" stroke="#a87b2c" stroke-width="1"/>
+              <g stroke-width="1" stroke="#7b6853">
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z"/>
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z" transform="rotate(60)"/>
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z" transform="rotate(120)"/>
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z" transform="rotate(180)"/>
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z" transform="rotate(240)"/>
+                <path d="M0 -100 A100 100 0 0 1 86.6 -50 L22 -12 A25 25 0 0 0 0 -25 Z" transform="rotate(300)"/>
+              </g>
+              <polygon points="0,-26 22.5,-13 22.5,13 0,26 -22.5,13 -22.5,-13" fill="#3b2016" stroke="none" opacity=".9"/>
+            </g>
+          </g>
+
+          <!-- 3 shutter blade set -->
+          <g class="part" data-part="3">
+            <g transform="translate(230 238) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.2">
+              <circle r="104"/>
+              <g fill="#d9cfb6" stroke="#3b2016" stroke-width="1.1">
+                <path d="M0 -6 C 30 -40, 70 -70, 96 -30 C 70 -10, 40 10, 0 -6 Z"/>
+                <path d="M0 -6 C 30 -40, 70 -70, 96 -30 C 70 -10, 40 10, 0 -6 Z" transform="rotate(72)"/>
+                <path d="M0 -6 C 30 -40, 70 -70, 96 -30 C 70 -10, 40 10, 0 -6 Z" transform="rotate(144)"/>
+                <path d="M0 -6 C 30 -40, 70 -70, 96 -30 C 70 -10, 40 10, 0 -6 Z" transform="rotate(216)"/>
+                <path d="M0 -6 C 30 -40, 70 -70, 96 -30 C 70 -10, 40 10, 0 -6 Z" transform="rotate(288)"/>
+              </g>
+              <g fill="#a87b2c" stroke="none">
+                <circle cx="96" cy="-30" r="4"/><circle cx="96" cy="-30" r="4" transform="rotate(72)"/><circle cx="96" cy="-30" r="4" transform="rotate(144)"/><circle cx="96" cy="-30" r="4" transform="rotate(216)"/><circle cx="96" cy="-30" r="4" transform="rotate(288)"/>
+              </g>
+            </g>
+          </g>
+
+          <!-- 4 speed cam ring -->
+          <g class="part" data-part="4">
+            <g transform="translate(230 328) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.3">
+              <circle r="120"/>
+              <circle r="104"/>
+              <g fill="#3b2016" stroke="none">
+                <use href="#tooth"/><use href="#tooth" transform="rotate(12)"/><use href="#tooth" transform="rotate(24)"/><use href="#tooth" transform="rotate(36)"/><use href="#tooth" transform="rotate(48)"/><use href="#tooth" transform="rotate(60)"/><use href="#tooth" transform="rotate(72)"/><use href="#tooth" transform="rotate(84)"/><use href="#tooth" transform="rotate(96)"/><use href="#tooth" transform="rotate(108)"/><use href="#tooth" transform="rotate(120)"/><use href="#tooth" transform="rotate(132)"/><use href="#tooth" transform="rotate(144)"/><use href="#tooth" transform="rotate(156)"/><use href="#tooth" transform="rotate(168)"/><use href="#tooth" transform="rotate(180)"/><use href="#tooth" transform="rotate(192)"/><use href="#tooth" transform="rotate(204)"/><use href="#tooth" transform="rotate(216)"/><use href="#tooth" transform="rotate(228)"/><use href="#tooth" transform="rotate(240)"/><use href="#tooth" transform="rotate(252)"/><use href="#tooth" transform="rotate(264)"/><use href="#tooth" transform="rotate(276)"/><use href="#tooth" transform="rotate(288)"/><use href="#tooth" transform="rotate(300)"/><use href="#tooth" transform="rotate(312)"/><use href="#tooth" transform="rotate(324)"/><use href="#tooth" transform="rotate(336)"/><use href="#tooth" transform="rotate(348)"/>
+              </g>
+              <!-- cam profile -->
+              <path d="M-40 -96 L-20 -80 L 10 -84 L 40 -70 L 60 -78" stroke="#a87b2c" stroke-width="2"/>
+              <path d="M-110 20 L-96 30 L-84 24" stroke="#a87b2c" stroke-width="2"/>
+            </g>
+            <g transform="translate(230 328) scale(1 .3)" stroke="#3b2016" stroke-width="1">
+              <line x1="-120" y1="0" x2="-120" y2="20"/><line x1="120" y1="0" x2="120" y2="20"/>
+            </g>
+            <g transform="translate(230 334) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.3">
+              <path d="M-120 0 A120 120 0 0 0 120 0"/>
+            </g>
+          </g>
+
+          <!-- 5 escapement and gear train -->
+          <g class="part" data-part="5">
+            <g transform="translate(230 420) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.2">
+              <circle r="112" stroke-dasharray="3 4" stroke="#7b6853"/>
+              <!-- main spring -->
+              <path d="M-70 -30 a30 30 0 1 1 30 30 a22 22 0 1 1 22 -22 a14 14 0 1 1 14 -14 a7 7 0 1 1 7 -7" stroke="#a87b2c" stroke-width="1.6"/>
+              <!-- gears -->
+              <circle cx="20" cy="30" r="26"/>
+              <circle cx="20" cy="30" r="20" stroke-dasharray="3 3"/>
+              <circle cx="20" cy="30" r="4" fill="#3b2016"/>
+              <circle cx="66" cy="0" r="18"/>
+              <circle cx="66" cy="0" r="13" stroke-dasharray="3 3"/>
+              <circle cx="66" cy="0" r="3" fill="#3b2016"/>
+              <circle cx="92" cy="-34" r="11"/>
+              <circle cx="92" cy="-34" r="2.5" fill="#3b2016"/>
+              <!-- pallet -->
+              <path d="M84 -60 l-10 14 l20 8 z" fill="#d9cfb6"/>
+              <!-- star wheel -->
+              <circle cx="-60" cy="50" r="15"/>
+              <path d="M-60 35 l4 8 l8 -3 l-4 8 l6 6 l-9 1 l-1 9 l-6 -7 l-8 4 l1 -9 l-9 -3 l8 -5 l-2 -9 l8 4 z" fill="#3b2016" stroke="none" opacity=".85"/>
+            </g>
+          </g>
+
+          <!-- 6 rear flange -->
+          <g class="part" data-part="6">
+            <g transform="translate(230 505) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.4">
+              <circle r="118"/>
+              <circle r="78"/>
+              <g fill="#3b2016" stroke="none">
+                <circle cx="0" cy="-98" r="5"/><circle cx="98" cy="0" r="5"/><circle cx="0" cy="98" r="5"/><circle cx="-98" cy="0" r="5"/>
+              </g>
+              <g stroke="#e8e1cf" stroke-width="1.2">
+                <line x1="-3" y1="-101" x2="3" y2="-95"/><line x1="95" y1="-3" x2="101" y2="3"/><line x1="-3" y1="95" x2="3" y2="101"/><line x1="-101" y1="-3" x2="-95" y2="3"/>
+              </g>
+              <!-- thread -->
+              <circle r="82" stroke="#a87b2c" stroke-width="1" stroke-dasharray="4 3"/>
+            </g>
+            <g transform="translate(230 505) scale(1 .3)" stroke="#3b2016" stroke-width="1">
+              <line x1="-118" y1="0" x2="-118" y2="36"/><line x1="118" y1="0" x2="118" y2="36"/>
+            </g>
+            <g transform="translate(230 516) scale(1 .3)" fill="none" stroke="#3b2016" stroke-width="1.4">
+              <path d="M-118 0 A118 118 0 0 0 118 0"/>
+            </g>
+          </g>
+
+          <!-- labels -->
+          <g class="lbl" data-for="1"><line x1="344" y1="58" x2="392" y2="58"/><text x="398" y="62">01 retaining ring</text></g>
+          <g class="lbl" data-for="2"><line x1="340" y1="146" x2="392" y2="146"/><text x="398" y="150">02 iris diaphragm</text></g>
+          <g class="lbl" data-for="3"><line x1="336" y1="234" x2="392" y2="234"/><text x="398" y="238">03 shutter blades</text></g>
+          <g class="lbl" data-for="4"><line x1="352" y1="324" x2="392" y2="324"/><text x="398" y="328">04 speed cam ring</text></g>
+          <g class="lbl" data-for="5"><line x1="344" y1="416" x2="392" y2="416"/><text x="398" y="420">05 escapement</text></g>
+          <g class="lbl" data-for="6"><line x1="350" y1="501" x2="392" y2="501"/><text x="398" y="505">06 rear flange</text></g>
+        </svg>
+        <figcaption class="caption">Fig. 1, Synchro-Compur size 0, exploded along the optical axis</figcaption>
+      </figure>
+    </div>
+  </section>
+</div>
+
+<!-- ---------- Service list ---------- -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="num meta">01</span>Service list, by camera type</h2>
+      <p>Every price below is the labour for a complete job on a typical example of that camera. Parts are extra and quoted before we start. Turnaround is counted from the day your camera lands on the bench, and we tell you if it slips.</p>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter by camera type">
+      <button class="chip" aria-pressed="true" data-filter="all">All types</button>
+      <button class="chip" aria-pressed="false" data-filter="rf">Rangefinders</button>
+      <button class="chip" aria-pressed="false" data-filter="slr">Single-lens reflex</button>
+      <button class="chip" aria-pressed="false" data-filter="tlr">Twin-lens reflex</button>
+      <button class="chip" aria-pressed="false" data-filter="mf">Folders and medium format</button>
+      <button class="chip" aria-pressed="false" data-filter="lf">Large format shutters</button>
+    </div>
+
+    <div class="services">
+      <table>
+        <thead>
+          <tr><th>Service</th><th class="price">Labour</th><th class="turn">Turnaround</th></tr>
+        </thead>
+
+        <tbody class="group" data-type="rf">
+          <tr class="group-head"><th colspan="3">Rangefinders, 35mm <span>Leica, Canon, Nikon, Contax, Zeiss Ikon</span></th></tr>
+          <tr class="row"><td class="svc">Full clean, lubricate and adjust<small>Shutter strip, curtain tension, slow-speed escapement, rangefinder, all speeds timed.</small></td><td class="price">$325</td><td class="turn">4 to 5 weeks</td></tr>
+          <tr class="row"><td class="svc">Rangefinder alignment only<small>Vertical and infinity, checked on a collimator at three distances.</small></td><td class="price">$95</td><td class="turn">1 week</td></tr>
+          <tr class="row"><td class="svc">Cloth curtain replacement, pair<small>Hand-cut rubberised silk, original ribbon widths, tension set from scratch.</small></td><td class="price">$210</td><td class="turn">5 to 6 weeks</td></tr>
+          <tr class="row"><td class="svc">Viewfinder haze and separation clean<small>Prisms out, beamsplitter cleaned or re-silvered, frame lines re-registered.</small></td><td class="price">$140</td><td class="turn">2 weeks</td></tr>
+        </tbody>
+
+        <tbody class="group" data-type="slr">
+          <tr class="group-head"><th colspan="3">Single-lens reflex, 35mm <span>Nikon F and F2, Pentax, Olympus, Canon F-1, Minolta</span></th></tr>
+          <tr class="row"><td class="svc">Full service, mechanical body<small>Shutter, mirror box, wind train and self-timer stripped and re-lubricated; speeds timed.</small></td><td class="price">$285</td><td class="turn">4 weeks</td></tr>
+          <tr class="row"><td class="svc">Mirror and light seal foam replacement<small>Old foam removed, new closed-cell seals cut to the channel.</small></td><td class="price">$85</td><td class="turn">1 week</td></tr>
+          <tr class="row"><td class="svc">Meter recalibration to modern cells<small>Silver oxide or air-cell adaptation, bridge trimmed to within a third of a stop.</small></td><td class="price">$70</td><td class="turn">1 week</td></tr>
+          <tr class="row"><td class="svc">Prism desilvering repair<small>Common on OM-1 and Spotmatic bodies. Replacement prism or re-silvering, foam fixed so it does not recur.</small></td><td class="price">$160</td><td class="turn">3 weeks</td></tr>
+        </tbody>
+
+        <tbody class="group" data-type="tlr">
+          <tr class="group-head"><th colspan="3">Twin-lens reflex <span>Rolleiflex, Rolleicord, Yashica, Minolta Autocord</span></th></tr>
+          <tr class="row"><td class="svc">Full clean, lubricate and adjust<small>Leaf shutter overhaul, focus helicoid regreased, both lenses cleaned, screen and mirror matched.</small></td><td class="price">$295</td><td class="turn">4 to 5 weeks</td></tr>
+          <tr class="row"><td class="svc">Focus screen upgrade and mirror clean<small>Brighter screen fitted and shimmed so the taking lens agrees with it.</small></td><td class="price">$120</td><td class="turn">2 weeks</td></tr>
+          <tr class="row"><td class="svc">Leaf shutter overhaul only<small>Shutter out, ultrasonic clean, escapement oiled, timed at every speed.</small></td><td class="price">$175</td><td class="turn">3 weeks</td></tr>
+        </tbody>
+
+        <tbody class="group" data-type="mf">
+          <tr class="group-head"><th colspan="3">Folders and medium format <span>Zeiss Ikon, Voigtländer, Hasselblad, Mamiya, Pentax 67</span></th></tr>
+          <tr class="row"><td class="svc">Bellows replacement, hand-cut<small>Made to the original pattern in light-tight cloth, glued and left to cure a full week.</small></td><td class="price">$260</td><td class="turn">6 weeks</td></tr>
+          <tr class="row"><td class="svc">Leaf shutter overhaul<small>Compur, Prontor, Copal and Seikosha. Slow speeds are usually the reason you are here.</small></td><td class="price">$165</td><td class="turn">3 weeks</td></tr>
+          <tr class="row"><td class="svc">Hasselblad 500 series body service<small>Wind train, mirror damper, rear baffle and lens interlock; jammed bodies freed at no extra charge.</small></td><td class="price">$340</td><td class="turn">5 weeks</td></tr>
+          <tr class="row"><td class="svc">Hasselblad lens shutter service<small>Shutter and aperture stripped, cocking ring adjusted, timed on the tester.</small></td><td class="price">$210</td><td class="turn">4 weeks</td></tr>
+        </tbody>
+
+        <tbody class="group" data-type="lf">
+          <tr class="group-head"><th colspan="3">Large format lenses and shutters <span>Copal, Compur, Ilex, Schneider, Rodenstock, Fujinon</span></th></tr>
+          <tr class="row"><td class="svc">Shutter overhaul, up to size 1<small>Strip, clean, re-lubricate, all speeds within a sixth of a stop, flash sync checked.</small></td><td class="price">$155</td><td class="turn">3 weeks</td></tr>
+          <tr class="row"><td class="svc">Shutter overhaul, size 3 and larger<small>Includes Ilex and older Compound shutters with pneumatic retards.</small></td><td class="price">$220</td><td class="turn">4 weeks</td></tr>
+          <tr class="row"><td class="svc">Element separation, rebalsam<small>Cemented groups split, cleaned and re-cemented with synthetic balsam, then centred.</small></td><td class="price">$240</td><td class="turn">8 weeks</td></tr>
+          <tr class="row"><td class="svc">Fungus and haze clean, per lens<small>Every element out and cleaned. Etched coatings are reported honestly, not hidden.</small></td><td class="price">$110</td><td class="turn">2 weeks</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="dotrule" style="margin-top:32px">
+    <div class="svc-note">
+      <p class="meta">A note on estimates</p>
+      <p><b>Anything not on the list is $40 to look at</b>, and that fee comes off the job if you go ahead. If we open a camera and find it is not worth the labour, we tell you, close it up, and charge nothing beyond the estimate. Quotes are held for 30 days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Makes ---------- -->
+<section id="makes">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="num meta">02</span>The makes we take</h2>
+      <p>Mechanical bodies and shutters from roughly 1930 to 1985. If yours is on this list, send it. If it is not, write to us with the model and a photograph and we will tell you in a day whether it belongs on our bench or someone else's.</p>
+    </div>
+    <ul class="makes">
+      <li><b>Leica</b><span>screw-mount and M, to M6</span></li>
+      <li><b>Zeiss Ikon</b><span>Contax, Ikonta, Super Ikonta</span></li>
+      <li><b>Rollei</b><span>Rolleiflex, Rolleicord, 35</span></li>
+      <li><b>Hasselblad</b><span>500 series bodies and lenses</span></li>
+      <li><b>Nikon</b><span>rangefinders, F, F2, F3</span></li>
+      <li><b>Canon</b><span>rangefinders, F-1, Pellix, Canonet</span></li>
+      <li><b>Pentax</b><span>Spotmatic, K1000, 6x7</span></li>
+      <li><b>Olympus</b><span>OM-1 to OM-4, Pen, 35 series</span></li>
+      <li><b>Minolta</b><span>SR-T, Autocord, Hi-Matic</span></li>
+      <li><b>Voigtländer</b><span>Bessa, Vito, Vitessa</span></li>
+      <li><b>Mamiya</b><span>C series, RB67, Six</span></li>
+      <li><b>Yashica</b><span>Mat, Electro 35 shutters</span></li>
+      <li><b>Kodak</b><span>Retina, Medalist, Ektra</span></li>
+      <li><b>Graflex</b><span>Speed and Crown Graphic</span></li>
+      <li><b>Linhof</b><span>Technika, all generations</span></li>
+      <li><b>Plaubel</b><span>Makina 67 and 670</span></li>
+      <li><b>Kiev and Contax copies</b><span>rangefinders only</span></li>
+      <li><b>Compur, Prontor, Copal</b><span>any lens they are mounted in</span></li>
+      <li><b>Ilex and Wollensak</b><span>large format shutters</span></li>
+      <li><b>Schneider and Rodenstock</b><span>lenses, separation and haze</span></li>
+    </ul>
+    <hr class="dotrule" style="margin-top:40px">
+    <div class="not-taken">
+      <p class="meta">What we do not take</p>
+      <p>Autofocus bodies, anything digital, Polaroid and instant cameras, motor drives, and most Soviet reflex bodies. We can usually name a workshop that does take them, so ask.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- CLA ---------- -->
+<section id="cla">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="num meta">03</span>What a full service includes</h2>
+      <p>People write asking for "a clean, lube and adjust" and mean nine different things by it. Here is exactly what ours is. Every camera that leaves the workshop under a full service has had all nine.</p>
+    </div>
+    <div class="cla">
+      <ol class="cla-steps">
+        <li><div><h3>Complete strip of the shutter and body</h3><p>Every mechanical assembly comes out. We do not flush a shutter in place and call it serviced.</p></div></li>
+        <li><div><h3>Ultrasonic clean of all metal parts</h3><p>Blades, levers, cams and the escapement go through two baths, then are dried and inspected under a loupe.</p></div></li>
+        <li><div><h3>Old lubricant removed entirely</h3><p>Hardened grease is the reason most slow speeds hang. It is all gone before anything new goes in.</p></div></li>
+        <li><div><h3>Re-lubricated with modern synthetics</h3><p>Four different oils and greases, each chosen for the load and temperature of the part it lands on, applied by needle.</p></div></li>
+        <li><div><h3>Timed at every speed on the tester</h3><p>Curtain travel or blade opening measured on a Kyoritsu tester. We aim for a sixth of a stop and write the results on your ticket.</p></div></li>
+        <li><div><h3>Rangefinder or mirror alignment</h3><p>Focus checked at infinity, three metres and the closest distance, on a collimator, and the screen or rangefinder set to match the film plane.</p></div></li>
+        <li><div><h3>Light seals and dampers replaced</h3><p>New closed-cell foam or wool, cut to the channel. Mirror damper replaced so the foam never reaches the prism.</p></div></li>
+        <li><div><h3>Cosmetic clean and leatherette re-glued</h3><p>Vulcanite lifted edges glued back down. We do not polish brass through the paint unless you ask.</p></div></li>
+        <li><div><h3>Test roll shot and processed</h3><p>A short roll through the camera, developed here, checked for capping, light leaks and focus before it goes back in the box.</p></div></li>
+      </ol>
+
+      <aside class="cla-aside">
+        <svg class="lens" viewBox="0 0 560 240" role="img" aria-labelledby="lens-title" xmlns="http://www.w3.org/2000/svg">
+          <title id="lens-title">Section through a four-element lens in a leaf shutter, showing where the work happens</title>
+          <!-- barrel -->
+          <rect x="40" y="60" width="480" height="120" fill="none" stroke="#3b2016" stroke-width="1.4"/>
+          <rect x="40" y="52" width="60" height="136" fill="none" stroke="#3b2016" stroke-width="1.4"/>
+          <rect x="460" y="52" width="60" height="136" fill="none" stroke="#3b2016" stroke-width="1.4"/>
+          <!-- helicoid thread -->
+          <g stroke="#a87b2c" stroke-width="1.2">
+            <line x1="110" y1="60" x2="110" y2="180"/><line x1="122" y1="60" x2="122" y2="180"/><line x1="134" y1="60" x2="134" y2="180"/><line x1="146" y1="60" x2="146" y2="180"/><line x1="158" y1="60" x2="158" y2="180"/>
+          </g>
+          <!-- optical axis -->
+          <line x1="20" y1="120" x2="540" y2="120" stroke="#bfb296" stroke-dasharray="2 5"/>
+          <!-- elements -->
+          <g fill="#d9cfb6" stroke="#3b2016" stroke-width="1.3">
+            <path d="M190 74 C 204 100, 204 140, 190 166 C 176 140, 176 100, 190 74 Z"/>
+            <path d="M232 80 C 246 100, 246 140, 232 160 L 226 160 C 236 140, 236 100, 226 80 Z"/>
+            <path d="M330 80 C 316 100, 316 140, 330 160 L 336 160 C 326 140, 326 100, 336 80 Z"/>
+            <path d="M372 74 C 386 100, 386 140, 372 166 C 358 140, 358 100, 372 74 Z"/>
+          </g>
+          <!-- shutter blades in the gap -->
+          <g stroke="#3b2016" stroke-width="1.2" fill="none">
+            <line x1="270" y1="70" x2="270" y2="104"/><line x1="270" y1="136" x2="270" y2="170"/>
+            <line x1="292" y1="70" x2="292" y2="104"/><line x1="292" y1="136" x2="292" y2="170"/>
+            <rect x="262" y="62" width="38" height="8" fill="#a87b2c" stroke="none"/>
+            <rect x="262" y="170" width="38" height="8" fill="#a87b2c" stroke="none"/>
+          </g>
+          <!-- aperture blades -->
+          <g stroke="#7b6853" stroke-width="1">
+            <line x1="281" y1="86" x2="281" y2="108"/><line x1="281" y1="132" x2="281" y2="154"/>
+          </g>
+          <!-- rays -->
+          <g stroke="#8a3826" stroke-width="1" fill="none" opacity=".8">
+            <path d="M20 96 L190 96 L232 104 L330 110 L372 114 L540 120"/>
+            <path d="M20 144 L190 144 L232 136 L330 130 L372 126 L540 120"/>
+          </g>
+          <!-- callouts -->
+          <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#7b6853">
+            <line x1="134" y1="180" x2="134" y2="214" stroke="#bfb296"/><text x="70" y="228">helicoid, regreased</text>
+            <line x1="281" y1="178" x2="281" y2="214" stroke="#bfb296"/><text x="236" y="228">blades, timed</text>
+            <line x1="372" y1="166" x2="372" y2="214" stroke="#bfb296"/><text x="344" y="228">groups, cleaned</text>
+            <line x1="490" y1="52" x2="490" y2="26" stroke="#bfb296"/><text x="428" y="20">rear flange, shimmed</text>
+          </g>
+        </svg>
+        <p>Fig. 2, a Tessar-type lens in a size 0 shutter. Four places the camera is usually hurting, and the order we attend to them.</p>
+        <div class="warranty">
+          <div class="seal">12</div>
+          <div><b>Twelve months, parts and labour</b><span>If a full service fails inside a year through anything we did, it comes back and we put it right for nothing, postage both ways included.</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Repair log ---------- -->
+<section id="log">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="num meta">04</span>Repair log</h2>
+      <p>The last six jobs off the bench, written up the way they go on the ticket. Owners' names are left off; the faults are exactly as found. We keep this so you can see what a service turns up and how long it really took.</p>
+    </div>
+    <ol class="log">
+      <li>
+        <span class="date">3 Sept 2026</span>
+        <span class="job">Job 2214</span>
+        <div>
+          <p class="cam">Leica M3, single stroke, 1958</p>
+          <p class="fault">Slow speeds hanging from an eighth downward; second curtain capping at a thousandth.</p>
+          <p class="work">Escapement out and cleaned, hardened grease in the slow-speed train. Curtain tension reset from scratch, both curtains within a twelfth of a stop across the gate. Rangefinder infinity corrected by a hair. 29 days on the bench.</p>
+        </div>
+        <span class="status done">Delivered</span>
+      </li>
+      <li>
+        <span class="date">1 Sept 2026</span>
+        <span class="job">Job 2211</span>
+        <div>
+          <p class="cam">Rolleiflex 2.8F, Planar</p>
+          <p class="fault">Focus stiff enough to move the strap lugs; taking lens hazed; screen dim.</p>
+          <p class="work">Helicoid stripped and regreased, front group cleaned inside, no coating damage. Brighter screen fitted and shimmed to the taking lens. Shutter timed, all speeds within a sixth. 31 days.</p>
+        </div>
+        <span class="status done">Delivered</span>
+      </li>
+      <li>
+        <span class="date">28 Aug 2026</span>
+        <span class="job">Job 2209</span>
+        <div>
+          <p class="cam">Nikon F2 Photomic</p>
+          <p class="fault">Meter dead. Mirror foam turned to tar and reaching the screen.</p>
+          <p class="work">Foams replaced throughout. Ring resistor in the finder cleaned, battery contacts re-tensioned, meter now within a third of a stop at every value. Body speeds checked, no service needed. 9 days.</p>
+        </div>
+        <span class="status done">Delivered</span>
+      </li>
+      <li>
+        <span class="date">25 Aug 2026</span>
+        <span class="job">Job 2207</span>
+        <div>
+          <p class="cam">Hasselblad 500C, 1969</p>
+          <p class="fault">Body jammed with the 80mm lens locked on mid-cycle.</p>
+          <p class="work">Lens freed with the release tool, no damage to the drive shaft. Body now stripped for a full service: wind train worn, mirror damper gone. Awaiting the owner's word on a rear baffle.</p>
+        </div>
+        <span class="status bench">On the bench</span>
+      </li>
+      <li>
+        <span class="date">21 Aug 2026</span>
+        <span class="job">Job 2204</span>
+        <div>
+          <p class="cam">Zeiss Ikon Super Ikonta 532/16</p>
+          <p class="fault">Pinholes along every bellows fold; shutter capping at the two fastest speeds.</p>
+          <p class="work">Synchro-Compur overhauled and timed. New bellows cut to the original pattern and glued; curing until the 11th before it goes back on the standard.</p>
+        </div>
+        <span class="status wait">Curing</span>
+      </li>
+      <li>
+        <span class="date">18 Aug 2026</span>
+        <span class="job">Job 2201</span>
+        <div>
+          <p class="cam">Schneider Symmar 210mm in Copal 1</p>
+          <p class="fault">Running a full stop slow at the two fastest speeds; aperture blades oily.</p>
+          <p class="work">Shutter stripped and cleaned, aperture blades degreased, main spring within limits. All speeds within a sixth of a stop, flash sync confirmed. 16 days.</p>
+        </div>
+        <span class="status done">Delivered</span>
+      </li>
+    </ol>
+    <hr class="dotrule" style="margin-top:28px">
+    <div class="log-foot">
+      <p class="meta">Average bench time on full services this year: 27 days. Quoted: 28 to 35.</p>
+      <a class="mono" href="#send">Add yours to the log &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Send in ---------- -->
+<section id="send">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="num meta">05</span>How to send a camera in</h2>
+      <p>Most of our work arrives by post. Four steps, and the only one that takes any time is packing it properly. Nothing is opened, let alone worked on, until you have seen a quote and said yes.</p>
+    </div>
+    <div class="send">
+      <ol class="steps">
+        <li>
+          <span class="n">01</span>
+          <div>
+            <h3>Write us a ticket</h3>
+            <p>Email service@ostrandercameraworks.com with the make and model, what it is doing wrong, and your return address. A photograph helps. We reply inside a working day with a job number; put that number in the box.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">02</span>
+          <div>
+            <h3>Pack it the way it will survive</h3>
+            <p>Cameras are lost to shipping far more often than to age. Please do all of these:</p>
+            <ul>
+              <li>Fire the shutter so it is not stored cocked, and take the film out.</li>
+              <li>Caps on, lens off the body if it comes off, each wrapped separately.</li>
+              <li>A box inside a box, with at least two inches of packing all round the inner one.</li>
+              <li>No batteries, no cases, no accessories we did not ask for.</li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <span class="n">03</span>
+          <div>
+            <h3>Ship with tracking and insurance</h3>
+            <p>Any carrier is fine. Insure for what it would cost to replace, not what you paid in 1994. We sign for everything and email you the moment it arrives.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">04</span>
+          <div>
+            <h3>Approve the quote, then wait well</h3>
+            <p>Within three working days of arrival you get a written quote with the turnaround. Say yes and it joins the queue; say no and we send it back for the cost of postage. You will hear from us when it goes on the bench and again when it comes off.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="ticket">
+        <div class="head"><b>Ship to</b><span class="meta">Job number on the outside</span></div>
+        <dl>
+          <dt>Name</dt><dd>Ostrander Camera Works</dd>
+          <dt>Street</dt><dd>2318 Northwest Thurman Street<br>Rear workshop, ring the bell</dd>
+          <dt>City</dt><dd>Portland, Oregon 97210</dd>
+          <dt>Phone</dt><dd>(503) 555-0148</dd>
+          <dt>Email</dt><dd><a href="mailto:service@ostrandercameraworks.com">service@ostrandercameraworks.com</a></dd>
+        </dl>
+        <div class="cut">
+          <span>Return postage is charged at cost, insured.</span>
+          <a class="btn solid" href="mailto:service@ostrandercameraworks.com?subject=Repair%20ticket">Start a ticket <span class="arrow">&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Workshop ---------- -->
+<section id="workshop">
+  <div class="wrap">
+    <div class="shop">
+      <div>
+        <span class="num meta">06</span>
+        <h2>The workshop</h2>
+        <p class="addr"><b>2318 Northwest Thurman Street</b><br>rear workshop, through the gate<br>Portland, Oregon 97210</p>
+        <ul class="hours" id="hours">
+          <li data-day="2"><span>Tuesday</span><span>10:00 to 17:30</span></li>
+          <li data-day="3"><span>Wednesday</span><span>10:00 to 17:30</span></li>
+          <li data-day="4"><span>Thursday</span><span>10:00 to 17:30</span></li>
+          <li data-day="5"><span>Friday</span><span>10:00 to 17:30</span></li>
+          <li data-day="6"><span>Saturday</span><span>10:00 to 14:00, drop-off only</span></li>
+          <li data-day="0"><span>Sunday, Monday</span><span>closed, benches running</span></li>
+        </ul>
+        <p class="meta" style="margin-top:14px" id="open-note">Walk-ins welcome in opening hours. Collections by appointment outside them.</p>
+      </div>
+      <div>
+        <div class="bench">
+          <div><h3>Two benches, one tester</h3><p>A Kyoritsu shutter tester, a collimator, an ultrasonic bath and an autocollimator for lens centring. Nothing leaves without going across all of them.</p></div>
+          <div><h3>Parts on the shelf</h3><p>Curtain cloth, Compur springs, Leica and Nikon foams, Rollei screens, and around 300 donor bodies for the parts nobody makes any more.</p></div>
+          <div><h3>Hand-cut bellows</h3><p>Cut and folded here for Ikontas, Bessas, Makinas and field cameras. Bring the old one; we take the pattern from it.</p></div>
+          <div><h3>Film processed on site</h3><p>Every full service ends with a test roll developed in the darkroom next door, checked on a light table before we box the camera.</p></div>
+        </div>
+        <div class="people">
+          <div><b>Maren Ostrander</b><span>Owner, leaf shutters and rangefinders</span><p>Trained under her father Nils, who opened the bench in 1987 after twenty years at Zeiss Ikon in Stuttgart. Runs the Compur and Leica work.</p></div>
+          <div><b>Theo Abara</b><span>Technician, reflex bodies and large format</span><p>Joined in 2014 from a clock workshop in Eugene. Takes the Nikon, Hasselblad and view-camera shutters, and cuts the bellows.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="meta">Find us</p>
+        <p>2318 Northwest Thurman Street<br>Portland, Oregon 97210<br><span class="muted">Rear workshop, through the gate.</span></p>
+      </div>
+      <div>
+        <p class="meta">Write</p>
+        <p><a href="mailto:service@ostrandercameraworks.com">service@ostrandercameraworks.com</a><br><span class="muted">Replies inside one working day.</span></p>
+      </div>
+      <div>
+        <p class="meta">Call</p>
+        <p><a href="tel:+15035550148">(503) 555-0148</a><br><span class="muted">Tuesday to Friday, 10:00 to 17:30.</span></p>
+      </div>
+      <div>
+        <p class="meta">Prices</p>
+        <p>Current from 1 September 2026.<br><span class="muted">Quotes held for 30 days.</span></p>
+      </div>
+    </div>
+    <div class="foot-line">
+      <span>Ostrander Camera Works, Portland, since 1987</span>
+      <span>Set in Source Serif and Plex Mono. Drawings by hand, then by vector.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Service list filter
+  (function(){
+    var chips = document.querySelectorAll('.chip');
+    var groups = document.querySelectorAll('tbody.group');
+    chips.forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var f = chip.getAttribute('data-filter');
+        chips.forEach(function(c){ c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+        groups.forEach(function(g){ g.hidden = !(f === 'all' || g.getAttribute('data-type') === f); });
+      });
+    });
+  })();
+
+  // Exploded drawing: hovering a label lifts its part
+  (function(){
+    var plate = document.getElementById('plate');
+    if(!plate) return;
+    var labels = plate.querySelectorAll('.lbl');
+    var parts = plate.querySelectorAll('.part');
+    labels.forEach(function(l){
+      l.addEventListener('mouseenter', function(){
+        var id = l.getAttribute('data-for');
+        plate.classList.add('dim');
+        parts.forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-part') === id); });
+      });
+      l.addEventListener('mouseleave', function(){
+        plate.classList.remove('dim');
+        parts.forEach(function(p){ p.classList.remove('on'); });
+      });
+    });
+  })();
+
+  // Mark today's row in the hours list
+  (function(){
+    var day = new Date().getDay();
+    var rows = document.querySelectorAll('#hours li');
+    rows.forEach(function(r){
+      var d = r.getAttribute('data-day');
+      var hit = (d === String(day)) || (d === '0' && (day === 0 || day === 1));
+      if(hit) r.classList.add('today');
+    });
+  })();
+</script>
+</body>
+</html>

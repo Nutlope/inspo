@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterpunch, issue 47: Fraunces and the return of the leaning serif</title>
+<meta name="description" content="Counterpunch is a fortnightly letter about typefaces, the people who draw them, and the pages they end up on. Issue 47 is about Fraunces.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+  /* Type scale: six tokens, used everywhere below. */
+  :root {
+    --t-1: 0.8125rem;                        /* 13px  meta, labels, captions */
+    --t-2: 1.0625rem;                        /* 17px  body */
+    --t-3: 1.375rem;                         /* 22px  lead, article titles */
+    --t-4: clamp(1.75rem, 2.6vw, 2.25rem);   /* 28-36 section headings, stats */
+    --t-5: clamp(2.75rem, 4.6vw, 3.75rem);   /* 44-60 hero display */
+    --t-6: clamp(3.25rem, 7vw, 6rem);        /* 52-96 specimen lead line */
+
+    --paper: #F4F0E8;
+    --ink: #1C1A16;
+    --muted: #6E685D;
+    --rule: #D8D1C4;
+    --accent: #C2411F;
+    --band: #E6DDF1;
+    --band-deep: #2E1B4E;
+
+    --section: clamp(72px, 9vw, 120px);
+    --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--t-2);
+    line-height: 1.55;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--accent); }
+  h1, h2, h3, p, ul { margin: 0; }
+  ul { padding: 0; list-style: none; }
+  button, input { font: inherit; color: inherit; }
+
+  /* Container owns the gutter with padding-inline only. */
+  .wrap {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 48px);
+  }
+  section { padding-block: var(--section); }
+
+  .meta {
+    font-size: var(--t-1);
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+  .meta b { color: var(--ink); font-weight: 600; }
+  .display { font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em; }
+
+  /* ---------- Fold: nav + hero ---------- */
+  .fold { min-height: 100svh; display: flex; flex-direction: column; }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .wordmark {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.55rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 72, "SOFT" 50, "WONK" 1;
+  }
+  .wordmark span { color: var(--accent); }
+  .nav ul { display: flex; align-items: center; gap: 28px; font-size: var(--t-1); }
+  .nav .issue-tag { color: var(--muted); }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    padding: 11px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 500;
+    line-height: 1;
+    transition: background .2s ease, color .2s ease;
+  }
+  .pill:hover { background: var(--accent); color: var(--paper); }
+  .pill.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule); }
+  .pill.ghost:hover { box-shadow: inset 0 0 0 1px var(--ink); background: transparent; color: var(--ink); }
+
+  .hero { flex: 1; display: flex; }
+  .hero .wrap {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+    padding-block: clamp(24px, 4vh, 44px);
+  }
+  .hero h1 {
+    font-size: var(--t-5);
+    line-height: 1.02;
+    margin: 18px 0 20px;
+    max-width: 16ch;
+    font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1; }
+  .hero .lead { font-size: var(--t-3); line-height: 1.4; max-width: 34ch; color: var(--ink); }
+  .hero .lead span { color: var(--muted); }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; }
+  .cta-row .note { font-size: var(--t-1); color: var(--muted); margin-left: 6px; }
+
+  .spec-card {
+    position: relative;
+    height: min(520px, 60vh);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    margin-left: auto;
+    border-radius: 28px;
+    background: var(--band-deep);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .spec-card .glyph {
+    font-family: var(--serif);
+    font-size: clamp(180px, 22vw, 300px);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    padding-bottom: 0.08em;
+    font-variation-settings: "opsz" 144, "wght" 500, "SOFT" 100, "WONK" 1;
+  }
+  .spec-card .corner {
+    position: absolute;
+    font-size: var(--t-1);
+    color: color-mix(in oklab, var(--paper) 72%, transparent);
+  }
+  .spec-card .tl { top: 22px; left: 26px; color: var(--paper); font-weight: 600; }
+  .spec-card .tr { top: 22px; right: 26px; }
+  .spec-card .bl { bottom: 22px; left: 26px; }
+  .spec-card .br { bottom: 22px; right: 26px; }
+
+  /* ---------- Stats strip ---------- */
+  .stats-section { padding-block: 0; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .stat { padding: 30px 28px 30px 0; }
+  .stat + .stat { padding-left: 28px; border-left: 1px solid var(--rule); }
+  .stat b {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: var(--t-4);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 72, "SOFT" 20, "WONK" 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span { font-size: var(--t-1); color: var(--muted); }
+
+  /* ---------- Section headers ---------- */
+  .sec-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: clamp(36px, 5vw, 56px);
+  }
+  .sec-head h2 { font-size: var(--t-4); line-height: 1.1; margin-top: 12px; max-width: 24ch; font-variation-settings: "opsz" 72, "SOFT" 30, "WONK" 0; }
+  .sec-head .link { font-size: var(--t-1); font-weight: 600; white-space: nowrap; }
+  .arrow { display: inline-block; transition: transform .2s ease; }
+  a:hover .arrow { transform: translateX(3px); }
+
+  /* ---------- Specimen band ---------- */
+  .specimen { background: var(--band); color: var(--band-deep); }
+  .specimen .meta, .specimen .stat span { color: color-mix(in oklab, var(--band-deep) 68%, var(--band)); }
+  .specimen .meta b { color: var(--band-deep); }
+  .spec-lead {
+    font-family: var(--serif);
+    font-size: var(--t-6);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    max-width: 15ch;
+    margin: 20px 0 0;
+    font-variation-settings: "opsz" 144, "wght" 400, "SOFT" 60, "WONK" 1;
+    text-wrap: balance;
+  }
+  .spec-lead em { font-style: italic; }
+  .spec-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+  .spec-intro p { max-width: 46ch; }
+
+  .waterfall { margin-top: clamp(48px, 6vw, 80px); border-top: 1px solid color-mix(in oklab, var(--band-deep) 22%, var(--band)); }
+  .waterfall .row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--band-deep) 22%, var(--band));
+  }
+  .waterfall .row .meta { padding-top: 4px; }
+  .waterfall .sample { font-family: var(--serif); line-height: 1.1; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .w1 { font-size: 3.4rem; font-variation-settings: "opsz" 144, "wght" 100, "SOFT" 0, "WONK" 0; }
+  .w2 { font-size: 2.8rem; font-variation-settings: "opsz" 72, "wght" 400, "SOFT" 50, "WONK" 1; }
+  .w3 { font-size: 2.2rem; font-style: italic; font-variation-settings: "opsz" 24, "wght" 600, "SOFT" 100, "WONK" 1; }
+  .w4 { font-size: 1.6rem; font-variation-settings: "opsz" 9, "wght" 900, "SOFT" 0, "WONK" 0; }
+
+  .lab {
+    margin-top: clamp(48px, 6vw, 80px);
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 48px;
+    align-items: start;
+  }
+  .lab-stage {
+    min-height: 260px;
+    border-radius: 22px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: clamp(24px, 3vw, 40px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  #lab {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144, "wght" 500, "SOFT" 40, "WONK" 1;
+    transition: font-variation-settings .18s ease;
+  }
+  .lab-readout { font-size: var(--t-1); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .lab-controls { display: grid; gap: 22px; }
+  .control label { display: flex; justify-content: space-between; font-size: var(--t-1); margin-bottom: 8px; }
+  .control label output { font-variant-numeric: tabular-nums; }
+  .control input[type=range] { width: 100%; accent-color: var(--band-deep); }
+  .toggle { display: flex; align-items: center; justify-content: space-between; font-size: var(--t-1); padding-top: 6px; }
+  .switch { position: relative; width: 44px; height: 26px; border-radius: 999px; background: color-mix(in oklab, var(--band-deep) 30%, var(--band)); border: 0; cursor: pointer; transition: background .2s ease; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--paper); transition: transform .2s ease; }
+  .switch[aria-checked="true"] { background: var(--band-deep); }
+  .switch[aria-checked="true"]::after { transform: translateX(18px); }
+  .lab-note { font-size: var(--t-1); color: color-mix(in oklab, var(--band-deep) 68%, var(--band)); line-height: 1.5; }
+
+  .charset {
+    margin-top: clamp(48px, 6vw, 80px);
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    word-spacing: 0.3em;
+    font-variation-settings: "opsz" 144, "wght" 400, "SOFT" 50, "WONK" 1;
+    overflow-wrap: anywhere;
+  }
+  .charset .meta { display: block; font-family: var(--sans); letter-spacing: 0.01em; word-spacing: normal; margin-bottom: 10px; }
+
+  /* ---------- Inside the issue ---------- */
+  .inside { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(28px, 4vw, 48px); }
+  .inside article { border-top: 1px solid var(--rule); padding-top: 22px; }
+  .inside .num { font-family: var(--serif); font-size: var(--t-3); color: var(--accent); font-variation-settings: "opsz" 72, "SOFT" 30, "WONK" 1; }
+  .inside h3 { font-family: var(--serif); font-weight: 500; font-size: var(--t-3); line-height: 1.2; margin: 14px 0 12px; letter-spacing: -0.01em; font-variation-settings: "opsz" 48, "SOFT" 30, "WONK" 0; }
+  .inside p { color: var(--muted); }
+  .tray { margin-top: clamp(40px, 5vw, 64px); display: grid; grid-template-columns: 200px 1fr; gap: 24px; border-top: 1px solid var(--rule); padding-top: 22px; }
+  .tray ul { display: grid; gap: 10px; }
+  .tray li { display: grid; grid-template-columns: 1fr auto; gap: 16px; }
+  .tray li span { color: var(--muted); font-size: var(--t-1); white-space: nowrap; }
+
+  /* ---------- Archive ---------- */
+  .index li a {
+    display: grid;
+    grid-template-columns: 88px 150px 1fr 200px 60px;
+    gap: 24px;
+    align-items: baseline;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .index li:last-child a { border-bottom: 1px solid var(--rule); }
+  .badge {
+    display: inline-block;
+    font-size: var(--t-1);
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px var(--rule);
+    font-variant-numeric: tabular-nums;
+    transition: background .2s ease, color .2s ease;
+  }
+  .index li a:hover .badge { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .index .date { font-size: var(--t-1); color: var(--muted); }
+  .index .title { font-family: var(--serif); font-size: var(--t-3); font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; font-variation-settings: "opsz" 48, "SOFT" 30, "WONK" 0; }
+  .index .title small { display: block; font-family: var(--sans); font-size: var(--t-1); font-weight: 400; color: var(--muted); margin-top: 6px; letter-spacing: 0.01em; }
+  .index .face { font-size: var(--t-1); color: var(--muted); }
+  .index .face b { display: block; color: var(--ink); font-weight: 600; }
+  .index .go { text-align: right; font-size: var(--t-1); font-weight: 600; }
+  .archive-foot { margin-top: 28px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: var(--t-1); color: var(--muted); }
+
+  /* ---------- Writer ---------- */
+  .writer { border-top: 1px solid var(--rule); }
+  .writer .wrap { display: grid; grid-template-columns: 300px 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .mark {
+    width: 200px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 8rem;
+    line-height: 1;
+    padding-bottom: 0.1em;
+    font-variation-settings: "opsz" 144, "wght" 400, "SOFT" 100, "WONK" 1;
+  }
+  .mark-cap { margin-top: 18px; max-width: 26ch; }
+  .writer h2 { font-size: var(--t-4); line-height: 1.1; margin: 12px 0 18px; font-variation-settings: "opsz" 72, "SOFT" 30, "WONK" 0; }
+  .writer p + p { margin-top: 14px; }
+  .writer p { max-width: 46ch; }
+  .arrives li { display: grid; grid-template-columns: 24px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid var(--rule); }
+  .arrives li:last-child { border-bottom: 1px solid var(--rule); }
+  .arrives .n { font-family: var(--serif); color: var(--accent); font-variation-settings: "opsz" 48, "WONK" 1; }
+  .arrives b { display: block; font-weight: 600; }
+  .arrives span { color: var(--muted); font-size: var(--t-1); }
+
+  /* ---------- Subscribe ---------- */
+  .subscribe { background: var(--ink); color: var(--paper); }
+  .subscribe .wrap { max-width: 860px; }
+  .subscribe .meta { color: color-mix(in oklab, var(--paper) 62%, transparent); }
+  .subscribe h2 { font-size: var(--t-5); line-height: 1.02; margin-top: 16px; max-width: 18ch; font-variation-settings: "opsz" 144, "SOFT" 40, "WONK" 1; text-wrap: balance; }
+  .subscribe h2 em { font-style: italic; color: #F2A58E; }
+  .form {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    max-width: 620px;
+  }
+  .form input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--paper) 40%, transparent);
+    padding: 14px 4px;
+    font-size: var(--t-3);
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 24, "SOFT" 30, "WONK" 0;
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  .form input::placeholder { color: color-mix(in oklab, var(--paper) 45%, transparent); }
+  .form input:focus { border-bottom-color: #F2A58E; }
+  .form .pill { background: var(--paper); color: var(--ink); padding: 15px 24px; border: 0; cursor: pointer; }
+  .form .pill:hover { background: var(--accent); color: var(--paper); }
+  .form-note { margin-top: 16px; font-size: var(--t-1); color: color-mix(in oklab, var(--paper) 62%, transparent); max-width: 52ch; }
+  .success { margin-top: 40px; border-left: 2px solid #F2A58E; padding-left: 18px; max-width: 52ch; }
+  .success b { display: block; font-family: var(--serif); font-size: var(--t-3); font-weight: 500; margin-bottom: 6px; }
+  .success span { color: color-mix(in oklab, var(--paper) 70%, transparent); }
+
+  /* ---------- Footer ---------- */
+  footer { padding-block: 56px 40px; border-top: 1px solid var(--rule); }
+  .colophon { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .colophon p { margin-top: 12px; font-size: var(--t-1); line-height: 1.6; }
+  .colophon .meta { font-weight: 600; color: var(--ink); }
+  .colophon a { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+  .foot-line { margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: var(--t-1); color: var(--muted); }
+  .foot-line .wordmark { font-size: 1.2rem; color: var(--ink); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px) {
+    .hero .wrap { grid-template-columns: 1fr; align-items: start; }
+    .spec-card { height: auto; width: 100%; max-height: 420px; margin-left: 0; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat:nth-child(3) { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+    .stat:nth-child(4) { border-top: 1px solid var(--rule); }
+    .spec-intro, .lab, .inside, .writer .wrap, .colophon { grid-template-columns: 1fr; }
+    .index li a { grid-template-columns: 88px 1fr; }
+    .index .date, .index .face, .index .go { grid-column: 2; }
+    .waterfall .row, .tray { grid-template-columns: 1fr; gap: 6px; }
+  }
+  @media (max-width: 640px) {
+    .nav ul li:not(:last-child) { display: none; }
+    .form { grid-template-columns: 1fr; }
+    .spec-card .glyph { font-size: 42vw; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    #lab, .arrow, .switch, .switch::after { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="fold">
+  <header class="wrap nav">
+    <a class="wordmark" href="#top" aria-label="Counterpunch, home">Counter<span>punch</span></a>
+    <ul>
+      <li class="issue-tag">Issue 47 · 10 September 2026</li>
+      <li><a href="#issue">This issue</a></li>
+      <li><a href="#archive">Archive</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a class="pill" href="#subscribe">Subscribe, it's free</a></li>
+    </ul>
+  </header>
+
+  <main class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <p class="meta"><b>Issue 47</b> · Thursday 10 September 2026 · a nine minute read</p>
+        <h1 class="display">Fraunces, and the return of <em>the leaning serif.</em></h1>
+        <p class="lead">Counterpunch is a fortnightly letter about typefaces, the people who draw them, and the pages they end up on. <span>This issue: how one variable font brought the 1970s soft serif back, one wonk at a time.</span></p>
+        <div class="cta-row">
+          <a class="pill" href="#subscribe">Get the next issue <span class="arrow">→</span></a>
+          <a class="pill ghost" href="#issue">Read issue 47</a>
+          <span class="note">18,412 readers, no sponsors</span>
+        </div>
+      </div>
+      <div class="spec-card" aria-label="Fraunces specimen: the letters a and g at optical size 144 with the wonk axis on">
+        <span class="corner tl">Fraunces</span>
+        <span class="corner tr">opsz 144 · soft 100 · wonk 1</span>
+        <span class="glyph" aria-hidden="true">ag</span>
+        <span class="corner bl">Undercase Type, 2020</span>
+        <span class="corner br">live text, not an image</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<section class="stats-section">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><b>18,412</b><span>subscribers as of this morning</span></div>
+      <div class="stat"><b>Fortnightly</b><span>every other Thursday, 07:00 in Glasgow</span></div>
+      <div class="stat"><b>47 issues</b><span>one typeface each, since November 2024</span></div>
+      <div class="stat"><b>Ines Halloran</b><span>writes every word, by hand, twice</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="specimen" id="issue">
+  <div class="wrap">
+    <div class="spec-intro">
+      <div>
+        <p class="meta"><b>This issue's specimen</b> · Fraunces, designed by Phaedra Charles and Flavia Zimbardi for Undercase Type</p>
+        <p class="spec-lead">Wonky when you want it, <em>sober</em> when you don't.</p>
+      </div>
+      <p>Fraunces is a variable serif with four axes: weight, optical size, a softness axis that rounds the corners, and a wonk switch that lets the stems of the a, the n and the u lean the way they did in 1970s display faces like Windsor and Souvenir. Everything on this page set in it is live text. Resize the window, select the letters, copy them out.</p>
+    </div>
+
+    <div class="waterfall">
+      <div class="row"><span class="meta"><b>Thin 100</b> · opsz 144 · wonk off</span><span class="sample w1">The counter is the part you never print.</span></div>
+      <div class="row"><span class="meta"><b>Regular 400</b> · opsz 72 · wonk on</span><span class="sample w2">Soft serifs, sharp opinions, fortnightly.</span></div>
+      <div class="row"><span class="meta"><b>Semibold 600 italic</b> · opsz 24 · soft 100</span><span class="sample w3">Set small, it stops joking and starts reading.</span></div>
+      <div class="row"><span class="meta"><b>Black 900</b> · opsz 9 · wonk off</span><span class="sample w4">Nine point on newsprint, and still unmistakably a Fraunces.</span></div>
+    </div>
+
+    <div class="lab">
+      <div class="lab-stage">
+        <p id="lab">Quirky ampersands &amp; leaning stems, quietly.</p>
+        <p class="lab-readout" id="readout">optical size 144 · weight 500 · softness 40 · wonk on</p>
+      </div>
+      <div class="lab-controls">
+        <div class="control">
+          <label for="wght">Weight <output id="wght-out">500</output></label>
+          <input type="range" id="wght" min="100" max="900" step="10" value="500">
+        </div>
+        <div class="control">
+          <label for="soft">Softness <output id="soft-out">40</output></label>
+          <input type="range" id="soft" min="0" max="100" step="1" value="40">
+        </div>
+        <div class="toggle">
+          <span>Wonk axis</span>
+          <button class="switch" id="wonk" role="switch" aria-checked="true" aria-label="Toggle the wonk axis"></button>
+        </div>
+        <p class="lab-note">The wonk axis is binary on purpose. The designers decided a half-leaning stem reads as a mistake, so the font offers the lean or it doesn't. Softness, by contrast, is a dial.</p>
+      </div>
+    </div>
+
+    <div class="charset">
+      <span class="meta">Lowercase and figures · opsz 144 · wonk on</span>
+      abcdefghijklmnopqrstuvwxyz 0123456789 &amp; ¶ § ? ! ¿ ¡ @ ﬁ ﬂ
+    </div>
+  </div>
+</section>
+
+<section id="inside">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><b>Inside issue 47</b> · about 1,900 words</p>
+        <h2 class="display">Three things you will know by the end of it.</h2>
+      </div>
+      <a class="link" href="#subscribe">Read the whole issue <span class="arrow">→</span></a>
+    </div>
+    <div class="inside">
+      <article>
+        <span class="num">1</span>
+        <h3>What a wonk actually does to an a, an n and a u</h3>
+        <p>We put the two masters side by side at 144pt and trace what moves: the stem pitches, the top of the a gets a little gable, and the whole word gains about four percent of width. Then we explain why the designers chose a switch over a slider.</p>
+      </article>
+      <article>
+        <span class="num">2</span>
+        <h3>Where the softness comes from: Windsor, Souvenir and the 1970s</h3>
+        <p>Fraunces credits a family tree that most people were taught to be embarrassed by. We go back to the paperback covers and the record sleeves and make the case that the softness was never the problem, the pairings were.</p>
+      </article>
+      <article>
+        <span class="num">3</span>
+        <h3>In use: three pages readers sent in, and one we would fix</h3>
+        <p>A bakery menu, a poetry chapbook and a dashboard that had no business using a soft serif. Two of them work, one doesn't, and the reason is optical size, not taste.</p>
+      </article>
+    </div>
+    <div class="tray">
+      <span class="meta"><b>Also in the tray</b></span>
+      <ul>
+        <li><a href="#archive">A correction to issue 45: Literata's optical size range is 7 to 72, not 7 to 60</a><span>Errata</span></li>
+        <li><a href="#archive">Reader question: is it rude to use a display cut for body text? Yes, to the reader.</a><span>Letters</span></li>
+        <li><a href="#archive">Three type specimens from 1926 that read better than most websites</a><span>Links</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="archive">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="meta"><b>The archive</b> · 46 back issues, all free to read</p>
+        <h2 class="display">One typeface an issue, all the way back.</h2>
+      </div>
+      <a class="link" href="#archive">Browse every issue <span class="arrow">→</span></a>
+    </div>
+    <ul class="index">
+      <li><a href="#archive">
+        <span class="badge">No. 46</span>
+        <span class="date">27 August 2026</span>
+        <span class="title">Söhne, and the myth of the neutral grotesk<small>A grotesk that claims to have no opinion has, on inspection, about forty. We count them, from the folded leg of the R to the width of the spacing.</small></span>
+        <span class="face">Typeface<b>Söhne, Klim</b></span>
+        <span class="go">Read →</span>
+      </a></li>
+      <li><a href="#archive">
+        <span class="badge">No. 45</span>
+        <span class="date">13 August 2026</span>
+        <span class="title">Reading at nine point: the optical size problem<small>Why the same outlines that look elegant at 72pt clog at 9pt, what a text cut fixes, and a test you can run on any site in one minute.</small></span>
+        <span class="face">Typeface<b>Literata, TypeTogether</b></span>
+        <span class="go">Read →</span>
+      </a></li>
+      <li><a href="#archive">
+        <span class="badge">No. 44</span>
+        <span class="date">30 July 2026</span>
+        <span class="title">Tabular figures, and other kindnesses to the reader<small>A short issue about numbers: when to line them up, when to let them hang, and why a price list set in proportional figures is quietly hostile.</small></span>
+        <span class="face">Typeface<b>Inter, Rasmus Andersson</b></span>
+        <span class="go">Read →</span>
+      </a></li>
+      <li><a href="#archive">
+        <span class="badge">No. 43</span>
+        <span class="date">16 July 2026</span>
+        <span class="title">Two centuries of Caslon, in one paragraph<small>Set the same paragraph in five Caslons from 1722 to 2019 and read what each century wanted from a book face. The 1990s wanted it cleaner. It was wrong.</small></span>
+        <span class="face">Typeface<b>Caslon, several hands</b></span>
+        <span class="go">Read →</span>
+      </a></li>
+    </ul>
+    <div class="archive-foot">
+      <span>Issues 1 to 42 are in the archive, from Garamond to Söhne, with the specimens intact.</span>
+      <span>Also available as a <a href="#archive">web feed</a> and as a <a href="#archive">single searchable page</a>.</span>
+    </div>
+  </div>
+</section>
+
+<section class="writer" id="about">
+  <div class="wrap">
+    <div>
+      <div class="mark" aria-hidden="true">&amp;</div>
+      <p class="mark-cap meta">The sign-off. Every issue ends with an ampersand from the typeface it discussed.</p>
+    </div>
+    <div>
+      <p class="meta"><b>The writer</b></p>
+      <h2 class="display">Ines Halloran writes Counterpunch from a desk in Glasgow.</h2>
+      <p>She spent nine years setting books for a university press before she started writing about the type instead of with it. The letter began in November 2024 as a note to six friends about why a footnote looked wrong, and it has kept the same shape since: one typeface, one argument, a specimen you can select.</p>
+      <p>Nothing here is sponsored. Foundries are named because their work is worth naming, and a typeface never appears because someone asked.</p>
+    </div>
+    <div>
+      <p class="meta"><b>How it arrives</b></p>
+      <ul class="arrives" style="margin-top:12px">
+        <li><span class="n">1</span><div><b>Every other Thursday</b><span>07:00 British time, so it is waiting with the first coffee</span></div></li>
+        <li><span class="n">2</span><div><b>About 1,800 words</b><span>nine minutes, with a specimen set live in the email itself</span></div></li>
+        <li><span class="n">3</span><div><b>One typeface per issue</b><span>picked for what it teaches, not for what is new</span></div></li>
+        <li><span class="n">4</span><div><b>No tracking pixels</b><span>we do not know who opened it, and we like it that way</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="subscribe" id="subscribe">
+  <div class="wrap">
+    <p class="meta">Free, every other Thursday · next issue 24 September</p>
+    <h2 class="display">Join 18,412 readers who care <em>where the serif lands.</em></h2>
+    <form class="form" id="form" novalidate>
+      <label for="email" class="meta" style="position:absolute;left:-9999px">Email address</label>
+      <input type="email" id="email" name="email" placeholder="you@yourstudio.com" autocomplete="email" required>
+      <button class="pill" type="submit">Subscribe <span class="arrow">→</span></button>
+    </form>
+    <p class="form-note" id="form-note">One email a fortnight. Unsubscribe in one click from any issue. The list is never sold, rented or shown to anyone, including the foundries we write about.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="colophon">
+      <div>
+        <p class="meta">Typefaces</p>
+        <p>Fraunces by Undercase Type, for the display lines and this issue's specimen.<br>Instrument Sans by Rodrigo Fuenzalida for everything else.<br>Both served from Google Fonts, both open licences.</p>
+      </div>
+      <div>
+        <p class="meta">Write to us</p>
+        <p><a href="mailto:ines@counterpunch.press">ines@counterpunch.press</a><br>Letters are read the same day and answered within the week.<br>Specimens you have set are always welcome, at any size.</p>
+      </div>
+      <div>
+        <p class="meta">Elsewhere</p>
+        <p><a href="#archive">Full archive</a>, <a href="#archive">web feed</a>, <a href="#about">about the letter</a>.<br>Counterpunch is written in Glasgow and sent from a small server in Dublin.<br>No analytics, no cookies, no pixels.</p>
+      </div>
+    </div>
+    <div class="foot-line">
+      <span class="wordmark">Counter<span style="color:var(--accent)">punch</span></span>
+      <span>© 2026 Ines Halloran. Typefaces remain the property of their designers.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var lab = document.getElementById('lab');
+    var readout = document.getElementById('readout');
+    var wght = document.getElementById('wght');
+    var soft = document.getElementById('soft');
+    var wonk = document.getElementById('wonk');
+    var wghtOut = document.getElementById('wght-out');
+    var softOut = document.getElementById('soft-out');
+
+    function update() {
+      var w = wonk.getAttribute('aria-checked') === 'true' ? 1 : 0;
+      var value = '"opsz" 144, "wght" ' + wght.value + ', "SOFT" ' + soft.value + ', "WONK" ' + w;
+      lab.style.fontVariationSettings = value;
+      readout.textContent = 'optical size 144 · weight ' + wght.value + ' · softness ' + soft.value + ' · wonk ' + (w ? 'on' : 'off');
+      wghtOut.textContent = wght.value;
+      softOut.textContent = soft.value;
+    }
+    wght.addEventListener('input', update);
+    soft.addEventListener('input', update);
+    wonk.addEventListener('click', function () {
+      var on = wonk.getAttribute('aria-checked') === 'true';
+      wonk.setAttribute('aria-checked', on ? 'false' : 'true');
+      update();
+    });
+
+    var form = document.getElementById('form');
+    var note = document.getElementById('form-note');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('email');
+      if (!email.value || email.value.indexOf('@') < 1) {
+        email.focus();
+        note.textContent = 'That address does not look right yet. Try again, we will wait.';
+        return;
+      }
+      var done = document.createElement('div');
+      done.className = 'success';
+      done.innerHTML = '<b>You are on the list.</b><span>Issue 48 lands on Thursday 24 September at 07:00. In the meantime the archive above is open, and issue 47 is in your inbox already.</span>';
+      form.replaceWith(done);
+      note.textContent = 'A confirmation has gone to ' + email.value + '. If it is not there in a minute, check the folder your mail client is embarrassed about.';
+    });
+  })();
+</script>
+</body>
+</html>
