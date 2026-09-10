@@ -37,6 +37,7 @@ import {
   isStyle,
   isVibe,
 } from "@inspo/taxonomy";
+import { cleanFontList, cleanRampFamily } from "./font-names.js";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..", "..");
 const SEED_PATH = join(REPO_ROOT, "packages", "db", "src", "static-screens.json");
@@ -101,7 +102,7 @@ interface MetaSidecar {
     pageTitle?: string;
     pageDescription?: string;
     designSystem?: {
-      typeRamp?: unknown[];
+      typeRamp?: Array<Record<string, unknown> & { family?: string }>;
       spacingScale?: number[];
       radiusScale?: number[];
       containerWidth?: number | null;
@@ -344,7 +345,7 @@ function rowFromSidecar(slug: string, meta: MetaSidecar, siteName: string | null
     ...(variants.lqip ? { lqip: variants.lqip } : {}),
     description,
     palette: (meta.meta.palette ?? []).slice(0, 5),
-    fonts: meta.meta.fonts ?? [],
+    fonts: cleanFontList(meta.meta.fonts),
     tech: meta.meta.tech ?? [],
     // Provisional: backfill-axes.ts re-derives mode from the measured
     // surface (paperL) and syncs the dark-mode style tag to it.
@@ -352,7 +353,10 @@ function rowFromSidecar(slug: string, meta: MetaSidecar, siteName: string | null
     pageType: meta.pageType ?? "landing",
     tags,
     designSystem: {
-      typeRamp: meta.meta.designSystem?.typeRamp ?? [],
+      typeRamp: (meta.meta.designSystem?.typeRamp ?? []).map((t) => ({
+        ...t,
+        family: cleanRampFamily(t.family),
+      })),
       spacingScale: meta.meta.designSystem?.spacingScale ?? [],
       radiusScale: meta.meta.designSystem?.radiusScale ?? [],
       containerWidth: meta.meta.designSystem?.containerWidth ?? null,

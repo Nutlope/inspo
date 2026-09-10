@@ -1,9 +1,9 @@
 /**
- * Per-page metadata extraction — palette (from the hero crop), fonts
+ * Per-page metadata extraction: palette (from the hero crop), fonts
  * (from computed styles), tech fingerprint (from script srcs / meta /
  * cookie names), light/dark mode (from luminance of hero).
  *
- * Phase 2 also extracts the design-system block — type ramp, spacing
+ * Phase 2 also extracts the design-system block: type ramp, spacing
  * scale, radius scale, container width, raw CSS variables. All values
  * are heuristic, derived from `getComputedStyle` over a representative
  * sample of elements; we get what we get and reject obvious garbage.
@@ -14,6 +14,7 @@ import type { Page } from "playwright";
 import type { TypeRampEntry } from "@inspo/shared";
 import type { ExtractedMetadata } from "./types";
 import { extractComponents } from "./components.js";
+import { cleanFontList, cleanRampFamily } from "./font-names.js";
 
 const gen = (c: Clues, needle: string) =>
   Boolean(c.metaGenerator && c.metaGenerator.toLowerCase().includes(needle));
@@ -60,7 +61,7 @@ export async function extract(
     palette = [];
   }
 
-  // In-page font + meta extraction. Implementation is fully inlined —
+  // In-page font + meta extraction. Implementation is fully inlined:
   // tsx/esbuild rewrites named inner functions to use a `__name` helper
   // that doesn't exist in the page context, so we keep this monolithic.
   const inPage = await page.evaluate(`(() => {
@@ -110,7 +111,7 @@ export async function extract(
   };
   const tech = TECH_FINGERPRINTS.filter((f) => f.test(clues)).map((f) => f.name);
 
-  // Design-system extraction. Same in-page-as-string pattern as above —
+  // Design-system extraction. Same in-page-as-string pattern as above:
   // tsx wraps named inner functions with __name which the browser
   // context doesn't have. Returns a freeform object; we sanity-check on
   // the host side.
@@ -140,7 +141,7 @@ export async function extract(
 
   return {
     palette,
-    fonts: inPage.fonts,
+    fonts: cleanFontList(inPage.fonts),
     tech,
     mode,
     pageTitle: inPage.title,
@@ -212,8 +213,8 @@ const DESIGN_SYSTEM_SCRIPT = `(() => {
     rampFor('button, [role="button"], a.button, .btn', 'button'),
   ].filter(Boolean);
 
-  // Spacing — pull padding-y / margin-y / gap from a sample of layout
-  // elements. Keep only sensible values (4–256px).
+  // Spacing: pull padding-y / margin-y / gap from a sample of layout
+  // elements. Keep only sensible values (4-256px).
   const spaceSample = new Set();
   const spaceSelectors = ['main', 'section', 'header', 'footer', 'article', 'nav', '[class*="container"]', '[class*="section"]'];
   spaceSelectors.forEach((s) => {
@@ -227,7 +228,7 @@ const DESIGN_SYSTEM_SCRIPT = `(() => {
     });
   });
 
-  // Radius — pull border-radius from buttons, cards, inputs.
+  // Radius: pull border-radius from buttons, cards, inputs.
   const radSample = new Set();
   document.querySelectorAll('button, [role="button"], input, .card, [class*="card"], [class*="button"], [class*="rounded"]').forEach((el) => {
     if (!(el instanceof HTMLElement)) return;
@@ -236,7 +237,7 @@ const DESIGN_SYSTEM_SCRIPT = `(() => {
     if (n >= 0 && n <= 64) radSample.add(Math.round(n));
   });
 
-  // Container width — read max-width of <main> / .container / body content.
+  // Container width: read max-width of <main> / .container / body content.
   let containerWidth = null;
   const containerCandidates = [document.querySelector('main'), document.querySelector('[class*="container"]'), document.querySelector('article')].filter(Boolean);
   for (const el of containerCandidates) {
@@ -247,7 +248,7 @@ const DESIGN_SYSTEM_SCRIPT = `(() => {
     if (el.offsetWidth >= 320 && el.offsetWidth <= 2400) { containerWidth = Math.round(el.offsetWidth); break; }
   }
 
-  // CSS variables — every --* declared on :root / documentElement.
+  // CSS variables: every --* declared on :root / documentElement.
   const cssVariables = {};
   const rootCs = window.getComputedStyle(document.documentElement);
   for (let i = 0; i < rootCs.length; i++) {
@@ -280,7 +281,7 @@ function sanitiseTypeRamp(raw: Array<Partial<TypeRampEntry>>): TypeRampEntry[] {
     )
     .map((r) => ({
       role: r.role,
-      family: r.family || "inherit",
+      family: cleanRampFamily(r.family),
       sizePx: Math.round(r.sizePx),
       weight: Math.max(100, Math.min(900, r.weight || 400)),
       lineHeight: r.lineHeight,
