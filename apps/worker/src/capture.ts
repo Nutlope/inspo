@@ -264,9 +264,10 @@ async function load(page: Page, url: string): Promise<void> {
   // browsers start at once, so ERR_NAME_NOT_RESOLVED on a domain that
   // plainly resolves is routine at concurrency > 2. Retry transient
   // network failures twice before giving up.
+  let response: Response | null = null;
   for (let attempt = 1; ; attempt++) {
     try {
-      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45_000 });
       break;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -276,6 +277,11 @@ async function load(page: Page, url: string): Promise<void> {
       await new Promise((r) => setTimeout(r, 2000 * attempt + Math.random() * 1000));
     }
   }
+  // A 404, an access-denied or a bot-check page renders fine and would be
+  // captured as if it were the site. Discovery sometimes proposes paths a
+  // sitemap still lists but the site no longer serves.
+  const status = response?.status() ?? 0;
+  if (status >= 400) throw new Error(`HTTP ${status} for ${url}`);
   await page
     .waitForLoadState("networkidle", { timeout: 8_000 })
     .catch(() => {
