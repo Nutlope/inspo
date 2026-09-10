@@ -128,7 +128,8 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     };
 
     console.log("  capturing desktop + tablet…");
-    const shots: Shot[] = await captureAllViewports(page, url, sweep, ["desktop", "tablet"]);
+    // Tablet only supplies the 384px thumb; nothing uses its full page.
+    const shots: Shot[] = await captureAllViewports(page, url, sweep, ["desktop", "tablet"], ["desktop"]);
 
     console.log("  capturing mobile (375 @2x, phone context)…");
     try {

@@ -113,8 +113,9 @@ async function main() {
           console.log(`${tag} ▶ ${job.slug}  [${job.pageType}] ${job.url}`);
           const result = await Promise.race([
             capture({ url: job.url, slug: job.slug, siteSlug: job.site, pageType: job.pageType }),
+            // 300s: a scroll-stitched fallback on a long page adds a minute or more.
             new Promise<never>((_, rej) =>
-              setTimeout(() => rej(new Error("capture timed out (180s)")), 180_000),
+              setTimeout(() => rej(new Error("capture timed out (300s)")), 300_000),
             ),
           ]);
           mkdirSync(dir, { recursive: true });

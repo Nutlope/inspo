@@ -261,6 +261,9 @@ export async function captureAllViewports(
   url: string,
   stabilizeFn: (page: Page) => Promise<void>,
   viewports: Viewport[] = ["desktop", "tablet", "mobile"],
+  /** Viewports that also get a full-page shot. The tablet view only
+   *  supplies the 384px gallery thumb, so its full page is dead weight. */
+  fullPageFor: Viewport[] = viewports,
 ): Promise<Shot[]> {
   const out: Shot[] = [];
 
@@ -290,6 +293,7 @@ export async function captureAllViewports(
       contentHash: hashOf(hero),
     });
 
+    if (!fullPageFor.includes(vp)) continue;
     await clipOverflowX(page);
     const full = await bestFullPage(page, vp, size.width, size.height, dsf);
     out.push({

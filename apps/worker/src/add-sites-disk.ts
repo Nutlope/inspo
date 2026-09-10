@@ -1,5 +1,5 @@
 /**
- * Disk-only add-sites — capture a list of brand-new URLs without touching
+ * Disk-only add-sites: capture a list of brand-new URLs without touching
  * Neon. Mirrors `add-sites.ts` but writes a `meta.json` sidecar per
  * capture dir (with tags, embeddings, palette, design metadata) so the
  * companion `merge-disk-captures-to-seed.ts` can merge them into
@@ -76,12 +76,13 @@ async function main() {
         console.log(`${tag} ▶ ${slug}  (${url})`);
         const result = await Promise.race([
           capture({ url, slug, siteSlug: slug, pageType: "landing", enrich: !skipEnrich }),
+          // 300s: a scroll-stitched fallback on a long page adds a minute or more.
           new Promise<never>((_, rej) =>
-            setTimeout(() => rej(new Error("capture timed out (180s)")), 180_000),
+            setTimeout(() => rej(new Error("capture timed out (300s)")), 300_000),
           ),
         ]);
         mkdirSync(dir, { recursive: true });
-        // Persist just the enrichment + metadata — PNGs are already on disk via saveLocal()
+        // Persist just the enrichment + metadata; PNGs are already on disk via saveLocal()
         const sidecar = {
           sourceUrl: result.sourceUrl,
           slug: result.slug,
