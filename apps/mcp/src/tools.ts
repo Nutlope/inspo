@@ -86,10 +86,12 @@ const REFERENCE_TYPES = [
   "stat",
 ] as const;
 import {
+  IMAGE_PATTERN,
   asTextContent,
   formatCollection,
   formatScreen,
   formatScreenConcise,
+  formatScreenRow,
   inlineThumbCandidates,
   withImages,
 } from "./format";
@@ -257,20 +259,38 @@ const flexUrl = () =>
  *  search result would cost more than the server instructions they
  *  replaced. */
 const COMPOSE_RULE =
-  "COMPOSE: keep the hero complete inside the first viewport (~1280x800); 80-160px between sections (measured median 96px); copy in a centered, padded column. `recommend` returns the long form.";
+  "Hero complete inside 1280x800; 80-160px between sections; copy in a centered padded column.";
 
-function resultsTip(inline: boolean, concise: boolean): string {
-  const mobile = " Each result carries `mobile` (375px) URLs where captured.";
+/** One short line. This used to be four sentences on every list
+ *  response (~90 tokens, fifty times a build); the composition rules
+ *  ride on `recommend` in full and here in one clause. */
+function resultsTip(inline: boolean, detail: "concise" | "standard" | "full"): string {
   const search =
     typeof process !== "undefined" && process.env?.TOGETHER_API_KEY
       ? ""
-      : " Ranking is lexical-only (no TOGETHER_API_KEY); set it for sharper relevance.";
-  const base = inline
-    ? "Each result: inline thumbnail plus full-resolution URLs."
-    : concise
-      ? 'Concise results: `northstar`, palette, fonts, mode, macrostructure. get_screen(slug) or detail:"full" adds the fold-by-fold autopsy, description, tags and tech.'
-      : "Read each result's `autopsy` (fold-by-fold composition), `northstar`, palette and fonts.";
-  return `${base}${mobile}${search} ${COMPOSE_RULE}`;
+      : " Ranking is lexical-only (no TOGETHER_API_KEY).";
+  const shape =
+    detail === "concise"
+      ? "get_screen(slug) for a row's autopsy."
+      : detail === "standard"
+        ? "Top rows carry the fold autopsy; get_screen(slug) for the others."
+        : "Every row carries its fold autopsy.";
+  return `${inline ? "Thumbnails inline. " : ""}${shape}${search} ${COMPOSE_RULE}`;
+}
+
+/** The JSDoc paragraph a reference component's source carries after
+ *  its stamp: the author's own account of the archetype, which is what
+ *  an agent reading the code for shape actually uses. */
+function aboutOf(source: string): string | null {
+  const m = /\/\*\*\s*\n([\s\S]*?)\*\//.exec(source);
+  if (!m) return null;
+  const text = m[1]!
+    .split("\n")
+    .map((l) => l.replace(/^\s*\*\s?/, ""))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > 0 ? text.slice(0, 420) : null;
 }
 
 /** Error payload for a slug miss, with close-match suggestions so the
@@ -308,17 +328,42 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   // result runs ~3 KB and a tight budget would otherwise spend the
   // whole allowance on one row when the caller clearly wanted several
   // lean ones. An explicit `detail` arg always wins over both.
-  const fmt = (detail?: string, maxTokens?: number | null) =>
-    (detail
-      ? detail === "concise"
-      : ctx.concise() || resolveBudget(maxTokens, opts.maxTokens) !== null)
-      ? formatScreenConcise
-      : formatScreen;
+  type Detail = "concise" | "standard" | "full";
+  const resolveDetail = (detail?: string, maxTokens?: number | null): Detail =>
+    detail === "concise" || detail === "standard" || detail === "full"
+      ? detail
+      : ctx.concise() || resolveBudget(maxTokens, opts.maxTokens) !== null
+        ? "concise"
+        : "standard";
+  /* How many list rows carry the fold autopsy at the default detail.
+     Twenty agent builds cited 5 references each out of ~40 sites
+     returned, and asked for `full` on 44 of 51 searches because the
+     tip told them to read every autopsy. Three per list is enough to
+     judge the shape of the top hits; get_screen covers the rest. */
+  const AUTOPSY_ROWS = 3;
+  const rows = <T extends Parameters<typeof formatScreenRow>[0]>(
+    list: T[],
+    detail: string | undefined,
+    maxTokens: number | null | undefined,
+    why?: (s: T, i: number) => string | undefined,
+    mobile = false,
+  ) => {
+    const d = resolveDetail(detail, maxTokens);
+    return list.map((s, i) =>
+      d === "concise"
+        ? formatScreenConcise(s, why?.(s, i))
+        : formatScreenRow(s, {
+            autopsy: d === "full" || i < AUTOPSY_ROWS,
+            why: why?.(s, i),
+            mobile,
+          }),
+    );
+  };
   const detailArg = () => ({
-    detail: flexEnum(["concise", "full"])
+    detail: flexEnum(["concise", "standard", "full"])
       .optional()
       .describe(
-        "Result verbosity. 'full' adds the fold-by-fold autopsy, description, all tags and tech; 'concise' keeps northstar + palette + fonts. Concise by default on the text profile.",
+        "'standard' (default): northstar, palette, fonts, axes, macro and tags per row, plus the fold-by-fold autopsy on the top 3. 'full': the autopsy on every row (~300 tokens each; only if you will read them all). 'concise': northstar, palette, fonts. Text profile defaults to concise.",
       ),
   });
   const deviceArg = () => ({
@@ -477,9 +522,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
 
       const inline = ctx.inlineImages();
-      const concise = args.detail ? args.detail === "concise" : ctx.concise();
+      const detail = resolveDetail(args.detail, args.maxTokens);
       const matched = await searchScreens(filtered, args.query, args.limit);
-      const results = matched.map((s) => fmt(args.detail, args.maxTokens)(s));
+      const results = rows(
+        matched,
+        args.detail,
+        args.maxTokens,
+        undefined,
+        args.device === "mobile",
+      );
       return withImages(
         {
           query: args.query,
@@ -501,8 +552,9 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           count: matched.length,
           tip:
             matched.length > 0
-              ? resultsTip(inline, concise)
+              ? resultsTip(inline, detail)
               : "No matches. Try fewer filters or a broader query.",
+          ...(detail !== "concise" && matched.length > 0 ? { images: IMAGE_PATTERN } : {}),
           results,
         },
         matched.map((s) =>
@@ -649,7 +701,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         limit,
         sameSite,
       });
-      const results = similar.map((s) => {
+      const results: string[] = similar.map((s) => {
         const structural: string[] = [];
         if (
           s.tags.macrostructure &&
@@ -669,14 +721,17 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             : structural.length
               ? structural.join("; ")
               : "Overlapping industry / style / mode";
-        return fmt(detail, maxTokens)(s, why);
+        return why;
       });
+      const whyOf = new Map(similar.map((s, i) => [s.slug, results[i]]));
+      const formatted = rows(similar, detail, maxTokens, (s) => whyOf.get(s.slug));
       return withImages(
         {
           reference: { slug: target.slug, title: target.title },
           method,
           count: similar.length,
-          results,
+          ...(resolveDetail(detail, maxTokens) !== "concise" ? { images: IMAGE_PATTERN } : {}),
+          results: formatted,
         },
         similar.map((s) => inlineThumbCandidates(s)),
         ctx.inlineImages(),
@@ -815,14 +870,18 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       scored.sort((a, b) => a.d - b.d);
       const top = scored.slice(0, limit);
-      const results = top.map(({ s, d }) =>
-        fmt(detail, maxTokens)(s, `Δ ${d.toFixed(3)} from ${target}`),
+      const results = rows(
+        top.map((t) => t.s),
+        detail,
+        maxTokens,
+        (_s, i) => `Δ ${top[i]!.d.toFixed(3)} from ${target}`,
       );
       return withImages(
         {
           anchor: target,
           tolerance,
           count: results.length,
+          ...(resolveDetail(detail, maxTokens) !== "concise" ? { images: IMAGE_PATTERN } : {}),
           results,
         },
         top.map(({ s }) => inlineThumbCandidates(s)),
@@ -884,7 +943,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       const availableSites = bySite.size;
       const top = [...bySite.values()].slice(0, limit);
-      const results = top.map((s) => fmt(detail, maxTokens)(s));
+      const results = rows(top, detail, maxTokens, undefined, device === "mobile");
       const inline = ctx.inlineImages();
 
       // Coverage is information, not an error. Some shapes are rare in
@@ -921,14 +980,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           tip:
             top.length > 0
               ? [
-                  inline
-                    ? `Each result has an inline thumbnail (image block) below the JSON. Study them: they're real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}.`
-                    : `These are real production captures embodying ${MACROSTRUCTURE_LABELS[slug]}. Study each result's autopsy + palette + fonts; they carry the composition.`,
+                  `Real captures embodying ${MACROSTRUCTURE_LABELS[slug]}. ${resultsTip(inline, resolveDetail(detail, maxTokens))}`,
                   coverageNote,
                 ]
                   .filter(Boolean)
                   .join(" ")
               : coverageNote,
+          ...(resolveDetail(detail, maxTokens) !== "concise" && top.length > 0
+            ? { images: IMAGE_PATTERN }
+            : {}),
           results,
         },
         top.map((s) =>
@@ -1047,7 +1107,6 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         pageType: p.pageType,
         title: p.title,
         image: absolute(p.imageUrl),
-        thumb: absolute(p.thumbUrl),
         ...(p.northstar ? { northstar: p.northstar } : {}),
       }));
       const sequence = [...new Set(pages.map((p) => p.pageType))].join(" → ");
@@ -1145,8 +1204,6 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         imageUrl: h.fallback
           ? absolute(h.screen.thumbUrl)
           : `${base}/api/component/${h.screen.slug}/${h.idx}`,
-        thumb: absolute(h.screen.thumbUrl),
-        siteUrl: `${base}/sites/${h.screen.siteSlug}`,
         ...(h.fallback
           ? { fallback: true }
           : {
@@ -1160,15 +1217,17 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       return withImages(
         {
           type: args.type,
-          filters: {
-            style: args.style ?? null,
-            industry: args.industry ?? null,
-            macrostructure: args.macrostructure ?? null,
-            mode: args.mode ?? null,
-            vibe: args.vibe ?? null,
-            color: args.color ?? null,
-            pageType: args.pageType ?? null,
-          },
+          filters: Object.fromEntries(
+            Object.entries({
+              style: args.style,
+              industry: args.industry,
+              macrostructure: args.macrostructure,
+              mode: args.mode,
+              vibe: args.vibe,
+              color: args.color,
+              pageType: args.pageType,
+            }).filter(([, v]) => v != null),
+          ),
           count: filtered.length,
           ...(anyFallback
             ? {
@@ -1177,7 +1236,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             : {}),
           components,
         },
-        components.map((c) => c.thumb),
+        filtered.map((h) => inlineThumbCandidates(h.screen)),
         ctx.inlineImages(),
         budget(args.maxTokens),
       );
@@ -1215,8 +1274,13 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           return row ? { row, editorNote: entry.editorNote } : null;
         })
         .filter((v): v is NonNullable<typeof v> => v !== null);
-      const enriched = enrichedRows.map(({ row, editorNote }) => ({
-        ...fmt(detail, maxTokens)(row),
+      const formattedRows = rows(
+        enrichedRows.map((e) => e.row),
+        detail,
+        maxTokens,
+      );
+      const enriched = enrichedRows.map(({ editorNote }, i) => ({
+        ...formattedRows[i]!,
         editorNote,
       }));
       return withImages(
@@ -1272,27 +1336,28 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           : never,
         macroQuery: macro,
       });
-      // Without a `type` filter the catalogue is heavy (68 × ~2 KB);
-      // return a list view (id/label/macro/note + tiny preview) and
-      // let the caller fetch full source via get_reference_jsx.
-      if (!type) {
-        return asTextContent({
-          count: list.length,
-          tip: "Filter by `type` to get full JSX source. Currently showing list view only.",
-          components: list.map((r) => ({
-            id: r.id,
-            type: r.type,
-            label: r.label,
-            macro: r.macro,
-            note: r.note,
-            sourcePreview: r.source.slice(0, 240).replace(/\s+/g, " ") + "…",
-          })),
-        });
-      }
+      /* Index only, with or without a type filter.
+
+         The typed call used to return every archetype's full JSX: seven
+         sources, ~19k characters, and it was the single largest line
+         item across twenty agent builds (44 calls, 28% of everything
+         Inspo sent), while only four of those agents ever went on to
+         fetch a source they had chosen. What the agents actually took
+         was the archetype's shape and its note ("N1 Inline: wordmark
+         left, links centre"). So the list carries the note plus the
+         JSDoc `about` paragraph from the source, and get_reference_jsx
+         serves the code for the one that was picked. */
       return asTextContent({
         count: list.length,
-        tip: "Each result includes the full canonical JSX. Stamp + JSDoc are inside the source - read them; they explain when to reach for this archetype. Each also carries `tokens`: the custom properties the source reads, and an alias block to paste if your system names its tokens for their roles (paper / ink / muted / rule / accent). Undefined custom properties fail silently, so skipping that block gets you a component that renders unstyled with no error.",
-        components: list,
+        tip: "Archetype index. Pick one, then get_reference_jsx({type,id}) for its React + Tailwind source (~600 tokens); read the source for structure even when writing plain HTML.",
+        components: list.map((r) => ({
+          id: r.id,
+          type: r.type,
+          label: r.label,
+          macro: r.macro,
+          note: r.note,
+          ...(aboutOf(r.source) ? { about: aboutOf(r.source) } : {}),
+        })),
       });
     },
   );
@@ -1450,15 +1515,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
          The top two keep theirs; the rest keep `northstar`, the
          one-line soul of the design, and can be drilled into by slug. */
       const AUTOPSY_DEPTH = 2;
-      const exemplarsFmt = exemplars.map((s, i) => {
-        const row = fmt(args.detail, args.maxTokens)(s) as Record<string, unknown>;
-        if (i >= AUTOPSY_DEPTH && "autopsy" in row) {
-          delete row.autopsy;
-          delete row.description;
-          row.detail = `northstar only - call get_screen({slug:"${s.slug}"}) for the fold-by-fold autopsy`;
-        }
-        return row;
-      });
+      const exDetail = resolveDetail(args.detail, args.maxTokens);
+      const exemplarsFmt = exemplars.map((s, i) =>
+        exDetail === "concise"
+          ? formatScreenConcise(s)
+          : formatScreenRow(s, {
+              autopsy: exDetail === "full" || i < AUTOPSY_DEPTH,
+              mobile: args.device === "mobile",
+            }),
+      );
 
       // Canonical reference component(s) that match the picked
       // macrostructure. Substring-match on the first word of the
@@ -1494,26 +1559,18 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
         })
         .slice(0, 3);
 
-      /* Full JSX for the first match only. Three sources measured at
-         2,126 tokens - a quarter of the response - and the median
-         component is 579 tokens with the largest at 1,204. The head is
-         a hero when one matched, which is the piece that actually
-         defines page shape; the rest arrive as a name plus a note, and
-         `get_reference_jsx` fetches whichever the agent decides it
-         wants. Same scan-then-fetch shape `find_reference_components`
-         already uses when called without a type filter. */
-      const referenceComponents = referencePicks.map((r, i) =>
-        i === 0
-          ? r
-          : {
-              id: r.id,
-              type: r.type,
-              label: r.label,
-              macro: r.macro,
-              note: r.note,
-              source: `get_reference_jsx({type:"${r.type}",id:"${r.id}"})`,
-            },
-      );
+      /* Index entries only. The head used to carry its full JSX (~600
+         tokens of React the agent may not be writing); in twenty
+         builds no agent used it in place, and the four that wanted a
+         source called get_reference_jsx for one they had chosen. */
+      const referenceComponents = referencePicks.map((r) => ({
+        id: r.id,
+        type: r.type,
+        label: r.label,
+        macro: r.macro,
+        note: r.note,
+        ...(aboutOf(r.source) ? { about: aboutOf(r.source) } : {}),
+      }));
 
       // Palette suggestion - top exemplar's palette is the safest
       // signal. If somehow empty, fall back to the second.
@@ -1523,7 +1580,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           : ((exemplarsFmt[1]?.palette as string[] | undefined) ?? []);
 
       const inline = ctx.inlineImages();
-      const conciseEx = args.detail ? args.detail === "concise" : ctx.concise();
+      const conciseEx = exDetail === "concise";
       const inlined = inline
         ? Math.min(RECOMMEND_INLINE_EXEMPLARS, exemplars.length)
         : 0;
@@ -1539,14 +1596,16 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       return withImages(
         {
           brief: args.brief,
-          filters: {
-            pageType: args.pageType ?? null,
-            mode: args.mode ?? null,
-            ...(inferredMode ? { inferredMode } : {}),
-            vibe: args.vibe ?? null,
-            color: args.color ?? null,
-            device: args.device ?? null,
-          },
+          filters: Object.fromEntries(
+            Object.entries({
+              pageType: args.pageType,
+              mode: args.mode,
+              inferredMode,
+              vibe: args.vibe,
+              color: args.color,
+              device: args.device,
+            }).filter(([, v]) => v != null),
+          ),
           pick: picked
             ? {
                 macrostructure: {
@@ -1561,6 +1620,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           // matched sites. Use it to place yourself deliberately - the
           // consensus is the gravity, not the target.
           evidence: buildEvidence(ranked, { concise: conciseEx }),
+          ...(conciseEx ? {} : { images: IMAGE_PATTERN }),
           exemplars: exemplarsFmt,
           referenceComponents,
           paletteSuggestion: palette,
@@ -1573,7 +1633,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
             'Writing a standalone HTML file? Include <meta charset="utf-8">. These exemplars lean on typographic glyphs (middle dots, arrows, true quotes) and render as mojibake without it.',
           tip:
             referencePicks.length > 0
-              ? `referenceComponents[0] carries full JSX; the rest name a get_reference_jsx call. ${exemplarStudyPhrase} for palette, type and density - the first two carry a fold-by-fold autopsy, the rest a northstar plus get_screen. Then honour heroGuidance and spacingGuidance.`
+              ? `referenceComponents are archetype notes; get_reference_jsx({type,id}) for one's source. ${exemplarStudyPhrase} for palette, type and density - the first two carry a fold-by-fold autopsy, the rest a northstar plus get_screen. Then honour heroGuidance and spacingGuidance. Budget: this call plus one or two searches and get_screen on the 3-5 references you keep is a complete study.`
               : `No canonical reference matched this macrostructure. ${exemplarStudyPhrase} and write the page shape by hand, honouring heroGuidance and spacingGuidance.`,
         },
         exemplars
@@ -1657,4 +1717,12 @@ export const SERVER_INSTRUCTIONS = [
   "shipped sites and plenty of them break rules a strict linter would",
   "flag: take their composition, not their compliance. The composition",
   "rules for whatever you build travel back with the results.",
+  "",
+  "BUDGET: one `recommend`, one or two `search_screens`, then",
+  "`get_screen` on the three to five references you keep is a complete",
+  "study; results are re-read on every later turn, so a fourth search",
+  "costs more than it finds. List rows carry the fold autopsy on the",
+  "top three only; ask for detail:\"full\" only if you will read all",
+  "of them. `find_reference_components` is an index; fetch one source",
+  "with `get_reference_jsx`.",
 ].join(" ");

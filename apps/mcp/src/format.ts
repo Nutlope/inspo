@@ -13,6 +13,123 @@ import { imagesAffordable, textCharsFor, trimToChars } from "./budget";
 
 type RoleVariants = NonNullable<ScreenSummary["thumbVariants"]>;
 
+/**
+ * Font names as the capture found them, cleaned for a reader.
+ *
+ * Next.js's font loader renames every face to `__Name_hash` and the
+ * extractor recorded that verbatim on 23 sites, so `recommend`'s
+ * evidence packet was listing "__Inter_f367f3" and "__esbuild_b38aaf"
+ * as faces in use. The first is Inter; the second is a bundler
+ * artefact and not a typeface at all. Returns null for names that
+ * carry no information once the mangling is stripped.
+ */
+export function cleanFont(name: string): string | null {
+  let n = name.trim();
+  const next = /^__(.+?)_[0-9a-f]{6}$/.exec(n);
+  if (next) n = next[1]!;
+  if (/^(esbuild|webpack|vite|font|fallback)/i.test(n)) return null;
+  // camelCase identifiers ("instrumentSans", "tomatoGroteskMedium")
+  // come from CSS-in-JS variable names; space them out.
+  if (/^[a-z]+[A-Z]/.test(n)) {
+    n = n.replace(/([a-z])([A-Z])/g, "$1 $2");
+    n = n.charAt(0).toUpperCase() + n.slice(1);
+  }
+  return n.length > 0 ? n : null;
+}
+
+export function cleanFonts(list: ReadonlyArray<string>): string[] {
+  const out: string[] = [];
+  for (const f of list) {
+    const c = cleanFont(f);
+    if (c && !out.includes(c)) out.push(c);
+  }
+  return out;
+}
+
+/**
+ * JSON for a model to read, not for a linter to admire.
+ *
+ * Two-space pretty printing put every palette hex and every tag on
+ * its own line: 16-20% of a search response was indentation. This
+ * keeps one space of indent so nesting stays legible, and folds any
+ * array of primitives onto one line.
+ */
+export function compactJson(value: unknown): string {
+  const pretty = JSON.stringify(value, null, 1);
+  // A JSON primitive: string (with escapes), number, boolean, null.
+  const prim = '(?:"(?:[^"\\\\]|\\\\.)*"|-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?|true|false|null)';
+  const re = new RegExp("\\[\\n\\s*(" + prim + "(?:,\\n\\s*" + prim + ")*)\\n\\s*\\]", "g");
+  return pretty.replace(re, (_m, inner: string) => `[${inner.replace(/,\n\s*/g, ", ")}]`);
+}
+
+/** Blob layout every row shares, stated once per response instead of
+ *  four URLs per row. Every catalogue row has hero.{384,768,1440},
+ *  thumb.384 and mobile.384 WebP; full.1440 exists on 94% of rows. */
+export const IMAGE_PATTERN =
+  "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/captures/<slug>/hero.1440.webp (also full.1440, thumb.384, mobile.384; get_screen returns exact URLs)";
+
+/** Strip the tag list the tagger appended to every description
+ *  ("...ornamentation.  ·  dark saas, developer tools, ..."): it
+ *  repeats `tags` and the search index already reads it. */
+function proseOnly(description: string): string {
+  const i = description.indexOf("  ·  ");
+  return i > 0 ? description.slice(0, i).trim() : description;
+}
+
+/** One-line tag summary for list rows. The four-array object cost
+ *  ~100 tokens a row for information that reads fine as a sentence. */
+function tagLine(s: ScreenSummary): string {
+  const parts: string[] = [];
+  if (s.tags.style.length) parts.push(s.tags.style.join(", "));
+  if (s.tags.industry.length) parts.push(s.tags.industry.join(", "));
+  if (s.tags.vibe.length) parts.push(s.tags.vibe.join(", "));
+  if (s.tags.components.length) parts.push(s.tags.components.join(", "));
+  return parts.join(" · ");
+}
+
+/**
+ * The list-row shape: what a reader needs to decide whether a row is
+ * worth drilling into, and nothing that only matters once it has.
+ *
+ * Measured over twenty agent builds, 13% of the sites returned in
+ * lists were ever cited, so the per-row cost is paid ~8 times for
+ * every row that earns it. Dropped from the old full row: four blob
+ * URLs (IMAGE_PATTERN covers them once), the description (repeats
+ * northstar plus tags), tech, capturedAt, and the six-field axes
+ * object (now the axes key string plus the display face). The
+ * autopsy stays on the rows the caller marks with `autopsy: true`;
+ * list tools give it to the top few and get_screen gives it to any.
+ */
+export function formatScreenRow(
+  s: ScreenSummary,
+  opts: { autopsy?: boolean; why?: string; mobile?: boolean } = {},
+) {
+  return {
+    slug: s.slug,
+    title: s.title,
+    ...(opts.mobile
+      ? { mobile: absolute(smallestWebp(s.mobileVariants) ?? s.mobileImageUrl ?? s.thumbUrl) }
+      : {}),
+    ...(s.northstar ? { northstar: s.northstar } : {}),
+    ...(opts.autopsy && s.autopsy ? { autopsy: s.autopsy } : {}),
+    palette: s.palette,
+    fonts: cleanFonts(s.fonts),
+    mode: s.mode,
+    ...(s.tags.macrostructure ? { macro: s.tags.macrostructure } : {}),
+    ...(s.tags.axes
+      ? {
+          axes: `${axesKey(s.tags.axes)}${
+            s.tags.axes.displayFace && cleanFont(s.tags.axes.displayFace)
+              ? ` / ${cleanFont(s.tags.axes.displayFace)}`
+              : ""
+          }`,
+        }
+      : {}),
+    tags: tagLine(s),
+    ...(opts.why ? { whyThisMatches: opts.why } : {}),
+  };
+}
+
 /** Smallest WebP variant URL for a role, if the seed carries one. */
 function smallestWebp(v: RoleVariants | undefined): string | undefined {
   const list = v?.webp;
@@ -96,9 +213,9 @@ export function formatScreen(
     ...assetUrls(s, opts.allAssets ?? false),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     ...(s.autopsy ? { autopsy: s.autopsy } : {}),
-    description: s.description,
+    description: proseOnly(s.description),
     palette: s.palette,
-    fonts: s.fonts,
+    fonts: cleanFonts(s.fonts),
     tech: s.tech,
     mode: s.mode,
     tags: {
@@ -123,7 +240,9 @@ export function formatScreen(
           accentHue: s.tags.axes.accentHue,
           paperL: s.tags.axes.paperL,
           accentDeg: s.tags.axes.accentDeg,
-          displayFace: s.tags.axes.displayFace,
+          displayFace: s.tags.axes.displayFace
+            ? cleanFont(s.tags.axes.displayFace)
+            : s.tags.axes.displayFace,
         }
       : null,
     ...(why ? { whyThisMatches: why } : {}),
@@ -149,7 +268,7 @@ export function formatScreenConcise(s: ScreenSummary, why?: string) {
       : {}),
     ...(s.northstar ? { northstar: s.northstar } : {}),
     palette: s.palette,
-    fonts: s.fonts,
+    fonts: cleanFonts(s.fonts),
     mode: s.mode,
     // Compact form ("dark / grotesk-sans / cool"): one short string
     // instead of the six-field object, because this shape exists to
@@ -188,7 +307,7 @@ export function asTextContent(value: unknown) {
     content: [
       {
         type: "text" as const,
-        text: JSON.stringify(value, null, 2),
+        text: compactJson(value),
       },
     ],
   };
@@ -251,7 +370,7 @@ export async function withImages(
       }
     }
     if (inline) {
-      const spentChars = JSON.stringify(body, null, 2).length;
+      const spentChars = compactJson(body).length;
       images = images.slice(0, imagesAffordable(maxTokens, spentChars));
     }
   }
@@ -276,7 +395,7 @@ export async function withImages(
     content: [
       {
         type: "text" as const,
-        text: JSON.stringify(body, null, 2),
+        text: compactJson(body),
       },
       ...kept,
       ...(dropped > 0

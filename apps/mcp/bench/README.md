@@ -60,6 +60,13 @@ object.
 |---|---|---|---|---|---|
 | [2026-07-31](results/2026-07-31.json) | 0.1.4 | Inspo won 3, lost 1, split 1 | 3.3x | 1.55x | 1.20x |
 
+[2026-09-10](results/2026-09-10-agent-usage.md) is a different kind of
+result: an audit of thirty real Fable 5.1 builds, which found that 13%
+of returned sites were used and that the reference-component tool was
+29% of all text served. The response shapes changed the same day; the
+before/after bench numbers are in that file and the new baseline is
+committed here.
+
 The 2026-07-31 run used the local stdio server at `full` + `thumbs`,
 which is the most expensive configuration Inspo offers. The hosted
 endpoint defaults to `lite` + `images=none`, so those ratios are close

@@ -28,6 +28,7 @@ import type {
   PaperBand,
 } from "@inspo/taxonomy";
 import { MACROSTRUCTURE_LABELS } from "@inspo/taxonomy";
+import { cleanFont } from "./format";
 
 /** One axis's distribution: the modal value, its share, and the full
  *  spread so a caller can see whether the mode is a real consensus or
@@ -45,7 +46,7 @@ export type Evidence = {
   accentHue: AxisSpread<AccentHueBand>;
   faces: { family: string; sites: number }[];
   anchors: string[];
-  outliers: { slug: string; title: string; axes: string; differsOn: string[] }[];
+  outliers: { slug: string; axes: string; differsOn: string[] }[];
   note: string;
 };
 
@@ -120,12 +121,14 @@ export function buildEvidence(
   // about the genre's register.
   const faceCounts = new Map<string, number>();
   for (const s of axed) {
-    const f = s.tags.axes?.displayFace;
+    // Cleaned, so "__Inter_f367f3" counts as Inter and a bundler
+    // artefact does not count as a face at all.
+    const f = s.tags.axes?.displayFace ? cleanFont(s.tags.axes.displayFace) : null;
     if (f) faceCounts.set(f, (faceCounts.get(f) ?? 0) + 1);
   }
   const faces = [...faceCounts.entries()]
     .sort((a, b) => b[1] - a[1])
-    .slice(0, concise ? 5 : 12)
+    .slice(0, concise ? 5 : 8)
     .map(([family, n]) => ({ family, sites: n }));
 
   // Accent anchors: the most-saturated colour from each of the top
@@ -152,7 +155,6 @@ export function buildEvidence(
         differsOn.push("accentHue");
       return {
         slug: s.slug,
-        title: s.title,
         axes: `${a.paperBand} / ${a.displayClass} / ${a.accentHue}`,
         differsOn,
       };

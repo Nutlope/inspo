@@ -53,6 +53,8 @@ const CASES = [
   { name: "find_similar", args: { slug: "novu-co", limit: 8 }, profiles: ["vision"] },
   { name: "get_site_pages", args: { siteSlug: "linear-app" }, profiles: ["vision"] },
   { name: "find_components", args: { type: "pricing", limit: 8 }, profiles: ["vision"] },
+  { name: "find_reference_components", args: { type: "hero" }, profiles: ["vision"] },
+  { name: "search_screens/full", tool: "search_screens", args: { query: "dark editorial agency", limit: 8, detail: "full" }, profiles: ["vision"] },
 ];
 
 const PROFILE_ENV = {

@@ -2,97 +2,109 @@
   "schemas": {
     "vision": {
       "tools": 15,
-      "chars": 16739,
-      "tokens": 4185
+      "chars": 17447,
+      "tokens": 4362
     },
     "text": {
       "tools": 8,
-      "chars": 9924,
-      "tokens": 2481
+      "chars": 10278,
+      "tokens": 2570
     }
   },
   "calls": {
     "recommend [vision]": {
-      "textChars": 22392,
-      "textTokens": 5598,
+      "textChars": 10164,
+      "textTokens": 2541,
       "images": 3,
       "imageKb": 38
     },
     "search_screens [vision]": {
-      "textChars": 19221,
-      "textTokens": 4805,
+      "textChars": 6852,
+      "textTokens": 1713,
       "images": 6,
       "imageKb": 86
     },
     "search_screens/mobile [vision]": {
-      "textChars": 19247,
-      "textTokens": 4812,
+      "textChars": 7634,
+      "textTokens": 1909,
       "images": 6,
       "imageKb": 128
     },
     "search_screens/budgeted [vision]": {
-      "textChars": 5729,
-      "textTokens": 1432,
+      "textChars": 5632,
+      "textTokens": 1408,
       "images": 6,
       "imageKb": 86
     },
     "find_examples_for_macrostructure [vision]": {
-      "textChars": 13633,
-      "textTokens": 3408,
+      "textChars": 6326,
+      "textTokens": 1582,
       "images": 4,
       "imageKb": 79
     },
     "get_screen [vision]": {
-      "textChars": 3309,
-      "textTokens": 827,
+      "textChars": 2992,
+      "textTokens": 748,
       "images": 1,
       "imageKb": 13
     },
     "find_similar [vision]": {
-      "textChars": 28252,
-      "textTokens": 7063,
+      "textChars": 8968,
+      "textTokens": 2242,
       "images": 8,
       "imageKb": 124
     },
     "get_site_pages [vision]": {
-      "textChars": 3752,
-      "textTokens": 938,
+      "textChars": 2726,
+      "textTokens": 682,
       "images": 7,
       "imageKb": 70
     },
     "find_components [vision]": {
-      "textChars": 4878,
-      "textTokens": 1220,
+      "textChars": 2537,
+      "textTokens": 634,
+      "images": 8,
+      "imageKb": 114
+    },
+    "find_reference_components [vision]": {
+      "textChars": 3439,
+      "textTokens": 860,
+      "images": 0,
+      "imageKb": 0
+    },
+    "search_screens/full [vision]": {
+      "textChars": 13464,
+      "textTokens": 3366,
       "images": 8,
       "imageKb": 114
     },
     "recommend [text]": {
-      "textChars": 13212,
-      "textTokens": 3303,
+      "textChars": 7833,
+      "textTokens": 1958,
       "images": 0,
       "imageKb": 0
     },
     "search_screens [text]": {
-      "textChars": 5632,
-      "textTokens": 1408,
+      "textChars": 4664,
+      "textTokens": 1166,
       "images": 0,
       "imageKb": 0
     },
     "find_examples_for_macrostructure [text]": {
-      "textChars": 3636,
-      "textTokens": 909,
+      "textChars": 3174,
+      "textTokens": 794,
       "images": 0,
       "imageKb": 0
     },
     "get_screen [text]": {
-      "textChars": 3309,
-      "textTokens": 827,
+      "textChars": 2992,
+      "textTokens": 748,
       "images": 0,
       "imageKb": 0
     },
     "get_design_system [text]": {
-      "textChars": 5733,
-      "textTokens": 1433,
+      "textChars": 5723,
+      "textTokens": 1431,
       "images": 0,
       "imageKb": 0
     }
