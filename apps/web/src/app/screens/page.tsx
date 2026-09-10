@@ -58,7 +58,7 @@ export default async function ArchivePage({
     if (match) redirect(`/screens/${match.slug}`);
   }
 
-  // gallery-style: one tile per SITE, not per captured screen. The hero
+  // One tile per SITE, not per captured screen. The hero
   // (landing page) is what shows; pageCount surfaces on the tile. Click
   // routes to /sites/[siteSlug] which expands to all captured pages.
   //

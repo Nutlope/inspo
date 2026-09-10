@@ -1,7 +1,7 @@
 /**
  * Generate a one-line "northstar" per site, an evocative 8 to 14 word
  * description of the design's soul (mood + palette + typographic
- * character). gallery ships these ("Rounded midnight marketplace…");
+ * character), such as "Rounded midnight marketplace…";
  * they're charming, quotable, and give the detail page + recommend()
  * a human voice.
  *

@@ -4,7 +4,7 @@
  *   1. Capture the homepage and persist as a published site.
  *   2. Run multi-page discovery + capture (same as capture-site.ts).
  *
- *   pnpm capture:add-sites gallery-additions.txt --concurrency=2 --max=7
+ *   pnpm capture:add-sites brand-additions.txt --concurrency=2 --max=7
  *
  * Idempotent: if a homepage slug is already in DB the orchestrator just
  * skips to the multi-page step for that site.
@@ -60,7 +60,7 @@ async function main() {
   for (const url of urls) {
     const siteSlug = slugifyHost(url);
 
-    // Step 1 — homepage capture (skip if already there)
+    // Step 1: homepage capture (skip if already there)
     const existing = await db
       .select({ id: screens.id })
       .from(screens)
@@ -87,7 +87,7 @@ async function main() {
       }
     }
 
-    // Step 2 — multi-page run
+    // Step 2: multi-page run
     try {
       const r = await captureSite({
         siteSlug,

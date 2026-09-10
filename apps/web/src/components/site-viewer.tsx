@@ -1,5 +1,5 @@
 /**
- * Master-detail viewer for /sites/[slug] - gallery-style two-pane.
+ * Master-detail viewer for /sites/[slug] - a two-pane layout.
  *
  * Desktop: DESIGN.md (palette, type, fonts, tech, tags, tokens) sticks
  * on the LEFT half while the site's captured pages scroll on the

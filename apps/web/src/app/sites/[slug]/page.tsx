@@ -79,7 +79,7 @@ export default async function SiteDetailPage({
         </div>
       </div>
 
-      {/* gallery-style two-pane: DESIGN.md left, screens right ── */}
+      {/* Two-pane: DESIGN.md left, screens right ── */}
       <div className="mt-12 pb-24 sm:mt-16">
         <SiteViewer hero={hero} pages={site.pages} />
       </div>

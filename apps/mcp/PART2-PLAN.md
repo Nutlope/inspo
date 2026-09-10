@@ -2,7 +2,7 @@
 
 Status snapshot. "Biggest Wins" and "Part 1 (OSS models)" from the research
 report are DONE (shipped in v0.1.1). Several Part 2 items were folded into
-that work. What remains is below: gallery-parity polish and the second tier
+that work. What remains is below: polish and the second tier
 of security hardening. The service stays free and unauthenticated throughout.
 
 ## Already shipped (v0.1.1)
@@ -18,7 +18,7 @@ of security hardening. The service stays free and unauthenticated throughout.
   rate-limit binding, 256KB body cap, top-level error hygiene,
   `global_fetch_strictly_public` flag.
 
-## Part 2: remaining (gallery parity and beyond)
+## Part 2: remaining
 
 ### Next (P1)
 1. Pagination on the list tools. Add an optional `offset` to `search_screens`,

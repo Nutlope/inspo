@@ -4,8 +4,8 @@
  * Lists every desktop-hero-*.png revision of a site on disk, oldest →
  * newest, and lets the user scrub between them. We already keep every
  * recapture without overwriting (see Step 1 of the dedupe report -
- * 447 dirs had >1 hero). Surfacing this is a differentiator: nobody
- * else (gallery, gallery, awards) shows site evolution over time.
+ * 447 dirs had >1 hero). Surfacing this is a differentiator: few
+ * archives show how a site evolves over time.
  *
  * Server side: enumerate the files, sort by mtime, pass to the client
  * scrubber. The client component manages the selected revision +

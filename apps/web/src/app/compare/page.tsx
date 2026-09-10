@@ -4,8 +4,7 @@
  * Up to 4 sites in parallel. Each design dimension (palette, type,
  * spacing, macrostructure, tags) renders as a row spanning all
  * columns, so it's easy to compare a single dimension across the
- * lineup at a glance. This is the layout gallery / gallery don't have
- * and the one designers + agents both want.
+ * lineup at a glance: the layout designers and agents both want.
  *
  * Server-rendered. No client state - the URL is the source of truth,
  * which makes the compare set shareable / re-openable.

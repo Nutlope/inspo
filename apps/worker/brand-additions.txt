@@ -1,5 +1,5 @@
-# Phase 9 additions — gallery-tier brands with full design teams.
-# These are URLs (not slugs) because the sites aren't in DB yet — the
+# Phase 9 additions: brands with full design teams.
+# These are URLs (not slugs) because the sites aren't in DB yet; the
 # worker will discover + capture homepages first, then multi-page.
 # Use: pnpm capture <url> --publish  (one-off)
 # or process via the seed runner.

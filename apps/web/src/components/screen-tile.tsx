@@ -66,7 +66,7 @@ export function ScreenTile({
    *  above-the-fold grid paints crisp. Below the fold stays lazy. */
   priority?: boolean;
   /** When set and > 1, the tile represents a multi-page site:
-   *  - link routes to /sites/[siteSlug] (gallery-style)
+   *  - link routes to /sites/[siteSlug]
    *  - small "N pages" badge in the caption row
    *  Otherwise link routes to /screens/[slug] (single screen detail). */
   pageCount?: number;

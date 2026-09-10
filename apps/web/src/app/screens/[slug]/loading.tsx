@@ -1,7 +1,7 @@
 /**
  * Loading state for /screens/[slug]. Shows the page shell with
- * placeholder bands while the detail page hydrates. gallery-style:
- * the navigation feels instant; the content fills in.
+ * placeholder bands while the detail page hydrates, so the
+ * navigation feels instant and the content fills in.
  */
 
 import { Dateline } from "@/components/dateline";

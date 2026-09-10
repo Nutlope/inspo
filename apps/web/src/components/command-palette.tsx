@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * ⌘K command palette - Linear / Vercel / gallery pattern.
+ * ⌘K command palette - the Linear / Vercel pattern.
  *
  * - Cmd+K (Ctrl+K on Windows/Linux) toggles
  * - Esc closes
