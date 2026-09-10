@@ -1,5 +1,5 @@
 /**
- * Tool registration - shared by both transports (stdio + Cloudflare Worker).
+ * Tool registration - shared by both transports (stdio + the Vercel route).
  *
  * Pulled out so adding a tool means editing exactly one file.
  */
@@ -855,7 +855,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
       }
       const all = await getAllScreens();
       // Score one row per site - sub-pages inherit the parent's palette
-      // so scoring all 3,000+ rows is wasted work + would double-list
+      // so scoring every row is wasted work + would double-list
       // sites whose sub-pages share the same hex. Group by siteSlug,
       // take the landing row (slug === siteSlug) as the canonical one.
       const bySite = new Map<string, typeof all[number]>();
@@ -1135,7 +1135,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "find_components",
     {
       description:
-        "Real sites featuring a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat), with a per-element crop where one exists. For copy-pasteable code use find_reference_components.",
+        "Real sites featuring a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat), with a per-element crop where one exists. For copy-pasteable code use get_reference_jsx.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .describe("Which component type to find"),
@@ -1306,15 +1306,15 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   /* ────── find_reference_components (canonical-JSX catalogue) ──────
    *
    * Lists the 68 canonical reference components - the canonical
-   * shapes for hero / pricing / footer / etc. Without filters, returns
-   * a list view (no source) so the agent can scan. Filtered by type,
-   * returns the full source for each match.
+   * shapes for hero / pricing / footer / etc., as an index (id, label,
+   * macrostructure, note) whether filtered or not. get_reference_jsx
+   * returns the source for one.
    */
   reg(
     "find_reference_components",
     {
       description:
-        "The canonical reference components - JSX shapes for hero / pricing / cta / nav / footer, each stamped with the macrostructure it embodies. Filter by `type` for full JSX; unfiltered gives a scan-view.",
+        "The canonical reference components as an index: id, label, macrostructure and a note for each hero / pricing / cta / nav / footer archetype. Pick one, then get_reference_jsx(type, id) for its source.",
       inputSchema: {
         type: flexEnum(REFERENCE_TYPES as unknown as [string, ...string[]])
           .optional()
@@ -1408,7 +1408,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     "recommend",
     {
       description:
-        "Orchestrator - start here for a brief. One call returns a macrostructure pick, 5 real exemplars, canonical reference JSX, a palette suggestion, and an `evidence` packet measuring the genre's paper band / display class / accent hue. Pass a macrostructure to skip the pick step. No LLM call.",
+        "Orchestrator - start here for a brief. One call returns a macrostructure pick, 5 real exemplars, matching reference components (source via get_reference_jsx), a palette suggestion, and an `evidence` packet measuring the genre's paper band / display class / accent hue. Pass a macrostructure to skip the pick step. No LLM call.",
       inputSchema: {
         brief: z
           .preprocess(looseTrim, z.string().min(2))

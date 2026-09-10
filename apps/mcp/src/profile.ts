@@ -6,7 +6,7 @@
  * Two independent axes:
  *
  *   profile  "full" | "lite"
- *     full: all 16 tools (today's behaviour).
+ *     full: all 15 tools.
  *     lite: the 9 highest-leverage tools. Small models degrade as the
  *     tool count grows (selection accuracy falls off past ~10 tools),
  *     and most OSS harnesses are used with small-to-mid models.
@@ -44,7 +44,7 @@ export interface RegisterOptions {
    *  Per-call always wins; INSPO_MAX_TOKENS is the fallback. */
   maxTokens?: number | null;
   /** Per-tool-call metrics hook (name, success, duration). Wired by
-   *  the hosted Worker into Analytics Engine; stdio/npm servers pass
+   *  the hosted route to one log line per call; stdio/npm servers pass
    *  nothing, so local users emit zero telemetry. Must never throw
    *  into the response path (callers wrap it defensively anyway). */
   onToolCall?: (m: { tool: string; ok: boolean; ms: number }) => void;
@@ -59,8 +59,8 @@ export interface RegisterOptions {
  *  to page: orchestrate (recommend), browse (search_screens), drill in
  *  (get_screen), harvest tokens (get_design_system), pick a
  *  macrostructure (find_examples_for_macrostructure), and grab canonical
- *  code (find_reference_components, which returns full JSX when
- *  filtered by type). */
+ *  code (find_reference_components for the index, get_reference_jsx
+ *  for the source). */
 export const LITE_TOOLS: ReadonlySet<string> = new Set([
   "recommend",
   "search_screens",
@@ -68,6 +68,7 @@ export const LITE_TOOLS: ReadonlySet<string> = new Set([
   "get_design_system",
   "find_examples_for_macrostructure",
   "find_reference_components",
+  "get_reference_jsx",
   "get_site_pages",
   "get_filters",
 ]);

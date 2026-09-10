@@ -2,7 +2,7 @@
  * Standalone stdio entry for the published `inspo-mcp` npm package
  * (`npx inspo-mcp`).
  *
- * Same 16 tools as the monorepo server (./server.ts), but the catalogue
+ * Same 15 tools as the monorepo server (./server.ts), but the catalogue
  * is FETCHED from the CDN at startup rather than bundled - the build
  * (scripts/build-npm.mjs) aliases `@inspo/db/seed-source` to the edge
  * (null) variant, so the ~16MB seed never lands in the published bundle.
@@ -36,8 +36,8 @@ const HELP = `
   inspo-mcp v${VERSION}
 
   A curated archive of real website designs, served over MCP: search,
-  study, components, palettes, flows and recommendations for coding
-  agents that are about to write UI.
+  design systems, components, palettes, page flows and recommendations
+  for coding agents that are about to write UI.
 
   This is an MCP server, not a CLI. Run bare, it speaks JSON-RPC on
   stdin/stdout and waits for a client - which is why \`npx inspo-mcp\`
@@ -59,7 +59,9 @@ const HELP = `
     command:  npx -y inspo-mcp
 
   Optional env: TOGETHER_API_KEY (query-embedding semantic search),
-                INSPO_CATALOGUE_URL (self-hosted catalogue).
+                INSPO_CATALOGUE_URL (self-hosted catalogue),
+                INSPO_PROFILE=lite|full, INSPO_IMAGES=thumbs|none,
+                INSPO_MAX_TOKENS (per-response token ceiling).
 
   Flags: --help  --version  --stdio (run the server even from a terminal)
 
