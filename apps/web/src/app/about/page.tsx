@@ -119,9 +119,10 @@ export default async function AboutPage() {
             <p className="text-meta">Self-host & contribute</p>
             <div className="prose-style max-w-[64ch] space-y-4 text-[var(--color-fg)]">
               <p>
-                Every dependency has a free tier - Postgres on Neon, gallery
-                on Vercel, MCP on Cloudflare Workers, capture worker on
-                Fly.io (or any Node host with Chromium). One Together AI key,
+                Every dependency has a free tier: Postgres on Neon, the
+                gallery and the MCP endpoint together on Vercel, and the
+                capture worker on Fly.io (or any Node host with Chromium).
+                One Together AI key,
                 one Neon URL, one{" "}
                 <code className="font-mono text-[0.95em]">
                   pnpm capture:seed

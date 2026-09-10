@@ -7,7 +7,7 @@ import { getArchiveStats } from "@inspo/db";
 export const metadata: Metadata = {
   title: "MCP",
   description:
-    "Install Inspo as an MCP server for Claude Code, Cursor, Windsurf, Codex, and Zed. Your agent gains taste.",
+    "Install Inspo as an MCP server for Claude Code, Codex, Cursor, VS Code, Windsurf, Zed and Claude Desktop. Your agent gains taste.",
 };
 
 // Counts come from the live seed; re-render at most daily.
@@ -28,7 +28,7 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
       {
         name: "recommend",
         sig: "(brief, filters?)",
-        desc: "The orchestrator. One call turns a plain-English brief into a macrostructure pick, five real exemplars, reference JSX, and a palette.",
+        desc: "The orchestrator. One call turns a plain-English brief into a macrostructure pick, five real exemplars, matching reference components, and a palette.",
         lite: true,
         accent: true,
       },
@@ -94,14 +94,15 @@ const toolGroups: { group: string; tools: ToolEntry[] }[] = [
       },
       {
         name: "find_reference_components",
-        sig: "(type?)",
-        desc: "The canonical reference JSX catalogue, stamped by macrostructure.",
+        sig: "(type?, macro?)",
+        desc: "Index of the canonical reference components, stamped by macrostructure.",
         lite: true,
       },
       {
         name: "get_reference_jsx",
         sig: "(type, id)",
         desc: "Full source for one reference component, copy-pasteable.",
+        lite: true,
       },
     ],
   },
@@ -144,7 +145,7 @@ const HOSTED_URL = "https://inspomcp.dev/api/mcp";
 // Keep in sync with HOSTED_URL: a stale payload silently installs a dead
 // server (it pointed at the retired Cloudflare Worker until 2026-09-03).
 const CURSOR_DEEPLINK =
-  "cursor://anysphere.cursor-deeplink/mcp/install?name=inspo&config=eyJ1cmwiOiJodHRwczovL2luc3BvLXRocmVlLnZlcmNlbC5hcHAvYXBpL21jcCJ9";
+  "cursor://anysphere.cursor-deeplink/mcp/install?name=inspo&config=eyJ1cmwiOiJodHRwczovL2luc3BvbWNwLmRldi9hcGkvbWNwIn0%3D";
 
 const AGENT_PROMPT =
   `Add the Inspo MCP server to my setup. It is a free, hosted, no-auth ` +
@@ -278,7 +279,7 @@ export default async function MCPPage() {
               Try it before you install.
             </h2>
             <p className="mt-3 text-[var(--color-fg-muted)]">
-              Real MCP calls, right here in the browser.
+              The same queries the MCP runs, right here in the browser.
             </p>
           </div>
           <McpPlayground />
@@ -296,7 +297,7 @@ export default async function MCPPage() {
           </h2>
           <p className="mx-auto mt-5 max-w-[58ch] text-[var(--color-fg-muted)]">
             Before writing code, an agent picks one of 19 named shapes -
-            Bento, Specimen, Manifesto, Workbench… - and gets four real
+            Bento Grid, Specimen, Manifesto, Letter… - and gets four real
             production sites that embody it. Shape and reference, in one
             prompt.
           </p>

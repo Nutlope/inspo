@@ -13,9 +13,8 @@
  * for it when partners did real work and deserve named attribution.
  */
 const CREDITS = [
-  { partner: "Together AI", role: "Hosting + inference" },
-  { partner: "Vercel", role: "Edge + deploy" },
-  { partner: "Cloudflare", role: "Blob storage + MCP edge" },
+  { partner: "Together AI", role: "Inference + embeddings" },
+  { partner: "Vercel", role: "Hosting, Blob storage + MCP endpoint" },
   { partner: "Neon", role: "Postgres + pgvector" },
   { partner: "Playwright", role: "Capture pipeline" },
 ];

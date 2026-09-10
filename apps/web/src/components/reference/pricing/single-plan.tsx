@@ -13,11 +13,11 @@
  * against.
  */
 const INCLUDED = [
-  "Full catalogue access - 1,000+ sites",
+  "Full catalogue access - 800+ sites",
   "URL-paste lookups + lex search",
   "MCP server for Claude Code, Cursor, Codex",
   "DESIGN.md export per site",
-  "Twenty-eight Inspo reference components",
+  "Sixty-eight Inspo reference components",
   "All future updates",
 ];
 
