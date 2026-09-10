@@ -15,7 +15,7 @@
  */
 
 import "./env.js";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { capture } from "./capture.js";
 import { discoverUrls, type DiscoveredUrl } from "./discover.js";
@@ -72,14 +72,29 @@ async function main() {
           continue;
         }
         const root = (JSON.parse(readFileSync(metaPath, "utf8")) as { sourceUrl: string }).sourceUrl;
+        // A resumed run must not stack a second set of pages on a site:
+        // discovery can rank different pages the second time, so only
+        // fill the room left under --max.
+        const have = new Set(
+          readdirSync(CAPTURES_DIR).filter(
+            (d) => d.startsWith(`${site}--`) && existsSync(join(CAPTURES_DIR, d, "meta.json")),
+          ),
+        );
+        if (have.size >= max) {
+          discovered[site] = [];
+          continue;
+        }
         try {
           const found = await discoverUrls(root, max);
           discovered[site] = found;
           const seen = new Set<string>();
+          let room = max - have.size;
           for (const d of found) {
             const slug = childSlug(site, d.url);
-            if (seen.has(slug)) continue;
+            if (seen.has(slug) || have.has(slug)) continue;
             seen.add(slug);
+            if (room <= 0) break;
+            room -= 1;
             jobs.push({ site, url: d.url, pageType: d.pageType, slug });
           }
         } catch (err) {

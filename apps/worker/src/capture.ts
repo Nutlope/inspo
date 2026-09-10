@@ -287,6 +287,23 @@ async function load(page: Page, url: string): Promise<void> {
     .catch(() => {
       /* fine: page is loaded enough */
     });
+  // The same pages served with a 200: a site's own "page not found" and a
+  // bot check ("verify you are human") look like content to everything
+  // downstream. The title plus the first lines of text give them away;
+  // both are required for not-found so a studio called "404" survives.
+  const title = (await page.title().catch(() => "")).toLowerCase();
+  const head = String(
+    await page.evaluate("document.body ? document.body.innerText.slice(0, 400) : ''").catch(() => ""),
+  ).toLowerCase();
+  if (
+    /404|not found/.test(title) &&
+    /not found|does not exist|doesn't exist|could not be found|can't be found|no longer exists/.test(head)
+  ) {
+    throw new Error(`page not found (served with ${status}) for ${url}`);
+  }
+  if (/just a moment|attention required|verify you are human|needs to be verified|checking your browser|are you a robot/.test(`${title} ${head}`)) {
+    throw new Error(`bot check for ${url}`);
+  }
 }
 
 /**
