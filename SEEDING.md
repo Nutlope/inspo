@@ -1,111 +1,101 @@
 # Seeding the catalogue
 
-Replace the SVG placeholders with real captures of 50 hand-picked production sites. End-to-end, the run takes ~10–25 minutes and a few cents in API spend on **Together AI** (one key, both vision + embeddings), depending on how many sites still load with cookie-banner roulette.
+How a site gets into the archive: capture it to disk, look at the captures, then run the enrichment and publish steps. Everything runs from `apps/worker` and needs no database; Together AI does the tagging, autopsies and embeddings.
+
+Candidate sites are proposed in [`apps/worker/src/seed-urls.ts`](apps/worker/src/seed-urls.ts). The bar: does the site make the archive better for someone building a website?
 
 ## Prerequisites
 
 ```bash
 pnpm install
-pnpm --filter @inspo/worker run playwright:install   # Chromium, ~170MB
+pnpm --filter @inspo/worker run playwright:install   # Chromium
 ```
 
-## 1. Provision API keys
-
-Two vars activate the full pipeline. Each is graceful-fallback — without it the worker still produces captures + metadata, just no AI tags / no embeddings / no DB persist.
-
-Create `.env` at the repo root:
+Create `.env` at the repo root (`.env.example` lists every variable):
 
 ```env
-# Together AI — powers vision tagging (Qwen3-VL) + embeddings (BGE).
-# One key, both endpoints. https://api.together.ai
-TOGETHER_API_KEY=
-
-# Neon Postgres — see DEPLOY.md §1
-DATABASE_URL=postgres://...
+TOGETHER_API_KEY=        # tags, descriptions, northstars, autopsies, quality scores, embeddings
+BLOB_READ_WRITE_TOKEN=   # uploads screenshots and publishes the catalogue
 ```
 
-If you want Better Auth to issue real API keys for the gallery dashboard:
+Without `TOGETHER_API_KEY` the worker still captures pages, palettes, fonts and tech, but tags, descriptions and embeddings stay empty.
 
-```env
-BETTER_AUTH_SECRET=$(openssl rand -base64 32)
-BETTER_AUTH_URL=http://localhost:3000
-```
+## 1. Capture landing pages
 
-## 2. Bootstrap the database
-
-One-time, against the Neon DB:
+Put one URL per line in a file, then:
 
 ```bash
-pnpm db:migrate    # enables pgvector
-pnpm db:push       # pushes Drizzle schema
-pnpm db:seed       # loads the 16 fixture screens (so the gallery has content while real captures are pending)
+cd apps/worker
+pnpm exec tsx src/add-sites-disk.ts urls.txt --concurrency=2
 ```
 
-## 3. Curate the URL list
+Each site lands in `captures/<slug>/`: desktop hero and full page, a phone view, the extracted palette, fonts, type ramp and CSS variables, and a `meta.json` sidecar with the tags. Cookie notices, popups and chat bubbles are cleared before every shot. The run is idempotent: a slug that already has a `meta.json` is skipped, so a stopped run resumes where it left off.
 
-The 50 chosen sites live in [`apps/worker/src/seed-urls.ts`](apps/worker/src/seed-urls.ts). Edit freely - anything in there gets captured by the seed runner. Spread across industries, styles, and macrostructures matters more than count.
-
-Dry-run to confirm:
+## 2. Capture more pages per site (optional)
 
 ```bash
-pnpm capture:seed
-# → prints all 50 URLs without capturing
+pnpm exec tsx src/capture-pages-disk.ts sites.txt --max=3 --concurrency=3
 ```
 
-## 4. Pilot — capture 5 URLs
+Discovers public pages (pricing, about, docs, blog, changelog and so on) and captures each into `captures/<site>--<path>/`. Sign-in, account, checkout and legal pages are never picked, and pages that answer with an error, a not-found page or a bot check are dropped.
+
+## 3. Look before you merge
 
 ```bash
-pnpm capture:seed --go --slice=5
+pnpm exec tsx src/qa-sheet.ts slugs.txt
 ```
 
-Walks 5 of the 50 with concurrency 2. Each URL takes ~10–25s. Output:
+Writes contact sheets to `captures/_reports/qa/`: desktop and phone heroes, and whole pages as columns. Leave out any page that shows a cookie notice, a modal, a login wall, a blank band, or a copy of the landing page. `qa-captures.ts` runs a vision pass over the same captures as a first filter; the sheets are the real check.
 
-- PNGs land in `apps/worker/captures/<slug>/`
-- Tags + metadata logged to stdout
-- JSON report at `apps/worker/captures/_reports/seed-<timestamp>.json`
-- DB rows inserted as `status=pending`
+## 4. Merge and enrich
 
-Open `http://localhost:3000/admin/curator` to review the queue — sign in once at `/signin`, then `pnpm --filter @inspo/db promote you@example.com curator`.
-
-## 5. Full run
+With `slugs.txt` listing every capture dir that goes in (each site's landing page first), run these stages in order. Each one is idempotent, so a failed stage can be re-run on its own.
 
 ```bash
-pnpm capture:seed --go
+pnpm exec tsx src/encode-existing.ts --go --from-file=slugs.txt                 # AVIF/WebP variants
+pnpm exec tsx src/upload-to-blob.ts --go --from-file=slugs.txt                  # PNGs + variants to Blob
+pnpm exec tsx src/merge-disk-captures-to-seed.ts --from-file=slugs.txt --apply  # rows into the seed
+pnpm exec tsx src/add-mobile-to-seed.ts --write --from-file=slugs.txt           # phone views
+pnpm exec tsx src/add-desktop-variants-to-seed.ts --write --from-file=slugs.txt # full-page variants
+pnpm exec tsx src/backfill-axes.ts                                              # measured axes + light/dark mode
+pnpm exec tsx src/generate-northstars.ts --go                                   # one-line design summary
+pnpm exec tsx src/generate-autopsies.ts --go                                    # fold-by-fold autopsy
+pnpm exec tsx src/generate-quality.ts --go                                      # capture quality score
+pnpm exec tsx src/build-row-embeddings.ts --go --missing-only
+pnpm exec tsx src/rebuild-site-embeddings.ts --go
+pnpm exec tsx src/build-umap-layout.ts --apply
 ```
 
-About 10–25 min depending on networks + lazy-load complexity. Failed captures are listed in the final report — re-run them individually:
+`merge-disk-captures-to-seed.ts` also takes `--site-meta=site-meta.json` (`{"<siteSlug>": {"title": "Relume", "industry": ["saas", "ai"]}}`) for curated site names and industries. It cleans font names and takes em and en dashes out of every row on the way in.
+
+## 5. Publish
 
 ```bash
-pnpm capture https://that-one-stubborn-site.com
+pnpm exec tsx src/publish-catalogue-to-blob.ts --go
 ```
 
-## 6. Curator pass
+Uploads the seed and both embedding sidecars to Blob, where `npx inspo-mcp` reads them. Commit the seed files too: the next deploy of `apps/web` serves the new rows in the gallery and through the hosted MCP.
 
-For each pending screen at `/admin/curator`:
+## Removing pages or sites
 
-- **Approve** — promotes `status` to `published`. Now visible in `/screens` and queryable from the MCP.
-- **Reject (with note)** — sets `status=rejected`. A future re-capture pass can pick these up.
-- **Re-capture** — copies the `pnpm capture <url>` command. Paste into a worker terminal; tweak selector overrides via the worker's banner-dismissal cache (planned in v1.1).
+```bash
+pnpm exec tsx src/delete-screens.ts --from-file=pages.txt           # dry run
+pnpm exec tsx src/delete-screens.ts --from-file=pages.txt --apply
+```
 
-## 7. Tags drift?
+List page slugs, one per line; a whole site means its landing slug plus every `<site>--*` slug. The script also updates both embedding sidecars and reports any collection or example write-up that still names a removed page. Rebuild the map layout afterwards (`build-umap-layout.ts --apply`) and publish again.
 
-Allow-lists in [`packages/taxonomy/src/index.ts`](packages/taxonomy/src/index.ts) are the single source of truth. Claude is instructed to pick only from these enums and we validate every value before insert. If a curator notices a missing tag, add it there — both the worker prompt and the gallery filter rail pick it up automatically.
+## Tags
 
-## What graceful-fallback looks like
+The allow-lists in [`packages/taxonomy/src/index.ts`](packages/taxonomy/src/index.ts) are the single source of truth. The tagger picks only from these enums and every value is validated before it is written. Add a missing tag there and both the worker prompt and the gallery filter rail pick it up.
 
-| Missing | What still works |
-|---|---|
-| nothing | Full pipeline: PNGs + palette + fonts + tech + Together tags + Together embeddings + DB persist |
-| `TOGETHER_API_KEY` | Everything except `tags` and `embeddings` |
-| `DATABASE_URL` | Everything except DB persist — captures live as files; review with `cat captures/_reports/...` |
+## Models
 
-## Cost ballpark
+Defaults live in code; each can be overridden from `.env`.
 
-Per capture, when fully enriched:
-
-- Qwen3-VL-8B-Instruct vision tagging — ~$0.0003
-- BAAI/bge-large-en-v1.5 embedding — ~$0.00002
-- Neon — within free tier
-- Cloudflare R2 (when wired) — within free tier
-
-50 captures full pipeline: **~$0.02**. Together's open-weights pricing is roughly 10× cheaper than the Anthropic/Voyage path it replaced.
+| Stage | Default | Override |
+|---|---|---|
+| Tags, descriptions, northstars | `google/gemma-4-31B-it` | `INSPO_VISION_MODEL` |
+| Quality scores | `google/gemma-4-31B-it` | `INSPO_QUALITY_MODEL` |
+| Autopsies | `moonshotai/Kimi-K2.6` (a dedicated Together deployment) | `INSPO_AUTOPSY_MODEL`, e.g. `google/gemma-4-31B-it` |
+| Embeddings | `intfloat/multilingual-e5-large-instruct` (1024-dim) | `INSPO_EMBED_MODEL` |

@@ -1,5 +1,5 @@
 /**
- * `inspo` CLI — installer for the Inspo MCP server.
+ * `inspo` CLI: installer for the Inspo MCP server.
  *
  * Usage:
  *   inspo init                  detect clients → write inspo entries
@@ -31,7 +31,7 @@ function defaultBinPath(): string {
   if (process.env.INSPO_MCP_BIN) return process.env.INSPO_MCP_BIN;
   const localBin = resolve(__dirname, "../../mcp/bin/inspo-mcp.js");
   if (existsSync(localBin)) return localBin;
-  // Fallback when published — assume the mcp pkg is npm-installed alongside
+  // Fallback when published: assume the mcp pkg is npm-installed alongside
   return "@inspo/mcp/bin/inspo-mcp.js";
 }
 
@@ -83,7 +83,7 @@ function main() {
 
 function printHelp() {
   console.log(`
-${kleur.bold("inspo")} — install the Inspo MCP server in every detected coding-agent client
+${kleur.bold("inspo")} - install the Inspo MCP server in every detected coding-agent client
 
 ${kleur.bold("Commands")}
   ${kleur.cyan("inspo init")}           detect → write configs
@@ -110,7 +110,7 @@ function cmdInit(flags: ParsedFlags) {
 
   console.log(kleur.bold("\n  inspo init"));
   console.log(
-    kleur.dim(`  bin: ${bin}\n  url: ${url}\n  key: ${key ? "set" : kleur.yellow("none — get one at /dashboard")}\n`),
+    kleur.dim(`  bin: ${bin}\n  url: ${url}\n  key: ${key ? "set" : kleur.yellow("none, get one at /dashboard")}\n`),
   );
 
   const detected = detect();

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Curated screenshot archive for AI coding agents — installer.",
+  "description": "Retired installer for the Inspo MCP server, superseded by npx inspo-mcp install.",
   "bin": {
     "inspo": "./bin/inspo.js"
   },

@@ -3,7 +3,7 @@
  *
  * Bundles the stdio server (src/server-npm.ts) + all its workspace deps
  * (@inspo/db query layer, tools, MCP SDK) into a single self-contained
- * ESM file — EXCEPT the ~16MB catalogue seed, which the server fetches
+ * ESM file, EXCEPT the ~16MB catalogue seed, which the server fetches
  * from the CDN at runtime. The published artifact is `dist/`:
  *
  *   dist/inspo-mcp.mjs   the bundle (with shebang, executable bin)
@@ -54,7 +54,7 @@ const result = await build({
     __INSPO_VERSION__: JSON.stringify(VERSION),
   },
   alias: {
-    // Don't bundle the 16MB seed — the standalone server fetches the
+    // Don't bundle the 16MB seed: the standalone server fetches the
     // catalogue from the CDN at runtime. Force the edge (null) variant.
     "@inspo/db/seed-source": resolve(
       REPO_ROOT,
@@ -74,7 +74,7 @@ writeFileSync(
       name: "inspo-mcp",
       version: VERSION,
       description:
-        "A curated archive of real website designs, served as an MCP server: 15 tools for search, components, palettes, flows, and recommendations.",
+        "A curated archive of real website designs, served as an MCP server: 15 tools for search, design systems, palettes, reference components, site page flows, and recommendations.",
       // Ties the npm package to the MCP registry entry
       // (apps/mcp/server.json); the registry validates ownership
       // through this field at `mcp-publisher publish` time.

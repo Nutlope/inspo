@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.nutlope/inspo",
-  "description": "Design inspiration for coding agents: real production sites with palettes, fonts, fold autopsies, and canonical reference JSX.",
+  "description": "Real production websites for coding agents: palettes, fonts, fold autopsies and reference JSX.",
   "repository": {
     "url": "https://github.com/Nutlope/inspo",
     "source": "github"
   },
-  "version": "0.1.8",
+  "version": "0.1.13",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "inspo-mcp",
-      "version": "0.1.8",
+      "version": "0.1.13",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {
@@ -36,6 +36,12 @@
         {
           "name": "INSPO_IMAGES",
           "description": "Optional. 'thumbs' or 'none' - whether tool results inline thumbnail image blocks.",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "INSPO_MAX_TOKENS",
+          "description": "Optional. Token ceiling per tool response (300 to 200000); trims lower-ranked results first.",
           "isRequired": false,
           "isSecret": false
         }
