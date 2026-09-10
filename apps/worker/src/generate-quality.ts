@@ -26,10 +26,11 @@ import {
 import { join, resolve } from "node:path";
 import Together from "together-ai";
 
+// gemma-3n-E4B-it, the old default, is no longer served on Together.
 const MODEL =
   process.argv.find((a) => a.startsWith("--model="))?.split("=")[1] ??
   process.env.INSPO_QUALITY_MODEL ??
-  "google/gemma-3n-E4B-it";
+  "google/gemma-4-31B-it";
 const CAPTURES_DIR = resolve(
   process.env.INSPO_CAPTURES_DIR ?? "./captures",
 );
@@ -152,6 +153,9 @@ async function judge(client: Together, row: Row): Promise<Verdict | null> {
         model: MODEL,
         max_tokens: 160,
         temperature: 0.2,
+        // Gemma 4 would otherwise spend the 160-token budget reasoning.
+        // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+        reasoning: { enabled: false },
         response_format: {
           type: "json_object",
           schema: SCHEMA as unknown as Record<string, unknown>,

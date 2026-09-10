@@ -1,25 +1,38 @@
 /**
- * Banner / overlay dismissal — three layers, applied in order:
+ * Banner / overlay dismissal, four layers applied in order:
  *
  *  Layer 1 (network):  block known consent + chat-widget CDNs entirely
  *                       so their scripts never load.
  *  Layer 2 (cookies):  pre-seed common consent-cookie names BEFORE
  *                       navigation so banners that gate on existing
  *                       cookies skip rendering.
- *  Layer 3 (DOM):      after page loads, click known consent buttons,
- *                       click any "Accept all"-text button, then hide
- *                       chat / newsletter overlays via injected CSS.
- *  Layer 4 (phantom):  detect any leftover position:fixed element
- *                       covering >15% of the viewport and force-hide.
+ *  Layer 3 (DOM):      after page loads, answer consent notices (declining
+ *                       non-essential cookies where offered), dismiss
+ *                       newsletter / promo modals, then hide chat widgets
+ *                       via injected CSS.
+ *  Layer 4 (phantom):  detect any leftover popup or consent card and
+ *                       force-hide it.
  *
- * Each layer is cheap; they compose. The phantom check is the last
- * line of defence — when a site uses a banner we don't have a
- * selector for, the geometry catches it.
+ * Each layer is cheap; they compose. The phantom check is the last line
+ * of defence: when a site uses a banner we have no selector for, geometry
+ * plus what the element says catches it. It only touches layers that are
+ * fixed (or live inside a fixed layer) and read like a popup, because
+ * design-led sites paint their heroes with fixed canvases, videos and
+ * gradient layers and pin whole sections with position:sticky. Hiding
+ * those blanks the very page being captured.
  */
 
 import type { BrowserContext, Page } from "playwright";
 
 const CONSENT_SELECTORS = [
+  // Decline non-essential first where the CMP offers it.
+  "#onetrust-reject-all-handler",
+  "#CybotCookiebotDialogBodyButtonDecline",
+  ".osano-cm-denyAll",
+  "#didomi-notice-disagree-button",
+  "button[data-testid='uc-deny-all-button']",
+  ".cky-btn-reject",
+  // Accept, for notices that offer nothing else.
   // OneTrust
   "#onetrust-accept-btn-handler",
   "button.optanon-allow-all",
@@ -81,10 +94,11 @@ const OVERLAY_SELECTORS = [
   "[role='alertdialog']",
 ];
 
-/** Accepts a button if its full text (trim + lowercase) CONTAINS one of these.
- *  IMPORTANT: only phrases that DISMISS the banner — never "preferences" /
- *  "settings" / "manage" (those open deeper modals that look worse than the
- *  original banner). */
+/** Newsletter / promo / region modal dismissals, plus a fallback for
+ *  consent notices the consent pass could not place. A button qualifies
+ *  if its full text (trim + lowercase) CONTAINS one of these. Never
+ *  "preferences" / "settings" / "manage": those open deeper modals that
+ *  look worse than the original banner. */
 const ACCEPT_TEXT_PHRASES = [
   "accept all",
   "accept cookies",
@@ -96,7 +110,6 @@ const ACCEPT_TEXT_PHRASES = [
   "yes, i'm happy",
   "okay, got it",
   "okay, thanks",
-  // Newsletter / promo / region modal dismissals
   "no thanks",
   "no, thanks",
   "not now",
@@ -109,7 +122,7 @@ const ACCEPT_TEXT_PHRASES = [
   "x close",
 ];
 
-/** Phrases that suggest a deeper-modal opener — explicitly skipped. */
+/** Phrases that suggest a deeper-modal opener, explicitly skipped. */
 const NON_DISMISS_PHRASES = [
   "preferences",
   "settings",
@@ -128,6 +141,52 @@ const ACCEPT_TEXT_MATCH = (raw: string) => {
   return ACCEPT_TEXT_PHRASES.some((p) => t.includes(p));
 };
 
+/**
+ * Finds the one button that answers a consent notice and marks it with
+ * data-inspo-consent. Only buttons inside a container that is about
+ * cookies or consent count, so a stray "Decline" or "OK" elsewhere on
+ * the page is never touched. Preference: decline non-essential, then the
+ * notice's own accept / "Okay", then its close control. Kept as a string
+ * because tsx's __name helper does not exist inside the page.
+ */
+const MARK_CONSENT_BUTTON = `(() => {
+  const NOTICE = /(cookie|consent|gdpr|ccpa|datenschutz|einwilligung|consentement|consentimiento|consenso|toestemming)/i;
+  const REJECT = /^(reject( all)?( cookies)?|decline( all)?( cookies)?|deny( all)?|refuse( all)?|(use )?(only )?(strictly )?(necessary|essential)( cookies)?( only)?|only (necessary|essential)( cookies)?|alle ablehnen|ablehnen|nur (notwendige|erforderliche|essenzielle)( cookies)?|tout refuser|refuser|continuer sans accepter|rechazar( todo| todas)?|rifiuta( tutti)?|alles weigeren|weigeren|recusar( todos)?|avvisa( alla)?|afvis( alle)?)$/i;
+  const ACCEPT = /^(ok|okay|ok!|accept( all)?( cookies)?|allow( all)?( cookies)?|agree|i agree|got it|understood|i understand|alle akzeptieren|alles akzeptieren|akzeptieren|zustimmen|einverstanden|alle zulassen|tout accepter|accepter|j'accepte|aceptar( todo| todas)?|accetta( tutti)?|accetto|alles accepteren|accepteren|aceitar( todos)?|godkänn( alla)?|acceptera|accepter alle|tillad alle)$/i;
+  const CLOSE = /^(x|×|✕|close|dismiss|schließen|fermer|cerrar|chiudi|sluiten)$/i;
+  const visible = (el) => {
+    const r = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && cs.display !== "none";
+  };
+  const inNotice = (el) => {
+    let n = el.parentElement;
+    for (let i = 0; n && i < 8; i += 1, n = n.parentElement) {
+      const t = (n.innerText || "").trim();
+      if (t.length > 3000) return false;
+      if (t.length > 20 && NOTICE.test(t)) return true;
+    }
+    return false;
+  };
+  const label = (el) => (el.innerText || el.getAttribute("aria-label") || el.value || "").trim().replace(/\\s+/g, " ").toLowerCase();
+  const stays = (el) => {
+    if (el.tagName !== "A") return true;
+    const h = el.getAttribute("href") || "";
+    return h === "" || h.startsWith("#") || h.startsWith("javascript:");
+  };
+  const buttons = [...document.querySelectorAll("button, [role='button'], a, input[type='button'], input[type='submit']")]
+    .filter(visible)
+    .filter(stays)
+    .filter(inNotice);
+  const pick =
+    buttons.find((b) => REJECT.test(label(b))) ||
+    buttons.find((b) => ACCEPT.test(label(b))) ||
+    buttons.find((b) => CLOSE.test(label(b)));
+  if (!pick) return false;
+  pick.setAttribute("data-inspo-consent", "1");
+  return true;
+})()`;
+
 export type DismissResult = {
   consentClicked: number;
   overlaysHidden: number;
@@ -135,18 +194,27 @@ export type DismissResult = {
   phantomsHidden?: number;
 };
 
+export type DismissOptions = {
+  /** false = only the CSS and geometry passes, no clicks. Used for the
+   *  sweep right before each viewport's screenshots: a second round of
+   *  clicking could follow a link away from the page being captured. */
+  clicks?: boolean;
+};
+
 export async function dismissBanners(
   page: Page,
   extraSelectors: string[] = [],
+  opts: DismissOptions = {},
 ): Promise<DismissResult> {
   const result: DismissResult = {
     consentClicked: 0,
     overlaysHidden: 0,
     textButtonsClicked: 0,
   };
+  const clicks = opts.clicks !== false;
 
-  // 1. Click known consent buttons
-  for (const sel of [...CONSENT_SELECTORS, ...extraSelectors]) {
+  // 1. Click known consent-manager buttons
+  for (const sel of clicks ? [...CONSENT_SELECTORS, ...extraSelectors] : []) {
     try {
       const el = await page.$(sel);
       if (el && (await el.isVisible())) {
@@ -155,40 +223,62 @@ export async function dismissBanners(
         await page.waitForTimeout(200);
       }
     } catch {
-      /* ignore — many selectors won't match */
+      /* ignore: many selectors won't match */
     }
   }
 
-  // 2. Click any visible button whose text contains "Accept all" etc.
-  try {
-    const buttons = await page.$$("button, [role='button'], a, input[type='button'], input[type='submit']");
-    let clicked = 0;
-    for (const b of buttons.slice(0, 120)) {
-      try {
-        const visible = await b.isVisible();
-        if (!visible) continue;
-        const text = ((await b.textContent()) ?? "").trim();
-        if (text && ACCEPT_TEXT_MATCH(text)) {
+  // 2. Answer any consent notice by its own buttons, twice at most (some
+  //    notices open a second layer after the first answer).
+  for (let round = 0; clicks && round < 2; round += 1) {
+    try {
+      const marked = (await page.evaluate(MARK_CONSENT_BUTTON)) as boolean;
+      if (!marked) break;
+      await page.click("[data-inspo-consent='1']", { timeout: 1500 });
+      result.consentClicked += 1;
+      await page.waitForTimeout(600);
+      await page
+        .evaluate(`document.querySelectorAll("[data-inspo-consent]").forEach((e) => e.removeAttribute("data-inspo-consent"))`)
+        .catch(() => {});
+    } catch {
+      break;
+    }
+  }
+
+  // 3. Newsletter / promo / region modals: click a dismiss-type button.
+  if (clicks) {
+    try {
+      const buttons = await page.$$("button, [role='button'], a, input[type='button'], input[type='submit']");
+      for (const b of buttons.slice(0, 120)) {
+        try {
+          const visible = await b.isVisible();
+          if (!visible) continue;
+          const text = ((await b.textContent()) ?? "").trim();
+          if (!text || !ACCEPT_TEXT_MATCH(text)) continue;
+          // A link that goes somewhere ("Close" in a menu, "Skip" to
+          // another page) would navigate away from the page being shot.
+          const leaves = await b.evaluate((el) => {
+            if (el.tagName !== "A") return false;
+            const href = el.getAttribute("href") ?? "";
+            return href !== "" && !href.startsWith("#") && !href.startsWith("javascript:");
+          });
+          if (leaves) continue;
           await b.click({ timeout: 1500 });
           result.textButtonsClicked += 1;
-          clicked += 1;
-          // Generous wait — banners often animate out over 300-500ms,
-          // and clicking "preferences" instead of "accept all" was a
-          // real bug; we want time for the banner to actually leave
-          // the DOM before phantom-detector runs.
+          // Generous wait: banners often animate out over 300-500ms, and
+          // the phantom detector should run after the banner has
+          // actually left the DOM.
           await page.waitForTimeout(600);
           break; // one click is enough
+        } catch {
+          /* skip */
         }
-      } catch {
-        /* skip */
       }
+    } catch {
+      /* skip */
     }
-    void clicked;
-  } catch {
-    /* skip */
   }
 
-  // 3. Hide chat / newsletter overlays via display:none injection
+  // 4. Hide chat / newsletter overlays via display:none injection
   await page
     .addStyleTag({
       content: OVERLAY_SELECTORS.map(
@@ -200,92 +290,166 @@ export async function dismissBanners(
     });
   result.overlaysHidden = OVERLAY_SELECTORS.length;
 
-  // 4. Phantom-overlay detector. Three passes:
-  //    (a) Geometry: any fixed/sticky element covering >15% of viewport
-  //        and not styled as a top nav (likely a banner / modal).
-  //    (b) Content: any fixed/sticky element whose text mentions
-  //        "cookie" / "consent" / "accept" / "privacy" — catches small
-  //        bottom-right cookie cards that don't trip the area heuristic.
-  //    (c) Walk-up: any visible button containing accept/allow phrasing,
-  //        walk up the DOM until we find a position:fixed ancestor and
-  //        hide that. Catches dialogs whose root container isn't itself
-  //        position:fixed but rather positioned via a fixed wrapper.
+  // 5. Phantom-overlay detector. Passes, in order:
+  //    (a) Geometry: a fixed element covering >15% of the viewport that
+  //        reads like a popup (dialog role, email or password field, a
+  //        close control, or popup vocabulary) and sits above the page.
+  //    (b) Consent: the outermost element that holds a cookie / consent
+  //        notice and its buttons, when it is fixed or inside a fixed
+  //        layer. Framer's banner lives in a full-screen, click-through
+  //        fixed wrapper, so the card itself is what gets hidden.
+  //    (c) Walk-up: from a visible accept/allow button to its fixed
+  //        ancestor, for dialogs positioned by a fixed wrapper.
+  //    (d) Dialog roles, plus popup class names when fixed and popup-like.
+  //    (e) Backdrops: a fixed, semi-transparent layer over most of the
+  //        viewport, plus the dialog inside it.
+  //    (f) Body scroll locks left behind by a modal.
+  //    (g) Consent strips pinned to an edge, whatever their size.
   try {
     const hiddenCount = await page.evaluate(() => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const minArea = vw * vh * 0.15;
-      const CONSENT_RX = /\b(cookie|consent|gdpr|privacy|accept all|reject all|allow all|deny|do not allow|opt[- ]out|tracking|preferences|essential)\b/i;
+      // Phrases a consent notice uses, in the languages the archive's sites ship in.
+      // Specific enough that a bakery's "our cookies" section is left alone.
+      const CONSENT_RX = /\b(we use cookies|(this|our) (web)?site uses cookies|uses cookies|use of cookies|cookie (policy|settings|preferences|notice|consent|banner)|accept (all )?cookies|cookies? to (personali[sz]e|improve|analy[sz]e|enhance|provide|ensure|give)|consent|gdpr|ccpa|verwendet cookies|nutzt cookies|setzt cookies|datenschutz|einwilligung|utilise des cookies|consentement|utiliza cookies|consentimiento|utilizza (i )?cookie|consenso|gebruikt cookies|toestemming)\b/i;
 
-      const isFixedish = (el: HTMLElement) => {
+      const zOf = (el: HTMLElement) => {
+        const z = parseInt(window.getComputedStyle(el).zIndex, 10);
+        return Number.isNaN(z) ? 0 : z;
+      };
+
+      // Only position:fixed counts as an overlay. Sticky elements are
+      // pinned scroll-telling sections and headers, i.e. page content.
+      const isFixed = (el: HTMLElement) => {
         const cs = window.getComputedStyle(el);
         if (cs.display === "none" || cs.visibility === "hidden") return false;
-        return cs.position === "fixed" || cs.position === "sticky";
+        return cs.position === "fixed";
+      };
+      const fixedWithin = (el: HTMLElement, levels: number) => {
+        let n: HTMLElement | null = el;
+        for (let i = 0; n && i <= levels; i += 1) {
+          if (window.getComputedStyle(n).position === "fixed") return true;
+          n = n.parentElement;
+        }
+        return false;
       };
 
       const isLikelyTopNav = (r: DOMRect) =>
         r.top < 8 && r.height < 120;
 
+      const isPageRoot = (el: HTMLElement) =>
+        el === document.body || el === document.documentElement || el.tagName === "MAIN";
+
+      // Full-screen fixed canvases, videos, gradients and grain layers
+      // are how design-led sites paint their backgrounds. Not popups. A
+      // click-through (pointer-events:none) layer only counts when
+      // nothing in it speaks or can be clicked.
+      const isDecorative = (el: HTMLElement) => {
+        if (/^(canvas|video|img|picture|svg)$/i.test(el.tagName)) return true;
+        if (zOf(el) < 0) return true;
+        const txt = (el.innerText ?? "").trim();
+        const interactive = el.querySelector("button, input, select, textarea, form, a[href]");
+        if (txt.length < 12 && !interactive) {
+          if (window.getComputedStyle(el).pointerEvents === "none") return true;
+          if (el.querySelector("canvas, video, img, picture, svg")) return true;
+        }
+        return false;
+      };
+
+      // What a blocking popup says or contains. A fixed hero or menu
+      // rarely matches; newsletter, consent, region and login modals
+      // nearly always do.
+      const MODAL_RX = /\b(subscribe|newsletter|sign ?up|sign ?in|log ?in|e-?mail|discount|coupon|promo|cookies?|consent|privacy|accept|agree|dismiss|no,? thanks|not now|maybe later|download (the|our) app|get the app|open in app|select (your )?(country|region|language|location)|choose (your )?(country|region|language)|are you (over )?(18|21)|verify your age|age verification)\b/i;
+      const looksLikeModal = (el: HTMLElement) => {
+        if (el.matches("[role='dialog'], [role='alertdialog'], [aria-modal='true']")) return true;
+        if (el.querySelector("[role='dialog'], [aria-modal='true'], input[type='email'], input[type='password'], [aria-label*='close' i], [data-dismiss], [data-close]")) return true;
+        const txt = (el.innerText ?? "").trim().slice(0, 800);
+        return txt.length > 0 && MODAL_RX.test(txt);
+      };
+
       let hidden = 0;
       const candidates = Array.from(document.querySelectorAll("*")).slice(
         0,
-        1500,
+        3000,
       );
 
       const seen = new WeakSet<HTMLElement>();
       const tryHide = (el: HTMLElement) => {
         if (seen.has(el)) return false;
         seen.add(el);
+        if (isPageRoot(el)) return false;
         if (isLikelyTopNav(el.getBoundingClientRect())) return false;
         el.style.setProperty("display", "none", "important");
         el.style.setProperty("visibility", "hidden", "important");
         return true;
       };
 
-      // Pass A+B
+      // Pass A: big fixed popups.
       for (const el of candidates) {
         if (!(el instanceof HTMLElement)) continue;
-        if (!isFixedish(el)) continue;
+        if (!isFixed(el)) continue;
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
         if (isLikelyTopNav(r)) continue;
+        if (isPageRoot(el) || isDecorative(el)) continue;
+        const big =
+          r.width * r.height >= minArea &&
+          (zOf(el) >= 2 || el.matches("[role='dialog'], [aria-modal='true']")) &&
+          looksLikeModal(el);
+        if (big && tryHide(el)) {
+          hidden += 1;
+          if (hidden >= 6) break;
+        }
+      }
 
-        const big = r.width * r.height >= minArea;
-        const text = (el.textContent ?? "").trim().slice(0, 600);
-        const looksLikeConsent =
-          text.length > 8 && text.length < 600 && CONSENT_RX.test(text);
-
-        if (big || looksLikeConsent) {
+      // Pass B: consent notices, fixed or inside a fixed layer. Hide the
+      // outermost element that holds both the notice and its buttons but
+      // is smaller than a whole-screen wrapper.
+      {
+        const notices: HTMLElement[] = [];
+        for (const el of candidates) {
+          if (!(el instanceof HTMLElement) || seen.has(el)) continue;
+          const t = (el.innerText ?? "").trim();
+          if (t.length < 12 || t.length > 3000 || !CONSENT_RX.test(t)) continue;
+          if (!el.querySelector("button, [role='button'], a, input[type='checkbox']")) continue;
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) continue;
+          if (r.width * r.height > vw * vh * 0.6) continue;
+          if (!fixedWithin(el, 6)) continue;
+          notices.push(el);
+        }
+        const outermost = notices.filter((el) => !notices.some((o) => o !== el && o.contains(el)));
+        for (const el of outermost) {
           if (tryHide(el)) {
             hidden += 1;
-            if (hidden >= 6) break;
+            if (hidden >= 10) return hidden;
           }
         }
       }
 
-      // Pass C — walk-up from accept-text buttons. The Figma cookie
+      // Pass C: walk up from accept-text buttons. The Figma cookie
       // dialog (and many others) sits inside a wrapper whose position
-      // computes to "fixed" — but the dialog itself doesn't match the
-      // fixedish check until we walk up.
-      if (hidden < 6) {
-        const ACCEPT_BUTTON_RX = /\b(accept all|allow all|allow cookies|accept cookies|do not allow|reject all|essential only|preferences)\b/i;
+      // computes to "fixed", while the dialog itself does not.
+      if (hidden < 10) {
+        const ACCEPT_BUTTON_RX = /\b(accept all|allow all|allow cookies|accept cookies|do not allow|reject all|essential only|alle akzeptieren|tout accepter|aceptar todo|accetta tutti)\b/i;
         const buttons = Array.from(
           document.querySelectorAll("button, [role='button'], a"),
-        ).slice(0, 200);
+        ).slice(0, 300);
         for (const b of buttons) {
           if (!(b instanceof HTMLElement)) continue;
           const txt = (b.textContent ?? "").trim();
           if (!txt || !ACCEPT_BUTTON_RX.test(txt)) continue;
-          // Walk up looking for the first fixed/sticky ancestor.
+          // Walk up looking for the first fixed ancestor.
           let node: HTMLElement | null = b;
           for (let depth = 0; node && depth < 12; depth += 1) {
             const cs = window.getComputedStyle(node);
-            if (cs.position === "fixed" || cs.position === "sticky") {
+            if (cs.position === "fixed") {
               const r = node.getBoundingClientRect();
               if (r.width > 0 && r.height > 0 && !isLikelyTopNav(r)) {
                 if (tryHide(node)) {
                   hidden += 1;
-                  if (hidden >= 6) return hidden;
+                  if (hidden >= 10) return hidden;
                 }
               }
               break;
@@ -295,10 +459,12 @@ export async function dismissBanners(
         }
       }
 
-      // Pass D — explicit dialog role + class-name signatures. The
+      // Pass D: explicit dialog roles, plus class-name signatures. The
       // [role='dialog'][aria-modal='true'] pattern is the most reliable
-      // signal of "this is a centered modal blocking content".
-      if (hidden < 6) {
+      // signal of "this is a centered modal blocking content". Class
+      // names like "hero-overlay" or "video-popup" are page content, so
+      // those only count when fixed and popup-like.
+      if (hidden < 10) {
         const DIALOG_SELECTORS = [
           "[role='dialog'][aria-modal='true']",
           "[role='alertdialog']",
@@ -310,33 +476,37 @@ export async function dismissBanners(
           "[class*='overlay' i]:not(nav):not(header)",
         ];
         for (const sel of DIALOG_SELECTORS) {
+          const byRole = sel.startsWith("[role=");
           for (const el of Array.from(document.querySelectorAll(sel))) {
             if (!(el instanceof HTMLElement)) continue;
+            if (isPageRoot(el)) continue;
             const r = el.getBoundingClientRect();
             if (r.width < 200 || r.height < 100) continue;
             if (isLikelyTopNav(r)) continue;
+            if (!byRole && (!fixedWithin(el, 3) || isDecorative(el) || !looksLikeModal(el))) continue;
             if (tryHide(el)) {
               hidden += 1;
-              if (hidden >= 6) return hidden;
+              if (hidden >= 10) return hidden;
             }
           }
         }
       }
 
-      // Pass E — backdrop detector. Centered modals usually sit on top
-      // of a full-viewport semi-transparent backdrop. Find any fixed
-      // element covering >70% of the viewport with a dark/transparent
-      // bg-color, hide it AND its child modal.
-      if (hidden < 6) {
+      // Pass E: backdrop detector. Centered modals usually sit on a
+      // fixed, full-viewport, semi-transparent backdrop above the page.
+      // Hide it AND the dialog inside it.
+      if (hidden < 10) {
         const wideArea = vw * vh * 0.7;
-        for (const el of Array.from(document.querySelectorAll("body *")).slice(0, 800)) {
+        for (const el of Array.from(document.querySelectorAll("body *")).slice(0, 1200)) {
           if (!(el instanceof HTMLElement)) continue;
           const cs = window.getComputedStyle(el);
-          if (cs.position !== "fixed" && cs.position !== "absolute") continue;
+          if (cs.position !== "fixed") continue;
+          if (cs.pointerEvents === "none" || zOf(el) < 2) continue;
+          if (/^(canvas|video|img|picture|svg)$/i.test(el.tagName)) continue;
           const r = el.getBoundingClientRect();
           if (r.width * r.height < wideArea) continue;
           const bg = cs.backgroundColor;
-          // rgba(0,0,0,X) or similar dim layer — has alpha 0 < X < 1
+          // rgba(0,0,0,X) or similar dim layer: alpha strictly between 0 and 1
           const m = bg.match(/rgba?\(([^)]+)\)/);
           if (!m) continue;
           const parts = m[1]!.split(",").map((p) => p.trim());
@@ -344,34 +514,29 @@ export async function dismissBanners(
           if (alpha <= 0 || alpha >= 1) continue;
           if (tryHide(el)) {
             hidden += 1;
-            // Also hide any direct centered modal children.
             for (const child of Array.from(el.children)) {
               if (child instanceof HTMLElement) tryHide(child);
             }
-            if (hidden >= 6) return hidden;
+            if (hidden >= 10) return hidden;
           }
         }
       }
 
-      // Pass F — body lock detector. When body has overflow:hidden
-      // applied (modal-open lock), find the visible overlay nearest the
-      // top of the stacking order and hide it.
-      if (hidden < 6) {
+      // Pass F: body lock detector. A modal-open lock (overflow:hidden on
+      // the body) outlives the modal we just hid; restore scrolling.
+      if (hidden > 0) {
         const bodyCs = window.getComputedStyle(document.body);
         if (bodyCs.overflow === "hidden" || bodyCs.position === "fixed") {
-          // Restore scrolling, then look for the modal that locked it.
           document.body.style.setProperty("overflow", "auto", "important");
           document.body.style.setProperty("position", "static", "important");
         }
       }
 
-      // Pass G — small cookie footer/strip. Any fixed/sticky element
-      // pinned to the bottom (or top) edge whose text mentions "cookie"
-      // or "consent" or "privacy", regardless of size. The earlier
-      // 15%-area heuristic misses unobtrusive footer strips and
-      // bottom-right cards. The user wants ALL cookie UI gone.
-      const TEXTUAL_CONSENT_RX = /\b(cookie|consent|privacy|gdpr|ccpa|we use|we and our partners|tracking)\b/i;
-      for (const el of Array.from(document.querySelectorAll("*")).slice(0, 2500)) {
+      // Pass G: small consent strip. Any fixed/sticky element pinned to
+      // the bottom (or top) edge, or a corner, whose text is about
+      // cookies or consent, regardless of size.
+      const TEXTUAL_CONSENT_RX = /\b(cookies?|consent|gdpr|ccpa|we use|we and our partners)\b/i;
+      for (const el of Array.from(document.querySelectorAll("*")).slice(0, 3000)) {
         if (!(el instanceof HTMLElement)) continue;
         if (seen.has(el)) continue;
         const cs = window.getComputedStyle(el);
@@ -386,12 +551,12 @@ export async function dismissBanners(
           r.width < vw * 0.6 && r.height < vh * 0.6 &&
           (vh - r.bottom < 60 || r.top < 60);
         if (!pinnedBottom && !pinnedTopBar && !pinnedCorner) continue;
-        const text = (el.textContent ?? "").trim().slice(0, 800);
-        if (text.length < 6 || text.length > 800) continue;
+        const text = (el.textContent ?? "").trim().slice(0, 3000);
+        if (text.length < 6 || text.length > 3000) continue;
         if (!TEXTUAL_CONSENT_RX.test(text)) continue;
         if (tryHide(el)) {
           hidden += 1;
-          if (hidden >= 10) return hidden;
+          if (hidden >= 12) return hidden;
         }
       }
 
@@ -419,11 +584,36 @@ const BLOCKED_HOSTS = [
   "cookielaw.org",
   "cookiebot.com",
   "cookiehub.eu",
+  "cookiehub.net",
   "osano.com",
   "trustarc.com",
   "consentmanager.net",
   "iubenda.com",
   "termly.io",
+  "cookie-script.com",
+  "usercentrics.eu",
+  "usercentrics.com",
+  "privacy-mgmt.com",
+  "privacy-center.org",
+  "didomi.io",
+  "cookieyes.com",
+  "cdn-cookieyes.com",
+  "cookiefirst.com",
+  "axept.io",
+  "axeptio.eu",
+  "trustcommander.net",
+  "cookieinformation.com",
+  "ketchcdn.com",
+  "transcend-cdn.com",
+  "evidon.com",
+  "civiccomputing.com",
+  "consensu.org",
+  "cmp.quantcast.com",
+  "clickiocmp.com",
+  "secureprivacy.ai",
+  "cookiepro.com",
+  "enzuzo.com",
+  "silktide.com",
   // Chat widgets
   "intercom.io",
   "intercomcdn.com",
@@ -435,7 +625,7 @@ const BLOCKED_HOSTS = [
   "hubspot.com/conversations",
   "kustomerapp.com",
   "front.com",
-  // Email-capture / promo popup systems (the modal user complained about)
+  // Email-capture / promo popup systems
   "privy.com",
   "privy-static.com",
   "klaviyo.com/onsite",
@@ -471,7 +661,7 @@ export async function blockConsentNetworks(ctx: BrowserContext): Promise<void> {
 /* ─────────────── Layer 2: pre-seed consent cookies ─────────────── */
 
 /**
- * Drop a handful of common "user already accepted" cookies on the
+ * Drop a handful of common "user already answered" cookies on the
  * destination host before we navigate. Many banners short-circuit
  * when these are present.
  */

@@ -1,24 +1,31 @@
 /**
- * URL discovery — for a given site root, return up to N additional
- * page URLs that a designer studying this brand should see.
+ * URL discovery: for a given site root, return up to N additional page
+ * URLs that a designer studying this brand should see.
  *
  * Strategy:
- *   1. Read /robots.txt for Sitemap: directives. Fall back to /sitemap.xml.
- *   2. Parse sitemap (or sitemap-index — recurse one level).
- *   3. Filter to same-host URLs, drop junk (PDFs, RSS, /api, deep pagination).
- *   4. Cap candidate list to 50 (shortest-path first, then by sample stride).
- *   5. Ask Gemma 3n to pick up to MAX picks and classify each by page_type.
- *   6. If sitemap missing/empty, try a small set of common paths.
+ *   1. Collect same-site links from the homepage HTML. On small studio
+ *      and portfolio sites these ARE the real pages, and many of those
+ *      sites publish no sitemap at all.
+ *   2. Read /robots.txt for Sitemap: directives, falling back to
+ *      /sitemap.xml, and parse the sitemap (or a sitemap index, one level).
+ *   3. Filter to same-host URLs; drop junk (files, feeds, pagination),
+ *      sign-in / account / checkout pages, legal pages and locale homes.
+ *   4. Cap the candidates at 50: homepage links first, then sitemap URLs
+ *      sampled shortest-path first.
+ *   5. Ask a Together chat model to pick up to MAX and classify each by
+ *      page type.
+ *   6. If both sources are empty, probe a small set of common paths.
  *
- * Returns an array of { url, pageType } — never includes the root URL
- * itself (caller already has the homepage). May return fewer than MAX
- * if the site genuinely doesn't have that many design-relevant pages.
+ * Returns { url, pageType }[], never the root itself. Sign-in, sign-up
+ * and account pages are excluded outright: a login card shows nothing of
+ * the brand, and 245 of them had to be pruned from the archive in August.
  */
 
 import Together from "together-ai";
 
 const TIMEOUT_MS = 10_000;
 const MAX_CANDIDATES = 50;
+const MAX_HOMEPAGE_LINKS = 30;
 const MAX_PICKS_DEFAULT = 7;
 
 const COMMON_PATHS = [
@@ -27,16 +34,18 @@ const COMMON_PATHS = [
   "/product",
   "/about",
   "/about-us",
-  "/sign-up",
-  "/signup",
-  "/login",
-  "/sign-in",
-  "/signin",
+  "/work",
+  "/projects",
+  "/case-studies",
+  "/studio",
+  "/services",
+  "/company",
+  "/customers",
   "/blog",
+  "/journal",
   "/changelog",
   "/docs",
-  "/customers",
-  "/use-cases",
+  "/shop",
 ] as const;
 
 export type PageType =
@@ -73,26 +82,44 @@ export async function discoverUrls(
 
   console.log(`  ⚲ discovering pages for ${host}`);
 
-  // 1. Try sitemaps via robots.txt + /sitemap.xml.
-  let urls = await readSitemaps(root);
-  console.log(`    sitemap returned ${urls.length} URLs`);
+  // 1-3. Homepage links and sitemap URLs, filtered the same way.
+  const homepage = filterCandidates(await readHomepageLinks(root), host, root.href);
+  let sitemap = filterCandidates(await readSitemaps(root), host, root.href);
+  console.log(`    homepage links ${homepage.length} · sitemap ${sitemap.length}`);
 
-  // 2. If sitemap is empty, probe common paths.
-  if (urls.length === 0) {
-    urls = await probeCommonPaths(root);
-    console.log(`    common-path probe returned ${urls.length} URLs`);
+  // 6. Nothing from either source: probe common paths.
+  if (homepage.length === 0 && sitemap.length === 0) {
+    sitemap = filterCandidates(await probeCommonPaths(root), host, root.href);
+    console.log(`    common-path probe returned ${sitemap.length} URLs`);
   }
 
-  // 3. Filter: same host (root or www), no junk, no homepage itself.
-  const filtered = filterCandidates(urls, host, root.href);
-  if (filtered.length === 0) return [];
+  // 4. Homepage links lead; the sitemap fills the rest of the budget.
+  const lead = homepage.slice(0, MAX_HOMEPAGE_LINKS);
+  const leadSet = new Set(lead);
+  const rest = sitemap.filter((u) => !leadSet.has(u));
+  const candidates = [...lead, ...sampleCandidates(rest, MAX_CANDIDATES - lead.length)];
+  if (candidates.length === 0) return [];
+  console.log(`    ${candidates.length} candidates → ranker`);
 
-  // 4. Cap to MAX_CANDIDATES sampled across the path-depth distribution.
-  const candidates = sampleCandidates(filtered, MAX_CANDIDATES);
-  console.log(`    ${candidates.length} candidates → Gemma ranker`);
-
-  // 5. Rank + classify via Gemma.
+  // 5. Rank + classify.
   return rankWithLLM(host, candidates, maxPicks);
+}
+
+/* ───────────────────── homepage links ───────────────────── */
+
+/** Same-site <a href> targets from the homepage's served HTML. */
+async function readHomepageLinks(root: URL): Promise<string[]> {
+  const html = await fetchText(root.href, "text/html,application/xhtml+xml");
+  if (!html) return [];
+  const out: string[] = [];
+  for (const m of html.matchAll(/<a\b[^>]*?\bhref\s*=\s*["']([^"'#][^"']*)["']/gi)) {
+    try {
+      out.push(new URL(m[1]!.replace(/&amp;/g, "&"), root).href);
+    } catch {
+      /* not a URL */
+    }
+  }
+  return out;
 }
 
 /* ───────────────────── sitemap reading ───────────────────── */
@@ -100,7 +127,7 @@ export async function discoverUrls(
 async function readSitemaps(root: URL): Promise<string[]> {
   const sitemapUrls = new Set<string>();
 
-  // 5a. /robots.txt → Sitemap: directives.
+  // /robots.txt → Sitemap: directives.
   const robotsTxt = await fetchText(`${root.origin}/robots.txt`);
   if (robotsTxt) {
     for (const line of robotsTxt.split(/\r?\n/)) {
@@ -108,7 +135,7 @@ async function readSitemaps(root: URL): Promise<string[]> {
       if (m) sitemapUrls.add(m[1]!);
     }
   }
-  // 5b. Default location.
+  // Default locations.
   sitemapUrls.add(`${root.origin}/sitemap.xml`);
   sitemapUrls.add(`${root.origin}/sitemap_index.xml`);
 
@@ -133,7 +160,7 @@ async function readSitemaps(root: URL): Promise<string[]> {
 
     const isIndex = /<sitemapindex/i.test(xml);
     if (isIndex && !recursedOnce) {
-      // Each <loc> is itself a sitemap URL — enqueue up to 5 of them.
+      // Each <loc> is itself a sitemap URL: enqueue up to 5 of them.
       for (const child of locs.slice(0, 5)) queue.push(child);
       recursedOnce = true;
     } else {
@@ -145,7 +172,10 @@ async function readSitemaps(root: URL): Promise<string[]> {
   return collected;
 }
 
-async function fetchText(url: string): Promise<string | null> {
+async function fetchText(
+  url: string,
+  accept = "text/xml,application/xml,text/plain,*/*",
+): Promise<string | null> {
   try {
     const ac = new AbortController();
     const tm = setTimeout(() => ac.abort(), TIMEOUT_MS);
@@ -154,13 +184,13 @@ async function fetchText(url: string): Promise<string | null> {
       headers: {
         "user-agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-        accept: "text/xml,application/xml,text/plain,*/*",
+        accept,
       },
     });
     clearTimeout(tm);
     if (!res.ok) return null;
     const text = await res.text();
-    return text.slice(0, 2_000_000); // 2MB cap — big sitemaps exist
+    return text.slice(0, 2_000_000); // 2MB cap: big sitemaps exist
   } catch {
     return null;
   }
@@ -196,7 +226,7 @@ const JUNK_PATTERNS = [
   /\.(?:pdf|xml|jpg|jpeg|png|gif|webp|svg|ico|css|js|mp4|webm|zip|rss|gz|tar|bz2)$/i,
   /\.xml\.gz$/i,
   /\/(?:api|cdn-cgi|assets?|static|wp-content|wp-admin|wp-json|feed|rss|atom)\//i,
-  /\/sitemap[^/]*\//i, // /sitemap/, /sitemap_v2/ — sitemap-style index pages
+  /\/sitemap[^/]*\//i, // /sitemap/, /sitemap_v2/: sitemap-style index pages
   /\/sitemap[^/]*$/i, // /sitemap or /sitemap.xml or /sitemap_index
   /\/cgc\//i, // cloud.google.com directory listings
   /\/wayfinding/i, // misc site-index pages
@@ -209,10 +239,17 @@ const JUNK_PATTERNS = [
   /\/search\?/i,
   /[?&]utm_/i,
   /#[^/]+$/, // fragment-only
+  // Sign-in, sign-up and account pages show a login card, not the brand.
+  /\/(?:log-?in|sign-?in|sign-?up|signup|register|join|account|accounts|auth|oauth|sso|dashboard|app|console|portal|checkout|cart|basket|password|reset|verify)(?:\/|$)/i,
+  // Legal and cookie pages are the same boilerplate everywhere.
+  /\/(?:privacy|privacy-policy|terms|terms-of-service|terms-and-conditions|tos|legal|cookies?|cookie-policy|imprint|impressum|gdpr|dpa|accessibility)(?:\/|$)/i,
+  // A locale root ("/en", "/de-ch") is the homepage again.
+  /^https?:\/\/[^/]+\/[a-z]{2}(?:[-_][a-z]{2})?$/i,
 ];
 
 function filterCandidates(urls: string[], host: string, rootHref: string): string[] {
   const out = new Set<string>();
+  const rootNorm = rootHref.replace(/\/$/, "");
   for (const raw of urls) {
     let u: URL;
     try {
@@ -220,12 +257,13 @@ function filterCandidates(urls: string[], host: string, rootHref: string): strin
     } catch {
       continue;
     }
+    if (!/^https?:$/.test(u.protocol)) continue;
     if (u.host.replace(/^www\./, "") !== host) continue;
-    if (u.href === rootHref) continue;
     // Strip trailing slash and query string for dedupe.
     u.hash = "";
     u.search = "";
     const norm = u.href.replace(/\/$/, "");
+    if (norm === rootNorm || norm === u.origin) continue;
     if (JUNK_PATTERNS.some((re) => re.test(norm))) continue;
     out.add(norm);
   }
@@ -233,6 +271,7 @@ function filterCandidates(urls: string[], host: string, rootHref: string): strin
 }
 
 function sampleCandidates(urls: string[], max: number): string[] {
+  if (max <= 0) return [];
   if (urls.length <= max) return urls;
   // Sort by path depth (shorter = more likely to be a primary page),
   // then take the top half + sample the rest with even stride to keep
@@ -261,7 +300,7 @@ function pathDepth(url: string): number {
 /* ───────────────────── LLM ranker ───────────────────── */
 
 const RANKER_MODEL =
-  process.env.INSPO_RANKER_MODEL ?? "google/gemma-3n-E4B-it";
+  process.env.INSPO_RANKER_MODEL ?? "google/gemma-4-31B-it";
 
 const rankerSchema = {
   type: "object",
@@ -284,15 +323,16 @@ const rankerSchema = {
 } as const;
 
 const RANKER_SYSTEM = [
-  "You help curate a design archive.",
-  "Given a website's host and a sitemap of candidate URLs, pick the URLs a senior designer would want to study to understand the brand's design language.",
-  "Pick up to the requested limit — fewer is fine if the site doesn't have many design-relevant pages.",
-  "PREFER: pricing, product/features, sign up, sign in, about, blog index (not posts), changelog index, docs landing.",
-  "AVOID: individual blog posts, legal pages (privacy/terms/cookies), help/support articles, individual job listings, press releases, individual customer stories, anything that looks like a repeat of the homepage with different copy.",
+  "You help curate a design archive of real websites.",
+  "Given a website's host and candidate URLs from its homepage links and sitemap, pick the pages a senior designer would want to study to understand the brand's design language beyond the homepage.",
+  "Pick up to the requested limit. Fewer is fine when the site has few distinct pages.",
+  "PREFER, roughly in this order: pricing; product, features or platform pages; about, company or studio; a work or projects index; one or two standout case studies or project pages; customers; a blog or journal index (not posts); a changelog index; a docs landing; a shop or collection page for stores.",
+  "NEVER pick: sign in, log in, sign up, register, account, dashboard, app, checkout or cart pages; legal pages (privacy, terms, cookies, imprint); individual blog posts, press releases or job listings; help articles; near-duplicates of the homepage such as the same page in another language.",
+  "Prefer pages likely to look different from each other and from the homepage.",
   "Each pick must include the URL verbatim from the candidate list and a pageType from: " +
     PAGE_TYPES.join(", ") +
     ".",
-  "Return JSON only — no prose, no fences.",
+  "Return JSON only: no prose, no fences.",
 ].join(" ");
 
 async function rankWithLLM(
@@ -300,20 +340,22 @@ async function rankWithLLM(
   candidates: string[],
   maxPicks: number,
 ): Promise<DiscoveredUrl[]> {
+  const naive = () =>
+    candidates
+      .map((url) => ({ url, pageType: naivePageType(url) }))
+      .filter((d) => d.pageType !== "auth")
+      .slice(0, maxPicks);
+
   const apiKey = process.env.TOGETHER_API_KEY;
   if (!apiKey) {
-    // No API key — return the first maxPicks candidates with naive typing.
-    console.log("    ⨯ no TOGETHER_API_KEY — falling back to naive typing");
-    return candidates.slice(0, maxPicks).map((url) => ({
-      url,
-      pageType: naivePageType(url),
-    }));
+    console.log("    ⨯ no TOGETHER_API_KEY, falling back to naive typing");
+    return naive();
   }
 
   const client = new Together({
     apiKey,
     baseURL: process.env.TOGETHER_BASE_URL ?? "https://api.together.ai/v1",
-    timeout: 30_000,
+    timeout: 60_000,
   });
 
   const userText = [
@@ -323,32 +365,44 @@ async function rankWithLLM(
     candidates.map((u) => `- ${u}`).join("\n"),
   ].join("\n");
 
-  let raw: { picks?: { url: string; pageType: string }[] };
+  let raw: { picks?: { url: string; pageType: string }[] } = {};
   try {
-    const completion = await client.chat.completions.create({
-      model: RANKER_MODEL,
-      max_tokens: 1024,
-      temperature: 0.2,
-      response_format: {
-        type: "json_object",
-        schema: rankerSchema as unknown as Record<string, unknown>,
-      },
-      messages: [
-        { role: "system", content: RANKER_SYSTEM },
-        { role: "user", content: userText },
-      ],
-    });
-    const text = completion.choices?.[0]?.message?.content ?? "";
-    const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "");
-    raw = JSON.parse(cleaned);
+    // Retry transient capacity errors (503 / 429) with backoff: without
+    // it a busy minute on the serverless endpoint silently downgrades
+    // every site in the batch to the naive picker.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const completion = await client.chat.completions.create({
+          model: RANKER_MODEL,
+          max_tokens: 1024,
+          temperature: 0.2,
+          // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+          reasoning: { enabled: false },
+          response_format: {
+            type: "json_object",
+            schema: rankerSchema as unknown as Record<string, unknown>,
+          },
+          messages: [
+            { role: "system", content: RANKER_SYSTEM },
+            { role: "user", content: userText },
+          ],
+        });
+        const text = completion.choices?.[0]?.message?.content ?? "";
+        const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "");
+        raw = JSON.parse(cleaned);
+        break;
+      } catch (err) {
+        const status = (err as { status?: number }).status ?? 0;
+        const retryable = status === 408 || status === 429 || status >= 500;
+        if (!retryable || attempt >= 4) throw err;
+        await new Promise((r) => setTimeout(r, 2000 * 2 ** (attempt - 1)));
+      }
+    }
   } catch (err) {
     console.warn(
-      `    ⚠ ranker LLM failed: ${err instanceof Error ? err.message : String(err)} — falling back`,
+      `    ⚠ ranker LLM failed: ${err instanceof Error ? err.message : String(err)}, falling back`,
     );
-    return candidates.slice(0, maxPicks).map((url) => ({
-      url,
-      pageType: naivePageType(url),
-    }));
+    return naive();
   }
 
   const candidateSet = new Set(candidates);
@@ -356,6 +410,7 @@ async function rankWithLLM(
   for (const p of raw.picks ?? []) {
     if (!candidateSet.has(p.url)) continue; // never trust URLs not in our list
     const pt = isPageType(p.pageType) ? p.pageType : naivePageType(p.url);
+    if (pt === "auth") continue; // a login card is not a page of the brand
     if (out.some((x) => x.url === p.url)) continue;
     out.push({ url: p.url, pageType: pt });
     if (out.length >= maxPicks) break;

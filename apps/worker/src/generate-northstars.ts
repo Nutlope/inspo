@@ -1,5 +1,5 @@
 /**
- * Generate a one-line "northstar" per site — an evocative 8–14 word
+ * Generate a one-line "northstar" per site, an evocative 8 to 14 word
  * description of the design's soul (mood + palette + typographic
  * character). gallery ships these ("Rounded midnight marketplace…");
  * they're charming, quotable, and give the detail page + recommend()
@@ -19,17 +19,19 @@ import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "
 import { join, resolve } from "node:path";
 import Together from "together-ai";
 
-const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+// gemma-3n-E4B-it, the old default, is no longer served on Together.
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-4-31B-it";
 const CAPTURES_DIR = resolve(process.env.INSPO_CAPTURES_DIR ?? "./captures");
 const SEED_PATH = resolve("../../packages/db/src/static-screens.json");
 
-const SYSTEM_PROMPT = `You write a single evocative "northstar" line that captures a website's design soul — its mood, palette, and typographic character — the way a sharp art director would describe it in one breath.
+const SYSTEM_PROMPT = `You write a single evocative "northstar" line that captures a website's design soul (its mood, palette, and typographic character) the way a sharp art director would describe it in one breath.
 
 Rules:
 - 8 to 14 words. One line. No trailing period needed.
 - Concrete and sensory: name the colour mood, the type personality, the spatial feel.
 - NO marketing claims, NO the words "website"/"site"/"page", NO company name, NO quotes.
-- Think: "Rounded midnight marketplace — matte black tiles on a white tablecloth." or "Sun-bleached editorial calm, serif headlines drifting over generous warm paper."
+- Never use em dashes or en dashes; use commas.
+- Think: "Rounded midnight marketplace, matte black tiles on a white tablecloth." or "Sun-bleached editorial calm, serif headlines drifting over generous warm paper."
 
 Reply with ONLY a JSON object matching the schema.`;
 
@@ -90,6 +92,9 @@ async function generate(client: Together, row: Row): Promise<string | null> {
     model: MODEL,
     max_tokens: 80,
     temperature: 0.7,
+    // Gemma 4 would otherwise spend the whole 80-token budget reasoning.
+    // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+    reasoning: { enabled: false },
     response_format: {
       type: "json_object",
       schema: SCHEMA as unknown as Record<string, unknown>,
@@ -108,7 +113,13 @@ async function generate(client: Together, row: Row): Promise<string | null> {
   const raw = completion.choices?.[0]?.message?.content ?? "{}";
   try {
     const parsed = JSON.parse(raw) as { northstar?: string };
-    const ns = (parsed.northstar ?? "").trim().replace(/^["']|["']$/g, "");
+    // House style: no em/en dashes in repo file contents. The prompt
+    // forbids them, and this catches the ones the model writes anyway.
+    const dashes = new RegExp(`\\s*[${String.fromCharCode(0x2013, 0x2014)}]\\s*`, "g");
+    const ns = (parsed.northstar ?? "")
+      .trim()
+      .replace(/^["']|["']$/g, "")
+      .replace(dashes, ", ");
     return ns.length >= 4 ? ns : null;
   } catch {
     return null;
@@ -174,11 +185,11 @@ async function main() {
   }
 
   if (!go && sample === 0) {
-    console.log("\n  (no --go and no --sample — nothing written)");
+    console.log("\n  (no --go and no --sample, nothing written)");
     return;
   }
   if (sample > 0 && !go) {
-    console.log("\n  (sample mode — NOT writing to seed; re-run with --go to persist)");
+    console.log("\n  (sample mode, NOT writing to seed; re-run with --go to persist)");
     return;
   }
   writeFileSync(SEED_PATH, JSON.stringify(rows, null, 2) + "\n");
