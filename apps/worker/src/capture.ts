@@ -149,10 +149,14 @@ export async function capture(opts: CaptureOptions): Promise<CaptureResult> {
     // per site (about 4s of CPU spread across viewports) and turns the
     // gallery's first-paint payload from megabytes to kilobytes. Skips
     // outputs that already exist, so re-captures stay cheap.
-    console.log("  encoding AVIF/WebP variants…");
+    // INSPO_SKIP_ENCODE=1 defers encoding to encode-existing.ts, which a
+    // batch runs only for the captures it keeps: a candidate pool then
+    // never spends CPU (or disk) on variants of sites that get cut.
+    const encodeNow = process.env.INSPO_SKIP_ENCODE !== "1";
+    if (encodeNow) console.log("  encoding AVIF/WebP variants…");
     let encoded = 0;
     let skipped = 0;
-    for (const asset of assets) {
+    for (const asset of encodeNow ? assets : []) {
       // `desktop-hero` is the gallery's tile + the hero plate; `tablet-
       // hero` doubles as the upload-to-blob "thumb". Encode variants
       // for both, and full-page for the detail view. Mobile variants
