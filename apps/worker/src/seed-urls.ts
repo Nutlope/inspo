@@ -1,10 +1,10 @@
 /**
- * Seed catalogue — hand-picked production websites (2024–2026) spanning
+ * Seed catalogue: hand-picked production websites (2024-2026) spanning
  * industries, design moods, and macrostructures. Editorial
  * choices, not exhaustive.
  *
  * Curation rule: the bar is "would a designer building a brief pause
- * here?" — not "is this a popular brand?". Prefer intentional design
+ * here?", not "is this a popular brand?". Prefer intentional design
  * over loud marketing.
  *
  * Run: `pnpm capture:seed --go --publish --skip-existing` after edits.
@@ -573,11 +573,6 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://www.stanford.edu", note: "Stanford." },
   { url: "https://figma.com/config", note: "Figma Config." },
   { url: "https://www.offf.barcelona", note: "OFFF Festival." },
-  { url: "https://www.awards.com", note: "awards." },
-  { url: "https://gallery.com", note: "gallery." },
-  { url: "https://gallery.com", note: "gallery." },
-  { url: "https://gallery.website", note: "gallery." },
-  { url: "https://www.gallery.com", note: "gallery." },
   { url: "https://www.commonpublishing.org", note: "Common Publishing (eh)." },
 
   /* ─────────────── Design tooling / templates / kits ─────────────── */
@@ -705,7 +700,7 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://sourcehut.org", note: "Sourcehut." },
   { url: "https://stackoverflow.com", note: "Stack Overflow." },
 
-  /* ─────────────── Niche / experimental / awards-tier ─────────────── */
+  /* ─────────────── Niche / experimental ─────────────── */
   { url: "https://aslice.com", note: "Aslice DJ split." },
   { url: "https://teenageengineering.com", note: "Teenage Engineering (dup)." },
   { url: "https://generative.fm", note: "Generative.fm." },
@@ -725,8 +720,6 @@ export const seedUrls: SeedUrl[] = [
 
   /* ─────────────── Photography / arts / illustrators ─────────────── */
   { url: "https://www.magnumphotos.com", note: "Magnum Photos." },
-  { url: "https://www.behance.net", note: "Behance." },
-  { url: "https://www.dribbble.com", note: "Dribbble." },
   { url: "https://www.flickr.com", note: "Flickr." },
   { url: "https://unsplash.com", note: "Unsplash." },
   { url: "https://stocksy.com", note: "Stocksy." },
@@ -804,7 +797,7 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://www.studio-takeuma.com", note: "Studio Takeuma." },
   { url: "https://www.studio-takt.com", note: "Studio Takt." },
 
-  /* ─────────────── Misc — shopify themes / portfolios / hidden ─────────────── */
+  /* ─────────────── Misc: shopify themes / portfolios / hidden ─────────────── */
   { url: "https://gumroad.com/blog", note: "Gumroad blog (eh)." },
   { url: "https://blog.figma.com", note: "Figma blog." },
   { url: "https://stripe.press", note: "Stripe Press main." },
@@ -827,7 +820,7 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://www.docusign.com", note: "DocuSign." },
   { url: "https://www.hellosign.com", note: "HelloSign." },
 
-  /* ─── Phase 5 top-up — under-represented categories ─── */
+  /* ─── Phase 5 top-up: under-represented categories ─── */
 
   // Designer / developer portfolios
   { url: "https://lukestewart.dev", note: "Luke Stewart." },
@@ -1015,9 +1008,6 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://wesandersonworld.com", note: "Wes Anderson world." },
 
   // Web design / awards / showcase
-  { url: "https://gallery.website", note: "gallery (dup)." },
-  { url: "https://gallery.com", note: "gallery (dup)." },
-  { url: "https://www.gallery", note: "gallery." },
   { url: "https://oneshade.com", note: "One Shade." },
   { url: "https://www.themeforest.net", note: "ThemeForest." },
   { url: "https://www.creativeapplications.net", note: "Creative Applications." },
@@ -1025,10 +1015,7 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://www.commonlounge.com", note: "Common Lounge." },
   { url: "https://lookback.com", note: "Lookback." },
   { url: "https://reactdigest.net", note: "React Digest." },
-  { url: "https://gallery.com", note: "gallery (dup)." },
-  { url: "https://gallery.com", note: "gallery." },
   { url: "https://patternpad.com", note: "Pattern Pad." },
-  { url: "https://www.dribbble.com/shots/popular", note: "Dribbble Popular." },
 
   // Misc product / SaaS / startup
   { url: "https://shopify.com", note: "Shopify." },
@@ -1092,7 +1079,7 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://yarnpkg.com", note: "Yarn." },
   { url: "https://pnpm.io", note: "pnpm." },
 
-  /* ─── Top-up to 1000 — high-confidence brand surfaces ─── */
+  /* ─── Top-up to 1000: high-confidence brand surfaces ─── */
 
   // Apple subdomains + product surfaces
   { url: "https://www.apple.com/iphone", note: "Apple iPhone." },
@@ -1199,8 +1186,6 @@ export const seedUrls: SeedUrl[] = [
   { url: "https://www.feedly.com", note: "Feedly." },
   { url: "https://www.flipboard.com", note: "Flipboard." },
   { url: "https://medium.com", note: "Medium." },
-  { url: "https://www.behance.net", note: "Behance (dup)." },
-  { url: "https://dribbble.com", note: "Dribbble (dup)." },
 
   // Specific design-forward SaaS landing pages
   { url: "https://stripe.com/atlas", note: "Stripe Atlas." },
@@ -1343,6 +1328,6 @@ export const seedUrls: SeedUrl[] = [
 
 if (seedUrls.length < 700) {
   console.warn(
-    `[seed-urls] only ${seedUrls.length} URLs — expected 700+ post-Phase-3.5. Re-check the file.`,
+    `[seed-urls] only ${seedUrls.length} URLs, expected 700+ post-Phase-3.5. Re-check the file.`,
   );
 }

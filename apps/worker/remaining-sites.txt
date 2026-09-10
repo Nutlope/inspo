@@ -1,4 +1,4 @@
-# Phase 7 continuation — every published site NOT in the 50-site pilot.
+# Phase 7 continuation: every published site NOT in the 50-site pilot.
 # Generated 2026-05-12.
 # Run: pnpm --filter @inspo/worker capture:sites remaining-sites.txt --max=7 --concurrency=3 --publish
 205-tf
@@ -76,7 +76,6 @@ audius-co
 audocph-com
 augustinusbader-com
 aws-amazon-com
-awards-com
 azure-microsoft-com
 babbel-com
 balenciaga-com
@@ -93,7 +92,6 @@ bear-app
 beatport-com
 beauxartsparis-fr
 beehiiv-com
-behance-net
 bellroy-com
 belmond-com
 benadam-me
@@ -252,7 +250,6 @@ doordash-com
 dovetail-com
 dragcity-com
 drewdevault-com
-dribbble-com
 dropbox-com
 dropout-tv
 drunkelephant-com
@@ -356,7 +353,6 @@ glossier-com
 go-dev
 goal-zero-com
 godaddy-com
-gallery-website
 gog-com
 gold-ac-uk
 google-com
@@ -471,7 +467,6 @@ kysely-dev
 lacma-org
 lacollection-io
 lamborghini-com
-gallery-com
 langchain-com
 langfuse-com
 last-fm
@@ -555,7 +550,6 @@ method-com
 metmuseum-org
 mexicansummer-com
 microsoft-com
-gallery
 minimal-so
 minimalist-com
 mirazur-fr
@@ -565,7 +559,6 @@ missiveapp-com
 mistral-ai
 mit-edu
 mixpanel-com
-gallery-com
 modal-com
 modernhealth-com
 moderntreasury-com
@@ -631,7 +624,6 @@ olsonkundig-com
 oma-com
 once-tools
 onecard-co-in
-gallery-com
 opal-so
 open-foundry-com
 opensea-io
@@ -755,7 +747,6 @@ shopify-com
 shortwave-com
 shure-com
 signal-org
-gallery-com
 sixsenses-com
 skillshare-com
 skyscanner-net

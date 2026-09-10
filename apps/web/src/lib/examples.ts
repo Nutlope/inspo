@@ -2173,7 +2173,7 @@ export const EXAMPLES: Example[] = [
       {
         tool: "recommend",
         args: "brief \"A tattoo studio with four artists: black ink, flash-sheet led, booking by artist.\", detail full",
-        took: "Split Studio pick with the split-screen hero JSX; evidence packet: 54% dark paper band, 58% grotesk-sans display, warm accents on a third of the set. Exemplars animaapp-com, furoweb-eu, gallery-it, drams-framer-website, dropout-tv--about. Took the dark band and the furoweb italic-accent move, took a position against the grotesk consensus with a serif display.",
+        took: "Split Studio pick with the split-screen hero JSX; evidence packet: 54% dark paper band, 58% grotesk-sans display, warm accents on a third of the set. Exemplars animaapp-com, furoweb-eu, drams-framer-website, dropout-tv--about. Took the dark band and the furoweb italic-accent move, took a position against the grotesk consensus with a serif display.",
       },
       {
         tool: "search_screens",
@@ -3830,7 +3830,7 @@ export const EXAMPLES: Example[] = [
       {
         tool: "search_screens",
         args: "query \"team partners profiles about page serif institutional\", pageType about, mode light, limit 5",
-        took: "harvard-edu--about, gallery-com--about, render-com--about, maggieappleton-com--about, ghost-org--about; the Harvard split and Maggie Appleton's name, role, italic subline stack shaped the partner cards.",
+        took: "harvard-edu--about, render-com--about, maggieappleton-com--about, ghost-org--about; the Harvard split and Maggie Appleton's name, role, italic subline stack shaped the partner cards.",
       },
     ],
     palette: [
