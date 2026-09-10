@@ -38,6 +38,7 @@ import {
   isVibe,
 } from "@inspo/taxonomy";
 import { cleanFontList, cleanRampFamily } from "./font-names.js";
+import { DASHES, scrub } from "./undash.js";
 
 const REPO_ROOT = join(import.meta.dirname, "..", "..", "..");
 const SEED_PATH = join(REPO_ROOT, "packages", "db", "src", "static-screens.json");
@@ -124,24 +125,6 @@ interface MetaSidecar {
 }
 
 /* ───────────── text hygiene ───────────── */
-
-/** Em and en dashes never ship in archive copy. Built from char codes so
- *  this file itself contains neither. URLs and LQIPs are left alone. */
-const DASHES = String.fromCharCode(0x2013, 0x2014);
-const DASH_BETWEEN_DIGITS = new RegExp(`(\\d)\\s*[${DASHES}]\\s*(\\d)`, "g");
-const DASH_ANYWHERE = new RegExp(`\\s*[${DASHES}]\\s*`, "g");
-const undash = (s: string) =>
-  s.replace(DASH_BETWEEN_DIGITS, "$1-$2").replace(DASH_ANYWHERE, " - ");
-function scrub<T>(v: T, key = ""): T {
-  if (typeof v === "string") return (/url$|lqip/i.test(key) ? v : undash(v)) as T;
-  if (Array.isArray(v)) return v.map((x) => scrub(x, key)) as T;
-  if (v && typeof v === "object") {
-    return Object.fromEntries(
-      Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, scrub(x, k)]),
-    ) as T;
-  }
-  return v;
-}
 
 /** cssVariables cap per row, the same one revisit-enrich applies:
  *  unbounded writes ballooned rows to 40-80KB and would blow up the seed. */
