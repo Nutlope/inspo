@@ -97,13 +97,16 @@ async function check(client: Together, slug: string): Promise<Verdict> {
   } catch {
     /* no sidecar yet */
   }
+  // No response_format: with three images, gemma-4's constrained decoding
+  // writes the three arrays and then emits whitespace until max_tokens,
+  // never closing the object. JSON by instruction, read leniently below,
+  // is faster and always ends.
   const completion = await client.chat.completions.create({
     model: MODEL,
-    max_tokens: 400,
+    max_tokens: 220,
     temperature: 0,
     // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
     reasoning: { enabled: false },
-    response_format: { type: "json_object", schema: SCHEMA as unknown as Record<string, unknown> },
     messages: [
       { role: "system", content: SYSTEM },
       {
@@ -115,16 +118,34 @@ async function check(client: Together, slug: string): Promise<Verdict> {
           { type: "image_url", image_url: { url: mobile } },
           { type: "text", text: "Image 3: the whole desktop page, scaled down." },
           { type: "image_url", image_url: { url: full } },
-          { type: "text", text: `Page: ${url || slug}\nList the visible problems per image.` },
+          {
+            type: "text",
+            text: `Page: ${url || slug}\nList the visible problems per image. Reply with ONE JSON object matching this schema and nothing else: ${JSON.stringify(SCHEMA)}`,
+          },
         ],
       },
     ],
   });
-  const text = (completion.choices?.[0]?.message?.content ?? "")
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/```$/i, "");
-  const p = JSON.parse(text) as Record<string, unknown>;
+  const raw = (completion.choices?.[0]?.message?.content ?? "").trim();
+  const text = raw.replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "");
+  let p: Record<string, unknown>;
+  try {
+    p = JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    // The issue arrays are what matter and they are simple enough to lift
+    // even when the free-text notes break the JSON (an unescaped quote).
+    const lift = (key: string): string[] | null => {
+      const m = text.match(new RegExp(`"${key}"\\s*:\\s*\\[([^\\]]*)\\]`));
+      return m ? [...m[1]!.matchAll(/"([a-z-]+)"/g)].map((x) => x[1]!) : null;
+    };
+    const desktopIssues = lift("desktop");
+    const mobileIssues = lift("mobile");
+    const fullIssues = lift("full");
+    if (!desktopIssues || !mobileIssues || !fullIssues) {
+      throw new Error(`unparseable QA reply: ${raw.slice(0, 160)}`);
+    }
+    p = { desktop: desktopIssues, mobile: mobileIssues, full: fullIssues, notes: "" };
+  }
   return {
     slug,
     desktop: keepIssues(p.desktop),
