@@ -24,7 +24,7 @@ const MAX_PHYSICAL_PX = 16000;
 
 /** Share of below-the-fold bands allowed to be flat colour before the
  *  direct full-page capture is treated as broken and scroll-stitched. */
-const BLANK_RETRY_AT = 0.45;
+const BLANK_RETRY_AT = 0.3;
 
 /**
  * Resize a page to a viewport's CSS dimensions.

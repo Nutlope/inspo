@@ -7,11 +7,11 @@
  *                       navigation so banners that gate on existing
  *                       cookies skip rendering.
  *  Layer 3 (DOM):      after page loads, answer consent notices (declining
- *                       non-essential cookies where offered), dismiss
- *                       newsletter / promo modals, then hide chat widgets
- *                       via injected CSS.
- *  Layer 4 (phantom):  detect any leftover popup or consent card and
- *                       force-hide it.
+ *                       non-essential cookies where offered), get past
+ *                       intro gates, dismiss newsletter / promo modals,
+ *                       then hide chat widgets via injected CSS.
+ *  Layer 4 (phantom):  detect any leftover popup, consent card, floating
+ *                       toast or chat bubble and force-hide it.
  *
  * Each layer is cheap; they compose. The phantom check is the last line
  * of defence: when a site uses a banner we have no selector for, geometry
@@ -94,11 +94,11 @@ const OVERLAY_SELECTORS = [
   "[role='alertdialog']",
 ];
 
-/** Newsletter / promo / region modal dismissals, plus a fallback for
- *  consent notices the consent pass could not place. A button qualifies
- *  if its full text (trim + lowercase) CONTAINS one of these. Never
- *  "preferences" / "settings" / "manage": those open deeper modals that
- *  look worse than the original banner. */
+/** Newsletter / promo / region modal dismissals, intro gates, plus a
+ *  fallback for consent notices the consent pass could not place. A
+ *  button qualifies if its full text (trim + lowercase) CONTAINS one of
+ *  these. Never "preferences" / "settings" / "manage": those open deeper
+ *  modals that look worse than the original banner. */
 const ACCEPT_TEXT_PHRASES = [
   "accept all",
   "accept cookies",
@@ -120,6 +120,14 @@ const ACCEPT_TEXT_PHRASES = [
   "continue shopping",
   "continue browsing",
   "x close",
+  // Intro gates (an Acknowledgement of Country splash, a "click to enter")
+  "continue to website",
+  "continue to the website",
+  "continue to site",
+  "enter site",
+  "enter website",
+  "enter the site",
+  "skip intro",
 ];
 
 /** Phrases that suggest a deeper-modal opener, explicitly skipped. */
@@ -187,6 +195,78 @@ const MARK_CONSENT_BUTTON = `(() => {
   return true;
 })()`;
 
+/**
+ * Small floating things the popup passes are too coarse for: a toast or
+ * card pinned over the page with its own close control ("This page is
+ * also available in English", a "Featured case" promo), and chat or
+ * WhatsApp bubbles in a bottom corner. A fixed element that small, with a
+ * close control and little text, is a dismissible notice; page content
+ * is neither fixed nor closable. A full-width bar at the very top is left
+ * alone: that is navigation or an announcement strip, part of the design.
+ */
+const HIDE_FLOATERS = `(() => {
+  const vw = innerWidth;
+  const vh = innerHeight;
+  const NOTICE = /(also available in|available in english|switch to|view (this )?(page|site) in|change (the )?language|(choose|select) (a |your )?(language|region|country|location)|newsletter|subscribe|sign up|join (our|the)|discount|promo|download (the|our) app|get the app|open in app|featured|limited time|cookie|consent)/i;
+  const CLOSE_TEXT = /^(x|×|✕|✖|close|dismiss|schließen|fermer|cerrar|chiudi|sluiten)$/i;
+  const classOf = (el) => {
+    const c = el.className;
+    return (c && typeof c === "object" && "baseVal" in c ? c.baseVal : c || "") + "";
+  };
+  const isClose = (el) => {
+    const t = (el.innerText || el.value || "").trim();
+    const meta = ((el.getAttribute("aria-label") || "") + " " + (el.getAttribute("title") || "") + " " + classOf(el)).toLowerCase();
+    return CLOSE_TEXT.test(t) || /\\b(close|dismiss)\\b/.test(meta);
+  };
+  const fixedWithin = (el, levels) => {
+    let n = el;
+    for (let i = 0; n && i <= levels; i += 1, n = n.parentElement) {
+      if (getComputedStyle(n).position === "fixed") return true;
+    }
+    return false;
+  };
+  const all = [...document.querySelectorAll("body *")].slice(0, 4000);
+  let hidden = 0;
+
+  const toasts = [];
+  for (const el of all) {
+    if (!(el instanceof HTMLElement)) continue;
+    const cs = getComputedStyle(el);
+    if (cs.display === "none" || cs.visibility === "hidden") continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 120 || r.height < 36) continue;
+    if (r.width * r.height > vw * vh * 0.2) continue;
+    if (r.top < 8 && r.height < 120 && r.width > vw * 0.8) continue;
+    const t = (el.innerText || "").trim();
+    if (t.length < 8 || t.length > 500) continue;
+    if (t.length > 200 && !NOTICE.test(t)) continue;
+    if (!fixedWithin(el, 3)) continue;
+    const controls = [...el.querySelectorAll("button, [role='button'], a, span, div, svg")].slice(0, 40);
+    if (!controls.some(isClose)) continue;
+    toasts.push(el);
+  }
+  for (const el of toasts.filter((el) => !toasts.some((o) => o !== el && o.contains(el)))) {
+    el.style.setProperty("display", "none", "important");
+    hidden += 1;
+  }
+
+  const CHAT = /(wa\\.me|api\\.whatsapp|whatsapp|m\\.me\\/|t\\.me\\/|messenger|livechat|chat-widget|chatbot|tidio|tawk|freshchat|gorgias|chaport|jivo)/;
+  for (const el of all) {
+    if (!(el instanceof HTMLElement)) continue;
+    const cs = getComputedStyle(el);
+    if (cs.position !== "fixed" || cs.display === "none") continue;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.width > 320 || r.height > 320) continue;
+    const corner = vh - r.bottom < 140 && (r.left < 140 || vw - r.right < 140);
+    if (!corner) continue;
+    if (CHAT.test((el.outerHTML || "").slice(0, 3000).toLowerCase())) {
+      el.style.setProperty("display", "none", "important");
+      hidden += 1;
+    }
+  }
+  return hidden;
+})()`;
+
 export type DismissResult = {
   consentClicked: number;
   overlaysHidden: number;
@@ -244,7 +324,8 @@ export async function dismissBanners(
     }
   }
 
-  // 3. Newsletter / promo / region modals: click a dismiss-type button.
+  // 3. Intro gates, newsletter / promo / region modals: click a
+  //    dismiss-type button.
   if (clicks) {
     try {
       const buttons = await page.$$("button, [role='button'], a, input[type='button'], input[type='submit']");
@@ -358,9 +439,9 @@ export async function dismissBanners(
       };
 
       // What a blocking popup says or contains. A fixed hero or menu
-      // rarely matches; newsletter, consent, region and login modals
-      // nearly always do.
-      const MODAL_RX = /\b(subscribe|newsletter|sign ?up|sign ?in|log ?in|e-?mail|discount|coupon|promo|cookies?|consent|privacy|accept|agree|dismiss|no,? thanks|not now|maybe later|download (the|our) app|get the app|open in app|select (your )?(country|region|language|location)|choose (your )?(country|region|language)|are you (over )?(18|21)|verify your age|age verification)\b/i;
+      // rarely matches; newsletter, consent, region, login and intro
+      // gate modals nearly always do.
+      const MODAL_RX = /\b(subscribe|newsletter|sign ?up|sign ?in|log ?in|e-?mail|discount|coupon|promo|cookies?|consent|privacy|accept|agree|dismiss|no,? thanks|not now|maybe later|download (the|our) app|get the app|open in app|select (your )?(country|region|language|location)|choose (your )?(country|region|language)|are you (over )?(18|21)|verify your age|age verification|continue to (the )?(web)?site|enter (the )?site|skip intro|acknowledg(e|es|ement) (of )?(the )?(traditional|country)|traditional (custodians|owners)|also available in)\b/i;
       const looksLikeModal = (el: HTMLElement) => {
         if (el.matches("[role='dialog'], [role='alertdialog'], [aria-modal='true']")) return true;
         if (el.querySelector("[role='dialog'], [aria-modal='true'], input[type='email'], input[type='password'], [aria-label*='close' i], [data-dismiss], [data-close]")) return true;
@@ -567,6 +648,14 @@ export async function dismissBanners(
     /* ignore */
   }
 
+  // 6. Floating toasts with a close control, and corner chat bubbles.
+  try {
+    const floaters = (await page.evaluate(HIDE_FLOATERS)) as number;
+    result.phantomsHidden = (result.phantomsHidden ?? 0) + floaters;
+  } catch {
+    /* ignore */
+  }
+
   return result;
 }
 
@@ -625,6 +714,12 @@ const BLOCKED_HOSTS = [
   "hubspot.com/conversations",
   "kustomerapp.com",
   "front.com",
+  "tidio.co",
+  "tidiochat.com",
+  "freshchat.com",
+  "gorgias.chat",
+  "jivosite.com",
+  "livechatinc.com",
   // Email-capture / promo popup systems
   "privy.com",
   "privy-static.com",
