@@ -20,6 +20,11 @@
  * design-led sites paint their heroes with fixed canvases, videos and
  * gradient layers and pin whole sections with position:sticky. Hiding
  * those blanks the very page being captured.
+ *
+ * Every pass walks the WHOLE document, last elements first. Consent
+ * notices and late popups are appended at the end of <body>; on a heavy
+ * Framer or Next page that is past the first few thousand elements, where
+ * a capped scan never looked.
  */
 
 import type { BrowserContext, Page } from "playwright";
@@ -153,9 +158,10 @@ const ACCEPT_TEXT_MATCH = (raw: string) => {
  * Finds the one button that answers a consent notice and marks it with
  * data-inspo-consent. Only buttons inside a container that is about
  * cookies or consent count, so a stray "Decline" or "OK" elsewhere on
- * the page is never touched. Preference: decline non-essential, then the
- * notice's own accept / "Okay", then its close control. Kept as a string
- * because tsx's __name helper does not exist inside the page.
+ * the page is never touched, and a link that would leave the page is
+ * never picked. Preference: decline non-essential, then the notice's own
+ * accept / "Okay", then its close control. Kept as a string because
+ * tsx's __name helper does not exist inside the page.
  */
 const MARK_CONSENT_BUTTON = `(() => {
   const NOTICE = /(cookie|consent|gdpr|ccpa|datenschutz|einwilligung|consentement|consentimiento|consenso|toestemming)/i;
@@ -225,7 +231,7 @@ const HIDE_FLOATERS = `(() => {
     }
     return false;
   };
-  const all = [...document.querySelectorAll("body *")].slice(0, 4000);
+  const all = [...document.querySelectorAll("body *")].reverse().slice(0, 20000);
   let hidden = 0;
 
   const toasts = [];
@@ -235,6 +241,7 @@ const HIDE_FLOATERS = `(() => {
     if (cs.display === "none" || cs.visibility === "hidden") continue;
     const r = el.getBoundingClientRect();
     if (r.width < 120 || r.height < 36) continue;
+    if (r.bottom <= 0 || r.top >= vh) continue;
     if (r.width * r.height > vw * vh * 0.2) continue;
     if (r.top < 8 && r.height < 120 && r.width > vw * 0.8) continue;
     const t = (el.innerText || "").trim();
@@ -267,6 +274,9 @@ const HIDE_FLOATERS = `(() => {
   return hidden;
 })()`;
 
+/** esbuild's __name(target, value) returns target, so identity will do. */
+const NAME_SHIM = "globalThis.__name = globalThis.__name || function (f) { return f; }";
+
 export type DismissResult = {
   consentClicked: number;
   overlaysHidden: number;
@@ -275,9 +285,11 @@ export type DismissResult = {
 };
 
 export type DismissOptions = {
-  /** false = only the CSS and geometry passes, no clicks. Used for the
-   *  sweep right before each viewport's screenshots: a second round of
-   *  clicking could follow a link away from the page being captured. */
+  /** false = no general clicking, used for the sweep right before each
+   *  viewport's screenshots: a second round of it could follow a link
+   *  away from the page being captured. Consent notices are still
+   *  answered, because that pass only presses buttons inside a notice
+   *  and never a link that leaves, and notices often arrive late. */
   clicks?: boolean;
 };
 
@@ -292,6 +304,13 @@ export async function dismissBanners(
     textButtonsClicked: 0,
   };
   const clicks = opts.clicks !== false;
+
+  // tsx compiles the arrow functions inside the phantom pass below with
+  // esbuild's __name helper, which the page does not have: without this
+  // the whole pass throws a ReferenceError and hides nothing. Contexts
+  // prepared by preSeedConsentCookies already carry it; this covers the
+  // rest.
+  await page.evaluate(NAME_SHIM).catch(() => {});
 
   // 1. Click known consent-manager buttons
   for (const sel of clicks ? [...CONSENT_SELECTORS, ...extraSelectors] : []) {
@@ -308,8 +327,10 @@ export async function dismissBanners(
   }
 
   // 2. Answer any consent notice by its own buttons, twice at most (some
-  //    notices open a second layer after the first answer).
-  for (let round = 0; clicks && round < 2; round += 1) {
+  //    notices open a second layer after the first answer). Runs in the
+  //    pre-shot sweep too: notices that appear after a delay or on scroll
+  //    are only present by then.
+  for (let round = 0; round < 2; round += 1) {
     try {
       const marked = (await page.evaluate(MARK_CONSENT_BUTTON)) as boolean;
       if (!marked) break;
@@ -375,10 +396,10 @@ export async function dismissBanners(
   //    (a) Geometry: a fixed element covering >15% of the viewport that
   //        reads like a popup (dialog role, email or password field, a
   //        close control, or popup vocabulary) and sits above the page.
-  //    (b) Consent: the outermost element that holds a cookie / consent
-  //        notice and its buttons, when it is fixed or inside a fixed
-  //        layer. Framer's banner lives in a full-screen, click-through
-  //        fixed wrapper, so the card itself is what gets hidden.
+  //    (b) Consent: the outermost on-screen element that holds a cookie /
+  //        consent notice and its buttons, when it is fixed or inside a
+  //        fixed layer. Framer's banner lives in a full-screen,
+  //        click-through fixed wrapper, so the card itself gets hidden.
   //    (c) Walk-up: from a visible accept/allow button to its fixed
   //        ancestor, for dialogs positioned by a fixed wrapper.
   //    (d) Dialog roles, plus popup class names when fixed and popup-like.
@@ -391,9 +412,10 @@ export async function dismissBanners(
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const minArea = vw * vh * 0.15;
-      // Phrases a consent notice uses, in the languages the archive's sites ship in.
-      // Specific enough that a bakery's "our cookies" section is left alone.
-      const CONSENT_RX = /\b(we use cookies|(this|our) (web)?site uses cookies|uses cookies|use of cookies|cookie (policy|settings|preferences|notice|consent|banner)|accept (all )?cookies|cookies? to (personali[sz]e|improve|analy[sz]e|enhance|provide|ensure|give)|consent|gdpr|ccpa|verwendet cookies|nutzt cookies|setzt cookies|datenschutz|einwilligung|utilise des cookies|consentement|utiliza cookies|consentimiento|utilizza (i )?cookie|consenso|gebruikt cookies|toestemming)\b/i;
+      // Phrases a consent notice uses, including the IAB framework's
+      // standard text, in the languages the archive's sites ship in. Specific enough
+      // that a bakery's "our cookies" section is left alone.
+      const CONSENT_RX = /\b(we use cookies|(this|our) (web)?site uses cookies|uses cookies|use of cookies|cookie (policy|settings|preferences|notice|consent|banner)|accept (all )?cookies|cookies? (to|for) [a-z]+|consent|gdpr|ccpa|store and\/or access information|unique (identifiers|ids)|legitimate interest|your privacy|privacy (choices|preferences|settings)|manage (your )?(choices|preferences|cookies)|essential only|only (necessary|essential)|we (and our partners|value your privacy|care about your privacy)|verwendet cookies|nutzt cookies|setzt cookies|wir verwenden cookies|datenschutz|einwilligung|utilise des cookies|nous utilisons des cookies|consentement|utiliza cookies|utilizamos cookies|consentimiento|utilizza(mo)? (i )?cookie|consenso|gebruikt cookies|wij gebruiken cookies|toestemming)\b/i;
 
       const zOf = (el: HTMLElement) => {
         const z = parseInt(window.getComputedStyle(el).zIndex, 10);
@@ -415,6 +437,8 @@ export async function dismissBanners(
         }
         return false;
       };
+      const onScreen = (r: DOMRect) =>
+        r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
 
       const isLikelyTopNav = (r: DOMRect) =>
         r.top < 8 && r.height < 120;
@@ -450,10 +474,9 @@ export async function dismissBanners(
       };
 
       let hidden = 0;
-      const candidates = Array.from(document.querySelectorAll("*")).slice(
-        0,
-        3000,
-      );
+      // The whole document, last elements first: overlays are appended
+      // late, so a capped scan from the top misses exactly those.
+      const all = Array.from(document.querySelectorAll("body *")).reverse().slice(0, 20000);
 
       const seen = new WeakSet<HTMLElement>();
       const tryHide = (el: HTMLElement) => {
@@ -467,7 +490,7 @@ export async function dismissBanners(
       };
 
       // Pass A: big fixed popups.
-      for (const el of candidates) {
+      for (const el of all) {
         if (!(el instanceof HTMLElement)) continue;
         if (!isFixed(el)) continue;
         const r = el.getBoundingClientRect();
@@ -484,18 +507,21 @@ export async function dismissBanners(
         }
       }
 
-      // Pass B: consent notices, fixed or inside a fixed layer. Hide the
-      // outermost element that holds both the notice and its buttons but
-      // is smaller than a whole-screen wrapper.
+      // Pass B: consent notices on screen, fixed or inside a fixed layer.
+      // Hide the outermost element that holds both the notice and its
+      // buttons but is smaller than a whole-screen wrapper. On-screen only:
+      // on a smooth-scroll site the whole page sits in a fixed layer, and a
+      // footer's "Cookie settings" link lies far below the fold.
       {
         const notices: HTMLElement[] = [];
-        for (const el of candidates) {
+        for (const el of all) {
           if (!(el instanceof HTMLElement) || seen.has(el)) continue;
           const t = (el.innerText ?? "").trim();
           if (t.length < 12 || t.length > 3000 || !CONSENT_RX.test(t)) continue;
-          if (!el.querySelector("button, [role='button'], a, input[type='checkbox']")) continue;
+          // Framer's own banner answers with <input type="button" value="Okay">.
+          if (!el.querySelector("button, [role='button'], a, input[type='checkbox'], input[type='button'], input[type='submit']")) continue;
           const r = el.getBoundingClientRect();
-          if (r.width === 0 || r.height === 0) continue;
+          if (r.width === 0 || r.height === 0 || !onScreen(r)) continue;
           if (r.width * r.height > vw * vh * 0.6) continue;
           if (!fixedWithin(el, 6)) continue;
           notices.push(el);
@@ -516,7 +542,7 @@ export async function dismissBanners(
         const ACCEPT_BUTTON_RX = /\b(accept all|allow all|allow cookies|accept cookies|do not allow|reject all|essential only|alle akzeptieren|tout accepter|aceptar todo|accetta tutti)\b/i;
         const buttons = Array.from(
           document.querySelectorAll("button, [role='button'], a"),
-        ).slice(0, 300);
+        ).reverse().slice(0, 800);
         for (const b of buttons) {
           if (!(b instanceof HTMLElement)) continue;
           const txt = (b.textContent ?? "").trim();
@@ -578,7 +604,7 @@ export async function dismissBanners(
       // Hide it AND the dialog inside it.
       if (hidden < 10) {
         const wideArea = vw * vh * 0.7;
-        for (const el of Array.from(document.querySelectorAll("body *")).slice(0, 1200)) {
+        for (const el of all) {
           if (!(el instanceof HTMLElement)) continue;
           const cs = window.getComputedStyle(el);
           if (cs.position !== "fixed") continue;
@@ -617,7 +643,7 @@ export async function dismissBanners(
       // the bottom (or top) edge, or a corner, whose text is about
       // cookies or consent, regardless of size.
       const TEXTUAL_CONSENT_RX = /\b(cookies?|consent|gdpr|ccpa|we use|we and our partners)\b/i;
-      for (const el of Array.from(document.querySelectorAll("*")).slice(0, 3000)) {
+      for (const el of all) {
         if (!(el instanceof HTMLElement)) continue;
         if (seen.has(el)) continue;
         const cs = window.getComputedStyle(el);
@@ -630,7 +656,7 @@ export async function dismissBanners(
         const pinnedTopBar = r.top < 24 && r.height < 200 && r.width > vw * 0.6;
         const pinnedCorner =
           r.width < vw * 0.6 && r.height < vh * 0.6 &&
-          (vh - r.bottom < 60 || r.top < 60);
+          (vh - r.bottom < 120 || r.top < 60);
         if (!pinnedBottom && !pinnedTopBar && !pinnedCorner) continue;
         const text = (el.textContent ?? "").trim().slice(0, 3000);
         if (text.length < 6 || text.length > 3000) continue;
@@ -644,16 +670,18 @@ export async function dismissBanners(
       return hidden;
     });
     result.phantomsHidden = hiddenCount;
-  } catch {
-    /* ignore */
+  } catch (err) {
+    // A throw here silently disables every geometry and consent pass, so
+    // say so (a closed page during navigation is the only expected case).
+    console.warn(`   ⚠ phantom passes failed: ${err instanceof Error ? err.message.split("\n")[0] : String(err)}`);
   }
 
   // 6. Floating toasts with a close control, and corner chat bubbles.
   try {
     const floaters = (await page.evaluate(HIDE_FLOATERS)) as number;
     result.phantomsHidden = (result.phantomsHidden ?? 0) + floaters;
-  } catch {
-    /* ignore */
+  } catch (err) {
+    console.warn(`   ⚠ floater pass failed: ${err instanceof Error ? err.message.split("\n")[0] : String(err)}`);
   }
 
   return result;
@@ -785,6 +813,17 @@ export async function preSeedConsentCookies(
   ctx: BrowserContext,
   url: string,
 ): Promise<void> {
+  // Before any page script runs: Framer's built-in banner keeps its
+  // answer in localStorage and never renders once the key is there (it
+  // otherwise shows, vanishes on hydration and comes back after the
+  // pre-shot sweep), plus the __name helper tsx-compiled evaluate
+  // callbacks reference.
+  await ctx
+    .addInitScript({
+      content: `try { localStorage.setItem("framerCookiesDismissed", "true"); } catch (e) {} ${NAME_SHIM};`,
+    })
+    .catch(() => {});
+
   let host: string;
   try {
     host = new URL(url).hostname;

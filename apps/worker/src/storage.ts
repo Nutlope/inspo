@@ -3,11 +3,13 @@
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import type { Shot } from "./screenshot";
 import type { CapturedAsset } from "./types";
 
-const ROOT = join(process.cwd(), "captures");
+// The same root every disk script reads, so a capture run pointed at a
+// scratch dir (a smoke test) never drops its PNGs into the real one.
+const ROOT = resolve(process.env.INSPO_CAPTURES_DIR ?? join(process.cwd(), "captures"));
 
 export async function saveLocal(slug: string, shot: Shot): Promise<CapturedAsset> {
   const dir = join(ROOT, slug);
