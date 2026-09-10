@@ -32,10 +32,11 @@ import {
 import { join, resolve } from "node:path";
 import Together from "together-ai";
 
-// Kimi K2.6: natively multimodal, the strongest open-weights design
-// model, and (not incidentally) the only strong VLM serverless on our
-// Together account. The autopsies that teach OSS models to see are
-// themselves written by the best OSS design model.
+// Kimi K2.6: natively multimodal and the strongest open-weights design
+// model, so the autopsies that teach OSS models to see are written by the
+// best OSS design model. It runs as a dedicated deployment on our Together
+// account; while that is stopped, INSPO_AUTOPSY_MODEL=google/gemma-4-31B-it
+// (serverless) is the fallback.
 const MODEL = process.env.INSPO_AUTOPSY_MODEL ?? "moonshotai/Kimi-K2.6";
 const CAPTURES_DIR = resolve(process.env.INSPO_CAPTURES_DIR ?? "./captures");
 const SEED_PATH = resolve("../../packages/db/src/static-screens.json");
@@ -154,10 +155,12 @@ async function generate(client: Together, row: Row): Promise<string | null> {
         model: MODEL,
         max_tokens: 420,
         temperature: 0.4,
-        // Together serves K2.6 in thinking mode by default; reasoning
-        // would eat the whole completion budget before any content.
-        // Pass-through param (not in the SDK's types yet).
+        // Together serves K2.6 in thinking mode by default, and gemma-4
+        // reasons unless told not to; either would eat the whole
+        // completion budget before any content. Pass-through params (not
+        // in the SDK's types yet).
         ...({ chat_template_kwargs: { thinking: false } } as Record<string, unknown>),
+        ...(/gemma/i.test(MODEL) ? ({ reasoning: { enabled: false } } as Record<string, unknown>) : {}),
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           {
@@ -177,7 +180,7 @@ async function generate(client: Together, row: Row): Promise<string | null> {
         // some models wrap output in a fence or add a preamble line
         .replace(/^```[a-z]*\n?|```$/g, "")
         // house style: no em/en dashes anywhere in repo file contents
-        .replace(/\s*[—–]\s*/g, " - ")
+        .replace(/\s*[\u2013\u2014]\s*/g, " - ")
         .trim();
       const start = raw.indexOf("FOLD:");
       const text = start > 0 ? raw.slice(start).trim() : raw;
