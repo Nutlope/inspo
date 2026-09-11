@@ -12,11 +12,10 @@ import { getAllSites, getArchiveStats } from "@inspo/db";
 const GRID_LIMIT = 24;
 
 export default async function HomePage() {
-  // One tile per site, not per captured screen. The
-  // "featured" sort front-loads the most visually striking work
-  // (award-winning captures + bold macrostructures/styles + vision
-  // quality scores) - the landing grid is a highlight reel, not a
-  // changelog.
+  // One tile per site, not per captured screen. The "featured" sort
+  // opens with the 24 tiles picked by hand (FRONT_PAGE in
+  // packages/db/src/queries.ts), so this grid is exactly that set: a
+  // highlight reel, not a changelog.
   const [allSites, stats] = await Promise.all([
     getAllSites({}, "featured"),
     getArchiveStats(),

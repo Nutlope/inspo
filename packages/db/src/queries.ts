@@ -249,41 +249,59 @@ const FRONT_PAGE_DEMOTED = new Set<string>([
 ]);
 
 /**
- * Placed on the front page by hand.
+ * The home grid, placed by hand.
  *
- * The 2026-09 additions are mostly studio, portfolio and product sites
- * led by type and image. The score reads them as thinner pages than the
- * SaaS landings it was tuned on (fewer tagged sections, shorter
- * descriptions), so even the strongest sat 150 to 800 places down the
- * featured order. These six were chosen by looking at the tiles.
+ * The score measures what a page is made of (shape, sections, copy, the
+ * vision quality score), not how the tile reads at a glance, and its own
+ * top 24 leaned on photo heroes and dense pages. So the 24 tiles the
+ * home page shows were chosen by looking at them: product landing pages
+ * and a few studios, led by type and interface rather than photography.
+ * The first twelve are all 2026-09 additions; the second twelve mix more
+ * of them with long-standing favourites.
  *
- * Each goes to a fixed zero-based slot, spread so no two sit side by
- * side or directly above one another on a three or four column grid.
- * Everything else keeps its order around them, and a pick that a filter
- * removed is skipped.
+ * The order also spaces the six dark tiles so no two share an edge on a
+ * three, four or five column grid. Everything else follows in featured
+ * order, and a pick that a filter removed is skipped.
  */
-const FRONT_PAGE_PICKS: ReadonlyArray<readonly [slot: number, siteSlug: string]> = [
-  [1, "aspensearch-com"],
-  [7, "overmindlab-ai"],
-  [9, "northmail-app"],
-  [14, "agentcard-sh"],
-  [16, "stateofaidesign-com"],
-  [23, "sanity-io"],
+const FRONT_PAGE: ReadonlyArray<string> = [
+  "northmail-app",
+  "goclockout-app",
+  "overmindlab-ai",
+  "tracebit-com",
+  "sanity-io",
+  "shelby-xyz",
+  "supaste-com",
+  "aspensearch-com",
+  "glyphsapp-com",
+  "craft-wild-as",
+  "daybridge-com",
+  "mckp-live",
+
+  "vercel-com",
+  "linear-app",
+  "tokens-studio",
+  "synthesis-partners",
+  "aave-com",
+  "hex-tech",
+  "bevel-health",
+  "workos-com",
+  "raycast-com",
+  "ghost-org",
+  "nopan-com",
+  "alma-food",
 ];
 
-function placeFrontPagePicks(list: ScreenSummary[]): ScreenSummary[] {
-  const picks: Array<readonly [number, ScreenSummary]> = [];
-  for (const [slot, siteSlug] of FRONT_PAGE_PICKS) {
+function placeFrontPage(list: ScreenSummary[]): ScreenSummary[] {
+  const head: ScreenSummary[] = [];
+  for (const siteSlug of FRONT_PAGE) {
     const row = list.find(
       (r) => r.siteSlug === siteSlug && (r.pageType ?? "landing") === "landing",
     );
-    if (row) picks.push([slot, row]);
+    if (row) head.push(row);
   }
-  if (picks.length === 0) return list;
-  const placed = new Set(picks.map(([, row]) => row));
-  const rest = list.filter((r) => !placed.has(r));
-  for (const [slot, row] of picks) rest.splice(Math.min(slot, rest.length), 0, row);
-  return rest;
+  if (head.length === 0) return list;
+  const placed = new Set(head);
+  return [...head, ...list.filter((r) => !placed.has(r))];
 }
 
 /**
@@ -333,7 +351,7 @@ function featuredOrder(list: ScreenSummary[]): ScreenSummary[] {
   // Anything still held (a macrostructure with very few peers) tails on
   // in score order rather than being lost, and the hand-demoted rows
   // tail that - present, just never on the front page.
-  return placeFrontPagePicks([...out, ...held, ...demoted]);
+  return placeFrontPage([...out, ...held, ...demoted]);
 }
 
 function variedOrder(list: ScreenSummary[]): ScreenSummary[] {
