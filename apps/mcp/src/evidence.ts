@@ -95,8 +95,8 @@ function spreadOf<T extends string>(values: (T | undefined)[]): AxisSpread<T> {
  *
  * `rows` should be the ranked pool for the brief, not the whole
  * archive: the question being answered is "what does THIS genre look
- * like", and a distribution over all 784 sites answers a different and
- * far less useful question.
+ * like", and a distribution over every site in the archive answers a
+ * different and far less useful question.
  */
 export function buildEvidence(
   rows: ScreenSummary[],

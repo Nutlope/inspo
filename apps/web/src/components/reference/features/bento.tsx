@@ -34,7 +34,7 @@ export function FeaturesBento() {
         <article className="border rule p-6">
           <p className="text-meta">Patterns</p>
           <p className="font-display mt-3 text-4xl leading-none tracking-tight">
-            21
+            19
           </p>
           <p className="mt-3 text-sm text-[var(--color-fg-muted)]">
             named macrostructures, each one a complete page-shape.
@@ -45,7 +45,7 @@ export function FeaturesBento() {
         <article className="border rule p-6">
           <p className="text-meta">Sites filed</p>
           <p className="font-display mt-3 text-4xl leading-none tracking-tight">
-            784
+            832
           </p>
           <p className="mt-3 text-sm text-[var(--color-fg-muted)]">
             published rows, palettes extracted, queryable from MCP.

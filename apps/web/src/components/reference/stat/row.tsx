@@ -13,9 +13,9 @@
  * tag count, etc.) - never invented to inflate proof.
  */
 const STATS = [
-  { value: "784", label: "Sites filed" },
-  { value: "21", label: "Macrostructures" },
-  { value: "9", label: "Component types" },
+  { value: "832", label: "Sites filed" },
+  { value: "19", label: "Macrostructures" },
+  { value: "10", label: "Component types" },
   { value: "MIT", label: "Licence" },
 ];
 

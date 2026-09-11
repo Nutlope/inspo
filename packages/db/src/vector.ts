@@ -110,8 +110,8 @@ export function loadSidecar(): Map<string, Float32Array> | null {
 }
 
 /* Per-ROW sidecar (embeddings-rows.*): one vector per screen slug
- * (2,550) instead of one per site (870). Powers find_similar's cosine
- * ranking; the per-site sidecar keeps powering search_screens. */
+ * instead of one per site. Powers find_similar's cosine ranking; the
+ * per-site sidecar keeps powering search_screens. */
 
 let _rowSidecar: Map<string, Float32Array> | null = null;
 

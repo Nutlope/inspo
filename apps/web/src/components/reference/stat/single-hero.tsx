@@ -24,7 +24,7 @@ export function StatSingleHero() {
             fontVariantNumeric: "tabular-nums",
           }}
         >
-          784
+          832
         </p>
         <p className="font-display mx-auto mt-10 max-w-[28ch] text-balance text-2xl leading-tight sm:text-3xl">
           Real production sites, indexed for designers and the agents

@@ -15,7 +15,7 @@ import Link from "next/link";
  * where the footer needs to navigate, not narrate.
  */
 const SECTIONS = [
-  { num: "01", label: "The archive", href: "/screens", note: "1,000 captures" },
+  { num: "01", label: "The archive", href: "/screens", note: "2,320 captures" },
   { num: "02", label: "Components", href: "/components", note: "Patterns, sliced" },
   { num: "03", label: "Collections", href: "/collections", note: "Editor's issues" },
   { num: "04", label: "MCP server", href: "/mcp", note: "For Claude Code, Cursor, …" },

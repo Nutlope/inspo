@@ -12,7 +12,7 @@
 
 const STATS = [
   {
-    value: "784",
+    value: "832",
     label: "Sites filed",
     foot: "¹ Published rows in screens where status = 'published'",
   },
@@ -22,7 +22,7 @@ const STATS = [
     foot: "² At /components, all Stamped, every type populated",
   },
   {
-    value: "2.9",
+    value: "2.8",
     label: "Avg pages per site",
     foot: "³ Mean across catalogue, sub-pages incl. pricing + auth",
   },

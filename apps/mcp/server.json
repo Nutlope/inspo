@@ -6,13 +6,13 @@
     "url": "https://github.com/Nutlope/inspo",
     "source": "github"
   },
-  "version": "0.1.13",
+  "version": "0.1.14",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "inspo-mcp",
-      "version": "0.1.13",
+      "version": "0.1.14",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {

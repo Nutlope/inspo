@@ -1,7 +1,7 @@
 /**
  * Build the per-ROW embedding sidecar powering find_similar's cosine
- * ranking: one 1024-d text vector per screen (2,550), unlike the
- * per-site sidecar (870) that powers search_screens.
+ * ranking: one 1024-d text vector per captured page, unlike the
+ * per-site sidecar that powers search_screens.
  *
  * Text per row: title, pageType, northstar, autopsy, tags, colorWords,
  * fonts, description - the same corpus the archive's language already

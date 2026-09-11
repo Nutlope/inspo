@@ -28,8 +28,8 @@ import {
   type Macrostructure,
 } from "@inspo/taxonomy";
 
-// Runtime-rendered with on-demand cache; pre-rendering 3,800 pages at
-// build is wasteful and slow. The detail-page row size is small enough
+// Runtime-rendered with on-demand cache; pre-rendering every screen page
+// at build is wasteful and slow. The detail-page row size is small enough
 // that an SSR/render-on-demand pass is fast (~200ms).
 export const dynamic = "force-dynamic";
 

@@ -15,8 +15,9 @@
  *   pnpm tsx src/delete-sites.ts --from-file=captures/_reports/removals.txt --apply
  *
  * Selections survive a refresh (localStorage) and a restart (the file is
- * read back on boot), so a 870-site pass can be done over several
- * sittings. Nothing here mutates the catalogue; it only writes the list.
+ * read back on boot), so a pass over the whole archive can be spread
+ * over several sittings. Nothing here mutates the catalogue; it only
+ * writes the list.
  */
 
 import { createServer } from "node:http";
@@ -266,10 +267,11 @@ const dom = (u) => u.replace(/^https?:\\/\\//, "").replace(/^www\\./, "").replac
 const BAD = (s) => s !== "ok" && s !== "unchecked";
 
 // Thumbnails load through our own queue rather than loading="lazy" or an
-// IntersectionObserver: with 870 images both of those can silently never
-// fire (neither one runs while a tab is hidden), which left every card
-// blank. Measuring rects on demand always works, and the in-flight cap
-// keeps a full-catalogue scroll from opening 870 sockets at once.
+// IntersectionObserver: with the whole archive on one page both of those
+// can silently never fire (neither one runs while a tab is hidden), which
+// left every card blank. Measuring rects on demand always works, and the
+// in-flight cap keeps a full-catalogue scroll from opening hundreds of
+// sockets at once.
 const pending = [];
 let inflight = 0;
 const MAX_INFLIGHT = 20;

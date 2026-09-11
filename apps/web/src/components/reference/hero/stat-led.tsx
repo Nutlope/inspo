@@ -27,7 +27,7 @@ export function HeroStatLed() {
               fontVariantNumeric: "tabular-nums",
             }}
           >
-            784
+            832
           </p>
         </div>
 

@@ -13,11 +13,11 @@
  * invented stats.
  */
 const STATS = [
-  { value: "784", label: "Sites filed", note: "Curated and published, May 2026" },
-  { value: "21", label: "Macrostructures", note: "Named page shapes" },
+  { value: "832", label: "Sites filed", note: "Curated and published since May 2026" },
+  { value: "19", label: "Macrostructures", note: "Named page shapes" },
   { value: "68", label: "References", note: "Reference components, every type populated" },
   { value: "2", label: "Viewports", note: "Desktop and mobile captured per site" },
-  { value: "2.9", label: "Avg pages/site", note: "Mean pages captured per site" },
+  { value: "2.8", label: "Avg pages/site", note: "Mean pages captured per site" },
   { value: "MIT", label: "Licence", note: "Free, open, owned by Together AI" },
 ];
 
