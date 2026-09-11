@@ -1,8 +1,7 @@
 /**
  * Strict modal-only audit. Walks the current catalogue's newest
- * desktop-hero per slug and asks a LARGE vision model (Qwen2.5-VL-72B
- * by default — far more reliable than the Gemma-3n edge model the
- * original audit used) a single, tightly-scoped question:
+ * desktop-hero per slug and asks a vision model (gemma-4-31B-it by
+ * default) a single, tightly-scoped question:
  *
  *   "Is a modal / popup / dialog card overlaying and obscuring the
  *    main page content?"
@@ -36,15 +35,14 @@ import {
 import { join, resolve } from "node:path";
 import Together from "together-ai";
 
-// Larger VL models (Qwen2.5-VL-72B, Llama-4, gemma-3-27b) all require
-// dedicated Together endpoints — not serverless on this account. So we
-// use the same gemma-3n-E4B as the original audit, but the difference
-// here is the PROMPT: one tightly-scoped modal question instead of a
-// 10-item kitchen-sink checklist. That alone cuts the false-positive
-// rate dramatically (verified on known cases). The flagged set is
-// then eyeballed before anything is deleted.
+// gemma-4-31B-it is the serverless vision model on this account; the
+// gemma-3n edge model the original audit used is no longer served.
+// What makes this pass precise is the PROMPT: one tightly-scoped modal
+// question instead of a 10-item kitchen-sink checklist. That alone
+// cuts the false-positive rate dramatically (verified on known cases).
+// The flagged set is then eyeballed before anything is deleted.
 const MODEL =
-  process.env.INSPO_MODAL_MODEL ?? "google/gemma-3n-E4B-it";
+  process.env.INSPO_MODAL_MODEL ?? "google/gemma-4-31B-it";
 const CAPTURES_DIR = resolve(process.env.INSPO_CAPTURES_DIR ?? "./captures");
 const SEED_PATH = resolve("../../packages/db/src/static-screens.json");
 
@@ -54,7 +52,7 @@ Answer ONE question: is there a MODAL, POPUP, or DIALOG card overlaying
 and obscuring the page content?
 
 Reply hasModal=true ONLY when a distinct card/box floats ON TOP of the
-page — typically with a dim/blurred backdrop behind it, often with a
+page - typically with a dim/blurred backdrop behind it, often with a
 close (×) button. Examples that ARE modals:
   - Newsletter / email signup popups ("Subscribe", "Get our emails")
   - Cookie/consent shown as a centered dialog WITH a backdrop
@@ -71,7 +69,7 @@ Reply hasModal=false for ALL of these:
   - Banner strips that don't float over content
   - Genuinely minimal page designs
 
-When unsure, lean false — we only want true blocking overlays.
+When unsure, lean false - we only want true blocking overlays.
 
 Reply with ONLY a JSON object matching the schema.`;
 
@@ -96,7 +94,7 @@ function seedSlugs(): Set<string> {
     slug: string;
     siteSlug: string;
   }[];
-  // Audit one hero per SITE — sub-pages share the parent's modal state.
+  // Audit one hero per SITE - sub-pages share the parent's modal state.
   const sites = new Set<string>();
   for (const r of rows) if (r.slug === r.siteSlug) sites.add(r.siteSlug);
   return sites;
@@ -131,6 +129,8 @@ async function inspect(client: Together, png: Buffer): Promise<Verdict> {
   const completion = await client.chat.completions.create({
     model: MODEL,
     max_tokens: 200,
+    // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+    reasoning: { enabled: false },
     temperature: 0,
     response_format: {
       type: "json_object",

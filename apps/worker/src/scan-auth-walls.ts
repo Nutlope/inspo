@@ -55,7 +55,7 @@ type Verdict = {
 
 const SEED = resolve(import.meta.dirname, "../../../packages/db/src/static-screens.json");
 const OUT = resolve(import.meta.dirname, "auth-scan.json");
-const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-4-31B-it";
 const CONCURRENCY = 8;
 
 const argv = process.argv.slice(2);
@@ -122,6 +122,8 @@ async function scanOne(r: Row): Promise<Verdict> {
     const c = await client.chat.completions.create({
       model: MODEL,
       max_tokens: 160,
+      // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+      reasoning: { enabled: false },
       temperature: 0,
       response_format: {
         type: "json_object",

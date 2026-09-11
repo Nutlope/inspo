@@ -1,5 +1,5 @@
 /**
- * Audit pass — sends every published row's hero PNG to Together Gemma
+ * Audit pass - sends every published row's hero PNG to Together Gemma
  * vision and asks: "is there a cookie banner / chat widget / loading
  * splash visible?". Positives get auto-flagged status='rejected' with a
  * curator note so they drop out of /screens until reviewed.
@@ -20,7 +20,7 @@ import Together from "together-ai";
 import { hasDatabase, getDb, schema } from "@inspo/db";
 import { eq } from "drizzle-orm";
 
-const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-4-31B-it";
 const CAPTURES_DIR = resolve(
   process.env.INSPO_CAPTURES_DIR ?? "./captures",
 );
@@ -35,7 +35,7 @@ const SYSTEM_PROMPT = `You inspect website screenshots.
 Reply true if ANY of these are visible anywhere in the screenshot. Flag
 every single one:
 
-  1. Cookie / privacy / GDPR / CCPA consent UI — ANY size, ANY position.
+  1. Cookie / privacy / GDPR / CCPA consent UI - ANY size, ANY position.
      This includes tiny footer strips, bottom-corner cards, top banners,
      and full modals. If it says anything about cookies / consent /
      "we use", flag it.
@@ -44,7 +44,7 @@ every single one:
   4. Region / country / currency / language selector overlay
   5. Age gate ("Are you 21+?", "Confirm your age")
   6. Trial / signup / login full-screen splash forcing action before content
-  7. Open chat widget (NOT the small closed bubble — an open conversation)
+  7. Open chat widget (NOT the small closed bubble - an open conversation)
   8. Loading state or empty white page (content hasn't rendered)
   9. Ad / interstitial / paywall overlay
   10. Any centered modal dialog box with a backdrop dimming the page
@@ -52,10 +52,10 @@ every single one:
 These are FALSE (not flagged):
   - A closed chat BUBBLE in a corner (just the icon, no open conversation)
   - A site that's genuinely minimal in its design language
-  - Sticky nav at the top — that's just navigation, no cookie language
+  - Sticky nav at the top - that's just navigation, no cookie language
 
 Cookie UI is ALWAYS flagged, no matter how small or unobtrusive. We are
-re-capturing these screens to get clean versions. Be strict — when in
+re-capturing these screens to get clean versions. Be strict - when in
 doubt about whether something is a cookie/consent/popup element, FLAG IT.
 
 Reply with ONLY a JSON object matching the schema.`;
@@ -83,6 +83,8 @@ async function inspect(client: Together, png: Buffer): Promise<AuditVerdict> {
   const completion = await client.chat.completions.create({
     model: MODEL,
     max_tokens: 200,
+    // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+    reasoning: { enabled: false },
     temperature: 0,
     response_format: {
       type: "json_object",
@@ -126,11 +128,11 @@ async function main() {
   );
 
   if (!hasDatabase()) {
-    console.error("DATABASE_URL not set — audit needs the live row list.");
+    console.error("DATABASE_URL not set - audit needs the live row list.");
     process.exit(1);
   }
   if (!process.env.TOGETHER_API_KEY) {
-    console.error("TOGETHER_API_KEY not set — audit needs Together vision.");
+    console.error("TOGETHER_API_KEY not set - audit needs Together vision.");
     process.exit(1);
   }
   const client = new Together({
@@ -165,7 +167,7 @@ async function main() {
         const heroPath = await findHero(row.slug);
         if (!heroPath) {
           missingHero += 1;
-          console.log(`${tag} · ${row.slug.padEnd(28)} · no hero on disk — skip`);
+          console.log(`${tag} · ${row.slug.padEnd(28)} · no hero on disk - skip`);
           continue;
         }
         const png = readFileSync(heroPath);

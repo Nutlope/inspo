@@ -5,7 +5,7 @@
  * positives) because the model invents "centered modal dialogs"
  * everywhere. By cropping JUST the bottom 240px of the hero PNG
  * and asking a tight yes/no question, we get accurate signal on
- * the specific issue the user cares about — cookie/consent strips
+ * the specific issue the user cares about - cookie/consent strips
  * pinned to the bottom of older captures.
  *
  *   pnpm capture:audit-cookie-strips                  dry-run
@@ -24,11 +24,11 @@ import Together from "together-ai";
 import { hasDatabase, getDb, schema } from "@inspo/db";
 import { eq, sql, and } from "drizzle-orm";
 
-const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-4-31B-it";
 const CAPTURES_DIR = resolve(
   process.env.INSPO_CAPTURES_DIR ?? "./captures",
 );
-const STRIP_HEIGHT = 240; // bottom 240px — where cookie footers live
+const STRIP_HEIGHT = 240; // bottom 240px - where cookie footers live
 
 const SYSTEM_PROMPT = `You inspect a thin horizontal strip cut from the BOTTOM of a website screenshot.
 
@@ -84,6 +84,8 @@ async function inspect(client: Together, png: Buffer): Promise<Verdict> {
   const completion = await client.chat.completions.create({
     model: MODEL,
     max_tokens: 150,
+    // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+    reasoning: { enabled: false },
     temperature: 0,
     response_format: {
       type: "json_object",
@@ -142,7 +144,7 @@ async function main() {
   });
   const db = getDb();
 
-  // Only homepages — slug == site_slug. Skip pilot child captures (they
+  // Only homepages - slug == site_slug. Skip pilot child captures (they
   // were recaptured with the new dismiss.ts earlier).
   const baseRows = await db
     .select({ slug: schema.screens.slug, title: schema.screens.title })

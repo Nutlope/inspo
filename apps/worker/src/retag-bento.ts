@@ -1,12 +1,12 @@
 /**
  * Re-tag every site currently labelled `bento-grid` with a stricter
- * "verify the label" prompt — the Tier 1.1 enrichment knocked bento
+ * "verify the label" prompt - the Tier 1.1 enrichment knocked bento
  * dominance from 63% → 33%, but 33% (1,274 sites) is still over the
  * realistic floor. The first pass anchored on first-position bias;
  * this pass is calibration.
  *
  * Strategy: keep the rubric from tag.ts, but front-load an explicit
- * "this was previously labelled bento-grid — only keep that label if
+ * "this was previously labelled bento-grid - only keep that label if
  * the page genuinely has 4+ small modular tiles in an irregular
  * grid. Otherwise pick the most accurate alternative." Use a fresh
  * Together call per site.
@@ -18,7 +18,7 @@
  *
  * Updates static-screens.json in place and propagates the new macro
  * to all child rows for each site (children inherit, just like in
- * enrich-archive.ts). Embeddings are NOT regenerated — the
+ * enrich-archive.ts). Embeddings are NOT regenerated - the
  * description and tags don't change enough to warrant a re-embed.
  */
 
@@ -40,7 +40,7 @@ const CAPTURES_DIR = resolve(
   process.env.INSPO_CAPTURES_DIR ?? join(process.cwd(), "captures"),
 );
 const SEED = resolve("../../packages/db/src/static-screens.json");
-const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-3n-E4B-it";
+const MODEL = process.env.INSPO_VISION_MODEL ?? "google/gemma-4-31B-it";
 
 type Row = {
   slug: string;
@@ -64,12 +64,12 @@ const MACRO_DEFS: Record<(typeof MACROSTRUCTURES)[number], string> = {
   "letter": "First-person opening (\"Dear …\"), intimate prose. No buttons in fold.",
   "index-first": "Page IS a list of links. No hero image.",
   "narrative-workflow": "Numbered stages 1.0 → 2.0 → 3.0. Process timeline.",
-  "split-studio": "Diptych — text one side, proof the other, alternating.",
+  "split-studio": "Diptych - text one side, proof the other, alternating.",
   "feature-stack": "Sticky left pane + scroll-synced right pane of cycling screenshots.",
   "type-specimen": "The TYPEFACE is the design. Foundry/specimen page.",
   "portfolio-grid": "Filterable cards of projects.",
   "map-diagram": "A single large spatial diagram organises the page.",
-  "ecosystem-index": "Multiple discovery surfaces — featured / latest / by category.",
+  "ecosystem-index": "Multiple discovery surfaces - featured / latest / by category.",
   "component-playground": "Interactive code + preview blocks as primary content.",
 };
 
@@ -98,8 +98,8 @@ const SYSTEM = [
   "You inspect website screenshots and verify a macrostructure label.",
   "A previous pass tagged this page as macrostructure='bento-grid'. The bento-grid label was over-applied; verify it is genuinely correct.",
   "",
-  "DEFINITION OF BENTO GRID (strict): the page MUST have 4+ small modular tiles arranged in an IRREGULAR grid (varied tile sizes — some span 2 columns, some 1, etc.). Visual rhythm comes from size variation.",
-  "If the page has ONLY ONE of: a single hero image, a single code window, a single long column, a sticky-pane scroll, a wordmark + paragraph, a numbered list, an alternating two-column rhythm, a giant number, a typographic specimen — it is NOT bento-grid.",
+  "DEFINITION OF BENTO GRID (strict): the page MUST have 4+ small modular tiles arranged in an IRREGULAR grid (varied tile sizes - some span 2 columns, some 1, etc.). Visual rhythm comes from size variation.",
+  "If the page has ONLY ONE of: a single hero image, a single code window, a single long column, a sticky-pane scroll, a wordmark + paragraph, a numbered list, an alternating two-column rhythm, a giant number, a typographic specimen - it is NOT bento-grid.",
   "",
   "Output { verdict, macrostructure, reason }.",
   "  - verdict='keep_bento' iff you can count 4+ irregular tiles in the screenshot. macrostructure must then be 'bento-grid'.",
@@ -137,6 +137,8 @@ async function verifyOne(
     const res = await client.chat.completions.create({
       model: MODEL,
       max_tokens: 300,
+      // @ts-expect-error Together's reasoning switch is not in the SDK's types yet.
+      reasoning: { enabled: false },
       temperature: 0.1,
       response_format: {
         type: "json_object",
