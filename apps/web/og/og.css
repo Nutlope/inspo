@@ -34,8 +34,8 @@ html, body { width: 1200px; height: 630px; overflow: hidden; -webkit-font-smooth
 .strip { width: 128px; border-radius: 10px; overflow: hidden; flex: none; box-shadow: 0 0 0 1px rgba(232, 228, 221, 0.08); }
 .strip img { display: block; width: 128px; height: auto; }
 .shade {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 380px;
-  background: linear-gradient(180deg, rgba(14,14,12,0) 0%, rgba(14,14,12,0.7) 30%, rgba(14,14,12,0.95) 52%, var(--night) 66%);
+  position: absolute; left: 0; right: 0; bottom: 0; height: 460px;
+  background: linear-gradient(180deg, rgba(14,14,12,0) 0%, rgba(14,14,12,0.7) 28%, rgba(14,14,12,0.95) 48%, var(--night) 60%);
 }
-.copy { position: absolute; left: 72px; right: 72px; bottom: 60px; display: flex; justify-content: space-between; align-items: flex-end; }
+.copy { position: absolute; left: 72px; right: 72px; bottom: 128px; display: flex; justify-content: space-between; align-items: flex-end; }
 .copy h1 { font-size: 64px; margin-top: 18px; }
