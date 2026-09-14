@@ -1,0 +1,32 @@
+# Runs on every push and pull request. Typecheck, lint and the MCP
+# smoke test only: no capture jobs, no schedule, nothing that touches
+# the archive.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm --filter web --filter @inspo/mcp typecheck
+      - name: Lint
+        run: pnpm --filter web lint --max-warnings=0 src
+      - name: MCP smoke test
+        run: pnpm --filter @inspo/mcp test
