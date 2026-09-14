@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import {
-  findCollection,
-  getAllCollections,
-  screensInCollection,
-} from "@inspo/db";
+import { findCollection, screensInCollection } from "@inspo/db";
 import { ScreenTile } from "@/components/screen-tile";
 
 // Runtime-rendered.

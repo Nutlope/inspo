@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Dateline } from "@/components/dateline";
 import { PaletteStrip } from "@/components/palette-strip";
 import { TagPill } from "@/components/tag-pill";

@@ -10,12 +10,18 @@
  * baseline and width and never looked right in a square cell.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type Theme = "light" | "dark";
 const KEY = "inspo:theme";
+const EVT = "inspo:theme:change";
 
-function readInitial(): Theme {
+// Fallback for browsers where localStorage throws (private mode), so a
+// flip still takes effect for the life of the page.
+let inMemory: Theme | null = null;
+
+function readTheme(): Theme {
   if (typeof window === "undefined") return "light";
   try {
     const saved = localStorage.getItem(KEY);
@@ -23,9 +29,25 @@ function readInitial(): Theme {
   } catch {
     /* ignore */
   }
+  if (inMemory) return inMemory;
   return window.matchMedia?.("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
+}
+
+function subscribe(onChange: () => void) {
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === KEY) onChange();
+  };
+  const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(EVT, onChange);
+  media?.addEventListener("change", onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(EVT, onChange);
+    media?.removeEventListener("change", onChange);
+  };
 }
 
 function apply(t: Theme) {
@@ -34,25 +56,24 @@ function apply(t: Theme) {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
+  const theme = useSyncExternalStore<Theme>(subscribe, readTheme, () => "light");
 
+  // The class on <html> follows the store; this runs on hydration too,
+  // which is where a saved dark preference first gets applied.
   useEffect(() => {
-    const t = readInitial();
-    setTheme(t);
-    apply(t);
-    setMounted(true);
-  }, []);
+    apply(theme);
+  }, [theme]);
 
   function flip() {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    apply(next);
+    inMemory = next;
     try {
       localStorage.setItem(KEY, next);
     } catch {
       /* ignore */
     }
+    window.dispatchEvent(new Event(EVT));
   }
 
   return (

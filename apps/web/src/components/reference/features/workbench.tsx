@@ -26,7 +26,7 @@ export function FeaturesWorkbench() {
             One MCP call gets your agent a real reference.
           </p>
           <p className="mt-6 max-w-[40ch] text-sm leading-relaxed text-[var(--color-fg-muted)]">
-            search_screens returns hosted image URLs your agent's
+            search_screens returns hosted image URLs your agent&rsquo;s
             vision model can fetch directly. No base64 in the tool
             result. No context bloat.
           </p>

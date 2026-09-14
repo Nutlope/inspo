@@ -12,7 +12,7 @@
  * real-estate from new visitors who don't know what compare is yet.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 
 const KEY = "inspo:compare";
@@ -81,23 +81,40 @@ export function compareClear() {
   write([]);
 }
 
+// The compare set as an external store. The snapshot is cached against
+// the raw localStorage string so React sees the same array until the
+// contents change; the server snapshot is a single shared empty array.
+const EMPTY: CompareItem[] = [];
+let snapshotRaw: string | null | undefined;
+let snapshotItems: CompareItem[] = EMPTY;
+
+function snapshot(): CompareItem[] {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(KEY);
+  } catch {
+    raw = null;
+  }
+  if (raw === snapshotRaw) return snapshotItems;
+  snapshotRaw = raw;
+  snapshotItems = raw ? read() : EMPTY;
+  return snapshotItems;
+}
+
+function subscribe(onChange: () => void) {
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === KEY) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(EVT, onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(EVT, onChange);
+  };
+}
+
 export function useCompareSet() {
-  const [items, setItems] = useState<CompareItem[]>([]);
-  const sync = useCallback(() => setItems(read()), []);
-  useEffect(() => {
-    sync();
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY) sync();
-    };
-    const onCustom = () => sync();
-    window.addEventListener("storage", onStorage);
-    window.addEventListener(EVT, onCustom as EventListener);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener(EVT, onCustom as EventListener);
-    };
-  }, [sync]);
-  return items;
+  return useSyncExternalStore(subscribe, snapshot, () => EMPTY);
 }
 
 export function CompareDock() {

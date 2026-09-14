@@ -6,7 +6,8 @@
  * state so toggling here updates the floating dock instantly.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useHydrated } from "@/lib/use-hydrated";
 import {
   compareHas,
   compareToggle,
@@ -15,14 +16,10 @@ import {
 
 export function AddToCompare({ slug, title }: { slug: string; title: string }) {
   const items = useCompareSet();
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHydrated();
   const [bumpAtCap, setBumpAtCap] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (!hydrated) {
     // SSR / first paint: render a stable placeholder so the click
     // target's geometry doesn't reshuffle on hydration.
     return <Skeleton />;

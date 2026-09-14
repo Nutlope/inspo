@@ -13,7 +13,7 @@ export default function ErrorPage({
   useEffect(() => {
     // Surface the digest to the dev console so we can match it to logs.
     if (typeof console !== "undefined") {
-      // eslint-disable-next-line no-console
+       
       console.error("[inspo] page error", error);
     }
   }, [error]);

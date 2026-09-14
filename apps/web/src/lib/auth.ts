@@ -70,7 +70,6 @@ export const auth = betterAuth({
       expiresIn: 600, // 10 min
       async sendVerificationOTP({ email, otp, type }) {
         // Dev: log to console. Prod: swap in Resend/Postmark/etc.
-        // eslint-disable-next-line no-console
         console.log(
           `\n  📧 [Inspo auth] OTP for ${email} (${type}): ${otp}\n`,
         );

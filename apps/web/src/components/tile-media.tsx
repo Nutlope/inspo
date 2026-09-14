@@ -126,7 +126,7 @@ export function TileMedia({
               sizes={sizes}
             />
           ) : null}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={imageUrl}
             alt={alt}
@@ -157,7 +157,7 @@ export function TileMedia({
               sizes={FULL_SIZES}
             />
           ) : null}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             ref={markReady}
             src={fullPageUrl}

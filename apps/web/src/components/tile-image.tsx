@@ -49,7 +49,7 @@ export function TileImage({
       {variants?.webp?.length ? (
         <source type="image/webp" srcSet={buildSrcSet(variants.webp)} sizes={sizes} />
       ) : null}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
+      { }
       <img
         src={fallbackSrc}
         alt={alt}

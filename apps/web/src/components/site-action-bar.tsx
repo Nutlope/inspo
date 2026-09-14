@@ -16,10 +16,36 @@
  * across sessions, only across pages in the current tab.
  */
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, Check, ClipboardCopy, Link2, X } from "lucide-react";
+import { useHydrated } from "@/lib/use-hydrated";
 
 const DISMISS_KEY = "inspo:action-bar:dismissed";
+const DISMISS_EVT = "inspo:action-bar:change";
+
+// Fallback for when sessionStorage throws, so the × still works.
+let dismissedInMemory = false;
+
+function readDismissed(): boolean {
+  if (dismissedInMemory) return true;
+  try {
+    return sessionStorage.getItem(DISMISS_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function subscribeDismissed(onChange: () => void) {
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === DISMISS_KEY) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(DISMISS_EVT, onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(DISMISS_EVT, onChange);
+  };
+}
 
 type CopyState = "idle" | "copying" | "ok" | "err";
 
@@ -30,28 +56,25 @@ export function SiteActionBar({
   slug: string;
   sourceUrl: string;
 }) {
-  const [mounted, setMounted] = useState(false);
-  const [dismissed, setDismissed] = useState(true);
+  // Hidden on the server and until hydration, so the bar never flashes
+  // for a reader who already dismissed it in this tab.
+  const mounted = useHydrated();
+  const dismissed = useSyncExternalStore(
+    subscribeDismissed,
+    readDismissed,
+    () => true,
+  );
   const [copyDesign, setCopyDesign] = useState<CopyState>("idle");
   const [copyUrl, setCopyUrl] = useState<CopyState>("idle");
 
-  // Hydrate dismiss state + saved-flag after mount so we don't flash.
-  useEffect(() => {
-    setMounted(true);
-    try {
-      setDismissed(sessionStorage.getItem(DISMISS_KEY) === "1");
-    } catch {
-      /* ignore */
-    }
-  }, [slug]);
-
   function dismiss() {
-    setDismissed(true);
+    dismissedInMemory = true;
     try {
       sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
       /* ignore */
     }
+    window.dispatchEvent(new Event(DISMISS_EVT));
   }
 
   async function onCopyDesign() {

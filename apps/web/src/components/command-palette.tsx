@@ -17,7 +17,13 @@
 
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  useTransition,
+} from "react";
 
 type IndexEntry = {
   slug: string;
@@ -74,6 +80,49 @@ function writeList(key: string, list: string[]) {
   } catch {
     /* ignore */
   }
+  window.dispatchEvent(new Event(LIST_EVT));
+}
+
+// The recent and saved lists as external stores, so the palette reads
+// them straight from localStorage instead of copying them into state
+// on open. Snapshots are cached against the raw string so React sees a
+// stable array until the list actually changes.
+const LIST_EVT = "inspo:cmdk:lists";
+const EMPTY_LIST: string[] = [];
+const listCache = new Map<string, { raw: string | null; list: string[] }>();
+
+function listSnapshot(key: string): string[] {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(key);
+  } catch {
+    raw = null;
+  }
+  const cached = listCache.get(key);
+  if (cached && cached.raw === raw) return cached.list;
+  const list = raw ? readList(key) : EMPTY_LIST;
+  listCache.set(key, { raw, list });
+  return list;
+}
+
+function subscribeLists(onChange: () => void) {
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === RECENT_KEY || e.key === SAVED_KEY) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(LIST_EVT, onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(LIST_EVT, onChange);
+  };
+}
+
+function useStoredList(key: string): string[] {
+  return useSyncExternalStore(
+    subscribeLists,
+    () => listSnapshot(key),
+    () => EMPTY_LIST,
+  );
 }
 
 function pushRecent(slug: string) {
@@ -96,8 +145,8 @@ function toggleSaved(slug: string): string[] {
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState<IndexEntry[] | null>(null);
-  const [recent, setRecent] = useState<string[]>([]);
-  const [saved, setSaved] = useState<string[]>([]);
+  const recent = useStoredList(RECENT_KEY);
+  const saved = useStoredList(SAVED_KEY);
   const [query, setQuery] = useState("");
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -118,11 +167,9 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  /* ─── load index lazily on first open + re-read recent/saved ─── */
+  /* ─── load index lazily on first open ─── */
   useEffect(() => {
     if (!open) return;
-    setRecent(readList(RECENT_KEY));
-    setSaved(readList(SAVED_KEY));
     if (index !== null) return;
     fetch("/api/index", { cache: "force-cache" })
       .then((r) => r.json())
@@ -175,7 +222,7 @@ export function CommandPalette() {
   }
 
   function onSavedToggle(slug: string) {
-    setSaved(toggleSaved(slug));
+    toggleSaved(slug);
   }
 
   function onAction(name: string) {

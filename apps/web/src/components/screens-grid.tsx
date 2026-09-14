@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useHydrated } from "@/lib/use-hydrated";
 import type { ScreenSummary } from "@inspo/shared";
 
 /**
@@ -121,8 +122,7 @@ export function ScreensGrid({
 
   // Use initialFilters on first paint (avoid hydration mismatch in case
   // searchParams isn't yet populated client-side).
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  const hydrated = useHydrated();
   const active = hydrated ? filters : initialFilters;
 
   const filtered = useMemo(() => {
