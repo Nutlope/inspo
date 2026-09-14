@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter_Tight } from "next/font/google";
 import ReactDOM from "react-dom";
+import { Analytics } from "@vercel/analytics/next";
 import { Masthead } from "@/components/masthead";
 import { Colophon } from "@/components/colophon";
 import { CommandPalette } from "@/components/command-palette";
@@ -38,6 +39,10 @@ export const metadata: Metadata = {
     template: `%s - ${site.name}`,
   },
   description: site.description,
+  // "./" resolves to each page's own path under metadataBase, so every
+  // route names inspomcp.dev as canonical even when served from the
+  // old *.vercel.app host or the www alias.
+  alternates: { canonical: "./" },
   openGraph: {
     siteName: site.name,
     type: "website",
@@ -75,6 +80,7 @@ export default function RootLayout({
         <Colophon />
         <CommandPalette />
         <CompareDock />
+        <Analytics />
       </body>
     </html>
   );

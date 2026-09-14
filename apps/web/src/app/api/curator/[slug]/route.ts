@@ -11,8 +11,9 @@ export async function PATCH(
   ctx: { params: Promise<{ slug: string }> },
 ) {
   // Authz: in DB mode require curator/admin role; in fixtures mode allow
-  // (so the demo curator queue is interactive in dev).
-  if (hasDatabase()) {
+  // (so the demo curator queue is interactive in dev). Production checks
+  // regardless, so a missing DATABASE_URL can never open this up.
+  if (hasDatabase() || process.env.NODE_ENV === "production") {
     const session = await getSession();
     const role = (session?.user as { role?: string } | undefined)?.role;
     if (role !== "curator" && role !== "admin") {

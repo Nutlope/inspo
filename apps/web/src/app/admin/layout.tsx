@@ -10,9 +10,10 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   // Without a DB, role gating is best-effort (memory adapter loses sessions
-  // across restart). Allow access in dev so the curator UI is testable;
-  // the real authz check kicks in once Postgres is wired up.
-  if (hasDatabase()) {
+  // across restart). Allow access in dev so the curator UI is testable.
+  // Production always checks the role, so a deploy that lost its
+  // DATABASE_URL fails closed instead of opening the curator queue.
+  if (hasDatabase() || process.env.NODE_ENV === "production") {
     await requireRole("curator");
   }
 

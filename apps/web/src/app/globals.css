@@ -21,7 +21,9 @@
   --color-ink: #1a1a1a;
   --color-ink-muted: #6b6862;
   --color-rule: #d8d3c8;
-  --color-accent-light: #c7402f;
+  /* A hair darker than the original #c7402f so accent text on paper
+     clears AA (4.81:1, was 4.44:1). Indistinguishable by eye. */
+  --color-accent-light: #bf3b2b;
 
   /* Editorial palette (dark) */
   --color-paper-dark: #0e0e0c;
@@ -43,9 +45,8 @@
   --color-border: var(--color-rule);
   --color-accent: var(--color-accent-light);
   /* Text sitting ON the accent, never beside it. Its own value rather
-     than an alias of paper: paper against the accent measures 4.44:1,
-     which is under the 4.5 the pairing is judged at. A hair lighter
-     clears it at 4.87:1, and it stays off pure white. */
+     than an alias of paper, a hair lighter than paper so it clears AA
+     against the accent by a wider margin while staying off pure white. */
   --color-accent-ink: #fdfdfb;
   --color-link: var(--color-accent);
 

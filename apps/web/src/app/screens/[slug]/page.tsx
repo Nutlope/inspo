@@ -20,7 +20,6 @@ import {
   findSimilar,
   findSite,
   getAllCollections,
-  getAllScreens,
 } from "@inspo/db";
 import type { ScreenSummary } from "@inspo/shared";
 import {
@@ -197,12 +196,17 @@ export default async function ScreenDetailPage({
           </span>
           <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
             <AddToCompare slug={screen.slug} title={screen.title} />
-            <Link
-              href={`/screens/${screen.slug}/history`}
-              className="hover:text-[var(--color-link)]"
-            >
-              See history ↻
-            </Link>
+            {/* The time machine reads recapture revisions off the worker's
+                captures dir, which never ships to production, so the link
+                only renders where the page has something to show. */}
+            {process.env.NODE_ENV !== "production" && (
+              <Link
+                href={`/screens/${screen.slug}/history`}
+                className="hover:text-[var(--color-link)]"
+              >
+                See history ↻
+              </Link>
+            )}
             <a
               href={screen.sourceUrl}
               target="_blank"
