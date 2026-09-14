@@ -17,6 +17,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
 import type { ImagesMode, Profile, RegisterOptions } from "./profile";
 import { parseBudget } from "./budget";
+import { SERVER_VERSION } from "./version";
 
 /** Stateless HTTP never sees the client's initialize on the instance
  *  serving tools/list, so clientInfo auto-detection can't apply here.
@@ -38,7 +39,7 @@ export async function handleMcpRequest(
   extra?: Pick<RegisterOptions, "onToolCall">,
 ): Promise<Response> {
   const server = new McpServer(
-    { name: "inspo", version: "0.0.1" },
+    { name: "inspo", version: SERVER_VERSION },
     { instructions: SERVER_INSTRUCTIONS },
   );
   // Precedence: query > env > full + thumbs.

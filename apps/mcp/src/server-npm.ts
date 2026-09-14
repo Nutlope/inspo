@@ -26,11 +26,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { ensureCatalogue, ensureSidecarFromUrl } from "@inspo/db";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
 import { install } from "./install";
-
 // Replaced at build time (scripts/build-npm.mjs) with the published version.
-declare const __INSPO_VERSION__: string;
-const VERSION =
-  typeof __INSPO_VERSION__ === "string" ? __INSPO_VERSION__ : "0.0.0-dev";
+import { SERVER_VERSION as VERSION } from "./version";
 
 const HELP = `
   inspo-mcp v${VERSION}

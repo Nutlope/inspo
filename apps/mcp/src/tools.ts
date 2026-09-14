@@ -400,6 +400,17 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
     cb: ToolCallback<Args>,
   ): void => {
     if (ctx.staticProfile === "lite" && !LITE_TOOLS.has(name)) return;
+    // Every tool reads the archive and writes nothing, so say so: hosts
+    // that gate calls on the hints (Claude Code, Cursor) can let a
+    // read-only tool run without a confirmation prompt. The one tool
+    // that leaves the archive is get_design_system, whose live mode
+    // fetches the source site.
+    const annotations = {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: name === "get_design_system",
+    };
     // Metrics wrapper: time every call and report name/ok/duration to
     // the host's hook (Analytics Engine on the Worker; nothing on
     // stdio). The hook is fire-and-forget and can never break a
@@ -427,7 +438,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
           }
         }
       : cb) as ToolCallback<Args>;
-    handles.set(name, server.registerTool(name, config, wrapped));
+    handles.set(name, server.registerTool(name, { ...config, annotations }, wrapped));
   };
   /* ────────────── search_screens ────────────── */
   reg(

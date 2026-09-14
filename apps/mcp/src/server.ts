@@ -29,9 +29,10 @@ import { fileURLToPath as _envFileUrl } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerTools, SERVER_INSTRUCTIONS } from "./tools";
+import { SERVER_VERSION } from "./version";
 
 const server = new McpServer(
-  { name: "inspo", version: "0.0.1" },
+  { name: "inspo", version: SERVER_VERSION },
   { instructions: SERVER_INSTRUCTIONS },
 );
 registerTools(server);
