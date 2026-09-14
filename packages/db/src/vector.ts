@@ -1,13 +1,13 @@
 /**
  * Vector-search support for the static-seed path. Owns three things:
  *
- *  1. `embedQuery(text)` — embeds the user's natural-language query
+ *  1. `embedQuery(text)` - embeds the user's natural-language query
  *     into the same 1024-dim space as the per-site embeddings the
  *     archive enrichment (PR 5) wrote into `embeddings.bin`. Uses
  *     Together's `intfloat/multilingual-e5-large-instruct`, the same
  *     model the worker uses for site embeddings, so the spaces match.
  *
- *  2. `loadSidecar()` — reads `embeddings.bin` + `embeddings.idx.json`
+ *  2. `loadSidecar()` - reads `embeddings.bin` + `embeddings.idx.json`
  *     from disk on first call and caches the result in module scope.
  *     Returns a `Map<slug, Float32Array>` keyed by **siteSlug** (the
  *     enricher embeds once per site and propagates).
@@ -17,7 +17,7 @@
  *     the first query for any given string.
  *
  * Everything degrades to `null` on missing inputs (no API key, no
- * sidecar on disk, embedding fails, etc.) — callers should fall back
+ * sidecar on disk, embedding fails, etc.) - callers should fall back
  * to lexical search when that happens.
  */
 
@@ -72,8 +72,14 @@ function loadSidecarFromDisk(stem: string): Map<string, Float32Array> | null {
   const paths = sidecarPaths(stem);
   if (!paths || !existsSync(paths.bin) || !existsSync(paths.idx)) return null;
   try {
-    const idx = JSON.parse(readFileSync(paths.idx, "utf8")) as SidecarIdx;
-    const buf = readFileSync(paths.bin);
+    // The sidecar lives on disk only in dev and in the npm bundle; the
+    // hosted route fetches it from the CDN. The ignore hints keep
+    // Next's file tracer from pulling the whole repo into the lambda
+    // over a path it cannot resolve statically.
+    const idx = JSON.parse(
+      readFileSync(/* turbopackIgnore: true */ paths.idx, "utf8"),
+    ) as SidecarIdx;
+    const buf = readFileSync(/* turbopackIgnore: true */ paths.bin);
     // Copy into a standalone ArrayBuffer (buf may be a pooled slice).
     const ab = buf.buffer.slice(
       buf.byteOffset,

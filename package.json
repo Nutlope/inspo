@@ -22,5 +22,20 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "fast-uri": ">=3.1.6",
+      "ip-address": ">=10.3.1",
+      "hono": ">=4.13.5",
+      "@hono/node-server": ">=1.19.15",
+      "qs": ">=6.16.0",
+      "body-parser": ">=2.3.0",
+      "undici": ">=6.28.0",
+      "browserslist": ">=4.28.7",
+      "@babel/core": ">=7.29.6",
+      "baseline-browser-mapping": ">=2.11.0",
+      "nanoid@<3.3.18": ">=3.3.18"
+    }
   }
 }
