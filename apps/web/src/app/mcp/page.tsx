@@ -412,7 +412,7 @@ export default async function MCPPage() {
           <p className="font-display mx-auto max-w-[40ch] text-2xl leading-snug sm:text-3xl">
             Open source, MIT, owned and operated by{" "}
             <a
-              href="https://www.together.ai"
+              href="https://togetherai.link/?utm_source=inspo&utm_medium=referral&utm_campaign=example-app"
               target="_blank"
               rel="noopener noreferrer"
               className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"
