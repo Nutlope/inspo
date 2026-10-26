@@ -22,7 +22,7 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Together from "together-ai";
 
@@ -98,6 +98,53 @@ function loadSidecarFromDisk(stem: string): Map<string, Float32Array> | null {
   }
 }
 
+/** Load a sidecar pair (idx + bin) from an EXPLICIT directory rather
+ *  than the module-adjacent layout. The hosted Vercel route uses this:
+ *  its lambda bundles a copy under <app>/sidecars (traced via
+ *  outputFileTracingIncludes, staged by a build-time copy), which sits
+ *  elsewhere than this module, so module-adjacent resolution can't
+ *  find it there. Null on anything missing or unparseable. */
+function loadSidecarFromDir(
+  stem: "embeddings" | "embeddings-rows",
+  dir: string,
+): Map<string, Float32Array> | null {
+  try {
+    const bin = resolve(dir, `./${stem}.bin`);
+    const idx = resolve(dir, `./${stem}.idx.json`);
+    if (!existsSync(bin) || !existsSync(idx)) return null;
+    const parsed = JSON.parse(
+      readFileSync(/* turbopackIgnore: true */ idx, "utf8"),
+    ) as SidecarIdx;
+    const buf = readFileSync(/* turbopackIgnore: true */ bin);
+    // Copy into a standalone ArrayBuffer (buf may be a pooled slice).
+    const ab = buf.buffer.slice(
+      buf.byteOffset,
+      buf.byteOffset + buf.byteLength,
+    );
+    return parseSidecar(parsed, ab);
+  } catch {
+    return null;
+  }
+}
+
+/** Directories that may hold a deploy-bundled sidecar pair, in order.
+ *  INSPO_SIDECAR_DIR wins when set, then the copy staged by apps/web's
+ *  build (in the lambda the cwd is the app root), then the monorepo's
+ *  packages/db/src the same way for local dev. */
+export function bundledSidecarDirs(): string[] {
+  const dirs: string[] = [];
+  const envDir = process.env.INSPO_SIDECAR_DIR;
+  if (envDir) dirs.push(envDir);
+  try {
+    const cwd = process.cwd();
+    dirs.push(join(cwd, "sidecars"));
+    dirs.push(join(cwd, "..", "..", "packages", "db", "src"));
+  } catch {
+    /* no cwd in some runtimes: the env override still applies */
+  }
+  return dirs;
+}
+
 /* ────────────────────── sidecar loader ────────────────────── */
 
 let _sidecar: Map<string, Float32Array> | null = null;
@@ -122,6 +169,18 @@ export function loadSidecar(): Map<string, Float32Array> | null {
   return _sidecar;
 }
 
+/** Site sidecar from an explicit dir, memoized alongside the other
+ *  loaders: a successful read sets the module memo so repeat calls
+ *  never touch the filesystem again. Returns the map, or null when
+ *  the dir holds no parseable pair. */
+export function loadSiteSidecarFromDir(
+  dir: string,
+): Map<string, Float32Array> | null {
+  if (_sidecar) return _sidecar;
+  _sidecar = loadSidecarFromDir("embeddings", dir);
+  return _sidecar;
+}
+
 /* Per-ROW sidecar (embeddings-rows.*): one vector per screen slug
  * instead of one per site. Powers find_similar's cosine ranking; the
  * per-site sidecar keeps powering search_screens. */
@@ -138,6 +197,15 @@ export function setRowSidecar(idx: SidecarIdx, bin: ArrayBuffer): boolean {
 export function loadRowSidecar(): Map<string, Float32Array> | null {
   if (_rowSidecar) return _rowSidecar;
   _rowSidecar = loadSidecarFromDisk("embeddings-rows");
+  return _rowSidecar;
+}
+
+/** Row sidecar from an explicit dir; mirrors loadSiteSidecarFromDir. */
+export function loadRowSidecarFromDir(
+  dir: string,
+): Map<string, Float32Array> | null {
+  if (_rowSidecar) return _rowSidecar;
+  _rowSidecar = loadSidecarFromDir("embeddings-rows", dir);
   return _rowSidecar;
 }
 

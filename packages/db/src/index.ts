@@ -51,6 +51,8 @@ export {
   ensureSidecarFromUrl,
   ensureSiteSidecarFromUrl,
   ensureRowSidecarFromUrl,
+  ensureSiteSidecarDurable,
+  ensureRowSidecarDurable,
   type CatalogueLoadResult,
 } from "./load-remote";
 export { screens, collections } from "./fixtures";
