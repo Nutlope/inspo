@@ -55,4 +55,10 @@ export {
   ensureRowSidecarDurable,
   type CatalogueLoadResult,
 } from "./load-remote";
+export {
+  catalogueCacheDir,
+  evictFromCache,
+  fetchThroughCache,
+  type FetchThroughCacheOptions,
+} from "./catalogue-cache";
 export { screens, collections } from "./fixtures";

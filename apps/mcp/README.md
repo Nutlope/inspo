@@ -76,6 +76,13 @@ Optional `env`: `TOGETHER_API_KEY` (enables query-embedding semantic search),
 `INSPO_CATALOGUE_URL` (point at a self-hosted catalogue), and `INSPO_PROFILE` /
 `INSPO_IMAGES` / `INSPO_MAX_TOKENS` (see Open-source models below).
 
+**Catalogue disk cache.** The stdio server keeps the catalogue in the OS cache
+dir (`~/.cache/inspo-mcp`, or `%LOCALAPPDATA%\inspo-mcp\Cache` on Windows) and
+revalidates it via ETag at startup - after the first run, an unchanged
+catalogue costs ~1 KB of 304s per start instead of another ~14 MB, and a down
+or unreachable CDN falls back to the cached copy. Override the location with
+`INSPO_CACHE_DIR`; disable caching entirely with `INSPO_CATALOGUE_CACHE=0`.
+
 > Running `npx -y inspo-mcp` by hand looks like it does nothing: an MCP server
 > speaks JSON-RPC on stdin/stdout and prints nothing on its own. From a
 > terminal it now prints these install instructions instead (`--help`,

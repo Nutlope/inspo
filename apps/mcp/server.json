@@ -6,13 +6,13 @@
     "url": "https://github.com/Nutlope/inspo",
     "source": "github"
   },
-  "version": "0.1.15",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "inspo-mcp",
-      "version": "0.1.15",
+      "version": "0.2.0",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {
@@ -24,6 +24,12 @@
         {
           "name": "INSPO_CATALOGUE_URL",
           "description": "Optional. Point at a self-hosted catalogue instead of the public CDN.",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "INSPO_CACHE_DIR",
+          "description": "Optional. Location of the catalogue disk cache (defaults to the OS cache dir). Set INSPO_CATALOGUE_CACHE=0 to disable caching.",
           "isRequired": false,
           "isSecret": false
         },
