@@ -171,7 +171,14 @@ function writeEntry(
 function cachedResponse(bytes: Uint8Array, etag: string | null): Response {
   const headers = new Headers();
   if (etag) headers.set("etag", etag);
-  return new Response(bytes, { status: 200, headers });
+  // Copy into a freshly allocated Uint8Array: the DOM BodyInit used by
+  // Next.js's tsconfig only accepts ArrayBuffer-backed views, and the
+  // Uint8Array<ArrayBufferLike> that readFileSync / Buffer.from produce
+  // is rejected there (the plain-Node undici types accept it, which is
+  // why @inspo/mcp typechecks either way but apps/web did not). The
+  // TypedArray constructor returns Uint8Array<ArrayBuffer>, which both
+  // type universes accept as a Response body.
+  return new Response(new Uint8Array(bytes), { status: 200, headers });
 }
 
 export interface FetchThroughCacheOptions {
