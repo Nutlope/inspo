@@ -20,6 +20,10 @@
 # production
 /build
 
+# sidecar copies staged by scripts/copy-sidecars.mjs at build time;
+# source of truth is packages/db/src
+/sidecars/
+
 # misc
 .DS_Store
 *.pem

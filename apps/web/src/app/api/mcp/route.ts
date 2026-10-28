@@ -8,17 +8,23 @@
  *   https://<your-domain>/api/mcp
  *
  * Data: the catalogue is the static seed bundled into the web build, so
- * it's always in sync with the deploy (no fetch). The embedding sidecars
- * aren't bundled, so they're fetched from the CDN lazily, once per
- * lambda, and only when a tool that reads them runs: the per-site one
+ * it's always in sync with the deploy (no fetch). The embedding
+ * sidecars ship the same way: the build stages a copy under sidecars/
+ * and outputFileTracingIncludes traces it into this function's bundle,
+ * so a cold instance reads ~12.9MB from its own filesystem instead of
+ * re-downloading it from Blob (measured: the single largest Blob Data
+ * Transfer line item on this deployment). Both load lazily, once per
+ * lambda, only when a tool that reads them runs: the per-site one
  * (`embeddings.*`, 3.3MB - powers search ranking) on the first
  * search_screens / recommend, the per-row one (`embeddings-rows.*`,
- * 9.1MB - powers find_similar) on the first such call.
- * If a fetch fails, search still works lexically.
+ * 9.1MB - powers find_similar) on the first such call. If the bundled
+ * copy is missing the loaders fall back to the Blob fetch (a cost
+ * regression, never a functional one); if that also fails, search
+ * still works lexically.
  */
 
 import { handleMcpRequest } from "@inspo/mcp/http";
-import { ensureSiteSidecarFromUrl, ensureRowSidecarFromUrl } from "@inspo/db";
+import { ensureSiteSidecarDurable, ensureRowSidecarDurable } from "@inspo/db";
 
 // The MCP server uses the Node-only Together/Neon SDKs; pin the Node
 // runtime. Dynamic (never cached) - every call is a fresh JSON-RPC.
@@ -105,11 +111,11 @@ async function handle(request: Request): Promise<Response> {
   // the Blob fetch or the memory. The per-site one (3.3MB - search
   // ranking) loads on the first search_screens / recommend via
   // awaitSiteVectors; the per-row one (9.1MB - find_similar only)
-  // via awaitVectors. Both memoize per isolate, so a warm lambda fetches
+  // via awaitVectors. Both memoize per isolate, so a warm lambda reads
   // nothing.
   return handleMcpRequest(request, {
-    awaitSiteVectors: () => ensureSiteSidecarFromUrl(CATALOGUE_URL).catch(() => false),
-    awaitVectors: () => ensureRowSidecarFromUrl(CATALOGUE_URL).catch(() => false),
+    awaitSiteVectors: () => ensureSiteSidecarDurable(CATALOGUE_URL).catch(() => false),
+    awaitVectors: () => ensureRowSidecarDurable(CATALOGUE_URL).catch(() => false),
     // One structured log line per tool call, visible in Vercel logs.
     // Nothing is stored: no IPs, no query text, just tool/ok/duration.
     // (The Cloudflare Worker path writes the same shape to Analytics

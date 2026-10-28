@@ -12,6 +12,18 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@inspo/taxonomy", "@inspo/shared", "@inspo/db", "@inspo/mcp"],
+  // The /api/mcp lambda reads the embedding sidecars from disk on the
+  // first vector-tool call. Stage them with apps/web/scripts/
+  // copy-sidecars.mjs (part of the build), then trace the copy into
+  // this route's function: a cold instance then reads 12.9MB from its
+  // own filesystem instead of re-downloading it from Blob, which was
+  // the deployment's single largest Blob Data Transfer line item. Keep
+  // the value glob narrow - never point it at packages/db/src itself,
+  // which would trace the 19MB seed (already bundled) alongside every
+  // other file there.
+  outputFileTracingIncludes: {
+    "/api/mcp": ["./sidecars/*"],
+  },
   // The capture dir is read by /api/placeholder and /api/component in
   // dev. In prod (Vercel) the dir doesn't ship - the routes fall back
   // gracefully. Without this exclusion Next's file-tracer would bundle

@@ -18,7 +18,13 @@
  */
 
 import { setCatalogue } from "./queries";
-import { setRowSidecar, setSidecar } from "./vector";
+import {
+  bundledSidecarDirs,
+  loadRowSidecarFromDir,
+  loadSiteSidecarFromDir,
+  setRowSidecar,
+  setSidecar,
+} from "./vector";
 
 export interface CatalogueLoadResult {
   screens: number;
@@ -176,4 +182,67 @@ export function ensureSidecarFromUrl(base: string): Promise<boolean> {
     ensureSiteSidecarFromUrl(base),
     ensureRowSidecarFromUrl(base),
   ]).then(([a, b]) => a || b);
+}
+
+/* ─── disk-first sidecar loaders (hosted Vercel route) ───
+ * The /api/mcp lambda ships the sidecar pair inside its function
+ * bundle (apps/web/sidecars, staged by a build-time copy and traced
+ * via outputFileTracingIncludes), so a fresh instance reads the
+ * 12.9MB from disk in milliseconds instead of re-downloading it from
+ * Blob on every cold start - which was the deployment's single
+ * largest Blob Data Transfer line item.
+ *
+ * Disk first, URL fallback: a missing or mis-traced bundle costs the
+ * old Blob egress again but never breaks vector search. The memo
+ * resets on failure for the same reason the FromUrl loaders do - a
+ * miss must not brick the isolate for its whole lifetime. */
+let _siteDurable: Promise<boolean> | null = null;
+let _rowDurable: Promise<boolean> | null = null;
+
+function diskFirst(
+  fromDir: (dir: string) => Map<string, Float32Array> | null,
+  fallback: () => Promise<boolean>,
+): Promise<boolean> {
+  for (const dir of bundledSidecarDirs()) {
+    if (fromDir(dir)) return Promise.resolve(true);
+  }
+  return fallback();
+}
+
+/** Per-site sidecar (embeddings.*), preferring the bundled copy over
+ *  the CDN fetch. */
+export function ensureSiteSidecarDurable(base: string): Promise<boolean> {
+  if (!_siteDurable) {
+    _siteDurable = diskFirst(loadSiteSidecarFromDir, () =>
+      ensureSiteSidecarFromUrl(base),
+    )
+      .then((ok) => {
+        if (!ok) _siteDurable = null;
+        return ok;
+      })
+      .catch((e) => {
+        _siteDurable = null;
+        throw e;
+      });
+  }
+  return _siteDurable;
+}
+
+/** Per-row sidecar (embeddings-rows.*), preferring the bundled copy
+ *  over the CDN fetch. */
+export function ensureRowSidecarDurable(base: string): Promise<boolean> {
+  if (!_rowDurable) {
+    _rowDurable = diskFirst(loadRowSidecarFromDir, () =>
+      ensureRowSidecarFromUrl(base),
+    )
+      .then((ok) => {
+        if (!ok) _rowDurable = null;
+        return ok;
+      })
+      .catch((e) => {
+        _rowDurable = null;
+        throw e;
+      });
+  }
+  return _rowDurable;
 }
