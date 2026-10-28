@@ -17,6 +17,7 @@
  * tools degrade to lexical search.
  */
 
+import { evictFromCache, fetchThroughCache } from "./catalogue-cache";
 import { setCatalogue } from "./queries";
 import {
   bundledSidecarDirs,
@@ -37,20 +38,39 @@ let _loaded: Promise<CatalogueLoadResult> | null = null;
 
 type SidecarIdx = { slugs: string[]; dims: number; count?: number };
 
+function uaHeaders(ua?: string): Record<string, string> | undefined {
+  return ua ? { "user-agent": ua } : undefined;
+}
+
 async function fetchSidecarPair(
   b: string,
   stem: string,
   inject: (idx: SidecarIdx, bin: ArrayBuffer) => boolean,
+  opts: { userAgent?: string } = {},
 ): Promise<number> {
   try {
+    // Through the persistent disk cache: a repeat process start
+    // revalidates and gets a zero-byte 304 instead of another
+    // multi-MB download.
     const [idxRes, binRes] = await Promise.all([
-      fetch(`${b}/${stem}.idx.json`),
-      fetch(`${b}/${stem}.bin`),
+      fetchThroughCache(`${b}/${stem}.idx.json`, {
+        extraHeaders: uaHeaders(opts.userAgent),
+      }),
+      fetchThroughCache(`${b}/${stem}.bin`, {
+        extraHeaders: uaHeaders(opts.userAgent),
+      }),
     ]);
     if (!idxRes.ok || !binRes.ok) return 0;
     const idx = (await idxRes.json()) as SidecarIdx;
     const bin = await binRes.arrayBuffer();
-    return inject(idx, bin) ? (idx.count ?? idx.slugs.length) : 0;
+    if (inject(idx, bin)) return idx.count ?? idx.slugs.length;
+    // parseSidecar rejected the bytes (dims/byte-length mismatch). If
+    // they came from the disk cache that copy is poison — drop it so
+    // the next process revalidates fresh instead of failing on the
+    // same corrupt file forever.
+    evictFromCache(b, `${stem}.idx.json`);
+    evictFromCache(b, `${stem}.bin`);
+    return 0;
   } catch {
     /* vectors are optional — keep lexical search working */
     return 0;
@@ -64,14 +84,18 @@ export async function loadCatalogueFromUrl(
    *  so a caller that can await them later should not pay for them
    *  before it can answer its first search. `ensureSidecarFromUrl`
    *  loads them separately. */
-  opts: { sidecars?: boolean } = {},
+  opts: { sidecars?: boolean; userAgent?: string } = {},
 ): Promise<CatalogueLoadResult> {
   const b = base.replace(/\/+$/, "");
   const withSidecars = opts.sidecars !== false;
   const [screensRes, vectors, rowVectors] = await Promise.all([
-    fetch(`${b}/static-screens.json`),
-    withSidecars ? fetchSidecarPair(b, "embeddings", setSidecar) : 0,
-    withSidecars ? fetchSidecarPair(b, "embeddings-rows", setRowSidecar) : 0,
+    fetchThroughCache(`${b}/static-screens.json`, {
+      extraHeaders: uaHeaders(opts.userAgent),
+    }),
+    withSidecars ? fetchSidecarPair(b, "embeddings", setSidecar, opts) : 0,
+    withSidecars
+      ? fetchSidecarPair(b, "embeddings-rows", setRowSidecar, opts)
+      : 0,
   ]);
   if (!screensRes.ok) {
     throw new Error(
@@ -90,7 +114,7 @@ export async function loadCatalogueFromUrl(
  */
 export function ensureCatalogue(
   base: string,
-  opts: { sidecars?: boolean } = {},
+  opts: { sidecars?: boolean; userAgent?: string } = {},
 ): Promise<CatalogueLoadResult> {
   // Reset the memo on rejection so a transient cold-start failure (CDN
   // blip, non-200, DNS hiccup) doesn't permanently brick the isolate:
@@ -135,10 +159,13 @@ let _rowSidecarLoaded: Promise<boolean> | null = null;
  * sticking if fetchSidecarPair's internals ever change.) */
 
 /** Per-site sidecar (embeddings.*) — the one search_screens reads. */
-export function ensureSiteSidecarFromUrl(base: string): Promise<boolean> {
+export function ensureSiteSidecarFromUrl(
+  base: string,
+  opts: { userAgent?: string } = {},
+): Promise<boolean> {
   if (!_siteSidecarLoaded) {
     const b = base.replace(/\/+$/, "");
-    _siteSidecarLoaded = fetchSidecarPair(b, "embeddings", setSidecar)
+    _siteSidecarLoaded = fetchSidecarPair(b, "embeddings", setSidecar, opts)
       .then((n) => {
         if (n === 0) {
           _siteSidecarLoaded = null;
@@ -156,10 +183,18 @@ export function ensureSiteSidecarFromUrl(base: string): Promise<boolean> {
 
 /** Per-row sidecar (embeddings-rows.*) — only find_similar reads this;
  *  load it on first use, not on every cold start. */
-export function ensureRowSidecarFromUrl(base: string): Promise<boolean> {
+export function ensureRowSidecarFromUrl(
+  base: string,
+  opts: { userAgent?: string } = {},
+): Promise<boolean> {
   if (!_rowSidecarLoaded) {
     const b = base.replace(/\/+$/, "");
-    _rowSidecarLoaded = fetchSidecarPair(b, "embeddings-rows", setRowSidecar)
+    _rowSidecarLoaded = fetchSidecarPair(
+      b,
+      "embeddings-rows",
+      setRowSidecar,
+      opts,
+    )
       .then((n) => {
         if (n === 0) {
           _rowSidecarLoaded = null;
@@ -175,12 +210,17 @@ export function ensureRowSidecarFromUrl(base: string): Promise<boolean> {
   return _rowSidecarLoaded;
 }
 
-/** Both sidecars. Kept for callers that want them warmed together
- *  (the stdio/npm server warms them in the background at startup). */
-export function ensureSidecarFromUrl(base: string): Promise<boolean> {
+/** Both sidecars at once. Kept for callers that want them warmed
+ *  together; the stdio/npm server warms the SITE sidecar in the
+ *  background at startup and loads the row sidecar lazily, on the
+ *  first find_similar call. */
+export function ensureSidecarFromUrl(
+  base: string,
+  opts: { userAgent?: string } = {},
+): Promise<boolean> {
   return Promise.all([
-    ensureSiteSidecarFromUrl(base),
-    ensureRowSidecarFromUrl(base),
+    ensureSiteSidecarFromUrl(base, opts),
+    ensureRowSidecarFromUrl(base, opts),
   ]).then(([a, b]) => a || b);
 }
 

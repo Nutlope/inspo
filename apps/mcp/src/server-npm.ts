@@ -58,7 +58,9 @@ const HELP = `
   Optional env: TOGETHER_API_KEY (query-embedding semantic search),
                 INSPO_CATALOGUE_URL (self-hosted catalogue),
                 INSPO_PROFILE=lite|full, INSPO_IMAGES=thumbs|none,
-                INSPO_MAX_TOKENS (per-response token ceiling).
+                INSPO_MAX_TOKENS (per-response token ceiling),
+                INSPO_CACHE_DIR (catalogue disk cache location;
+                INSPO_CATALOGUE_CACHE=0 disables caching).
 
   Flags: --help  --version  --stdio (run the server even from a terminal)
 
@@ -68,6 +70,12 @@ const HELP = `
 const CATALOGUE_URL =
   process.env.INSPO_CATALOGUE_URL ??
   "https://0nme3pk5am3urwa9.public.blob.vercel-storage.com/catalogue";
+
+/* Sent on every catalogue request. Meaningless to the blob CDN today
+ * (no request logs), but it costs nothing and makes per-version
+ * attribution possible if the catalogue ever moves to a host with
+ * analytics. */
+const USER_AGENT = `inspo-mcp/${VERSION}`;
 
 async function main() {
   const argv = process.argv.slice(2);
@@ -90,24 +98,35 @@ async function main() {
     return;
   }
 
-  // Screens first, vectors after. A cold start used to pull 14MB and
-  // sit on the initialize handshake for ~1.7s; the two embedding
-  // sidecars are 11.6MB of that and only the vector tools read them.
-  // Fetch the catalogue alone (~2.3MB brotli), start serving, and warm
-  // the vectors in the background - the tools await these promises, so
-  // nothing silently ranks on tag overlap instead. Split per sidecar so
-  // search_screens (site, 3.3MB) doesn't wait on the 9.1MB row one.
-  await ensureCatalogue(CATALOGUE_URL, { sidecars: false });
-  const siteVectors = ensureSiteSidecarFromUrl(CATALOGUE_URL).catch(() => false);
-  const rowVectors = ensureRowSidecarFromUrl(CATALOGUE_URL).catch(() => false);
+  // Screens first, vectors after — and every fetch through the
+  // persistent disk cache (packages/db/src/catalogue-cache.ts): after
+  // the first run on a machine, startup revalidates with
+  // If-None-Match and an unchanged catalogue costs ~1KB of 304s
+  // instead of another ~14MB. That re-download was ~95% of the blob
+  // store's transfer bill (~$200/mo) at ~12K client starts/day.
+  //
+  // Split per sidecar so search_screens (site sidecar, 3.3MB) is warm
+  // by the first search, while the row sidecar (9.1MB, read ONLY by
+  // find_similar) goes fully lazy: a session that never runs
+  // find_similar never downloads 63% of the bytes.
+  await ensureCatalogue(CATALOGUE_URL, {
+    sidecars: false,
+    userAgent: USER_AGENT,
+  });
+  const siteVectors = ensureSiteSidecarFromUrl(CATALOGUE_URL, {
+    userAgent: USER_AGENT,
+  }).catch(() => false);
 
   const server = new McpServer(
     { name: "inspo", version: VERSION },
     { instructions: SERVER_INSTRUCTIONS },
   );
   registerTools(server, {
-    awaitVectors: () => rowVectors,
     awaitSiteVectors: () => siteVectors,
+    awaitVectors: () =>
+      ensureRowSidecarFromUrl(CATALOGUE_URL, {
+        userAgent: USER_AGENT,
+      }).catch(() => false),
   });
 
   const transport = new StdioServerTransport();
