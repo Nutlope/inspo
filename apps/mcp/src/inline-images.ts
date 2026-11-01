@@ -64,6 +64,29 @@ function mimeFromUrl(url: string): string {
   return "image/png";
 }
 
+/**
+ * The image type we'd hand to a model, or null when the response isn't
+ * one we can inline. The content-type header wins; a missing header
+ * falls back to the URL extension. AVIF is excluded on purpose (see the
+ * module comment), and so is everything that isn't `image/*`: a blob
+ * soft-404 or a proxy error arrives as a 200 `text/html`, and without
+ * this check it became an `image` block with `mimeType: "text/html"`
+ * that short-circuited the PNG fallback and got cached (#7).
+ */
+function imageMimeType(header: string | null, url: string): string | null {
+  let raw = (header ?? "").split(";")[0]!.trim().toLowerCase();
+  // No header, or the generic one some stores send for any binary: the URL
+  // extension is the better signal, same as before this check existed.
+  if (!raw || raw === "application/octet-stream") raw = mimeFromUrl(url);
+  if (!raw.startsWith("image/")) return null;
+  if (raw.includes("avif")) return null;
+  return raw;
+}
+
+function isInlineableImage(header: string | null, url: string): boolean {
+  return imageMimeType(header, url) !== null;
+}
+
 /** Build a small-WebP candidate URL from the PNG thumb URL by
  *  rewriting `.../thumb.png` to `.../thumb.384.webp`. The encoder /
  *  upload-to-blob pipeline ships avif+webp variants with this exact
@@ -114,6 +137,10 @@ async function fetchOne(url: string): Promise<InlineImage | null> {
     if (!res) {
       const fresh = await fetch(url, { signal: ctrl.signal });
       if (!fresh.ok) return null;
+      // A soft 404 or proxy error page comes back 200 text/html. Caching
+      // that at the edge would pin the bad answer for a year, so decide
+      // before the put, not after.
+      if (!isInlineableImage(fresh.headers.get("content-type"), url)) return null;
       if (edge) {
         // Store with an explicit long TTL rather than trusting the
         // origin's headers: the URL is content-versioned, so the only
@@ -142,10 +169,11 @@ async function fetchOne(url: string): Promise<InlineImage | null> {
     if (len > MAX_IMAGE_BYTES) return null;
     const buf = new Uint8Array(await res.arrayBuffer());
     if (buf.byteLength > MAX_IMAGE_BYTES) return null;
-    const mimeType = res.headers.get("content-type") ?? mimeFromUrl(url);
-    // Never inline a format the model APIs can't decode (AVIF being the
-    // one our blob store actually hosts) — the caller falls back to PNG.
-    if (mimeType.includes("avif")) return null;
+    const mimeType = imageMimeType(res.headers.get("content-type"), url);
+    // Anything that isn't a decodable image (AVIF, or an HTML error page
+    // served with a 200) returns null so the caller tries the next
+    // candidate — the PNG thumb that exists for every captured site.
+    if (!mimeType) return null;
     let bin = "";
     for (let i = 0; i < buf.byteLength; i++) bin += String.fromCharCode(buf[i]!);
     const block: InlineImage = {
