@@ -16,6 +16,7 @@
     "start": "tsx src/server.ts",
     "inspect": "npx @modelcontextprotocol/inspector tsx src/server.ts",
     "test": "tsx src/smoke.ts",
+    "test:unit": "tsx --test src/*.test.ts",
     "build:npm": "node scripts/build-npm.mjs",
     "typecheck": "tsc --noEmit",
     "bench": "node bench/response-cost.mjs",
