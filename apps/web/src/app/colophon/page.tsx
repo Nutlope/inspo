@@ -69,7 +69,7 @@ export default async function ColophonPage() {
             <dd className="text-lg leading-relaxed">
               Made by Youssef and Hassan at{" "}
               <a
-                href="https://www.together.ai"
+                href="https://togetherai.link/?utm_source=inspo&utm_medium=referral&utm_campaign=example-app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline-offset-4 hover:text-[var(--color-link)] hover:underline"

@@ -39,7 +39,7 @@ export default async function ExtractPage({
               and hand you a <code className="font-mono text-[0.95em] text-[var(--color-fg)]">DESIGN.md</code> your
               coding agent can consume directly. Powered by{" "}
               <a
-                href="https://www.together.ai"
+                href="https://togetherai.link/?utm_source=inspo&utm_medium=referral&utm_campaign=example-app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--color-fg)] underline-offset-4 hover:text-[var(--color-link)] hover:underline"
