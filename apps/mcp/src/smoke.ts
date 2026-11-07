@@ -23,6 +23,11 @@ async function main() {
 
   const tools = await client.listTools();
   console.log(`tools (${tools.tools.length}):`, tools.tools.map((t) => t.name).join(", "));
+  const untitled = tools.tools.filter((t) => !t.title?.trim()).map((t) => t.name);
+  if (untitled.length) {
+    console.error(`FAIL  tools without a title: ${untitled.join(", ")}`);
+    process.exitCode = 1;
+  }
 
   type Case = {
     name: string;

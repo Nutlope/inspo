@@ -396,7 +396,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
    *  registers and applyProfileOnInitialize() hides the rest. */
   const reg = <Args extends ZodRawShape>(
     name: string,
-    config: { description?: string; inputSchema?: Args },
+    config: { title: string; description?: string; inputSchema?: Args },
     cb: ToolCallback<Args>,
   ): void => {
     if (ctx.staticProfile === "lite" && !LITE_TOOLS.has(name)) return;
@@ -444,6 +444,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "search_screens",
     {
+      title: "Search screens",
       description:
         "Search the archive of real website screenshots. Returns screens with palette, fonts, components and image URLs.",
       inputSchema: {
@@ -585,6 +586,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_screen",
     {
+      title: "Get screen",
       description:
         "Fetch the full record for one screen by slug - every viewport variant, palette, fonts, tech stack, designer credit.",
       inputSchema: { slug: flexSlug().describe("Screen slug, e.g. 'atelier-mira'") },
@@ -608,6 +610,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_design_system",
     {
+      title: "Get design system",
       description:
         "The full DESIGN.md for one screen - real fonts, frequency-ranked palette, CSS variables, detected tech, colour roles, type ramp. Thin captured tokens are supplemented by a live fetch of the source; `live=false` skips that.",
       inputSchema: {
@@ -691,6 +694,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "find_similar",
     {
+      title: "Find similar screens",
       description:
         "A screen's nearest design neighbours - ranked by design-similarity embeddings where available, else by macrostructure / industry / style overlap. One result per site.",
       inputSchema: {
@@ -759,6 +763,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "compare",
     {
+      title: "Compare sites",
       description:
         "Compare 2-4 captured sites across palette, typefaces, macrostructure, mode, style tags, type/spacing/radius scales and container width. Returns per-site breakdowns plus what they share - triangulates a house style from a few references.",
       inputSchema: {
@@ -843,6 +848,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "find_by_color",
     {
+      title: "Find sites by colour",
       description:
         "Real sites whose extracted palette sits near a hex colour (OKLAB distance, so 'close' means the same colour family, not just the same hue). Use when a brief names a brand colour.",
       inputSchema: {
@@ -910,6 +916,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "find_examples_for_macrostructure",
     {
+      title: "Find macrostructure examples",
       description:
         "Real sites exemplifying one of the 19 named macrostructures. Call it at the macrostructure-pick step. Accepts slugs ('bento-grid') or display names ('Bento Grid').",
       inputSchema: {
@@ -1019,6 +1026,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "list_collections",
     {
+      title: "List collections",
       description:
         "List every editor-curated issue. Use this for thematic browsing - e.g. all 'Editorial Layouts' or 'Dark Product Pages'.",
       inputSchema: {},
@@ -1036,6 +1044,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_filters",
     {
+      title: "Get filter values",
       description:
         "Every value the filters accept: styles, industries, macrostructures, modes, vibes, colors, page types, component types. Zero input. Call it when unsure - an out-of-vocabulary value errors.",
       inputSchema: {},
@@ -1070,6 +1079,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_site_pages",
     {
+      title: "Get site pages",
       description:
         "A site's captured pages as an ordered flow (landing → pricing → features → ...) with titles, northstars and thumbnails - how a real product sequences its pages. No arguments returns the directory of flow-capable sites. Accepts a site or screen slug.",
       inputSchema: {
@@ -1149,6 +1159,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "find_components",
     {
+      title: "Find components",
       description:
         "Real sites featuring a specific UI component (hero, pricing, features, cta, nav, footer, testimonial, logo-cloud, faq, stat), with a per-element crop where one exists. For copy-pasteable code use get_reference_jsx.",
       inputSchema: {
@@ -1262,6 +1273,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_collection",
     {
+      title: "Get collection",
       description:
         "Fetch one issue by slug, including the editor's blurb and ordered screen list.",
       inputSchema: {
@@ -1328,6 +1340,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "find_reference_components",
     {
+      title: "Find reference components",
       description:
         "The canonical reference components as an index: id, label, macrostructure and a note for each hero / pricing / cta / nav / footer archetype. Pick one, then get_reference_jsx(type, id) for its source.",
       inputSchema: {
@@ -1422,6 +1435,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "recommend",
     {
+      title: "Recommend designs for a brief",
       description:
         "Orchestrator - start here for a brief. One call returns a macrostructure pick, 5 real exemplars, matching reference components (source via get_reference_jsx), a palette suggestion, and an `evidence` packet measuring the genre's paper band / display class / accent hue. Pass a macrostructure to skip the pick step. No LLM call.",
       inputSchema: {
@@ -1670,6 +1684,7 @@ export function registerTools(server: McpServer, opts: RegisterOptions = {}) {
   reg(
     "get_reference_jsx",
     {
+      title: "Get reference JSX",
       description:
         "The full canonical JSX source for one reference component, including the header stamp naming its macrostructure / theme / states. Copy-pasteable; tweak tokens to the target brand.",
       inputSchema: {
